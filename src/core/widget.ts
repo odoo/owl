@@ -25,7 +25,9 @@ export default class Widget {
     this.parent = parent;
     if (parent) {
       parent.children.push(this);
-      this.setEnvironment(parent.env);
+      if (parent.env) {
+        this.setEnvironment(parent.env);
+      }
     }
   }
 
@@ -46,14 +48,16 @@ export default class Widget {
     target.appendChild(this.el!);
   }
 
-  destroy() {}
-
-  setEnvironment(env: Env | null) {
-    this.env = env ? Object.create(env) : null;
-    if (this.env) {
-      this.env.qweb.addTemplate(this.name, this.template);
-      delete this.template;
+  destroy() {
+    if (this.el) {
+      this.el.remove();
     }
+  }
+
+  setEnvironment(env: Env) {
+    this.env = Object.create(env);
+    env.qweb.addTemplate(this.name, this.template);
+    delete this.template;
   }
 
   async updateState(newState: Object) {

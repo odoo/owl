@@ -54,3 +54,42 @@ describe("basic widget properties", () => {
     expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 });
+
+describe("lifecycle hooks", () => {
+  test("willStart hook is called", async () => {
+    let willstart = false;
+    class HookWidget extends Widget {
+      async willStart() {
+        willstart = true;
+      }
+    }
+    const widget = makeWidget(HookWidget);
+    const target = document.createElement("div");
+    await widget.mount(target);
+    expect(willstart).toBe(true);
+  });
+
+  test("mounted hook is not called if not in DOM", async () => {
+    let mounted = false;
+    class HookWidget extends Widget {
+      async mounted() {
+        mounted = true;
+      }
+    }
+    const widget = makeWidget(HookWidget);
+    const target = document.createElement("div");
+    await widget.mount(target);
+    expect(mounted).toBe(false);
+  });
+});
+
+describe("destroy method", () => {
+  test("destroy remove the widget from the DOM", async () => {
+    const widget = makeWidget(Widget);
+    const target = document.body;
+    await widget.mount(target);
+    expect(document.contains(widget.el)).toBe(true);
+    widget.destroy();
+    expect(document.contains(widget.el)).toBe(false);
+  });
+});

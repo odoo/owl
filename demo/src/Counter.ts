@@ -1,7 +1,7 @@
 import Widget from "../../src/core/widget";
 
 const template = `
-    <div t-debug="1">
+    <div>
         <button t-on-click="increment(-1)">-</button>
         <span>Value: <t t-esc="state.counter"/></span>
         <button t-on-click="increment(1)">+</button>
@@ -15,7 +15,7 @@ export default class Counter extends Widget {
     counter: 0
   };
 
-  constructor(parent: Widget, initialState?: number) {
+  constructor(parent: Widget | null, initialState?: number) {
     super(parent);
     this.state.counter = initialState || 0;
   }

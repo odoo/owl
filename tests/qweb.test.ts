@@ -1,5 +1,5 @@
-import QWeb from "../src/qweb";
-import { EvalContext } from "../src/qweb";
+import QWeb from "../src/core/qweb";
+import { EvalContext } from "../src/core/qweb";
 
 
 function renderToDOM(t: string, context: EvalContext = {}): DocumentFragment {

@@ -1,4 +1,4 @@
-import { escape, htmlTrim } from "../src/utils";
+import { escape, htmlTrim } from "../src/core/utils";
 
 describe("escape", () => {
   test("normal strings", () => {

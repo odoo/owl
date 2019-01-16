@@ -75,9 +75,9 @@ export class Context {
     }
   }
   addLine(line: string) {
-    const prefix = new Array(this.indentLevel).join('\t');
+    const prefix = new Array(this.indentLevel).join("\t");
     const lastChar = line[line.length - 1];
-    const suffix = lastChar !=='}' && lastChar !== '{' ? ';' : '';
+    const suffix = lastChar !== "}" && lastChar !== "{" ? ";" : "";
     this.code.push(prefix + line + suffix);
   }
 }

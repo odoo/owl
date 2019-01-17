@@ -36,3 +36,12 @@ npm run demo:serve
 - *watch* recompile the typescript files as soon as they are changed
 - *serve* starts a live-server pointing to the dist/demo (which will reload the
   page whenever the files are changed)
+
+## Notes
+
+Before even thinking about using this in a real scenario:
+
+- check qweb tests and see if it is reasonable
+- Note: the compilation of a template should have a unique node (but sub templates
+  can have multiple roots)
+- remove the "if (${exprID} || ${exprID} === 0) {"

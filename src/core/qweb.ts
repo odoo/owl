@@ -1,6 +1,19 @@
 import { escape } from "./utils";
 import directives from "./qweb_directives";
 import { Directive } from "./qweb_directives";
+import {init} from "../libs/snabbdom/src/snabbdom"
+import sdProps from "../libs/snabbdom/src/modules/props"
+import sdListeners from "../libs/snabbdom/src/modules/eventlisteners"
+import h from "../libs/snabbdom/src/h"
+// const init = require("../libs/snabbdom/dist/snabbdom.js");
+// import {init} from '../libs/snabbdom/dist/snabbdom.js';
+
+const patch = init([sdProps, sdListeners]);
+(<any>window).h = h;
+(<any>window).patch = patch;
+
+
+// console.log(init);
 type RawTemplate = string;
 type Template = (context: any) => DocumentFragment;
 

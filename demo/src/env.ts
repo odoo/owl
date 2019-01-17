@@ -1,5 +1,5 @@
 import { Env } from "../../src/core/widget";
-import QWeb from "../../src/core/qweb";
+import QWeb from "../../src/core/qweb_vdom";
 
 const qweb = new QWeb();
 

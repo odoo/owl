@@ -1,4 +1,10 @@
-import QWeb from "./qweb";
+import QWeb from "./qweb_vdom";
+
+// import {init} from "../libs/snabbdom/src/snabbdom"
+// import sdProps from "../libs/snabbdom/src/modules/props"
+// import sdListeners from "../libs/snabbdom/src/modules/eventlisteners"
+
+// const patch = init([sdProps, sdListeners]);
 
 export interface Env {
   qweb: QWeb;
@@ -60,6 +66,12 @@ export default class Widget {
     this.env = Object.create(env);
   }
 
+  /**
+   * DOCSTRIGN
+   *
+   * @param {Object} newState
+   * @memberof Widget
+   */
   async updateState(newState: Object) {
     Object.assign(this.state, newState);
     await this.render();
@@ -70,14 +82,16 @@ export default class Widget {
   //--------------------------------------------------------------------------
 
   async render() {
-    const fragment = await this.env!.qweb.render(this.name, this);
-    this._setElement(fragment.firstChild!);
+    // const vnode = await this.env!.qweb.render(this.name, this);
+    // patch(this.el, vnode);
+    
+    // this._setElement(fragment.firstChild!);
   }
 
-  private _setElement(el: ChildNode) {
-    if (this.el) {
-      this.el.replaceWith(el);
-    }
-    this.el = el;
-  }
+  // private _setElement(el: ChildNode) {
+  //   if (this.el) {
+  //     this.el.replaceWith(el);
+  //   }
+  //   this.el = el;
+  // }
 }

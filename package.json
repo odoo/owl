@@ -7,9 +7,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "bundle:core": "tsc -m es6 --lib es2017,dom --target esnext --outdir dist src/bundles/core.ts && rollup dist/bundles/core.js --file dist/bundle-core.js --format iife",
-    "bundle:core:watch": "nodemon -w src -e ts -x 'npm run bundle:core'",
-    "demo": "cp -r demo/ dist/demo && tsc -m amd --lib es2017,dom --target esnext --outfile dist/demo/main.js demo/src/main.ts",
-    "postdemo": "open dist/demo/index.html"
+    "bundle:core:watch": "npm run bundle:core -- --watch",
+    "demo:build": "cp -r demo/ dist/demo && npm run demo:build:js",
+    "demo:build:js": "tsc -m amd --lib es2017,dom --target esnext --outfile dist/demo/main.js demo/src/main.ts",
+    "predemo:watch": "npm run demo:build",
+    "demo:watch": "npm run demo:build:js -- --watch",
+    "demo:serve": "live-server dist/demo/"
   },
   "repository": {
     "type": "git",
@@ -24,11 +27,11 @@
   "devDependencies": {
     "@types/jest": "^23.3.12",
     "jest": "^23.6.0",
-    "nodemon": "^1.18.9",
     "rollup": "^1.1.0",
     "rollup-plugin-typescript2": "^0.19.0",
     "source-map-support": "^0.5.10",
     "ts-jest": "^23.10.5",
+    "live-server": "^1.2.1",
     "typescript": "^3.2.2"
   }
 }

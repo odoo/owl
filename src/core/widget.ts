@@ -44,6 +44,8 @@ export default class Widget {
 
   async mount(target: HTMLElement) {
     await this.willStart();
+    this.env!.qweb.addTemplate(this.name, this.template);
+    delete this.template;
     await this.render();
     target.appendChild(this.el!);
   }
@@ -56,8 +58,6 @@ export default class Widget {
 
   setEnvironment(env: Env) {
     this.env = Object.create(env);
-    env.qweb.addTemplate(this.name, this.template);
-    delete this.template;
   }
 
   async updateState(newState: Object) {

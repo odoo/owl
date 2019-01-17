@@ -15,9 +15,9 @@ export default class Counter extends Widget {
     counter: 0
   };
 
-  constructor(parent: Widget | null, initialState?: number) {
+  constructor(parent: Widget, props: {initialState?: number}) {
     super(parent);
-    this.state.counter = initialState || 0;
+    this.state.counter = props.initialState || 0;
   }
 
   increment(delta: number) {

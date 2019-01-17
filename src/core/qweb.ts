@@ -1,7 +1,6 @@
 import { escape } from "./utils";
 import directives from "./qweb_directives";
 import { Directive } from "./qweb_directives";
-
 type RawTemplate = string;
 type Template = (context: any) => DocumentFragment;
 

@@ -1,0 +1,60 @@
+{
+  "name": "snabbdom",
+  "version": "0.7.3",
+  "description": "A virtual DOM library with focus on simplicity, modularity, powerful features and performance.",
+  "main": "snabbdom.js",
+  "module": "es/snabbdom.js",
+  "typings": "snabbdom.d.ts",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "browserify": "^14.4.0",
+    "fake-raf": "1.0.1",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
+    "karma": "^3.0.0",
+    "karma-browserstack-launcher": "^1.3.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-typescript": "^3.0.13",
+    "knuth-shuffle": "^1.0.1",
+    "mocha": "^5.2.0",
+    "typescript": "^3.0.3",
+    "xyz": "2.1.0"
+  },
+  "scripts": {
+    "pretest": "npm run compile",
+    "test": "testem",
+    "compile": "npm run compile-es && npm run compile-commonjs",
+    "compile-es": "tsc --outDir es --module es6 --moduleResolution node",
+    "compile-commonjs": "tsc --outDir ./",
+    "prepublish": "npm run compile",
+    "release-major": "xyz --repo git@github.com:paldepind/snabbdom.git --increment major",
+    "release-minor": "xyz --repo git@github.com:paldepind/snabbdom.git --increment minor",
+    "release-patch": "xyz --repo git@github.com:paldepind/snabbdom.git --increment patch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paldepind/snabbdom.git"
+  },
+  "keywords": [
+    "virtual",
+    "dom",
+    "light",
+    "kiss",
+    "performance"
+  ],
+  "author": "Simon Friis Vindum",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paldepind/snabbdom/issues"
+  },
+  "homepage": "https://github.com/paldepind/snabbdom#readme"
+}

@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "declaration": true,
+        "removeComments": false,
+        "noUnusedLocals": true,
+        "lib": [
+            "dom",
+            "es5",
+            "es2015.core"
+        ]
+    },
+    "files": [
+        "src/helpers/attachto.ts",
+        "src/modules/attributes.ts",
+        "src/modules/class.ts",
+        "src/modules/dataset.ts",
+        "src/modules/eventlisteners.ts",
+        "src/modules/hero.ts",
+        "src/modules/props.ts",
+        "src/modules/module.ts",
+        "src/modules/style.ts",
+        "src/h.ts",
+        "src/htmldomapi.ts",
+        "src/hooks.ts",
+        "src/is.ts",
+        "src/snabbdom.bundle.ts",
+        "src/snabbdom.ts",
+        "src/thunk.ts",
+        "src/tovnode.ts",
+        "src/vnode.ts"
+    ]
+}

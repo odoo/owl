@@ -33,5 +33,8 @@
     "ts-jest": "^23.10.5",
     "live-server": "^1.2.1",
     "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "snabbdom": "^0.7.3"
   }
 }

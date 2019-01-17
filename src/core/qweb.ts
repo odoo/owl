@@ -18,7 +18,7 @@ export class Context {
   code: string[] = [];
   variables: { [key: string]: any } = {};
   escaping: boolean = false;
-  parentNode: string | undefined;
+  parentNode: string;
   indentLevel: number = 0;
   rootContext: Context;
   caller: Element | undefined;
@@ -27,6 +27,7 @@ export class Context {
   constructor() {
     this.rootContext = this;
     this.fragmentID = this.generateID();
+    this.parentNode = this.fragmentID;
   }
 
   generateID(): string {
@@ -68,17 +69,16 @@ export class Context {
   }
 
   addNode(nodeID: string) {
-    if (this.parentNode) {
-      this.addLine(`${this.parentNode}.appendChild(${nodeID})`);
-    } else {
-      this.addLine(`${this.fragmentID}.appendChild(${nodeID})`);
-    }
+    this.addLine(`${this.parentNode}.appendChild(${nodeID})`);
   }
   addLine(line: string) {
     const prefix = new Array(this.indentLevel).join("\t");
     const lastChar = line[line.length - 1];
     const suffix = lastChar !== "}" && lastChar !== "{" ? ";" : "";
     this.code.push(prefix + line + suffix);
+  }
+  getValue(val: any): any {
+    return val in this.variables ? this.getValue(this.variables[val]) : val;
   }
 }
 
@@ -298,12 +298,6 @@ export default class QWeb {
     }
   }
 
-  _getValue(val: any, ctx: Context): any {
-    if (val in ctx.variables) {
-      return this._getValue(ctx.variables[val], ctx);
-    }
-    return val;
-  }
   _compileChildren(node: ChildNode, ctx: Context) {
     if (node.childNodes.length > 0) {
       for (let child of Array.from(node.childNodes)) {

@@ -61,7 +61,7 @@ const ifDirective: Directive = {
   name: "if",
   priority: 20,
   atNodeEncounter({ node, qweb, ctx }): boolean {
-    let cond = qweb._getValue(node.getAttribute("t-if")!, ctx);
+    let cond = ctx.getValue(node.getAttribute("t-if")!);
     ctx.addLine(`if (${qweb._formatExpression(cond)}) {`);
     ctx.indent();
     return false;
@@ -76,7 +76,7 @@ const elifDirective: Directive = {
   name: "elif",
   priority: 30,
   atNodeEncounter({ node, qweb, ctx }): boolean {
-    let cond = qweb._getValue(node.getAttribute("t-elif")!, ctx);
+    let cond = ctx.getValue(node.getAttribute("t-elif")!);
     ctx.addLine(`else if (${qweb._formatExpression(cond)}) {`);
     ctx.indent();
     return false;
@@ -180,7 +180,7 @@ const escDirective: Directive = {
       let nodeID = qweb._compileGenericNode(node, ctx);
       ctx = ctx.withParent(nodeID);
     }
-    let value = qweb._getValue(node.getAttribute("t-esc")!, ctx);
+    let value = ctx.getValue(node.getAttribute("t-esc")!);
     compileValueNode(value, node, qweb, ctx.withEscaping());
     return true;
   }
@@ -194,7 +194,7 @@ const rawDirective: Directive = {
       let nodeID = qweb._compileGenericNode(node, ctx);
       ctx = ctx.withParent(nodeID);
     }
-    let value = qweb._getValue(node.getAttribute("t-raw")!, ctx);
+    let value = ctx.getValue(node.getAttribute("t-raw")!);
     compileValueNode(value, node, qweb, ctx);
     return true;
   }

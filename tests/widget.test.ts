@@ -1,5 +1,5 @@
 import Widget from "../src/core/widget";
-import QWeb from "../src/core/qweb";
+import QWeb from "../src/core/qweb_vdom";
 
 function makeWidget(W: typeof Widget): Widget {
   const env = {

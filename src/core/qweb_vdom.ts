@@ -640,3 +640,22 @@ const onDirective: Directive = {
     );
   }
 };
+
+// const widgetDirective: Directive = {
+//   name: "widget",
+//   priority: 100,
+//   atNodeEncounter({ ctx, fullName, value, node, qweb}): boolean {
+//     let spanID = ctx.generateID();
+//     ctx.addLine(`let ${spanID} = document.createElement('span')`);
+//     ctx.addNode(spanID)
+//     let props = node.getAttribute('t-props');
+//     let widgetID = ctx.generateID();
+//     ctx.addLine(`let ${widgetID} = new context.widgets['${value}'](context, ${props})`);
+//     ctx.addLine(`${widgetID}.mount(${spanID}).then(()=>${ctx.parentNode}.replaceChild(${widgetID}.el, ${spanID}))`);
+//     let ref = node.getAttribute('t-ref');
+//     if (ref) {
+//       ctx.addLine(`context.refs['${ref}'] = ${widgetID}`);
+//     }
+//     return true;
+//   }
+// };

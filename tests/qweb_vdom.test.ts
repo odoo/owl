@@ -5,7 +5,11 @@ import sdListeners from "../src/libs/snabbdom/src/modules/eventlisteners";
 
 const patch = init([sdAttributes, sdListeners]);
 
-function renderToDOM(qweb: QWeb, t: string, context: EvalContext = {}): HTMLElement {
+function renderToDOM(
+  qweb: QWeb,
+  t: string,
+  context: EvalContext = {}
+): HTMLElement {
   const vnode = qweb.render(t, context);
   const node = document.createElement(vnode.sel!);
   patch(node, vnode);
@@ -61,10 +65,8 @@ describe("error handling", () => {
 
   test("nice warning if no template with given name", () => {
     const qweb = new QWeb();
-    expect(() => qweb.render('invalidname')).toThrow('does not exist');
+    expect(() => qweb.render("invalidname")).toThrow("does not exist");
   });
-
-
 });
 
 describe("t-esc", () => {
@@ -338,66 +340,66 @@ describe("t-call (template calling", () => {
     const qweb = new QWeb();
     qweb.addTemplate("_basic-callee", "<t>ok</t>");
     qweb.addTemplate("caller", '<div t-call="_basic-callee"/>');
-    expect(() => qwebRender(qweb, "caller")).toThrow('Invalid tag');
+    expect(() => qwebRender(qweb, "caller")).toThrow("Invalid tag");
   });
 
-    test("with unused body", () => {
-      const qweb = new QWeb();
-      qweb.addTemplate("_basic-callee", "<div>ok</div>");
-      qweb.addTemplate("caller", '<t t-call="_basic-callee">WHEEE</t>');
-      const expected = "<div>ok</div>";
-      expect(qwebRender(qweb, "caller")).toBe(expected);
-    });
+  test("with unused body", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("_basic-callee", "<div>ok</div>");
+    qweb.addTemplate("caller", '<t t-call="_basic-callee">WHEEE</t>');
+    const expected = "<div>ok</div>";
+    expect(qwebRender(qweb, "caller")).toBe(expected);
+  });
 
-    test("with unused setbody", () => {
-      const qweb = new QWeb();
-      qweb.addTemplate("_basic-callee", "<div>ok</div>");
-      qweb.addTemplate(
-        "caller",
-        '<t t-call="_basic-callee"><t t-set="qux" t-value="3"/></t>'
-      );
-      const expected = "<div>ok</div>";
-      expect(qwebRender(qweb, "caller")).toBe(expected);
-    });
+  test("with unused setbody", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("_basic-callee", "<div>ok</div>");
+    qweb.addTemplate(
+      "caller",
+      '<t t-call="_basic-callee"><t t-set="qux" t-value="3"/></t>'
+    );
+    const expected = "<div>ok</div>";
+    expect(qwebRender(qweb, "caller")).toBe(expected);
+  });
 
-    test("with used body", () => {
-      const qweb = new QWeb();
-      qweb.addTemplate("_callee-printsbody", '<h1><t t-esc="0"/></h1>');
-      qweb.addTemplate("caller", '<t t-call="_callee-printsbody">ok</t>');
-      const expected = "<h1>ok</h1>";
-      expect(qwebRender(qweb, "caller")).toBe(expected);
-    });
+  test("with used body", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("_callee-printsbody", '<h1><t t-esc="0"/></h1>');
+    qweb.addTemplate("caller", '<t t-call="_callee-printsbody">ok</t>');
+    const expected = "<h1>ok</h1>";
+    expect(qwebRender(qweb, "caller")).toBe(expected);
+  });
 
-    test("with used set body", () => {
-      const qweb = new QWeb();
-      qweb.addTemplate("_callee-uses-foo", '<t t-esc="foo"/>');
-      qweb.addTemplate(
-        "caller",
-        `
+  test("with used set body", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("_callee-uses-foo", '<t t-esc="foo"/>');
+    qweb.addTemplate(
+      "caller",
+      `
         <span><t t-call="_callee-uses-foo"><t t-set="foo" t-value="'ok'"/></t></span>`
-      );
-      const expected = "<span>ok</span>";
-      expect(qwebRender(qweb, "caller")).toBe(expected);
-    });
+    );
+    const expected = "<span>ok</span>";
+    expect(qwebRender(qweb, "caller")).toBe(expected);
+  });
 
-    test("inherit context", () => {
-      const qweb = new QWeb();
-      qweb.addTemplate("_callee-uses-foo", '<t t-esc="foo"/>');
-      qweb.addTemplate(
-        "caller",
-        `
+  test("inherit context", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("_callee-uses-foo", '<t t-esc="foo"/>');
+    qweb.addTemplate(
+      "caller",
+      `
         <div><t t-set="foo" t-value="1"/><t t-call="_callee-uses-foo"/></div>`
-      );
-      const expected = "<div>1</div>";
-      expect(qwebRender(qweb, "caller")).toBe(expected);
-    });
+    );
+    const expected = "<div>1</div>";
+    expect(qwebRender(qweb, "caller")).toBe(expected);
+  });
 
-    test("scoped parameters", () => {
-      const qweb = new QWeb();
-      qweb.addTemplate("_basic-callee", `<t>ok</t>`);
-      qweb.addTemplate(
-        "caller",
-        `
+  test("scoped parameters", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("_basic-callee", `<t>ok</t>`);
+    qweb.addTemplate(
+      "caller",
+      `
         <div>
             <t t-call="_basic-callee">
                 <t t-set="foo" t-value="42"/>
@@ -405,10 +407,10 @@ describe("t-call (template calling", () => {
             <t t-esc="foo"/>
         </div>
       `
-      );
-      const expected = "<div>ok</div>";
-      expect(qwebRender(qweb, "caller").replace(/\s/g, '')).toBe(expected);
-    });
+    );
+    const expected = "<div>ok</div>";
+    expect(qwebRender(qweb, "caller").replace(/\s/g, "")).toBe(expected);
+  });
 });
 
 describe("foreach", () => {
@@ -420,7 +422,7 @@ describe("foreach", () => {
         </t>
     </div>`;
     const expected = `<div>[0:33][1:22][2:11]</div>`;
-    expect(renderToString(template).replace(/\s/g, '')).toBe(expected);
+    expect(renderToString(template).replace(/\s/g, "")).toBe(expected);
   });
 
   test("iterate on items (on a element node)", () => {
@@ -429,7 +431,7 @@ describe("foreach", () => {
         <span t-foreach="[1, 2]" t-as="item"><t t-esc="item"/></span>
     </div>`;
     const expected = `<div><span>1</span><span>2</span></div>`;
-    expect(renderToString(template).replace(/\s/g, '')).toBe(expected);
+    expect(renderToString(template).replace(/\s/g, "")).toBe(expected);
   });
 
   test("iterate, position", () => {
@@ -440,7 +442,7 @@ describe("foreach", () => {
         </t>
       </div>`;
     const expected = `<div>-first(even)-(odd)-(even)-(odd)-last(even)</div>`;
-    expect(renderToString(template).replace(/\s/g, '')).toBe(expected);
+    expect(renderToString(template).replace(/\s/g, "")).toBe(expected);
   });
 
   test("iterate, integer param", () => {
@@ -448,7 +450,7 @@ describe("foreach", () => {
       [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
     </t></div>`;
     const expected = `<div>[0:00][1:11][2:22]</div>`;
-    expect(renderToString(template).replace(/\s/g, '')).toBe(expected);
+    expect(renderToString(template).replace(/\s/g, "")).toBe(expected);
   });
 
   test("iterate, dict param", () => {
@@ -460,7 +462,10 @@ describe("foreach", () => {
       </div>`;
     const expected = `<div>[0:a1-even][1:b2-odd][2:c3-even]</div>`;
     expect(
-      renderToString(template, { value: { a: 1, b: 2, c: 3 } }).replace(/\s/g, '')
+      renderToString(template, { value: { a: 1, b: 2, c: 3 } }).replace(
+        /\s/g,
+        ""
+      )
     ).toBe(expected);
   });
 });
@@ -533,10 +538,12 @@ describe("misc", () => {
 describe("t-on", () => {
   test("can bind event handler", () => {
     const qweb = new QWeb();
-    qweb.addTemplate('test', `<button t-on-click="add">Click</button>`);
+    qweb.addTemplate("test", `<button t-on-click="add">Click</button>`);
     let a = 1;
-    const node = renderToDOM(qweb, 'test', {
-      add() { a = 3}
+    const node = renderToDOM(qweb, "test", {
+      add() {
+        a = 3;
+      }
     });
     node.click();
     expect(a).toBe(3);
@@ -544,13 +551,14 @@ describe("t-on", () => {
 
   test("can bind handlers with arguments", () => {
     const qweb = new QWeb();
-    qweb.addTemplate('test', `<button t-on-click="add(5)">Click</button>`);
+    qweb.addTemplate("test", `<button t-on-click="add(5)">Click</button>`);
     let a = 1;
-    const node = renderToDOM(qweb, 'test', {
-      add(n) { a = a + n}
+    const node = renderToDOM(qweb, "test", {
+      add(n) {
+        a = a + n;
+      }
     });
     node.click();
     expect(a).toBe(6);
   });
 });
-

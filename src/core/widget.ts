@@ -1,8 +1,8 @@
 import QWeb from "./qweb_vdom";
 
-import {init} from "../libs/snabbdom/src/snabbdom"
-import sdProps from "../libs/snabbdom/src/modules/props"
-import sdListeners from "../libs/snabbdom/src/modules/eventlisteners"
+import { init } from "../libs/snabbdom/src/snabbdom";
+import sdProps from "../libs/snabbdom/src/modules/props";
+import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
 import { VNode } from "../libs/snabbdom/src/vnode";
 
 const patch = init([sdProps, sdListeners]);
@@ -55,7 +55,6 @@ export default class Widget {
     this.env!.qweb.addTemplate(this.name, this.template);
     delete this.template;
     await this.render();
-    
 
     target.appendChild(this.el!);
   }
@@ -92,7 +91,6 @@ export default class Widget {
     }
     patch(this.vnode || this.el, vnode);
     this.vnode = vnode;
-
   }
 
   // private _setElement(el: ChildNode) {

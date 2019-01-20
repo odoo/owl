@@ -311,7 +311,7 @@ describe("attributes", () => {
     );
   });
 
-  xit("various escapes", () => {
+  test.skip("various escapes", () => {
     // need to think about this... This one does not pass, but I am not sure it is
     // a correct test
     const template = `

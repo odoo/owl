@@ -93,3 +93,23 @@ describe("destroy method", () => {
     expect(document.contains(widget.el)).toBe(false);
   });
 });
+
+describe("composition", () => {
+  test("a widget with a sub widget", async () => {
+
+    class WidgetB extends Widget {
+      template= `<div>world</div>`;
+    }
+
+    class WidgetA extends Widget {
+      name="a";
+      template= `<div>Hello<t t-widget="b"/></div>`;
+      widgets = {b: WidgetB}
+    }
+
+    const widget = makeWidget(WidgetA);
+    const target = document.createElement("div");
+    await widget.mount(target);
+    expect(target.innerHTML).toBe("<div>Hello<div>world</div></div>");
+  });
+});

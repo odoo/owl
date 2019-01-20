@@ -5,6 +5,7 @@ const template = `
     <div t-debug="1">
         <span>Root Widget</span>
         <button t-on-click="resetCounter">Reset</button>
+        <button t-on-click="resetCounterAsync">Reset in 3s</button>
         <button t-on-click="toggle">Toggle  Counter</button>
         <input/>
         <t t-if="state.validcounter">
@@ -21,6 +22,12 @@ export default class RootWidget extends Widget {
 
   resetCounter(ev: MouseEvent) {
       this.refs.counter.updateState({counter: 3})
+  }
+
+  resetCounterAsync(ev: MouseEvent) {
+      setTimeout(() => {
+          this.refs.counter.updateState({counter: 3})
+      }, 3000);
   }
 
   toggle() {

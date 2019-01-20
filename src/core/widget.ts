@@ -17,6 +17,7 @@ export default class Widget {
   name: string = "widget";
   template: string = "<div></div>";
   vnode: VNode | null = null;
+  _TEMP: Promise<any>[] | null = null;
 
   parent: Widget | null;
   children: Widget[] = [];
@@ -50,13 +51,16 @@ export default class Widget {
   // Public
   //--------------------------------------------------------------------------
 
-  async mount(target: HTMLElement) {
+  async mount(target?: HTMLElement): Promise<VNode> {
     await this.willStart();
     this.env!.qweb.addTemplate(this.name, this.template);
     delete this.template;
-    await this.render();
+    const vnode = await this.render();
 
-    target.appendChild(this.el!);
+    if (target) {
+      target.appendChild(this.el!);
+    }
+    return vnode;
   }
 
   destroy() {
@@ -84,19 +88,15 @@ export default class Widget {
   // Private
   //--------------------------------------------------------------------------
 
-  async render() {
-    let vnode = await this.env!.qweb.render(this.name, this);
+  async render(): Promise<VNode> {
+    this._TEMP = [];
+    let vnode = this.env!.qweb.render(this.name, this);
+    await Promise.all(this._TEMP);
     if (!this.el) {
       this.el = document.createElement(vnode.sel!);
     }
     patch(this.vnode || this.el, vnode);
     this.vnode = vnode;
+    return vnode;
   }
-
-  // private _setElement(el: ChildNode) {
-  //   if (this.el) {
-  //     this.el.replaceWith(el);
-  //   }
-  //   this.el = el;
-  // }
 }

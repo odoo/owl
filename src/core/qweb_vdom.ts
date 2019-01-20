@@ -95,7 +95,8 @@ export default class QWeb {
       elseDirective,
       elifDirective,
       ifDirective,
-      callDirective
+      callDirective,
+      onDirective
     ].forEach(d => this.addDirective(d));
   }
 
@@ -170,6 +171,9 @@ export default class QWeb {
    * @param {string} name the template should already have been added
    */
   render(name: string, context: any = {}): VNode {
+    if (!(name in this.rawTemplates)) {
+      throw new Error(`Template ${name} does not exist`);
+    }
     const template = this.templates[name] || this._compile(name);
     return template(context);
   }
@@ -616,5 +620,23 @@ const forEachDirective: Directive = {
     ctx.dedent();
     ctx.addLine("}");
     return true;
+  }
+};
+
+const onDirective: Directive = {
+  name: "on",
+  priority: 90,
+  atNodeCreation({ ctx, fullName, value, nodeID }) {
+    const eventName = fullName.slice(5);
+    let extraArgs;
+    let handler = value.replace(/\(.*\)/, function(args) {
+      extraArgs = args.slice(1, -1);
+      return "";
+    });
+    ctx.addLine(
+      `p${nodeID}.on = {${eventName}: context['${handler}'].bind(context${
+        extraArgs ? ", " + extraArgs : ""
+      })}`
+    );
   }
 };

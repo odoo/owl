@@ -5,10 +5,14 @@ import sdListeners from "../src/libs/snabbdom/src/modules/eventlisteners";
 
 const patch = init([sdAttributes, sdListeners]);
 
-function qwebRender(qweb: QWeb, t: string, context: EvalContext = {}): string {
+function renderToDOM(qweb: QWeb, t: string, context: EvalContext = {}): HTMLElement {
   const vnode = qweb.render(t, context);
   const node = document.createElement(vnode.sel!);
   patch(node, vnode);
+  return node;
+}
+function qwebRender(qweb: QWeb, t: string, context: EvalContext = {}): string {
+  const node = renderToDOM(qweb, t, context);
   return node.outerHTML;
 }
 
@@ -54,6 +58,13 @@ describe("error handling", () => {
       "A template should have one root node"
     );
   });
+
+  test("nice warning if no template with given name", () => {
+    const qweb = new QWeb();
+    expect(() => qweb.render('invalidname')).toThrow('does not exist');
+  });
+
+
 });
 
 describe("t-esc", () => {
@@ -518,3 +529,28 @@ describe("misc", () => {
     expect(qwebRender(qweb, "caller").trim()).toBe(expected);
   });
 });
+
+describe("t-on", () => {
+  test("can bind event handler", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate('test', `<button t-on-click="add">Click</button>`);
+    let a = 1;
+    const node = renderToDOM(qweb, 'test', {
+      add() { a = 3}
+    });
+    node.click();
+    expect(a).toBe(3);
+  });
+
+  test("can bind handlers with arguments", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate('test', `<button t-on-click="add(5)">Click</button>`);
+    let a = 1;
+    const node = renderToDOM(qweb, 'test', {
+      add(n) { a = a + n}
+    });
+    node.click();
+    expect(a).toBe(6);
+  });
+});
+

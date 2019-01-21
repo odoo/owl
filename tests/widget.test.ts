@@ -56,12 +56,14 @@ describe("basic widget properties", () => {
 
   test("widget style and classname", async () => {
     class StyledWidget extends Widget {
-      template= `<div style="font-weight:bold;" class="some-class">world</div>`;
+      template = `<div style="font-weight:bold;" class="some-class">world</div>`;
     }
     const widget = makeWidget(StyledWidget);
     const target = document.createElement("div");
     await widget.mount(target);
-    expect(target.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
+    expect(target.innerHTML).toBe(
+      `<div style="font-weight:bold;" class="some-class">world</div>`
+    );
   });
 });
 
@@ -104,7 +106,7 @@ describe("lifecycle hooks", () => {
     document.body.appendChild(target);
     await widget.mount(target);
     expect(mounted).toBe(true);
-    target.remove()
+    target.remove();
   });
 });
 
@@ -120,19 +122,17 @@ describe("destroy method", () => {
 });
 
 describe("composition", () => {
-
-  class WidgetB extends Widget {
-    template= `<div>world</div>`;
+  class WidgetA extends Widget {
+    name = "a";
+    template = `<div>Hello<t t-widget="b"/></div>`;
+    widgets = { b: WidgetB };
   }
 
-  class WidgetA extends Widget {
-    name="a";
-    template= `<div>Hello<t t-widget="b"/></div>`;
-    widgets = {b: WidgetB}
+  class WidgetB extends Widget {
+    template = `<div>world</div>`;
   }
 
   test("a widget with a sub widget", async () => {
-
     const widget = makeWidget(WidgetA);
     const target = document.createElement("div");
     await widget.mount(target);
@@ -140,11 +140,11 @@ describe("composition", () => {
   });
 
   test("t-refs on widget are widgets", async () => {
-  class WidgetC extends Widget {
-    name="a";
-    template= `<div t-debug="1">Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
-    widgets = {b: WidgetB}
-  }
+    class WidgetC extends Widget {
+      name = "a";
+      template = `<div t-debug="1">Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
+      widgets = { b: WidgetB };
+    }
     const widget = makeWidget(WidgetC);
     const target = document.createElement("div");
     await widget.mount(target);

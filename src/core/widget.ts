@@ -59,7 +59,7 @@ export default class Widget {
     if (target) {
       target.appendChild(this.el!);
       if (document.body.contains(target)) {
-        this.mounted();
+        this.visitSubTree(w => w.mounted())
       }
     }
     return vnode;
@@ -101,5 +101,12 @@ export default class Widget {
     patch(this.vnode || this.el, vnode);
     this.vnode = vnode;
     return vnode;
+  }
+
+  private visitSubTree(callback: (w: Widget) => void) {
+    callback(this);
+    for (let child of this.children) {
+      child.visitSubTree(callback);
+    }
   }
 }

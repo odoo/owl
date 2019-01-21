@@ -108,6 +108,32 @@ describe("lifecycle hooks", () => {
     expect(mounted).toBe(true);
     target.remove();
   });
+
+  test("mounted hook is called on subwidgets, in proper order", async () => {
+    expect.assertions(2);
+    let parentMounted = false;
+    let childMounted = false;
+    class ParentWidget extends Widget {
+      name="a";
+      template = `<div>Hello<t t-widget="child"/></div>`;
+      widgets = { child: ChildWidget };
+      async mounted() {
+        expect(childMounted).toBe(false);
+        parentMounted = true;
+      }
+    }
+    class ChildWidget extends Widget {
+      async mounted() {
+        expect(parentMounted).toBe(true);
+        childMounted = true;
+      }
+    }
+    const widget = makeWidget(ParentWidget);
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    await widget.mount(target);
+    target.remove();
+  });
 });
 
 describe("destroy method", () => {
@@ -142,7 +168,7 @@ describe("composition", () => {
   test("t-refs on widget are widgets", async () => {
     class WidgetC extends Widget {
       name = "a";
-      template = `<div t-debug="1">Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
+      template = `<div>Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
       widgets = { b: WidgetB };
     }
     const widget = makeWidget(WidgetC);

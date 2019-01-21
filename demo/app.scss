@@ -1,0 +1,48 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+/* Web Client */
+.o_web_client {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 40px auto;
+}
+
+/* Navbar */
+.o_navbar {
+    background-color: #875A7B;
+    color: white;
+    display: flex;
+
+    span.title {
+        font-size: 22px;
+        font-weight: bold;
+        padding: 8px;
+    }
+
+    ul {
+        list-style-type: none;
+        display: inline-flex;
+        height: 100%;
+        margin: 0;
+    }
+
+    li {
+        padding: 8px 12px;
+        font-size: 20px;
+    }
+
+    a {
+        color: white;
+        text-decoration: none;
+    }
+}
+

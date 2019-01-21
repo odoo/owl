@@ -23,19 +23,20 @@ npm run bundle:core:watch
 
 ## Demo page
 
-There are three commands that can be used to play with the demo application:
+There are three main commands that can be used to play with the demo application:
 
 ```
 npm run demo:build
-npm run demo:watch
 npm run demo:serve
+npm run demo:watch
 ```
 
-- *build* prepare a folder with all the static files compiled. It is located in
-  dist/demo
-- *watch* recompile the typescript files as soon as they are changed
-- *serve* starts a live-server pointing to the dist/demo (which will reload the
-  page whenever the files are changed)
+- *demo:build* prepare a folder with all the static files compiled. It is
+  located in dist/demo
+- *demo:serve* simply starts a live-server pointing to the dist/demo (which will
+  also reload the page whenever the static files are changed)
+- *demo:dev* is a single command useful for developping: it will watch the
+  source files, recompile them as needed, starts a live-server.
 
 ## Notes
 

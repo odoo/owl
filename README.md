@@ -48,3 +48,4 @@ Before even thinking about using this in a real scenario:
 - style is props? difference between props and attrs
 - text node
 - t-extend???
+- improve qweb generated code: do not assign object/array if no props/attrs/children

@@ -1,9 +1,9 @@
 import Widget from "../../src/core/widget";
 
 const template = `
-    <div>
+    <div t-debug="1">
         <button t-on-click="increment(-1)">-</button>
-        <span>Value: <t t-esc="state.counter"/></span>
+        <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
         <button t-on-click="increment(1)">+</button>
     </div>
 `;

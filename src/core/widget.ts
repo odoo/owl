@@ -1,11 +1,11 @@
 import QWeb from "./qweb_vdom";
 
 import { init } from "../libs/snabbdom/src/snabbdom";
-import sdProps from "../libs/snabbdom/src/modules/props";
 import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
+import sdAttrs from "../libs/snabbdom/src/modules/attributes";
 import { VNode } from "../libs/snabbdom/src/vnode";
 
-const patch = init([sdProps, sdListeners]);
+const patch = init([sdListeners, sdAttrs]);
 
 export interface Env {
   qweb: QWeb;

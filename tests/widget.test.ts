@@ -53,6 +53,16 @@ describe("basic widget properties", () => {
     await click((<HTMLElement>counter.el).getElementsByTagName("button")[0]);
     expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
+
+  test("widget style and classname", async () => {
+    class StyledWidget extends Widget {
+      template= `<div style="font-weight:bold;" class="some-class">world</div>`;
+    }
+    const widget = makeWidget(StyledWidget);
+    const target = document.createElement("div");
+    await widget.mount(target);
+    expect(target.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
+  });
 });
 
 describe("lifecycle hooks", () => {

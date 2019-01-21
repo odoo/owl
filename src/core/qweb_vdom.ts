@@ -34,7 +34,7 @@ export class Context {
   withParent(node: number): Context {
     const newContext: Context = Object.create(this);
     if (this === this.rootContext && this.parentNode) {
-      throw new Error('A template should not have more than one root node');
+      throw new Error("A template should not have more than one root node");
     }
     newContext.parentNode = node;
     if (!this.rootContext.rootNode) {
@@ -352,7 +352,6 @@ export default class QWeb {
     let p =
       attrs.length + tattrs.length > 0 ? `{attrs:{${attrs.join(",")}}}` : "{}";
     ctx.addLine(`let c${nodeID} = [], p${nodeID} = ${p}`);
-
     for (let id of tattrs) {
       ctx.addLine(`if (_${id} instanceof Array) {`);
       ctx.indent();
@@ -657,19 +656,23 @@ const onDirective: Directive = {
 const widgetDirective: Directive = {
   name: "widget",
   priority: 100,
-  atNodeEncounter({ ctx, fullName, value, node, qweb}): boolean {
+  atNodeEncounter({ ctx, fullName, value, node, qweb }): boolean {
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();
     ctx.addLine(`let _${dummyID} = {} // DUMMY`);
-      ctx.addLine(`c${ctx.parentNode}.push(_${dummyID})`);
-    let props = node.getAttribute('t-props');
+    ctx.addLine(`c${ctx.parentNode}.push(_${dummyID})`);
+    let props = node.getAttribute("t-props");
     let widgetID = ctx.generateID();
-    ctx.addLine(`let _${widgetID} = new context.widgets['${value}'](context, ${props})`);
-    ctx.addLine(`let def${defID} = _${widgetID}.mount().then(vnode=>Object.assign(_${dummyID}, vnode))`);
+    ctx.addLine(
+      `let _${widgetID} = new context.widgets['${value}'](context, ${props})`
+    );
+    ctx.addLine(
+      `let def${defID} = _${widgetID}.mount().then(vnode=>Object.assign(_${dummyID}, vnode))`
+    );
     ctx.addLine(`context._TEMP.push(def${defID})`);
 
     // split into extra directive?
-    let ref = node.getAttribute('t-ref');
+    let ref = node.getAttribute("t-ref");
     if (ref) {
       ctx.addLine(`context.refs['${ref}'] = _${widgetID}`);
     }

@@ -11,6 +11,10 @@ const template = `
         <t t-if="state.validcounter">
             <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
         </t>
+        <t t-else="1">
+            <t t-widget="Counter" t-ref="counter" t-props="{initialState:7}"/>
+        </t>
+        <div ref="target"/>
     </div>
 `;
 

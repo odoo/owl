@@ -45,3 +45,6 @@ Before even thinking about using this in a real scenario:
 - Note: the compilation of a template should have a unique node (but sub templates
   can have multiple roots)
 - remove the "if (${exprID} || ${exprID} === 0) {"
+- style is props? difference between props and attrs
+- text node
+- t-extend???

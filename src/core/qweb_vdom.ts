@@ -33,6 +33,9 @@ export class Context {
 
   withParent(node: number): Context {
     const newContext: Context = Object.create(this);
+    if (this === this.rootContext && this.parentNode) {
+      throw new Error('A template should not have more than one root node');
+    }
     newContext.parentNode = node;
     if (!this.rootContext.rootNode) {
       this.rootContext.rootNode = node;
@@ -171,7 +174,7 @@ export default class QWeb {
    *
    * @param {string} name the template should already have been added
    */
-  render(name: string, context: any = {}): VNode {
+  render(name: string, context: EvalContext = {}): VNode {
     if (!(name in this.rawTemplates)) {
       throw new Error(`Template ${name} does not exist`);
     }
@@ -217,7 +220,16 @@ export default class QWeb {
     if (!(node instanceof Element)) {
       // this is a text node, there are no directive to apply
       let text = node.textContent!;
-      ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`})`);
+      if (ctx.parentNode) {
+        ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`})`);
+      } else {
+        // this is an unusual situation: this text node is the result of the
+        // template rendering.
+        let nodeID = ctx.generateID();
+        ctx.addLine(`let vn${nodeID} = {text: \`${text}\`}`);
+        ctx.rootContext.rootNode = nodeID;
+        ctx.rootContext.parentNode = nodeID;
+      }
       return;
     }
 

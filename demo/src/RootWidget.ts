@@ -2,7 +2,7 @@ import Widget from "../../src/core/widget";
 import Counter from "./Counter";
 
 const template = `
-    <div t-debug="1">
+    <div>
         <span>Root Widget</span>
         <button t-on-click="resetCounter">Reset</button>
         <button t-on-click="resetCounterAsync">Reset in 3s</button>

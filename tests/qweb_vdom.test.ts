@@ -69,7 +69,7 @@ describe("error handling", () => {
 
   test("template with text node and tag", () => {
     const qweb = new QWeb();
-    qweb.addTemplate("test", `<t t-debug="1">text<span>other node</span></t>`);
+    qweb.addTemplate("test", `<t>text<span>other node</span></t>`);
 
     expect(() => renderToString(qweb, "test")).toThrow(
       "A template should not have more than one root node"
@@ -650,5 +650,16 @@ describe("t-on", () => {
     });
     (<HTMLElement>node).click();
     expect(a).toBe(6);
+  });
+});
+
+
+describe("t-ref", () => {
+  test("can get a ref on a node", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate("test", `<div><span t-ref="myspan"/></div>`);
+    let refs: any = {};
+    renderToDOM(qweb, "test", { refs});
+    expect(refs.myspan.tagName).toBe('SPAN');
   });
 });

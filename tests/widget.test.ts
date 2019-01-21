@@ -120,21 +120,34 @@ describe("destroy method", () => {
 });
 
 describe("composition", () => {
+
+  class WidgetB extends Widget {
+    template= `<div>world</div>`;
+  }
+
+  class WidgetA extends Widget {
+    name="a";
+    template= `<div>Hello<t t-widget="b"/></div>`;
+    widgets = {b: WidgetB}
+  }
+
   test("a widget with a sub widget", async () => {
-
-    class WidgetB extends Widget {
-      template= `<div>world</div>`;
-    }
-
-    class WidgetA extends Widget {
-      name="a";
-      template= `<div>Hello<t t-widget="b"/></div>`;
-      widgets = {b: WidgetB}
-    }
 
     const widget = makeWidget(WidgetA);
     const target = document.createElement("div");
     await widget.mount(target);
     expect(target.innerHTML).toBe("<div>Hello<div>world</div></div>");
+  });
+
+  test("t-refs on widget are widgets", async () => {
+  class WidgetC extends Widget {
+    name="a";
+    template= `<div t-debug="1">Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
+    widgets = {b: WidgetB}
+  }
+    const widget = makeWidget(WidgetC);
+    const target = document.createElement("div");
+    await widget.mount(target);
+    expect(widget.refs.mywidgetb instanceof WidgetB).toBe(true);
   });
 });

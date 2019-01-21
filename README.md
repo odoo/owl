@@ -49,3 +49,6 @@ Before even thinking about using this in a real scenario:
 - text node
 - t-extend???
 - improve qweb generated code: do not assign object/array if no props/attrs/children
+- improve qweb gen code: when building a vnode, propagate a structure with
+    children/attrs/hooks, fill it properly by each directive, then and only
+    then create node with minimal code

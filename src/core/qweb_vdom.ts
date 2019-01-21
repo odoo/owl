@@ -100,6 +100,7 @@ export default class QWeb {
       ifDirective,
       callDirective,
       onDirective,
+      refDirective,
       widgetDirective
     ].forEach(d => this.addDirective(d));
   }
@@ -653,6 +654,17 @@ const onDirective: Directive = {
   }
 };
 
+const refDirective: Directive = {
+  name: "ref",
+  priority: 95,
+  atNodeCreation({ ctx, node, nodeID }) {
+    let ref = node.getAttribute("t-ref");
+    ctx.addLine(`p${ctx.parentNode}.hook = {
+            create: (_, n) => context.refs['${ref}'] = n.elm,
+        }`);
+  }
+};
+
 const widgetDirective: Directive = {
   name: "widget",
   priority: 100,
@@ -671,7 +683,6 @@ const widgetDirective: Directive = {
     );
     ctx.addLine(`context._TEMP.push(def${defID})`);
 
-    // split into extra directive?
     let ref = node.getAttribute("t-ref");
     if (ref) {
       ctx.addLine(`context.refs['${ref}'] = _${widgetID}`);

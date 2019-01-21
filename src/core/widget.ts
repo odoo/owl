@@ -17,7 +17,6 @@ export default class Widget {
   name: string = "widget";
   template: string = "<div></div>";
   vnode: VNode | null = null;
-  _TEMP: Promise<any>[] | null = null;
 
   parent: Widget | null;
   children: Widget[] = [];
@@ -59,6 +58,9 @@ export default class Widget {
 
     if (target) {
       target.appendChild(this.el!);
+      if (document.body.contains(target)) {
+        this.mounted();
+      }
     }
     return vnode;
   }
@@ -89,9 +91,10 @@ export default class Widget {
   //--------------------------------------------------------------------------
 
   async render(): Promise<VNode> {
-    this._TEMP = [];
+    // localized hack to keep track of deferred list
+    (<any>this)._TEMP = [];
     let vnode = this.env!.qweb.render(this.name, this);
-    await Promise.all(this._TEMP);
+    await Promise.all((<any>this)._TEMP);
     if (!this.el) {
       this.el = document.createElement(vnode.sel!);
     }

@@ -91,6 +91,21 @@ describe("lifecycle hooks", () => {
     await widget.mount(target);
     expect(mounted).toBe(false);
   });
+
+  test("mounted hook is called if mounted in DOM", async () => {
+    let mounted = false;
+    class HookWidget extends Widget {
+      async mounted() {
+        mounted = true;
+      }
+    }
+    const widget = makeWidget(HookWidget);
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    await widget.mount(target);
+    expect(mounted).toBe(true);
+    target.remove()
+  });
 });
 
 describe("destroy method", () => {

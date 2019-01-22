@@ -1,4 +1,4 @@
-import Widget, { Env } from "../../../src/core/widget";
+import Widget, { Env } from "../../../src/core/Widget";
 import Navbar from "./Navbar";
 import { Action } from "../services/actions";
 

@@ -1,4 +1,4 @@
-import Widget from "../../../src/core/widget";
+import Widget from "../../../src/core/Widget";
 
 const template = `
     <div class="o_crm">

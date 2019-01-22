@@ -1,4 +1,4 @@
-import Widget from "../src/core/widget";
+import Widget from "../src/core/Widget";
 import QWeb from "../src/core/qweb_vdom";
 
 function makeWidget(W: typeof Widget): Widget {

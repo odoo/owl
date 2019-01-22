@@ -1,4 +1,4 @@
-import Widget from "../../src/core/widget";
+import Widget from "../../../src/core/widget";
 
 const template = `
     <div>

@@ -6,8 +6,7 @@ function makeWidget(W: typeof Widget): Widget {
     qweb: new QWeb(),
     services: {}
   };
-  const w = new W(null);
-  w.setEnvironment(env);
+  const w = new W(env);
   return w;
 }
 

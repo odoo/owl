@@ -18,9 +18,9 @@ export default class Widget {
   template: string = "<div></div>";
   vnode: VNode | null = null;
 
-  parent: Widget | null;
+  parent: Widget | null = null;
   children: Widget[] = [];
-  env: Env | null = null;
+  env: Env;
   el: HTMLElement | null = null;
   state: Object = {};
   refs: { [key: string]: Widget } = {};
@@ -29,13 +29,13 @@ export default class Widget {
   // Lifecycle
   //--------------------------------------------------------------------------
 
-  constructor(parent: Widget | null, props?: any) {
-    this.parent = parent;
-    if (parent) {
+  constructor(parent: Widget | Env, props?: any) {
+    if (parent instanceof Widget) {
+      this.parent = parent;
       parent.children.push(this);
-      if (parent.env) {
-        this.setEnvironment(parent.env);
-      }
+      this.env = Object.create(parent.env);
+    } else {
+      this.env = parent;
     }
   }
 
@@ -59,7 +59,7 @@ export default class Widget {
     if (target) {
       target.appendChild(this.el!);
       if (document.body.contains(target)) {
-        this.visitSubTree(w => w.mounted())
+        this.visitSubTree(w => w.mounted());
       }
     }
     return vnode;
@@ -69,10 +69,6 @@ export default class Widget {
     if (this.el) {
       this.el.remove();
     }
-  }
-
-  setEnvironment(env: Env) {
-    this.env = Object.create(env);
   }
 
   /**

@@ -1,3 +1,5 @@
+$navbar-height: 40px;
+$main-color: #875A7B;
 
 html {
     height: 100%;
@@ -6,26 +8,27 @@ html {
 body {
     height: 100%;
     margin: 0;
-    font-family: sans-serif;
 }
 
 /* Web Client */
 .o_web_client {
+    font-family: sans-serif;
     height: 100%;
     display: grid;
-    grid-template-rows: 40px auto;
+    grid-template-rows: $navbar-height auto;
 }
 
 /* Navbar */
 .o_navbar {
-    background-color: #875A7B;
+    background-color: $main-color;
     color: white;
     display: flex;
+    line-height: $navbar-height;
 
     span.title {
-        font-size: 22px;
+        font-size: 24px;
         font-weight: bold;
-        padding: 8px;
+        padding: 0 16px;
     }
 
     ul {
@@ -36,13 +39,18 @@ body {
     }
 
     li {
-        padding: 8px 12px;
+        margin: 0 4px;
         font-size: 20px;
+        &:hover {
+            background-color: darken($main-color, 10);
+        }
     }
 
     a {
         color: white;
         text-decoration: none;
+        padding: 0 5px;
+
     }
 }
 

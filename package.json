@@ -11,7 +11,7 @@
     "demo:build": "cp -r demo/ dist/demo && npm run demo:build:js && npm run demo:build:css",
     "demo:build:css": "sass demo/app.scss dist/demo/app.css",
     "demo:build:js": "tsc --allowjs -m amd --lib es2017,dom --target esnext --outfile dist/demo/main.js demo/src/main.ts",
-    "demo:serve": "live-server dist/demo/",
+    "demo:serve": "live-server --entry-file=index.html dist/demo/",
     "predemo:dev": "npm run demo:build",
     "demo:dev": "npm-run-all --parallel \"demo:build:* -- --watch\" demo:serve"
   },

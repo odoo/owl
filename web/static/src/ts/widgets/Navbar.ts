@@ -1,4 +1,4 @@
-import Widget from "../../../src/core/Widget";
+import Widget from "../core/Widget";
 import { Action } from "../services/actions";
 
 const template = `

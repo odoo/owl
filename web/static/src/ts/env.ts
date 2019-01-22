@@ -1,5 +1,5 @@
-import { Env } from "../../src/core/Widget";
-import QWeb from "../../src/core/qweb_vdom";
+import { Env } from "./core/Widget";
+import QWeb from "./core/qweb_vdom";
 import Router from "./services/router";
 import actions from "./services/actions";
 

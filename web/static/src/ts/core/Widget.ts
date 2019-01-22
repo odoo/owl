@@ -1,9 +1,9 @@
 import QWeb from "./qweb_vdom";
 
-import { init } from "../libs/snabbdom/src/snabbdom";
-import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
-import sdAttrs from "../libs/snabbdom/src/modules/attributes";
-import { VNode } from "../libs/snabbdom/src/vnode";
+import { init } from "../../../libs/snabbdom/src/snabbdom";
+import sdListeners from "../../../libs/snabbdom/src/modules/eventlisteners";
+import sdAttrs from "../../../libs/snabbdom/src/modules/attributes";
+import { VNode } from "../../../libs/snabbdom/src/vnode";
 
 const patch = init([sdListeners, sdAttrs]);
 

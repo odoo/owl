@@ -6,14 +6,12 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "bundle:core": "tsc -m es6 --lib es2017,dom --target esnext --outdir dist src/bundles/core.ts && rollup dist/bundles/core.js --file dist/bundle-core.js --format iife",
-    "bundle:core:watch": "npm run bundle:core -- --watch",
-    "demo:build": "cp -r demo/ dist/demo && npm run demo:build:js && npm run demo:build:css",
-    "demo:build:css": "sass demo/app.scss dist/demo/app.css",
-    "demo:build:js": "tsc --allowjs -m amd --lib es2017,dom --target esnext --outfile dist/demo/main.js demo/src/main.ts",
-    "demo:serve": "live-server --entry-file=index.html dist/demo/",
-    "predemo:dev": "npm run demo:build",
-    "demo:dev": "npm-run-all --parallel \"demo:build:* -- --watch\" demo:serve"
+    "build": "cp -r web/ dist/app && npm run build:js && npm run build:css",
+    "build:css": "sass web/static/src/scss/app.scss dist/app/app.css",
+    "build:js": "tsc --allowjs -m amd --lib es2017,dom --target esnext --outfile dist/app/main.js web/static/src/ts/main.ts",
+    "serve": "live-server --entry-file=index.html dist/app/",
+    "predev": "npm run build",
+    "dev": "npm-run-all --parallel \"build:* -- --watch\" serve"
   },
   "repository": {
     "type": "git",

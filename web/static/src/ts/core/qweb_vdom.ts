@@ -1,5 +1,5 @@
-import { VNode } from "../libs/snabbdom/src/vnode";
-import h from "../libs/snabbdom/src/h";
+import { VNode } from "../../../libs/snabbdom/src/vnode";
+import h from "../../../libs/snabbdom/src/h";
 
 export type EvalContext = { [key: string]: any };
 type RawTemplate = string;

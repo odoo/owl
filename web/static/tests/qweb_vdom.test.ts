@@ -1,7 +1,7 @@
-import QWeb, { EvalContext } from "../src/core/qweb_vdom";
-import { init } from "../src/libs/snabbdom/src/snabbdom";
-import sdAttributes from "../src/libs/snabbdom/src/modules/attributes";
-import sdListeners from "../src/libs/snabbdom/src/modules/eventlisteners";
+import QWeb, { EvalContext } from "../src/ts/core/qweb_vdom";
+import { init } from "../libs/snabbdom/src/snabbdom";
+import sdAttributes from "../libs/snabbdom/src/modules/attributes";
+import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
 
 const patch = init([sdAttributes, sdListeners]);
 

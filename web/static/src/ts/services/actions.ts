@@ -1,6 +1,6 @@
 import CRM from "../widgets/CRM";
 import Discuss from "../widgets/Discuss";
-import Widget from "../../../src/core/Widget";
+import Widget from "../core/Widget";
 
 export interface Action {
   id: number;

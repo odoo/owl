@@ -8,35 +8,32 @@ This is a POC, not at all production ready code!!!
 npm install
 ```
 
-## Tests
+## Main scripts
+
+### Testing
 
 ```
 npm run test
 npm run test:watch
 ```
-## Build code bundles
+
+### Building app
 
 ```
-npm run bundle:core
-npm run bundle:core:watch
+npm run build
+npm run minify
 ```
 
-## Demo page
+These commands will build the app in dist/app, and minify the js bundle
 
-There are three main commands that can be used to play with the demo application:
+### Developping
 
 ```
-npm run demo:build
-npm run demo:serve
-npm run demo:watch
+npm run dev
 ```
 
-- *demo:build* prepare a folder with all the static files compiled. It is
-  located in dist/demo
-- *demo:serve* simply starts a live-server pointing to the dist/demo (which will
-  also reload the page whenever the static files are changed)
-- *demo:dev* is a single command useful for developping: it will watch the
-  source files, recompile them as needed, starts a live-server.
+This will: build the app (without minification), then start a live-server with hot-reloading, and watch the file system to make sure
+that assets are properly rebuilt if necessary, and then reloaded.
 
 ## Notes
 
@@ -51,5 +48,5 @@ Before even thinking about using this in a real scenario:
 - t-extend???
 - improve qweb generated code: do not assign object/array if no props/attrs/children
 - improve qweb gen code: when building a vnode, propagate a structure with
-    children/attrs/hooks, fill it properly by each directive, then and only
-    then create node with minimal code
+  children/attrs/hooks, fill it properly by each directive, then and only
+  then create node with minimal code

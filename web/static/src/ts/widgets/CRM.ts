@@ -1,4 +1,5 @@
-import Widget from "../core/Widget";
+import Widget from "../core/widget";
+import { Env } from "../types";
 
 const template = `
     <div class="o_crm">
@@ -6,7 +7,7 @@ const template = `
     </div>
 `;
 
-export default class Discuss extends Widget {
+export default class Discuss extends Widget<Env> {
   name = "crm";
   template = template;
 }

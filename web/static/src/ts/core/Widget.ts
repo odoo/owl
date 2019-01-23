@@ -1,35 +1,32 @@
-import QWeb from "./qweb_vdom";
-
 import { init } from "../../../libs/snabbdom/src/snabbdom";
 import sdListeners from "../../../libs/snabbdom/src/modules/eventlisteners";
 import sdAttrs from "../../../libs/snabbdom/src/modules/attributes";
 import { VNode } from "../../../libs/snabbdom/src/vnode";
+import QWeb from "./qweb_vdom";
 
 const patch = init([sdListeners, sdAttrs]);
 
-export interface Env {
+export interface WidgetEnv {
   qweb: QWeb;
-  services: { [key: string]: any };
-  [key: string]: any;
 }
 
-export default class Widget {
+export default class Widget<T extends WidgetEnv> {
   name: string = "widget";
   template: string = "<div></div>";
   vnode: VNode | null = null;
 
-  parent: Widget | null = null;
-  children: Widget[] = [];
-  env: Env;
+  parent: Widget<T> | null = null;
+  children: Widget<T>[] = [];
+  env: T;
   el: HTMLElement | null = null;
   state: Object = {};
-  refs: { [key: string]: Widget } = {};
+  refs: { [key: string]: Widget<T> } = {};
 
   //--------------------------------------------------------------------------
   // Lifecycle
   //--------------------------------------------------------------------------
 
-  constructor(parent: Widget | Env, props?: any) {
+  constructor(parent: Widget<T> | T, props?: any) {
     if (parent instanceof Widget) {
       this.parent = parent;
       parent.children.push(this);
@@ -99,7 +96,7 @@ export default class Widget {
     return vnode;
   }
 
-  private visitSubTree(callback: (w: Widget) => void) {
+  private visitSubTree(callback: (w: Widget<T>) => void) {
     callback(this);
     for (let child of this.children) {
       child.visitSubTree(callback);

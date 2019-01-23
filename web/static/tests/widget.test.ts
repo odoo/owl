@@ -1,10 +1,14 @@
-import Widget from "../src/ts/core/Widget";
+import Widget, {WidgetEnv} from "../src/ts/core/widget";
 import QWeb from "../src/ts/core/qweb_vdom";
+import { Type } from "../src/ts/types";
 
-function makeWidget(W: typeof Widget): Widget {
+
+type TestEnv = WidgetEnv;
+type TestWidget = Widget<TestEnv>
+
+function makeWidget(W: Type<TestWidget>): TestWidget {
   const env = {
     qweb: new QWeb(),
-    services: {}
   };
   const w = new W(env);
   return w;
@@ -19,7 +23,7 @@ const template = `
     <div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>
 `;
 
-export default class Counter extends Widget {
+export default class Counter extends Widget<TestEnv> {
   name = "counter";
   template = template;
   state = {
@@ -54,7 +58,7 @@ describe("basic widget properties", () => {
   });
 
   test("widget style and classname", async () => {
-    class StyledWidget extends Widget {
+    class StyledWidget extends Widget<TestEnv> {
       template = `<div style="font-weight:bold;" class="some-class">world</div>`;
     }
     const widget = makeWidget(StyledWidget);
@@ -69,7 +73,7 @@ describe("basic widget properties", () => {
 describe("lifecycle hooks", () => {
   test("willStart hook is called", async () => {
     let willstart = false;
-    class HookWidget extends Widget {
+    class HookWidget extends Widget<TestEnv> {
       async willStart() {
         willstart = true;
       }
@@ -82,7 +86,7 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is not called if not in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget {
+    class HookWidget extends Widget<TestEnv> {
       async mounted() {
         mounted = true;
       }
@@ -95,7 +99,7 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is called if mounted in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget {
+    class HookWidget extends Widget<TestEnv> {
       async mounted() {
         mounted = true;
       }
@@ -112,7 +116,7 @@ describe("lifecycle hooks", () => {
     expect.assertions(2);
     let parentMounted = false;
     let childMounted = false;
-    class ParentWidget extends Widget {
+    class ParentWidget extends Widget<TestEnv> {
       name="a";
       template = `<div>Hello<t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
@@ -121,7 +125,7 @@ describe("lifecycle hooks", () => {
         parentMounted = true;
       }
     }
-    class ChildWidget extends Widget {
+    class ChildWidget extends Widget<TestEnv> {
       async mounted() {
         expect(parentMounted).toBe(true);
         childMounted = true;
@@ -147,13 +151,13 @@ describe("destroy method", () => {
 });
 
 describe("composition", () => {
-  class WidgetA extends Widget {
+  class WidgetA extends Widget<TestEnv> {
     name = "a";
     template = `<div>Hello<t t-widget="b"/></div>`;
     widgets = { b: WidgetB };
   }
 
-  class WidgetB extends Widget {
+  class WidgetB extends Widget<TestEnv> {
     template = `<div>world</div>`;
   }
 
@@ -165,7 +169,7 @@ describe("composition", () => {
   });
 
   test("t-refs on widget are widgets", async () => {
-    class WidgetC extends Widget {
+    class WidgetC extends Widget<TestEnv> {
       name = "a";
       template = `<div>Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
       widgets = { b: WidgetB };

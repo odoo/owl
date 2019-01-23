@@ -1,11 +1,14 @@
-import CRM from "../widgets/CRM";
-import Discuss from "../widgets/Discuss";
-import Widget from "../core/Widget";
+import CRM from "../widgets/crm";
+import Discuss from "../widgets/discuss";
+import Widget from "../core/widget";
+import { Env, Type } from "../types";
+
+
 
 export interface Action {
   id: number;
   title: string;
-  Widget: typeof Widget;
+  Widget: Type<Widget<Env>>;
   default?: boolean;
 }
 
@@ -15,3 +18,4 @@ const actions: Action[] = [
 ];
 
 export default actions;
+

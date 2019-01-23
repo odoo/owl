@@ -1,4 +1,5 @@
-import Widget from "../core/Widget";
+import Widget from "../core/widget";
+import { Env } from "../types";
 
 const template = `
     <div>
@@ -8,14 +9,14 @@ const template = `
     </div>
 `;
 
-export default class Counter extends Widget {
+export default class Counter extends Widget<Env> {
   name = "counter";
   template = template;
   state = {
     counter: 0
   };
 
-  constructor(parent: Widget | null, props: {initialState?: number}) {
+  constructor(parent: Widget<Env>, props: {initialState?: number}) {
     super(parent);
     this.state.counter = props.initialState || 0;
   }

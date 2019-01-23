@@ -1,5 +1,6 @@
-import Widget from "../core/Widget";
+import Widget from "../core/widget";
 import { Action } from "../services/actions";
+import { Env } from "../types";
 
 const template = `
     <div class="o_navbar">
@@ -12,12 +13,12 @@ const template = `
     </div>
 `;
 
-export default class Navbar extends Widget {
+export default class Navbar extends Widget<Env> {
   name = "navbar";
   template = template;
 
   getUrl(action: Action) {
-    const action_id = action.id;
-    return this.env.services.router.formatURL("web", { action_id });
+    const action_id = String(action.id);
+    return this.env.router.formatURL("web", { action_id });
   }
 }

@@ -1,6 +1,7 @@
-import Widget, { Env } from "../core/Widget";
-import Navbar from "./Navbar";
+import Widget from "../core/widget";
+import Navbar from "./navbar";
 import { Action } from "../services/actions";
+import { Env } from "../types";
 
 const template = `
     <div class="o_web_client">
@@ -11,11 +12,10 @@ const template = `
     </div>
 `;
 
-export default class RootWidget extends Widget {
+export default class RootWidget extends Widget<Env> {
   name = "root";
   template = template;
   widgets = { Navbar };
-  state = { validcounter: true };
 
   constructor(env: Env) {
     super(env);
@@ -23,7 +23,7 @@ export default class RootWidget extends Widget {
   }
 
   mounted() {
-    this.env.services.router.register(this, this.onUrlChange);
+    this.env.router.register(this, this.onUrlChange);
   }
 
   setMainWidget() {
@@ -39,7 +39,7 @@ export default class RootWidget extends Widget {
   }
 
   getAction(): Action {
-    const routeInfo = this.env.services.router.getRouteInfo();
+    const routeInfo = this.env.router.getRouteInfo();
     const actionID = parseInt(routeInfo.query.action_id);
     let actions: Action[] = this.env.services.actions;
     let action = actions.find(a => a.id === actionID);

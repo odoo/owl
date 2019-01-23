@@ -17,5 +17,5 @@
     "strictPropertyInitialization": true,
     "strictNullChecks": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "demo/**/*.ts"]
+  "include": ["web/static/**/*.ts"]
 }

@@ -2,12 +2,14 @@ import { VNode } from "../../../libs/snabbdom/src/vnode";
 import h from "../../../libs/snabbdom/src/h";
 
 export type EvalContext = { [key: string]: any };
-type RawTemplate = string;
-type ParsedTemplate = Document;
-type CompiledTemplate = (context: EvalContext) => VNode;
+export type RawTemplate = string;
+export type CompiledTemplate<T> = (context: EvalContext) => T;
+
 const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
   ","
 );
+
+type ParsedTemplate = Document;
 
 // Compilation Context
 export class Context {
@@ -84,7 +86,7 @@ export class Context {
 export default class QWeb {
   rawTemplates: { [name: string]: RawTemplate } = {};
   parsedTemplates: { [name: string]: ParsedTemplate } = {};
-  templates: { [name: string]: CompiledTemplate } = {};
+  templates: { [name: string]: CompiledTemplate<VNode> } = {};
   h = h;
   exprCache: { [key: string]: string } = {};
   directives: Directive[] = [];
@@ -183,7 +185,7 @@ export default class QWeb {
     return template(context);
   }
 
-  _compile(name: string): CompiledTemplate {
+  _compile(name: string): CompiledTemplate<VNode> {
     if (name in this.templates) {
       return this.templates[name];
     }
@@ -205,10 +207,9 @@ export default class QWeb {
         `Template: ${this.rawTemplates[name]}\nCompiled code:\n` + functionCode
       );
     }
-    const template: CompiledTemplate = (new Function(
-      "context",
-      functionCode
-    ) as CompiledTemplate).bind(this);
+    const template = (new Function("context", functionCode) as CompiledTemplate<
+      VNode
+    >).bind(this);
     this.templates[name] = template;
     return template;
   }

@@ -1,9 +1,11 @@
 import CRM from "../widgets/crm";
 import Discuss from "../widgets/discuss";
 import Widget from "../core/widget";
-import { Env, Type } from "../types";
+import { Env } from "../env";
 
-
+interface Type<T> extends Function {
+  new (...args: any[]): T;
+}
 
 export interface Action {
   id: number;
@@ -19,3 +21,9 @@ const actions: Action[] = [
 
 export default actions;
 
+// class ActionManager {
+
+//   doAction(action: Action) {
+
+//   }
+// }

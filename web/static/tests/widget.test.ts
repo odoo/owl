@@ -1,9 +1,12 @@
-import Widget, {WidgetEnv} from "../src/ts/core/widget";
+import Widget, {WEnv} from "../src/ts/core/widget";
 import QWeb from "../src/ts/core/qweb_vdom";
-import { Type } from "../src/ts/types";
 
 
-type TestEnv = WidgetEnv;
+interface Type<T> extends Function {
+  new (...args: any[]): T;
+}
+
+type TestEnv = WEnv;
 type TestWidget = Widget<TestEnv>
 
 function makeWidget(W: Type<TestWidget>): TestWidget {

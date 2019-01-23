@@ -651,6 +651,21 @@ describe("t-on", () => {
     (<HTMLElement>node).click();
     expect(a).toBe(6);
   });
+
+  test("can bind handlers with loop variable as argument", () => {
+    expect.assertions(1);
+    const qweb = new QWeb();
+    qweb.addTemplate("test", `
+      <ul>
+        <li t-foreach="['someval']" t-as="action"><a t-on-click="activate(action)">link</a></li>
+      </ul>`);
+    const node = renderToDOM(qweb, "test", {
+      activate(action) {
+        expect(action).toBe('someval');
+      }
+    });
+    (<HTMLElement>node).getElementsByTagName('a')[0].click();
+  });
 });
 
 

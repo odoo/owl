@@ -1,7 +1,7 @@
 import Widget from "../core/widget";
 import Navbar from "./navbar";
 import { Action } from "../services/actions";
-import { Env } from "../types";
+import { Env } from "../env";
 
 const template = `
     <div class="o_web_client">
@@ -39,9 +39,9 @@ export default class RootWidget extends Widget<Env> {
   }
 
   getAction(): Action {
-    const routeInfo = this.env.router.getRouteInfo();
+    const routeInfo = this.env.router.getRoute();
     const actionID = parseInt(routeInfo.query.action_id);
-    let actions: Action[] = this.env.services.actions;
+    let actions: Action[] = this.env.actions;
     let action = actions.find(a => a.id === actionID);
     if (!action) {
       action = actions.find(a => a.default === true);

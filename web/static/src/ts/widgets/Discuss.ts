@@ -1,6 +1,6 @@
 import Widget from "../core/widget";
 import Counter from "./counter";
-import { Env } from "../types";
+import { Env } from "../env";
 
 const template = `
     <div class="o_discuss">

@@ -640,7 +640,7 @@ const forEachDirective: Directive = {
 const onDirective: Directive = {
   name: "on",
   priority: 90,
-  atNodeCreation({ ctx, fullName, value, nodeID }) {
+  atNodeCreation({ ctx, fullName, value, nodeID, qweb }) {
     const eventName = fullName.slice(5);
     let extraArgs;
     let handler = value.replace(/\(.*\)/, function(args) {
@@ -649,7 +649,7 @@ const onDirective: Directive = {
     });
     ctx.addLine(
       `p${nodeID}.on = {${eventName}: context['${handler}'].bind(context${
-        extraArgs ? ", " + extraArgs : ""
+        extraArgs ? ", " +  qweb._formatExpression(extraArgs) : ""
       })}`
     );
   }

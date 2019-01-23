@@ -649,7 +649,7 @@ const onDirective: Directive = {
     });
     ctx.addLine(
       `p${nodeID}.on = {${eventName}: context['${handler}'].bind(context${
-        extraArgs ? ", " +  qweb._formatExpression(extraArgs) : ""
+        extraArgs ? ", " + qweb._formatExpression(extraArgs) : ""
       })}`
     );
   }

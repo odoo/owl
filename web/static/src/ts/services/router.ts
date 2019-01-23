@@ -16,11 +16,14 @@ export default class Router {
 
   constructor() {
     window.addEventListener("popstate", this.onUrlChange.bind(this));
-    window.onhashchange = function () { console.log('aaaa'); debugger; }
+    window.onhashchange = function() {
+      console.log("aaaa");
+      debugger;
+    };
   }
 
   onUrlChange(event: PopStateEvent) {
-    debugger
+    debugger;
     event.preventDefault();
     const info = this.getRoute();
     for (let listener of this.listeners) {

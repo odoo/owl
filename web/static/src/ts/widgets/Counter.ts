@@ -16,7 +16,7 @@ export default class Counter extends Widget<Env> {
     counter: 0
   };
 
-  constructor(parent: Widget<Env>, props: {initialState?: number}) {
+  constructor(parent: Widget<Env>, props: { initialState?: number }) {
     super(parent);
     this.state.counter = props.initialState || 0;
   }

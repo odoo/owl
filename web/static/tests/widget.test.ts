@@ -1,17 +1,16 @@
-import Widget, {WEnv} from "../src/ts/core/widget";
+import Widget, { WEnv } from "../src/ts/core/widget";
 import QWeb from "../src/ts/core/qweb_vdom";
-
 
 interface Type<T> extends Function {
   new (...args: any[]): T;
 }
 
 type TestEnv = WEnv;
-type TestWidget = Widget<TestEnv>
+type TestWidget = Widget<TestEnv>;
 
 function makeWidget(W: Type<TestWidget>): TestWidget {
   const env = {
-    qweb: new QWeb(),
+    qweb: new QWeb()
   };
   const w = new W(env);
   return w;
@@ -120,7 +119,7 @@ describe("lifecycle hooks", () => {
     let parentMounted = false;
     let childMounted = false;
     class ParentWidget extends Widget<TestEnv> {
-      name="a";
+      name = "a";
       template = `<div>Hello<t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
       async mounted() {

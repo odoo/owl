@@ -12,13 +12,11 @@ import { Action } from "./actions";
 //   { id: 2, title: "CRM", Widget: CRM }
 // ];
 
-
-
 export default class ActionManager {
-    doAction(action: Action) {
-        console.log(action);
-        // load data (??)
-        // trigger action somewhere
-        // upload url with router
-    }
+  doAction(action: Action) {
+    console.log(action);
+    // load data (??)
+    // trigger action somewhere
+    // upload url with router
+  }
 }

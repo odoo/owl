@@ -1,4 +1,4 @@
-import QWeb, {EvalContext} from "../src/ts/core/qweb_vdom";
+import QWeb, { EvalContext } from "../src/ts/core/qweb_vdom";
 import { init } from "../libs/snabbdom/src/snabbdom";
 import sdAttributes from "../libs/snabbdom/src/modules/attributes";
 import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
@@ -551,13 +551,18 @@ describe("foreach", () => {
 
   test("iterate, dict param", () => {
     const qweb = new QWeb();
-    qweb.addTemplate('test',`
+    qweb.addTemplate(
+      "test",
+      `
       <div>
         <t t-foreach="value" t-as="item">
           [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/> - <t t-esc="item_parity"/>]
         </t>
-      </div>`);
-    const result = trim(renderToString(qweb, "test", { value: { a: 1, b: 2, c: 3 } }));
+      </div>`
+    );
+    const result = trim(
+      renderToString(qweb, "test", { value: { a: 1, b: 2, c: 3 } })
+    );
     const expected = `<div>[0:a1-even][1:b2-odd][2:c3-even]</div>`;
     expect(result).toBe(expected);
   });
@@ -594,7 +599,7 @@ describe("misc", () => {
       </div>
     `
     );
-    const result = trim(renderToString(qweb, "caller"))
+    const result = trim(renderToString(qweb, "caller"));
     const expected = trim(`
       <div>
         <span>4</span>
@@ -655,26 +660,28 @@ describe("t-on", () => {
   test("can bind handlers with loop variable as argument", () => {
     expect.assertions(1);
     const qweb = new QWeb();
-    qweb.addTemplate("test", `
+    qweb.addTemplate(
+      "test",
+      `
       <ul>
         <li t-foreach="['someval']" t-as="action"><a t-on-click="activate(action)">link</a></li>
-      </ul>`);
+      </ul>`
+    );
     const node = renderToDOM(qweb, "test", {
       activate(action) {
-        expect(action).toBe('someval');
+        expect(action).toBe("someval");
       }
     });
-    (<HTMLElement>node).getElementsByTagName('a')[0].click();
+    (<HTMLElement>node).getElementsByTagName("a")[0].click();
   });
 });
-
 
 describe("t-ref", () => {
   test("can get a ref on a node", () => {
     const qweb = new QWeb();
     qweb.addTemplate("test", `<div><span t-ref="myspan"/></div>`);
     let refs: any = {};
-    renderToDOM(qweb, "test", { refs});
-    expect(refs.myspan.tagName).toBe('SPAN');
+    renderToDOM(qweb, "test", { refs });
+    expect(refs.myspan.tagName).toBe("SPAN");
   });
 });

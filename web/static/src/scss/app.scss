@@ -1,56 +1,54 @@
 $navbar-height: 40px;
-$main-color: #875A7B;
+$main-color: #875a7b;
 
 html {
-    height: 100%;
+  height: 100%;
 }
 
 body {
-    height: 100%;
-    margin: 0;
+  height: 100%;
+  margin: 0;
 }
 
 /* Web Client */
 .o_web_client {
-    font-family: sans-serif;
-    height: 100%;
-    display: grid;
-    grid-template-rows: $navbar-height auto;
+  font-family: sans-serif;
+  height: 100%;
+  display: grid;
+  grid-template-rows: $navbar-height auto;
 }
 
 /* Navbar */
 .o_navbar {
-    background-color: $main-color;
+  background-color: $main-color;
+  color: white;
+  display: flex;
+  line-height: $navbar-height;
+
+  span.title {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 16px;
+  }
+
+  ul {
+    list-style-type: none;
+    display: inline-flex;
+    height: 100%;
+    margin: 0;
+  }
+
+  li {
+    margin: 0 4px;
+    font-size: 20px;
+    &:hover {
+      background-color: darken($main-color, 10);
+    }
+  }
+
+  a {
     color: white;
-    display: flex;
-    line-height: $navbar-height;
-
-    span.title {
-        font-size: 24px;
-        font-weight: bold;
-        padding: 0 16px;
-    }
-
-    ul {
-        list-style-type: none;
-        display: inline-flex;
-        height: 100%;
-        margin: 0;
-    }
-
-    li {
-        margin: 0 4px;
-        font-size: 20px;
-        &:hover {
-            background-color: darken($main-color, 10);
-        }
-    }
-
-    a {
-        color: white;
-        text-decoration: none;
-        padding: 0 5px;
-
-    }
+    text-decoration: none;
+    padding: 0 5px;
+  }
 }
-

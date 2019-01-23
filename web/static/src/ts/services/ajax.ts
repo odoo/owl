@@ -1,2 +1,1 @@
-
-export default class Ajax{}
+export default class Ajax {}

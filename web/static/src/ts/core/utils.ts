@@ -18,11 +18,11 @@ export function escape(str: string | number | undefined): string {
  */
 export function htmlTrim(s: string): string {
   let result = s.replace(/(^\s+|\s+$)/g, "");
-  if (s[0] === ' ') {
-      result = ' ' + result;
+  if (s[0] === " ") {
+    result = " " + result;
   }
-  if (result !== ' ' && s[s.length - 1] === ' ') {
-      result = result + ' ';
+  if (result !== " " && s[s.length - 1] === " ") {
+    result = result + " ";
   }
   return result;
 }

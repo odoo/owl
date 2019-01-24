@@ -157,7 +157,7 @@ describe("lifecycle hooks", () => {
     let childMounted = false;
     class ParentWidget extends Widget<TestEnv> {
       name = "a";
-      template = `<div>Hello<t t-widget="child"/></div>`;
+      template = `<div><t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
       mounted() {
         expect(childMounted).toBe(false);
@@ -215,6 +215,35 @@ describe("lifecycle hooks", () => {
     await widget.updateState({ ok: true });
     expect(hookCounter).toBe(2);
     target.remove();
+  });
+
+  test("mounted hook is correctly called on subwidgets created in mounted hook", async done => {
+    // the issue here is that the parent widget creates in the
+    // mounted hook a new widget, which means that it modifies
+    // in place its list of children. But this list of children is currently
+    // being visited, so the mount action of the parent could cause a mount
+    // action of the new child widget, even though it is not ready yet.
+    expect.assertions(1);
+
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    class ParentWidget extends Widget<TestEnv> {
+      name = "a";
+      mounted() {
+        const child = new ChildWidget(this);
+        child.mount(this.el!);
+      }
+    }
+    class ChildWidget extends Widget<TestEnv> {
+      mounted() {
+        expect(this.el).toBeTruthy();
+        target.remove();
+        done();
+      }
+    }
+
+    const widget = makeWidget(ParentWidget);
+    await widget.mount(target);
   });
 });
 

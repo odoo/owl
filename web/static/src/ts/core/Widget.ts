@@ -56,7 +56,7 @@ export class Widget<T extends WEnv> {
 
     if (document.body.contains(target)) {
       this.visitSubTree(w => {
-        if (!w.isMounted) {
+        if (!w.isMounted && this.el!.contains(w.el)) {
           w.isMounted = true;
           w.mounted();
         }

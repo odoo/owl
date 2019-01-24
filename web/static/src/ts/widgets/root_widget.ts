@@ -1,7 +1,6 @@
 import { Widget } from "../core/widget";
 import { Navbar } from "./navbar";
 import { ActionWidget } from "../services/action_manager";
-// import { Action } from "../services/actions";
 import { Env } from "../env";
 
 const template = `
@@ -35,25 +34,4 @@ export class RootWidget extends Widget<Env> {
     }
     this.content = newWidget;
   }
-
-  // onUrlChange() {
-  //   this.setMainWidget();
-  //   // notice that this can only be safely done because the root widget is
-  //   // mounted now.
-  //   this.render();
-  // }
-
-  // getAction(): Action {
-  //   const routeInfo = this.env.router.getRoute();
-  //   const actionID = parseInt(routeInfo.query.action_id);
-  //   let actions: Action[] = this.env.actions;
-  //   let action = actions.find(a => a.id === actionID);
-  //   if (!action) {
-  //     action = actions.find(a => a.default === true);
-  //     if (!action) {
-  //       throw new Error("No valid action!");
-  //     }
-  //   }
-  //   return action;
-  // }
 }

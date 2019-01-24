@@ -1,4 +1,4 @@
-import { Bus } from "../core/bus";
+import { EventBus } from "../core/event_bus";
 
 export type Query = { [key: string]: string };
 
@@ -6,7 +6,7 @@ function clearSlashes(s: string): string {
   return s.replace(/\/$/, "").replace(/^\//, "");
 }
 
-export class Router extends Bus {
+export class Router extends EventBus {
   currentQuery: Query;
 
   constructor() {

@@ -1,9 +1,9 @@
-import { Bus } from "../core/bus";
+import { EventBus } from "../core/event_bus";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
-import { Router, Query } from "./router";
-import { Discuss } from "../widgets/discuss";
 import { CRM } from "../widgets/crm";
+import { Discuss } from "../widgets/discuss";
+import { Query, Router } from "./router";
 
 interface Type<T> extends Function {
   new (...args: any[]): T;
@@ -32,7 +32,7 @@ const actions: any[] = [
   { id: 2, title: "CRM", Widget: CRM }
 ];
 
-export class ActionManager extends Bus {
+export class ActionManager extends EventBus {
   router: Router;
   currentAction: ActionWidget | null = null;
 

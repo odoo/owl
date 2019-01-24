@@ -1,8 +1,8 @@
-import { Bus } from "../src/ts/core/bus";
+import { EventBus } from "../src/ts/core/event_bus";
 
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {
-    const bus = new Bus();
+    const bus = new EventBus();
     let notified = false;
     bus.on("event", {}, () => (notified = true));
     expect(notified).toBe(false);
@@ -12,7 +12,7 @@ describe("event bus behaviour", () => {
 
   test("callbacks are called with proper 'this'", () => {
     expect.assertions(1);
-    const bus = new Bus();
+    const bus = new EventBus();
     const owner = {};
     bus.on("event", owner, function(this: any) {
       expect(this).toBe(owner);
@@ -21,7 +21,7 @@ describe("event bus behaviour", () => {
   });
 
   test("can unsubscribe", () => {
-    const bus = new Bus();
+    const bus = new EventBus();
     let notified = false;
     let owner = {};
     bus.on("event", owner, () => (notified = true));
@@ -32,7 +32,7 @@ describe("event bus behaviour", () => {
 
   test("arguments are properly propagated", () => {
     expect.assertions(1);
-    const bus = new Bus();
+    const bus = new EventBus();
     bus.on("event", {}, (arg: any) => expect(arg).toBe("hello world"));
     bus.trigger("event", "hello world");
   });

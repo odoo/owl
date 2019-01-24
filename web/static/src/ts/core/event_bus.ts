@@ -8,7 +8,7 @@ interface Subscription {
 /**
  * Simple event bus: it can emit events, and add/remove listeners.
  */
-export class Bus {
+export class EventBus {
   private subscriptions: { [eventType: string]: Subscription[] } = {};
 
   /**

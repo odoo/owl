@@ -6,7 +6,7 @@ const template = `
         <span class="title">Odoo</span>
         <ul>
             <li t-foreach="env.menus" t-as="menu">
-                <a t-on-click="activateMenu(menu)" t-att-href="getUrl(menu)">
+                <a t-att-href="getUrl(menu)">
                     <t t-esc="menu.title"/>
                 </a>
             </li>
@@ -21,10 +21,5 @@ export class Navbar extends Widget<Env> {
   getUrl(menu: Menu) {
     const action_id = String(menu.actionID);
     return this.env.router.formatURL("", { action_id });
-  }
-
-  activateMenu(menu: Menu, event: MouseEvent) {
-    event.preventDefault();
-    this.env.actionManager.doAction(menu.actionID);
   }
 }

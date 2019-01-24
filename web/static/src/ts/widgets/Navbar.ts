@@ -1,14 +1,13 @@
 import { Widget } from "../core/widget";
-import { Action } from "../services/actions";
-import { Env } from "../env";
+import { Env, Menu } from "../env";
 
 const template = `
     <div class="o_navbar">
         <span class="title">Odoo</span>
         <ul>
-            <li t-foreach="env.actions" t-as="action">
-                <a t-on-click="activateAction(action)" t-att-href="getUrl(action)">
-                    <t t-esc="action.title"/>
+            <li t-foreach="env.menus" t-as="menu">
+                <a t-on-click="activateMenu(menu)" t-att-href="getUrl(menu)">
+                    <t t-esc="menu.title"/>
                 </a>
             </li>
         </ul>
@@ -19,13 +18,13 @@ export class Navbar extends Widget<Env> {
   name = "navbar";
   template = template;
 
-  getUrl(action: Action) {
-    const action_id = String(action.id);
-    return this.env.router.formatURL("web", { action_id });
+  getUrl(menu: Menu) {
+    const action_id = String(menu.actionID);
+    return this.env.router.formatURL("", { action_id });
   }
 
-  activateAction(action: Action, event: MouseEvent) {
+  activateMenu(menu: Menu, event: MouseEvent) {
     event.preventDefault();
-    this.env.actionManager.doAction(action);
+    this.env.actionManager.doAction(menu.actionID);
   }
 }

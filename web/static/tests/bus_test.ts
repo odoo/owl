@@ -10,6 +10,16 @@ describe("event bus behaviour", () => {
     expect(notified).toBe(true);
   });
 
+  test("callbacks are called with proper 'this'", () => {
+    expect.assertions(1);
+    const bus = new Bus();
+    const owner = {};
+    bus.on("event", owner, function(this: any) {
+      expect(this).toBe(owner);
+    });
+    bus.trigger("event");
+  });
+
   test("can unsubscribe", () => {
     const bus = new Bus();
     let notified = false;

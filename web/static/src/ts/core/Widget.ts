@@ -20,7 +20,7 @@ export class Widget<T extends WEnv> {
   env: T;
   el: HTMLElement | null = null;
   state: Object = {};
-  refs: { [key: string]: Widget<T> } = {};
+  refs: { [key: string]: any } = {}; // either HTMLElement or Widget
 
   //--------------------------------------------------------------------------
   // Lifecycle

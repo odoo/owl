@@ -21,6 +21,9 @@ export class Counter extends Widget<Env> {
     this.state.counter = props.initialState || 0;
   }
 
+  mounted() {
+    debugger;
+  }
   increment(delta: number) {
     this.updateState({ counter: this.state.counter + delta });
   }

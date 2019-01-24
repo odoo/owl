@@ -15,6 +15,7 @@ export class Widget<T extends WEnv> {
   template: string = "<div></div>";
   vnode: VNode | null = null;
 
+  isStarted: boolean = false;
   parent: Widget<T> | null = null;
   children: Widget<T>[] = [];
   env: T;
@@ -49,6 +50,7 @@ export class Widget<T extends WEnv> {
 
   async mount(target?: HTMLElement): Promise<VNode> {
     await this.willStart();
+    this.isStarted = true;
     this.env.qweb.addTemplate(this.name, this.template);
     delete this.template;
     const vnode = await this.render();
@@ -69,14 +71,14 @@ export class Widget<T extends WEnv> {
   }
 
   /**
-   * DOCSTRIGN
-   *
-   * @param {Object} newState
-   * @memberof Widget
+   * Note: it is ok to call updateState before the widget is started. In that
+   * case, it will simply update the state and will not rerender
    */
   async updateState(newState: Object) {
     Object.assign(this.state, newState);
-    await this.render();
+    if (this.isStarted) {
+      await this.render();
+    }
   }
 
   //--------------------------------------------------------------------------
@@ -84,10 +86,9 @@ export class Widget<T extends WEnv> {
   //--------------------------------------------------------------------------
 
   async render(): Promise<VNode> {
-    // localized hack to keep track of deferred list
-    (<any>this)._TEMP = [];
-    let vnode = this.env!.qweb.render(this.name, this);
-    await Promise.all((<any>this)._TEMP);
+    const promises: Promise<void>[] = [];
+    let vnode = this.env.qweb.render(this.name, this, { promises });
+    await Promise.all(promises);
     if (!this.el) {
       this.el = document.createElement(vnode.sel!);
     }

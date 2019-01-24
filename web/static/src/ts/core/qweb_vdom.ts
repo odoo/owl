@@ -3,7 +3,7 @@ import h from "../../../libs/snabbdom/src/h";
 
 export type EvalContext = { [key: string]: any };
 export type RawTemplate = string;
-export type CompiledTemplate<T> = (context: EvalContext) => T;
+export type CompiledTemplate<T> = (context: EvalContext, extra: any) => T;
 
 const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
   ","
@@ -177,12 +177,12 @@ export class QWeb {
    *
    * @param {string} name the template should already have been added
    */
-  render(name: string, context: EvalContext = {}): VNode {
+  render(name: string, context: EvalContext = {}, extra: any = null): VNode {
     if (!(name in this.rawTemplates)) {
       throw new Error(`Template ${name} does not exist`);
     }
     const template = this.templates[name] || this._compile(name);
-    return template(context);
+    return template(context, extra);
   }
 
   _compile(name: string): CompiledTemplate<VNode> {
@@ -191,9 +191,7 @@ export class QWeb {
     }
 
     const doc = this.parsedTemplates[name];
-
-    let ctx = new Context();
-
+    const ctx = new Context();
     const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
 
@@ -201,15 +199,18 @@ export class QWeb {
       throw new Error("A template should have one root node");
     }
     ctx.addLine(`return vn${ctx.rootNode}`);
-    const functionCode = ctx.code.join("\n");
+    let template = new Function(
+      "context",
+      "extra",
+      ctx.code.join("\n")
+    ) as CompiledTemplate<VNode>;
     if ((<Element>mainNode).attributes.hasOwnProperty("t-debug")) {
       console.log(
-        `Template: ${this.rawTemplates[name]}\nCompiled code:\n` + functionCode
+        `Template: ${this.rawTemplates[name]}\nCompiled code:\n` +
+          template.toString()
       );
     }
-    const template = (new Function("context", functionCode) as CompiledTemplate<
-      VNode
-    >).bind(this);
+    template = template.bind(this);
     this.templates[name] = template;
     return template;
   }
@@ -682,7 +683,7 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `let def${defID} = _${widgetID}.mount().then(vnode=>Object.assign(_${dummyID}, vnode))`
     );
-    ctx.addLine(`context._TEMP.push(def${defID})`);
+    ctx.addLine(`extra.promises.push(def${defID})`);
 
     let ref = node.getAttribute("t-ref");
     if (ref) {

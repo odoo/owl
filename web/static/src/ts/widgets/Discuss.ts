@@ -1,10 +1,11 @@
 import { Widget } from "../core/widget";
-import { Counter } from "./counter";
 import { Env } from "../env";
+import { Clock } from "./clock";
+import { Counter } from "./counter";
 
 const template = `
-    <div class="o_discuss">
-        <span>Root Widget</span>
+    <div class="o_discuss" t-debug="1">
+        <span>DISCUSS!!</span>
         <button t-on-click="resetCounter">Reset</button>
         <button t-on-click="resetCounterAsync">Reset in 3s</button>
         <button t-on-click="toggle">Toggle  Counter</button>
@@ -13,7 +14,7 @@ const template = `
             <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
         </t>
         <t t-else="1">
-            <t t-widget="Counter" t-ref="counter" t-props="{initialState:7}"/>
+            <t t-widget="Clock"/>
         </t>
         <div ref="target"/>
     </div>
@@ -22,9 +23,12 @@ const template = `
 export class Discuss extends Widget<Env> {
   name = "discuss";
   template = template;
-  widgets = { Counter };
+  widgets = { Clock, Counter };
   state = { validcounter: true };
 
+  mounted() {
+    debugger;
+  }
   resetCounter(ev: MouseEvent) {
     this.refs.counter.updateState({ counter: 3 });
   }

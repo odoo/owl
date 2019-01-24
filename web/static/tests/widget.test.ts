@@ -70,6 +70,22 @@ describe("basic widget properties", () => {
       `<div style="font-weight:bold;" class="some-class">world</div>`
     );
   });
+
+  test("updateState before first render does not trigger a render", async () => {
+    let renderCalls = 0;
+    class TestW extends Widget<TestEnv> {
+      async willStart() {
+        this.updateState({});
+      }
+      async render() {
+        renderCalls++;
+        return super.render();
+      }
+    }
+    const widget = makeWidget(TestW);
+    await widget.mount(document.createElement("div"));
+    expect(renderCalls).toBe(1);
+  });
 });
 
 describe("lifecycle hooks", () => {

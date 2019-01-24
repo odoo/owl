@@ -1,4 +1,4 @@
-import Bus from "../src/ts/core/bus";
+import { Bus } from "../src/ts/core/bus";
 
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {

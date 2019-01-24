@@ -1,5 +1,5 @@
-import Widget from "../core/widget";
-import Counter from "./counter";
+import { Widget } from "../core/widget";
+import { Counter } from "./counter";
 import { Env } from "../env";
 
 const template = `
@@ -19,7 +19,7 @@ const template = `
     </div>
 `;
 
-export default class Discuss extends Widget<Env> {
+export class Discuss extends Widget<Env> {
   name = "discuss";
   template = template;
   widgets = { Counter };

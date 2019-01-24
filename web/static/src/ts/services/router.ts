@@ -1,3 +1,5 @@
+import { Bus } from "../core/bus";
+
 export type Query = { [key: string]: string };
 
 export interface Route {
@@ -11,10 +13,11 @@ function clearSlaches(s: string): string {
   return s.replace(/\/$/, "").replace(/^\//, "");
 }
 
-export default class Router {
+export default class Router extends Bus {
   listeners: { owner: any; callback: (info: Route) => void }[] = [];
 
   constructor() {
+    super();
     window.addEventListener("popstate", this.onUrlChange.bind(this));
     window.onhashchange = function() {
       console.log("aaaa");

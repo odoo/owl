@@ -83,7 +83,7 @@ export class Context {
   }
 }
 
-export default class QWeb {
+export class QWeb {
   rawTemplates: { [name: string]: RawTemplate } = {};
   parsedTemplates: { [name: string]: ParsedTemplate } = {};
   templates: { [name: string]: CompiledTemplate<VNode> } = {};

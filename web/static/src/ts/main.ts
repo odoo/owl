@@ -1,6 +1,6 @@
 ///<amd-module name="main" />
 
-import RootWidget from "./widgets/root_widget";
+import { RootWidget } from "./widgets/root_widget";
 import { makeEnvironment } from "./env";
 
 document.addEventListener("DOMContentLoaded", async function() {

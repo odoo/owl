@@ -1,4 +1,4 @@
-import Widget from "../core/widget";
+import { Widget } from "../core/widget";
 import { Action } from "../services/actions";
 import { Env } from "../env";
 
@@ -15,7 +15,7 @@ const template = `
     </div>
 `;
 
-export default class Navbar extends Widget<Env> {
+export class Navbar extends Widget<Env> {
   name = "navbar";
   template = template;
 

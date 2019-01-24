@@ -1,5 +1,5 @@
-import Widget from "../core/widget";
-import Navbar from "./navbar";
+import { Widget } from "../core/widget";
+import { Navbar } from "./navbar";
 import { Action } from "../services/actions";
 import { Env } from "../env";
 
@@ -12,7 +12,7 @@ const template = `
     </div>
 `;
 
-export default class RootWidget extends Widget<Env> {
+export class RootWidget extends Widget<Env> {
   name = "root";
   template = template;
   widgets = { Navbar };

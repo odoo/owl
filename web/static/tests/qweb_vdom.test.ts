@@ -1,4 +1,4 @@
-import QWeb, { EvalContext } from "../src/ts/core/qweb_vdom";
+import { QWeb, EvalContext } from "../src/ts/core/qweb_vdom";
 import { init } from "../libs/snabbdom/src/snabbdom";
 import sdAttributes from "../libs/snabbdom/src/modules/attributes";
 import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";

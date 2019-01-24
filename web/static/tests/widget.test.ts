@@ -1,5 +1,5 @@
-import Widget, { WEnv } from "../src/ts/core/widget";
-import QWeb from "../src/ts/core/qweb_vdom";
+import { Widget, WEnv } from "../src/ts/core/widget";
+import { QWeb } from "../src/ts/core/qweb_vdom";
 
 interface Type<T> extends Function {
   new (...args: any[]): T;
@@ -25,7 +25,7 @@ const template = `
     <div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>
 `;
 
-export default class Counter extends Widget<TestEnv> {
+class Counter extends Widget<TestEnv> {
   name = "counter";
   template = template;
   state = {

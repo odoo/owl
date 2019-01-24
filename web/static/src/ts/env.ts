@@ -1,7 +1,7 @@
-import QWeb from "./core/qweb_vdom";
+import { QWeb } from "./core/qweb_vdom";
 import { WEnv } from "./core/widget";
-import actions, { Action } from "./services/actions";
-import ActionManager from "./services/action_manager";
+import { actions, Action } from "./services/actions";
+import { ActionManager } from "./services/action_manager";
 import Ajax from "./services/ajax";
 import Router from "./services/router";
 

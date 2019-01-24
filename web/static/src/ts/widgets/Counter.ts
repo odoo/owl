@@ -1,4 +1,4 @@
-import Widget from "../core/widget";
+import { Widget } from "../core/widget";
 import { Env } from "../env";
 
 const template = `
@@ -9,7 +9,7 @@ const template = `
     </div>
 `;
 
-export default class Counter extends Widget<Env> {
+export class Counter extends Widget<Env> {
   name = "counter";
   template = template;
   state = {

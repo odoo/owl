@@ -5,7 +5,7 @@ interface Subscription {
   callback: Callback;
 }
 
-export default class Bus {
+export class Bus {
   private subscriptions: { [eventType: string]: Subscription[] } = {};
 
   on(eventType: string, owner: any, callback: Callback) {

@@ -2,7 +2,7 @@ import sdAttrs from "../../../libs/snabbdom/src/modules/attributes";
 import sdListeners from "../../../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../../../libs/snabbdom/src/snabbdom";
 import { VNode } from "../../../libs/snabbdom/src/vnode";
-import QWeb from "./qweb_vdom";
+import { QWeb } from "./qweb_vdom";
 
 const patch = init([sdListeners, sdAttrs]);
 
@@ -10,7 +10,7 @@ export interface WEnv {
   qweb: QWeb;
 }
 
-export default class Widget<T extends WEnv> {
+export class Widget<T extends WEnv> {
   name: string = "widget";
   template: string = "<div></div>";
   vnode: VNode | null = null;

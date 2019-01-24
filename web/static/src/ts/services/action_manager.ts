@@ -12,7 +12,7 @@ import { Action } from "./actions";
 //   { id: 2, title: "CRM", Widget: CRM }
 // ];
 
-export default class ActionManager {
+export class ActionManager {
   doAction(action: Action) {
     console.log(action);
     // load data (??)

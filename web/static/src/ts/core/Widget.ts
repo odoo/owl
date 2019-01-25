@@ -21,7 +21,7 @@ export class Widget<T extends WEnv> {
   env: T;
   el: HTMLElement | null = null;
   state: Object = {};
-  refs: { [key: string]: any } = {}; // either HTMLElement or Widget
+  refs: { [key: string]: Widget<T> | HTMLElement | undefined } = {}; // either HTMLElement or Widget
 
   //--------------------------------------------------------------------------
   // Lifecycle
@@ -86,15 +86,19 @@ export class Widget<T extends WEnv> {
   //--------------------------------------------------------------------------
 
   async render(): Promise<VNode> {
-    const promises: Promise<void>[] = [];
-    let vnode = this.env.qweb.render(this.name, this, { promises });
-    await Promise.all(promises);
+    const vnode = await this._render();
     if (!this.el) {
       this.el = document.createElement(vnode.sel!);
     }
     patch(this.vnode || this.el, vnode);
     this.vnode = vnode;
     return vnode;
+  }
+
+  private async _render(): Promise<VNode> {
+    const promises: Promise<void>[] = [];
+    let vnode = this.env.qweb.render(this.name, this, { promises });
+    return Promise.all(promises).then(() => vnode);
   }
 
   private visitSubTree(callback: (w: Widget<T>) => void) {

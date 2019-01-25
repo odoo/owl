@@ -4,7 +4,7 @@ import { Clock } from "./clock";
 import { Counter } from "./counter";
 
 const template = `
-    <div class="o_discuss" t-debug="1">
+    <div class="o_discuss">
         <span>DISCUSS!!</span>
         <button t-on-click="resetCounter">Reset</button>
         <button t-on-click="resetCounterAsync">Reset in 3s</button>
@@ -26,20 +26,24 @@ export class Discuss extends Widget<Env> {
   widgets = { Clock, Counter };
   state = { validcounter: true };
 
-  mounted() {
-    debugger;
-  }
+  mounted() {}
   resetCounter(ev: MouseEvent) {
-    this.refs.counter.updateState({ counter: 3 });
+    if (this.refs.counter instanceof Counter) {
+      this.refs.counter.updateState({ counter: 3 });
+    }
   }
 
   resetCounterAsync(ev: MouseEvent) {
     setTimeout(() => {
-      this.refs.counter.updateState({ counter: 3 });
+      if (this.refs.counter instanceof Counter) {
+        this.refs.counter.updateState({ counter: 3 });
+      }
     }, 3000);
   }
 
   toggle() {
-    this.updateState({ validcounter: !this.state.validcounter });
+    if (this.refs.counter instanceof Counter) {
+      this.updateState({ validcounter: !this.state.validcounter });
+    }
   }
 }

@@ -682,7 +682,7 @@ const widgetDirective: Directive = {
     let props = node.getAttribute("t-props");
     let widgetID = ctx.generateID();
     ctx.addLine(
-      `let _${widgetID} = new context.widgets['${value}'](context, ${props})`
+      `let _${widgetID} = new context.widgets['${value}'](owner, ${props})`
     );
     ctx.addLine(
       `let def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{Object.assign(_${dummyID}, vnode);_${dummyID}.key="${dummyID}";_${dummyID}.data.hook = {create(_,vn){_${widgetID}._mount(vn)}}})`

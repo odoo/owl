@@ -265,6 +265,7 @@ describe("composition", () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
+    expect(widget._.children[0]._.parent).toBe(widget);
   });
 
   test("t-refs on widget are widgets", async () => {

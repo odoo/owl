@@ -192,6 +192,9 @@ export class QWeb {
 
     const doc = this.parsedTemplates[name];
     const ctx = new Context();
+    // this is necessary to prevent some directives (t-forach for ex) to
+    // pollute the rendering context by adding some keys in it.
+    ctx.addLine("context = Object.create(context)");
     const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
 

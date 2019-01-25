@@ -566,6 +566,19 @@ describe("foreach", () => {
     const expected = `<div>[0:a1-even][1:b2-odd][2:c3-even]</div>`;
     expect(result).toBe(expected);
   });
+
+  test("does not pollute the rendering context", () => {
+    const qweb = new QWeb();
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-foreach="[1]" t-as="item"><t t-esc="item"/></t>
+      </div>`
+    );
+    const context = {};
+    renderToString(qweb, "test", context);
+    expect(Object.keys(context).length).toBe(0);
+  });
 });
 
 describe("misc", () => {

@@ -16,6 +16,7 @@ export class Widget<T extends WEnv> {
   vnode: VNode | null = null;
 
   isStarted: boolean = false;
+  isMounted: boolean = false;
   parent: Widget<T> | null = null;
   children: Widget<T>[] = [];
   env: T;
@@ -48,17 +49,20 @@ export class Widget<T extends WEnv> {
   // Public
   //--------------------------------------------------------------------------
 
-  async mount(target?: HTMLElement): Promise<VNode> {
-    await this.willStart();
-    this.isStarted = true;
+  async mount(target: HTMLElement): Promise<VNode> {
+    await this._start();
     const vnode = await this.render();
+    target.appendChild(this.el!);
 
-    if (target) {
-      target.appendChild(this.el!);
-      if (document.body.contains(target)) {
-        this.visitSubTree(w => w.mounted());
-      }
+    if (document.body.contains(target)) {
+      this.visitSubTree(w => {
+        if (!w.isMounted) {
+          w.isMounted = true;
+          w.mounted();
+        }
+      });
     }
+    // }
     return vnode;
   }
 
@@ -93,6 +97,11 @@ export class Widget<T extends WEnv> {
     return vnode;
   }
 
+  private async _start(): Promise<void> {
+    await this.willStart();
+    this.isStarted = true;
+  }
+
   private async _render(): Promise<VNode> {
     if (this.template) {
       this.env.qweb.addTemplate(this.name, this.template);
@@ -101,6 +110,16 @@ export class Widget<T extends WEnv> {
     const promises: Promise<void>[] = [];
     let vnode = this.env.qweb.render(this.name, this, { promises });
     return Promise.all(promises).then(() => vnode);
+  }
+
+  _mount(el: HTMLElement) {
+    this.el = el;
+    if (this.parent) {
+      if (this.parent.isMounted) {
+        this.isMounted = true;
+        this.mounted();
+      }
+    }
   }
 
   private visitSubTree(callback: (w: Widget<T>) => void) {

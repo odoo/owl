@@ -130,6 +130,27 @@ describe("lifecycle hooks", () => {
     target.remove();
   });
 
+  test("willStart hook is called on subwidget", async () => {
+    expect.assertions(1);
+    let ok = false;
+    class ParentWidget extends Widget<TestEnv> {
+      name = "a";
+      template = `<div><t t-widget="child"/></div>`;
+      widgets = { child: ChildWidget };
+    }
+    class ChildWidget extends Widget<TestEnv> {
+      async willStart() {
+        ok = true;
+      }
+    }
+    const widget = makeWidget(ParentWidget);
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    await widget.mount(target);
+    expect(ok).toBe(true);
+    target.remove();
+  });
+
   test("mounted hook is called on subwidgets, in proper order", async () => {
     expect.assertions(4);
     let parentMounted = false;
@@ -155,6 +176,44 @@ describe("lifecycle hooks", () => {
     document.body.appendChild(target);
     await widget.mount(target);
     expect(childMounted).toBe(true);
+    target.remove();
+  });
+
+  test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
+    expect.assertions(3);
+    let hookCounter = 0;
+    class ParentWidget extends Widget<TestEnv> {
+      name = "a";
+      state = { ok: false };
+      template = `
+        <div>
+          <t t-if="state.ok">
+            <t t-widget="child"/>
+          </t>
+          <t t-else="1">
+            <div/>
+          </t>
+        </div>`; // the t-else part in this template is important. This is
+      // necessary to have a situation that could confuse the vdom
+      // patching algorithm
+      widgets = { child: ChildWidget };
+    }
+    class ChildWidget extends Widget<TestEnv> {
+      async willStart() {
+        hookCounter++;
+      }
+      mounted() {
+        expect(hookCounter).toBe(1);
+        hookCounter++;
+      }
+    }
+    const widget = makeWidget(ParentWidget);
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    await widget.mount(target);
+    expect(hookCounter).toBe(0); // sub widget not created yet
+    await widget.updateState({ ok: true });
+    expect(hookCounter).toBe(2);
     target.remove();
   });
 });

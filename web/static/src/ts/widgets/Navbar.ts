@@ -18,9 +18,6 @@ export class Navbar extends Widget<Env> {
   name = "navbar";
   template = template;
 
-  mounted() {
-    console.log("navbar mounted", this.el);
-  }
   getUrl(menu: Menu) {
     const action_id = String(menu.actionID);
     return this.env.router.formatURL("", { action_id });

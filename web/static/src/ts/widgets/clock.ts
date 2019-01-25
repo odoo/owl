@@ -15,12 +15,10 @@ export class Clock extends Widget<Env> {
   }
 
   mounted() {
-    console.log("clock mounter", this.el);
     setInterval(this.updateTime.bind(this), 500);
   }
 
   updateTime() {
-    debugger;
     this.updateState({
       currentTime: new Date().toLocaleTimeString()
     });

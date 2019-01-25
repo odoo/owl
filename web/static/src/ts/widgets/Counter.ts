@@ -21,9 +21,6 @@ export class Counter extends Widget<Env> {
     this.state.counter = props.initialState || 0;
   }
 
-  mounted() {
-    console.log("counter mounter", this.el);
-  }
   increment(delta: number) {
     this.updateState({ counter: this.state.counter + delta });
   }

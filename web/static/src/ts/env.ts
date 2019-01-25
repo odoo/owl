@@ -1,4 +1,5 @@
 import { QWeb } from "./core/qweb_vdom";
+import { idGenerator } from "./core/utils";
 import { WEnv } from "./core/widget";
 import { ActionManager } from "./services/action_manager";
 import { Ajax } from "./services/ajax";
@@ -31,6 +32,7 @@ export function makeEnvironment(): Env {
     ajax,
     router,
     actionManager,
-    menus
+    menus,
+    getID: idGenerator()
   };
 }

@@ -1,4 +1,4 @@
-import { escape, htmlTrim } from "../src/ts/core/utils";
+import { escape, htmlTrim, idGenerator } from "../src/ts/core/utils";
 
 describe("escape", () => {
   test("normal strings", () => {
@@ -23,5 +23,14 @@ describe("htmlTrim", () => {
     expect(htmlTrim(" \n ")).toBe(" ");
     expect(htmlTrim("  ")).toBe(" ");
     expect(htmlTrim("")).toBe("");
+  });
+});
+
+describe("idGenerator", () => {
+  test("basic use", () => {
+    let gen = idGenerator();
+    expect(gen()).toBe(1);
+    expect(gen()).toBe(2);
+    expect(gen()).toBe(3);
   });
 });

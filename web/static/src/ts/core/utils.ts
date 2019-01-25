@@ -26,3 +26,8 @@ export function htmlTrim(s: string): string {
   }
   return result;
 }
+
+export function idGenerator(): (() => number) {
+  let nextID = 1;
+  return () => nextID++;
+}

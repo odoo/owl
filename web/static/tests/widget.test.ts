@@ -1,4 +1,5 @@
 import { Widget, WEnv } from "../src/ts/core/widget";
+import { idGenerator } from "../src/ts/core/utils";
 import { QWeb } from "../src/ts/core/qweb_vdom";
 
 interface Type<T> extends Function {
@@ -9,8 +10,9 @@ type TestEnv = WEnv;
 type TestWidget = Widget<TestEnv>;
 
 function makeWidget(W: Type<TestWidget>): TestWidget {
-  const env = {
-    qweb: new QWeb()
+  const env: WEnv = {
+    qweb: new QWeb(),
+    getID: idGenerator()
   };
   const w = new W(env);
   return w;

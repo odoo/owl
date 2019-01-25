@@ -684,7 +684,7 @@ const widgetDirective: Directive = {
       `let _${widgetID} = new context.widgets['${value}'](context, ${props})`
     );
     ctx.addLine(
-      `let def${defID} = _${widgetID}.mount().then(vnode=>Object.assign(_${dummyID}, vnode))`
+      `let def${defID} = _${widgetID}._render().then(vnode=>{Object.assign(_${dummyID}, vnode);_${dummyID}.data.hook = {create(_,vn){_${widgetID}.el=vn.elm}}})`
     );
     ctx.addLine(`extra.promises.push(def${defID})`);
 

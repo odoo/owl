@@ -51,8 +51,6 @@ export class Widget<T extends WEnv> {
   async mount(target?: HTMLElement): Promise<VNode> {
     await this.willStart();
     this.isStarted = true;
-    this.env.qweb.addTemplate(this.name, this.template);
-    delete this.template;
     const vnode = await this.render();
 
     if (target) {
@@ -96,6 +94,10 @@ export class Widget<T extends WEnv> {
   }
 
   private async _render(): Promise<VNode> {
+    if (this.template) {
+      this.env.qweb.addTemplate(this.name, this.template);
+      delete this.template;
+    }
     const promises: Promise<void>[] = [];
     let vnode = this.env.qweb.render(this.name, this, { promises });
     return Promise.all(promises).then(() => vnode);

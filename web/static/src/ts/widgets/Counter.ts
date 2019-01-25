@@ -22,7 +22,7 @@ export class Counter extends Widget<Env> {
   }
 
   mounted() {
-    debugger;
+    console.log("counter mounter", this.el);
   }
   increment(delta: number) {
     this.updateState({ counter: this.state.counter + delta });

@@ -131,20 +131,21 @@ describe("lifecycle hooks", () => {
   });
 
   test("mounted hook is called on subwidgets, in proper order", async () => {
-    expect.assertions(2);
+    expect.assertions(4);
     let parentMounted = false;
     let childMounted = false;
     class ParentWidget extends Widget<TestEnv> {
       name = "a";
       template = `<div>Hello<t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
-      async mounted() {
+      mounted() {
         expect(childMounted).toBe(false);
         parentMounted = true;
       }
     }
     class ChildWidget extends Widget<TestEnv> {
-      async mounted() {
+      mounted() {
+        expect(document.body.contains(this.el)).toBe(true);
         expect(parentMounted).toBe(true);
         childMounted = true;
       }
@@ -153,6 +154,7 @@ describe("lifecycle hooks", () => {
     const target = document.createElement("div");
     document.body.appendChild(target);
     await widget.mount(target);
+    expect(childMounted).toBe(true);
     target.remove();
   });
 });

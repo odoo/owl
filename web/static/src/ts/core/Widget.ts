@@ -133,8 +133,9 @@ export class Widget<T extends WEnv> {
     return Promise.all(promises).then(() => vnode);
   }
 
-  _mount(el: HTMLElement) {
-    this.el = el;
+  _mount(vnode: VNode) {
+    this.el = <HTMLElement>vnode.elm;
+    this._.vnode = vnode;
     if (this._.parent) {
       if (this._.parent._.isMounted) {
         this._.isMounted = true;

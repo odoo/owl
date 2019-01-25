@@ -1,6 +1,6 @@
-import { Widget, WEnv } from "../src/ts/core/widget";
-import { idGenerator } from "../src/ts/core/utils";
 import { QWeb } from "../src/ts/core/qweb_vdom";
+import { idGenerator } from "../src/ts/core/utils";
+import { WEnv, Widget } from "../src/ts/core/widget";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -31,6 +31,19 @@ function nextTick(): Promise<void> {
   return Promise.resolve();
 }
 
+// Test widget
+class Counter extends Widget<WEnv> {
+  name = "counter";
+  template = `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`;
+  state = {
+    counter: 0
+  };
+
+  inc() {
+    this.updateState({ counter: this.state.counter + 1 });
+  }
+}
+
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
@@ -48,22 +61,6 @@ describe("basic widget properties", () => {
   });
 
   test("can be clicked on and updated", async () => {
-    const template = `
-      <div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>
-    `;
-
-    class Counter extends Widget<WEnv> {
-      name = "counter";
-      template = template;
-      state = {
-        counter: 0
-      };
-
-      inc() {
-        this.updateState({ counter: this.state.counter + 1 });
-      }
-    }
-
     const counter = new Counter(env);
     const target = document.createElement("div");
     await counter.mount(target);
@@ -279,5 +276,23 @@ describe("composition", () => {
     const widget = new WidgetC(env);
     await widget.mount(fixture);
     expect(widget.refs.mywidgetb instanceof WidgetB).toBe(true);
+  });
+
+  test("modifying a sub widget", async () => {
+    class ParentWidget extends Widget<WEnv> {
+      template = `<div><t t-widget="Counter"/></div>`;
+      widgets = { Counter };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><div>0<button>Inc</button></div></div>"
+    );
+    const button = fixture.getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div>1<button>Inc</button></div></div>"
+    );
   });
 });

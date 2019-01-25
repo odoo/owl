@@ -194,6 +194,7 @@ export class QWeb {
     const ctx = new Context();
     // this is necessary to prevent some directives (t-forach for ex) to
     // pollute the rendering context by adding some keys in it.
+    ctx.addLine("let owner = context");
     ctx.addLine("context = Object.create(context)");
     const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
@@ -652,7 +653,7 @@ const onDirective: Directive = {
       return "";
     });
     ctx.addLine(
-      `p${nodeID}.on = {${eventName}: context['${handler}'].bind(context${
+      `p${nodeID}.on = {${eventName}: context['${handler}'].bind(owner${
         extraArgs ? ", " + qweb._formatExpression(extraArgs) : ""
       })}`
     );

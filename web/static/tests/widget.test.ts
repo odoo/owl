@@ -2,80 +2,92 @@ import { Widget, WEnv } from "../src/ts/core/widget";
 import { idGenerator } from "../src/ts/core/utils";
 import { QWeb } from "../src/ts/core/qweb_vdom";
 
-interface Type<T> extends Function {
-  new (...args: any[]): T;
-}
+//------------------------------------------------------------------------------
+// Setup and helpers
+//------------------------------------------------------------------------------
 
-type TestEnv = WEnv;
-type TestWidget = Widget<TestEnv>;
+// We create before each test:
+// - fixture: a div, appended to the DOM, intended to be the target of dom
+//   manipulations.  Note that it is removed after each test.
+// - env: a WEnv, necessary to create new widgets
 
-function makeWidget(W: Type<TestWidget>): TestWidget {
-  const env: WEnv = {
+let fixture: HTMLElement;
+let env: WEnv;
+
+beforeEach(() => {
+  fixture = document.createElement("div");
+  document.body.appendChild(fixture);
+  env = {
     qweb: new QWeb(),
     getID: idGenerator()
   };
-  const w = new W(env);
-  return w;
-}
+});
 
-async function click(el: HTMLElement) {
-  el.click();
+afterEach(() => {
+  fixture.remove();
+});
+
+function nextTick(): Promise<void> {
   return Promise.resolve();
 }
 
-const template = `
-    <div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>
-`;
-
-class Counter extends Widget<TestEnv> {
-  name = "counter";
-  template = template;
-  state = {
-    counter: 0
-  };
-
-  inc() {
-    this.updateState({ counter: this.state.counter + 1 });
-  }
-}
+//------------------------------------------------------------------------------
+// Tests
+//------------------------------------------------------------------------------
 
 describe("basic widget properties", () => {
   test("has no el after creation", async () => {
-    const widget = makeWidget(Widget);
+    const widget = new Widget(env);
     expect(widget.el).toBe(null);
   });
 
   test("can be mounted", async () => {
-    const widget = makeWidget(Widget);
-    const target = document.createElement("div");
-    await widget.mount(target);
-    expect(target.innerHTML).toBe("<div></div>");
+    const widget = new Widget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
   });
 
   test("can be clicked on and updated", async () => {
-    const counter = makeWidget(Counter);
+    const template = `
+      <div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>
+    `;
+
+    class Counter extends Widget<WEnv> {
+      name = "counter";
+      template = template;
+      state = {
+        counter: 0
+      };
+
+      inc() {
+        this.updateState({ counter: this.state.counter + 1 });
+      }
+    }
+
+    const counter = new Counter(env);
     const target = document.createElement("div");
     await counter.mount(target);
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
-    await click((<HTMLElement>counter.el).getElementsByTagName("button")[0]);
+    const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
     expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 
   test("widget style and classname", async () => {
-    class StyledWidget extends Widget<TestEnv> {
+    class StyledWidget extends Widget<WEnv> {
       template = `<div style="font-weight:bold;" class="some-class">world</div>`;
     }
-    const widget = makeWidget(StyledWidget);
-    const target = document.createElement("div");
-    await widget.mount(target);
-    expect(target.innerHTML).toBe(
+    const widget = new StyledWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(
       `<div style="font-weight:bold;" class="some-class">world</div>`
     );
   });
 
   test("updateState before first render does not trigger a render", async () => {
     let renderCalls = 0;
-    class TestW extends Widget<TestEnv> {
+    class TestW extends Widget<WEnv> {
       async willStart() {
         this.updateState({});
       }
@@ -84,8 +96,8 @@ describe("basic widget properties", () => {
         return super.render();
       }
     }
-    const widget = makeWidget(TestW);
-    await widget.mount(document.createElement("div"));
+    const widget = new TestW(env);
+    await widget.mount(fixture);
     expect(renderCalls).toBe(1);
   });
 });
@@ -93,25 +105,24 @@ describe("basic widget properties", () => {
 describe("lifecycle hooks", () => {
   test("willStart hook is called", async () => {
     let willstart = false;
-    class HookWidget extends Widget<TestEnv> {
+    class HookWidget extends Widget<WEnv> {
       async willStart() {
         willstart = true;
       }
     }
-    const widget = makeWidget(HookWidget);
-    const target = document.createElement("div");
-    await widget.mount(target);
+    const widget = new HookWidget(env);
+    await widget.mount(fixture);
     expect(willstart).toBe(true);
   });
 
   test("mounted hook is not called if not in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget<TestEnv> {
+    class HookWidget extends Widget<WEnv> {
       async mounted() {
         mounted = true;
       }
     }
-    const widget = makeWidget(HookWidget);
+    const widget = new HookWidget(env);
     const target = document.createElement("div");
     await widget.mount(target);
     expect(mounted).toBe(false);
@@ -119,45 +130,38 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is called if mounted in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget<TestEnv> {
+    class HookWidget extends Widget<WEnv> {
       async mounted() {
         mounted = true;
       }
     }
-    const widget = makeWidget(HookWidget);
-    const target = document.createElement("div");
-    document.body.appendChild(target);
-    await widget.mount(target);
+    const widget = new HookWidget(env);
+    await widget.mount(fixture);
     expect(mounted).toBe(true);
-    target.remove();
   });
 
   test("willStart hook is called on subwidget", async () => {
-    expect.assertions(1);
     let ok = false;
-    class ParentWidget extends Widget<TestEnv> {
+    class ParentWidget extends Widget<WEnv> {
       name = "a";
       template = `<div><t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
     }
-    class ChildWidget extends Widget<TestEnv> {
+    class ChildWidget extends Widget<WEnv> {
       async willStart() {
         ok = true;
       }
     }
-    const widget = makeWidget(ParentWidget);
-    const target = document.createElement("div");
-    document.body.appendChild(target);
-    await widget.mount(target);
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
     expect(ok).toBe(true);
-    target.remove();
   });
 
   test("mounted hook is called on subwidgets, in proper order", async () => {
     expect.assertions(4);
     let parentMounted = false;
     let childMounted = false;
-    class ParentWidget extends Widget<TestEnv> {
+    class ParentWidget extends Widget<WEnv> {
       name = "a";
       template = `<div><t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
@@ -166,41 +170,38 @@ describe("lifecycle hooks", () => {
         parentMounted = true;
       }
     }
-    class ChildWidget extends Widget<TestEnv> {
+    class ChildWidget extends Widget<WEnv> {
       mounted() {
         expect(document.body.contains(this.el)).toBe(true);
         expect(parentMounted).toBe(true);
         childMounted = true;
       }
     }
-    const widget = makeWidget(ParentWidget);
-    const target = document.createElement("div");
-    document.body.appendChild(target);
-    await widget.mount(target);
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
     expect(childMounted).toBe(true);
-    target.remove();
   });
 
   test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
     expect.assertions(3);
     let hookCounter = 0;
-    class ParentWidget extends Widget<TestEnv> {
+    class ParentWidget extends Widget<WEnv> {
       name = "a";
       state = { ok: false };
       template = `
-        <div>
-          <t t-if="state.ok">
-            <t t-widget="child"/>
-          </t>
-          <t t-else="1">
-            <div/>
-          </t>
-        </div>`; // the t-else part in this template is important. This is
+          <div>
+            <t t-if="state.ok">
+              <t t-widget="child"/>
+            </t>
+            <t t-else="1">
+              <div/>
+            </t>
+          </div>`; // the t-else part in this template is important. This is
       // necessary to have a situation that could confuse the vdom
       // patching algorithm
       widgets = { child: ChildWidget };
     }
-    class ChildWidget extends Widget<TestEnv> {
+    class ChildWidget extends Widget<WEnv> {
       async willStart() {
         hookCounter++;
       }
@@ -209,14 +210,11 @@ describe("lifecycle hooks", () => {
         hookCounter++;
       }
     }
-    const widget = makeWidget(ParentWidget);
-    const target = document.createElement("div");
-    document.body.appendChild(target);
-    await widget.mount(target);
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
     expect(hookCounter).toBe(0); // sub widget not created yet
     await widget.updateState({ ok: true });
     expect(hookCounter).toBe(2);
-    target.remove();
   });
 
   test("mounted hook is correctly called on subwidgets created in mounted hook", async done => {
@@ -226,34 +224,30 @@ describe("lifecycle hooks", () => {
     // being visited, so the mount action of the parent could cause a mount
     // action of the new child widget, even though it is not ready yet.
     expect.assertions(1);
-
     const target = document.createElement("div");
     document.body.appendChild(target);
-    class ParentWidget extends Widget<TestEnv> {
+    class ParentWidget extends Widget<WEnv> {
       name = "a";
       mounted() {
         const child = new ChildWidget(this);
         child.mount(this.el!);
       }
     }
-    class ChildWidget extends Widget<TestEnv> {
+    class ChildWidget extends Widget<WEnv> {
       mounted() {
         expect(this.el).toBeTruthy();
-        target.remove();
         done();
       }
     }
-
-    const widget = makeWidget(ParentWidget);
+    const widget = new ParentWidget(env);
     await widget.mount(target);
   });
 });
 
 describe("destroy method", () => {
   test("destroy remove the widget from the DOM", async () => {
-    const widget = makeWidget(Widget);
-    const target = document.body;
-    await widget.mount(target);
+    const widget = new Widget(env);
+    await widget.mount(fixture);
     expect(document.contains(widget.el)).toBe(true);
     widget.destroy();
     expect(document.contains(widget.el)).toBe(false);
@@ -261,32 +255,29 @@ describe("destroy method", () => {
 });
 
 describe("composition", () => {
-  class WidgetA extends Widget<TestEnv> {
+  class WidgetA extends Widget<WEnv> {
     name = "a";
     template = `<div>Hello<t t-widget="b"/></div>`;
     widgets = { b: WidgetB };
   }
-
-  class WidgetB extends Widget<TestEnv> {
+  class WidgetB extends Widget<WEnv> {
     template = `<div>world</div>`;
   }
 
   test("a widget with a sub widget", async () => {
-    const widget = makeWidget(WidgetA);
-    const target = document.createElement("div");
-    await widget.mount(target);
-    expect(target.innerHTML).toBe("<div>Hello<div>world</div></div>");
+    const widget = new WidgetA(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
   });
 
   test("t-refs on widget are widgets", async () => {
-    class WidgetC extends Widget<TestEnv> {
+    class WidgetC extends Widget<WEnv> {
       name = "a";
       template = `<div>Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
       widgets = { b: WidgetB };
     }
-    const widget = makeWidget(WidgetC);
-    const target = document.createElement("div");
-    await widget.mount(target);
+    const widget = new WidgetC(env);
+    await widget.mount(fixture);
     expect(widget.refs.mywidgetb instanceof WidgetB).toBe(true);
   });
 });

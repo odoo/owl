@@ -296,4 +296,17 @@ describe("composition", () => {
       "<div><div>1<button>Inc</button></div></div>"
     );
   });
+
+  test("parent's elm for a children === children's elm, even after rerender", async () => {
+    const widget = new WidgetA(env);
+    await widget.mount(fixture);
+
+    expect((<any>widget._.vnode!.children![1]).elm).toBe(
+      (<any>widget._.children[0]._.vnode).elm
+    );
+    await widget._.children[0].render();
+    expect((<any>widget._.vnode!.children![1]).elm).toBe(
+      (<any>widget._.children[0]._.vnode).elm
+    );
+  });
 });

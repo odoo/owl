@@ -30,8 +30,11 @@ export class Widget<T extends WEnv> {
   name: string = "widget";
   template: string = "<div></div>";
 
+  get el(): HTMLElement | null {
+    return this._.vnode ? (<any>this)._.vnode.elm : null;
+  }
+
   env: T;
-  el: HTMLElement | null = null;
   state: Object = {};
   refs: { [key: string]: Widget<T> | HTMLElement | undefined } = {}; // either HTMLElement or Widget
 
@@ -110,12 +113,11 @@ export class Widget<T extends WEnv> {
 
   async render(): Promise<VNode> {
     const vnode = await this._render();
-    if (!this.el) {
-      this.el = document.createElement(vnode.sel!);
-    }
-    patch(this._.vnode || this.el, vnode);
-    this._.vnode = vnode;
-    return vnode;
+    this._.vnode = patch(
+      this._.vnode || document.createElement(vnode.sel!),
+      vnode
+    );
+    return this._.vnode;
   }
 
   private async _start(): Promise<void> {
@@ -130,11 +132,20 @@ export class Widget<T extends WEnv> {
     }
     const promises: Promise<void>[] = [];
     let vnode = this.env.qweb.render(this.name, this, { promises });
+
+    // this part is critical for the patching process to be done correctly. The
+    // tricky part is that a child widget can be rerendered on its own, which
+    // will update its own vnode representation without the knowledge of the
+    // parent widget.  With this, we make sure that the parent widget will be
+    // able to patch itself properly after
+    vnode.key = this._.id;
     return Promise.all(promises).then(() => vnode);
   }
 
+  /**
+   * Only called by qweb t-widget directive
+   */
   _mount(vnode: VNode) {
-    this.el = <HTMLElement>vnode.elm;
     this._.vnode = vnode;
     if (this._.parent) {
       if (this._.parent._.isMounted) {

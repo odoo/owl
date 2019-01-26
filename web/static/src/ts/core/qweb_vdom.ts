@@ -678,6 +678,7 @@ const widgetDirective: Directive = {
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();
     ctx.addLine(`let _${dummyID} = {} // DUMMY`);
+    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length`);
     ctx.addLine(`c${ctx.parentNode}.push(_${dummyID})`);
     let props = node.getAttribute("t-props");
     let widgetID = ctx.generateID();
@@ -685,7 +686,9 @@ const widgetDirective: Directive = {
       `let _${widgetID} = new context.widgets['${value}'](owner, ${props})`
     );
     ctx.addLine(
-      `let def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{Object.assign(_${dummyID}, vnode);_${dummyID}.key="${dummyID}";_${dummyID}.data.hook = {create(_,vn){_${widgetID}._mount(vn)}}})`
+      `let def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${
+        ctx.parentNode
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)}}})`
     );
     ctx.addLine(`extra.promises.push(def${defID})`);
 

@@ -1,4 +1,4 @@
-import { EventBus } from "../core/event_bus";
+import { EventBus, Callback } from "../core/event_bus";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
 import { CRM } from "../widgets/crm";
@@ -19,6 +19,14 @@ interface ActWindowAction {
   views: string[];
 }
 
+type ActionEvent = "action_ready";
+
+export interface IActionManager {
+  doAction(actionID: number);
+  on(event: ActionEvent, owner: any, callback: Callback);
+  getCurrentAction(): ActionWidget | null;
+}
+
 export type Action = ClientAction | ActWindowAction;
 
 export interface ActionWidget {
@@ -32,7 +40,7 @@ const actions: any[] = [
   { id: 2, title: "CRM", Widget: CRM }
 ];
 
-export class ActionManager extends EventBus {
+export class ActionManager extends EventBus implements IActionManager {
   router: IRouter;
   currentAction: ActionWidget | null = null;
 

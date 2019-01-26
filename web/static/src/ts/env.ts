@@ -1,8 +1,8 @@
 import { QWeb } from "./core/qweb_vdom";
 import { idGenerator } from "./core/utils";
 import { WEnv } from "./core/widget";
-import { ActionManager } from "./services/action_manager";
-import { Ajax } from "./services/ajax";
+import { ActionManager, IActionManager } from "./services/action_manager";
+import { Ajax, IAjax } from "./services/ajax";
 import { Router, IRouter } from "./services/router";
 
 export interface Menu {
@@ -11,10 +11,11 @@ export interface Menu {
 }
 
 export interface Env extends WEnv {
-  actionManager: ActionManager;
-  ajax: Ajax;
+  actionManager: IActionManager;
+  ajax: IAjax;
   router: IRouter;
   menus: Menu[];
+  rpc: IAjax["rpc"];
 }
 
 export function makeEnvironment(): Env {
@@ -28,11 +29,17 @@ export function makeEnvironment(): Env {
   ];
 
   return {
+    // Base widget requirements
     qweb,
+    getID: idGenerator(),
+
+    // services
     ajax,
     router,
     actionManager,
     menus,
-    getID: idGenerator()
+
+    // helpers
+    rpc: ajax.rpc
   };
 }

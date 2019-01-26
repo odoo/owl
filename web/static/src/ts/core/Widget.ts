@@ -21,6 +21,7 @@ interface Meta<T extends WEnv> {
   vnode: VNode | null;
   isStarted: boolean;
   isMounted: boolean;
+  isDestroyed: boolean;
   parent: Widget<T> | null;
   children: Widget<T>[];
 }
@@ -57,6 +58,7 @@ export class Widget<T extends WEnv> {
       vnode: null,
       isStarted: false,
       isMounted: false,
+      isDestroyed: false,
       parent: p,
       children: []
     };
@@ -91,8 +93,13 @@ export class Widget<T extends WEnv> {
   }
 
   destroy() {
-    if (this.el) {
-      this.el.remove();
+    if (!this._.isDestroyed) {
+      if (this.el) {
+        this.el.remove();
+        delete this._.vnode;
+      }
+      this._.isDestroyed = true;
+      this.destroyed();
     }
   }
 

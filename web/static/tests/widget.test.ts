@@ -249,6 +249,21 @@ describe("destroy method", () => {
     widget.destroy();
     expect(document.contains(widget.el)).toBe(false);
   });
+
+  test("destroying a widget twice only call destroyed once", async () => {
+    let count = 0;
+    class TestWidget extends Widget<WEnv> {
+      destroyed() {
+        count++;
+      }
+    }
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+    widget.destroy();
+    expect(count).toBe(1);
+    widget.destroy();
+    expect(count).toBe(1);
+  });
 });
 
 describe("composition", () => {

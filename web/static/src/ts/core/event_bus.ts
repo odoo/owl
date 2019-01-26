@@ -1,13 +1,25 @@
+/**
+ * We define here a simple event bus: it can
+ * - emit events
+ * - add/remove listeners.
+ *
+ * This is a useful pattern of communication in some cases.
+ */
+
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
 export type Callback = (...args: any[]) => void;
 
-interface Subscription {
+export interface Subscription {
   owner: any;
   callback: Callback;
 }
 
-/**
- * Simple event bus: it can emit events, and add/remove listeners.
- */
+//------------------------------------------------------------------------------
+// EventBus
+//------------------------------------------------------------------------------
 export class EventBus {
   private subscriptions: { [eventType: string]: Subscription[] } = {};
 

@@ -3,7 +3,11 @@ import { idGenerator } from "./core/utils";
 import { WEnv } from "./core/widget";
 import { ActionManager, IActionManager } from "./services/action_manager";
 import { Ajax, IAjax } from "./services/ajax";
-import { Router, IRouter } from "./services/router";
+import { IRouter, Router } from "./services/router";
+
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
 
 export interface Menu {
   title: string;
@@ -11,12 +15,22 @@ export interface Menu {
 }
 
 export interface Env extends WEnv {
+  // services
   actionManager: IActionManager;
   ajax: IAjax;
   router: IRouter;
   menus: Menu[];
+
+  // helpers
   rpc: IAjax["rpc"];
+
+  // configuration
+  debug: boolean;
 }
+
+//------------------------------------------------------------------------------
+// Code
+//------------------------------------------------------------------------------
 
 export function makeEnvironment(): Env {
   const qweb = new QWeb();
@@ -33,13 +47,12 @@ export function makeEnvironment(): Env {
     qweb,
     getID: idGenerator(),
 
-    // services
     ajax,
     router,
     actionManager,
     menus,
 
-    // helpers
-    rpc: ajax.rpc
+    rpc: ajax.rpc,
+    debug: false
   };
 }

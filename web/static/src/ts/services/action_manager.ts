@@ -5,25 +5,29 @@ import { CRM } from "../widgets/crm";
 import { Discuss } from "../widgets/discuss";
 import { Query, IRouter } from "./router";
 
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
 interface Type<T> extends Function {
   new (...args: any[]): T;
 }
 
-interface ClientAction {
+export interface ClientAction {
   type: "client";
   name: string;
 }
 
-interface ActWindowAction {
+export interface ActWindowAction {
   type: "act_window";
   views: string[];
 }
 
-type ActionEvent = "action_ready";
+export type ActionEvent = "action_ready";
 
 export interface IActionManager {
-  doAction(actionID: number);
-  on(event: ActionEvent, owner: any, callback: Callback);
+  doAction(actionID: number): void;
+  on(event: ActionEvent, owner: any, callback: Callback): void;
   getCurrentAction(): ActionWidget | null;
 }
 
@@ -39,6 +43,10 @@ const actions: any[] = [
   { id: 1, title: "Discuss", Widget: Discuss, default: true },
   { id: 2, title: "CRM", Widget: CRM }
 ];
+
+//------------------------------------------------------------------------------
+// Action Manager
+//------------------------------------------------------------------------------
 
 export class ActionManager extends EventBus implements IActionManager {
   router: IRouter;

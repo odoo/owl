@@ -28,6 +28,7 @@ export class Context {
   rootContext: Context;
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
+  shouldProtectContext: boolean = false;
 
   constructor() {
     this.rootContext = this;
@@ -199,7 +200,6 @@ export class QWeb {
 
     const doc = this.parsedTemplates[name];
     const ctx = new Context();
-    ctx.addLine("context = Object.create(context);");
     const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
 
@@ -207,6 +207,9 @@ export class QWeb {
       // this is necessary to prevent some directives (t-forach for ex) to
       // pollute the rendering context by adding some keys in it.
       ctx.code.unshift("let owner = context;");
+    }
+    if (ctx.shouldProtectContext) {
+      ctx.code.unshift("context = Object.create(context);");
     }
 
     if (!ctx.rootNode) {
@@ -620,6 +623,7 @@ const forEachDirective: Directive = {
   name: "foreach",
   priority: 10,
   atNodeEncounter({ node, qweb, ctx }): boolean {
+    ctx.rootContext.shouldProtectContext = true;
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();

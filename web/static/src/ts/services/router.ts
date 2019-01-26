@@ -1,4 +1,4 @@
-import { EventBus } from "../core/event_bus";
+import { EventBus, Callback } from "../core/event_bus";
 
 export type Query = { [key: string]: string };
 
@@ -6,7 +6,16 @@ function clearSlashes(s: string): string {
   return s.replace(/\/$/, "").replace(/^\//, "");
 }
 
-export class Router extends EventBus {
+type RouterEvent = "query_changed";
+
+export interface IRouter {
+  navigate(query: Query);
+  on(event: RouterEvent, owner: any, callback: Callback);
+  getQuery(): Query;
+  formatURL(path: string, query: Query): string;
+}
+
+export class Router extends EventBus implements IRouter {
   currentQuery: Query;
 
   constructor() {

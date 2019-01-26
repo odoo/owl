@@ -3,7 +3,7 @@ import { idGenerator } from "./core/utils";
 import { WEnv } from "./core/widget";
 import { ActionManager } from "./services/action_manager";
 import { Ajax } from "./services/ajax";
-import { Router } from "./services/router";
+import { Router, IRouter } from "./services/router";
 
 export interface Menu {
   title: string;
@@ -13,7 +13,7 @@ export interface Menu {
 export interface Env extends WEnv {
   actionManager: ActionManager;
   ajax: Ajax;
-  router: Router;
+  router: IRouter;
   menus: Menu[];
 }
 

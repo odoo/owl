@@ -9,6 +9,7 @@ const template = `
         <button t-on-click="resetCounter">Reset first counter</button>
         <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
         <button t-on-click="toggle">Toggle  Clock/counters</button>
+        <button t-on-click="updateState({})">Rerender this widget</button>
         <input/>
         <t t-if="state.validcounter">
             <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>

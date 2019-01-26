@@ -1,4 +1,4 @@
-type Callback = (...args: any[]) => void;
+export type Callback = (...args: any[]) => void;
 
 interface Subscription {
   owner: any;

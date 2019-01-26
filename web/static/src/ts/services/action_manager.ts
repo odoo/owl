@@ -3,7 +3,7 @@ import { Widget } from "../core/widget";
 import { Env } from "../env";
 import { CRM } from "../widgets/crm";
 import { Discuss } from "../widgets/discuss";
-import { Query, Router } from "./router";
+import { Query, IRouter } from "./router";
 
 interface Type<T> extends Function {
   new (...args: any[]): T;
@@ -33,10 +33,10 @@ const actions: any[] = [
 ];
 
 export class ActionManager extends EventBus {
-  router: Router;
+  router: IRouter;
   currentAction: ActionWidget | null = null;
 
-  constructor(router: Router) {
+  constructor(router: IRouter) {
     super();
     this.router = router;
     const query = this.router.getQuery();

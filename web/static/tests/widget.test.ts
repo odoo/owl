@@ -280,7 +280,7 @@ describe("composition", () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
-    expect(widget._.children[0]._.parent).toBe(widget);
+    expect(widget.__widget__.children[0].__widget__.parent).toBe(widget);
   });
 
   test("t-refs on widget are widgets", async () => {
@@ -316,12 +316,12 @@ describe("composition", () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
 
-    expect((<any>widget._.vnode!.children![1]).elm).toBe(
-      (<any>widget._.children[0]._.vnode).elm
+    expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
+      (<any>widget.__widget__.children[0].__widget__.vnode).elm
     );
-    await widget._.children[0].render();
-    expect((<any>widget._.vnode!.children![1]).elm).toBe(
-      (<any>widget._.children[0]._.vnode).elm
+    await widget.__widget__.children[0].render();
+    expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
+      (<any>widget.__widget__.children[0].__widget__.vnode).elm
     );
   });
 });

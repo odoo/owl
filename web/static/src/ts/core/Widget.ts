@@ -27,12 +27,12 @@ interface Meta<T extends WEnv> {
 }
 
 export class Widget<T extends WEnv> {
-  _: Meta<WEnv>;
+  __widget__: Meta<WEnv>;
   name: string = "widget";
   template: string = "<div></div>";
 
   get el(): HTMLElement | null {
-    return this._.vnode ? (<any>this)._.vnode.elm : null;
+    return this.__widget__.vnode ? (<any>this).__widget__.vnode.elm : null;
   }
 
   env: T;
@@ -48,12 +48,12 @@ export class Widget<T extends WEnv> {
     let p: Widget<T> | null = null;
     if (parent instanceof Widget) {
       p = parent;
-      parent._.children.push(this);
+      parent.__widget__.children.push(this);
       this.env = Object.create(parent.env);
     } else {
       this.env = parent;
     }
-    this._ = {
+    this.__widget__ = {
       id: this.env.getID(),
       vnode: null,
       isStarted: false,
@@ -82,23 +82,22 @@ export class Widget<T extends WEnv> {
 
     if (document.body.contains(target)) {
       this.visitSubTree(w => {
-        if (!w._.isMounted && this.el!.contains(w.el)) {
-          w._.isMounted = true;
+        if (!w.__widget__.isMounted && this.el!.contains(w.el)) {
+          w.__widget__.isMounted = true;
           w.mounted();
         }
       });
     }
-    // }
     return vnode;
   }
 
   destroy() {
-    if (!this._.isDestroyed) {
+    if (!this.__widget__.isDestroyed) {
       if (this.el) {
         this.el.remove();
-        delete this._.vnode;
+        delete this.__widget__.vnode;
       }
-      this._.isDestroyed = true;
+      this.__widget__.isDestroyed = true;
       this.destroyed();
     }
   }
@@ -109,7 +108,7 @@ export class Widget<T extends WEnv> {
    */
   async updateState(newState: Object) {
     Object.assign(this.state, newState);
-    if (this._.isStarted) {
+    if (this.__widget__.isStarted) {
       await this.render();
     }
   }
@@ -120,16 +119,16 @@ export class Widget<T extends WEnv> {
 
   async render(): Promise<VNode> {
     const vnode = await this._render();
-    this._.vnode = patch(
-      this._.vnode || document.createElement(vnode.sel!),
+    this.__widget__.vnode = patch(
+      this.__widget__.vnode || document.createElement(vnode.sel!),
       vnode
     );
-    return this._.vnode;
+    return this.__widget__.vnode;
   }
 
   private async _start(): Promise<void> {
     await this.willStart();
-    this._.isStarted = true;
+    this.__widget__.isStarted = true;
   }
 
   private async _render(): Promise<VNode> {
@@ -145,7 +144,7 @@ export class Widget<T extends WEnv> {
     // will update its own vnode representation without the knowledge of the
     // parent widget.  With this, we make sure that the parent widget will be
     // able to patch itself properly after
-    vnode.key = this._.id;
+    vnode.key = this.__widget__.id;
     return Promise.all(promises).then(() => vnode);
   }
 
@@ -153,10 +152,10 @@ export class Widget<T extends WEnv> {
    * Only called by qweb t-widget directive
    */
   _mount(vnode: VNode) {
-    this._.vnode = vnode;
-    if (this._.parent) {
-      if (this._.parent._.isMounted) {
-        this._.isMounted = true;
+    this.__widget__.vnode = vnode;
+    if (this.__widget__.parent) {
+      if (this.__widget__.parent.__widget__.isMounted) {
+        this.__widget__.isMounted = true;
         this.mounted();
       }
     }
@@ -164,7 +163,7 @@ export class Widget<T extends WEnv> {
 
   private visitSubTree(callback: (w: Widget<T>) => void) {
     callback(this);
-    for (let child of this._.children) {
+    for (let child of this.__widget__.children) {
       child.visitSubTree(callback);
     }
   }

@@ -49,7 +49,7 @@ export class Widget<T extends WEnv> {
     if (parent instanceof Widget) {
       p = parent;
       parent.__widget__.children.push(this);
-      this.env = Object.create(parent.env);
+      this.env = parent.env;
     } else {
       this.env = parent;
     }

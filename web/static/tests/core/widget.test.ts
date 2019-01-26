@@ -97,6 +97,11 @@ describe("basic widget properties", () => {
     await widget.mount(fixture);
     expect(renderCalls).toBe(1);
   });
+
+  test("keep a reference to env", async () => {
+    const widget = new Widget(env);
+    expect(widget.env).toBe(env);
+  });
 });
 
 describe("lifecycle hooks", () => {
@@ -323,5 +328,12 @@ describe("composition", () => {
     expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
       (<any>widget.__widget__.children[0].__widget__.vnode).elm
     );
+  });
+
+  test("parent env is propagated to child widgets", async () => {
+    const widget = new WidgetA(env);
+    await widget.mount(fixture);
+
+    expect(widget.__widget__.children[0].env).toBe(env);
   });
 });

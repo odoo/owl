@@ -1,17 +1,22 @@
-import { VNode } from "../../../libs/snabbdom/src/vnode";
 import h from "../../../libs/snabbdom/src/h";
+import { VNode } from "../../../libs/snabbdom/src/vnode";
+
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
 
 export type EvalContext = { [key: string]: any };
 export type RawTemplate = string;
 export type CompiledTemplate<T> = (context: EvalContext, extra: any) => T;
+type ParsedTemplate = Document;
 
 const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
   ","
 );
 
-type ParsedTemplate = Document;
-
+//------------------------------------------------------------------------------
 // Compilation Context
+//------------------------------------------------------------------------------
 export class Context {
   nextID: number = 1;
   code: string[] = [];
@@ -83,6 +88,9 @@ export class Context {
   }
 }
 
+//------------------------------------------------------------------------------
+// QWeb rendering engine
+//------------------------------------------------------------------------------
 export class QWeb {
   rawTemplates: { [name: string]: RawTemplate } = {};
   parsedTemplates: { [name: string]: ParsedTemplate } = {};
@@ -451,8 +459,8 @@ export interface Directive {
   // if return true, then directive is fully applied and there is no need to
   // keep processing node. Otherwise, we keep going.
   atNodeEncounter?(info: CompilationInfo): boolean;
-  atNodeCreation?(info: CompilationInfo);
-  finalize?(info: CompilationInfo);
+  atNodeCreation?(info: CompilationInfo): void;
+  finalize?(info: CompilationInfo): void;
 }
 
 function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {

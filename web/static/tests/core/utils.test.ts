@@ -1,4 +1,4 @@
-import { escape, htmlTrim, idGenerator } from "../src/ts/core/utils";
+import { escape, htmlTrim, idGenerator } from "../../src/ts/core/utils";
 
 describe("escape", () => {
   test("normal strings", () => {

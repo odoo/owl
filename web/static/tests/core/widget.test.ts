@@ -1,6 +1,6 @@
-import { QWeb } from "../src/ts/core/qweb_vdom";
-import { idGenerator } from "../src/ts/core/utils";
-import { WEnv, Widget } from "../src/ts/core/widget";
+import { QWeb } from "../../src/ts/core/qweb_vdom";
+import { idGenerator } from "../../src/ts/core/utils";
+import { WEnv, Widget } from "../../src/ts/core/widget";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

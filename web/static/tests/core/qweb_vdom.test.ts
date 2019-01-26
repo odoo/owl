@@ -1,7 +1,7 @@
-import sdAttributes from "../libs/snabbdom/src/modules/attributes";
-import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
-import { init } from "../libs/snabbdom/src/snabbdom";
-import { EvalContext, QWeb } from "../src/ts/core/qweb_vdom";
+import sdAttributes from "../../libs/snabbdom/src/modules/attributes";
+import sdListeners from "../../libs/snabbdom/src/modules/eventlisteners";
+import { init } from "../../libs/snabbdom/src/snabbdom";
+import { EvalContext, QWeb } from "../../src/ts/core/qweb_vdom";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

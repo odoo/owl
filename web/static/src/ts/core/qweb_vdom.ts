@@ -27,10 +27,11 @@ export class Context {
   indentLevel: number = 0;
   rootContext: Context;
   caller: Element | undefined;
+  shouldDefineOwner: boolean = false;
 
   constructor() {
     this.rootContext = this;
-    this.addLine("let h = this.h");
+    this.addLine("let h = this.h;");
   }
 
   generateID(): number {
@@ -78,9 +79,7 @@ export class Context {
 
   addLine(line: string) {
     const prefix = new Array(this.indentLevel).join("\t");
-    const lastChar = line[line.length - 1];
-    const suffix = lastChar !== "}" && lastChar !== "{" ? ";" : "";
-    this.code.push(prefix + line + suffix);
+    this.code.push(prefix + line);
   }
 
   getValue(val: any): any {
@@ -200,17 +199,20 @@ export class QWeb {
 
     const doc = this.parsedTemplates[name];
     const ctx = new Context();
-    // this is necessary to prevent some directives (t-forach for ex) to
-    // pollute the rendering context by adding some keys in it.
-    ctx.addLine("let owner = context");
-    ctx.addLine("context = Object.create(context)");
+    ctx.addLine("context = Object.create(context);");
     const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
+
+    if (ctx.shouldDefineOwner) {
+      // this is necessary to prevent some directives (t-forach for ex) to
+      // pollute the rendering context by adding some keys in it.
+      ctx.code.unshift("let owner = context;");
+    }
 
     if (!ctx.rootNode) {
       throw new Error("A template should have one root node");
     }
-    ctx.addLine(`return vn${ctx.rootNode}`);
+    ctx.addLine(`return vn${ctx.rootNode};`);
     let template = new Function(
       "context",
       "extra",
@@ -236,12 +238,12 @@ export class QWeb {
       // this is a text node, there are no directive to apply
       let text = node.textContent!;
       if (ctx.parentNode) {
-        ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`})`);
+        ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
       } else {
         // this is an unusual situation: this text node is the result of the
         // template rendering.
         let nodeID = ctx.generateID();
-        ctx.addLine(`let vn${nodeID} = {text: \`${text}\`}`);
+        ctx.addLine(`let vn${nodeID} = {text: \`${text}\`};`);
         ctx.rootContext.rootNode = nodeID;
         ctx.rootContext.parentNode = nodeID;
       }
@@ -332,7 +334,7 @@ export class QWeb {
       // regular attributes
       if (!name.startsWith("t-")) {
         const attID = ctx.generateID();
-        ctx.addLine(`let _${attID} = '${value}'`);
+        ctx.addLine(`let _${attID} = '${value}';`);
         attrs.push(`${name}: _${attID}`);
       }
 
@@ -341,7 +343,7 @@ export class QWeb {
         const attName = name.slice(6);
         const formattedValue = this._formatExpression(value!);
         const attID = ctx.generateID();
-        ctx.addLine(`let _${attID} = ${formattedValue}`);
+        ctx.addLine(`let _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);
       }
 
@@ -352,40 +354,40 @@ export class QWeb {
           s => "${" + this._formatExpression(s.slice(2, -2)) + "}"
         );
         const attID = ctx.generateID();
-        ctx.addLine(`let _${attID} = \`${formattedExpr}\``);
+        ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
         attrs.push(`${attName}: _${attID}`);
       }
 
       // t-att= attributes
       if (name === "t-att") {
         let id = ctx.generateID();
-        ctx.addLine(`let _${id} = ${this._formatExpression(value!)}`);
+        ctx.addLine(`let _${id} = ${this._formatExpression(value!)};`);
         tattrs.push(id);
       }
     }
     let nodeID = ctx.generateID();
     let p =
       attrs.length + tattrs.length > 0 ? `{attrs:{${attrs.join(",")}}}` : "{}";
-    ctx.addLine(`let c${nodeID} = [], p${nodeID} = ${p}`);
+    ctx.addLine(`let c${nodeID} = [], p${nodeID} = ${p};`);
     for (let id of tattrs) {
       ctx.addLine(`if (_${id} instanceof Array) {`);
       ctx.indent();
-      ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1]`);
+      ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
       ctx.dedent();
       ctx.addLine(`} else {`);
       ctx.indent();
       ctx.addLine(`for (let key in _${id}) {`);
       ctx.indent();
-      ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key]`);
+      ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key];`);
       ctx.dedent();
       ctx.addLine(`}`);
       ctx.dedent();
       ctx.addLine(`}`);
     }
     ctx.addLine(`
-      let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID})`);
+      let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
     if (ctx.parentNode) {
-      ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID})`);
+      ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
     }
 
     return nodeID;
@@ -471,7 +473,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
 
   if (typeof value === "string") {
     const exprID = ctx.generateID();
-    ctx.addLine(`let e${exprID} = ${qweb._formatExpression(value)}`);
+    ctx.addLine(`let e${exprID} = ${qweb._formatExpression(value)};`);
     ctx.addLine(`if (e${exprID} || e${exprID} === 0) {`);
     ctx.indent();
     let text = `e${exprID}`;
@@ -480,12 +482,12 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
       throw new Error("Should not have a text node without a parent");
     }
     if (ctx.escaping) {
-      ctx.addLine(`c${ctx.parentNode}.push({text: ${text}})`);
+      ctx.addLine(`c${ctx.parentNode}.push({text: ${text}});`);
     } else {
       ctx.addLine(`p${ctx.parentNode}.hook = {
             create: (_, n) => n.elm.innerHTML = e${exprID},
             update: (_, n) => n.elm.innerHTML = e${exprID},
-        }`); // p${ctx.parentNode}.elm.innerHTML = e${exprID}
+        };`); // p${ctx.parentNode}.elm.innerHTML = e${exprID}
     }
     ctx.dedent();
     if (node.childNodes.length) {
@@ -621,26 +623,26 @@ const forEachDirective: Directive = {
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
-    ctx.addLine(`let _${arrayID} = ${qweb._formatExpression(elems)}`);
+    ctx.addLine(`let _${arrayID} = ${qweb._formatExpression(elems)};`);
     ctx.addLine(
       `if (typeof _${arrayID} === 'number') { _${arrayID} = Array.from(Array(_${arrayID}).keys())}`
     );
     let keysID = ctx.generateID();
     ctx.addLine(
-      `let _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID})`
+      `let _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`
     );
     let valuesID = ctx.generateID();
     ctx.addLine(
-      `let _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID})`
+      `let _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`
     );
     ctx.addLine(`for (let i = 0; i < _${keysID}.length; i++) {`);
     ctx.indent();
-    ctx.addLine(`context.${name}_first = i === 0`);
-    ctx.addLine(`context.${name}_last = i === _${keysID}.length - 1`);
-    ctx.addLine(`context.${name}_parity = i % 2 === 0 ? 'even' : 'odd'`);
-    ctx.addLine(`context.${name}_index = i`);
-    ctx.addLine(`context.${name} = _${keysID}[i]`);
-    ctx.addLine(`context.${name}_value = _${valuesID}[i]`);
+    ctx.addLine(`context.${name}_first = i === 0;`);
+    ctx.addLine(`context.${name}_last = i === _${keysID}.length - 1;`);
+    ctx.addLine(`context.${name}_parity = i % 2 === 0 ? 'even' : 'odd';`);
+    ctx.addLine(`context.${name}_index = i;`);
+    ctx.addLine(`context.${name} = _${keysID}[i];`);
+    ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
     const nodeCopy = <Element>node.cloneNode(true);
     nodeCopy.removeAttribute("t-foreach");
     qweb._compileNode(nodeCopy, ctx);
@@ -654,6 +656,7 @@ const onDirective: Directive = {
   name: "on",
   priority: 90,
   atNodeCreation({ ctx, fullName, value, nodeID, qweb }) {
+    ctx.rootContext.shouldDefineOwner = true;
     const eventName = fullName.slice(5);
     let extraArgs;
     let handler = value.replace(/\(.*\)/, function(args) {
@@ -663,7 +666,7 @@ const onDirective: Directive = {
     ctx.addLine(
       `p${nodeID}.on = {${eventName}: context['${handler}'].bind(owner${
         extraArgs ? ", " + qweb._formatExpression(extraArgs) : ""
-      })}`
+      })};`
     );
   }
 };
@@ -675,34 +678,35 @@ const refDirective: Directive = {
     let ref = node.getAttribute("t-ref");
     ctx.addLine(`p${ctx.parentNode}.hook = {
             create: (_, n) => context.refs['${ref}'] = n.elm,
-        }`);
+        };`);
   }
 };
 
 const widgetDirective: Directive = {
   name: "widget",
   priority: 100,
-  atNodeEncounter({ ctx, fullName, value, node, qweb }): boolean {
+  atNodeEncounter({ ctx, value, node }): boolean {
+    ctx.rootContext.shouldDefineOwner = true;
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();
-    ctx.addLine(`let _${dummyID} = {} // DUMMY`);
-    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length`);
-    ctx.addLine(`c${ctx.parentNode}.push(_${dummyID})`);
+    ctx.addLine(`let _${dummyID} = {}; // DUMMY`);
+    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+    ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     let props = node.getAttribute("t-props");
     let widgetID = ctx.generateID();
     ctx.addLine(
-      `let _${widgetID} = new context.widgets['${value}'](owner, ${props})`
+      `let _${widgetID} = new context.widgets['${value}'](owner, ${props});`
     );
     ctx.addLine(
       `let def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)}}})`
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)}}});`
     );
-    ctx.addLine(`extra.promises.push(def${defID})`);
+    ctx.addLine(`extra.promises.push(def${defID});`);
 
     let ref = node.getAttribute("t-ref");
     if (ref) {
-      ctx.addLine(`context.refs['${ref}'] = _${widgetID}`);
+      ctx.addLine(`context.refs['${ref}'] = _${widgetID};`);
     }
     return true;
   }

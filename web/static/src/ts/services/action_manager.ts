@@ -1,6 +1,7 @@
 import { EventBus, Callback } from "../core/event_bus";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
+import { Registry } from "../registry";
 import { CRM } from "../widgets/crm";
 import { Discuss } from "../widgets/discuss";
 import { Query, IRouter } from "./router";
@@ -50,11 +51,13 @@ const actions: any[] = [
 
 export class ActionManager extends EventBus implements IActionManager {
   router: IRouter;
+  registry: Registry;
   currentAction: ActionWidget | null = null;
 
-  constructor(router: IRouter) {
+  constructor(router: IRouter, registry: Registry) {
     super();
     this.router = router;
+    this.registry = registry;
     const query = this.router.getQuery();
     this.update(query);
     this.router.on("query_changed", this, this.update);

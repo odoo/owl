@@ -1,6 +1,7 @@
 import { QWeb } from "./core/qweb_vdom";
 import { idGenerator, memoize } from "./core/utils";
 import { WEnv } from "./core/widget";
+import { registry } from "./registry";
 import { ActionManager, IActionManager } from "./services/action_manager";
 import { Ajax, IAjax } from "./services/ajax";
 import { IRouter, Router } from "./services/router";
@@ -46,7 +47,7 @@ export const makeEnvironment = memoize(function(): Env {
   const qweb = new QWeb();
   const router = new Router();
   const ajax = new Ajax();
-  const actionManager = new ActionManager(router);
+  const actionManager = new ActionManager(router, registry);
   const menus = [
     { title: "Discuss", actionID: 1 },
     { title: "CRM", actionID: 2 }

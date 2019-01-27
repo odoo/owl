@@ -4,8 +4,9 @@ import { init } from "../../../libs/snabbdom/src/snabbdom";
 import { VNode } from "../../../libs/snabbdom/src/vnode";
 import { QWeb } from "./qweb_vdom";
 
-const patch = init([sdListeners, sdAttrs]);
-
+//------------------------------------------------------------------------------
+// Types/helpers
+//------------------------------------------------------------------------------
 export interface WEnv {
   qweb: QWeb;
   getID(): number;
@@ -26,6 +27,11 @@ interface Meta<T extends WEnv> {
   children: { [key: number]: Widget<T> };
 }
 
+const patch = init([sdListeners, sdAttrs]);
+
+//------------------------------------------------------------------------------
+// Widget
+//------------------------------------------------------------------------------
 export class Widget<T extends WEnv> {
   __widget__: Meta<WEnv>;
   name: string = "widget";

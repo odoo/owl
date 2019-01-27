@@ -1,4 +1,9 @@
-import { escape, htmlTrim, idGenerator } from "../../src/ts/core/utils";
+import {
+  escape,
+  htmlTrim,
+  idGenerator,
+  memoize
+} from "../../src/ts/core/utils";
 
 describe("escape", () => {
   test("normal strings", () => {
@@ -32,5 +37,25 @@ describe("idGenerator", () => {
     expect(gen()).toBe(1);
     expect(gen()).toBe(2);
     expect(gen()).toBe(3);
+  });
+});
+
+describe("memoize", () => {
+  test("return correct value", () => {
+    const f = memoize((a, b) => a + b);
+    expect(f(1, 3)).toBe(4);
+  });
+
+  test("does not recompute if not needed", () => {
+    let nCalls = 0;
+    function origFunction(a: number, b: number): number {
+      nCalls++;
+      return a + b;
+    }
+    const memoized = memoize(origFunction);
+
+    expect(memoized(1, 3)).toBe(4);
+    expect(memoized(1, 3)).toBe(4);
+    expect(nCalls).toBe(1);
   });
 });

@@ -15,7 +15,7 @@ let wl: any[] = [];
 (<any>window).wl = wl;
 
 interface Meta<T extends WEnv> {
-  id: number;
+  readonly id: number;
   // name: string;
   // template: string;
   vnode: VNode | null;

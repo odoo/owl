@@ -1,5 +1,5 @@
 import { QWeb } from "./core/qweb_vdom";
-import { idGenerator } from "./core/utils";
+import { idGenerator, memoize } from "./core/utils";
 import { WEnv } from "./core/widget";
 import { ActionManager, IActionManager } from "./services/action_manager";
 import { Ajax, IAjax } from "./services/ajax";
@@ -32,7 +32,17 @@ export interface Env extends WEnv {
 // Code
 //------------------------------------------------------------------------------
 
-export function makeEnvironment(): Env {
+/**
+ * makeEnvironment returns the main environment for the application.
+ *
+ * Note that it does not make much sense (except for tests) to have more than
+ * one environment. For example, with two environment, the router code in one
+ * environment will probably interfere with the code from the other environment.
+ *
+ * For this reason, the result of makeEnvironment is memoized: every call to
+ * this function will actually return the same environment.
+ */
+export const makeEnvironment = memoize(function(): Env {
   const qweb = new QWeb();
   const router = new Router();
   const ajax = new Ajax();
@@ -55,4 +65,4 @@ export function makeEnvironment(): Env {
     rpc: ajax.rpc,
     debug: false
   };
-}
+});

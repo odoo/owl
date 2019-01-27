@@ -31,3 +31,23 @@ export function idGenerator(): (() => number) {
   let nextID = 1;
   return () => nextID++;
 }
+
+export type HashFn = (args: any[]) => string;
+
+export function memoize<R, T extends (...args: any[]) => R>(
+  f: T,
+  hash?: HashFn
+): T {
+  if (!hash) {
+    hash = args => args.map(a => String(a)).join(",");
+  }
+  let cache: { [key: string]: R } = {};
+  function memoizedFunction(...args: any[]) {
+    let hashValue = hash!(args);
+    if (!(hashValue in cache)) {
+      cache[hashValue] = f(...args);
+    }
+    return cache[hashValue];
+  }
+  return memoizedFunction as T;
+}

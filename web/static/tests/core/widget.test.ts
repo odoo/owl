@@ -113,9 +113,19 @@ describe("basic widget properties", () => {
     expect(renderCalls).toBe(1);
   });
 
-  test("keep a reference to env", async () => {
+  test("keeps a reference to env", async () => {
     const widget = new Widget(env);
     expect(widget.env).toBe(env);
+  });
+
+  test("do not remove previously rendered dom if not necessary", async () => {
+    const widget = new Widget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div></div>`);
+    widget.el!.appendChild(document.createElement("span"));
+    expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
+    widget.render();
+    expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
   });
 });
 

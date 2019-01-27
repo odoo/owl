@@ -1,5 +1,8 @@
 import { EventBus, Callback } from "../core/event_bus";
 
+//------------------------------------------------------------------------------
+// Types and helpers
+//------------------------------------------------------------------------------
 export type Query = { [key: string]: string };
 
 function clearSlashes(s: string): string {
@@ -9,12 +12,15 @@ function clearSlashes(s: string): string {
 type RouterEvent = "query_changed";
 
 export interface IRouter {
-  navigate(query: Query);
-  on(event: RouterEvent, owner: any, callback: Callback);
+  navigate(query: Query): void;
+  on(event: RouterEvent, owner: any, callback: Callback): void;
   getQuery(): Query;
   formatURL(path: string, query: Query): string;
 }
 
+//------------------------------------------------------------------------------
+// Router
+//------------------------------------------------------------------------------
 export class Router extends EventBus implements IRouter {
   currentQuery: Query;
 

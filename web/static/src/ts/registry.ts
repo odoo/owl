@@ -14,23 +14,20 @@ type ActionWidget = Type<Widget<Env>>;
 // Registry code
 //------------------------------------------------------------------------------
 export class Registry {
-  actions: { [key: string]: ActionWidget } = {};
+  registries: { [key: string]: { [key: string]: any } } = {
+    action: {}
+  };
 
-  addAction(name: string, action: ActionWidget): Registry {
-    return this.addToRegistry(this.actions, name, action);
-  }
-
-  private addToRegistry<T>(
-    map: { [k: string]: T },
-    name: string,
-    elem: T
-  ): Registry {
-    if (name in map) {
+  add(type: "action", name: string, action: ActionWidget): Registry {
+    if (name in this.registries[type]) {
       throw new Error(`Key ${name} already exists!`);
     }
-    map[name] = elem;
+    this.registries[type][name] = action;
     return this;
   }
 }
 
+//------------------------------------------------------------------------------
+// Main registry instance
+//------------------------------------------------------------------------------
 export const registry = new Registry();

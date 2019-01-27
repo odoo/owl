@@ -8,7 +8,7 @@ import { RootWidget } from "./widgets/root_widget";
 //------------------------------------------------------------------------------
 // Prepare application registry
 //------------------------------------------------------------------------------
-registry.addAction("discuss", Discuss);
+registry.add("action", "discuss", Discuss);
 
 //------------------------------------------------------------------------------
 // Application bootstrapping

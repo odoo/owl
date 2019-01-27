@@ -98,6 +98,9 @@ export class Widget<T extends WEnv> {
 
   destroy() {
     if (!this.__widget__.isDestroyed) {
+      for (let id in this.__widget__.children) {
+        this.__widget__.children[id].destroy();
+      }
       if (this.__widget__.isMounted) {
         this.willUnmount();
       }

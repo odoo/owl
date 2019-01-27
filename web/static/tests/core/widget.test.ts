@@ -312,6 +312,66 @@ describe("lifecycle hooks", () => {
       "destroyed"
     ]);
   });
+
+  test("hooks are called in proper order in widget creation/destruction", async () => {
+    let steps: string[] = [];
+    class ParentWidget extends Widget<WEnv> {
+      name = "a";
+      template = `
+          <div><t t-widget="child"/></div>`;
+      widgets = { child: ChildWidget };
+      constructor(parent) {
+        super(parent);
+        steps.push("p init");
+      }
+      async willStart() {
+        steps.push("p willstart");
+      }
+      mounted() {
+        steps.push("p mounted");
+      }
+      willUnmount() {
+        steps.push("p willunmount");
+      }
+      destroyed() {
+        steps.push("p destroyed");
+      }
+    }
+
+    class ChildWidget extends Widget<WEnv> {
+      constructor(parent) {
+        super(parent);
+        steps.push("c init");
+      }
+      async willStart() {
+        steps.push("c willstart");
+      }
+      mounted() {
+        steps.push("c mounted");
+      }
+      willUnmount() {
+        steps.push("c willunmount");
+      }
+      destroyed() {
+        steps.push("c destroyed");
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    widget.destroy();
+    expect(steps).toEqual([
+      "p init",
+      "p willstart",
+      "c init",
+      "c willstart",
+      "p mounted",
+      "c mounted",
+      "c willunmount",
+      "c destroyed",
+      "p willunmount",
+      "p destroyed"
+    ]);
+  });
 });
 
 describe("destroy method", () => {
@@ -338,6 +398,17 @@ describe("destroy method", () => {
     expect(count).toBe(1);
     widget.destroy();
     expect(count).toBe(1);
+  });
+
+  test("destroying a parent also destroys its children", async () => {
+    const parent = new WidgetA(env);
+    await parent.mount(fixture);
+
+    const child = children(parent)[0];
+
+    expect(child.__widget__.isDestroyed).toBe(false);
+    parent.destroy();
+    expect(child.__widget__.isDestroyed).toBe(true);
   });
 
   test("destroy remove the parent/children link", async () => {

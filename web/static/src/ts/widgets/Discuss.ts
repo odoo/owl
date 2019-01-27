@@ -56,10 +56,5 @@ export class Discuss extends Widget<Env> {
 
 class ColorWidget extends Widget<Env> {
   name = "colorwidget";
-  template = `<div>Current Color: <t t-esc="state.color"/></div>`;
-  state: { color: "red" | "blue" };
-  constructor(parent: Widget<Env>, props: { color: "red" | "blue" }) {
-    super(parent);
-    this.state = { color: props.color };
-  }
+  template = `<div>Current Color: <t t-esc="props.color"/></div>`;
 }

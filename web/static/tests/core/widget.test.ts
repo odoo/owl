@@ -516,6 +516,25 @@ describe("composition", () => {
 
     expect(children(widget)[0].env).toBe(env);
   });
+
+  test("rerendering a widget with a sub widget", async () => {
+    class ParentWidget extends Widget<WEnv> {
+      template = `<div><t t-widget="Counter"/></div>`;
+      widgets = { Counter };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    const button = fixture.getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div>1<button>Inc</button></div></div>"
+    );
+    await widget.render();
+    expect(fixture.innerHTML).toBe(
+      "<div><div>1<button>Inc</button></div></div>"
+    );
+  });
 });
 
 describe("props evaluation (with t-props directive)", () => {

@@ -25,6 +25,8 @@ interface Meta<T extends WEnv> {
   isDestroyed: boolean;
   parent: Widget<T> | null;
   children: { [key: number]: Widget<T> };
+  // children mapping: from templateID to widgetID
+  cmap: { [key: number]: number };
 }
 
 const patch = init([sdListeners, sdAttrs]);
@@ -43,6 +45,7 @@ export class Widget<T extends WEnv> {
 
   env: T;
   state: Object = {};
+  props: any;
   refs: { [key: string]: Widget<T> | HTMLElement | undefined } = {}; // either HTMLElement or Widget
 
   //--------------------------------------------------------------------------
@@ -51,6 +54,7 @@ export class Widget<T extends WEnv> {
 
   constructor(parent: Widget<T> | T, props?: any) {
     wl.push(this);
+    this.props = props;
     let id: number;
     let p: Widget<T> | null = null;
     if (parent instanceof Widget) {
@@ -69,7 +73,8 @@ export class Widget<T extends WEnv> {
       isMounted: false,
       isDestroyed: false,
       parent: p,
-      children: {}
+      children: {},
+      cmap: {}
     };
   }
 
@@ -137,6 +142,11 @@ export class Widget<T extends WEnv> {
     if (this.__widget__.isStarted) {
       await this.render();
     }
+  }
+
+  updateProps(props?: any): Promise<void> {
+    this.props = props;
+    return this.render();
   }
 
   //--------------------------------------------------------------------------

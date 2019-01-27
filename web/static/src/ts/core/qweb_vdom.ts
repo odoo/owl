@@ -691,11 +691,6 @@ const widgetDirective: Directive = {
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.rootContext.shouldDefineOwner = true;
-    let dummyID = ctx.generateID();
-    let defID = ctx.generateID();
-    ctx.addLine(`let _${dummyID} = {}; // DUMMY`);
-    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
-    ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     let props = node.getAttribute("t-props");
     if (props) {
       props = props.trim();
@@ -713,21 +708,48 @@ const widgetDirective: Directive = {
         props = qweb._formatExpression(props);
       }
     }
+    let dummyID = ctx.generateID();
+    let defID = ctx.generateID();
     let widgetID = ctx.generateID();
+    ctx.addLine(`let _${dummyID} = {}; // DUMMY`);
+    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+    ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
+    ctx.addLine(`let def${defID};`);
+
+    ctx.addLine(`if (${widgetID} in context.__widget__.cmap) {`);
+    ctx.indent();
+    ctx.addLine(
+      `let curWidget = context.__widget__.children[context.__widget__.cmap[${widgetID}]]`
+    );
+    ctx.addLine(
+      `def${defID} = curWidget.updateProps(${props}).then(()=>{vnode=curWidget.__widget__.vnode;c${
+        ctx.parentNode
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {remove(){curWidget.destroy()}}});`
+    );
+    ctx.dedent();
+    ctx.addLine("} else {");
+    ctx.indent();
+
     ctx.addLine(
       `let _${widgetID} = new context.widgets['${value}'](owner, ${props});`
     );
     ctx.addLine(
-      `let def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${
+      `context.__widget__.cmap[${widgetID}] = _${widgetID}.__widget__.id`
+    );
+    ctx.addLine(
+      `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${
         ctx.parentNode
       }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)},remove(){_${widgetID}.destroy()}}});`
     );
-    ctx.addLine(`extra.promises.push(def${defID});`);
 
     let ref = node.getAttribute("t-ref");
     if (ref) {
       ctx.addLine(`context.refs['${ref}'] = _${widgetID};`);
     }
+    ctx.dedent();
+    ctx.addLine("}");
+    ctx.addLine(`extra.promises.push(def${defID});`);
+
     return true;
   }
 };

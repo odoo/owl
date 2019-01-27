@@ -31,7 +31,12 @@ function nextTick(): Promise<void> {
   return Promise.resolve();
 }
 
-// Test widget
+function children(w: Widget<WEnv>): Widget<WEnv>[] {
+  const childrenMap = w.__widget__.children;
+  return Object.keys(childrenMap).map(id => childrenMap[id]);
+}
+
+// Test widgets
 class Counter extends Widget<WEnv> {
   name = "counter";
   template = `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`;
@@ -42,6 +47,16 @@ class Counter extends Widget<WEnv> {
   inc() {
     this.updateState({ counter: this.state.counter + 1 });
   }
+}
+
+class WidgetA extends Widget<WEnv> {
+  name = "a";
+  template = `<div>Hello<t t-widget="b"/></div>`;
+  widgets = { b: WidgetB };
+}
+
+class WidgetB extends Widget<WEnv> {
+  template = `<div>world</div>`;
 }
 
 //------------------------------------------------------------------------------
@@ -269,23 +284,26 @@ describe("destroy method", () => {
     widget.destroy();
     expect(count).toBe(1);
   });
+
+  test("destroy remove the parent/children link", async () => {
+    const parent = new WidgetA(env);
+    await parent.mount(fixture);
+
+    const child = children(parent)[0];
+    expect(child.__widget__.parent).toBe(parent);
+    expect(children(parent).length).toBe(1);
+    child.destroy();
+    expect(child.__widget__.parent).toBe(null);
+    expect(children(parent).length).toBe(0);
+  });
 });
 
 describe("composition", () => {
-  class WidgetA extends Widget<WEnv> {
-    name = "a";
-    template = `<div>Hello<t t-widget="b"/></div>`;
-    widgets = { b: WidgetB };
-  }
-  class WidgetB extends Widget<WEnv> {
-    template = `<div>world</div>`;
-  }
-
   test("a widget with a sub widget", async () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
-    expect(widget.__widget__.children[0].__widget__.parent).toBe(widget);
+    expect(children(widget)[0].__widget__.parent).toBe(widget);
   });
 
   test("t-refs on widget are widgets", async () => {
@@ -322,11 +340,11 @@ describe("composition", () => {
     await widget.mount(fixture);
 
     expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
-      (<any>widget.__widget__.children[0].__widget__.vnode).elm
+      (<any>children(widget)[0].__widget__.vnode).elm
     );
-    await widget.__widget__.children[0].render();
+    await children(widget)[0].render();
     expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
-      (<any>widget.__widget__.children[0].__widget__.vnode).elm
+      (<any>children(widget)[0].__widget__.vnode).elm
     );
   });
 
@@ -334,6 +352,6 @@ describe("composition", () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
 
-    expect(widget.__widget__.children[0].env).toBe(env);
+    expect(children(widget)[0].env).toBe(env);
   });
 });

@@ -23,7 +23,7 @@ interface Meta<T extends WEnv> {
   isMounted: boolean;
   isDestroyed: boolean;
   parent: Widget<T> | null;
-  children: Widget<T>[];
+  children: { [key: number]: Widget<T> };
 }
 
 export class Widget<T extends WEnv> {
@@ -45,22 +45,25 @@ export class Widget<T extends WEnv> {
 
   constructor(parent: Widget<T> | T, props?: any) {
     wl.push(this);
+    let id: number;
     let p: Widget<T> | null = null;
     if (parent instanceof Widget) {
       p = parent;
-      parent.__widget__.children.push(this);
       this.env = parent.env;
+      id = this.env.getID();
+      parent.__widget__.children[id] = this;
     } else {
       this.env = parent;
+      id = this.env.getID();
     }
     this.__widget__ = {
-      id: this.env.getID(),
+      id: id,
       vnode: null,
       isStarted: false,
       isMounted: false,
       isDestroyed: false,
       parent: p,
-      children: []
+      children: {}
     };
   }
 
@@ -96,6 +99,11 @@ export class Widget<T extends WEnv> {
       if (this.el) {
         this.el.remove();
         delete this.__widget__.vnode;
+      }
+      if (this.__widget__.parent) {
+        let id = this.__widget__.id;
+        delete this.__widget__.parent.__widget__.children[id];
+        this.__widget__.parent = null;
       }
       this.__widget__.isDestroyed = true;
       this.destroyed();
@@ -163,8 +171,9 @@ export class Widget<T extends WEnv> {
 
   private visitSubTree(callback: (w: Widget<T>) => void) {
     callback(this);
-    for (let child of this.__widget__.children) {
-      child.visitSubTree(callback);
+    const children = this.__widget__.children;
+    for (let id in children) {
+      children[id].visitSubTree(callback);
     }
   }
 }

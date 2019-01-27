@@ -63,6 +63,14 @@ that assets are properly rebuilt if necessary, and then reloaded.
   - simpler/faster: once we are aware of the exact structure of what we are
     dealing with, we can make simpler code.
 
+- _simple, "not enterprisy"_. We would like that developping in Odoo feels as
+  simple and natural as possible, without too many abstractions/files. I feel
+  that this is not really important, but there is some value in seeing a code
+  source tree with tens of files (instead of hundreds). For this reason, we made
+  some 'imperfect' choices: for example, most interfaces are in the same file
+  as the code that uses them the most. Or we try to avoid the 'manager' word
+  if possible.
+
 ## Architecture notes
 
 This POC revolves around two main ideas:

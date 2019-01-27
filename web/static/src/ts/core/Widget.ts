@@ -80,9 +80,13 @@ export class Widget<T extends WEnv> {
   // Public
   //--------------------------------------------------------------------------
 
-  async mount(target: HTMLElement): Promise<VNode> {
+  async mount(target: HTMLElement): Promise<void> {
     await this._start();
-    const vnode = await this.render();
+    await this.render();
+    if (!this.el) {
+      // widget was destroyed before we get here...
+      return;
+    }
     target.appendChild(this.el!);
 
     if (document.body.contains(target)) {
@@ -93,7 +97,6 @@ export class Widget<T extends WEnv> {
         }
       });
     }
-    return vnode;
   }
 
   destroy() {
@@ -134,18 +137,22 @@ export class Widget<T extends WEnv> {
   // Private
   //--------------------------------------------------------------------------
 
-  async render(): Promise<VNode> {
+  async render(): Promise<void> {
+    if (this.__widget__.isDestroyed) {
+      return;
+    }
     const vnode = await this._render();
     this.__widget__.vnode = patch(
       this.__widget__.vnode || document.createElement(vnode.sel!),
       vnode
     );
-    return this.__widget__.vnode;
   }
 
   private async _start(): Promise<void> {
     await this.willStart();
-    this.__widget__.isStarted = true;
+    if (!this.__widget__.isDestroyed) {
+      this.__widget__.isStarted = true;
+    }
   }
 
   private async _render(): Promise<VNode> {

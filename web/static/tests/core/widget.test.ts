@@ -422,6 +422,42 @@ describe("destroy method", () => {
     expect(child.__widget__.parent).toBe(null);
     expect(children(parent).length).toBe(0);
   });
+
+  test("destroying a widget before willStart is done", async () => {
+    let resolve;
+    let isRendered = false;
+    let p: Promise<void> = new Promise(function(r) {
+      resolve = r;
+    });
+    class DelayedWidget extends Widget<WEnv> {
+      willStart() {
+        return p;
+      }
+    }
+    expect(fixture.innerHTML).toBe("");
+    const widget = new DelayedWidget(env);
+    widget.mount(fixture);
+    expect(widget.__widget__.isStarted).toBe(false);
+    expect(widget.__widget__.isMounted).toBe(false);
+    expect(widget.__widget__.isDestroyed).toBe(false);
+    widget.destroy();
+    expect(widget.__widget__.isMounted).toBe(false);
+    expect(widget.__widget__.isStarted).toBe(false);
+    expect(widget.__widget__.isDestroyed).toBe(true);
+    resolve();
+    // Note: should we abandon await and not have to do this?
+    // TODO: talk to vsc
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(widget.__widget__.isStarted).toBe(false);
+    expect(widget.__widget__.isMounted).toBe(false);
+    expect(widget.__widget__.isDestroyed).toBe(true);
+    expect(widget.__widget__.vnode).toBe(null);
+    expect(fixture.innerHTML).toBe("");
+    expect(isRendered).toBe(false);
+  });
 });
 
 describe("composition", () => {

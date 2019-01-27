@@ -71,6 +71,10 @@ that assets are properly rebuilt if necessary, and then reloaded.
   as the code that uses them the most. Or we try to avoid the 'manager' word
   if possible.
 
+Not a goal: reactiveness, or bi-directional bindings. We want to stay at a
+slightly lower level of abstraction. Each widget can implement its own update
+pattern.
+
 ## Architecture notes
 
 This POC revolves around two main ideas:

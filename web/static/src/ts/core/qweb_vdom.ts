@@ -704,7 +704,7 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `let def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)}}});`
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)},remove(){_${widgetID}.destroy()}}});`
     );
     ctx.addLine(`extra.promises.push(def${defID});`);
 

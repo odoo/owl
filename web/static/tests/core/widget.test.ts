@@ -269,6 +269,49 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(target);
   });
+
+  test("widgets are unmounted and destroyed if no longer in DOM", async () => {
+    let steps: string[] = [];
+    class ParentWidget extends Widget<WEnv> {
+      name = "a";
+      state = { ok: true };
+      template = `
+          <div>
+            <t t-if="state.ok"><t t-widget="child"/></t>
+          </div>`;
+      widgets = { child: ChildWidget };
+    }
+
+    class ChildWidget extends Widget<WEnv> {
+      constructor(parent) {
+        super(parent);
+        steps.push("init");
+      }
+      async willStart() {
+        steps.push("willstart");
+      }
+      mounted() {
+        steps.push("mounted");
+      }
+      willUnmount() {
+        steps.push("willunmount");
+      }
+      destroyed() {
+        steps.push("destroyed");
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(steps).toEqual(["init", "willstart", "mounted"]);
+    await widget.updateState({ ok: false });
+    expect(steps).toEqual([
+      "init",
+      "willstart",
+      "mounted",
+      "willunmount",
+      "destroyed"
+    ]);
+  });
 });
 
 describe("destroy method", () => {
@@ -278,6 +321,8 @@ describe("destroy method", () => {
     expect(document.contains(widget.el)).toBe(true);
     widget.destroy();
     expect(document.contains(widget.el)).toBe(false);
+    expect(widget.__widget__.isMounted).toBe(false);
+    expect(widget.__widget__.isDestroyed).toBe(true);
   });
 
   test("destroying a widget twice only call destroyed once", async () => {

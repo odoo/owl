@@ -96,8 +96,12 @@ export class Widget<T extends WEnv> {
 
   destroy() {
     if (!this.__widget__.isDestroyed) {
+      if (this.__widget__.isMounted) {
+        this.willUnmount();
+      }
       if (this.el) {
         this.el.remove();
+        this.__widget__.isMounted = false;
         delete this.__widget__.vnode;
       }
       if (this.__widget__.parent) {

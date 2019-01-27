@@ -71,6 +71,8 @@ export class Widget<T extends WEnv> {
 
   mounted() {}
 
+  propsUpdated(newProps: any) {}
+
   willUnmount() {}
 
   destroyed() {}

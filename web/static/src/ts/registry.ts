@@ -1,5 +1,6 @@
 import { Widget } from "./core/widget";
 import { Env } from "./env";
+import { Type } from "./types";
 
 //------------------------------------------------------------------------------
 // Types

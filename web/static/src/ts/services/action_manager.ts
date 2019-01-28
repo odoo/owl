@@ -1,10 +1,11 @@
-import { EventBus, Callback } from "../core/event_bus";
+import { Callback, EventBus } from "../core/event_bus";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
 import { Registry } from "../registry";
+import { Type } from "../types";
 import { CRM } from "../widgets/crm";
 import { Discuss } from "../widgets/discuss";
-import { Query, IRouter } from "./router";
+import { IRouter, Query } from "./router";
 
 //------------------------------------------------------------------------------
 // Types

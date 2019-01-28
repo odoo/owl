@@ -689,7 +689,7 @@ const refDirective: Directive = {
 const widgetDirective: Directive = {
   name: "widget",
   priority: 100,
-  atNodeEncounter({ ctx, value, node }): boolean {
+  atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.rootContext.shouldDefineOwner = true;
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();
@@ -697,6 +697,22 @@ const widgetDirective: Directive = {
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     let props = node.getAttribute("t-props");
+    if (props) {
+      props = props.trim();
+      if (props[0] === "{" && props[props.length - 1] === "}") {
+        const innerProp = props
+          .slice(1, -1)
+          .split(",")
+          .map(p => {
+            let [key, val] = p.split(":");
+            return `${key}: ${qweb._formatExpression(val)}`;
+          })
+          .join(",");
+        props = "{" + innerProp + "}";
+      } else {
+        props = qweb._formatExpression(props);
+      }
+    }
     let widgetID = ctx.generateID();
     ctx.addLine(
       `let _${widgetID} = new context.widgets['${value}'](owner, ${props});`

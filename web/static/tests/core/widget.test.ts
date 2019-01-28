@@ -517,3 +517,49 @@ describe("composition", () => {
     expect(children(widget)[0].env).toBe(env);
   });
 });
+
+describe("props evaluation (with t-props directive)", () => {
+  test("explicit object prop", async () => {
+    class Parent extends Widget<WEnv> {
+      name = "a";
+      template = `<div><t t-widget="child" t-props="{value: state.val}"/></div>`;
+      widgets = { child: Child };
+      state = { val: 42 };
+    }
+
+    class Child extends Widget<WEnv> {
+      template = `<span><t t-esc="state.someval"/></span>`;
+      state: { someval: number };
+      constructor(parent: Parent, props: { value: number }) {
+        super(parent);
+        this.state = { someval: props.value };
+      }
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+  });
+
+  test("object prop value", async () => {
+    class Parent extends Widget<WEnv> {
+      name = "a";
+      template = `<div><t t-widget="child" t-props="state"/></div>`;
+      widgets = { child: Child };
+      state = { val: 42 };
+    }
+
+    class Child extends Widget<WEnv> {
+      template = `<span><t t-esc="state.someval"/></span>`;
+      state: { someval: number };
+      constructor(parent: Parent, props: { val: number }) {
+        super(parent);
+        this.state = { someval: props.val };
+      }
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+  });
+});

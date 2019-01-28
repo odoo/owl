@@ -9,6 +9,7 @@ const template = `
         <button t-on-click="resetCounter">Reset first counter</button>
         <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
         <button t-on-click="toggle">Toggle  Clock/counters</button>
+        <button t-on-click="toggleColor">Toggle Color</button>
         <button t-on-click="updateState({})">Rerender this widget</button>
         <input/>
         <t t-if="state.validcounter">
@@ -18,15 +19,15 @@ const template = `
         <t t-else="1">
             <t t-widget="Clock"/>
         </t>
-        <div ref="target"/>
+        <t t-widget="ColorWidget" t-props="{color: state.color}"/>
     </div>
 `;
 
 export class Discuss extends Widget<Env> {
   name = "discuss";
   template = template;
-  widgets = { Clock, Counter };
-  state = { validcounter: true };
+  widgets = { Clock, Counter, ColorWidget };
+  state = { validcounter: true, color: "red" };
 
   mounted() {}
   resetCounter(ev: MouseEvent) {
@@ -45,5 +46,20 @@ export class Discuss extends Widget<Env> {
 
   toggle() {
     this.updateState({ validcounter: !this.state.validcounter });
+  }
+
+  toggleColor() {
+    const newColor = this.state.color === "red" ? "blue" : "red";
+    this.updateState({ color: newColor });
+  }
+}
+
+class ColorWidget extends Widget<Env> {
+  name = "colorwidget";
+  template = `<div>Current Color: <t t-esc="state.color"/></div>`;
+  state: { color: "red" | "blue" };
+  constructor(parent: Widget<Env>, props: { color: "red" | "blue" }) {
+    super(parent);
+    this.state = { color: props.color };
   }
 }

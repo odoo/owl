@@ -167,6 +167,10 @@ We have 3 main folders and 3 main files:
 - **Qweb**
 
   - check qweb tests and see if it is reasonable (escaping? safety/security?)
+  - Expression evaluation: make sure we cannot inject JS in template function.
+    For example, a t-props directive such as t-props="state.someValueFromServer"
+    where the value would be something such as `"};console.log('Owned': context.env.actionManager.doAction('fuck you'))`
+
   - remove the "if (${exprID} || ${exprID} === 0) {"
   - need to implement t-extend (?)
   - improve qweb generated code: do not assign object/array if no props/attrs/children

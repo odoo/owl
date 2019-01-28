@@ -4,9 +4,6 @@ import { Env } from "./env";
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
-interface Type<T> extends Function {
-  new (...args: any[]): T;
-}
 
 type ActionWidget = Type<Widget<Env>>;
 

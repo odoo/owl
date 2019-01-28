@@ -10,10 +10,6 @@ import { Query, IRouter } from "./router";
 // Types
 //------------------------------------------------------------------------------
 
-interface Type<T> extends Function {
-  new (...args: any[]): T;
-}
-
 export interface ClientAction {
   type: "client";
   name: string;

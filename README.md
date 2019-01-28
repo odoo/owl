@@ -159,16 +159,22 @@ We have 3 main folders and 3 main files:
 
 ## Random Notes
 
-Before even thinking about using this in a real scenario:
+- Change of behaviour: The compilation of a template should have a unique root
+  node (but sub templates can have multiple roots)
 
-- check qweb tests and see if it is reasonable (escaping? safety/security?)
-- Note: the compilation of a template should have a unique node (but sub templates
-  can have multiple roots)
-- remove the "if (${exprID} || ${exprID} === 0) {"
-- style is props? difference between props and attrs
-- text node
-- t-extend???
-- improve qweb generated code: do not assign object/array if no props/attrs/children
-- improve qweb gen code: when building a vnode, propagate a structure with
-  children/attrs/hooks, fill it properly by each directive, then and only
-  then create node with minimal code
+## TO THINK ABOUT/TO DO
+
+- **Qweb**
+
+  - check qweb tests and see if it is reasonable (escaping? safety/security?)
+  - remove the "if (${exprID} || ${exprID} === 0) {"
+  - need to implement t-extend (?)
+  - improve qweb generated code: do not assign object/array if no props/attrs/children
+  - improve qweb gen code: when building a vnode, propagate a structure with
+    children/attrs/hooks, fill it properly by each directive, then and only
+    then create node with minimal code
+
+- **Widget**
+
+  - check if it is possible to remove parent reference in widget
+  - default implementation of propsUpdated?

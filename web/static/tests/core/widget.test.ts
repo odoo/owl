@@ -372,6 +372,25 @@ describe("lifecycle hooks", () => {
       "p destroyed"
     ]);
   });
+
+  test("shouldUpdate hook prevent rerendering", async () => {
+    let shouldUpdate = false;
+    class TestWidget extends Widget<WEnv> {
+      name = "a";
+      template = `<div><t t-esc="props.val"/></div>`;
+      shouldUpdate() {
+        return shouldUpdate;
+      }
+    }
+    const widget = new TestWidget(env, { val: 42 });
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+    await widget.updateProps({ val: 123 });
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+    shouldUpdate = true;
+    await widget.updateProps({ val: 666 });
+    expect(fixture.innerHTML).toBe("<div>666</div>");
+  });
 });
 
 describe("destroy method", () => {

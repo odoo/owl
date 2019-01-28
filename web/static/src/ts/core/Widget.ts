@@ -83,7 +83,9 @@ export class Widget<T extends WEnv> {
 
   mounted() {}
 
-  propsUpdated(newProps: any) {}
+  shouldUpdate(nextProps: any): boolean {
+    return true;
+  }
 
   willUnmount() {}
 
@@ -138,16 +140,17 @@ export class Widget<T extends WEnv> {
    * Note: it is ok to call updateState before the widget is started. In that
    * case, it will simply update the state and will not rerender
    */
-  async updateState(newState: Object) {
-    Object.assign(this.state, newState);
+  async updateState(nextState: Object) {
+    Object.assign(this.state, nextState);
     if (this.__widget__.isStarted) {
       await this.render();
     }
   }
 
-  updateProps(props?: any): Promise<void> {
-    this.props = props;
-    return this.render();
+  updateProps(nextProps?: any): Promise<void> {
+    const shouldUpdate = this.shouldUpdate(nextProps);
+    this.props = nextProps;
+    return shouldUpdate ? this.render() : Promise.resolve();
   }
 
   //--------------------------------------------------------------------------

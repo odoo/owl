@@ -715,16 +715,16 @@ const widgetDirective: Directive = {
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     ctx.addLine(`let def${defID};`);
+    ctx.addLine(
+      `let w${widgetID} = ${widgetID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${widgetID}]] : false;`
+    );
 
-    ctx.addLine(`if (${widgetID} in context.__widget__.cmap) {`);
+    ctx.addLine(`if (w${widgetID}) {`);
     ctx.indent();
     ctx.addLine(
-      `let curWidget = context.__widget__.children[context.__widget__.cmap[${widgetID}]]`
-    );
-    ctx.addLine(
-      `def${defID} = curWidget.updateProps(${props}).then(()=>{vnode=curWidget.__widget__.vnode;c${
+      `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{vnode=w${widgetID}.__widget__.vnode;c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {remove(){curWidget.destroy()}}});`
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {remove(){w${widgetID}.destroy()}}});`
     );
     ctx.dedent();
     ctx.addLine("} else {");
@@ -734,7 +734,7 @@ const widgetDirective: Directive = {
       `let _${widgetID} = new context.widgets['${value}'](owner, ${props});`
     );
     ctx.addLine(
-      `context.__widget__.cmap[${widgetID}] = _${widgetID}.__widget__.id`
+      `context.__widget__.cmap[${widgetID}] = _${widgetID}.__widget__.id;`
     );
     ctx.addLine(
       `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${

@@ -26,6 +26,7 @@ interface Meta<T extends WEnv> {
   parent: Widget<T> | null;
   children: { [key: number]: Widget<T> };
   // children mapping: from templateID to widgetID
+  // should it be a map number => Widget?
   cmap: { [key: number]: number };
 }
 

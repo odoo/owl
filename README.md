@@ -182,3 +182,6 @@ We have 3 main folders and 3 main files:
 
   - check if it is possible to remove parent reference in widget
   - default implementation of propsUpdated?
+
+- **Rendering** think about batching all patching updates in a
+  nextanimationframe

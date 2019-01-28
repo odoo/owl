@@ -535,6 +535,30 @@ describe("composition", () => {
       "<div><div>1<button>Inc</button></div></div>"
     );
   });
+
+  test("sub widgets are destroyed if no longer in dom, then recreated", async () => {
+    class ParentWidget extends Widget<WEnv> {
+      name = "a";
+      state = { ok: true };
+      template = `
+          <div><t t-if="state.ok"><t t-widget="counter"/></t></div>`;
+      widgets = { counter: Counter };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    const button = fixture.getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div>1<button>Inc</button></div></div>"
+    );
+    await widget.updateState({ ok: false });
+    expect(fixture.innerHTML).toBe("<div></div>");
+    await widget.updateState({ ok: true });
+    expect(fixture.innerHTML).toBe(
+      "<div><div>0<button>Inc</button></div></div>"
+    );
+  });
 });
 
 describe("props evaluation (with t-props directive)", () => {

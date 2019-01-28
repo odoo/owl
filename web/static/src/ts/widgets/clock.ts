@@ -3,7 +3,7 @@ import { Env } from "../env";
 
 const template = `<div class="o_clock"><t t-esc="state.currentTime"/></div>`;
 
-export class Clock extends Widget<Env> {
+export class Clock extends Widget<Env, {}> {
   name = "clock";
   template = template;
   interval: any | undefined;

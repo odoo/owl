@@ -7,7 +7,7 @@ const template = `
     </div>
 `;
 
-export class CRM extends Widget<Env> {
+export class CRM extends Widget<Env, {}> {
   name = "crm";
   template = template;
 }

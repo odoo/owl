@@ -9,15 +9,19 @@ const template = `
     </div>
 `;
 
-export class Counter extends Widget<Env> {
+interface Props {
+  initialState?: number;
+}
+
+export class Counter extends Widget<Env, Props> {
   name = "counter";
   template = template;
   state = {
     counter: 0
   };
 
-  constructor(parent: Widget<Env>, props: { initialState?: number }) {
-    super(parent);
+  constructor(parent: Widget<Env, {}>, props: Props) {
+    super(parent, props);
     this.state.counter = props.initialState || 0;
   }
 

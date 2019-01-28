@@ -31,13 +31,13 @@ function nextTick(): Promise<void> {
   return Promise.resolve();
 }
 
-function children(w: Widget<WEnv>): Widget<WEnv>[] {
+function children(w: Widget<WEnv, {}>): Widget<WEnv, {}>[] {
   const childrenMap = w.__widget__.children;
   return Object.keys(childrenMap).map(id => childrenMap[id]);
 }
 
 // Test widgets
-class Counter extends Widget<WEnv> {
+class Counter extends Widget<WEnv, {}> {
   name = "counter";
   template = `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`;
   state = {
@@ -49,13 +49,13 @@ class Counter extends Widget<WEnv> {
   }
 }
 
-class WidgetA extends Widget<WEnv> {
+class WidgetA extends Widget<WEnv, {}> {
   name = "a";
   template = `<div>Hello<t t-widget="b"/></div>`;
   widgets = { b: WidgetB };
 }
 
-class WidgetB extends Widget<WEnv> {
+class WidgetB extends Widget<WEnv, {}> {
   template = `<div>world</div>`;
 }
 
@@ -87,7 +87,7 @@ describe("basic widget properties", () => {
   });
 
   test("widget style and classname", async () => {
-    class StyledWidget extends Widget<WEnv> {
+    class StyledWidget extends Widget<WEnv, {}> {
       template = `<div style="font-weight:bold;" class="some-class">world</div>`;
     }
     const widget = new StyledWidget(env);
@@ -99,7 +99,7 @@ describe("basic widget properties", () => {
 
   test("updateState before first render does not trigger a render", async () => {
     let renderCalls = 0;
-    class TestW extends Widget<WEnv> {
+    class TestW extends Widget<WEnv, {}> {
       async willStart() {
         this.updateState({});
       }
@@ -132,7 +132,7 @@ describe("basic widget properties", () => {
 describe("lifecycle hooks", () => {
   test("willStart hook is called", async () => {
     let willstart = false;
-    class HookWidget extends Widget<WEnv> {
+    class HookWidget extends Widget<WEnv, {}> {
       async willStart() {
         willstart = true;
       }
@@ -144,7 +144,7 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is not called if not in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget<WEnv> {
+    class HookWidget extends Widget<WEnv, {}> {
       async mounted() {
         mounted = true;
       }
@@ -157,7 +157,7 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is called if mounted in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget<WEnv> {
+    class HookWidget extends Widget<WEnv, {}> {
       async mounted() {
         mounted = true;
       }
@@ -169,12 +169,12 @@ describe("lifecycle hooks", () => {
 
   test("willStart hook is called on subwidget", async () => {
     let ok = false;
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       template = `<div><t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
     }
-    class ChildWidget extends Widget<WEnv> {
+    class ChildWidget extends Widget<WEnv, {}> {
       async willStart() {
         ok = true;
       }
@@ -188,7 +188,7 @@ describe("lifecycle hooks", () => {
     expect.assertions(4);
     let parentMounted = false;
     let childMounted = false;
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       template = `<div><t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
@@ -197,7 +197,7 @@ describe("lifecycle hooks", () => {
         parentMounted = true;
       }
     }
-    class ChildWidget extends Widget<WEnv> {
+    class ChildWidget extends Widget<WEnv, {}> {
       mounted() {
         expect(document.body.contains(this.el)).toBe(true);
         expect(parentMounted).toBe(true);
@@ -212,7 +212,7 @@ describe("lifecycle hooks", () => {
   test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
     expect.assertions(3);
     let hookCounter = 0;
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       state = { ok: false };
       template = `
@@ -228,7 +228,7 @@ describe("lifecycle hooks", () => {
       // patching algorithm
       widgets = { child: ChildWidget };
     }
-    class ChildWidget extends Widget<WEnv> {
+    class ChildWidget extends Widget<WEnv, {}> {
       async willStart() {
         hookCounter++;
       }
@@ -253,14 +253,14 @@ describe("lifecycle hooks", () => {
     expect.assertions(1);
     const target = document.createElement("div");
     document.body.appendChild(target);
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       mounted() {
         const child = new ChildWidget(this);
         child.mount(this.el!);
       }
     }
-    class ChildWidget extends Widget<WEnv> {
+    class ChildWidget extends Widget<WEnv, {}> {
       mounted() {
         expect(this.el).toBeTruthy();
         done();
@@ -272,7 +272,7 @@ describe("lifecycle hooks", () => {
 
   test("widgets are unmounted and destroyed if no longer in DOM", async () => {
     let steps: string[] = [];
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       state = { ok: true };
       template = `
@@ -282,7 +282,7 @@ describe("lifecycle hooks", () => {
       widgets = { child: ChildWidget };
     }
 
-    class ChildWidget extends Widget<WEnv> {
+    class ChildWidget extends Widget<WEnv, {}> {
       constructor(parent) {
         super(parent);
         steps.push("init");
@@ -315,7 +315,7 @@ describe("lifecycle hooks", () => {
 
   test("hooks are called in proper order in widget creation/destruction", async () => {
     let steps: string[] = [];
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       template = `
           <div><t t-widget="child"/></div>`;
@@ -338,7 +338,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    class ChildWidget extends Widget<WEnv> {
+    class ChildWidget extends Widget<WEnv, {}> {
       constructor(parent) {
         super(parent);
         steps.push("c init");
@@ -375,7 +375,7 @@ describe("lifecycle hooks", () => {
 
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
-    class TestWidget extends Widget<WEnv> {
+    class TestWidget extends Widget<WEnv, {}> {
       name = "a";
       template = `<div><t t-esc="props.val"/></div>`;
       shouldUpdate() {
@@ -406,7 +406,7 @@ describe("destroy method", () => {
 
   test("destroying a widget twice only call destroyed once", async () => {
     let count = 0;
-    class TestWidget extends Widget<WEnv> {
+    class TestWidget extends Widget<WEnv, {}> {
       destroyed() {
         count++;
       }
@@ -448,7 +448,7 @@ describe("destroy method", () => {
     let p: Promise<void> = new Promise(function(r) {
       resolve = r;
     });
-    class DelayedWidget extends Widget<WEnv> {
+    class DelayedWidget extends Widget<WEnv, {}> {
       willStart() {
         return p;
       }
@@ -488,7 +488,7 @@ describe("composition", () => {
   });
 
   test("t-refs on widget are widgets", async () => {
-    class WidgetC extends Widget<WEnv> {
+    class WidgetC extends Widget<WEnv, {}> {
       name = "a";
       template = `<div>Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
       widgets = { b: WidgetB };
@@ -499,7 +499,7 @@ describe("composition", () => {
   });
 
   test("modifying a sub widget", async () => {
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       template = `<div><t t-widget="Counter"/></div>`;
       widgets = { Counter };
     }
@@ -537,7 +537,7 @@ describe("composition", () => {
   });
 
   test("rerendering a widget with a sub widget", async () => {
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       template = `<div><t t-widget="Counter"/></div>`;
       widgets = { Counter };
     }
@@ -556,7 +556,7 @@ describe("composition", () => {
   });
 
   test("sub widgets are destroyed if no longer in dom, then recreated", async () => {
-    class ParentWidget extends Widget<WEnv> {
+    class ParentWidget extends Widget<WEnv, {}> {
       name = "a";
       state = { ok: true };
       template = `
@@ -582,14 +582,14 @@ describe("composition", () => {
 
 describe("props evaluation (with t-props directive)", () => {
   test("explicit object prop", async () => {
-    class Parent extends Widget<WEnv> {
+    class Parent extends Widget<WEnv, {}> {
       name = "a";
       template = `<div><t t-widget="child" t-props="{value: state.val}"/></div>`;
       widgets = { child: Child };
       state = { val: 42 };
     }
 
-    class Child extends Widget<WEnv> {
+    class Child extends Widget<WEnv, {}> {
       template = `<span><t t-esc="state.someval"/></span>`;
       state: { someval: number };
       constructor(parent: Parent, props: { value: number }) {
@@ -604,14 +604,14 @@ describe("props evaluation (with t-props directive)", () => {
   });
 
   test("object prop value", async () => {
-    class Parent extends Widget<WEnv> {
+    class Parent extends Widget<WEnv, {}> {
       name = "a";
       template = `<div><t t-widget="child" t-props="state"/></div>`;
       widgets = { child: Child };
       state = { val: 42 };
     }
 
-    class Child extends Widget<WEnv> {
+    class Child extends Widget<WEnv, {}> {
       template = `<span><t t-esc="state.someval"/></span>`;
       state: { someval: number };
       constructor(parent: Parent, props: { val: number }) {

@@ -6,7 +6,7 @@ import { Type } from "./types";
 // Types
 //------------------------------------------------------------------------------
 
-type ActionWidget = Type<Widget<Env>>;
+type ActionWidget = Type<Widget<Env, {}>>;
 
 //------------------------------------------------------------------------------
 // Registry code

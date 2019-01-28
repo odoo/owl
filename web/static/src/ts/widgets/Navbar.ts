@@ -14,7 +14,7 @@ const template = `
     </div>
 `;
 
-export class Navbar extends Widget<Env> {
+export class Navbar extends Widget<Env, {}> {
   name = "navbar";
   template = template;
 

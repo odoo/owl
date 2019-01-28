@@ -23,7 +23,7 @@ const template = `
     </div>
 `;
 
-export class Discuss extends Widget<Env> {
+export class Discuss extends Widget<Env, {}> {
   name = "discuss";
   template = template;
   widgets = { Clock, Counter, ColorWidget };
@@ -54,7 +54,7 @@ export class Discuss extends Widget<Env> {
   }
 }
 
-class ColorWidget extends Widget<Env> {
+class ColorWidget extends Widget<Env, { color: "red" | "blue" }> {
   name = "colorwidget";
   template = `<div>Current Color: <t t-esc="props.color"/></div>`;
 }

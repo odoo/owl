@@ -11,11 +11,11 @@ const template = `
     </div>
 `;
 
-export class RootWidget extends Widget<Env> {
+export class RootWidget extends Widget<Env, {}> {
   name = "root";
   template = template;
   widgets = { Navbar };
-  content: Widget<Env> | null = null;
+  content: Widget<Env, {}> | null = null;
 
   mounted() {
     this.env.actionManager.on("action_ready", this, this.setContentWidget);

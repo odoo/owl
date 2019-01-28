@@ -23,8 +23,8 @@ interface Meta<T extends WEnv> {
   isStarted: boolean;
   isMounted: boolean;
   isDestroyed: boolean;
-  parent: Widget<T> | null;
-  children: { [key: number]: Widget<T> };
+  parent: Widget<T, {}> | null;
+  children: { [key: number]: Widget<T, {}> };
   // children mapping: from templateID to widgetID
   // should it be a map number => Widget?
   cmap: { [key: number]: number };
@@ -35,7 +35,7 @@ const patch = init([sdListeners, sdAttrs]);
 //------------------------------------------------------------------------------
 // Widget
 //------------------------------------------------------------------------------
-export class Widget<T extends WEnv> {
+export class Widget<T extends WEnv, Props> {
   __widget__: Meta<WEnv>;
   name: string = "widget";
   template: string = "<div></div>";
@@ -46,18 +46,18 @@ export class Widget<T extends WEnv> {
 
   env: T;
   state: Object = {};
-  props: any;
-  refs: { [key: string]: Widget<T> | HTMLElement | undefined } = {};
+  props: Props | undefined;
+  refs: { [key: string]: Widget<T, {}> | HTMLElement | undefined } = {};
 
   //--------------------------------------------------------------------------
   // Lifecycle
   //--------------------------------------------------------------------------
 
-  constructor(parent: Widget<T> | T, props?: any) {
+  constructor(parent: Widget<T, {}> | T, props?: Props) {
     wl.push(this);
     this.props = props;
     let id: number;
-    let p: Widget<T> | null = null;
+    let p: Widget<T, any> | null = null;
     if (parent instanceof Widget) {
       p = parent;
       this.env = parent.env;
@@ -83,7 +83,7 @@ export class Widget<T extends WEnv> {
 
   mounted() {}
 
-  shouldUpdate(nextProps: any): boolean {
+  shouldUpdate(nextProps: Props): boolean {
     return true;
   }
 
@@ -147,7 +147,7 @@ export class Widget<T extends WEnv> {
     }
   }
 
-  updateProps(nextProps?: any): Promise<void> {
+  updateProps(nextProps: Props): Promise<void> {
     const shouldUpdate = this.shouldUpdate(nextProps);
     this.props = nextProps;
     return shouldUpdate ? this.render() : Promise.resolve();
@@ -205,7 +205,7 @@ export class Widget<T extends WEnv> {
     }
   }
 
-  private visitSubTree(callback: (w: Widget<T>) => void) {
+  private visitSubTree(callback: (w: Widget<T, any>) => void) {
     callback(this);
     const children = this.__widget__.children;
     for (let id in children) {

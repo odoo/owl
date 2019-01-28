@@ -33,7 +33,7 @@ export type Action = ClientAction | ActWindowAction;
 
 export interface ActionWidget {
   id: number;
-  Widget: Type<Widget<Env>>;
+  Widget: Type<Widget<Env, {}>>;
   props: any;
 }
 

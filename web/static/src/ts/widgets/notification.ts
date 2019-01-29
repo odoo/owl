@@ -4,7 +4,7 @@ import { INotification } from "../services/notifications";
 
 const template = `
     <div class="o_notification">
-        <a t-if="props.sticky" class="fa fa-times o_close" href="#" title="Close" aria-label="Close"/>
+        <a t-if="props.sticky" class="fa fa-times o_close" href="#" title="Close" aria-label="Close" t-on-click="close"/>
         <div class="o_notification_title">
             <t t-raw="props.title"/>
         </div>
@@ -17,4 +17,8 @@ const template = `
 export class Notification extends Widget<Env, INotification> {
   name = "notification";
   template = template;
+
+  close() {
+    this.env.notifications.close(this.props!.id);
+  }
 }

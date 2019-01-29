@@ -4,7 +4,7 @@ import { EventBus as Bus } from "../core/event_bus";
 // Types
 //------------------------------------------------------------------------------
 
-export interface Notification {
+export interface INotification {
   id: number;
   title: string;
   message: string;
@@ -14,10 +14,10 @@ export interface Notification {
 
 export type NotificationEvent = "notification_added" | "notification_closed";
 
-export type Callback = (notif: Notification) => void;
+export type Callback = (notif: INotification) => void;
 
 export interface INotificationManager {
-  add(notif: Partial<Notification>): number;
+  add(notif: Partial<INotification>): number;
   close(id: number): void;
   on(event: NotificationEvent, owner: any, callback: Callback): void;
 }
@@ -26,10 +26,10 @@ export interface INotificationManager {
 // Notification Manager
 //------------------------------------------------------------------------------
 export class NotificationManager extends Bus implements INotificationManager {
-  nextID = 0;
-  notifications: { [key: number]: Notification } = {};
+  nextID = 1;
+  notifications: { [key: number]: INotification } = {};
 
-  add(notif: Partial<Notification>): number {
+  add(notif: Partial<INotification>): number {
     const id = this.nextID++;
     const defaultVals = {
       title: "",

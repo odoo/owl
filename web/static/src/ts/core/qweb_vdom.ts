@@ -29,6 +29,7 @@ export class Context {
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
   shouldProtectContext: boolean = false;
+  inLoop: boolean = false;
 
   constructor() {
     this.rootContext = this;
@@ -134,7 +135,7 @@ export class QWeb {
     if (!doc.firstChild) {
       throw new Error("Invalid template (should not be empty)");
     }
-    if (doc.firstChild.nodeName === "parsererror") {
+    if (doc.getElementsByTagName("parsererror").length) {
       throw new Error("Invalid XML in template");
     }
     let tbranch = doc.querySelectorAll("[t-elif], [t-else]");
@@ -331,13 +332,17 @@ export class QWeb {
     const attrs: string[] = [];
     const tattrs: number[] = [];
     for (let i = 0; i < attributes.length; i++) {
-      const name = attributes[i].name;
+      let name = attributes[i].name;
       const value = attributes[i].textContent!;
 
       // regular attributes
       if (!name.startsWith("t-")) {
         const attID = ctx.generateID();
         ctx.addLine(`let _${attID} = '${value}';`);
+        if (!name.match(/^[a-zA-Z]+$/)) {
+          // attribute contains 'non letters' => we want to quote it
+          name = '"' + name + '"';
+        }
         attrs.push(`${name}: _${attID}`);
       }
 
@@ -624,6 +629,7 @@ const forEachDirective: Directive = {
   priority: 10,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldProtectContext = true;
+    ctx.inLoop = true;
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
@@ -715,8 +721,9 @@ const widgetDirective: Directive = {
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     ctx.addLine(`let def${defID};`);
+    let templateID = ctx.inLoop ? `(${widgetID} + i)` : String(widgetID);
     ctx.addLine(
-      `let w${widgetID} = ${widgetID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${widgetID}]] : false;`
+      `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
     );
 
     ctx.addLine(`if (w${widgetID}) {`);
@@ -734,7 +741,7 @@ const widgetDirective: Directive = {
       `let _${widgetID} = new context.widgets['${value}'](owner, ${props});`
     );
     ctx.addLine(
-      `context.__widget__.cmap[${widgetID}] = _${widgetID}.__widget__.id;`
+      `context.__widget__.cmap[${templateID}] = _${widgetID}.__widget__.id;`
     );
     ctx.addLine(
       `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${

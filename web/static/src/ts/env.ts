@@ -4,6 +4,10 @@ import { WEnv } from "./core/widget";
 import { registry } from "./registry";
 import { ActionManager, IActionManager } from "./services/action_manager";
 import { Ajax, IAjax } from "./services/ajax";
+import {
+  INotificationManager,
+  NotificationManager
+} from "./services/notifications";
 import { IRouter, Router } from "./services/router";
 
 //------------------------------------------------------------------------------
@@ -21,6 +25,7 @@ export interface Env extends WEnv {
   ajax: IAjax;
   router: IRouter;
   menus: Menu[];
+  notifications: INotificationManager;
 
   // helpers
   rpc: IAjax["rpc"];
@@ -48,6 +53,8 @@ export const makeEnvironment = memoize(function(): Env {
   const router = new Router();
   const ajax = new Ajax();
   const actionManager = new ActionManager(router, registry);
+  const notifications = new NotificationManager();
+
   const menus = [
     { title: "Discuss", actionID: 1 },
     { title: "CRM", actionID: 2 }
@@ -62,6 +69,7 @@ export const makeEnvironment = memoize(function(): Env {
     router,
     actionManager,
     menus,
+    notifications,
 
     rpc: ajax.rpc,
     debug: false

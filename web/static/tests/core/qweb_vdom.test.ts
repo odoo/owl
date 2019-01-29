@@ -280,6 +280,13 @@ describe("attributes", () => {
     expect(result).toBe(expected);
   });
 
+  test("static attributes with dashes", () => {
+    qweb.addTemplate("test", `<div aria-label="Close"/>`);
+    const result = renderToString(qweb, "test");
+    const expected = `<div aria-label="Close"></div>`;
+    expect(result).toBe(expected);
+  });
+
   test("static attributes on void elements", () => {
     qweb.addTemplate("test", `<img src="/test.jpg" alt="Test"/>`);
     const result = renderToString(qweb, "test");

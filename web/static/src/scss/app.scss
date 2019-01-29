@@ -1,5 +1,7 @@
 $navbar-height: 40px;
 $main-color: #875a7b;
+$o-notification-info-bg-color: #fcfbea;
+$o-main-text-color: #666666;
 
 html {
   height: 100%;
@@ -50,6 +52,41 @@ body {
     color: white;
     text-decoration: none;
     padding: 0 5px;
+  }
+}
+
+/* Notifications */
+.o_notification_container {
+  position: absolute;
+  width: 300px;
+  right: 5px;
+  top: $navbar-height;
+  bottom: 0;
+
+  .o_notification {
+    padding: 0;
+    margin: 5px 0 0 0;
+    background-color: $o-notification-info-bg-color;
+    box-shadow: 0px 0px 5px 1px $o-main-text-color;
+
+    .o_notification_title {
+      display: flex;
+      align-items: center;
+
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 10px 10px 10px 20px;
+
+      font-weight: bold;
+
+      .o_icon {
+        display: inline-block;
+        margin-right: 20px;
+        color: rgba(0, 0, 0, 0.3);
+      }
+    }
+    .o_notification_content {
+      padding: 10px;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 import {
   NotificationManager,
-  Notification,
+  INotification,
   INotificationManager
 } from "../../src/ts/services/notifications";
 
@@ -8,7 +8,7 @@ import {
 // Setup and helpers
 //------------------------------------------------------------------------------
 
-function makeNotification(notif: Partial<Notification> = {}): Notification {
+function makeNotification(notif: Partial<INotification> = {}): INotification {
   const defaultNotif = {
     id: 1,
     title: "title",

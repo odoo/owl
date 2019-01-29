@@ -185,3 +185,5 @@ We have 3 main folders and 3 main files:
 
 - **Rendering** think about batching all patching updates in a
   nextanimationframe
+
+- when t-widget/t-on directives are compiled, the widget/eval context is actually available. Should we use that info to determine if bound methods exists on the widget?

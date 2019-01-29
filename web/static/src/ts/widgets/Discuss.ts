@@ -11,7 +11,7 @@ const template = `
         <button t-on-click="toggle">Toggle  Clock/counters</button>
         <button t-on-click="toggleColor">Toggle Color</button>
         <button t-on-click="updateState({})">Rerender this widget</button>
-        <input/>
+        <input t-ref="textinput"/>
         <t t-if="state.validcounter">
             <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
             <t t-widget="Counter" t-ref="counter2" t-props="{initialState:400}"/>
@@ -20,6 +20,7 @@ const template = `
             <t t-widget="Clock"/>
         </t>
         <t t-widget="ColorWidget" t-props="{color: state.color}"/>
+        <button t-on-click="addNotif">Add Notification</button>
     </div>
 `;
 
@@ -51,6 +52,12 @@ export class Discuss extends Widget<Env, {}> {
   toggleColor() {
     const newColor = this.state.color === "red" ? "blue" : "red";
     this.updateState({ color: newColor });
+  }
+
+  addNotif() {
+    const text = (<any>this.refs.textinput).value;
+    const message = `It is now ${new Date().toLocaleTimeString()}.<br/> Msg: ${text}`;
+    this.env.notifications.add({ title: "hey", message: message });
   }
 }
 

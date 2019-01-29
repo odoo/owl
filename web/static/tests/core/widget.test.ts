@@ -1,5 +1,6 @@
 import { WEnv, Widget } from "../../src/ts/core/widget";
 import { makeTestWEnv, makeTestFixture } from "../helpers";
+import { normalize } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -571,6 +572,37 @@ describe("composition", () => {
     await widget.updateState({ ok: true });
     expect(fixture.innerHTML).toBe(
       "<div><div>0<button>Inc</button></div></div>"
+    );
+  });
+
+  test("sub widgets rendered in a loop", async () => {
+    class ChildWidget extends Widget<WEnv, { n: number }> {
+      name = "c";
+      template = `<span><t t-esc="props.n"/></span>`;
+    }
+    class Parent extends Widget<WEnv, {}> {
+      name = "p";
+      template = `
+        <div>
+          <t t-foreach="state.numbers" t-as="number">
+            <t t-widget="ChildWidget" t-props="{n: number}"/>
+          </t>
+        </div>`;
+      state = {
+        numbers: [1, 2, 3]
+      };
+      widgets = { ChildWidget };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(normalize(fixture.innerHTML)).toBe(
+      normalize(`
+      <div>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+      </div>
+    `)
     );
   });
 });

@@ -2,7 +2,9 @@ import { QWeb } from "../src/ts/core/qweb_vdom";
 import { idGenerator } from "../src/ts/core/utils";
 import { WEnv } from "../src/ts/core/widget";
 import { Env } from "../src/ts/env";
-import { IAjax, RPC } from "../src/ts/services/ajax";
+import { IAjax, RPCQuery } from "../src/ts/services/ajax";
+import { NotificationManager } from "../src/ts/services/notifications";
+
 import {
   IActionManager,
   ActionEvent,
@@ -28,12 +30,14 @@ export function makeTestEnv(): Env {
   const ajax = new MockAjax();
   const actionManager = new MockActionManager();
   const router = new MockRouter();
+  const notifications = new NotificationManager();
   let { qweb, getID } = makeTestWEnv();
   return {
     qweb,
     getID,
     ajax,
     actionManager,
+    notifications,
     router,
     rpc: ajax.rpc,
     debug: false,
@@ -42,7 +46,7 @@ export function makeTestEnv(): Env {
 }
 
 class MockAjax implements IAjax {
-  async rpc(rpc: RPC) {
+  async rpc(rpc: RPCQuery) {
     return true;
   }
 }

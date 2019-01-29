@@ -12,7 +12,7 @@ export interface INotification {
   sticky: boolean;
 }
 
-export type NotificationEvent = "notification_added" | "notification_closed";
+export type NotificationEvent = "notification_added" | "notification_removed";
 
 export type Callback = (notif: INotification) => void;
 
@@ -40,13 +40,16 @@ export class NotificationManager extends Bus implements INotificationManager {
     const notification = Object.assign(defaultVals, notif, { id });
     this.notifications[id] = notification;
     this.trigger("notification_added", notification);
+    if (!notification.sticky) {
+      setTimeout(() => this.close(id), 2500);
+    }
     return id;
   }
   close(id: number) {
     let notification = this.notifications[id];
     if (notification) {
       delete this.notifications[id];
-      this.trigger("notification_closed", notification);
+      this.trigger("notification_removed", notification);
     }
   }
 }

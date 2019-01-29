@@ -36,11 +36,39 @@ test("can subscribe and add notification", () => {
 test("can close a notification", () => {
   const notifications: INotificationManager = new NotificationManager();
   let notified = false;
-  notifications.on("notification_closed", {}, () => (notified = true));
+  notifications.on("notification_removed", {}, () => (notified = true));
 
   const id = notifications.add(makeNotification());
   expect(notified).toBe(false);
 
   notifications.close(id);
   expect(notified).toBe(true);
+});
+
+test("notifications closes themselves after a while", () => {
+  jest.useFakeTimers();
+  const notifications: INotificationManager = new NotificationManager();
+  let removed = false;
+  notifications.on("notification_removed", {}, () => (removed = true));
+
+  notifications.add(makeNotification());
+
+  expect(setTimeout).toHaveBeenCalledTimes(1);
+  expect(removed).toBe(false);
+  jest.runAllTimers();
+  expect(removed).toBe(true);
+});
+
+test("sticky notifications do not close themselves after a while", () => {
+  jest.useFakeTimers();
+  const notifications: INotificationManager = new NotificationManager();
+  let removed = false;
+  notifications.on("notification_removed", {}, () => (removed = true));
+
+  notifications.add(makeNotification({ sticky: true }));
+
+  expect(setTimeout).toHaveBeenCalledTimes(0);
+  expect(removed).toBe(false);
+  jest.runAllTimers();
+  expect(removed).toBe(false);
 });

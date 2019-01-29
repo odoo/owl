@@ -68,6 +68,15 @@ body {
     margin: 5px 0 0 0;
     background-color: $o-notification-info-bg-color;
     box-shadow: 0px 0px 5px 1px $o-main-text-color;
+    position: relative;
+
+    .o_close {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: rgba(0, 0, 0, 0.3);
+      text-decoration: none;
+    }
 
     .o_notification_title {
       display: flex;

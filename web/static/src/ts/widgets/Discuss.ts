@@ -20,7 +20,8 @@ const template = `
             <t t-widget="Clock"/>
         </t>
         <t t-widget="ColorWidget" t-props="{color: state.color}"/>
-        <button t-on-click="addNotif">Add Notification</button>
+        <button t-on-click="addNotif(false)">Add notif</button>
+        <button t-on-click="addNotif(true)">Add sticky notif</button>
     </div>
 `;
 
@@ -54,10 +55,10 @@ export class Discuss extends Widget<Env, {}> {
     this.updateState({ color: newColor });
   }
 
-  addNotif() {
+  addNotif(sticky: boolean) {
     const text = (<any>this.refs.textinput).value;
     const message = `It is now ${new Date().toLocaleTimeString()}.<br/> Msg: ${text}`;
-    this.env.notifications.add({ title: "hey", message: message });
+    this.env.notifications.add({ title: "hey", message: message, sticky });
   }
 }
 

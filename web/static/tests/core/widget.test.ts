@@ -1,6 +1,5 @@
-import { QWeb } from "../../src/ts/core/qweb_vdom";
-import { idGenerator } from "../../src/ts/core/utils";
 import { WEnv, Widget } from "../../src/ts/core/widget";
+import { makeTestWEnv, makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -15,12 +14,8 @@ let fixture: HTMLElement;
 let env: WEnv;
 
 beforeEach(() => {
-  fixture = document.createElement("div");
-  document.body.appendChild(fixture);
-  env = {
-    qweb: new QWeb(),
-    getID: idGenerator()
-  };
+  fixture = makeTestFixture();
+  env = makeTestWEnv();
 });
 
 afterEach(() => {

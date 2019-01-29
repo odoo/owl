@@ -9,7 +9,7 @@ function clearSlashes(s: string): string {
   return s.replace(/\/$/, "").replace(/^\//, "");
 }
 
-type RouterEvent = "query_changed";
+export type RouterEvent = "query_changed";
 
 export interface IRouter {
   navigate(query: Query): void;

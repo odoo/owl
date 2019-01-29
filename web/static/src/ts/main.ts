@@ -3,7 +3,7 @@
 import { makeEnvironment } from "./env";
 import { registry } from "./registry";
 import { Discuss } from "./widgets/discuss";
-import { RootWidget } from "./widgets/root_widget";
+import { RootWidget } from "./root_widget";
 
 //------------------------------------------------------------------------------
 // Prepare application registry

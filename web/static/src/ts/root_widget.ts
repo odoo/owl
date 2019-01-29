@@ -1,7 +1,7 @@
-import { Widget } from "../core/widget";
-import { Navbar } from "./navbar";
-import { ActionWidget } from "../services/action_manager";
-import { Env } from "../env";
+import { Widget } from "./core/widget";
+import { Navbar } from "./widgets/navbar";
+import { ActionWidget } from "./services/action_manager";
+import { Env } from "./env";
 
 const template = `
     <div class="o_web_client">

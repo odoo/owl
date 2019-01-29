@@ -46,7 +46,7 @@ export class Widget<T extends WEnv, Props> {
 
   env: T;
   state: Object = {};
-  props: Props | undefined;
+  props: Props;
   refs: { [key: string]: Widget<T, {}> | HTMLElement | undefined } = {};
 
   //--------------------------------------------------------------------------
@@ -55,7 +55,12 @@ export class Widget<T extends WEnv, Props> {
 
   constructor(parent: Widget<T, {}> | T, props?: Props) {
     wl.push(this);
-    this.props = props;
+
+    // is this a good idea?
+    //   Pro: if props is empty, we can create easily a widget
+    //   Con: this is not really safe
+    //   Pro: but creating widget (by a template) is always unsafe anyway
+    this.props = <Props>props;
     let id: number;
     let p: Widget<T, any> | null = null;
     if (parent instanceof Widget) {

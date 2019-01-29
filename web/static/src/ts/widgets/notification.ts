@@ -19,6 +19,6 @@ export class Notification extends Widget<Env, INotification> {
   template = template;
 
   close() {
-    this.env.notifications.close(this.props!.id);
+    this.env.notifications.close(this.props.id);
   }
 }

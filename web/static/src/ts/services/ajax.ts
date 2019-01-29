@@ -1,14 +1,14 @@
-export interface RPC {
+export interface RPCQuery {
   model: string;
   method: string;
   args: any;
 }
 export interface IAjax {
-  rpc(rpc: RPC): Promise<any>;
+  rpc(rpc: RPCQuery): Promise<any>;
 }
 
 export class Ajax implements IAjax {
-  rpc(rpc: RPC): Promise<any> {
+  rpc(rpc: RPCQuery): Promise<any> {
     return Promise.resolve(1);
   }
 }

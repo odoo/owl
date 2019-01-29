@@ -3,7 +3,7 @@
 import { makeEnvironment } from "./env";
 import { registry } from "./registry";
 import { Discuss } from "./widgets/discuss";
-import { RootWidget } from "./root_widget";
+import { Root } from "./root";
 
 //------------------------------------------------------------------------------
 // Prepare application registry
@@ -15,6 +15,6 @@ registry.add("action", "discuss", Discuss);
 //------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", async function() {
   const env = makeEnvironment();
-  const rootWidget = new RootWidget(env);
+  const rootWidget = new Root(env);
   await rootWidget.mount(document.body);
 });

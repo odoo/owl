@@ -11,7 +11,7 @@ const template = `
     </div>
 `;
 
-export class RootWidget extends Widget<Env, {}> {
+export class Root extends Widget<Env, {}> {
   name = "root";
   template = template;
   widgets = { Navbar };

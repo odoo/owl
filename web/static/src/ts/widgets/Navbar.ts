@@ -3,7 +3,7 @@ import { Env, Menu } from "../env";
 
 const template = `
     <div class="o_navbar">
-        <span class="title">Odoo</span>
+        <span class="title">Odoo<t t-if="env.isMobile"> MOBILE</t></span>
         <ul>
             <li t-foreach="env.menus" t-as="menu">
                 <a t-att-href="getUrl(menu)">

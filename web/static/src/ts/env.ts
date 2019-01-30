@@ -74,6 +74,6 @@ export const makeEnvironment = memoize(function(): Env {
 
     rpc: ajax.rpc,
     debug: false,
-    isMobile: false
+    isMobile: window.innerWidth <= 768
   };
 });

@@ -34,3 +34,10 @@ test("can render one menu item", async () => {
   await navbar.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();
 });
+
+test("mobile mode: navbar is different", async () => {
+  env.isMobile = true;
+  const navbar = new Navbar(env);
+  await navbar.mount(fixture);
+  expect(fixture.innerHTML).toMatchSnapshot();
+});

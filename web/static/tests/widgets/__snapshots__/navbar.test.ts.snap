@@ -21,3 +21,12 @@ exports[`can render one menu item 1`] = `
         </ul>
     </div>"
 `;
+
+exports[`mobile mode: navbar is different 1`] = `
+"<div class=\\"o_navbar\\">
+        <span class=\\"title\\">Odoo MOBILE</span>
+        <ul>
+            
+        </ul>
+    </div>"
+`;

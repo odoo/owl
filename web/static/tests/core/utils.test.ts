@@ -2,7 +2,8 @@ import {
   escape,
   htmlTrim,
   idGenerator,
-  memoize
+  memoize,
+  debounce
 } from "../../src/ts/core/utils";
 
 describe("escape", () => {
@@ -57,5 +58,22 @@ describe("memoize", () => {
     expect(memoized(1, 3)).toBe(4);
     expect(memoized(1, 3)).toBe(4);
     expect(nCalls).toBe(1);
+  });
+});
+
+describe("debounce", () => {
+  test("works as expected", () => {
+    jest.useFakeTimers();
+    let n = 0;
+    let f = debounce(() => n++, 100);
+    expect(n).toBe(0);
+    f();
+    expect(n).toBe(0);
+    f();
+    expect(n).toBe(0);
+    jest.advanceTimersByTime(90);
+    expect(n).toBe(0);
+    jest.advanceTimersByTime(20);
+    expect(n).toBe(1);
   });
 });

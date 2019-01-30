@@ -86,7 +86,7 @@ export class Context {
   }
 
   addLine(line: string) {
-    const prefix = new Array(this.indentLevel).join("\t");
+    const prefix = new Array(this.indentLevel + 2).join("    ");
     this.code.push(prefix + line);
   }
 
@@ -213,10 +213,10 @@ export class QWeb {
     if (ctx.shouldDefineOwner) {
       // this is necessary to prevent some directives (t-forach for ex) to
       // pollute the rendering context by adding some keys in it.
-      ctx.code.unshift("let owner = context;");
+      ctx.code.unshift("    let owner = context;");
     }
     if (ctx.shouldProtectContext) {
-      ctx.code.unshift("context = Object.create(context);");
+      ctx.code.unshift("    context = Object.create(context);");
     }
 
     if (!ctx.rootNode) {
@@ -398,8 +398,9 @@ export class QWeb {
       ctx.dedent();
       ctx.addLine(`}`);
     }
-    ctx.addLine(`
-      let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
+    ctx.addLine(
+      `let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`
+    );
     if (ctx.parentNode) {
       ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
     }

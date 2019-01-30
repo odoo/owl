@@ -1,7 +1,7 @@
 import { Env } from "../../src/ts/env";
-import { makeTestEnv, makeTestFixture, normalize } from "../helpers";
-import { Notification } from "../../src/ts/widgets/notification";
 import { INotification } from "../../src/ts/services/notifications";
+import { Notification } from "../../src/ts/widgets/notification";
+import { makeTestEnv, makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -38,13 +38,7 @@ test("can be rendered", async () => {
   const notif = makeNotification({ title: "title", message: "message" });
   const navbar = new Notification(env, notif);
   await navbar.mount(fixture);
-  expect(normalize(fixture.innerHTML)).toBe(
-    normalize(`
-      <div class=\"o_notification\">
-        <div class=\"o_notification_title\">title</div>
-        <div class=\"o_notification_content\">message</div>
-      </div>`)
-  );
+  expect(fixture.innerHTML).toMatchSnapshot();
 });
 
 test("can be closed by clicking on it (if sticky)", async () => {

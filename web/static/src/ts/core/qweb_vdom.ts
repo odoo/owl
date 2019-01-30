@@ -721,7 +721,7 @@ const widgetDirective: Directive = {
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     ctx.addLine(`let def${defID};`);
-    let templateID = ctx.inLoop ? `(-${widgetID} - i)` : String(widgetID);
+    let templateID = ctx.inLoop ? `String(-${widgetID} - i)` : String(widgetID);
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
     );

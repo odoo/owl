@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can be rendered 1`] = `
+"<div class=\\"o_navbar\\">
+        <span class=\\"title\\">Odoo</span>
+        <ul>
+            
+        </ul>
+    </div>"
+`;
+
+exports[`can render one menu item 1`] = `
+"<div class=\\"o_navbar\\">
+        <span class=\\"title\\">Odoo</span>
+        <ul>
+            <li>
+                <a href=\\"\\">
+                    menu
+                </a>
+            </li>
+        </ul>
+    </div>"
+`;

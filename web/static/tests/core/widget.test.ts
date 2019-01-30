@@ -714,3 +714,27 @@ describe("random stuff", () => {
     expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
   });
 });
+
+describe("miscellaneous", () => {
+  test("updating widget immediately", async () => {
+    // in this situation, we protect against a bug that occurred: because of the
+    // interplay between widgets and vnodes, a sub widget vnode was patched
+    // twice.
+    class Parent extends Widget<WEnv, {}> {
+      name = "a";
+      template = `<div><t t-widget="child" t-props="state"/></div>`;
+      widgets = { child: Child };
+      state = { flag: false };
+    }
+
+    class Child extends Widget<WEnv, {}> {
+      template = `<span>abc<t t-if="props.flag">def</t></span>`;
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
+    await widget.updateState({ flag: true });
+    expect(fixture.innerHTML).toBe("<div><span>abcdef</span></div>");
+  });
+});

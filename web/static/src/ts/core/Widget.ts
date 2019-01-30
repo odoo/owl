@@ -55,7 +55,6 @@ export class Widget<T extends WEnv, Props> {
 
   constructor(parent: Widget<T, {}> | T, props?: Props) {
     wl.push(this);
-
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a widget
     //   Con: this is not really safe
@@ -211,14 +210,15 @@ export class Widget<T extends WEnv, Props> {
   /**
    * Only called by qweb t-widget directive
    */
-  _mount(vnode: VNode) {
-    this.__widget__.vnode = vnode;
+  _mount(vnode: VNode, elm: HTMLElement): VNode {
+    this.__widget__.vnode = patch(elm, vnode);
     if (this.__widget__.parent) {
       if (this.__widget__.parent.__widget__.isMounted) {
         this.__widget__.isMounted = true;
         this.mounted();
       }
     }
+    return this.__widget__.vnode;
   }
 
   private visitSubTree(callback: (w: Widget<T, any>) => void) {

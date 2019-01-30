@@ -22,16 +22,28 @@ const template = `
         <t t-widget="ColorWidget" t-props="{color: state.color}"/>
         <button t-on-click="addNotif(false)">Add notif</button>
         <button t-on-click="addNotif(true)">Add sticky notif</button>
-        <t t-foreach="state.test" t-as="blip">
-            <t t-widget="Counter" t-key="blip" t-props="{initialState: 100}"/>
+        <t t-foreach="state.test" t-as="number">
+            <t t-widget="ChildWidget" t-key="number"/>
         </t>
+
     </div>
 `;
+
+let n = 1;
+class ChildWidget extends Widget<Env, never> {
+  name = "c";
+  template = `<span><t t-esc="state.n"/></span>`;
+  constructor(parent) {
+    super(parent);
+    this.state = { n };
+    n++;
+  }
+}
 
 export class Discuss extends Widget<Env, {}> {
   name = "discuss";
   template = template;
-  widgets = { Clock, Counter, ColorWidget };
+  widgets = { Clock, Counter, ColorWidget, ChildWidget };
   state = { validcounter: true, color: "red", test: [1, 2, 3] };
 
   mounted() {}

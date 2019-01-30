@@ -210,13 +210,13 @@ export class QWeb {
     const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
 
+    if (ctx.shouldProtectContext) {
+      ctx.code.unshift("    context = Object.create(context);");
+    }
     if (ctx.shouldDefineOwner) {
       // this is necessary to prevent some directives (t-forach for ex) to
       // pollute the rendering context by adding some keys in it.
       ctx.code.unshift("    let owner = context;");
-    }
-    if (ctx.shouldProtectContext) {
-      ctx.code.unshift("    context = Object.create(context);");
     }
 
     if (!ctx.rootNode) {
@@ -728,7 +728,6 @@ const widgetDirective: Directive = {
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();
     let widgetID = ctx.generateID();
-    ctx.addLine(`let _${dummyID} = {}; // DUMMY`);
     let keyID = key && ctx.generateID();
     if (key) {
       // we bind a variable to the key (could be a complex expression, so we
@@ -736,7 +735,7 @@ const widgetDirective: Directive = {
       ctx.addLine(`let key${keyID} = ${key};`);
     }
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
-    ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
+    ctx.addLine(`c${ctx.parentNode}.push(null);`);
     ctx.addLine(`let def${defID};`);
     let templateID = key
       ? `key${keyID}`
@@ -746,11 +745,10 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
     );
-
     ctx.addLine(`if (w${widgetID}) {`);
     ctx.indent();
     ctx.addLine(
-      `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{vnode=w${widgetID}.__widget__.vnode;c${
+      `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
       }[_${dummyID}_index]=vnode;vnode.data.hook = {remove(){w${widgetID}.destroy()}}});`
     );
@@ -765,9 +763,9 @@ const widgetDirective: Directive = {
       `context.__widget__.cmap[${templateID}] = _${widgetID}.__widget__.id;`
     );
     ctx.addLine(
-      `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{c${
+      `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {create(_,vn){_${widgetID}._mount(vn)},remove(){_${widgetID}.destroy()}}});`
+      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=_${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){_${widgetID}.destroy()}}});`
     );
 
     let ref = node.getAttribute("t-ref");

@@ -32,6 +32,7 @@ export interface Env extends WEnv {
 
   // configuration
   debug: boolean;
+  isMobile: boolean;
 }
 
 //------------------------------------------------------------------------------
@@ -72,6 +73,7 @@ export const makeEnvironment = memoize(function(): Env {
     notifications,
 
     rpc: ajax.rpc,
-    debug: false
+    debug: false,
+    isMobile: false
   };
 });

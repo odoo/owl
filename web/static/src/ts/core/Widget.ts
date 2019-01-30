@@ -142,11 +142,22 @@ export class Widget<T extends WEnv, Props> {
   }
 
   /**
-   * Note: it is ok to call updateState before the widget is started. In that
+   * This is the safest update method for widget: its job is to update the state
+   * and rerender (if widget is mounted).
+   *
+   * Notes:
+   * - it checks if we do not add extra keys to the state.
+   * - it is ok to call updateState before the widget is started. In that
    * case, it will simply update the state and will not rerender
    */
   async updateState(nextState: Object) {
-    Object.assign(this.state, nextState);
+    for (let key in nextState) {
+      if (key in this.state) {
+        this.state[key] = nextState[key];
+      } else {
+        throw new Error(`Invalid key: '${key}' does not exist in widget state`);
+      }
+    }
     if (this.__widget__.isStarted) {
       return this.render();
     }

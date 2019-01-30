@@ -109,6 +109,15 @@ describe("basic widget properties", () => {
     expect(renderCalls).toBe(1);
   });
 
+  test("updateState does not allow adding extra keys", async () => {
+    const widget = new Widget(env);
+    try {
+      await widget.updateState({ extra: 1 });
+    } catch (e) {
+      expect(e.message).toMatch("Invalid key:");
+    }
+  });
+
   test("keeps a reference to env", async () => {
     const widget = new Widget(env);
     expect(widget.env).toBe(env);
@@ -600,6 +609,43 @@ describe("composition", () => {
       <div>
         <span>1</span>
         <span>2</span>
+        <span>3</span>
+      </div>
+    `)
+    );
+  });
+
+  test("sub widgets with some state rendered in a loop", async () => {
+    let n = 1;
+    class ChildWidget extends Widget<WEnv, never> {
+      name = "c";
+      template = `<span><t t-esc="state.n"/></span>`;
+      constructor(parent) {
+        super(parent);
+        this.state = { n };
+        n++;
+      }
+    }
+    class Parent extends Widget<WEnv, {}> {
+      name = "p";
+      template = `
+        <div>
+          <t t-foreach="state.numbers" t-as="number">
+            <t t-widget="ChildWidget" t-key="number"/>
+          </t>
+        </div>`;
+      state = {
+        numbers: [1, 2, 3]
+      };
+      widgets = { ChildWidget };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    await parent.updateState({ numbers: [1, 3] });
+    expect(normalize(fixture.innerHTML)).toBe(
+      normalize(`
+      <div>
+        <span>1</span>
         <span>3</span>
       </div>
     `)

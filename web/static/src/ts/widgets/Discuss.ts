@@ -22,6 +22,9 @@ const template = `
         <t t-widget="ColorWidget" t-props="{color: state.color}"/>
         <button t-on-click="addNotif(false)">Add notif</button>
         <button t-on-click="addNotif(true)">Add sticky notif</button>
+        <t t-foreach="state.test" t-as="blip">
+            <t t-widget="Counter" t-key="blip" t-props="{initialState: 100}"/>
+        </t>
     </div>
 `;
 
@@ -29,7 +32,7 @@ export class Discuss extends Widget<Env, {}> {
   name = "discuss";
   template = template;
   widgets = { Clock, Counter, ColorWidget };
-  state = { validcounter: true, color: "red" };
+  state = { validcounter: true, color: "red", test: [1, 2, 3] };
 
   mounted() {}
   resetCounter(ev: MouseEvent) {

@@ -698,6 +698,10 @@ const widgetDirective: Directive = {
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.rootContext.shouldDefineOwner = true;
     let props = node.getAttribute("t-props");
+    let key = node.getAttribute("t-key");
+    if (key) {
+      key = qweb._formatExpression(key);
+    }
     if (props) {
       props = props.trim();
       if (props[0] === "{" && props[props.length - 1] === "}") {
@@ -718,10 +722,20 @@ const widgetDirective: Directive = {
     let defID = ctx.generateID();
     let widgetID = ctx.generateID();
     ctx.addLine(`let _${dummyID} = {}; // DUMMY`);
+    let keyID = key && ctx.generateID();
+    if (key) {
+      // we bind a variable to the key (could be a complex expression, so we
+      // want to evaluate it only once)
+      ctx.addLine(`let key${keyID} = ${key};`);
+    }
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     ctx.addLine(`c${ctx.parentNode}.push(_${dummyID});`);
     ctx.addLine(`let def${defID};`);
-    let templateID = ctx.inLoop ? `String(-${widgetID} - i)` : String(widgetID);
+    let templateID = key
+      ? `key${keyID}`
+      : ctx.inLoop
+      ? `String(-${widgetID} - i)`
+      : String(widgetID);
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
     );

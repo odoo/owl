@@ -148,7 +148,7 @@ export class Widget<T extends WEnv, Props> {
   async updateState(nextState: Object) {
     Object.assign(this.state, nextState);
     if (this.__widget__.isStarted) {
-      await this.render();
+      return this.render();
     }
   }
 

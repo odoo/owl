@@ -59,6 +59,12 @@ export class Context {
     return newContext;
   }
 
+  withInLoop(): Context {
+    const newContext = Object.create(this);
+    newContext.inLoop = true;
+    return newContext;
+  }
+
   withCaller(node: Element): Context {
     const newContext = Object.create(this);
     newContext.caller = node;
@@ -629,7 +635,7 @@ const forEachDirective: Directive = {
   priority: 10,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldProtectContext = true;
-    ctx.inLoop = true;
+    ctx = ctx.withInLoop();
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();

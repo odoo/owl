@@ -698,3 +698,19 @@ describe("props evaluation (with t-props directive)", () => {
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
 });
+
+describe("random stuff", () => {
+  test("widget after a t-foreach", async () => {
+    // this test makes sure that the foreach directive does not pollute sub
+    // context with the inLoop variable, which is then used in the t-widget
+    // directive as a key
+    class Test extends Widget<WEnv, {}> {
+      name = "test";
+      template = `<div><t t-foreach="2">txt</t><t t-widget="widget"/></div>`;
+      widgets = { widget: Widget };
+    }
+    const widget = new Test(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
+  });
+});

@@ -7,6 +7,7 @@ import { QWeb } from "./qweb_vdom";
 //------------------------------------------------------------------------------
 // Types/helpers
 //------------------------------------------------------------------------------
+
 export interface WEnv {
   qweb: QWeb;
   getID(): number;
@@ -35,6 +36,7 @@ const patch = init([sdListeners, sdAttrs]);
 //------------------------------------------------------------------------------
 // Widget
 //------------------------------------------------------------------------------
+
 export class Widget<T extends WEnv, Props> {
   __widget__: Meta<WEnv>;
   name: string = "widget";
@@ -53,7 +55,7 @@ export class Widget<T extends WEnv, Props> {
   // Lifecycle
   //--------------------------------------------------------------------------
 
-  constructor(parent: Widget<T, {}> | T, props?: Props) {
+  constructor(parent: Widget<T, any> | T, props?: Props) {
     wl.push(this);
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a widget

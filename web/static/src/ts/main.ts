@@ -1,19 +1,23 @@
 ///<amd-module name="main" />
 
+import { debounce } from "./core/utils";
 import { makeEnvironment } from "./env";
 import { registry } from "./registry";
-import { Discuss } from "./widgets/discuss";
 import { Root } from "./root";
-import { debounce } from "./core/utils";
+import { CRM } from "./widgets/crm";
+import { Discuss } from "./widgets/discuss";
 
 //------------------------------------------------------------------------------
 // Prepare application registry
 //------------------------------------------------------------------------------
+
 registry.add("action", "discuss", Discuss);
+registry.add("action", "crm", CRM);
 
 //------------------------------------------------------------------------------
 // Application bootstrapping
 //------------------------------------------------------------------------------
+
 document.addEventListener("DOMContentLoaded", async function() {
   const env = makeEnvironment();
   const rootWidget = new Root(env);

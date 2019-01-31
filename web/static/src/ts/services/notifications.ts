@@ -12,9 +12,9 @@ export interface INotification {
   sticky: boolean;
 }
 
-export type NotificationEvent = "notification_added" | "notification_removed";
+export type NotificationEvent = "notifications_updated";
 
-export type Callback = (notif: INotification) => void;
+export type Callback = (notifs: INotification[]) => void;
 
 export interface INotificationManager {
   add(notif: Partial<INotification>): number;
@@ -25,9 +25,10 @@ export interface INotificationManager {
 //------------------------------------------------------------------------------
 // Notification Manager
 //------------------------------------------------------------------------------
+
 export class NotificationManager extends Bus implements INotificationManager {
   nextID = 1;
-  notifications: { [key: number]: INotification } = {};
+  notifications: INotification[] = [];
 
   add(notif: Partial<INotification>): number {
     const id = this.nextID++;
@@ -38,18 +39,15 @@ export class NotificationManager extends Bus implements INotificationManager {
       sticky: false
     };
     const notification = Object.assign(defaultVals, notif, { id });
-    this.notifications[id] = notification;
-    this.trigger("notification_added", notification);
+    this.notifications.push(notification);
+    this.trigger("notifications_updated", this.notifications);
     if (!notification.sticky) {
       setTimeout(() => this.close(id), 2500);
     }
     return id;
   }
   close(id: number) {
-    let notification = this.notifications[id];
-    if (notification) {
-      delete this.notifications[id];
-      this.trigger("notification_removed", notification);
-    }
+    this.notifications = this.notifications.filter(n => n.id !== id);
+    this.trigger("notifications_updated", this.notifications);
   }
 }

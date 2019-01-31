@@ -42,19 +42,21 @@ test("can be rendered", async () => {
 });
 
 test("can be closed by clicking on it (if sticky)", async () => {
-  let notif: INotification;
-  let removed = false;
-  env.notifications.on("notification_added", null, _notif => (notif = _notif));
+  let notifs: INotification[] = [];
+  env.notifications.on(
+    "notifications_updated",
+    null,
+    _notifs => (notifs = _notifs)
+  );
   env.notifications.add({
     title: "title",
     message: "message",
     sticky: true
   });
-  env.notifications.on("notification_removed", null, () => (removed = true));
 
-  const navbar = new Notification(env, notif!);
+  const navbar = new Notification(env, notifs[0]);
   await navbar.mount(fixture);
-  expect(removed).toBe(false);
+  expect(notifs.length).toBe(1);
   (<any>fixture.getElementsByClassName("o_close")[0]).click();
-  expect(removed).toBe(true);
+  expect(notifs.length).toBe(0);
 });

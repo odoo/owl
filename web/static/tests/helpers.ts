@@ -5,11 +5,7 @@ import { Env } from "../src/ts/env";
 import { IAjax, RPCQuery } from "../src/ts/services/ajax";
 import { NotificationManager } from "../src/ts/services/notifications";
 
-import {
-  IActionManager,
-  ActionEvent,
-  ActionWidget
-} from "../src/ts/services/action_manager";
+import { IActionManager, ActionEvent } from "../src/ts/services/action_manager";
 import { Callback } from "../src/ts/core/event_bus";
 import { IRouter, Query, RouterEvent } from "../src/ts/services/router";
 
@@ -55,8 +51,9 @@ class MockAjax implements IAjax {
 class MockActionManager implements IActionManager {
   doAction(actionID: number) {}
   on(event: ActionEvent, owner: any, callback: Callback) {}
-  getCurrentAction(): ActionWidget | null {
-    return null;
+  activate() {}
+  getStack() {
+    return [];
   }
 }
 

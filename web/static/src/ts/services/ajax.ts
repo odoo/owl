@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
 export interface RPCQuery {
   model: string;
   method: string;
@@ -6,6 +10,10 @@ export interface RPCQuery {
 export interface IAjax {
   rpc(rpc: RPCQuery): Promise<any>;
 }
+
+//------------------------------------------------------------------------------
+// Ajax
+//------------------------------------------------------------------------------
 
 export class Ajax implements IAjax {
   rpc(rpc: RPCQuery): Promise<any> {

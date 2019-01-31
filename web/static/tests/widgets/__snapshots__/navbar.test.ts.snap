@@ -5,6 +5,7 @@ exports[`can be rendered 1`] = `
         <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
         <ul>
             
+            
         </ul>
     </div>"
 `;
@@ -18,6 +19,7 @@ exports[`can render one menu item 1`] = `
                     menu
                 </a>
             </li>
+            
         </ul>
     </div>"
 `;
@@ -27,6 +29,7 @@ exports[`mobile mode: navbar is different 1`] = `
         <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
         <ul>
             
+            <li>MOBILEMODE</li>
         </ul>
     </div>"
 `;

@@ -3,6 +3,7 @@ import { EventBus, Callback } from "../core/event_bus";
 //------------------------------------------------------------------------------
 // Types and helpers
 //------------------------------------------------------------------------------
+
 export type Query = { [key: string]: string };
 
 function clearSlashes(s: string): string {
@@ -21,6 +22,7 @@ export interface IRouter {
 //------------------------------------------------------------------------------
 // Router
 //------------------------------------------------------------------------------
+
 export class Router extends EventBus implements IRouter {
   currentQuery: Query;
 

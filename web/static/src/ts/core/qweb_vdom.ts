@@ -17,6 +17,7 @@ const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
+
 export class Context {
   nextID: number = 1;
   code: string[] = [];
@@ -98,6 +99,7 @@ export class Context {
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
+
 export class QWeb {
   rawTemplates: { [name: string]: RawTemplate } = {};
   parsedTemplates: { [name: string]: ParsedTemplate } = {};
@@ -461,6 +463,7 @@ export class QWeb {
 //------------------------------------------------------------------------------
 // QWeb Directives
 //------------------------------------------------------------------------------
+
 interface CompilationInfo {
   nodeID?: number;
   node: Element;

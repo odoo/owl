@@ -1,46 +1,49 @@
-import { Callback, EventBus } from "../core/event_bus";
+import { EventBus } from "../core/event_bus";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
 import { Registry } from "../registry";
 import { Type } from "../types";
-import { CRM } from "../widgets/crm";
-import { Discuss } from "../widgets/discuss";
 import { IRouter, Query } from "./router";
 
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
 
-export interface ClientAction {
+export type ActionRequest = string | number;
+
+export type Context = { [key: string]: any };
+
+export interface CommonActionInfo {
+  id: number;
+  context: Context;
+  title: string;
+  target: "current" | "new";
+}
+
+export interface ClientActionInfo extends CommonActionInfo {
   type: "client";
   name: string;
+  Widget: Type<Widget<Env, {}>>;
 }
 
-export interface ActWindowAction {
+export interface ActWindowInfo extends CommonActionInfo {
   type: "act_window";
-  views: string[];
+  view: string;
 }
 
-export type ActionEvent = "action_ready";
+export type ActionInfo = ClientActionInfo | ActWindowInfo;
+export type ActionStack = ActionInfo[];
+
+export type ActionEvent = "action_stack_updated";
+
+type Callback = (stack: ActionStack) => void;
 
 export interface IActionManager {
-  doAction(actionID: number): void;
+  activate(): void;
+  doAction(request: ActionRequest): void;
   on(event: ActionEvent, owner: any, callback: Callback): void;
-  getCurrentAction(): ActionWidget | null;
+  getStack(): ActionStack;
 }
-
-export type Action = ClientAction | ActWindowAction;
-
-export interface ActionWidget {
-  id: number;
-  Widget: Type<Widget<Env, {}>>;
-  props: any;
-}
-
-const actions: any[] = [
-  { id: 1, title: "Discuss", Widget: Discuss, default: true },
-  { id: 2, title: "CRM", Widget: CRM }
-];
 
 //------------------------------------------------------------------------------
 // Action Manager
@@ -49,49 +52,47 @@ const actions: any[] = [
 export class ActionManager extends EventBus implements IActionManager {
   router: IRouter;
   registry: Registry;
-  currentAction: ActionWidget | null = null;
+  stack: ActionStack;
 
   constructor(router: IRouter, registry: Registry) {
     super();
     this.router = router;
     this.registry = registry;
-    const query = this.router.getQuery();
-    this.update(query);
+    this.stack = [];
+  }
+
+  activate() {
     this.router.on("query_changed", this, this.update);
-    if (!this.currentAction) {
-      const action = actions.find(a => a.default);
-      if (action) {
-        this.doAction(action.id);
-      }
+    this.update(this.router.getQuery());
+  }
+  doAction(request: ActionRequest) {
+    if (typeof request === "number") {
+      // this is an action ID
+      let name = request === 1 ? 'discuss' : 'crm';
+      let title = request === 1 ? 'Discuss': 'CRM';
+      let Widget = this.registry.getAction(name);
+      this.stack = [
+        {
+          id: 1,
+          context: {},
+          target: "current",
+          type: "client",
+          name,
+          title,
+          Widget: Widget
+        }
+      ];
+      this.trigger("action_stack_updated", this.stack);
     }
   }
 
+  getStack(): ActionStack {
+    return [];
+  }
+
   update(query: Query) {
-    const initialAction = this.currentAction;
     if ("action_id" in query) {
       const actionID = parseInt(query.action_id);
       this.doAction(actionID);
     }
-    if (this.currentAction && initialAction !== this.currentAction) {
-    }
   }
-
-  doAction(actionID: number) {
-    const action = actions.find(a => a.id === actionID);
-    if (action) {
-      this.currentAction = {
-        id: action.id,
-        Widget: action.Widget,
-        props: {}
-      };
-    }
-    this.trigger("action_ready", this.currentAction);
-    this.router.navigate({ action_id: String(actionID) });
-  }
-
-  registerAction(action: Action) {}
-
-  getCurrentAction(): ActionWidget | null {
-    return this.currentAction;
-  }
-}

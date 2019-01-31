@@ -13,7 +13,7 @@ let props: Props;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
-  props = { inMenu: false, toggleHomeMenu: () => {} };
+  props = { inMenu: false, toggleHome: () => {} };
 });
 
 afterEach(() => {

@@ -23,6 +23,10 @@ export class Registry {
     this.registries[type][name] = action;
     return this;
   }
+
+  getAction(name: string): ActionWidget {
+    return this.registries.action[name];
+  }
 }
 
 //------------------------------------------------------------------------------

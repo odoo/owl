@@ -20,6 +20,7 @@ export interface Subscription {
 //------------------------------------------------------------------------------
 // EventBus
 //------------------------------------------------------------------------------
+
 export class EventBus {
   private subscriptions: { [eventType: string]: Subscription[] } = {};
 

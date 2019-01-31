@@ -26,11 +26,13 @@ body {
   color: white;
   display: flex;
   line-height: $navbar-height;
+  font-size: 18px;
 
-  span.title {
-    font-size: 24px;
-    font-weight: bold;
-    padding: 0 16px;
+  a.o_title {
+    padding: 10px 16px 16px 20px;
+    &:hover {
+      background-color: #68465f;
+    }
   }
 
   ul {

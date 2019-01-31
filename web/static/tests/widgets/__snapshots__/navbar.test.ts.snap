@@ -2,7 +2,7 @@
 
 exports[`can be rendered 1`] = `
 "<div class=\\"o_navbar\\">
-        <span class=\\"title\\">Odoo</span>
+        <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
         <ul>
             
         </ul>
@@ -11,7 +11,7 @@ exports[`can be rendered 1`] = `
 
 exports[`can render one menu item 1`] = `
 "<div class=\\"o_navbar\\">
-        <span class=\\"title\\">Odoo</span>
+        <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
         <ul>
             <li>
                 <a href=\\"\\">
@@ -24,7 +24,7 @@ exports[`can render one menu item 1`] = `
 
 exports[`mobile mode: navbar is different 1`] = `
 "<div class=\\"o_navbar\\">
-        <span class=\\"title\\">Odoo MOBILE</span>
+        <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
         <ul>
             
         </ul>

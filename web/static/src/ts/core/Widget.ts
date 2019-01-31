@@ -230,13 +230,24 @@ export class Widget<T extends WEnv, Props> {
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
     this.__widget__.vnode = patch(elm, vnode);
+    this.__mount();
+    return this.__widget__.vnode;
+  }
+
+  __mount() {
+    if (this.__widget__.isMounted) {
+      return;
+    }
     if (this.__widget__.parent) {
-      if (this.__widget__.parent.__widget__.isMounted) {
+      if (this.__widget__.parent!.__widget__.isMounted) {
         this.__widget__.isMounted = true;
         this.mounted();
+        const children = this.__widget__.children;
+        for (let id in children) {
+          children[id].__mount();
+        }
       }
     }
-    return this.__widget__.vnode;
   }
 
   private visitSubTree(callback: (w: Widget<T, any>) => boolean) {

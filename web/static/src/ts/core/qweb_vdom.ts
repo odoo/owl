@@ -755,7 +755,7 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;},remove(){w${widgetID}.${
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
         keepAlive ? "detach" : "destroy"
       }()}}});`
     );

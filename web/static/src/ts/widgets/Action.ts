@@ -11,10 +11,6 @@ export class Action extends Widget<Env, Props> {
   template = `<div class="o_content"/>`;
   currentWidget: any;
 
-  mounted() {
-    this.setContentWidget();
-  }
-
   shouldUpdate(nextProps: Props) {
     if (nextProps.stack !== this.props.stack) {
       this.props = nextProps;

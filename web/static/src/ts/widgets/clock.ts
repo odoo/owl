@@ -1,31 +1,34 @@
 import { Widget } from "../core/widget";
 import { Env } from "../env";
 
-const template = `<div class="o_clock"><t t-esc="state.currentTime"/></div>`;
-
 export class Clock extends Widget<Env, {}> {
   name = "clock";
-  template = template;
-  interval: any | undefined;
+  template = `<div class="o_clock"><t t-esc="state.currentTime"/></div>`;
+  timeout: any | undefined;
 
   state = {
     currentTime: ""
   };
 
-  async willStart() {
-    this.updateTime();
-  }
-
   mounted() {
-    this.interval = setInterval(this.updateTime.bind(this), 500);
+    this.updateTime();
+    this.startClock();
   }
 
   willUnmount() {
-    clearInterval(this.interval);
+    clearTimeout(this.timeout);
   }
+
   updateTime() {
-    this.updateState({
-      currentTime: new Date().toLocaleTimeString()
-    });
+    this.updateState({ currentTime: new Date().toLocaleTimeString() });
+  }
+
+  startClock() {
+    const now = Date.now();
+    const offset = 1000 - (now % 1000);
+    this.timeout = setTimeout(() => {
+      this.updateTime();
+      this.startClock();
+    }, offset);
   }
 }

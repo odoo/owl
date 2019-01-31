@@ -600,9 +600,13 @@ describe("composition", () => {
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
+    const counter = children(widget)[0];
+    expect(counter.__widget__.isMounted).toBe(true);
     await widget.updateState({ ok: false });
     expect(fixture.innerHTML).toBe("<div></div>");
+    expect(counter.__widget__.isMounted).toBe(false);
     await widget.updateState({ ok: true });
+    expect(counter.__widget__.isMounted).toBe(true);
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );

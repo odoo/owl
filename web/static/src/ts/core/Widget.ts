@@ -112,8 +112,24 @@ export class Widget<T extends WEnv, Props> {
         if (!w.__widget__.isMounted && this.el!.contains(w.el)) {
           w.__widget__.isMounted = true;
           w.mounted();
+          return true;
         }
+        return false;
       });
+    }
+  }
+
+  detach() {
+    if (this.el) {
+      this.visitSubTree(w => {
+        if (w.__widget__.isMounted) {
+          w.willUnmount();
+          w.__widget__.isMounted = false;
+          return true;
+        }
+        return false;
+      });
+      this.el.remove();
     }
   }
 
@@ -221,11 +237,13 @@ export class Widget<T extends WEnv, Props> {
     return this.__widget__.vnode;
   }
 
-  private visitSubTree(callback: (w: Widget<T, any>) => void) {
-    callback(this);
-    const children = this.__widget__.children;
-    for (let id in children) {
-      children[id].visitSubTree(callback);
+  private visitSubTree(callback: (w: Widget<T, any>) => boolean) {
+    const shouldVisitChildren = callback(this);
+    if (shouldVisitChildren) {
+      const children = this.__widget__.children;
+      for (let id in children) {
+        children[id].visitSubTree(callback);
+      }
     }
   }
 }

@@ -584,6 +584,54 @@ describe("composition", () => {
     );
   });
 
+  test("sub widgets with t-keep-alive are not destroyed if no longer in dom", async () => {
+    class ParentWidget extends Widget<WEnv, {}> {
+      name = "a";
+      state = { ok: true };
+      template = `
+          <div><t t-if="state.ok"><t t-widget="counter" t-keep-alive="1"/></t></div>`;
+      widgets = { counter: Counter };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    const button = fixture.getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div>1<button>Inc</button></div></div>"
+    );
+    await widget.updateState({ ok: false });
+    expect(fixture.innerHTML).toBe("<div></div>");
+    await widget.updateState({ ok: true });
+    expect(fixture.innerHTML).toBe(
+      "<div><div>1<button>Inc</button></div></div>"
+    );
+  });
+
+  test("sub widgets dom state with t-keep-alive is preserved", async () => {
+    class ParentWidget extends Widget<WEnv, {}> {
+      name = "a";
+      state = { ok: true };
+      template = `
+          <div><t t-if="state.ok"><t t-widget="InputWidget" t-keep-alive="1"/></t></div>`;
+      widgets = { InputWidget };
+    }
+    class InputWidget extends Widget<WEnv, {}> {
+      template = `<input/>`;
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    const input = fixture.getElementsByTagName("input")[0];
+    input.value = "test";
+    await widget.updateState({ ok: false });
+    expect(fixture.innerHTML).toBe("<div></div>");
+    await widget.updateState({ ok: true });
+    expect(fixture.innerHTML).toBe("<div><input></div>");
+    const input2 = fixture.getElementsByTagName("input")[0];
+    expect(input).toBe(input2);
+    expect(input2.value).toBe("test");
+  });
+
   test("sub widgets rendered in a loop", async () => {
     class ChildWidget extends Widget<WEnv, { n: number }> {
       name = "c";

@@ -703,8 +703,10 @@ const widgetDirective: Directive = {
   name: "widget",
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
+    ctx.addLine("//WIDGET");
     ctx.rootContext.shouldDefineOwner = true;
     let props = node.getAttribute("t-props");
+    let keepAlive = node.getAttribute("t-keep-alive") ? true : false;
     let key = node.getAttribute("t-key");
     if (key) {
       key = qweb._formatExpression(key);
@@ -748,9 +750,11 @@ const widgetDirective: Directive = {
     ctx.addLine(`if (w${widgetID}) {`);
     ctx.indent();
     ctx.addLine(
-      `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});c${
+      `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {remove(){w${widgetID}.destroy()}}});`
+      }[_${dummyID}_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;},remove(){w${widgetID}.${
+        keepAlive ? "detach" : "destroy"
+      }()}}});`
     );
     ctx.dedent();
     ctx.addLine("} else {");
@@ -765,7 +769,9 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
-      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=_${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){_${widgetID}.destroy()}}});`
+      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=_${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){_${widgetID}.${
+        keepAlive ? "detach" : "destroy"
+      }()}}});`
     );
 
     let ref = node.getAttribute("t-ref");

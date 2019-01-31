@@ -157,6 +157,16 @@ We have 3 main folders and 3 main files:
   else, and make sure they are properly connected. Then, it make sure that the
   root widget is mounted to its desired location.
 
+## New QWeb directives
+
+1. t-on-\*: allow binding event handlers on any kind of event
+2. t-widget: instantiate a widget at this location. It has sub directives:
+   a. t-props: to pass properties to the widget constructor/updateProps methods
+   b. t-key: useful to keep track of which widget is which, when created in a
+   list
+   c. t-keep-alive: makes sure the widget is not destroyed when removed from
+   the DOM (note that it will still be destroyed when parent is destroyed)
+
 ## Random Notes
 
 - Change of behaviour: The compilation of a template should have a unique root
@@ -187,3 +197,5 @@ We have 3 main folders and 3 main files:
   nextanimationframe
 
 - when t-widget/t-on directives are compiled, the widget/eval context is actually available. Should we use that info to determine if bound methods exists on the widget?
+
+- allow t-if t-widget and t-else t-widget on same t tag

@@ -16,8 +16,10 @@ export class Action extends Widget<Env, Props> {
   }
 
   shouldUpdate(nextProps: Props) {
-    this.props = nextProps;
-    this.setContentWidget();
+    if (nextProps.stack !== this.props.stack) {
+      this.props = nextProps;
+      this.setContentWidget();
+    }
     return false;
   }
 

@@ -29,5 +29,5 @@ document.addEventListener("DOMContentLoaded", async function() {
       env.isMobile = isMobile;
       rootWidget.render();
     }
-  }, 100));
+  }, 50));
 });

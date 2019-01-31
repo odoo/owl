@@ -166,6 +166,7 @@ We have 3 main folders and 3 main files:
    list
    c. t-keep-alive: makes sure the widget is not destroyed when removed from
    the DOM (note that it will still be destroyed when parent is destroyed)
+3. t-ref
 
 ## Random Notes
 

@@ -68,8 +68,8 @@ export class ActionManager extends EventBus implements IActionManager {
   doAction(request: ActionRequest) {
     if (typeof request === "number") {
       // this is an action ID
-      let name = request === 1 ? 'discuss' : 'crm';
-      let title = request === 1 ? 'Discuss': 'CRM';
+      let name = request === 1 ? "discuss" : "crm";
+      let title = request === 1 ? "Discuss" : "CRM";
       let Widget = this.registry.getAction(name);
       this.stack = [
         {
@@ -96,3 +96,4 @@ export class ActionManager extends EventBus implements IActionManager {
       this.doAction(actionID);
     }
   }
+}

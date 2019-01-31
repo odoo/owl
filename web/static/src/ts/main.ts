@@ -2,8 +2,8 @@
 
 import { debounce } from "./core/utils";
 import { makeEnvironment } from "./env";
-import { registry } from "./registry";
 import { Root } from "./root";
+import { registry } from "./services/registry";
 import { CRM } from "./widgets/crm";
 import { Discuss } from "./widgets/discuss";
 

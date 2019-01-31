@@ -1,7 +1,7 @@
 import { EventBus } from "../core/event_bus";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
-import { Registry } from "../registry";
+import { Registry } from "./registry";
 import { Type } from "../types";
 import { IRouter, Query } from "./router";
 
@@ -65,6 +65,7 @@ export class ActionManager extends EventBus implements IActionManager {
     this.router.on("query_changed", this, this.update);
     this.update(this.router.getQuery());
   }
+
   doAction(request: ActionRequest) {
     if (typeof request === "number") {
       // this is an action ID

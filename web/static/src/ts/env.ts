@@ -1,13 +1,13 @@
 import { QWeb } from "./core/qweb_vdom";
 import { idGenerator, memoize } from "./core/utils";
 import { WEnv } from "./core/widget";
-import { registry } from "./registry";
 import { ActionManager, IActionManager } from "./services/action_manager";
 import { Ajax, IAjax } from "./services/ajax";
 import {
   INotificationManager,
   NotificationManager
 } from "./services/notifications";
+import { registry, Registry } from "./services/registry";
 import { IRouter, Router } from "./services/router";
 
 //------------------------------------------------------------------------------
@@ -23,9 +23,12 @@ export interface Env extends WEnv {
   // services
   actionManager: IActionManager;
   ajax: IAjax;
-  router: IRouter;
-  menus: Menu[];
   notifications: INotificationManager;
+  registry: Registry;
+  router: IRouter;
+
+  // data
+  menus: Menu[];
 
   // helpers
   rpc: IAjax["rpc"];
@@ -66,13 +69,16 @@ export const makeEnvironment = memoize(function(): Env {
     qweb,
     getID: idGenerator(),
 
-    ajax,
-    router,
     actionManager,
-    menus,
+    ajax,
     notifications,
+    registry,
+    router,
+
+    menus,
 
     rpc: ajax.rpc,
+
     debug: false,
     isMobile: window.innerWidth <= 768
   };

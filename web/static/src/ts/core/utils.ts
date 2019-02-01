@@ -83,3 +83,23 @@ export function debounce(
     }
   };
 }
+
+interface Tree<T> {
+  children: T[];
+}
+
+export function findInTree<T extends Tree<T>>(
+  tree: T,
+  predicate: (t: T) => boolean
+): T | null {
+  if (predicate(tree)) {
+    return tree;
+  }
+  for (let child of tree.children) {
+    let match = findInTree(child, predicate);
+    if (match) {
+      return match;
+    }
+  }
+  return null;
+}

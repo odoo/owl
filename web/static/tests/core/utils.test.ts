@@ -3,7 +3,8 @@ import {
   htmlTrim,
   idGenerator,
   memoize,
-  debounce
+  debounce,
+  findInTree
 } from "../../src/ts/core/utils";
 
 describe("escape", () => {
@@ -75,5 +76,18 @@ describe("debounce", () => {
     expect(n).toBe(0);
     jest.advanceTimersByTime(20);
     expect(n).toBe(1);
+  });
+});
+
+describe("findInTree", () => {
+  test("can find stuff in tree", () => {
+    let tree = {
+      id: 1,
+      children: [{ id: 2, children: [] }, { id: 3, key: "hello", children: [] }]
+    };
+    const match1 = findInTree(tree, t => t.id === 3);
+    expect((<any>match1).key).toBe("hello");
+    const match2 = findInTree(tree, t => t.id === 4);
+    expect(match2).toBe(null);
   });
 });

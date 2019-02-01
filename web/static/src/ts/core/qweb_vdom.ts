@@ -645,6 +645,9 @@ const forEachDirective: Directive = {
     let arrayID = ctx.generateID();
     ctx.addLine(`let _${arrayID} = ${qweb._formatExpression(elems)};`);
     ctx.addLine(
+      `if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`
+    );
+    ctx.addLine(
       `if (typeof _${arrayID} === 'number') { _${arrayID} = Array.from(Array(_${arrayID}).keys())}`
     );
     let keysID = ctx.generateID();

@@ -545,6 +545,14 @@ describe("foreach", () => {
     renderToString(qweb, "test", context);
     expect(Object.keys(context).length).toBe(0);
   });
+
+  test("throws error if invalid loop expression", () => {
+    qweb.addTemplate(
+      "test",
+      `<div><t t-foreach="abc" t-as="item"><span/></t></div>`
+    );
+    expect(() => qweb.render("test")).toThrow("Invalid loop expression");
+  });
 });
 
 describe("misc", () => {

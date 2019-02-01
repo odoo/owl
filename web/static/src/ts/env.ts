@@ -9,6 +9,8 @@ import {
 } from "./services/notifications";
 import { registry, Registry } from "./services/registry";
 import { IRouter, Router } from "./services/router";
+import { CRM } from "./widgets/crm";
+import { Discuss } from "./widgets/discuss";
 
 //------------------------------------------------------------------------------
 // Types
@@ -53,12 +55,18 @@ export interface Env extends WEnv {
  * this function will actually return the same environment.
  */
 export const makeEnvironment = memoize(function(): Env {
+  // main application registry
+  registry.add("action", "discuss", Discuss);
+  registry.add("action", "crm", CRM);
+
+  // services
   const qweb = new QWeb();
   const router = new Router();
   const ajax = new Ajax();
   const actionManager = new ActionManager(router, registry);
   const notifications = new NotificationManager();
 
+  // demo data
   const menus = [
     { title: "Discuss", actionID: 1 },
     { title: "CRM", actionID: 2 }

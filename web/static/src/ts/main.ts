@@ -3,16 +3,6 @@
 import { debounce } from "./core/utils";
 import { makeEnvironment } from "./env";
 import { Root } from "./root";
-import { registry } from "./services/registry";
-import { CRM } from "./widgets/crm";
-import { Discuss } from "./widgets/discuss";
-
-//------------------------------------------------------------------------------
-// Prepare application registry
-//------------------------------------------------------------------------------
-
-registry.add("action", "discuss", Discuss);
-registry.add("action", "crm", CRM);
 
 //------------------------------------------------------------------------------
 // Application bootstrapping

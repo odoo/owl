@@ -1,11 +1,11 @@
-import { Widget } from "./core/widget";
-import { Env } from "./env";
-import { ActionStack } from "./services/action_manager";
-import { INotification } from "./core/notifications";
-import { Action } from "./widgets/action";
-import { HomeMenu } from "./widgets/home_menu";
-import { Navbar } from "./widgets/navbar";
-import { Notification } from "./widgets/notification";
+import { Widget } from "../core/widget";
+import { Env } from "../env";
+import { ActionStack } from "../services/action_manager";
+import { INotification } from "../core/notifications";
+import { Action } from "./action";
+import { HomeMenu } from "./home_menu";
+import { Navbar } from "./navbar";
+import { Notification } from "./notification";
 
 //------------------------------------------------------------------------------
 // Types

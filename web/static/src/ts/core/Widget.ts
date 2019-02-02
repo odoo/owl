@@ -31,6 +31,10 @@ interface Meta<T extends WEnv> {
 
 const patch = init([sdListeners, sdAttrs]);
 
+export interface Type<T> extends Function {
+  new (...args: any[]): T;
+}
+
 //------------------------------------------------------------------------------
 // Widget
 //------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 import { debounce } from "./core/utils";
 import { makeEnvironment } from "./env";
-import { Root } from "./root";
+import { Root } from "./widgets/root";
 
 //------------------------------------------------------------------------------
 // Application bootstrapping

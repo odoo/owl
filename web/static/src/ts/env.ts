@@ -7,11 +7,12 @@ import {
   INotificationManager,
   NotificationManager
 } from "./core/notifications";
-import { registry, Registry } from "./services/registry";
+import { actionRegistry } from "./registries";
+import { Registry } from "./core/registry";
 import { IRouter, Router } from "./core/router";
 import { CRM } from "./widgets/crm";
 import { Discuss } from "./widgets/discuss";
-
+import { Widget, Type } from "./core/widget";
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
@@ -26,8 +27,10 @@ export interface Env extends WEnv {
   actionManager: IActionManager;
   ajax: IAjax;
   notifications: INotificationManager;
-  registry: Registry;
   router: IRouter;
+
+  // registries
+  actionRegistry: Registry<Type<Widget<Env, any>>>;
 
   // data
   menus: Menu[];
@@ -56,14 +59,13 @@ export interface Env extends WEnv {
  */
 export const makeEnvironment = memoize(async function(): Promise<Env> {
   // main application registry
-  registry.add("action", "discuss", Discuss);
-  registry.add("action", "crm", CRM);
+  actionRegistry.add("discuss", Discuss).add("crm", CRM);
 
   // services
   const qweb = new QWeb();
   const router = new Router();
   const ajax = new Ajax();
-  const actionManager = new ActionManager(router, registry);
+  const actionManager = new ActionManager(router, actionRegistry);
   const notifications = new NotificationManager();
 
   // demo data
@@ -89,7 +91,7 @@ export const makeEnvironment = memoize(async function(): Promise<Env> {
     actionManager,
     ajax,
     notifications,
-    registry,
+    actionRegistry,
     router,
 
     menus,

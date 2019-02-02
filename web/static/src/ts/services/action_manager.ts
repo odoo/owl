@@ -1,8 +1,7 @@
 import { EventBus } from "../core/event_bus";
-import { Widget } from "../core/widget";
+import { Widget, Type } from "../core/widget";
 import { Env } from "../env";
-import { Registry } from "./registry";
-import { Type } from "../types";
+import { Registry } from "../core/registry";
 import { IRouter, Query } from "../core/router";
 
 //------------------------------------------------------------------------------
@@ -51,10 +50,10 @@ export interface IActionManager {
 
 export class ActionManager extends EventBus implements IActionManager {
   router: IRouter;
-  registry: Registry;
+  registry: Registry<Type<Widget<Env, any>>>;
   stack: ActionStack;
 
-  constructor(router: IRouter, registry: Registry) {
+  constructor(router: IRouter, registry: Registry<Type<Widget<Env, any>>>) {
     super();
     this.router = router;
     this.registry = registry;
@@ -71,7 +70,7 @@ export class ActionManager extends EventBus implements IActionManager {
       // this is an action ID
       let name = request === 1 ? "discuss" : "crm";
       let title = request === 1 ? "Discuss" : "CRM";
-      let Widget = this.registry.getAction(name);
+      let Widget = this.registry.get(name);
       this.stack = [
         {
           id: 1,

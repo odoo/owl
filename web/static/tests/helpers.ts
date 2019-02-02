@@ -3,6 +3,7 @@ import { idGenerator } from "../src/ts/core/utils";
 import { WEnv } from "../src/ts/core/widget";
 import { Env } from "../src/ts/env";
 import { IAjax, RPCQuery } from "../src/ts/services/ajax";
+import { Registry } from "../src/ts/services/registry";
 import { NotificationManager } from "../src/ts/services/notifications";
 
 import { IActionManager, ActionEvent } from "../src/ts/services/action_manager";
@@ -28,9 +29,11 @@ export function makeTestEnv(): Env {
   const router = new MockRouter();
   const notifications = new NotificationManager();
   let { qweb, getID } = makeTestWEnv();
+  const registry = new Registry();
   return {
     qweb,
     getID,
+    registry,
     ajax,
     actionManager,
     notifications,

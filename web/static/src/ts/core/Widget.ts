@@ -18,8 +18,6 @@ let wl: any[] = [];
 
 interface Meta<T extends WEnv> {
   readonly id: number;
-  // name: string;
-  // template: string;
   vnode: VNode | null;
   isStarted: boolean;
   isMounted: boolean;

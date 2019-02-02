@@ -8,7 +8,7 @@ import { VNode } from "../../../libs/snabbdom/src/vnode";
 export type EvalContext = { [key: string]: any };
 export type RawTemplate = string;
 export type CompiledTemplate<T> = (context: EvalContext, extra: any) => T;
-type ParsedTemplate = Document;
+type ProcessedTemplate = Element;
 
 const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
   ","
@@ -101,8 +101,7 @@ export class Context {
 //------------------------------------------------------------------------------
 
 export class QWeb {
-  rawTemplates: { [name: string]: RawTemplate } = {};
-  parsedTemplates: { [name: string]: ParsedTemplate } = {};
+  processedTemplates: { [name: string]: ProcessedTemplate } = {};
   templates: { [name: string]: CompiledTemplate<VNode> } = {};
   h = h;
   exprCache: { [key: string]: string } = {};
@@ -134,10 +133,9 @@ export class QWeb {
    * immediately compiled.
    */
   addTemplate(name: string, template: RawTemplate) {
-    if (name in this.rawTemplates) {
+    if (name in this.processedTemplates) {
       return;
     }
-    this.rawTemplates[name] = template;
     const parser = new DOMParser();
     const doc = parser.parseFromString(template, "text/xml");
     if (!doc.firstChild) {
@@ -146,7 +144,14 @@ export class QWeb {
     if (doc.getElementsByTagName("parsererror").length) {
       throw new Error("Invalid XML in template");
     }
-    let tbranch = doc.querySelectorAll("[t-elif], [t-else]");
+    let elem = doc.firstChild as Element;
+    this._processTemplate(elem);
+
+    this.processedTemplates[name] = elem;
+  }
+
+  _processTemplate(elem: Element) {
+    let tbranch = elem.querySelectorAll("[t-elif], [t-else]");
     for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
       let node = tbranch[i];
       let prevElem = node.previousElementSibling!;
@@ -185,17 +190,24 @@ export class QWeb {
         );
       }
     }
-
-    this.parsedTemplates[name] = doc;
   }
-
+  loadTemplates(xmlstr: string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlstr, "text/xml");
+    const templates = doc.getElementsByTagName("templates")[0];
+    for (let elem of <any>templates.children) {
+      const name = elem.getAttribute("t-name");
+      this._processTemplate(elem);
+      this.processedTemplates[name] = elem;
+    }
+  }
   /**
    * Render a template
    *
    * @param {string} name the template should already have been added
    */
   render(name: string, context: EvalContext = {}, extra: any = null): VNode {
-    if (!(name in this.rawTemplates)) {
+    if (!(name in this.processedTemplates)) {
       throw new Error(`Template ${name} does not exist`);
     }
     const template = this.templates[name] || this._compile(name);
@@ -207,9 +219,8 @@ export class QWeb {
       return this.templates[name];
     }
 
-    const doc = this.parsedTemplates[name];
+    const mainNode = this.processedTemplates[name];
     const ctx = new Context();
-    const mainNode = doc.firstChild!;
     this._compileNode(mainNode, ctx);
 
     if (ctx.shouldProtectContext) {
@@ -232,8 +243,9 @@ export class QWeb {
     ) as CompiledTemplate<VNode>;
     if ((<Element>mainNode).attributes.hasOwnProperty("t-debug")) {
       console.log(
-        `Template: ${this.rawTemplates[name]}\nCompiled code:\n` +
-          template.toString()
+        `Template: ${
+          this.processedTemplates[name].outerHTML
+        }\nCompiled code:\n` + template.toString()
       );
     }
     template = template.bind(this);
@@ -619,8 +631,11 @@ const callDirective: Directive = {
       throw new Error("Invalid tag for t-call directive (should be 't')");
     }
     const subTemplate = node.getAttribute("t-call")!;
-    const nodeTemplate = qweb.parsedTemplates[subTemplate];
-    const nodeCopy = <Element>node.cloneNode(true);
+    const nodeTemplate = qweb.processedTemplates[subTemplate];
+    if (!nodeTemplate) {
+      throw new Error(`Cannot find template "${subTemplate}" (t-call)`);
+    }
+    const nodeCopy = node.cloneNode(true) as Element;
     nodeCopy.removeAttribute("t-call");
 
     // extract variables from nodecopy
@@ -629,7 +644,7 @@ const callDirective: Directive = {
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
     const subCtx = ctx.withCaller(nodeCopy).withVariables(vars);
 
-    qweb._compileNode(nodeTemplate.firstChild!, subCtx);
+    qweb._compileNode(nodeTemplate, subCtx);
     return true;
   }
 };

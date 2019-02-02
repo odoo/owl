@@ -3,6 +3,7 @@ import sdListeners from "../../../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../../../libs/snabbdom/src/snabbdom";
 import { VNode } from "../../../libs/snabbdom/src/vnode";
 import { QWeb } from "./qweb_vdom";
+import { EventBus } from "./event_bus";
 
 //------------------------------------------------------------------------------
 // Types/helpers
@@ -39,7 +40,7 @@ export interface Type<T> extends Function {
 // Widget
 //------------------------------------------------------------------------------
 
-export class Widget<T extends WEnv, Props> {
+export class Widget<T extends WEnv, Props> extends EventBus {
   __widget__: Meta<WEnv>;
   template: string = "default";
 
@@ -57,6 +58,7 @@ export class Widget<T extends WEnv, Props> {
   //--------------------------------------------------------------------------
 
   constructor(parent: Widget<T, any> | T, props?: Props) {
+    super();
     wl.push(this);
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a widget
@@ -154,6 +156,7 @@ export class Widget<T extends WEnv, Props> {
         delete this.__widget__.parent.__widget__.children[id];
         this.__widget__.parent = null;
       }
+      this.clear();
       this.__widget__.isDestroyed = true;
       this.destroyed();
     }

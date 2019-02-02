@@ -64,4 +64,8 @@ export class EventBus {
       sub.callback.call(sub.owner, ...args);
     }
   }
+
+  clear() {
+    this.subscriptions = {};
+  }
 }

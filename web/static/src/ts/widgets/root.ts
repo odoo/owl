@@ -14,7 +14,7 @@ import { Notification } from "./notification";
 interface State {
   notifications: INotification[];
   stack: ActionStack;
-  inMenu: boolean;
+  inHome: boolean;
 }
 
 //------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export class Root extends Widget<Env, {}> {
   state: State = {
     notifications: [],
     stack: [],
-    inMenu: false
+    inHome: false
   };
 
   constructor(env: Env) {
@@ -47,6 +47,6 @@ export class Root extends Widget<Env, {}> {
   }
 
   toggleHome() {
-    this.updateState({ inMenu: !this.state.inMenu });
+    this.updateState({ inHome: !this.state.inHome });
   }
 }

@@ -2,8 +2,7 @@ import { Widget } from "../core/widget";
 import { Env, Menu } from "../env";
 
 export interface Props {
-  toggleHome: () => void;
-  inMenu: boolean;
+  inHome: boolean;
 }
 
 export class Navbar extends Widget<Env, Props> {
@@ -16,6 +15,6 @@ export class Navbar extends Widget<Env, Props> {
 
   toggleHome(ev: MouseEvent) {
     ev.preventDefault();
-    this.props.toggleHome();
+    this.trigger("toggle-home-menu");
   }
 }

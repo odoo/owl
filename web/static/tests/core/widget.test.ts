@@ -794,7 +794,35 @@ describe("props evaluation (with t-props directive)", () => {
   });
 });
 
-describe("random stuff", () => {
+describe("t-on directive on widgets", () => {
+  test("t-on works as expected", async () => {
+    let n = 0;
+    env.qweb.addTemplate(
+      "parent",
+      `<div><t t-widget="child" t-on-customevent="someMethod"/></div>`
+    );
+    class ParentWidget extends Widget<WEnv, {}> {
+      template = "parent";
+      widgets = { child: Child };
+      someMethod(arg) {
+        expect(arg).toBe(43);
+        n++;
+      }
+    }
+    class Child extends Widget<WEnv, {}> {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    let child = children(widget)[0];
+    expect(n).toBe(0);
+    child.trigger("customevent", 43);
+    expect(n).toBe(1);
+    child.destroy();
+    child.trigger("customevent", 43);
+    expect(n).toBe(1);
+  });
+});
+
+describe("random stuff/miscellaneous", () => {
   test("widget after a t-foreach", async () => {
     // this test makes sure that the foreach directive does not pollute sub
     // context with the inLoop variable, which is then used in the t-widget
@@ -811,9 +839,7 @@ describe("random stuff", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
   });
-});
 
-describe("miscellaneous", () => {
   test("updating widget immediately", async () => {
     // in this situation, we protect against a bug that occurred: because of the
     // interplay between widgets and vnodes, a sub widget vnode was patched

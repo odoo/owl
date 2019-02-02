@@ -733,6 +733,17 @@ const widgetDirective: Directive = {
     ctx.rootContext.shouldDefineOwner = true;
     let props = node.getAttribute("t-props");
     let keepAlive = node.getAttribute("t-keep-alive") ? true : false;
+
+    // t-on- events...
+    const events: [string, string][] = [];
+    const attributes = (<Element>node).attributes;
+    for (let i = 0; i < attributes.length; i++) {
+      const name = attributes[i].name;
+      if (name.startsWith("t-on-")) {
+        events.push([name.slice(5), attributes[i].textContent!]);
+      }
+    }
+
     let key = node.getAttribute("t-key");
     if (key) {
       key = qweb._formatExpression(key);
@@ -792,6 +803,10 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `context.__widget__.cmap[${templateID}] = _${widgetID}.__widget__.id;`
     );
+    for (let [event, method] of events) {
+      ctx.addLine(`_${widgetID}.on('${event}', owner, owner['${method}'])`);
+    }
+
     ctx.addLine(
       `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode

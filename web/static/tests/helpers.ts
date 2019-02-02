@@ -9,6 +9,7 @@ import { NotificationManager } from "../src/ts/services/notifications";
 import { IActionManager, ActionEvent } from "../src/ts/services/action_manager";
 import { Callback } from "../src/ts/core/event_bus";
 import { IRouter, Query, RouterEvent } from "../src/ts/services/router";
+import { readFile } from "fs";
 
 export function makeTestFixture() {
   let fixture = document.createElement("div");
@@ -73,4 +74,12 @@ class MockRouter implements IRouter {
 
 export function normalize(str: string): string {
   return str.replace(/\s+/g, "");
+}
+
+export async function loadTemplates(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    readFile("web/static/src/xml/templates.xml", "utf-8", (err, result) => {
+      resolve(result);
+    });
+  });
 }

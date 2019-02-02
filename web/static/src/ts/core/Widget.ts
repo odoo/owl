@@ -37,8 +37,7 @@ const patch = init([sdListeners, sdAttrs]);
 
 export class Widget<T extends WEnv, Props> {
   __widget__: Meta<WEnv>;
-  name: string = "widget";
-  template: string = "<div></div>";
+  template: string = "default";
 
   get el(): HTMLElement | null {
     return this.__widget__.vnode ? (<any>this).__widget__.vnode.elm : null;
@@ -207,12 +206,8 @@ export class Widget<T extends WEnv, Props> {
   }
 
   private async _render(): Promise<VNode> {
-    if (this.template) {
-      this.env.qweb.addTemplate(this.name, this.template);
-      delete this.template;
-    }
     const promises: Promise<void>[] = [];
-    let vnode = this.env.qweb.render(this.name, this, { promises });
+    let vnode = this.env.qweb.render(this.template, this, { promises });
 
     // this part is critical for the patching process to be done correctly. The
     // tricky part is that a child widget can be rerendered on its own, which

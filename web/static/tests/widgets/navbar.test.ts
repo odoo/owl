@@ -1,6 +1,6 @@
 import { Env } from "../../src/ts/env";
 import { Navbar, Props } from "../../src/ts/widgets/navbar";
-import { makeTestEnv, makeTestFixture } from "../helpers";
+import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -9,10 +9,16 @@ import { makeTestEnv, makeTestFixture } from "../helpers";
 let fixture: HTMLElement;
 let env: Env;
 let props: Props;
+let templates: string;
+
+beforeAll(async () => {
+  templates = await loadTemplates();
+});
 
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
+  env.qweb.loadTemplates(templates);
   props = { inMenu: false, toggleHome: () => {} };
 });
 

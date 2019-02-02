@@ -7,8 +7,7 @@ export interface Props {
 }
 
 export class Action extends Widget<Env, Props> {
-  name = "action";
-  template = `<div class="o_content"/>`;
+  template = "action";
   currentWidget: any;
 
   shouldUpdate(nextProps: Props) {

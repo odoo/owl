@@ -9,7 +9,7 @@ import { Root } from "./root";
 //------------------------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", async function() {
-  const env = makeEnvironment();
+  const env = await makeEnvironment();
   const rootWidget = new Root(env);
   await rootWidget.mount(document.body);
 

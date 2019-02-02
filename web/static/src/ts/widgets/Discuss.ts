@@ -3,32 +3,8 @@ import { Env } from "../env";
 import { Clock } from "./clock";
 import { Counter } from "./counter";
 
-const template = `
-    <div class="o_discuss">
-        <span>DISCUSS!!</span>
-        <button t-on-click="resetCounter">Reset first counter</button>
-        <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
-        <button t-on-click="toggle">Toggle  Clock/counters</button>
-        <button t-on-click="toggleColor">Toggle Color</button>
-        <button t-on-click="updateState({})">Rerender this widget</button>
-        <input t-ref="textinput"/>
-        <t t-if="state.validcounter">
-            <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
-            <t t-widget="Counter" t-ref="counter2" t-props="{initialState:400}"/>
-        </t>
-        <t t-else="1">
-            <t t-widget="Clock"/>
-        </t>
-        <t t-widget="ColorWidget" t-props="{color: state.color}"/>
-        <button t-on-click="addNotif(false)">Add notif</button>
-        <button t-on-click="addNotif(true)">Add sticky notif</button>
-
-    </div>
-`;
-
 export class Discuss extends Widget<Env, {}> {
-  name = "discuss";
-  template = template;
+  template = "discuss";
   widgets = { Clock, Counter, ColorWidget };
   state = { validcounter: true, color: "red" };
 
@@ -63,6 +39,5 @@ export class Discuss extends Widget<Env, {}> {
 }
 
 class ColorWidget extends Widget<Env, { color: "red" | "blue" }> {
-  name = "colorwidget";
-  template = `<div>Current Color: <t t-esc="props.color"/></div>`;
+  template = "colorwidget";
 }

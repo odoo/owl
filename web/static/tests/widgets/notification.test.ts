@@ -1,7 +1,7 @@
 import { Env } from "../../src/ts/env";
 import { INotification } from "../../src/ts/services/notifications";
 import { Notification } from "../../src/ts/widgets/notification";
-import { makeTestEnv, makeTestFixture } from "../helpers";
+import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -9,10 +9,16 @@ import { makeTestEnv, makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;
 let env: Env;
+let templates: string;
+
+beforeAll(async () => {
+  templates = await loadTemplates();
+});
 
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
+  env.qweb.loadTemplates(templates);
 });
 
 afterEach(() => {

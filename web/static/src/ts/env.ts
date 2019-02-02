@@ -54,7 +54,7 @@ export interface Env extends WEnv {
  * For this reason, the result of makeEnvironment is memoized: every call to
  * this function will actually return the same environment.
  */
-export const makeEnvironment = memoize(function(): Env {
+export const makeEnvironment = memoize(async function(): Promise<Env> {
   // main application registry
   registry.add("action", "discuss", Discuss);
   registry.add("action", "crm", CRM);
@@ -71,6 +71,15 @@ export const makeEnvironment = memoize(function(): Env {
     { title: "Discuss", actionID: 1 },
     { title: "CRM", actionID: 2 }
   ];
+
+  // templates
+  const result = await fetch("templates.xml");
+  if (!result.ok) {
+    throw new Error("Error while fetching xml templates");
+  }
+  const templates = await result.text();
+  qweb.addTemplate("default", "<div/>");
+  qweb.loadTemplates(templates);
 
   return {
     // Base widget requirements

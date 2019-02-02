@@ -6,9 +6,10 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "cp -r web/ dist/app && npm run build:js && npm run build:css",
+    "build": "cp -r web/ dist/app && npm run build:js && npm run build:css && npm run build:xml",
     "build:css": "sass web/static/src/scss/app.scss dist/app/app.css",
     "build:js": "tsc --allowjs -m amd --lib es2017,dom --target esnext --outfile dist/app/main.js web/static/src/ts/main.ts",
+    "build:xml": "cpx web/static/src/xml/templates.xml dist/app",
     "minify": "uglifyjs dist/app/main.js -o dist/app/main.js --compress --mangle",
     "serve": "live-server --entry-file=index.html dist/app/",
     "predev": "npm run build",
@@ -26,6 +27,7 @@
   "homepage": "https://github.com/ged-odoo/web-core#readme",
   "devDependencies": {
     "@types/jest": "^23.3.12",
+    "cpx": "^1.5.0",
     "jest": "^23.6.0",
     "live-server": "^1.2.1",
     "npm-run-all": "^4.1.5",

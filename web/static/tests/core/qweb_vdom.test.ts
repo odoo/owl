@@ -89,6 +89,11 @@ describe("error handling", () => {
   test("nice warning if no template with given name", () => {
     expect(() => qweb.render("invalidname")).toThrow("does not exist");
   });
+
+  test("cannot add twice the same template", () => {
+    qweb.addTemplate("test", `<t></t>`);
+    expect(() => qweb.addTemplate("test", "<div/>")).toThrow("already defined");
+  });
 });
 
 describe("t-esc", () => {

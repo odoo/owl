@@ -21,26 +21,8 @@ interface State {
 // Root Widget
 //------------------------------------------------------------------------------
 
-const template = `
-  <div class="o_web_client">
-    <t t-widget="Navbar" t-props="{toggleHome:toggleHome,inMenu:state.inMenu}"/>
-    <t t-if="state.inMenu">
-      <t t-widget="HomeMenu" t-keep-alive="1"/>
-    </t>
-    <t t-else="1">
-      <t t-widget="Action" t-props="{stack:state.stack}" t-keep-alive="1"/>
-    </t>
-    <div class="o_notification_container">
-      <t t-foreach="state.notifications" t-as="notif">
-        <t t-widget="Notification" t-props="notif"/>
-      </t>
-    </div>
-  </div>
-`;
-
 export class Root extends Widget<Env, {}> {
-  name = "root";
-  template = template;
+  template = "web_client";
   widgets = { Navbar, Notification, HomeMenu, Action };
 
   state: State = {

@@ -134,7 +134,7 @@ export class QWeb {
    */
   addTemplate(name: string, template: RawTemplate) {
     if (name in this.processedTemplates) {
-      return;
+      throw new Error(`Template ${name} already defined`);
     }
     const parser = new DOMParser();
     const doc = parser.parseFromString(template, "text/xml");
@@ -191,6 +191,11 @@ export class QWeb {
       }
     }
   }
+  /**
+   * Load templates from a xml (as a string).  This will look up for the first
+   * <templates> tag, and will consider each child of this as a template, with
+   * the name given by the t-name attribute.
+   */
   loadTemplates(xmlstr: string) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlstr, "text/xml");

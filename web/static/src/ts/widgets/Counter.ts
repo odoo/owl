@@ -1,21 +1,12 @@
 import { Widget } from "../core/widget";
 import { Env } from "../env";
 
-const template = `
-    <div>
-        <button t-on-click="increment(-1)">-</button>
-        <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
-        <button t-on-click="increment(1)">+</button>
-    </div>
-`;
-
 interface Props {
   initialState?: number;
 }
 
 export class Counter extends Widget<Env, Props> {
-  name = "counter";
-  template = template;
+  template = "counter";
   state = {
     counter: 0
   };

@@ -1,7 +1,7 @@
 import {
   NotificationManager,
   INotification
-} from "../../src/ts/services/notifications";
+} from "../../src/ts/core/notifications";
 
 test("can subscribe and add notification", () => {
   let notifs: INotification[] = [];

@@ -1,7 +1,7 @@
 import { Widget } from "./core/widget";
 import { Env } from "./env";
 import { ActionStack } from "./services/action_manager";
-import { INotification } from "./services/notifications";
+import { INotification } from "./core/notifications";
 import { Action } from "./widgets/action";
 import { HomeMenu } from "./widgets/home_menu";
 import { Navbar } from "./widgets/navbar";

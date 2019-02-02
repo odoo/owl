@@ -3,7 +3,7 @@ import { Widget } from "../core/widget";
 import { Env } from "../env";
 import { Registry } from "./registry";
 import { Type } from "../types";
-import { IRouter, Query } from "./router";
+import { IRouter, Query } from "../core/router";
 
 //------------------------------------------------------------------------------
 // Types

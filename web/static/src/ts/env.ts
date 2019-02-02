@@ -2,13 +2,13 @@ import { QWeb } from "./core/qweb_vdom";
 import { idGenerator, memoize } from "./core/utils";
 import { WEnv } from "./core/widget";
 import { ActionManager, IActionManager } from "./services/action_manager";
-import { Ajax, IAjax } from "./services/ajax";
+import { Ajax, IAjax } from "./core/ajax";
 import {
   INotificationManager,
   NotificationManager
-} from "./services/notifications";
+} from "./core/notifications";
 import { registry, Registry } from "./services/registry";
-import { IRouter, Router } from "./services/router";
+import { IRouter, Router } from "./core/router";
 import { CRM } from "./widgets/crm";
 import { Discuss } from "./widgets/discuss";
 

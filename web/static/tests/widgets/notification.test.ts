@@ -1,5 +1,5 @@
 import { Env } from "../../src/ts/env";
-import { INotification } from "../../src/ts/services/notifications";
+import { INotification } from "../../src/ts/core/notifications";
 import { Notification } from "../../src/ts/widgets/notification";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 

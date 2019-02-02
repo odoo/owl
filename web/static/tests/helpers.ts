@@ -2,13 +2,13 @@ import { QWeb } from "../src/ts/core/qweb_vdom";
 import { idGenerator } from "../src/ts/core/utils";
 import { WEnv } from "../src/ts/core/widget";
 import { Env } from "../src/ts/env";
-import { IAjax, RPCQuery } from "../src/ts/services/ajax";
+import { IAjax, RPCQuery } from "../src/ts/core/ajax";
 import { Registry } from "../src/ts/services/registry";
-import { NotificationManager } from "../src/ts/services/notifications";
+import { NotificationManager } from "../src/ts/core/notifications";
 
 import { IActionManager, ActionEvent } from "../src/ts/services/action_manager";
 import { Callback } from "../src/ts/core/event_bus";
-import { IRouter, Query, RouterEvent } from "../src/ts/services/router";
+import { IRouter, Query, RouterEvent } from "../src/ts/core/router";
 import { readFile } from "fs";
 
 export function makeTestFixture() {

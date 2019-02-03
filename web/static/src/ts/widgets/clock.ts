@@ -2,7 +2,7 @@ import { Widget } from "../core/widget";
 import { Env } from "../env";
 
 export class Clock extends Widget<Env, {}> {
-  template = "clock";
+  inlineTemplate = `<div class="o_clock"><t t-esc="state.currentTime"/></div>`;
   timeout: any | undefined;
 
   state = {

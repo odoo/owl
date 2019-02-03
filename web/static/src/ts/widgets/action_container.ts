@@ -6,8 +6,8 @@ export interface Props {
   stack: ActionStack;
 }
 
-export class Action extends Widget<Env, Props> {
-  template = "action";
+export class ActionContainer extends Widget<Env, Props> {
+  template = "web.action_container";
   currentWidget: any;
 
   shouldUpdate(nextProps: Props) {

@@ -6,7 +6,7 @@ export interface Props {
 }
 
 export class Navbar extends Widget<Env, Props> {
-  template = "navbar";
+  template = "web.navbar";
 
   getUrl(menu: Menu) {
     const action_id = String(menu.actionID);

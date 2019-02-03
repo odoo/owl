@@ -4,7 +4,7 @@ import { Clock } from "./clock";
 import { Counter } from "./counter";
 
 export class Discuss extends Widget<Env, {}> {
-  template = "discuss";
+  template = "web.discuss";
   widgets = { Clock, Counter, ColorWidget };
   state = { validcounter: true, color: "red" };
 
@@ -39,5 +39,9 @@ export class Discuss extends Widget<Env, {}> {
 }
 
 class ColorWidget extends Widget<Env, { color: "red" | "blue" }> {
-  template = "colorwidget";
+  inlineTemplate = `
+    <div t-name="colorwidget">
+      <span>Current Color: </span>
+      <t t-esc="props.color"/>
+    </div>`;
 }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <div t-name="web_client" class="o_web_client">
+    <div t-name="web.web_client" class="o_web_client">
         <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle-home-menu="toggleHome"/>
         <t t-if="state.inHome">
             <t t-widget="HomeMenu" t-keep-alive="1" t-props="{apps:apps, openApp: openApp}"/>
         </t>
         <t t-else="1">
-            <t t-widget="Action" t-props="{stack:state.stack}" t-keep-alive="1"/>
+            <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>
         </t>
         <div class="o_notification_container">
             <t t-foreach="state.notifications" t-as="notif">
@@ -16,23 +16,13 @@
         </div>
     </div>
 
-    <div t-name="action" class="o_content"/>
-    <div t-name="clock" class="o_clock">
-        <t t-esc="state.currentTime"/>
-    </div>
+    <div t-name="web.action_container" class="o_content"/>
 
-    <div t-name="counter">
-        <button t-on-click="increment(-1)">-</button>
-        <span style="font-weight:bold">Value: <t t-esc="state.counter"/>
-        </span>
-        <button t-on-click="increment(1)">+</button>
-    </div>
-
-    <div t-name="crm" class="o_crm">
+    <div t-name="web.crm" class="o_crm">
         <span>CRM!!!!</span>
     </div>
 
-    <div t-name="discuss" class="o_discuss">
+    <div t-name="web.discuss" class="o_discuss">
         <span>DISCUSS!!</span>
         <button t-on-click="resetCounter">Reset first counter</button>
         <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
@@ -52,11 +42,11 @@
         <button t-on-click="addNotif(true)">Add sticky notif</button>
     </div>
 
-    <div t-name="home" class="o_home_menu">
+    <div t-name="web.home_menu" class="o_home_menu">
         <span>HOME MENU</span>
     </div>
 
-    <div t-name="navbar" class="o_navbar">
+    <div t-name="web.navbar" class="o_navbar">
         <a aria-label="Applications" class="o_title fa fa-th" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
         <ul t-if="!props.inMenu">
             <li t-foreach="env.menus" t-as="menu">
@@ -68,7 +58,7 @@
         </ul>
     </div>
 
-    <div t-name="notification" class="o_notification">
+    <div t-name="web.notification" class="o_notification">
         <a t-if="props.sticky" class="fa fa-times o_close" href="#" title="Close" aria-label="Close" t-on-click="close"/>
         <div class="o_notification_title">
             <t t-raw="props.title"/>
@@ -79,8 +69,4 @@
 
     </div>
 
-    <div t-name="colorwidget">
-        <span>Current Color: </span>
-        <t t-esc="props.color"/>
-    </div>
 </templates>

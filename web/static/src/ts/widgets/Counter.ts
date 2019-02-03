@@ -6,7 +6,12 @@ interface Props {
 }
 
 export class Counter extends Widget<Env, Props> {
-  template = "counter";
+  inlineTemplate = `
+    <div t-name="counter">
+      <button t-on-click="increment(-1)">-</button>
+      <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
+      <button t-on-click="increment(1)">+</button>
+    </div>`;
   state = {
     counter: 0
   };

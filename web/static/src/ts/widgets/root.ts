@@ -2,7 +2,7 @@ import { Widget } from "../core/widget";
 import { Env } from "../env";
 import { ActionStack } from "../services/action_manager";
 import { INotification } from "../core/notifications";
-import { Action } from "./action";
+import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
@@ -22,8 +22,8 @@ interface State {
 //------------------------------------------------------------------------------
 
 export class Root extends Widget<Env, {}> {
-  template = "web_client";
-  widgets = { Navbar, Notification, HomeMenu, Action };
+  template = "web.web_client";
+  widgets = { Navbar, Notification, HomeMenu, ActionContainer };
 
   state: State = {
     notifications: [],

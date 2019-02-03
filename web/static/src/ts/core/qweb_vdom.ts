@@ -381,7 +381,7 @@ export class QWeb {
       // dynamic attributes
       if (name.startsWith("t-att-")) {
         const attName = name.slice(6);
-        const formattedValue = this._formatExpression(value!);
+        const formattedValue = this._formatExpression(ctx.getValue(value!));
         const attID = ctx.generateID();
         ctx.addLine(`let _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);

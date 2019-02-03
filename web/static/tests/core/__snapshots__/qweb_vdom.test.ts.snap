@@ -77,6 +77,20 @@ exports[`attributes format value 1`] = `
 }"
 `;
 
+exports[`attributes from variables set previously 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let _2 = 'def';
+    let c3 = [], p3 = {attrs:{class: _2}};
+    let vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    return vn1;
+}"
+`;
+
 exports[`attributes object 1`] = `
 "function anonymous(context,extra
 ) {

@@ -353,6 +353,28 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
+  test("from variables set previously", () => {
+    qweb.addTemplate(
+      "test",
+      `<div><t t-set="abc" t-value="'def'"/><span t-att-class="abc"/></div>`
+    );
+    const result = renderToString(qweb, "test");
+    expect(result).toBe('<div><span class="def"></span></div>');
+  });
+
+  test.skip("from object variables set previously", () => {
+    // qweb is stupid and does not support this.
+    // To do that properly, we need to extend the formatExpression method to
+    // be able to deal with objects.  I think that it is not easy:
+    // it should properly deal with stuff like {a:expr, b: {c: otherexpr}}
+    qweb.addTemplate(
+      "test",
+      `<div t-debug="1"><t t-set="o" t-value="{a:'b'}"/><span t-att-class="o.a"/></div>`
+    );
+    const result = renderToString(qweb, "test");
+    expect(result).toBe('<div><span class="b"></span></div>');
+  });
+
   test("format expression", () => {
     qweb.addTemplate("test", `<div t-attf-foo="{{value + 37}}"/>`);
     const result = renderToString(qweb, "test", { value: 5 });

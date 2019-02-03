@@ -200,3 +200,5 @@ We have 3 main folders and 3 main files:
 - when t-widget/t-on directives are compiled, the widget/eval context is actually available. Should we use that info to determine if bound methods exists on the widget?
 
 - allow t-if t-widget and t-else t-widget on same t tag
+
+- should we allow class and t-add-class to be additive?

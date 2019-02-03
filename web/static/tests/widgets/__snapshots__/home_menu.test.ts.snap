@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can be rendered 1`] = `
+"<div class=\\"o_home_menu\\">
+    <div class=\\"o_apps\\">
+      <a href=\\"#\\" class=\\"o_app\\">
+        <i class=\\"fa fa-test o_app_icon fa-3x fa-fw\\"></i>
+        <div class=\\"o_caption\\">
+          Demo
+        </div>
+      </a>
+    </div>
+  </div>"
+`;

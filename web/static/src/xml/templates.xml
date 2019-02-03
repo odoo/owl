@@ -1,72 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <div t-name="web.web_client" class="o_web_client">
-        <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle-home-menu="toggleHome"/>
-        <t t-if="state.inHome">
-            <t t-widget="HomeMenu" t-keep-alive="1" t-props="{apps:apps, openApp: openApp}"/>
-        </t>
-        <t t-else="1">
-            <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>
-        </t>
-        <div class="o_notification_container">
-            <t t-foreach="state.notifications" t-as="notif">
-                <t t-widget="Notification" t-props="notif"/>
-            </t>
+  <div t-name="web.web_client" class="o_web_client">
+    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle-home-menu="toggleHome"/>
+    <t t-if="state.inHome">
+      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}"/>
+    </t>
+    <t t-else="1">
+      <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>
+    </t>
+    <div class="o_notification_container">
+      <t t-foreach="state.notifications" t-as="notif">
+        <t t-widget="Notification" t-props="notif"/>
+      </t>
+    </div>
+  </div>
+
+  <div t-name="web.navbar" class="o_navbar" t-att-class="props.inHome ? 'o_navbar o_in_home' : 'o_navbar'">
+    <a aria-label="Applications" class="o_title fa fa-th" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
+    <ul t-if="!props.inHome">
+      <li t-foreach="env.menus" t-as="menu">
+        <a t-att-href="getUrl(menu)">
+          <t t-esc="menu.title"/>
+        </a>
+      </li>
+      <li t-if="env.isMobile">MOBILEMODE</li>
+    </ul>
+  </div>
+
+  <div t-name="web.home_menu" class="o_home_menu">
+    <div class="o_apps">
+      <a t-foreach="apps" t-as="app" href="#" class="o_app" t-on-click="openApp(app.id)">
+        <i t-att-class="app.icon + ' o_app_icon fa-3x fa-fw'"/>
+        <div class="o_caption">
+          <t t-esc="app.name"/>
         </div>
+      </a>
     </div>
+  </div>
 
-    <div t-name="web.action_container" class="o_content"/>
-
-    <div t-name="web.crm" class="o_crm">
-        <span>CRM!!!!</span>
+  <div t-name="web.notification" class="o_notification">
+    <a t-if="props.sticky" class="fa fa-times o_close" href="#" title="Close" aria-label="Close" t-on-click="close"/>
+    <div class="o_notification_title">
+      <t t-raw="props.title"/>
     </div>
-
-    <div t-name="web.discuss" class="o_discuss">
-        <span>DISCUSS!!</span>
-        <button t-on-click="resetCounter">Reset first counter</button>
-        <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
-        <button t-on-click="toggle">Toggle  Clock/counters</button>
-        <button t-on-click="toggleColor">Toggle Color</button>
-        <button t-on-click="updateState({})">Rerender this widget</button>
-        <input t-ref="textinput"/>
-        <t t-if="state.validcounter">
-            <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
-            <t t-widget="Counter" t-ref="counter2" t-props="{initialState:400}"/>
-        </t>
-        <t t-else="1">
-            <t t-widget="Clock"/>
-        </t>
-        <t t-widget="ColorWidget" t-props="{color: state.color}"/>
-        <button t-on-click="addNotif(false)">Add notif</button>
-        <button t-on-click="addNotif(true)">Add sticky notif</button>
+    <div class="o_notification_content" t-if="props.message.length">
+      <t t-raw="props.message"/>
     </div>
+  </div>
 
-    <div t-name="web.home_menu" class="o_home_menu">
-        <span>HOME MENU</span>
-    </div>
+  <div t-name="web.action_container" class="o_content"/>
 
-    <div t-name="web.navbar" class="o_navbar">
-        <a aria-label="Applications" class="o_title fa fa-th" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
-        <ul t-if="!props.inMenu">
-            <li t-foreach="env.menus" t-as="menu">
-                <a t-att-href="getUrl(menu)">
-                    <t t-esc="menu.title"/>
-                </a>
-            </li>
-            <li t-if="env.isMobile">MOBILEMODE</li>
-        </ul>
-    </div>
+  <div t-name="web.crm" class="o_crm">
+    <span>CRM!!!!</span>
+  </div>
 
-    <div t-name="web.notification" class="o_notification">
-        <a t-if="props.sticky" class="fa fa-times o_close" href="#" title="Close" aria-label="Close" t-on-click="close"/>
-        <div class="o_notification_title">
-            <t t-raw="props.title"/>
-        </div>
-        <div class="o_notification_content" t-if="props.message.length">
-            <t t-raw="props.message"/>
-        </div>
-
-    </div>
+  <div t-name="web.discuss" class="o_discuss">
+    <span>DISCUSS!!</span>
+    <button t-on-click="resetCounter">Reset first counter</button>
+    <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
+    <button t-on-click="toggle">Toggle  Clock/counters</button>
+    <button t-on-click="toggleColor">Toggle Color</button>
+    <button t-on-click="updateState({})">Rerender this widget</button>
+    <input t-ref="textinput"/>
+    <t t-if="state.validcounter">
+      <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
+      <t t-widget="Counter" t-ref="counter2" t-props="{initialState:400}"/>
+    </t>
+    <t t-else="1">
+      <t t-widget="Clock"/>
+    </t>
+    <t t-widget="ColorWidget" t-props="{color: state.color}"/>
+    <button t-on-click="addNotif(false)">Add notif</button>
+    <button t-on-click="addNotif(true)">Add sticky notif</button>
+  </div>
 
 </templates>

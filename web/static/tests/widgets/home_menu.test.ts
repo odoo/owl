@@ -1,5 +1,5 @@
 import { Env } from "../../src/ts/env";
-import { Navbar, Props } from "../../src/ts/widgets/navbar";
+import { HomeMenu, Props } from "../../src/ts/widgets/home_menu";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -19,7 +19,21 @@ beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
   env.qweb.loadTemplates(templates);
-  props = { inHome: false };
+  props = {
+    menuInfo: {
+      menuMap: {
+        14: {
+          id: 14,
+          name: "Demo",
+          parent_id: false,
+          action: false,
+          icon: "fa fa-test",
+          children: []
+        }
+      },
+      roots: [14]
+    }
+  };
 });
 
 afterEach(() => {
@@ -31,21 +45,7 @@ afterEach(() => {
 //------------------------------------------------------------------------------
 
 test("can be rendered", async () => {
-  const navbar = new Navbar(env, props);
-  await navbar.mount(fixture);
-  expect(fixture.innerHTML).toMatchSnapshot();
-});
-
-test("can render one menu item", async () => {
-  env.menus.push({ title: "menu", actionID: 4 });
-  const navbar = new Navbar(env, props);
-  await navbar.mount(fixture);
-  expect(fixture.innerHTML).toMatchSnapshot();
-});
-
-test("mobile mode: navbar is different", async () => {
-  env.isMobile = true;
-  const navbar = new Navbar(env, props);
-  await navbar.mount(fixture);
+  const homeMenu = new HomeMenu(env, props);
+  await homeMenu.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();
 });

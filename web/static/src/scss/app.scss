@@ -12,7 +12,7 @@ body {
   margin: 0;
 }
 
-/* Web Client */
+/***** Web Client *****/
 .o_web_client {
   font-family: sans-serif;
   height: 100%;
@@ -20,13 +20,17 @@ body {
   grid-template-rows: $navbar-height auto;
 }
 
-/* Navbar */
+/***** Navbar *****/
 .o_navbar {
   background-color: $main-color;
   color: white;
   display: flex;
   line-height: $navbar-height;
   font-size: 18px;
+
+  &.o_in_home {
+    background-color: #bba2a5;
+  }
 
   a.o_title {
     padding: 10px 16px 16px 20px;
@@ -57,7 +61,44 @@ body {
   }
 }
 
-/* Notifications */
+/***** Home Menu *****/
+.o_home_menu {
+  background-color: #bba2a5;
+  display: flex;
+  justify-content: center;
+
+  .o_apps {
+    margin-top: 100px;
+    width: 100%;
+    max-width: 850px;
+    display: flex;
+    flex-flow: row wrap;
+
+    .o_app {
+      width: 16.6666667%;
+      max-height: 110px;
+      padding: 10px 0;
+      text-decoration: none;
+      text-align: center;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+      font-size: 15px;
+      transition: background-color 0.3s ease 0s;
+      &:hover {
+        background-color: darken(#bba2a5, 4);
+      }
+
+      .o_app_icon {
+        max-width: 70px;
+        width: 80%;
+        margin: auto;
+        box-shadow: 0 8px 0 -10px black;
+      }
+    }
+  }
+}
+
+/***** Notifications *****/
 .o_notification_container {
   position: absolute;
   width: 300px;
@@ -101,7 +142,7 @@ body {
   }
 }
 
-/* Discuss */
+/***** Discuss *****/
 .o_discuss {
   padding: 20px;
   font-size: 15px;

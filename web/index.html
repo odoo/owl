@@ -3,12 +3,129 @@
   <head>
     <meta charset="utf-8">
     <title>Odoo Web Core Demo</title>
-    <script src="/static/libs/almond/almond.js"></script>
-    <script src="/main.js"></script>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="/app.css">
+
+    <!-- Bootstrap... This sucks. -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <!-- Font awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <!-- AMD module system -->
+    <script src="/static/libs/almond/almond.js"></script>
+
+    <!-- Application JS/CSS -->
+    <script src="/main.js"></script>
+    <link rel="stylesheet" href="/app.css">
+
     <script>
+        window.odoo = {};
+        odoo.menus = [
+          {
+            id: 96,
+            name: "Discuss",
+            parent_id: false,
+            action: "ir.actions.client,131",
+            icon: "fa fa-comment",
+            children: [
+              {
+                id: 97,
+                name: "Integrations",
+                parent_id: 96,
+                action: false,
+                icon: false,
+                children: [
+                  {
+                    id: 188,
+                    name: "Github Repositories",
+                    parent_id: 97,
+                    action: "ir.actions.act_window,233",
+                    icon: false,
+                    children: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 205,
+            name: "Notes",
+            parent_id: false,
+            action: "ir.actions.act_window,250",
+            icon: "fa fa-pen",
+            children: []
+          },
+          {
+            id: 409,
+            name: "CRM",
+            parent_id: false,
+            action: "ir.actions.act_window,597",
+            icon: "fa fa-handshake",
+            children: [
+              {
+                id: 418,
+                name: "Sales",
+                parent_id: 409,
+                action: false,
+                icon: false,
+                children: [
+                  {
+                    id: 423,
+                    name: "My Pipeline",
+                    parent_id: 418,
+                    action: "ir.actions.act_window,597",
+                    icon: false,
+                    children: []
+                  },
+                  {
+                    id: 812,
+                    name: "My Quotations",
+                    parent_id: 418,
+                    action: "ir.actions.act_window,1051",
+                    icon: false,
+                    children: []
+                  },
+                  {
+                    id: 419,
+                    name: "Team Pipelines",
+                    parent_id: 418,
+                    action: "ir.actions.act_window,275",
+                    icon: false,
+                    children: []
+                  }
+                ]
+              },
+              {
+                id: 421,
+                name: "Leads",
+                parent_id: 409,
+                action: false,
+                icon: false,
+                children: [
+                  {
+                    id: 422,
+                    name: "Leads",
+                    parent_id: 421,
+                    action: "ir.actions.act_window,595",
+                    icon: false,
+                    children: []
+                  },
+                  {
+                    id: 752,
+                    name: "Scoring Rules",
+                    parent_id: 421,
+                    icon: false,
+                    action: "ir.actions.act_window,1083",
+                    children: []
+                  }
+                ]
+              }
+            ]
+          }
+        ];
         require('main');
     </script>
   </head>

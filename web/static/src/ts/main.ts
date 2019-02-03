@@ -3,6 +3,7 @@
 import { debounce } from "./core/utils";
 import { makeEnvironment } from "./env";
 import { Root } from "./widgets/root";
+import { MenuItem, processMenuItems } from "./misc/menu_helpers";
 
 //------------------------------------------------------------------------------
 // Application bootstrapping
@@ -10,9 +11,18 @@ import { Root } from "./widgets/root";
 
 document.addEventListener("DOMContentLoaded", async function() {
   const env = await makeEnvironment();
-  const rootWidget = new Root(env);
-  await rootWidget.mount(document.body);
 
+  // menu processing
+  const menuItems: MenuItem[] = (<any>window).odoo.menus;
+  const menuInfo = processMenuItems(menuItems);
+  delete (<any>window).odoo.menus; // overkill?
+
+  // creating root widget
+  const rootWidget = new Root(env, { menuInfo });
+  await rootWidget.mount(document.body);
+  (<any>window).odoo.rootWidget = rootWidget;
+
+  // adding reactiveness to mobile/non mobile
   window.addEventListener("resize", <any>debounce(() => {
     const isMobile = window.innerWidth <= 768;
     if (isMobile !== env.isMobile) {

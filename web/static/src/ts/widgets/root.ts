@@ -1,7 +1,8 @@
+import { INotification } from "../core/notifications";
 import { Widget } from "../core/widget";
 import { Env } from "../env";
+import { MenuInfo } from "../misc/menu_helpers";
 import { ActionStack } from "../services/action_manager";
-import { INotification } from "../core/notifications";
 import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
@@ -17,11 +18,15 @@ interface State {
   inHome: boolean;
 }
 
+interface Props {
+  menuInfo: MenuInfo;
+}
+
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
 
-export class Root extends Widget<Env, {}> {
+export class Root extends Widget<Env, Props> {
   template = "web.web_client";
   widgets = { Navbar, Notification, HomeMenu, ActionContainer };
 
@@ -30,11 +35,6 @@ export class Root extends Widget<Env, {}> {
     stack: [],
     inHome: false
   };
-
-  constructor(env: Env) {
-    super(env);
-    this.toggleHome = this.toggleHome.bind(this);
-  }
 
   mounted() {
     this.env.notifications.on("notifications_updated", this, notifs =>

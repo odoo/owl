@@ -43,6 +43,7 @@ export interface Type<T> extends Function {
 export class Widget<T extends WEnv, Props> extends EventBus {
   __widget__: Meta<WEnv>;
   template: string = "default";
+  inlineTemplate: string | null = null;
 
   get el(): HTMLElement | null {
     return this.__widget__.vnode ? (<any>this).__widget__.vnode.elm : null;
@@ -60,6 +61,7 @@ export class Widget<T extends WEnv, Props> extends EventBus {
   constructor(parent: Widget<T, any> | T, props?: Props) {
     super();
     wl.push(this);
+
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a widget
     //   Con: this is not really safe
@@ -210,11 +212,15 @@ export class Widget<T extends WEnv, Props> extends EventBus {
     if (!this.__widget__.isDestroyed) {
       this.__widget__.isStarted = true;
     }
+    if (this.inlineTemplate) {
+      this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
+    }
   }
 
   private async _render(): Promise<VNode> {
     const promises: Promise<void>[] = [];
-    let vnode = this.env.qweb.render(this.template, this, { promises });
+    const template = this.inlineTemplate || this.template;
+    let vnode = this.env.qweb.render(template, this, { promises });
 
     // this part is critical for the patching process to be done correctly. The
     // tricky part is that a child widget can be rerendered on its own, which

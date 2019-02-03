@@ -132,9 +132,17 @@ export class QWeb {
    * Add a template to the internal template map.  Note that it is not
    * immediately compiled.
    */
-  addTemplate(name: string, template: RawTemplate) {
+  addTemplate(
+    name: string,
+    template: RawTemplate,
+    allowDuplicates: boolean = false
+  ) {
     if (name in this.processedTemplates) {
-      throw new Error(`Template ${name} already defined`);
+      if (allowDuplicates) {
+        return;
+      } else {
+        throw new Error(`Template ${name} already defined`);
+      }
     }
     const parser = new DOMParser();
     const doc = parser.parseFromString(template, "text/xml");

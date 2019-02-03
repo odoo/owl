@@ -35,6 +35,9 @@ export class EventBus {
    * listener.
    */
   on(eventType: string, owner: any, callback: Callback) {
+    if (!callback) {
+      throw new Error("Missing callback");
+    }
     if (!this.subscriptions[eventType]) {
       this.subscriptions[eventType] = [];
     }

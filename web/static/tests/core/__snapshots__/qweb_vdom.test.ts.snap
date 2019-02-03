@@ -1,0 +1,1105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`attributes dynamic attribute falsy variable  1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = context['value'];
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes dynamic attributes 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = 'bar';
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes fixed variable 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = context['value'];
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes format expression 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = \`\${context['value'] + 37}\`;
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes format literal 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = \`bar\`;
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes format multiple 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = \`a \${context['value1']} is \${context['value2']} of \${context['value3']} ]\`;
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes format value 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = \`b\${context['value']}r\`;
+    let c2 = [], p2 = {attrs:{foo: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes object 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = context['value'];
+    let c2 = [], p2 = {attrs:{}};
+    if (_1 instanceof Array) {
+        p2.attrs[_1[0]] = _1[1];
+    } else {
+        for (let key in _1) {
+            p2.attrs[key] = _1[key];
+        }
+    }
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes static attributes 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = 'a';
+    let _2 = 'b';
+    let _3 = 'c';
+    let c4 = [], p4 = {attrs:{foo: _1,bar: _2,baz: _3}};
+    let vn4 = h('div', p4, c4);
+    return vn4;
+}"
+`;
+
+exports[`attributes static attributes on void elements 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = '/test.jpg';
+    let _2 = 'Test';
+    let c3 = [], p3 = {attrs:{src: _1,alt: _2}};
+    let vn3 = h('img', p3, c3);
+    return vn3;
+}"
+`;
+
+exports[`attributes static attributes with dashes 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = 'Close';
+    let c2 = [], p2 = {attrs:{\\"aria-label\\": _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes tuple literal 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = ['foo', 'bar'];
+    let c2 = [], p2 = {attrs:{}};
+    if (_1 instanceof Array) {
+        p2.attrs[_1[0]] = _1[1];
+    } else {
+        for (let key in _1) {
+            p2.attrs[key] = _1[key];
+        }
+    }
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes tuple variable 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = context['value'];
+    let c2 = [], p2 = {attrs:{}};
+    if (_1 instanceof Array) {
+        p2.attrs[_1[0]] = _1[1];
+    } else {
+        for (let key in _1) {
+            p2.attrs[key] = _1[key];
+        }
+    }
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`foreach does not pollute the rendering context 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = [1];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        let e5 = context['item'];
+        if (e5 || e5 === 0) {
+            c1.push({text: e5});
+        }
+    }
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`foreach iterate on items (on a element node) 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = [1, 2];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        let c5 = [], p5 = {};
+        let vn5 = h('span', p5, c5);
+        c1.push(vn5);
+        let e6 = context['item'];
+        if (e6 || e6 === 0) {
+            c5.push({text: e6});
+        }
+    }
+    c1.push({text: \`
+    \`});
+    return vn1;
+}"
+`;
+
+exports[`foreach iterate on items 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = [3, 2, 1];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        c1.push({text: \`
+          [\`});
+        let e5 = context['item_index'];
+        if (e5 || e5 === 0) {
+            c1.push({text: e5});
+        }
+        c1.push({text: \`: \`});
+        let e6 = context['item'];
+        if (e6 || e6 === 0) {
+            c1.push({text: e6});
+        }
+        c1.push({text: \` \`});
+        let e7 = context['item_value'];
+        if (e7 || e7 === 0) {
+            c1.push({text: e7});
+        }
+        c1.push({text: \`]
+        \`});
+    }
+    c1.push({text: \`
+    \`});
+    return vn1;
+}"
+`;
+
+exports[`foreach iterate, dict param 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = context['value'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        c1.push({text: \`
+          [\`});
+        let e5 = context['item_index'];
+        if (e5 || e5 === 0) {
+            c1.push({text: e5});
+        }
+        c1.push({text: \`: \`});
+        let e6 = context['item'];
+        if (e6 || e6 === 0) {
+            c1.push({text: e6});
+        }
+        c1.push({text: \` \`});
+        let e7 = context['item_value'];
+        if (e7 || e7 === 0) {
+            c1.push({text: e7});
+        }
+        c1.push({text: \` - \`});
+        let e8 = context['item_parity'];
+        if (e8 || e8 === 0) {
+            c1.push({text: e8});
+        }
+        c1.push({text: \`]
+        \`});
+    }
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`foreach iterate, integer param 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let _2 = 3;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        c1.push({text: \`
+        [\`});
+        let e5 = context['item_index'];
+        if (e5 || e5 === 0) {
+            c1.push({text: e5});
+        }
+        c1.push({text: \`: \`});
+        let e6 = context['item'];
+        if (e6 || e6 === 0) {
+            c1.push({text: e6});
+        }
+        c1.push({text: \` \`});
+        let e7 = context['item_value'];
+        if (e7 || e7 === 0) {
+            c1.push({text: e7});
+        }
+        c1.push({text: \`]
+      \`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`foreach iterate, position 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = 5;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.elem_first = i === 0;
+        context.elem_last = i === _3.length - 1;
+        context.elem_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.elem_index = i;
+        context.elem = _3[i];
+        context.elem_value = _4[i];
+        c1.push({text: \`
+          -\`});
+        if (context['elem_first']) {
+            c1.push({text: \` first\`});
+        }
+        if (context['elem_last']) {
+            c1.push({text: \` last\`});
+        }
+        c1.push({text: \` (\`});
+        let e5 = context['elem_parity'];
+        if (e5 || e5 === 0) {
+            c1.push({text: e5});
+        }
+        c1.push({text: \`)
+        \`});
+    }
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`loading templates can load a few templates from a xml string 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('ul', p1, c1);
+    let c2 = [], p2 = {};
+    let vn2 = h('li', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`ok\`});
+    let c3 = [], p3 = {};
+    let vn3 = h('li', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`foo\`});
+    return vn1;
+}"
+`;
+
+exports[`misc global 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = [4,5,6];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.value_first = i === 0;
+        context.value_last = i === _3.length - 1;
+        context.value_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.value_index = i;
+        context.value = _3[i];
+        context.value_value = _4[i];
+        c1.push({text: \`
+          \`});
+        let c5 = [], p5 = {};
+        let vn5 = h('span', p5, c5);
+        c1.push(vn5);
+        let e6 = context['value'];
+        if (e6 || e6 === 0) {
+            c5.push({text: e6});
+        }
+        c1.push({text: \`
+          \`});
+        let _7 = 'agüero';
+        let c8 = [], p8 = {attrs:{falló: _7}};
+        let vn8 = h('Año', p8, c8);
+        c1.push(vn8);
+        c8.push({text: \`
+            \`});
+        let c9 = [], p9 = {};
+        let vn9 = h('span', p9, c9);
+        c8.push(vn9);
+        let e10 = 'aaa';
+        if (e10 || e10 === 0) {
+            c9.push({text: e10});
+        } else {
+            c9.push({text: \`foo default\`});
+        }
+        c8.push({text: \`
+            \`});
+        let c11 = [], p11 = {};
+        let vn11 = h('span', p11, c11);
+        c8.push(vn11);
+        let e12 = context['foo'];
+        if (e12 || e12 === 0) {
+            c11.push({text: e12});
+        } else {
+            c11.push({text: \`foo default\`});
+        }
+        c8.push({text: \`
+            \`});
+        c8.push({text: \`
+            \`});
+        let c13 = [], p13 = {};
+        let vn13 = h('span', p13, c13);
+        c8.push(vn13);
+        let e14 = 'bbb';
+        if (e14 || e14 === 0) {
+            c13.push({text: e14});
+        } else {
+            c13.push({text: \`foo default\`});
+        }
+        c8.push({text: \`
+          \`});
+        c1.push({text: \`
+        \`});
+    }
+    c1.push({text: \`
+        \`});
+    let c15 = [], p15 = {};
+    let vn15 = h('div', p15, c15);
+    c1.push(vn15);
+    let e16 = context['toto'];
+    if (e16 || e16 === 0) {
+        p15.hook = {
+            create: (_, n) => n.elm.innerHTML = e16,
+            update: (_, n) => n.elm.innerHTML = e16,
+        };
+    } else {
+        c15.push({text: \`toto default\`});
+    }
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`static templates div with a span child node 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`word\`});
+    return vn1;
+}"
+`;
+
+exports[`static templates div with a text node 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`word\`});
+    return vn1;
+}"
+`;
+
+exports[`static templates empty div 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    return vn1;
+}"
+`;
+
+exports[`static templates simple string 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let vn1 = {text: \`hello vdom\`};
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling basic caller 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`ok\`});
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling inherit context 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = 1;
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling scoped parameters 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+            \`});
+    c1.push({text: \`ok\`});
+    c1.push({text: \`
+            \`});
+    let e2 = context['foo'];
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    c1.push({text: \`
+        \`});
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling with unused body 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`ok\`});
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling with unused setbody 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`ok\`});
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling with used body 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('h1', p1, c1);
+    c1.push({text: \`ok\`});
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling with used set body 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = 'ok';
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc escaping on a node 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = 'ok';
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc escaping on a node with a body 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = 'ok';
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    } else {
+        c1.push({text: \`nope\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc escaping on a node with a body, as a default 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = context['var'];
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    } else {
+        c1.push({text: \`nope\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc literal 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = 'ok';
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc variable 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = context['var'];
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-if boolean value condition elif 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    if (context['color'] == 'black') {
+        c1.push({text: \`black pearl\`});
+    }
+    else if (context['color'] == 'yellow') {
+        c1.push({text: \`yellow submarine\`});
+    }
+    else if (context['color'] == 'red') {
+        c1.push({text: \`red is dead\`});
+    }
+    else {
+        c1.push({text: \`beer\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-if boolean value condition else 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let c2 = [], p2 = {};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`begin\`});
+    c1.push({text: \`
+        \`});
+    if (context['condition']) {
+        c1.push({text: \`ok\`});
+    }
+    else {
+        c1.push({text: \`ok-else\`});
+    }
+    c1.push({text: \`
+        \`});
+    let c3 = [], p3 = {};
+    let vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`end\`});
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`t-if boolean value condition false else 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`begin\`});
+    if (context['condition']) {
+        c1.push({text: \`fail\`});
+    }
+    else {
+        c1.push({text: \`fail-else\`});
+    }
+    let c3 = [], p3 = {};
+    let vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`end\`});
+    return vn1;
+}"
+`;
+
+exports[`t-if boolean value condition missing 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    if (context['condition']) {
+        c1.push({text: \`fail\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-if boolean value false condition 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    if (context['condition']) {
+        c1.push({text: \`ok\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-if boolean value true condition 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    if (context['condition']) {
+        c1.push({text: \`ok\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-on can bind event handler 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('button', p1, c1);
+    p1.on = {click: context['add'].bind(owner)};
+    c1.push({text: \`Click\`});
+    return vn1;
+}"
+`;
+
+exports[`t-on can bind handlers with arguments 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('button', p1, c1);
+    p1.on = {click: context['add'].bind(owner, 5)};
+    c1.push({text: \`Click\`});
+    return vn1;
+}"
+`;
+
+exports[`t-on can bind handlers with loop variable as argument 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('ul', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = ['someval'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.action_first = i === 0;
+        context.action_last = i === _3.length - 1;
+        context.action_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.action_index = i;
+        context.action = _3[i];
+        context.action_value = _4[i];
+        let c5 = [], p5 = {};
+        let vn5 = h('li', p5, c5);
+        c1.push(vn5);
+        let c6 = [], p6 = {};
+        let vn6 = h('a', p6, c6);
+        c5.push(vn6);
+        p6.on = {click: context['activate'].bind(owner, context['action'])};
+        c6.push({text: \`link\`});
+    }
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`t-on handler is bound to proper owner 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('button', p1, c1);
+    p1.on = {click: context['add'].bind(owner)};
+    c1.push({text: \`Click\`});
+    return vn1;
+}"
+`;
+
+exports[`t-raw literal 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = 'ok';
+    if (e2 || e2 === 0) {
+        p1.hook = {
+            create: (_, n) => n.elm.innerHTML = e2,
+            update: (_, n) => n.elm.innerHTML = e2,
+        };
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-raw not escaping 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = context['var'];
+    if (e2 || e2 === 0) {
+        p1.hook = {
+            create: (_, n) => n.elm.innerHTML = e2,
+            update: (_, n) => n.elm.innerHTML = e2,
+        };
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-raw variable 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('span', p1, c1);
+    let e2 = context['var'];
+    if (e2 || e2 === 0) {
+        p1.hook = {
+            create: (_, n) => n.elm.innerHTML = e2,
+            update: (_, n) => n.elm.innerHTML = e2,
+        };
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-ref can get a ref on a node 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    p2.hook = {
+            create: (_, n) => context.refs['myspan'] = n.elm,
+        };
+    return vn1;
+}"
+`;
+
+exports[`t-set evaluate value expression 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = 1 + 2;
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set evaluate value expression, part 2 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = context['somevariable'] + 2;
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set set from attribute literal 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = 'ok';
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set set from attribute lookup 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = context['value'];
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set set from body literal 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let vn1 = {text: \`ok\`};
+    return vn1;
+}"
+`;
+
+exports[`t-set set from body lookup 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = context['value'];
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set set from empty body 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    return vn1;
+}"
+`;
+
+exports[`t-set value priority 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let c1 = [], p1 = {};
+    let vn1 = h('div', p1, c1);
+    let e2 = 1;
+    if (e2 || e2 === 0) {
+        c1.push({text: e2});
+    }
+    return vn1;
+}"
+`;

@@ -224,7 +224,7 @@ export class QWeb {
       throw new Error(`Template ${name} does not exist`);
     }
     const template = this.templates[name] || this._compile(name);
-    return template(context, extra);
+    return template.call(this, context, extra);
   }
 
   _compile(name: string): CompiledTemplate<VNode> {
@@ -261,7 +261,6 @@ export class QWeb {
         }\nCompiled code:\n` + template.toString()
       );
     }
-    template = template.bind(this);
     this.templates[name] = template;
     return template;
   }

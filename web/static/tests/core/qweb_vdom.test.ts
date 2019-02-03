@@ -28,6 +28,11 @@ function renderToDOM(
   context: EvalContext = {}
 ): HTMLElement | Text {
   const vnode = qweb.render(template, context);
+
+  // we snapshot here the compiled code. This is useful to prevent unwanted code
+  // change.
+  expect(qweb.templates[template].toString()).toMatchSnapshot();
+
   if (vnode.sel === undefined) {
     return document.createTextNode(vnode.text!);
   }
@@ -647,7 +652,7 @@ describe("t-on", () => {
   });
 
   test("can bind handlers with loop variable as argument", () => {
-    expect.assertions(1);
+    expect.assertions(2);
     qweb.addTemplate(
       "test",
       `
@@ -664,7 +669,7 @@ describe("t-on", () => {
   });
 
   test("handler is bound to proper owner", () => {
-    expect.assertions(1);
+    expect.assertions(2);
     qweb.addTemplate("test", `<button t-on-click="add">Click</button>`);
     let owner = {
       add() {

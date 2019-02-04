@@ -1,18 +1,22 @@
-import { QWeb } from "./core/qweb_vdom";
-import { idGenerator, memoize } from "./core/utils";
-import { WEnv } from "./core/widget";
-import { ActionManager, IActionManager } from "./services/action_manager";
 import { Ajax, IAjax } from "./core/ajax";
+import { WEnv } from "./core/base_widget";
 import {
   INotificationManager,
   NotificationManager
 } from "./core/notifications";
-import { actionRegistry } from "./registries";
+import { QWeb } from "./core/qweb_vdom";
 import { Registry } from "./core/registry";
 import { IRouter, Router } from "./core/router";
+import { idGenerator, memoize } from "./core/utils";
+import { actionRegistry } from "./registries";
+import {
+  ActionManager,
+  ActionWidget,
+  IActionManager
+} from "./services/action_manager";
 import { CRM } from "./widgets/crm";
 import { Discuss } from "./widgets/discuss";
-import { Widget, Type } from "./core/widget";
+
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
@@ -30,7 +34,7 @@ export interface Env extends WEnv {
   router: IRouter;
 
   // registries
-  actionRegistry: Registry<Type<Widget<Env, any>>>;
+  actionRegistry: Registry<ActionWidget>;
 
   // data
   menus: Menu[];

@@ -1,6 +1,5 @@
-import { Widget } from "../core/widget";
-import { Env } from "../env";
 import { MenuInfo, MenuItem } from "../misc/menu_helpers";
+import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------
 // Types
@@ -14,7 +13,7 @@ export interface Props {
 // Home Menu
 //------------------------------------------------------------------------------
 
-export class HomeMenu extends Widget<Env, Props> {
+export class HomeMenu extends Widget<Props, {}> {
   template = "web.home_menu";
 
   get apps(): MenuItem[] {

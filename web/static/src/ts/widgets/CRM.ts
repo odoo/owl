@@ -1,6 +1,5 @@
-import { Widget } from "../core/widget";
-import { Env } from "../env";
+import { Widget } from "./widget";
 
-export class CRM extends Widget<Env, {}> {
+export class CRM extends Widget<{}, {}> {
   template = "web.crm";
 }

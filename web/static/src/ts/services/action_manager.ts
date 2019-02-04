@@ -1,7 +1,7 @@
+import { Type } from "../core/base_widget";
 import { EventBus } from "../core/event_bus";
 import { Registry } from "../core/registry";
-import { Type, Widget } from "../core/widget";
-import { Env } from "../env";
+import { Widget } from "../widgets/widget";
 
 //------------------------------------------------------------------------------
 // Types
@@ -18,10 +18,12 @@ export interface CommonActionInfo {
   target: "current" | "new";
 }
 
+export type ActionWidget = Type<Widget<{}, {}>>;
+
 export interface ClientActionInfo extends CommonActionInfo {
   type: "client";
   name: string;
-  Widget: Type<Widget<Env, {}>>;
+  Widget: ActionWidget;
 }
 
 export interface ActWindowInfo extends CommonActionInfo {
@@ -47,10 +49,10 @@ export interface IActionManager {
 //------------------------------------------------------------------------------
 
 export class ActionManager extends EventBus implements IActionManager {
-  registry: Registry<Type<Widget<Env, any>>>;
+  registry: Registry<ActionWidget>;
   stack: ActionStack;
 
-  constructor(registry: Registry<Type<Widget<Env, any>>>) {
+  constructor(registry: Registry<ActionWidget>) {
     super();
     this.registry = registry;
     this.stack = [];

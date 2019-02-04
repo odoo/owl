@@ -1,7 +1,18 @@
-import { Widget } from "../core/widget";
-import { Env } from "../env";
+import { Widget } from "./widget";
 
-export class Clock extends Widget<Env, {}> {
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
+interface State {
+  currentTime: string;
+}
+
+//------------------------------------------------------------------------------
+// Clock
+//------------------------------------------------------------------------------
+
+export class Clock extends Widget<{}, State> {
   inlineTemplate = `<div class="o_clock"><t t-esc="state.currentTime"/></div>`;
   timeout: any | undefined;
 

@@ -1,13 +1,21 @@
-import { Widget } from "../core/widget";
-import { Env, Menu } from "../env";
+import { Menu } from "../env";
 import { MenuItem } from "../misc/menu_helpers";
+import { Widget } from "./widget";
+
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
 
 export interface Props {
   inHome: boolean;
   app: MenuItem | null;
 }
 
-export class Navbar extends Widget<Env, Props> {
+//------------------------------------------------------------------------------
+// Navbar
+//------------------------------------------------------------------------------
+
+export class Navbar extends Widget<Props, {}> {
   template = "web.navbar";
 
   getUrl(menu: Menu) {

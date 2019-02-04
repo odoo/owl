@@ -1,8 +1,7 @@
-import { Widget } from "../core/widget";
-import { Env } from "../env";
 import { INotification } from "../core/notifications";
+import { Widget } from "./widget";
 
-export class Notification extends Widget<Env, INotification> {
+export class Notification extends Widget<INotification, {}> {
   template = "web.notification";
 
   close() {

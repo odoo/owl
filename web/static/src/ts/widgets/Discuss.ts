@@ -1,9 +1,21 @@
-import { Widget } from "../core/widget";
-import { Env } from "../env";
 import { Clock } from "./clock";
 import { Counter } from "./counter";
+import { Widget } from "./widget";
 
-export class Discuss extends Widget<Env, {}> {
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
+interface State {
+  validcounter: boolean;
+  color: "red" | "blue";
+}
+
+//------------------------------------------------------------------------------
+// Discuss
+//------------------------------------------------------------------------------
+
+export class Discuss extends Widget<{}, State> {
   template = "web.discuss";
   widgets = { Clock, Counter, ColorWidget };
   state = { validcounter: true, color: "red" };
@@ -38,7 +50,7 @@ export class Discuss extends Widget<Env, {}> {
   }
 }
 
-class ColorWidget extends Widget<Env, { color: "red" | "blue" }> {
+class ColorWidget extends Widget<{ color: "red" | "blue" }, {}> {
   inlineTemplate = `
     <div t-name="colorwidget">
       <span>Current Color: </span>

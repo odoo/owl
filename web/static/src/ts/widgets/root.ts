@@ -1,5 +1,5 @@
 import { INotification } from "../core/notifications";
-import { Widget } from "../core/widget";
+import { Widget } from "./widget";
 import { Env } from "../env";
 import { MenuInfo, MenuItem, getAppAndAction } from "../misc/menu_helpers";
 import { ActionStack } from "../services/action_manager";
@@ -28,7 +28,7 @@ interface Props {
 // Root Widget
 //------------------------------------------------------------------------------
 
-export class Root extends Widget<Env, Props> {
+export class Root extends Widget<Props, State> {
   template = "web.web_client";
   widgets = { Navbar, Notification, HomeMenu, ActionContainer };
 

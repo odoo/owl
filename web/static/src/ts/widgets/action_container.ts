@@ -1,12 +1,19 @@
-import { Widget } from "../core/widget";
-import { Env } from "../env";
 import { ActionStack } from "../services/action_manager";
+import { Widget } from "./widget";
+
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
 
 export interface Props {
   stack: ActionStack;
 }
 
-export class ActionContainer extends Widget<Env, Props> {
+//------------------------------------------------------------------------------
+// Action Container
+//------------------------------------------------------------------------------
+
+export class ActionContainer extends Widget<Props, {}> {
   template = "web.action_container";
   currentWidget: any;
 

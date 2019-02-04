@@ -23,8 +23,8 @@ interface Meta<T extends WEnv> {
   isStarted: boolean;
   isMounted: boolean;
   isDestroyed: boolean;
-  parent: Widget<T, {}> | null;
-  children: { [key: number]: Widget<T, {}> };
+  parent: BaseWidget<T, any, any> | null;
+  children: { [key: number]: BaseWidget<T, any, any> };
   // children mapping: from templateID to widgetID
   // should it be a map number => Widget?
   cmap: { [key: number]: number };
@@ -40,7 +40,7 @@ export interface Type<T> extends Function {
 // Widget
 //------------------------------------------------------------------------------
 
-export class Widget<T extends WEnv, Props> extends EventBus {
+export class BaseWidget<T extends WEnv, Props, State> extends EventBus {
   __widget__: Meta<WEnv>;
   template: string = "default";
   inlineTemplate: string | null = null;
@@ -52,13 +52,15 @@ export class Widget<T extends WEnv, Props> extends EventBus {
   env: T;
   state: Object = {};
   props: Props;
-  refs: { [key: string]: Widget<T, {}> | HTMLElement | undefined } = {};
+  refs: {
+    [key: string]: BaseWidget<T, any, any> | HTMLElement | undefined;
+  } = {};
 
   //--------------------------------------------------------------------------
   // Lifecycle
   //--------------------------------------------------------------------------
 
-  constructor(parent: Widget<T, any> | T, props?: Props) {
+  constructor(parent: BaseWidget<T, any, any> | T, props?: Props) {
     super();
     wl.push(this);
 
@@ -68,8 +70,8 @@ export class Widget<T extends WEnv, Props> extends EventBus {
     //   Pro: but creating widget (by a template) is always unsafe anyway
     this.props = <Props>props;
     let id: number;
-    let p: Widget<T, any> | null = null;
-    if (parent instanceof Widget) {
+    let p: BaseWidget<T, any, any> | null = null;
+    if (parent instanceof BaseWidget) {
       p = parent;
       this.env = parent.env;
       id = this.env.getID();
@@ -173,17 +175,11 @@ export class Widget<T extends WEnv, Props> extends EventBus {
    * - it is ok to call updateState before the widget is started. In that
    * case, it will simply update the state and will not rerender
    */
-  async updateState(nextState: Object) {
+  async updateState(nextState: Partial<State>) {
     if (Object.keys(nextState).length === 0) {
       return;
     }
-    for (let key in nextState) {
-      if (key in this.state) {
-        this.state[key] = nextState[key];
-      } else {
-        throw new Error(`Invalid key: '${key}' does not exist in widget state`);
-      }
-    }
+    Object.assign(this.state, nextState);
     if (this.__widget__.isStarted) {
       return this.render();
     }
@@ -259,7 +255,7 @@ export class Widget<T extends WEnv, Props> extends EventBus {
     }
   }
 
-  private visitSubTree(callback: (w: Widget<T, any>) => boolean) {
+  private visitSubTree(callback: (w: BaseWidget<T, any, any>) => boolean) {
     const shouldVisitChildren = callback(this);
     if (shouldVisitChildren) {
       const children = this.__widget__.children;

@@ -65,7 +65,7 @@ export const makeEnvironment = memoize(async function(): Promise<Env> {
   const qweb = new QWeb();
   const router = new Router();
   const ajax = new Ajax();
-  const actionManager = new ActionManager(router, actionRegistry);
+  const actionManager = new ActionManager(actionRegistry);
   const notifications = new NotificationManager();
 
   // demo data

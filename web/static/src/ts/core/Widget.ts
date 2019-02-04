@@ -174,6 +174,9 @@ export class Widget<T extends WEnv, Props> extends EventBus {
    * case, it will simply update the state and will not rerender
    */
   async updateState(nextState: Object) {
+    if (Object.keys(nextState).length === 0) {
+      return;
+    }
     for (let key in nextState) {
       if (key in this.state) {
         this.state[key] = nextState[key];

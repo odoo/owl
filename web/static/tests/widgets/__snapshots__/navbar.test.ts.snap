@@ -3,33 +3,20 @@
 exports[`can be rendered 1`] = `
 "<div class=\\"o_navbar\\">
     <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
-    <ul>
-      
-      
-    </ul>
+    
   </div>"
 `;
 
 exports[`can render one menu item 1`] = `
 "<div class=\\"o_navbar\\">
     <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
-    <ul>
-      <li>
-        <a href=\\"\\">
-          menu
-        </a>
-      </li>
-      
-    </ul>
+    
   </div>"
 `;
 
 exports[`mobile mode: navbar is different 1`] = `
 "<div class=\\"o_navbar\\">
     <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
-    <ul>
-      
-      <li>MOBILEMODE</li>
-    </ul>
+    
   </div>"
 `;

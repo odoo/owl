@@ -58,7 +58,7 @@ export class Router extends EventBus implements IRouter {
 
   getQuery(): Query {
     const query = {};
-    for (let part of window.location.hash.slice(1).split("?")) {
+    for (let part of window.location.hash.slice(1).split("&")) {
       let [key, value] = part.split("=");
       query[key] = value;
     }

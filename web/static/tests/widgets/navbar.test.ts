@@ -19,7 +19,7 @@ beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
   env.qweb.loadTemplates(templates);
-  props = { inHome: false };
+  props = { inHome: false, app: null };
 });
 
 afterEach(() => {

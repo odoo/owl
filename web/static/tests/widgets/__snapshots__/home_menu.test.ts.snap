@@ -3,7 +3,7 @@
 exports[`can be rendered 1`] = `
 "<div class=\\"o_home_menu\\">
     <div class=\\"o_apps\\">
-      <a href=\\"#\\" class=\\"o_app\\">
+      <a href=\\"#menu_id=14&amp;action_id=43\\" class=\\"o_app\\">
         <i class=\\"fa fa-test o_app_icon fa-3x fa-fw\\"></i>
         <div class=\\"o_caption\\">
           Demo

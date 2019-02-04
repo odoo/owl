@@ -2,9 +2,9 @@
 <templates id="template" xml:space="preserve">
 
   <div t-name="web.web_client" class="o_web_client">
-    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle-home-menu="toggleHome"/>
+    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle_home_menu="toggleHome"/>
     <t t-if="state.inHome">
-      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}"/>
+      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" t-on-app_opened="openApp"/>
     </t>
     <t t-else="1">
       <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>
@@ -18,7 +18,10 @@
 
   <div t-name="web.navbar" class="o_navbar" t-att-class="props.inHome ? 'o_navbar o_in_home' : 'o_navbar'">
     <a aria-label="Applications" class="o_title fa fa-th" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
-    <ul t-if="!props.inHome">
+    <ul t-if="!props.inHome &amp;&amp; props.app">
+      <a class="o_menu_brand" href="#" role="button">
+        <t t-esc="props.app.name"/>
+      </a>
       <li t-foreach="env.menus" t-as="menu">
         <a t-att-href="getUrl(menu)">
           <t t-esc="menu.title"/>
@@ -30,7 +33,7 @@
 
   <div t-name="web.home_menu" class="o_home_menu">
     <div class="o_apps">
-      <a t-foreach="apps" t-as="app" href="#" class="o_app" t-on-click="openApp(app.id)">
+      <a t-foreach="apps" t-as="app" t-att-href="'#menu_id=' + app.menuId + '&amp;action_id=' + app.actionId" class="o_app" t-on-click="openApp(app)">
         <i t-att-class="app.icon + ' o_app_icon fa-3x fa-fw'"/>
         <div class="o_caption">
           <t t-esc="app.name"/>

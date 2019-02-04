@@ -1,8 +1,7 @@
 import { EventBus } from "../core/event_bus";
-import { Widget, Type } from "../core/widget";
-import { Env } from "../env";
 import { Registry } from "../core/registry";
-import { IRouter, Query } from "../core/router";
+import { Type, Widget } from "../core/widget";
+import { Env } from "../env";
 
 //------------------------------------------------------------------------------
 // Types
@@ -38,7 +37,6 @@ export type ActionEvent = "action_stack_updated";
 type Callback = (stack: ActionStack) => void;
 
 export interface IActionManager {
-  activate(): void;
   doAction(request: ActionRequest): void;
   on(event: ActionEvent, owner: any, callback: Callback): void;
   getStack(): ActionStack;
@@ -49,20 +47,13 @@ export interface IActionManager {
 //------------------------------------------------------------------------------
 
 export class ActionManager extends EventBus implements IActionManager {
-  router: IRouter;
   registry: Registry<Type<Widget<Env, any>>>;
   stack: ActionStack;
 
-  constructor(router: IRouter, registry: Registry<Type<Widget<Env, any>>>) {
+  constructor(registry: Registry<Type<Widget<Env, any>>>) {
     super();
-    this.router = router;
     this.registry = registry;
     this.stack = [];
-  }
-
-  activate() {
-    this.router.on("query_changed", this, this.update);
-    this.update(this.router.getQuery());
   }
 
   doAction(request: ActionRequest) {
@@ -88,12 +79,5 @@ export class ActionManager extends EventBus implements IActionManager {
 
   getStack(): ActionStack {
     return [];
-  }
-
-  update(query: Query) {
-    if ("action_id" in query) {
-      const actionID = parseInt(query.action_id);
-      this.doAction(actionID);
-    }
   }
 }

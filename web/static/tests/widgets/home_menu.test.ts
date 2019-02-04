@@ -28,7 +28,9 @@ beforeEach(() => {
           parent_id: false,
           action: false,
           icon: "fa fa-test",
-          children: []
+          children: [],
+          menuId: 14,
+          actionId: 43
         }
       },
       roots: [14]

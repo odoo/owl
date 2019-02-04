@@ -3,7 +3,7 @@
 import { debounce } from "./core/utils";
 import { makeEnvironment } from "./env";
 import { Root } from "./widgets/root";
-import { MenuItem, processMenuItems } from "./misc/menu_helpers";
+import { BaseMenuItem, processMenuItems } from "./misc/menu_helpers";
 
 //------------------------------------------------------------------------------
 // Application bootstrapping
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   const env = await makeEnvironment();
 
   // menu processing
-  const menuItems: MenuItem[] = (<any>window).odoo.menus;
+  const menuItems: BaseMenuItem[] = (<any>window).odoo.menus;
   const menuInfo = processMenuItems(menuItems);
   delete (<any>window).odoo.menus; // overkill?
 

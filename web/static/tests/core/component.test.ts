@@ -1,4 +1,4 @@
-import { BaseWidget, WEnv } from "../../src/ts/core/base_widget";
+import { Component, WEnv } from "../../src/ts/core/component";
 import { makeTestFixture, makeTestWEnv, normalize } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ function nextTick(): Promise<void> {
   return Promise.resolve();
 }
 
-class Widget extends BaseWidget<WEnv, {}, {}> {}
+class Widget extends Component<WEnv, {}, {}> {}
 
 function children(w: Widget): Widget[] {
   const childrenMap = w.__widget__.children;

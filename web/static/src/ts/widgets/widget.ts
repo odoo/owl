@@ -1,7 +1,7 @@
-import { BaseWidget } from "../core/base_widget";
+import { Component } from "../core/component";
 import { Env } from "../env";
 
-export class Widget<Props, State> extends BaseWidget<Env, Props, State> {}
+export class Widget<Props, State> extends Component<Env, Props, State> {}
 
 // TODO: move this to PureComponent in core
 export class PureWidget<Props, State> extends Widget<Props, State> {

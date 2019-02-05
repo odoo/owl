@@ -1,4 +1,4 @@
-import { Type } from "../core/base_widget";
+import { Type } from "../core/component";
 import { EventBus } from "../core/event_bus";
 import { Registry } from "../core/registry";
 import { Widget } from "../widgets/widget";

@@ -1,5 +1,5 @@
 import { Ajax, IAjax } from "./core/ajax";
-import { WEnv } from "./core/base_widget";
+import { WEnv } from "./core/component";
 import {
   INotificationManager,
   NotificationManager

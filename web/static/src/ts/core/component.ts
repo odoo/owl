@@ -23,8 +23,8 @@ interface Meta<T extends WEnv> {
   isStarted: boolean;
   isMounted: boolean;
   isDestroyed: boolean;
-  parent: BaseWidget<T, any, any> | null;
-  children: { [key: number]: BaseWidget<T, any, any> };
+  parent: Component<T, any, any> | null;
+  children: { [key: number]: Component<T, any, any> };
   // children mapping: from templateID to widgetID
   // should it be a map number => Widget?
   cmap: { [key: number]: number };
@@ -40,7 +40,7 @@ export interface Type<T> extends Function {
 // Widget
 //------------------------------------------------------------------------------
 
-export class BaseWidget<
+export class Component<
   T extends WEnv,
   Props,
   State extends {}
@@ -57,14 +57,14 @@ export class BaseWidget<
   state: State = <State>{};
   props: Props;
   refs: {
-    [key: string]: BaseWidget<T, any, any> | HTMLElement | undefined;
+    [key: string]: Component<T, any, any> | HTMLElement | undefined;
   } = {};
 
   //--------------------------------------------------------------------------
   // Lifecycle
   //--------------------------------------------------------------------------
 
-  constructor(parent: BaseWidget<T, any, any> | T, props?: Props) {
+  constructor(parent: Component<T, any, any> | T, props?: Props) {
     super();
     wl.push(this);
 
@@ -74,8 +74,8 @@ export class BaseWidget<
     //   Pro: but creating widget (by a template) is always unsafe anyway
     this.props = <Props>props;
     let id: number;
-    let p: BaseWidget<T, any, any> | null = null;
-    if (parent instanceof BaseWidget) {
+    let p: Component<T, any, any> | null = null;
+    if (parent instanceof Component) {
       p = parent;
       this.env = parent.env;
       id = this.env.getID();
@@ -259,7 +259,7 @@ export class BaseWidget<
     }
   }
 
-  private visitSubTree(callback: (w: BaseWidget<T, any, any>) => boolean) {
+  private visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
     const shouldVisitChildren = callback(this);
     if (shouldVisitChildren) {
       const children = this.__widget__.children;

@@ -1,4 +1,4 @@
-import { MenuItem } from "../misc/menu_helpers";
+import { MenuItem } from "./root";
 import { PureWidget } from "./widget";
 
 //------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ export class Navbar extends PureWidget<Props, {}> {
 
   getUrl(menu: MenuItem) {
     const action_id = String(menu.actionId);
-    const menu_id = String(menu.menuId);
+    const menu_id = String(menu.app.id);
     return this.env.router.formatURL("", { action_id, menu_id });
   }
 

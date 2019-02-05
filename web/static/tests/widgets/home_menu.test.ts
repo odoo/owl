@@ -1,5 +1,6 @@
 import { HomeMenu, Props } from "../../src/ts/widgets/home_menu";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
+import { MenuItem } from "../../src/ts/widgets/root";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -18,20 +19,22 @@ beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
   env.qweb.loadTemplates(templates);
+  const demoItem: MenuItem = <any>{
+    id: 14,
+    name: "Demo",
+    parentId: false,
+    action: false,
+    icon: "fa fa-test",
+    children: [],
+    actionId: 43
+  };
+  demoItem.app = demoItem;
   props = {
     menuInfo: {
-      menuMap: {
-        14: {
-          id: 14,
-          name: "Demo",
-          parent_id: false,
-          action: false,
-          icon: "fa fa-test",
-          children: [],
-          menuId: 14,
-          actionId: 43
-        }
+      menus: {
+        14: demoItem
       },
+      actionMap: { 43: demoItem },
       roots: [14]
     }
   };

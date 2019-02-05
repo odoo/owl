@@ -20,16 +20,15 @@ export interface MenuItem {
   icon: string | false;
 
   // root menu id
-  appId: number;
+  app: MenuItem;
   actionId: number;
   children: MenuItem[];
 }
 
 export interface MenuInfo {
-  menuMap: { [key: number]: MenuItem | undefined };
+  menus: { [key: number]: MenuItem | undefined };
 
-  // mapping from action id to menu id
-  actionMap: { [id: number]: number | undefined };
+  actionMap: { [id: number]: MenuItem | undefined };
   roots: number[];
 }
 
@@ -100,13 +99,14 @@ export class Root extends Widget<Props, State> {
     const newApp = app || this.state.currentApp;
     if (actionId) {
       const query: Query = { action_id: String(actionId) };
-      const menuId = newApp ? newApp.appId : false;
+      const menuId = newApp ? newApp.app.id : false;
       if (menuId) {
         query.menu_id = String(menuId);
       }
       if (app) {
         this.updateState({ currentApp: app });
       }
+      debugger;
       this.env.router.navigate(query);
       this.env.actionManager.doAction(actionId);
     } else {
@@ -119,8 +119,7 @@ export class Root extends Widget<Props, State> {
   }
 
   openMenu(menu: MenuItem) {
-    const app = this.props.menuInfo.menuMap[menu.appId]!;
-    this.updateAppState(app, menu.actionId);
+    this.updateAppState(menu.app, menu.actionId);
   }
 
   private getAppAndAction(
@@ -132,16 +131,15 @@ export class Root extends Widget<Props, State> {
     if ("action_id" in query) {
       actionId = parseInt(query.action_id, 10);
       if (menuInfo.actionMap[actionId]) {
-        const menuId = menuInfo.actionMap[actionId]!;
-        const appId = menuInfo.menuMap[menuId]!.appId;
-        app = menuInfo.menuMap[appId]!;
+        const menu = menuInfo.actionMap[actionId]!;
+        app = menu.app;
       }
     }
     if ("menu_id" in query) {
       const menuId = parseInt(query.menu_id, 10);
-      const menu = menuInfo.menuMap[menuId];
+      const menu = menuInfo.menus[menuId];
       if (menu) {
-        app = menuInfo.menuMap[menu.appId] || null;
+        app = menu.app;
         if (!actionId) {
           actionId = menu.actionId;
         }

@@ -1,4 +1,4 @@
-import { MenuInfo, MenuItem } from "../misc/menu_helpers";
+import { MenuInfo, MenuItem } from "../widgets/root";
 import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ export class HomeMenu extends Widget<Props, {}> {
 
   get apps(): MenuItem[] {
     const info = this.props.menuInfo;
-    return info.roots.map(root => info.menuMap[root]!);
+    return info.roots.map(root => info.menus[root]!);
   }
 
   openMenu(app: MenuItem, event: MouseEvent) {

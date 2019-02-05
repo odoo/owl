@@ -90,34 +90,34 @@ interface BaseMenuItem {
  * is supposed to be called once at startup.
  */
 export function getMenuInfo(items: BaseMenuItem[]): MenuInfo {
-  const menuMap: { [key: number]: MenuItem | undefined } = {};
-  const actionMap: { [id: number]: number | undefined } = {};
+  const menus: { [key: number]: MenuItem | undefined } = {};
+  const actionMap: { [id: number]: MenuItem | undefined } = {};
   const roots: number[] = [];
 
   // build MenuItems
   for (let root of items) {
     roots.push(root.id);
-    addToMap(root, root.id);
+    addToMap(root);
   }
 
-  function addToMap(m: BaseMenuItem, appId: number): MenuItem {
-    const item: MenuItem = {
+  function addToMap(m: BaseMenuItem, app?: MenuItem): MenuItem {
+    const item: Partial<MenuItem> = {
       id: m.id,
       name: m.name,
       parentId: m.parent_id,
       action: m.action,
       icon: m.icon,
-      appId: appId,
-      actionId: -1, // will be filled later on with correct id
-      children: m.children.map(c => addToMap(c, appId))
+      actionId: -1 // will be filled later on with correct id
     };
-    menuMap[item.id] = item;
-    return item;
+    item.app = app || (item as MenuItem);
+    item.children = m.children.map(c => addToMap(c, item.app as MenuItem));
+    menus[item.id!] = item as MenuItem;
+    return item as MenuItem;
   }
 
   // add proper actionId to every menuitems
-  for (let menuId in menuMap) {
-    const menu = menuMap[menuId]!;
+  for (let menuId in menus) {
+    const menu = menus[menuId]!;
     let menuWithAction = menu && findInTree(menu, m => Boolean(m.action));
     if (menuWithAction) {
       menu.actionId = parseInt(
@@ -125,10 +125,10 @@ export function getMenuInfo(items: BaseMenuItem[]): MenuInfo {
         10
       );
       if (menuWithAction === menu) {
-        actionMap[menu.actionId] = menu.id;
+        actionMap[menu.actionId] = menu;
       }
     }
   }
 
-  return { menuMap, roots, actionMap };
+  return { menus, roots, actionMap };
 }

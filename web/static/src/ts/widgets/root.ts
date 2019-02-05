@@ -1,6 +1,7 @@
 import { INotification } from "../core/notifications";
 import { Widget } from "./widget";
-import { Env } from "../env";
+import { debounce } from "../core/utils";
+import { Env } from "./widget";
 import { MenuInfo, MenuItem, getAppAndAction } from "../misc/menu_helpers";
 import { ActionStack } from "../services/action_manager";
 import { ActionContainer } from "./action_container";
@@ -60,6 +61,15 @@ export class Root extends Widget<Props, State> {
     );
     this.env.router.on("query_changed", this, this.updateAction);
     this.updateAction(this.env.router.getQuery());
+
+    // adding reactiveness to mobile/non mobile
+    window.addEventListener("resize", <any>debounce(() => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile !== this.env.isMobile) {
+        this.env.isMobile = isMobile;
+        this.render();
+      }
+    }, 50));
   }
 
   private updateAction(query: Query) {

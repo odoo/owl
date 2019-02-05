@@ -89,7 +89,8 @@ export class Root extends Widget<Props, State> {
     this.updateState({ inHome: !this.state.inHome });
   }
 
-  openApp(app: MenuItem) {
-    this.updateAppState(app, app.actionId);
+  openMenu(menu: MenuItem) {
+    const app = this.props.menuInfo.menuMap[menu.menuId]!;
+    this.updateAppState(app, menu.actionId);
   }
 }

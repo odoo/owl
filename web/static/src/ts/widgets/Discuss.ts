@@ -18,7 +18,7 @@ interface State {
 export class Discuss extends Widget<{}, State> {
   template = "web.discuss";
   widgets = { Clock, Counter, ColorWidget };
-  state = { validcounter: true, color: "red" };
+  state: State = { validcounter: true, color: "red" };
 
   resetCounter(ev: MouseEvent) {
     if (this.refs.counter instanceof Counter) {

@@ -21,8 +21,8 @@ export class HomeMenu extends Widget<Props, {}> {
     return info.roots.map(root => info.menuMap[root]!);
   }
 
-  openApp(app: MenuItem, event: MouseEvent) {
+  openMenu(app: MenuItem, event: MouseEvent) {
     event.preventDefault();
-    this.trigger("app_opened", app);
+    this.trigger("open_menu", app);
   }
 }

@@ -14,6 +14,7 @@ export interface BaseMenuItem {
 }
 
 export interface MenuItem extends BaseMenuItem {
+  // root menu id
   menuId: number;
   actionId: number;
   children: MenuItem[];
@@ -28,6 +29,10 @@ export interface MenuInfo {
 // Helpers
 //------------------------------------------------------------------------------
 
+/**
+ * Generate a valid MenuInfo object from a list of BaseMenuItems. This function
+ * is supposed to be called once at startup.
+ */
 export function processMenuItems(items: BaseMenuItem[]): MenuInfo {
   const menuMap: MenuInfo["menuMap"] = {};
   const roots: number[] = [];
@@ -38,10 +43,11 @@ export function processMenuItems(items: BaseMenuItem[]): MenuInfo {
     addToMap(root, root.id);
   }
 
-  function addToMap(m: BaseMenuItem, menuId: number) {
+  function addToMap(m: BaseMenuItem, menuId: number): MenuItem {
     let item: MenuItem = Object.assign({ menuId, actionId: -1 }, <MenuItem>m);
     menuMap[item.id] = item;
-    m.children.forEach(c => addToMap(c, menuId));
+    item.children = m.children.map(c => addToMap(c, menuId));
+    return item;
   }
 
   // add proper actionId to every menuitems

@@ -2,9 +2,9 @@
 <templates id="template" xml:space="preserve">
 
   <div t-name="web.web_client" class="o_web_client">
-    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle_home_menu="toggleHome"/>
+    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle_home_menu="toggleHome" t-on-open_menu="openMenu"/>
     <t t-if="state.inHome">
-      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" t-on-app_opened="openApp"/>
+      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" t-on-open_menu="openMenu"/>
     </t>
     <t t-else="1">
       <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>
@@ -18,22 +18,44 @@
 
   <div t-name="web.navbar" class="o_navbar" t-att-class="props.inHome ? 'o_navbar o_in_home' : 'o_navbar'">
     <a aria-label="Applications" class="o_title fa fa-th" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
-    <ul t-if="!props.inHome &amp;&amp; props.app">
-      <a class="o_menu_brand" href="#" role="button">
+    <t t-if="!props.inHome &amp;&amp; props.app">
+      <a class="o_menu_brand" t-att-href="getUrl(props.app)" role="button" t-on-click="openMenu(props.app)">
         <t t-esc="props.app.name"/>
       </a>
-      <li t-foreach="env.menus" t-as="menu">
-        <a t-att-href="getUrl(menu)">
-          <t t-esc="menu.title"/>
-        </a>
-      </li>
-      <li t-if="env.isMobile">MOBILEMODE</li>
-    </ul>
+      <ul class="o_menu_sections">
+        <li t-foreach="props.app.children" t-as="menu">
+          <t t-if="menu.children.length === 0">
+            <a t-att-href="getUrl(menu)" role="menuitem" t-on-click="openMenu(menu)">
+              <span>
+                <t t-esc="menu.name"/>
+              </span>
+            </a>
+          </t>
+          <t t-else="1">
+            <a href="#" role="button" class="dropdown-toggle o-no-caret" data-toggle="dropdown">
+              <span>
+                <t t-esc="menu.name"/>
+              </span>
+            </a>
+            <div class="dropdown-menu" role="menu">
+              <t t-foreach="menu.children" t-as="submenu">
+                <a t-att-href="getUrl(submenu)" data-toggle="collapse" data-target="#someid" role="menuitem" class="dropdown-item" t-on-click="openMenu(submenu)">
+                  <span>
+                    <t t-esc="submenu.name"/>
+                  </span>
+                </a>
+              </t>
+            </div>
+          </t>
+        </li>
+        <li t-if="env.isMobile">MOBILEMODE</li>
+      </ul>
+    </t>
   </div>
 
   <div t-name="web.home_menu" class="o_home_menu">
     <div class="o_apps">
-      <a t-foreach="apps" t-as="app" t-att-href="'#menu_id=' + app.menuId + '&amp;action_id=' + app.actionId" class="o_app" t-on-click="openApp(app)">
+      <a t-foreach="apps" t-as="app" t-att-href="'#menu_id=' + app.menuId + '&amp;action_id=' + app.actionId" class="o_app" t-on-click="openMenu(app)">
         <i t-att-class="app.icon + ' o_app_icon fa-3x fa-fw'"/>
         <div class="o_caption">
           <t t-esc="app.name"/>

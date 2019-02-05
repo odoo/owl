@@ -40,7 +40,11 @@ export interface Type<T> extends Function {
 // Widget
 //------------------------------------------------------------------------------
 
-export class BaseWidget<T extends WEnv, Props, State> extends EventBus {
+export class BaseWidget<
+  T extends WEnv,
+  Props,
+  State extends {}
+> extends EventBus {
   __widget__: Meta<WEnv>;
   template: string = "default";
   inlineTemplate: string | null = null;
@@ -50,7 +54,7 @@ export class BaseWidget<T extends WEnv, Props, State> extends EventBus {
   }
 
   env: T;
-  state: Object = {};
+  state: State = <State>{};
   props: Props;
   refs: {
     [key: string]: BaseWidget<T, any, any> | HTMLElement | undefined;

@@ -40,8 +40,7 @@ export function makeTestEnv(): Env {
     router,
     rpc: ajax.rpc,
     debug: false,
-    isMobile: false,
-    menus: []
+    isMobile: false
   };
 }
 

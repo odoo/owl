@@ -1,4 +1,3 @@
-import { Env } from "../../src/ts/env";
 import { Navbar, Props } from "../../src/ts/widgets/navbar";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 
@@ -7,7 +6,7 @@ import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: Env;
+let env: ReturnType<typeof makeTestEnv>;
 let props: Props;
 let templates: string;
 
@@ -37,7 +36,6 @@ test("can be rendered", async () => {
 });
 
 test("can render one menu item", async () => {
-  env.menus.push({ title: "menu", actionID: 4 });
   const navbar = new Navbar(env, props);
   await navbar.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();

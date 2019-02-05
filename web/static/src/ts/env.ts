@@ -36,9 +36,6 @@ export interface Env extends WEnv {
   // registries
   actionRegistry: Registry<ActionWidget>;
 
-  // data
-  menus: Menu[];
-
   // helpers
   rpc: IAjax["rpc"];
 
@@ -72,12 +69,6 @@ export const makeEnvironment = memoize(async function(): Promise<Env> {
   const actionManager = new ActionManager(actionRegistry);
   const notifications = new NotificationManager();
 
-  // demo data
-  const menus = [
-    { title: "Discuss", actionID: 1 },
-    { title: "CRM", actionID: 2 }
-  ];
-
   // templates
   const result = await fetch("templates.xml");
   if (!result.ok) {
@@ -97,8 +88,6 @@ export const makeEnvironment = memoize(async function(): Promise<Env> {
     notifications,
     actionRegistry,
     router,
-
-    menus,
 
     rpc: ajax.rpc,
 

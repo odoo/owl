@@ -1,4 +1,4 @@
-$navbar-height: 40px;
+$navbar-height: 46px;
 $main-color: #875a7b;
 $o-notification-info-bg-color: #fcfbea;
 $o-main-text-color: #666666;
@@ -10,6 +10,25 @@ html {
 body {
   height: 100%;
   margin: 0;
+}
+
+/***** Generic stuff *****/
+.dropdown-toggle.o-no-caret::before,
+.dropdown-toggle.o-no-caret::after {
+  content: normal;
+}
+
+.dropdown-item {
+  font-size: 13px;
+  line-height: 20px;
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+  &:active {
+    color: #212529;
+    background-color: #dee2e6;
+  }
 }
 
 /***** Web Client *****/
@@ -26,17 +45,28 @@ body {
   color: white;
   display: flex;
   line-height: $navbar-height;
-  font-size: 18px;
+  font-size: 13px;
 
   &.o_in_home {
     background-color: #bba2a5;
   }
 
   a.o_title {
-    padding: 10px 16px 16px 20px;
-    &:hover {
-      background-color: #68465f;
-    }
+    padding: 13px 16px 16px 20px;
+    color: white;
+    font-size: 18px;
+  }
+
+  a.o_title:hover,
+  a.o_menu_brand:hover {
+    background-color: darken($main-color, 10);
+  }
+
+  a.o_menu_brand {
+    font-size: 20px;
+    color: white;
+    text-decoration: none;
+    padding: 1px 12px;
   }
 
   ul {
@@ -46,18 +76,20 @@ body {
     margin: 0;
   }
 
-  li {
+  .o_menu_sections > li {
     margin: 0 4px;
-    font-size: 20px;
     &:hover {
       background-color: darken($main-color, 10);
     }
-  }
 
-  a {
-    color: white;
-    text-decoration: none;
-    padding: 0 5px;
+    > a {
+      display: block;
+      height: 40px;
+      font-size: 15px;
+      color: white;
+      text-decoration: none;
+      padding: 0 10px;
+    }
   }
 }
 

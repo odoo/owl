@@ -1,28 +1,47 @@
 import { INotification } from "../core/notifications";
-import { Widget } from "./widget";
+import { Query } from "../core/router";
 import { debounce } from "../core/utils";
-import { Env } from "./widget";
-import { MenuInfo, MenuItem, getAppAndAction } from "../misc/menu_helpers";
 import { ActionStack } from "../services/action_manager";
 import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
-import { Query } from "../core/router";
+import { Env, Widget } from "./widget";
 
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
+
+export interface MenuItem {
+  id: number;
+  name: string;
+  parentId: number | false;
+  action: string | false;
+  icon: string | false;
+
+  // root menu id
+  appId: number;
+  actionId: number;
+  children: MenuItem[];
+}
+
+export interface MenuInfo {
+  menuMap: { [key: number]: MenuItem | undefined };
+
+  // mapping from action id to menu id
+  actionMap: { [id: number]: number | undefined };
+  roots: number[];
+}
+
+interface Props {
+  menuInfo: MenuInfo;
+}
 
 interface State {
   notifications: INotification[];
   stack: ActionStack;
   inHome: boolean;
   currentApp: MenuItem | null;
-}
-
-interface Props {
-  menuInfo: MenuInfo;
 }
 
 //------------------------------------------------------------------------------
@@ -43,7 +62,7 @@ export class Root extends Widget<Props, State> {
   constructor(env: Env, props: Props) {
     super(env, props);
     const query = this.env.router.getQuery();
-    let { app, actionId } = getAppAndAction(props.menuInfo, query);
+    let { app, actionId } = this.getAppAndAction(query);
     this.state.currentApp = app;
     if (!actionId) {
       this.state.inHome = true;
@@ -73,7 +92,7 @@ export class Root extends Widget<Props, State> {
   }
 
   private updateAction(query: Query) {
-    let { app, actionId } = getAppAndAction(this.props.menuInfo, query);
+    let { app, actionId } = this.getAppAndAction(query);
     this.updateAppState(app, actionId);
   }
 
@@ -81,7 +100,7 @@ export class Root extends Widget<Props, State> {
     const newApp = app || this.state.currentApp;
     if (actionId) {
       const query: Query = { action_id: String(actionId) };
-      const menuId = newApp ? newApp.menuId : false;
+      const menuId = newApp ? newApp.appId : false;
       if (menuId) {
         query.menu_id = String(menuId);
       }
@@ -100,7 +119,34 @@ export class Root extends Widget<Props, State> {
   }
 
   openMenu(menu: MenuItem) {
-    const app = this.props.menuInfo.menuMap[menu.menuId]!;
+    const app = this.props.menuInfo.menuMap[menu.appId]!;
     this.updateAppState(app, menu.actionId);
+  }
+
+  private getAppAndAction(
+    query: Query
+  ): { app: MenuItem | null; actionId: number | null } {
+    const menuInfo = this.props.menuInfo;
+    let app: MenuItem | null = null;
+    let actionId: number | null = null;
+    if ("action_id" in query) {
+      actionId = parseInt(query.action_id, 10);
+      if (menuInfo.actionMap[actionId]) {
+        const menuId = menuInfo.actionMap[actionId]!;
+        const appId = menuInfo.menuMap[menuId]!.appId;
+        app = menuInfo.menuMap[appId]!;
+      }
+    }
+    if ("menu_id" in query) {
+      const menuId = parseInt(query.menu_id, 10);
+      const menu = menuInfo.menuMap[menuId];
+      if (menu) {
+        app = menuInfo.menuMap[menu.appId] || null;
+        if (!actionId) {
+          actionId = menu.actionId;
+        }
+      }
+    }
+    return { app, actionId };
   }
 }

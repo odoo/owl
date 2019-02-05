@@ -1,4 +1,3 @@
-import { Env } from "../../src/ts/env";
 import { INotification } from "../../src/ts/core/notifications";
 import { Notification } from "../../src/ts/widgets/notification";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
@@ -8,7 +7,7 @@ import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: Env;
+let env: ReturnType<typeof makeTestEnv>;
 let templates: string;
 
 beforeAll(async () => {

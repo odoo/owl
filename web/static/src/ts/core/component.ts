@@ -269,3 +269,26 @@ export class Component<
     }
   }
 }
+
+export class PureComponent<T extends WEnv, Props, State> extends Component<
+  T,
+  Props,
+  State
+> {
+  shouldUpdate(nextProps: Props): boolean {
+    for (let k in nextProps) {
+      if (nextProps[k] !== this.props[k]) {
+        return true;
+      }
+    }
+    return false;
+  }
+  async updateState(nextState: Partial<State>) {
+    for (let k in nextState) {
+      if (nextState[k] !== this.state[k]) {
+        return;
+      }
+    }
+    return super.updateState(nextState);
+  }
+}

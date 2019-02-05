@@ -1,4 +1,3 @@
-import { Env } from "../../src/ts/env";
 import { HomeMenu, Props } from "../../src/ts/widgets/home_menu";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 
@@ -7,7 +6,7 @@ import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: Env;
+let env: ReturnType<typeof makeTestEnv>;
 let props: Props;
 let templates: string;
 

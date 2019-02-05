@@ -1,7 +1,7 @@
 import { QWeb } from "../src/ts/core/qweb_vdom";
 import { idGenerator } from "../src/ts/core/utils";
 import { WEnv } from "../src/ts/core/component";
-import { Env } from "../src/ts/env";
+import { Env } from "../src/ts/widgets/widget";
 import { IAjax, RPCQuery } from "../src/ts/core/ajax";
 import { Registry } from "../src/ts/core/registry";
 import { NotificationManager } from "../src/ts/core/notifications";

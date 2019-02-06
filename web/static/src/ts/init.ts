@@ -81,6 +81,9 @@ async function loadTemplates(): Promise<string> {
  */
 function loadMenus(): MenuInfo {
   const menuItems: BaseMenuItem[] = (<any>window).odoo.menus;
+  if (!menuItems) {
+    throw new Error("Cannot find menus description");
+  }
   const menuInfo = getMenuInfo(menuItems);
   delete (<any>window).odoo.menus; // overkill?
   return menuInfo;

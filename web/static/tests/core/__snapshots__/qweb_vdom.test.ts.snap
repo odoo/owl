@@ -11,6 +11,17 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
 }"
 `;
 
+exports[`attributes dynamic attribute with a dash 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = context['id'];
+    let c2 = [], p2 = {attrs:{\\"data-action-id\\": _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
 exports[`attributes dynamic attributes 1`] = `
 "function anonymous(context,extra
 ) {
@@ -481,7 +492,7 @@ exports[`misc global 1`] = `
         c1.push({text: \`
           \`});
         let _7 = 'agüero';
-        let c8 = [], p8 = {attrs:{falló: _7}};
+        let c8 = [], p8 = {attrs:{\\"falló\\": _7}};
         let vn8 = h('Año', p8, c8);
         c1.push(vn8);
         c8.push({text: \`

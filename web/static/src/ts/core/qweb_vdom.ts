@@ -384,9 +384,13 @@ export class QWeb {
 
       // dynamic attributes
       if (name.startsWith("t-att-")) {
-        const attName = name.slice(6);
+        let attName = name.slice(6);
         const formattedValue = this._formatExpression(ctx.getValue(value!));
         const attID = ctx.generateID();
+        if (!attName.match(/^[a-zA-Z]+$/)) {
+          // attribute contains 'non letters' => we want to quote it
+          attName = '"' + attName + '"';
+        }
         ctx.addLine(`let _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);
       }

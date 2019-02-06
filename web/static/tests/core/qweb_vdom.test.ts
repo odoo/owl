@@ -309,6 +309,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
+  test("dynamic attribute with a dash", () => {
+    qweb.addTemplate("test", `<div t-att-data-action-id="id"/>`);
+    const result = renderToString(qweb, "test", { id: 32 });
+    expect(result).toBe(`<div data-action-id="32"></div>`);
+  });
+
   test("fixed variable", () => {
     qweb.addTemplate("test", `<div t-att-foo="value"/>`);
     const result = renderToString(qweb, "test", { value: "ok" });

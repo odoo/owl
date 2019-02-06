@@ -1,3 +1,4 @@
+import { IAjax } from "./ajax";
 import { Type } from "../core/component";
 import { EventBus } from "../core/event_bus";
 import { Registry } from "../core/registry";
@@ -31,6 +32,12 @@ export interface ActWindowInfo extends CommonActionInfo {
   view: string;
 }
 
+export interface ActionDescription {
+  id: number;
+  type: "ir.actions.act_window" | "ir.actions.client";
+  target: "current";
+}
+
 export type ActionInfo = ClientActionInfo | ActWindowInfo;
 export type ActionStack = ActionInfo[];
 
@@ -50,16 +57,19 @@ export interface IActionManager {
 
 export class ActionManager extends EventBus implements IActionManager {
   registry: Registry<ActionWidget>;
+  ajax: IAjax;
   stack: ActionStack;
 
-  constructor(registry: Registry<ActionWidget>) {
+  constructor(registry: Registry<ActionWidget>, ajax: IAjax) {
     super();
     this.registry = registry;
+    this.ajax = ajax;
     this.stack = [];
   }
 
   doAction(request: ActionRequest) {
     if (typeof request === "number") {
+      this.loadAction(request);
       // this is an action ID
       let name = request === 131 ? "discuss" : "crm";
       let title =
@@ -78,6 +88,15 @@ export class ActionManager extends EventBus implements IActionManager {
       ];
       this.trigger("action_stack_updated", this.stack);
     }
+  }
+
+  private loadAction(id: number) {
+    this.ajax.rpc({
+      route: "web/action/load",
+      params: {
+        action_id: id
+      }
+    });
   }
 
   getStack(): ActionStack {

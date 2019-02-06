@@ -1,4 +1,4 @@
-import { IAjax } from "../core/ajax";
+import { IAjax } from "../services/ajax";
 import { Component, PureComponent, WEnv } from "../core/component";
 import { INotificationManager } from "../core/notifications";
 import { Registry } from "../core/registry";

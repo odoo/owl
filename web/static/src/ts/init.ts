@@ -1,4 +1,4 @@
-import { Ajax } from "./core/ajax";
+import { Ajax } from "./services/ajax";
 import { NotificationManager } from "./core/notifications";
 import { QWeb } from "./core/qweb_vdom";
 import { Router } from "./core/router";
@@ -32,7 +32,7 @@ export const init = memoize(async function(): Promise<InitializedData> {
   const qweb = new QWeb();
   const router = new Router();
   const ajax = new Ajax();
-  const actionManager = new ActionManager(actionRegistry);
+  const actionManager = new ActionManager(actionRegistry, ajax);
   const notifications = new NotificationManager();
 
   // templates

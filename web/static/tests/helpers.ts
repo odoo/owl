@@ -1,5 +1,5 @@
 import { readFile } from "fs";
-import { IAjax, RPCQuery } from "../src/ts/core/ajax";
+import { IAjax, RPCQuery } from "../src/ts/services/ajax";
 import { WEnv } from "../src/ts/core/component";
 import { Callback } from "../src/ts/core/event_bus";
 import { NotificationManager } from "../src/ts/core/notifications";
@@ -31,7 +31,7 @@ export interface MockEnv extends Env {
 
 export function makeTestEnv(): MockEnv {
   const ajax = new MockAjax();
-  const actionManager = new ActionManager(actionRegistry);
+  const actionManager = new ActionManager(actionRegistry, ajax);
   const router = new MockRouter();
   const notifications = new NotificationManager();
   let { qweb, getID } = makeTestWEnv();

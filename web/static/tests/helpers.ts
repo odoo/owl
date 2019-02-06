@@ -1,14 +1,14 @@
 import { readFile } from "fs";
-import { Ajax, RPCQuery } from "../src/ts/services/ajax";
 import { WEnv } from "../src/ts/core/component";
 import { Callback } from "../src/ts/core/event_bus";
 import { NotificationManager } from "../src/ts/core/notifications";
 import { QWeb } from "../src/ts/core/qweb_vdom";
-import { actionRegistry } from "../src/ts/registries";
 import { IRouter, Query, RouterEvent } from "../src/ts/core/router";
 import { idGenerator } from "../src/ts/core/utils";
 import { getMenuInfo } from "../src/ts/init";
+import { actionRegistry } from "../src/ts/registries";
 import { ActionManager } from "../src/ts/services/action_manager";
+import { Ajax } from "../src/ts/services/ajax";
 import { MenuInfo } from "../src/ts/widgets/root";
 import { Env } from "../src/ts/widgets/widget";
 

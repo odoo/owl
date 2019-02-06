@@ -1,3 +1,5 @@
+import { EventBus } from "../core/event_bus";
+
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
@@ -17,8 +19,11 @@ export interface RPCControllerQuery {
 
 export type RPCQuery = RPCModelQuery | RPCControllerQuery;
 
+type AjaxStatus = "loading" | "notloading";
+
 export interface IAjax {
   rpc(rpc: RPCQuery): Promise<any>;
+  on(event: "rpc_status", owner: any, callback: (status: AjaxStatus) => void);
 }
 
 interface RequestParameters {
@@ -32,16 +37,27 @@ export type FetchMethod = (route: string, params: any) => Promise<any>;
 // Ajax
 //------------------------------------------------------------------------------
 
-export class Ajax implements IAjax {
+export class Ajax extends EventBus implements IAjax {
   fetch: FetchMethod;
+  counter: number = 0;
 
   constructor(fetch: FetchMethod) {
+    super();
     this.fetch = fetch;
   }
 
-  rpc(rpc: RPCQuery): Promise<any> {
+  async rpc(rpc: RPCQuery): Promise<any> {
     const request = this.prepareRequest(rpc);
-    return this.fetch(request.route, request.params);
+    if (this.counter === 0) {
+      this.trigger("rpc_status", "loading");
+    }
+    this.counter++;
+    const result = await this.fetch(request.route, request.params);
+    this.counter--;
+    if (this.counter === 0) {
+      this.trigger("rpc_status", "notloading");
+    }
+    return result;
   }
 
   private prepareRequest(query: RPCQuery): RequestParameters {

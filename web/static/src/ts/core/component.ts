@@ -45,7 +45,7 @@ export class Component<
   Props,
   State extends {}
 > extends EventBus {
-  __widget__: Meta<WEnv>;
+  readonly __widget__: Meta<WEnv>;
   template: string = "default";
   inlineTemplate: string | null = null;
 

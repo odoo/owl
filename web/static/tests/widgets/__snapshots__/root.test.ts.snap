@@ -3,7 +3,7 @@
 exports[`can be rendered (in home menu) 1`] = `
 "<div class=\\"o_web_client\\">
     <div class=\\"o_navbar o_in_home\\">
-    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-chevron-left\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
     
   </div>
     

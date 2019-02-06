@@ -49,12 +49,16 @@ body {
 
   &.o_in_home {
     background-color: #bba2a5;
+    a.o_title:hover {
+      background-color: #bba2a5;
+    }
   }
 
   a.o_title {
     padding: 13px 16px 16px 20px;
     color: white;
     font-size: 18px;
+    text-decoration: none;
   }
 
   a.o_title:hover,

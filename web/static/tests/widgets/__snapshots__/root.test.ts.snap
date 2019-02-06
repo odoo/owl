@@ -1,0 +1,110 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can be rendered (in home menu) 1`] = `
+"<div class=\\"o_web_client\\">
+    <div class=\\"o_navbar o_in_home\\">
+    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+    
+  </div>
+    
+      <div class=\\"o_home_menu\\">
+    <div class=\\"o_apps\\">
+      <a href=\\"#menu_id=96&amp;action_id=131\\" class=\\"o_app\\">
+        <i class=\\"fa fa-comment o_app_icon fa-3x fa-fw\\"></i>
+        <div class=\\"o_caption\\">
+          Discuss
+        </div>
+      </a><a href=\\"#menu_id=205&amp;action_id=250\\" class=\\"o_app\\">
+        <i class=\\"fa fa-pen o_app_icon fa-3x fa-fw\\"></i>
+        <div class=\\"o_caption\\">
+          Notes
+        </div>
+      </a><a href=\\"#menu_id=409&amp;action_id=597\\" class=\\"o_app\\">
+        <i class=\\"fa fa-handshake o_app_icon fa-3x fa-fw\\"></i>
+        <div class=\\"o_caption\\">
+          CRM
+        </div>
+      </a>
+    </div>
+  </div>
+    
+    <div class=\\"o_notification_container\\">
+      
+    </div>
+  </div>"
+`;
+
+exports[`if url has action_id, will render action and navigate to proper menu_id 1`] = `
+"<div class=\\"o_web_client\\">
+    <div class=\\"o_navbar\\">
+    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+    
+      <a class=\\"o_menu_brand\\" href=\\"\\" role=\\"button\\">
+        CRM
+      </a>
+      <ul class=\\"o_menu_sections\\">
+        <li>
+          
+            <a href=\\"#\\" role=\\"button\\" class=\\"dropdown-toggle o-no-caret\\" data-toggle=\\"dropdown\\">
+              <span>
+                Sales
+              </span>
+            </a>
+            <div class=\\"dropdown-menu\\" role=\\"menu\\">
+              
+                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
+                  <span>
+                    My Pipeline
+                  </span>
+                </a>
+              
+                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
+                  <span>
+                    My Quotations
+                  </span>
+                </a>
+              
+                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
+                  <span>
+                    Team Pipelines
+                  </span>
+                </a>
+              
+            </div>
+          
+        </li><li>
+          
+            <a href=\\"#\\" role=\\"button\\" class=\\"dropdown-toggle o-no-caret\\" data-toggle=\\"dropdown\\">
+              <span>
+                Leads
+              </span>
+            </a>
+            <div class=\\"dropdown-menu\\" role=\\"menu\\">
+              
+                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
+                  <span>
+                    Leads
+                  </span>
+                </a>
+              
+                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
+                  <span>
+                    Scoring Rules
+                  </span>
+                </a>
+              
+            </div>
+          
+        </li>
+        
+      </ul>
+    
+  </div>
+    
+      <div class=\\"o_content\\"></div>
+    
+    <div class=\\"o_notification_container\\">
+      
+    </div>
+  </div>"
+`;

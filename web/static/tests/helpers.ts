@@ -25,7 +25,11 @@ export function makeTestWEnv(): WEnv {
   };
 }
 
-export function makeTestEnv(): Env {
+export interface MockEnv extends Env {
+  router: MockRouter;
+}
+
+export function makeTestEnv(): MockEnv {
   const ajax = new MockAjax();
   const actionManager = new MockActionManager();
   const router = new MockRouter();
@@ -61,13 +65,22 @@ class MockActionManager implements IActionManager {
 }
 
 class MockRouter implements IRouter {
-  navigate(query: Query) {}
+  currentQuery: Query = {};
+
+  navigate(query: Query) {
+    this.currentQuery = query;
+  }
   on(event: RouterEvent, owner: any, callback: Callback) {}
   getQuery(): Query {
-    return {};
+    return this.currentQuery;
   }
+
   formatURL(path: string, query: Query): string {
     return "";
+  }
+
+  setQuery(query: Query) {
+    this.currentQuery = query;
   }
 }
 

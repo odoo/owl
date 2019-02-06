@@ -32,7 +32,7 @@ export interface MenuInfo {
   roots: number[];
 }
 
-interface Props {
+export interface Props {
   menuInfo: MenuInfo;
 }
 

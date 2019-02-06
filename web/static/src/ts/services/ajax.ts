@@ -26,16 +26,22 @@ interface RequestParameters {
   params: { [key: string]: any };
 }
 
+export type FetchMethod = (route: string, params: any) => Promise<any>;
+
 //------------------------------------------------------------------------------
 // Ajax
 //------------------------------------------------------------------------------
 
 export class Ajax implements IAjax {
+  fetch: FetchMethod;
+
+  constructor(fetch: FetchMethod) {
+    this.fetch = fetch;
+  }
+
   rpc(rpc: RPCQuery): Promise<any> {
     const request = this.prepareRequest(rpc);
-    console.log("RPC", request.route, request.params);
-    const delay = Math.random() * 150;
-    return new Promise(resolve => setTimeout(resolve, delay));
+    return this.fetch(request.route, request.params);
   }
 
   private prepareRequest(query: RPCQuery): RequestParameters {

@@ -31,7 +31,7 @@ export const init = memoize(async function(): Promise<InitializedData> {
   // services
   const qweb = new QWeb();
   const router = new Router();
-  const ajax = new Ajax();
+  const ajax = new Ajax(ajaxFetch);
   const actionManager = new ActionManager(actionRegistry, ajax);
   const notifications = new NotificationManager();
 
@@ -64,6 +64,12 @@ export const init = memoize(async function(): Promise<InitializedData> {
 //------------------------------------------------------------------------------
 // Adapters
 //------------------------------------------------------------------------------
+
+function ajaxFetch(route: string, params: any): Promise<any> {
+  console.log("RPC", route, params);
+  const delay = Math.random() * 150;
+  return new Promise(resolve => setTimeout(resolve, delay));
+}
 
 /**
  * Load xml templates as a string.

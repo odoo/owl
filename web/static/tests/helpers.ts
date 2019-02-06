@@ -1,5 +1,5 @@
 import { readFile } from "fs";
-import { IAjax, RPCQuery } from "../src/ts/services/ajax";
+import { Ajax, RPCQuery } from "../src/ts/services/ajax";
 import { WEnv } from "../src/ts/core/component";
 import { Callback } from "../src/ts/core/event_bus";
 import { NotificationManager } from "../src/ts/core/notifications";
@@ -30,7 +30,7 @@ export interface MockEnv extends Env {
 }
 
 export function makeTestEnv(): MockEnv {
-  const ajax = new MockAjax();
+  const ajax = new MockAjax(mockFetch);
   const actionManager = new ActionManager(actionRegistry, ajax);
   const router = new MockRouter();
   const notifications = new NotificationManager();
@@ -49,11 +49,10 @@ export function makeTestEnv(): MockEnv {
   };
 }
 
-class MockAjax implements IAjax {
-  async rpc(rpc: RPCQuery) {
-    return true;
-  }
+function mockFetch(route: string, params: any): Promise<any> {
+  return Promise.resolve(true);
 }
+class MockAjax extends Ajax {}
 
 class MockRouter implements IRouter {
   currentQuery: Query = {};

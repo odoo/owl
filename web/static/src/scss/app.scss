@@ -187,3 +187,15 @@ body {
     padding: 5px;
   }
 }
+
+/***** Loading indicator *****/
+.o_loading {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1051; // lol...
+  background-color: $main-color;
+  color: white;
+  padding: 4px;
+  font-size: 14px;
+}

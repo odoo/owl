@@ -31,6 +31,7 @@ exports[`can be rendered (in home menu) 1`] = `
     <div class=\\"o_notification_container\\">
       
     </div>
+    
   </div>"
 `;
 
@@ -106,6 +107,7 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     <div class=\\"o_notification_container\\">
       
     </div>
+    
   </div>"
 `;
 
@@ -172,5 +174,6 @@ exports[`start with no action => clicks on client action => discuss is rendered 
     <div class=\\"o_notification_container\\">
       
     </div>
+    
   </div>"
 `;

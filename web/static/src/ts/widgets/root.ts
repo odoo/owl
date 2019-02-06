@@ -41,6 +41,7 @@ interface State {
   stack: ActionStack;
   inHome: boolean;
   currentApp: MenuItem | null;
+  isLoading: boolean;
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +56,8 @@ export class Root extends Widget<Props, State> {
     notifications: [],
     stack: [],
     inHome: false,
-    currentApp: null
+    currentApp: null,
+    isLoading: false
   };
 
   constructor(env: Env, props: Props) {
@@ -72,6 +74,11 @@ export class Root extends Widget<Props, State> {
     this.env.notifications.on("notifications_updated", this, notifs =>
       this.updateState({ notifications: notifs })
     );
+
+    // loading indicator
+    this.env.ajax.on("rpc_status", this, status => {
+      this.updateState({ isLoading: status === "loading" });
+    });
 
     // actions
     this.env.actionManager.on("action_stack_updated", this, stack =>

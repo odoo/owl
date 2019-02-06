@@ -17,6 +17,17 @@ export class ActionContainer extends Widget<Props, {}> {
   template = "web.action_container";
   currentWidget: any;
 
+  willStart() {
+    return this.setContentWidget();
+  }
+
+  mounted() {
+    if (this.currentWidget && this.currentWidget.el) {
+      this.el!.appendChild(this.currentWidget.el);
+      this.currentWidget.__mount();
+    }
+  }
+
   shouldUpdate(nextProps: Props) {
     if (nextProps.stack !== this.props.stack) {
       this.props = nextProps;
@@ -30,7 +41,7 @@ export class ActionContainer extends Widget<Props, {}> {
     if (info && info.type === "client") {
       const Widget = info.Widget;
       let widget = new Widget(this, {});
-      await widget.mount(this.el!);
+      await widget.mount(this.el || document.createElement("div"));
       if (this.currentWidget) {
         this.currentWidget.destroy();
       }

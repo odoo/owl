@@ -4,11 +4,11 @@ import { WEnv } from "../src/ts/core/component";
 import { Callback } from "../src/ts/core/event_bus";
 import { NotificationManager } from "../src/ts/core/notifications";
 import { QWeb } from "../src/ts/core/qweb_vdom";
-import { Registry } from "../src/ts/core/registry";
+import { actionRegistry } from "../src/ts/registries";
 import { IRouter, Query, RouterEvent } from "../src/ts/core/router";
 import { idGenerator } from "../src/ts/core/utils";
 import { getMenuInfo } from "../src/ts/init";
-import { ActionEvent, IActionManager } from "../src/ts/services/action_manager";
+import { ActionManager } from "../src/ts/services/action_manager";
 import { MenuInfo } from "../src/ts/widgets/root";
 import { Env } from "../src/ts/widgets/widget";
 
@@ -31,14 +31,14 @@ export interface MockEnv extends Env {
 
 export function makeTestEnv(): MockEnv {
   const ajax = new MockAjax();
-  const actionManager = new MockActionManager();
+  const actionManager = new ActionManager(actionRegistry);
   const router = new MockRouter();
   const notifications = new NotificationManager();
   let { qweb, getID } = makeTestWEnv();
   return {
     qweb,
     getID,
-    actionRegistry: new Registry(),
+    actionRegistry,
     ajax,
     actionManager,
     notifications,
@@ -52,15 +52,6 @@ export function makeTestEnv(): MockEnv {
 class MockAjax implements IAjax {
   async rpc(rpc: RPCQuery) {
     return true;
-  }
-}
-
-class MockActionManager implements IActionManager {
-  doAction(actionID: number) {}
-  on(event: ActionEvent, owner: any, callback: Callback) {}
-  activate() {}
-  getStack() {
-    return [];
   }
 }
 
@@ -200,4 +191,12 @@ export function makeDemoMenuInfo(): MenuInfo {
       ]
     }
   ]);
+}
+
+export function nextMicroTick(): Promise<void> {
+  return Promise.resolve();
+}
+
+export function nextTick(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve));
 }

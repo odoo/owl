@@ -1,5 +1,10 @@
 import { Component, WEnv } from "../../src/ts/core/component";
-import { makeTestFixture, makeTestWEnv, normalize } from "../helpers";
+import {
+  makeTestFixture,
+  makeTestWEnv,
+  nextMicroTick,
+  normalize
+} from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -28,10 +33,6 @@ beforeEach(() => {
 afterEach(() => {
   fixture.remove();
 });
-
-function nextTick(): Promise<void> {
-  return Promise.resolve();
-}
 
 class Widget extends Component<WEnv, {}, {}> {}
 
@@ -85,7 +86,7 @@ describe("basic widget properties", () => {
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     await button.click();
-    await nextTick();
+    await nextMicroTick();
     expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 
@@ -470,9 +471,9 @@ describe("destroy method", () => {
     resolve();
     // Note: should we abandon await and not have to do this?
     // TODO: talk to vsc
-    await nextTick();
-    await nextTick();
-    await nextTick();
+    await nextMicroTick();
+    await nextMicroTick();
+    await nextMicroTick();
 
     expect(widget.__widget__.isStarted).toBe(false);
     expect(widget.__widget__.isMounted).toBe(false);
@@ -513,7 +514,7 @@ describe("composition", () => {
     );
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextTick();
+    await nextMicroTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
@@ -548,7 +549,7 @@ describe("composition", () => {
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextTick();
+    await nextMicroTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
@@ -568,7 +569,7 @@ describe("composition", () => {
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextTick();
+    await nextMicroTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
@@ -590,7 +591,7 @@ describe("composition", () => {
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextTick();
+    await nextMicroTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );

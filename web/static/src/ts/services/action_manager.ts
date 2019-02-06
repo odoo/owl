@@ -59,7 +59,6 @@ export class ActionManager extends EventBus implements IActionManager {
   }
 
   doAction(request: ActionRequest) {
-    console.log("doaction", request);
     if (typeof request === "number") {
       // this is an action ID
       let name = request === 131 ? "discuss" : "crm";

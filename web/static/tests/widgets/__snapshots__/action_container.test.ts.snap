@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can be rendered with a non empty stack 1`] = `"<div class=\\"o_content\\"><div>some client action</div></div>"`;
+
+exports[`can be rendered with an empty stack 1`] = `"<div class=\\"o_content\\"></div>"`;
+
+exports[`content is updated properly when new props are given 1`] = `"<div class=\\"o_content\\"><div>some client action</div></div>"`;

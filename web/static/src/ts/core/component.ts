@@ -286,9 +286,8 @@ export class PureComponent<T extends WEnv, Props, State> extends Component<
   async updateState(nextState: Partial<State>) {
     for (let k in nextState) {
       if (nextState[k] !== this.state[k]) {
-        return;
+        return super.updateState(nextState);
       }
     }
-    return super.updateState(nextState);
   }
 }

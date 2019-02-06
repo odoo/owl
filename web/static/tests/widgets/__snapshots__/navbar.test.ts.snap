@@ -11,12 +11,45 @@ exports[`can render one menu item 1`] = `
 "<div class=\\"o_navbar\\">
     <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
     
+      <a class=\\"o_menu_brand\\" href=\\"\\" role=\\"button\\">
+        Discuss
+      </a>
+      <ul class=\\"o_menu_sections\\">
+        <li>
+          
+            <a href=\\"#\\" role=\\"button\\" class=\\"dropdown-toggle o-no-caret\\" data-toggle=\\"dropdown\\">
+              <span>
+                Integrations
+              </span>
+            </a>
+            <div class=\\"dropdown-menu\\" role=\\"menu\\">
+              
+                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
+                  <span>
+                    Github Repositories
+                  </span>
+                </a>
+              
+            </div>
+          
+        </li>
+        
+      </ul>
+    
   </div>"
 `;
 
 exports[`mobile mode: navbar is different 1`] = `
 "<div class=\\"o_navbar\\">
     <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+    
+      <a class=\\"o_menu_brand\\" href=\\"\\" role=\\"button\\">
+        Notes
+      </a>
+      <ul class=\\"o_menu_sections\\">
+        
+        <li>MOBILEMODE</li>
+      </ul>
     
   </div>"
 `;

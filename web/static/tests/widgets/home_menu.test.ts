@@ -1,43 +1,24 @@
 import { HomeMenu, Props } from "../../src/ts/widgets/home_menu";
-import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
-import { MenuItem } from "../../src/ts/widgets/root";
+import * as helpers from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: ReturnType<typeof makeTestEnv>;
+let env: ReturnType<typeof helpers.makeTestEnv>;
 let props: Props;
 let templates: string;
 
 beforeAll(async () => {
-  templates = await loadTemplates();
+  templates = await helpers.loadTemplates();
 });
 
 beforeEach(() => {
-  fixture = makeTestFixture();
-  env = makeTestEnv();
+  fixture = helpers.makeTestFixture();
+  env = helpers.makeTestEnv();
   env.qweb.loadTemplates(templates);
-  const demoItem: MenuItem = <any>{
-    id: 14,
-    name: "Demo",
-    parentId: false,
-    action: false,
-    icon: "fa fa-test",
-    children: [],
-    actionId: 43
-  };
-  demoItem.app = demoItem;
-  props = {
-    menuInfo: {
-      menus: {
-        14: demoItem
-      },
-      actionMap: { 43: demoItem },
-      roots: [14]
-    }
-  };
+  props = { menuInfo: helpers.makeDemoMenuInfo() };
 });
 
 afterEach(() => {

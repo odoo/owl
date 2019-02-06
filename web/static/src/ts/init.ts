@@ -8,19 +8,23 @@ import { ActionManager } from "./services/action_manager";
 import { MenuInfo, MenuItem } from "./widgets/root";
 import { Env } from "./widgets/widget";
 
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
 interface InitializedData {
   env: Env;
   menuInfo: MenuInfo;
 }
 
 /**
- * makeEnvironment returns the main environment for the application.
+ * init returns the main environment for the application.
  *
  * Note that it does not make much sense (except for tests) to have more than
  * one environment. For example, with two environment, the router code in one
  * environment will probably interfere with the code from the other environment.
  *
- * For this reason, the result of makeEnvironment is memoized: every call to
+ * For this reason, the result of init is memoized: every call to
  * this function will actually return the same environment.
  */
 export const init = memoize(async function(): Promise<InitializedData> {
@@ -61,19 +65,25 @@ export const init = memoize(async function(): Promise<InitializedData> {
 // Adapters
 //------------------------------------------------------------------------------
 
-function loadMenus(): MenuInfo {
-  const menuItems: BaseMenuItem[] = (<any>window).odoo.menus;
-  const menuInfo = getMenuInfo(menuItems);
-  delete (<any>window).odoo.menus; // overkill?
-  return menuInfo;
-}
-
+/**
+ * Load xml templates as a string.
+ */
 async function loadTemplates(): Promise<string> {
   const result = await fetch("templates.xml");
   if (!result.ok) {
     throw new Error("Error while fetching xml templates");
   }
   return result.text();
+}
+
+/**
+ * Load all menu items
+ */
+function loadMenus(): MenuInfo {
+  const menuItems: BaseMenuItem[] = (<any>window).odoo.menus;
+  const menuInfo = getMenuInfo(menuItems);
+  delete (<any>window).odoo.menus; // overkill?
+  return menuInfo;
 }
 
 interface BaseMenuItem {

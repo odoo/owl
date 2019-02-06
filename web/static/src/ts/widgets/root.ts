@@ -106,7 +106,6 @@ export class Root extends Widget<Props, State> {
       if (app) {
         this.updateState({ currentApp: app });
       }
-      debugger;
       this.env.router.navigate(query);
       this.env.actionManager.doAction(actionId);
     } else {

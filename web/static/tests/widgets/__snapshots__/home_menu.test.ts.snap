@@ -3,10 +3,20 @@
 exports[`can be rendered 1`] = `
 "<div class=\\"o_home_menu\\">
     <div class=\\"o_apps\\">
-      <a href=\\"#menu_id=14&amp;action_id=43\\" class=\\"o_app\\">
-        <i class=\\"fa fa-test o_app_icon fa-3x fa-fw\\"></i>
+      <a href=\\"#menu_id=96&amp;action_id=131\\" class=\\"o_app\\">
+        <i class=\\"fa fa-comment o_app_icon fa-3x fa-fw\\"></i>
         <div class=\\"o_caption\\">
-          Demo
+          Discuss
+        </div>
+      </a><a href=\\"#menu_id=205&amp;action_id=250\\" class=\\"o_app\\">
+        <i class=\\"fa fa-pen o_app_icon fa-3x fa-fw\\"></i>
+        <div class=\\"o_caption\\">
+          Notes
+        </div>
+      </a><a href=\\"#menu_id=409&amp;action_id=597\\" class=\\"o_app\\">
+        <i class=\\"fa fa-handshake o_app_icon fa-3x fa-fw\\"></i>
+        <div class=\\"o_caption\\">
+          CRM
         </div>
       </a>
     </div>

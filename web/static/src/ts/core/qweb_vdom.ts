@@ -233,6 +233,7 @@ export class QWeb {
     }
 
     const mainNode = this.processedTemplates[name];
+    const isDebug = (<Element>mainNode).attributes.hasOwnProperty("t-debug");
     const ctx = new Context();
     this._compileNode(mainNode, ctx);
 
@@ -249,12 +250,15 @@ export class QWeb {
       throw new Error("A template should have one root node");
     }
     ctx.addLine(`return vn${ctx.rootNode};`);
+    if (isDebug) {
+      ctx.code.unshift("    debugger");
+    }
     let template = new Function(
       "context",
       "extra",
       ctx.code.join("\n")
     ) as CompiledTemplate<VNode>;
-    if ((<Element>mainNode).attributes.hasOwnProperty("t-debug")) {
+    if (isDebug) {
       console.log(
         `Template: ${
           this.processedTemplates[name].outerHTML

@@ -112,12 +112,12 @@ export class Component<
   //--------------------------------------------------------------------------
 
   async mount(target: HTMLElement): Promise<void> {
-    await this._start();
-    await this.render();
-    if (!this.el) {
+    const vnode = await this._start();
+    if (this.__widget__.isDestroyed) {
       // widget was destroyed before we get here...
       return;
     }
+    this._patch(vnode);
     target.appendChild(this.el!);
 
     if (document.body.contains(target)) {
@@ -204,13 +204,16 @@ export class Component<
       return;
     }
     const vnode = await this._render();
+    this._patch(vnode);
+  }
+
+  private _patch(vnode) {
     this.__widget__.vnode = patch(
       this.__widget__.vnode || document.createElement(vnode.sel!),
       vnode
     );
   }
-
-  private async _start(): Promise<void> {
+  private async _start(): Promise<VNode> {
     await this.willStart();
     if (!this.__widget__.isDestroyed) {
       this.__widget__.isStarted = true;
@@ -218,9 +221,10 @@ export class Component<
     if (this.inlineTemplate) {
       this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
     }
+    return this._render();
   }
 
-  private async _render(): Promise<VNode> {
+  async _render(): Promise<VNode> {
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
     let vnode = this.env.qweb.render(template, this, { promises });

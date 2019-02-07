@@ -1,8 +1,10 @@
 import { Component, WEnv } from "../../src/ts/core/component";
 import {
+  makeDeferred,
   makeTestFixture,
   makeTestWEnv,
   nextMicroTick,
+  nextTick,
   normalize
 } from "../helpers";
 
@@ -107,9 +109,9 @@ describe("basic widget properties", () => {
       async willStart() {
         this.updateState({});
       }
-      async render() {
+      async _render() {
         renderCalls++;
-        return super.render();
+        return super._render();
       }
     }
     const widget = new TestW(env);
@@ -448,14 +450,11 @@ describe("destroy method", () => {
   });
 
   test("destroying a widget before willStart is done", async () => {
-    let resolve;
+    let def = makeDeferred();
     let isRendered = false;
-    let p: Promise<void> = new Promise(function(r) {
-      resolve = r;
-    });
     class DelayedWidget extends Widget {
       willStart() {
-        return p;
+        return def;
       }
     }
     expect(fixture.innerHTML).toBe("");
@@ -468,12 +467,8 @@ describe("destroy method", () => {
     expect(widget.__widget__.isMounted).toBe(false);
     expect(widget.__widget__.isStarted).toBe(false);
     expect(widget.__widget__.isDestroyed).toBe(true);
-    resolve();
-    // Note: should we abandon await and not have to do this?
-    // TODO: talk to vsc
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
+    def.resolve();
+    await nextTick();
 
     expect(widget.__widget__.isStarted).toBe(false);
     expect(widget.__widget__.isMounted).toBe(false);

@@ -769,6 +769,7 @@ describe("random stuff/miscellaneous", () => {
     }
     const widget = new Test(env);
     await widget.mount(fixture);
+    // console.log(children(widget)[0].__widget__)
     expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
   });
 
@@ -777,7 +778,7 @@ describe("random stuff/miscellaneous", () => {
     // interplay between widgets and vnodes, a sub widget vnode was patched
     // twice.
     class Parent extends Widget {
-      inlineTemplate = `<div><t t-widget="child" t-props="state"/></div>`;
+      inlineTemplate = `<div><t t-widget="child" t-props="{flag:state.flag}"/></div>`;
       widgets = { child: Child };
       state = { flag: false };
     }
@@ -791,5 +792,51 @@ describe("random stuff/miscellaneous", () => {
     expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
     await widget.updateState({ flag: true });
     expect(fixture.innerHTML).toBe("<div><span>abcdef</span></div>");
+  });
+});
+
+describe("async rendering", () => {
+  let resolveA, resolveB;
+
+  class ChildA extends Widget {
+    inlineTemplate = "<span>a</span>";
+    willStart(): Promise<void> {
+      return new Promise(r => (resolveA = r));
+    }
+  }
+
+  class ChildB extends Widget {
+    inlineTemplate = "<span>b</span>";
+    willStart(): Promise<void> {
+      return new Promise(r => (resolveB = r));
+    }
+  }
+
+  test("creating two async widgets, scenario 1", async () => {
+    class Parent extends Widget {
+      inlineTemplate = `
+        <div>
+          <t t-if="state.flagA"><t t-widget="ChildA"/></t>
+          <t t-if="state.flagB"><t t-widget="ChildB"/></t>
+        </div>`;
+      widgets = { ChildA, ChildB };
+      state = { flagA: false, flagB: false };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
+    parent.updateState({ flagA: true });
+    await nextTick();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
+    parent.updateState({ flagB: true });
+    await nextTick();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
+    resolveB();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
+    resolveA();
+    await nextTick();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
+      "<div><span>a</span><span>b</span></div>"
+    );
   });
 });

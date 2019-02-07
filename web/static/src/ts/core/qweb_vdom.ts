@@ -799,43 +799,96 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
     );
-    ctx.addLine(`if (w${widgetID}) {`);
+    ctx.addLine(`let props${widgetID} = ${props};`);
+    ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
+
+    // check if we can reuse current rendering promise
+    ctx.addLine(`if (w${widgetID} && w${widgetID}.__widget__.renderPromise) {`);
+    ctx.indent();
+    ctx.addLine(`if (w${widgetID}.__widget__.isStarted) {`);
     ctx.indent();
     ctx.addLine(
-      `def${defID} = w${widgetID}.updateProps(${props}).then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
+      `if (props${widgetID} === w${widgetID}.__widget__.renderProps) {`
+    );
+    ctx.indent();
+    ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
+    ctx.dedent();
+    ctx.addLine(`} else {`);
+    ctx.indent();
+    ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
+    ctx.dedent();
+    ctx.addLine(`}`);
+    ctx.dedent();
+    ctx.addLine(`} else {`); // not started
+    ctx.indent();
+    ctx.addLine(
+      `if (props${widgetID} === w${widgetID}.__widget__.renderProps) {`
+    );
+    ctx.indent();
+    ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
+    ctx.addLine(`isNew${widgetID} = true`);
+    ctx.dedent();
+    ctx.addLine(`} else {`);
+    ctx.indent();
+    ctx.addLine(`w${widgetID}.destroy();`);
+    ctx.addLine(`w${widgetID} = false`);
+    ctx.dedent();
+    ctx.addLine(`}`);
+    ctx.dedent();
+    ctx.addLine(`}`);
+    ctx.dedent();
+    ctx.addLine(`}`);
+
+    ctx.addLine(`if (!def${defID}) {`);
+    ctx.indent();
+    ctx.addLine(`if (w${widgetID}) {`);
+    ctx.indent();
+    ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
+    ctx.dedent();
+    ctx.addLine(`} else {`);
+    ctx.indent();
+    ctx.addLine(
+      `w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`
+    );
+    ctx.addLine(
+      `context.__widget__.cmap[${templateID}] = w${widgetID}.__widget__.id;`
+    );
+    for (let [event, method] of events) {
+      ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
+    }
+    let ref = node.getAttribute("t-ref");
+    if (ref) {
+      ctx.addLine(`context.refs['${ref}'] = w${widgetID};`);
+    }
+
+    ctx.addLine(`def${defID} = w${widgetID}._start();`);
+    ctx.dedent();
+    ctx.addLine(`}`);
+    ctx.dedent();
+    ctx.addLine(`}`);
+
+    ctx.addLine(`if (isNew${widgetID}) {`);
+    ctx.indent();
+    ctx.addLine(
+      `def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
+        ctx.parentNode
+      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${
+        keepAlive ? "detach" : "destroy"
+      }()}}});`
+    );
+    ctx.dedent();
+    ctx.addLine(`} else {`);
+    ctx.indent();
+    ctx.addLine(
+      `def${defID} = def${defID}.then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
         ctx.parentNode
       }[_${dummyID}_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
         keepAlive ? "detach" : "destroy"
       }()}}});`
     );
     ctx.dedent();
-    ctx.addLine("} else {");
-    ctx.indent();
+    ctx.addLine(`}`);
 
-    ctx.addLine(
-      `let _${widgetID} = new context.widgets['${value}'](owner, ${props});`
-    );
-    ctx.addLine(
-      `context.__widget__.cmap[${templateID}] = _${widgetID}.__widget__.id;`
-    );
-    for (let [event, method] of events) {
-      ctx.addLine(`_${widgetID}.on('${event}', owner, owner['${method}'])`);
-    }
-
-    ctx.addLine(
-      `def${defID} = _${widgetID}._start().then(() => _${widgetID}._render()).then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
-        ctx.parentNode
-      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=_${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){_${widgetID}.${
-        keepAlive ? "detach" : "destroy"
-      }()}}});`
-    );
-
-    let ref = node.getAttribute("t-ref");
-    if (ref) {
-      ctx.addLine(`context.refs['${ref}'] = _${widgetID};`);
-    }
-    ctx.dedent();
-    ctx.addLine("}");
     ctx.addLine(`extra.promises.push(def${defID});`);
 
     return true;

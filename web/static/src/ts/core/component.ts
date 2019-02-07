@@ -28,6 +28,10 @@ interface Meta<T extends WEnv> {
   // children mapping: from templateID to widgetID
   // should it be a map number => Widget?
   cmap: { [key: number]: number };
+
+  renderId: number;
+  renderProps: any;
+  renderPromise: Promise<VNode> | null;
 }
 
 const patch = init([sdListeners, sdAttrs]);
@@ -92,7 +96,10 @@ export class Component<
       isDestroyed: false,
       parent: p,
       children: {},
-      cmap: {}
+      cmap: {},
+      renderId: 1,
+      renderPromise: null,
+      renderProps: props
     };
   }
 
@@ -203,28 +210,44 @@ export class Component<
     if (this.__widget__.isDestroyed) {
       return;
     }
-    const vnode = await this._render();
-    this._patch(vnode);
+    const renderVDom = this._render();
+    const renderId = this.__widget__.renderId;
+    const vnode = await renderVDom;
+    if (renderId === this.__widget__.renderId) {
+      // we only update the vnode and the actual DOM if no other rendering
+      // occurred between now and when the render method was initially called.
+      this._patch(vnode);
+    }
   }
 
   private _patch(vnode) {
+    this.__widget__.renderPromise = null;
     this.__widget__.vnode = patch(
       this.__widget__.vnode || document.createElement(vnode.sel!),
       vnode
     );
   }
   private async _start(): Promise<VNode> {
-    await this.willStart();
-    if (!this.__widget__.isDestroyed) {
+    this.__widget__.renderProps = this.props;
+    this.__widget__.renderPromise = this.willStart().then(() => {
+      if (this.__widget__.isDestroyed) {
+        return Promise.resolve(this.env.qweb.render("default"));
+      }
       this.__widget__.isStarted = true;
-    }
-    if (this.inlineTemplate) {
-      this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
-    }
-    return this._render();
+      if (this.inlineTemplate) {
+        this.env.qweb.addTemplate(
+          this.inlineTemplate,
+          this.inlineTemplate,
+          true
+        );
+      }
+      return this._render();
+    });
+    return this.__widget__.renderPromise;
   }
 
   async _render(): Promise<VNode> {
+    this.__widget__.renderId++;
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
     let vnode = this.env.qweb.render(template, this, { promises });
@@ -235,7 +258,9 @@ export class Component<
     // parent widget.  With this, we make sure that the parent widget will be
     // able to patch itself properly after
     vnode.key = this.__widget__.id;
-    return Promise.all(promises).then(() => vnode);
+    this.__widget__.renderProps = this.props;
+    this.__widget__.renderPromise = Promise.all(promises).then(() => vnode);
+    return this.__widget__.renderPromise;
   }
 
   /**
@@ -274,12 +299,8 @@ export class Component<
   }
 }
 
-export class PureComponent<T extends WEnv, Props, State> extends Component<
-  T,
-  Props,
-  State
-> {
-  shouldUpdate(nextProps: Props): boolean {
+export class PureComponent<T extends WEnv, P, S> extends Component<T, P, S> {
+  shouldUpdate(nextProps: P): boolean {
     for (let k in nextProps) {
       if (nextProps[k] !== this.props[k]) {
         return true;
@@ -287,7 +308,7 @@ export class PureComponent<T extends WEnv, Props, State> extends Component<
     }
     return false;
   }
-  async updateState(nextState: Partial<State>) {
+  async updateState(nextState: Partial<S>) {
     for (let k in nextState) {
       if (nextState[k] !== this.state[k]) {
         return super.updateState(nextState);

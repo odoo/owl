@@ -796,23 +796,23 @@ describe("random stuff/miscellaneous", () => {
 });
 
 describe("async rendering", () => {
-  let resolveA, resolveB;
-
-  class ChildA extends Widget {
-    inlineTemplate = "<span>a</span>";
-    willStart(): Promise<void> {
-      return new Promise(r => (resolveA = r));
-    }
-  }
-
-  class ChildB extends Widget {
-    inlineTemplate = "<span>b</span>";
-    willStart(): Promise<void> {
-      return new Promise(r => (resolveB = r));
-    }
-  }
-
   test("creating two async widgets, scenario 1", async () => {
+    let defA = makeDeferred();
+    let defB = makeDeferred();
+
+    class ChildA extends Widget {
+      inlineTemplate = "<span>a</span>";
+      willStart(): Promise<void> {
+        return defA;
+      }
+    }
+
+    class ChildB extends Widget {
+      inlineTemplate = "<span>b</span>";
+      willStart(): Promise<void> {
+        return defB;
+      }
+    }
     class Parent extends Widget {
       inlineTemplate = `
         <div>
@@ -831,12 +831,64 @@ describe("async rendering", () => {
     parent.updateState({ flagB: true });
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
-    resolveB();
+    defB.resolve();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
-    resolveA();
+    defA.resolve();
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a</span><span>b</span></div>"
+    );
+  });
+
+  test("creating two async widgets, scenario 2", async () => {
+    let defA = makeDeferred();
+    let defB = makeDeferred();
+
+    class ChildA extends Widget {
+      inlineTemplate = `<span>a<t t-esc="props.val"/></span>`;
+      updateProps(props): Promise<void> {
+        return defA.then(() => super.updateProps(props));
+      }
+    }
+    class ChildB extends Widget {
+      inlineTemplate = `<span>b<t t-esc="props.val"/></span>`;
+      willStart(): Promise<void> {
+        return defB;
+      }
+    }
+
+    class Parent extends Widget {
+      inlineTemplate = `
+        <div>
+          <t t-widget="ChildA" t-props="{val:state.valA}"/>
+          <t t-if="state.flagB"><t t-widget="ChildB" t-props="{val:state.valB}"/></t>
+        </div>`;
+      widgets = { ChildA, ChildB };
+      state = { valA: 1, valB: 2, flagB: false };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
+      "<div><span>a1</span></div>"
+    );
+    parent.updateState({ valA: 2 });
+    await nextTick();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
+      "<div><span>a1</span></div>"
+    );
+    parent.updateState({ flagB: true });
+    await nextTick();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
+      "<div><span>a1</span></div>"
+    );
+    defB.resolve();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
+      "<div><span>a1</span></div>"
+    );
+    defA.resolve();
+    await nextTick();
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
+      "<div><span>a2</span><span>b2</span></div>"
     );
   });
 });

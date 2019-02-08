@@ -1,3 +1,4 @@
+import h from "../../../libs/snabbdom/src/h";
 import sdAttrs from "../../../libs/snabbdom/src/modules/attributes";
 import sdListeners from "../../../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../../../libs/snabbdom/src/snabbdom";
@@ -231,7 +232,7 @@ export class Component<
     this.__widget__.renderProps = this.props;
     this.__widget__.renderPromise = this.willStart().then(() => {
       if (this.__widget__.isDestroyed) {
-        return Promise.resolve(this.env.qweb.render("default"));
+        return Promise.resolve(h("div"));
       }
       this.__widget__.isStarted = true;
       if (this.inlineTemplate) {

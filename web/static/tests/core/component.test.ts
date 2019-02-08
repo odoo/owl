@@ -796,6 +796,60 @@ describe("random stuff/miscellaneous", () => {
 });
 
 describe("async rendering", () => {
+  test("destroying a widget before start is over", async () => {
+    let def = makeDeferred();
+    class W extends Widget {
+      inlineTemplate = "invalid><";
+      willStart(): Promise<void> {
+        return def;
+      }
+    }
+    const w = new W(env);
+    w.mount(fixture);
+    expect(w.__widget__.isDestroyed).toBe(false);
+    expect(w.__widget__.isMounted).toBe(false);
+    expect(w.__widget__.isStarted).toBe(false);
+    w.destroy();
+    def.resolve();
+    await nextTick();
+    expect(w.__widget__.isDestroyed).toBe(true);
+    expect(w.__widget__.isMounted).toBe(false);
+    expect(w.__widget__.isStarted).toBe(false);
+  });
+
+  test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
+    let def = makeDeferred();
+    let n = 0;
+    class W extends Widget {
+      inlineTemplate = `<div><t t-if="state.val > 1"><t t-widget="Child" t-props="{val: state.val}"/></t></div>`;
+      widgets = { Child };
+      state = { val: 1 };
+    }
+
+    class Child extends Widget {
+      inlineTemplate = `<span>child:<t t-esc="props.val"/></span>`;
+      constructor(parent, props) {
+        super(parent, props);
+        n++;
+      }
+      willStart(): Promise<void> {
+        return def;
+      }
+    }
+    const w = new W(env);
+    await w.mount(fixture);
+    expect(n).toBe(0);
+    w.updateState({ val: 2 });
+    expect(n).toBe(1);
+    await nextTick();
+    w.updateState({ val: 3 });
+    expect(n).toBe(2);
+    def.resolve();
+    await nextTick();
+    expect(children(w).length).toBe(1);
+    expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
+  });
+
   test("creating two async widgets, scenario 1", async () => {
     let defA = makeDeferred();
     let defB = makeDeferred();

@@ -821,12 +821,12 @@ const widgetDirective: Directive = {
     ctx.dedent();
     ctx.addLine(`} else {`); // not started
     ctx.indent();
+    ctx.addLine(`isNew${widgetID} = true`);
     ctx.addLine(
       `if (props${widgetID} === w${widgetID}.__widget__.renderProps) {`
     );
     ctx.indent();
     ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
-    ctx.addLine(`isNew${widgetID} = true`);
     ctx.dedent();
     ctx.addLine(`} else {`);
     ctx.indent();
@@ -880,7 +880,7 @@ const widgetDirective: Directive = {
     ctx.addLine(`} else {`);
     ctx.indent();
     ctx.addLine(
-      `def${defID} = def${defID}.then(()=>{let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
+      `def${defID} = def${defID}.then(()=>{if (!w${widgetID}.__widget__.vnode) {return};let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
         ctx.parentNode
       }[_${dummyID}_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
         keepAlive ? "detach" : "destroy"

@@ -91,6 +91,22 @@ export class Context {
     this.code.push(prefix + line);
   }
 
+  addIf(condition: string) {
+    this.addLine(`if (${condition}) {`);
+    this.indent();
+  }
+
+  addElse() {
+    this.dedent();
+    this.addLine("} else {");
+    this.indent();
+  }
+
+  closeIf() {
+    this.dedent();
+    this.addLine("}");
+  }
+
   getValue(val: any): any {
     return val in this.variables ? this.getValue(this.variables[val]) : val;
   }
@@ -418,19 +434,15 @@ export class QWeb {
       attrs.length + tattrs.length > 0 ? `{attrs:{${attrs.join(",")}}}` : "{}";
     ctx.addLine(`let c${nodeID} = [], p${nodeID} = ${p};`);
     for (let id of tattrs) {
-      ctx.addLine(`if (_${id} instanceof Array) {`);
-      ctx.indent();
+      ctx.addIf(`_${id} instanceof Array`);
       ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
-      ctx.dedent();
-      ctx.addLine(`} else {`);
-      ctx.indent();
+      ctx.addElse();
       ctx.addLine(`for (let key in _${id}) {`);
       ctx.indent();
       ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key];`);
       ctx.dedent();
       ctx.addLine(`}`);
-      ctx.dedent();
-      ctx.addLine(`}`);
+      ctx.closeIf();
     }
     ctx.addLine(
       `let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`
@@ -524,8 +536,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
   if (typeof value === "string") {
     const exprID = ctx.generateID();
     ctx.addLine(`let e${exprID} = ${qweb._formatExpression(value)};`);
-    ctx.addLine(`if (e${exprID} || e${exprID} === 0) {`);
-    ctx.indent();
+    ctx.addIf(`e${exprID} || e${exprID} === 0`);
     let text = `e${exprID}`;
 
     if (!ctx.parentNode) {
@@ -539,14 +550,11 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
             update: (_, n) => n.elm.innerHTML = e${exprID},
         };`); // p${ctx.parentNode}.elm.innerHTML = e${exprID}
     }
-    ctx.dedent();
     if (node.childNodes.length) {
-      ctx.addLine("} else {");
-      ctx.indent();
+      ctx.addElse();
       qweb._compileChildren(node, ctx);
-      ctx.dedent();
     }
-    ctx.addLine("}");
+    ctx.closeIf();
     return;
   }
   if (value instanceof NodeList) {
@@ -604,13 +612,11 @@ const ifDirective: Directive = {
   priority: 20,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-if")!);
-    ctx.addLine(`if (${qweb._formatExpression(cond)}) {`);
-    ctx.indent();
+    ctx.addIf(`${qweb._formatExpression(cond)}`);
     return false;
   },
   finalize({ ctx }) {
-    ctx.dedent();
-    ctx.addLine(`}`);
+    ctx.closeIf();
   }
 };
 
@@ -624,8 +630,7 @@ const elifDirective: Directive = {
     return false;
   },
   finalize({ ctx }) {
-    ctx.dedent();
-    ctx.addLine(`}`);
+    ctx.closeIf();
   }
 };
 
@@ -638,8 +643,7 @@ const elseDirective: Directive = {
     return false;
   },
   finalize({ ctx }) {
-    ctx.dedent();
-    ctx.addLine(`}`);
+    ctx.closeIf();
   }
 };
 
@@ -804,50 +808,28 @@ const widgetDirective: Directive = {
     ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
 
     // check if we can reuse current rendering promise
-    ctx.addLine(`if (w${widgetID} && w${widgetID}.__widget__.renderPromise) {`);
-    ctx.indent();
-    ctx.addLine(`if (w${widgetID}.__widget__.isStarted) {`);
-    ctx.indent();
-    ctx.addLine(
-      `if (props${widgetID} === w${widgetID}.__widget__.renderProps) {`
-    );
-    ctx.indent();
+    ctx.addIf(`w${widgetID} && w${widgetID}.__widget__.renderPromise`);
+    ctx.addIf(`w${widgetID}.__widget__.isStarted`);
+    ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);
     ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
-    ctx.dedent();
-    ctx.addLine(`} else {`);
-    ctx.indent();
+    ctx.addElse();
     ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
-    ctx.dedent();
-    ctx.addLine(`}`);
-    ctx.dedent();
-    ctx.addLine(`} else {`); // not started
-    ctx.indent();
+    ctx.closeIf();
+    ctx.addElse();
     ctx.addLine(`isNew${widgetID} = true`);
-    ctx.addLine(
-      `if (props${widgetID} === w${widgetID}.__widget__.renderProps) {`
-    );
-    ctx.indent();
+    ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);
     ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
-    ctx.dedent();
-    ctx.addLine(`} else {`);
-    ctx.indent();
+    ctx.addElse();
     ctx.addLine(`w${widgetID}.destroy();`);
     ctx.addLine(`w${widgetID} = false`);
-    ctx.dedent();
-    ctx.addLine(`}`);
-    ctx.dedent();
-    ctx.addLine(`}`);
-    ctx.dedent();
-    ctx.addLine(`}`);
+    ctx.closeIf();
+    ctx.closeIf();
+    ctx.closeIf();
 
-    ctx.addLine(`if (!def${defID}) {`);
-    ctx.indent();
-    ctx.addLine(`if (w${widgetID}) {`);
-    ctx.indent();
+    ctx.addIf(`!def${defID}`);
+    ctx.addIf(`w${widgetID}`);
     ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
-    ctx.dedent();
-    ctx.addLine(`} else {`);
-    ctx.indent();
+    ctx.addElse();
     ctx.addLine(
       `w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`
     );
@@ -863,13 +845,10 @@ const widgetDirective: Directive = {
     }
 
     ctx.addLine(`def${defID} = w${widgetID}._start();`);
-    ctx.dedent();
-    ctx.addLine(`}`);
-    ctx.dedent();
-    ctx.addLine(`}`);
+    ctx.closeIf();
+    ctx.closeIf();
 
-    ctx.addLine(`if (isNew${widgetID}) {`);
-    ctx.indent();
+    ctx.addIf(`isNew${widgetID}`);
     ctx.addLine(
       `def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
@@ -877,9 +856,7 @@ const widgetDirective: Directive = {
         keepAlive ? "detach" : "destroy"
       }()}}});`
     );
-    ctx.dedent();
-    ctx.addLine(`} else {`);
-    ctx.indent();
+    ctx.addElse();
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (!w${widgetID}.__widget__.vnode) {return};let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
         ctx.parentNode
@@ -887,8 +864,7 @@ const widgetDirective: Directive = {
         keepAlive ? "detach" : "destroy"
       }()}}});`
     );
-    ctx.dedent();
-    ctx.addLine(`}`);
+    ctx.closeIf();
 
     ctx.addLine(`extra.promises.push(def${defID});`);
 

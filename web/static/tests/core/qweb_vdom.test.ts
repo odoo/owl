@@ -25,9 +25,10 @@ function trim(str: string): string {
 function renderToDOM(
   qweb: QWeb,
   template: string,
-  context: EvalContext = {}
+  context: EvalContext = {},
+  extra?: any
 ): HTMLElement | Text {
-  const vnode = qweb.render(template, context);
+  const vnode = qweb.render(template, context, extra);
 
   // we snapshot here the compiled code. This is useful to prevent unwanted code
   // change.
@@ -658,11 +659,16 @@ describe("t-on", () => {
   test("can bind event handler", () => {
     qweb.addTemplate("test", `<button t-on-click="add">Click</button>`);
     let a = 1;
-    const node = renderToDOM(qweb, "test", {
-      add() {
-        a = 3;
-      }
-    });
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        add() {
+          a = 3;
+        }
+      },
+      { handlers: [] }
+    );
     (<HTMLElement>node).click();
     expect(a).toBe(3);
   });
@@ -670,11 +676,16 @@ describe("t-on", () => {
   test("can bind handlers with arguments", () => {
     qweb.addTemplate("test", `<button t-on-click="add(5)">Click</button>`);
     let a = 1;
-    const node = renderToDOM(qweb, "test", {
-      add(n) {
-        a = a + n;
-      }
-    });
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        add(n) {
+          a = a + n;
+        }
+      },
+      { handlers: [] }
+    );
     (<HTMLElement>node).click();
     expect(a).toBe(6);
   });
@@ -688,11 +699,16 @@ describe("t-on", () => {
         <li t-foreach="['someval']" t-as="action"><a t-on-click="activate(action)">link</a></li>
       </ul>`
     );
-    const node = renderToDOM(qweb, "test", {
-      activate(action) {
-        expect(action).toBe("someval");
-      }
-    });
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        activate(action) {
+          expect(action).toBe("someval");
+        }
+      },
+      { handlers: [] }
+    );
     (<HTMLElement>node).getElementsByTagName("a")[0].click();
   });
 
@@ -704,7 +720,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       }
     };
-    const node = renderToDOM(qweb, "test", owner);
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     (<HTMLElement>node).click();
   });
 });

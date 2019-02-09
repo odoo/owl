@@ -722,10 +722,11 @@ const onDirective: Directive = {
       return "";
     });
     ctx.addLine(
-      `p${nodeID}.on = {${eventName}: context['${handler}'].bind(owner${
+      `extra.handlers[${nodeID}] = extra.handlers[${nodeID}] || context['${handler}'].bind(owner${
         extraArgs ? ", " + qweb._formatExpression(extraArgs) : ""
-      })};`
+      });`
     );
+    ctx.addLine(`p${nodeID}.on = {${eventName}: extra.handlers[${nodeID}]};`);
   }
 };
 

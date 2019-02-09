@@ -890,7 +890,8 @@ exports[`t-on can bind event handler 1`] = `
     let h = this.h;
     let c1 = [], p1 = {};
     let vn1 = h('button', p1, c1);
-    p1.on = {click: context['add'].bind(owner)};
+    extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner);
+    p1.on = {click: extra.handlers[1]};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -903,7 +904,8 @@ exports[`t-on can bind handlers with arguments 1`] = `
     let h = this.h;
     let c1 = [], p1 = {};
     let vn1 = h('button', p1, c1);
-    p1.on = {click: context['add'].bind(owner, 5)};
+    extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner, 5);
+    p1.on = {click: extra.handlers[1]};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -937,7 +939,8 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         let c6 = [], p6 = {};
         let vn6 = h('a', p6, c6);
         c5.push(vn6);
-        p6.on = {click: context['activate'].bind(owner, context['action'])};
+        extra.handlers[6] = extra.handlers[6] || context['activate'].bind(owner, context['action']);
+        p6.on = {click: extra.handlers[6]};
         c6.push({text: \`link\`});
     }
     c1.push({text: \`
@@ -953,7 +956,8 @@ exports[`t-on handler is bound to proper owner 1`] = `
     let h = this.h;
     let c1 = [], p1 = {};
     let vn1 = h('button', p1, c1);
-    p1.on = {click: context['add'].bind(owner)};
+    extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner);
+    p1.on = {click: extra.handlers[1]};
     c1.push({text: \`Click\`});
     return vn1;
 }"

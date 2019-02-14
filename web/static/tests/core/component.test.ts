@@ -793,6 +793,26 @@ describe("random stuff/miscellaneous", () => {
     await widget.updateState({ flag: true });
     expect(fixture.innerHTML).toBe("<div><span>abcdef</span></div>");
   });
+
+  test("snapshotting compiled code", async () => {
+    env.qweb.addTemplate(
+      "parent",
+      `<div><t t-widget="child" t-props="{flag:state.flag}"/></div>`
+    );
+    class Parent extends Widget {
+      inlineTemplate = "parent";
+      widgets = { child: Child };
+      state = { flag: false };
+    }
+
+    class Child extends Widget {
+      inlineTemplate = `<span>abc<t t-if="props.flag">def</t></span>`;
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
+  });
 });
 
 describe("async rendering", () => {

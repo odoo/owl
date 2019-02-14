@@ -725,12 +725,18 @@ const onDirective: Directive = {
       extraArgs = args.slice(1, -1);
       return "";
     });
-    ctx.addLine(
-      `extra.handlers[${nodeID}] = extra.handlers[${nodeID}] || context['${handler}'].bind(owner${
-        extraArgs ? ", " + qweb._formatExpression(extraArgs) : ""
-      });`
-    );
-    ctx.addLine(`p${nodeID}.on = {${eventName}: extra.handlers[${nodeID}]};`);
+    if (extraArgs) {
+      ctx.addLine(
+        `p${nodeID}.on = {${eventName}: context['${handler}'].bind(owner, ${qweb._formatExpression(
+          extraArgs
+        )})};`
+      );
+    } else {
+      ctx.addLine(
+        `extra.handlers[${nodeID}] = extra.handlers[${nodeID}] || context['${handler}'].bind(owner);`
+      );
+      ctx.addLine(`p${nodeID}.on = {${eventName}: extra.handlers[${nodeID}]};`);
+    }
   }
 };
 

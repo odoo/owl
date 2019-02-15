@@ -431,7 +431,9 @@ export class QWeb {
     }
     let nodeID = ctx.generateID();
     let p =
-      attrs.length + tattrs.length > 0 ? `{attrs:{${attrs.join(",")}}}` : "{}";
+      attrs.length + tattrs.length > 0
+        ? `{key:${nodeID},attrs:{${attrs.join(",")}}}`
+        : `{key:${nodeID}}`;
     ctx.addLine(`let c${nodeID} = [], p${nodeID} = ${p};`);
     for (let id of tattrs) {
       ctx.addIf(`_${id} instanceof Array`);

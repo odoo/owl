@@ -38,8 +38,8 @@ function renderToDOM(
     return document.createTextNode(vnode.text!);
   }
   const node = document.createElement(vnode.sel!);
-  patch(node, vnode);
-  return node;
+  const result = patch(node, vnode);
+  return result.elm as HTMLElement;
 }
 
 function renderToString(

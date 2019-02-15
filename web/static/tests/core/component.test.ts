@@ -688,6 +688,39 @@ describe("composition", () => {
     `)
     );
   });
+
+  test("sub widgets between t-ifs", async () => {
+    // this confuses the patching algorithm...
+    class ChildWidget extends Widget {
+      inlineTemplate = `<span>child</span>`;
+    }
+
+    class Parent extends Widget {
+      inlineTemplate = `<div>
+            <h1 t-if="state.flag">hey</h1>
+            <h2 t-else="1">noo</h2>
+            <span><t t-widget="ChildWidget"/></span>
+            <t t-if="state.flag"><span>test</span></t>
+        </div>`;
+      state = { flag: false };
+      widgets = { ChildWidget };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    const child = children(parent)[0];
+    await parent.updateState({ flag: true });
+    expect(children(parent)[0]).toBe(child);
+    expect(child.__widget__.isDestroyed).toBe(false);
+    expect(normalize(fixture.innerHTML)).toBe(
+      normalize(`
+      <div>
+        <h1>hey</h1>
+        <span><span>child</span></span>
+        <span>test</span>
+      </div>
+    `)
+    );
+  });
 });
 
 describe("props evaluation (with t-props directive)", () => {

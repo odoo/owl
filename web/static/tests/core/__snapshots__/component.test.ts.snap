@@ -5,7 +5,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 ) {
     let owner = context;
     let h = this.h;
-    let c1 = [], p1 = {};
+    let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     //WIDGET
     let _2_index = c1.length;

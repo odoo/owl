@@ -14,7 +14,7 @@
         <t t-widget="Notification" t-props="notif"/>
       </t>
     </div>
-    <div class="o_loading" t-if="state.isLoading">Loading</div>
+    <div class="o_loading d-none" t-ref="loading_indicator">Loading</div>
   </div>
 
   <div t-name="web.navbar" class="o_navbar" t-att-class="props.inHome ? 'o_navbar o_in_home' : 'o_navbar'">

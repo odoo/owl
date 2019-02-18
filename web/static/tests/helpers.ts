@@ -7,8 +7,8 @@ import { IRouter, Query, RouterEvent } from "../src/ts/core/router";
 import { idGenerator } from "../src/ts/core/utils";
 import { getMenuInfo } from "../src/ts/init";
 import { actionRegistry } from "../src/ts/registries";
-import { ActionManager } from "../src/ts/services/action_manager";
-import { Ajax } from "../src/ts/services/ajax";
+import { ActionManager } from "../src/ts/store/action_manager";
+import { Ajax } from "../src/ts/store/ajax";
 import { MenuInfo } from "../src/ts/widgets/root";
 import { Env } from "../src/ts/widgets/widget";
 

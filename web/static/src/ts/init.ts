@@ -1,10 +1,10 @@
-import { Ajax } from "./services/ajax";
+import { Ajax } from "./store/ajax";
 import { NotificationManager } from "./core/notifications";
 import { QWeb } from "./core/qweb_vdom";
 import { Router } from "./core/router";
 import { findInTree, idGenerator, memoize } from "./core/utils";
 import { actionRegistry } from "./registries";
-import { ActionManager } from "./services/action_manager";
+import { ActionManager } from "./store/action_manager";
 import { MenuInfo, MenuItem } from "./widgets/root";
 import { Env } from "./widgets/widget";
 

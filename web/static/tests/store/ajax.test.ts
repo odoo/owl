@@ -1,4 +1,4 @@
-import { Ajax } from "../../src/ts/services/ajax";
+import { Ajax } from "../../src/ts/store/ajax";
 import { nextMicroTick } from "../helpers";
 
 //------------------------------------------------------------------------------

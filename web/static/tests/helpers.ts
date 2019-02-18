@@ -1,15 +1,14 @@
 import { readFile } from "fs";
 import { WEnv } from "../src/ts/core/component";
 import { Callback } from "../src/ts/core/event_bus";
-import { NotificationManager } from "../src/ts/core/notifications";
+import { NotificationManager } from "../src/ts/store/notifications";
 import { QWeb } from "../src/ts/core/qweb_vdom";
-import { IRouter, Query, RouterEvent } from "../src/ts/core/router";
+import { IRouter, Query, RouterEvent } from "../src/ts/store/router";
 import { idGenerator } from "../src/ts/core/utils";
-import { getMenuInfo } from "../src/ts/init";
+import { getMenuInfo, MenuInfo } from "../src/ts/loaders/menus";
 import { actionRegistry } from "../src/ts/registries";
 import { ActionManager } from "../src/ts/store/action_manager";
 import { Ajax } from "../src/ts/store/ajax";
-import { MenuInfo } from "../src/ts/widgets/root";
 import { Env } from "../src/ts/widgets/widget";
 
 export function makeTestFixture() {

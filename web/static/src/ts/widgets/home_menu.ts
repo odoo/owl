@@ -1,4 +1,4 @@
-import { MenuInfo, MenuItem } from "../widgets/root";
+import { MenuInfo, MenuItem } from "../loaders/menus";
 import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------

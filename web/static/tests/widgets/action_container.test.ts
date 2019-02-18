@@ -1,4 +1,4 @@
-import { ActionStack } from "../../src/ts/services/action_manager";
+import { ActionStack } from "../../src/ts/store/action_manager";
 import { ActionContainer, Props } from "../../src/ts/widgets/action_container";
 import { Widget } from "../../src/ts/widgets/widget";
 import * as helpers from "../helpers";

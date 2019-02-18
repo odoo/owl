@@ -1,4 +1,4 @@
-import { MenuItem } from "./root";
+import { MenuItem } from "../loaders/menus";
 import { PureWidget } from "./widget";
 
 //------------------------------------------------------------------------------

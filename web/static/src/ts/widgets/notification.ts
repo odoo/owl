@@ -1,4 +1,4 @@
-import { INotification } from "../core/notifications";
+import { INotification } from "../store/notifications";
 import { Widget } from "./widget";
 
 export class Notification extends Widget<INotification, {}> {

@@ -1,6 +1,7 @@
-import { Query } from "../core/router";
+import { Query } from "../store/router";
 import { debounce } from "../core/utils";
-import { ActionStack } from "../services/action_manager";
+import { MenuInfo, MenuItem } from "../loaders/menus";
+import { ActionStack } from "../store/action_manager";
 import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
@@ -10,26 +11,6 @@ import { Env, Widget } from "./widget";
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
-
-export interface MenuItem {
-  id: number;
-  name: string;
-  parentId: number | false;
-  action: string | false;
-  icon: string | false;
-
-  // root menu id
-  app: MenuItem;
-  actionId: number;
-  children: MenuItem[];
-}
-
-export interface MenuInfo {
-  menus: { [key: number]: MenuItem | undefined };
-
-  actionMap: { [id: number]: MenuItem | undefined };
-  roots: number[];
-}
 
 export interface Props {
   menuInfo: MenuInfo;

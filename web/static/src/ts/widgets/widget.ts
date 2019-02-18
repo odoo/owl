@@ -1,9 +1,9 @@
-import { IAjax } from "../services/ajax";
+import { IAjax } from "../store/ajax";
 import { Component, PureComponent, WEnv } from "../core/component";
-import { INotificationManager } from "../core/notifications";
+import { INotificationManager } from "../store/notifications";
 import { Registry } from "../core/registry";
-import { IRouter } from "../core/router";
-import { ActionWidget, IActionManager } from "../services/action_manager";
+import { IRouter } from "../store/router";
+import { ActionWidget, IActionManager } from "../store/action_manager";
 
 //------------------------------------------------------------------------------
 // Types

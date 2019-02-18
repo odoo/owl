@@ -1,4 +1,4 @@
-import { NotificationManager } from "../../src/ts/core/notifications";
+import { NotificationManager } from "../../src/ts/store/notifications";
 
 test("can subscribe and add notification", () => {
   let n = 0;

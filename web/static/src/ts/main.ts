@@ -1,6 +1,9 @@
 ///<amd-module name="main" />
 
-import { init } from "./init";
+import { makeEnv } from "./env";
+import { rpc } from "./services/ajax";
+import { loadMenus } from "./loaders/menus";
+import { loadTemplates } from "./loaders/templates";
 import { Root } from "./widgets/root";
 
 //------------------------------------------------------------------------------
@@ -8,7 +11,14 @@ import { Root } from "./widgets/root";
 //------------------------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", async function() {
-  const { env, menuInfo } = await init();
+  const services = {
+    rpc
+  };
+  const loaders = {
+    loadTemplates
+  };
+  const env = await makeEnv(loaders, services);
+  const menuInfo = loadMenus();
 
   // Creating root widget
   const rootWidget = new Root(env, { menuInfo });

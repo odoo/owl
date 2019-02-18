@@ -1,4 +1,4 @@
-import { INotification } from "../../src/ts/core/notifications";
+import { INotification } from "../../src/ts/store/notifications";
 import { Notification } from "../../src/ts/widgets/notification";
 import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
 

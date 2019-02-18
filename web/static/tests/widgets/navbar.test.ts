@@ -1,6 +1,6 @@
 import { Navbar, Props } from "../../src/ts/widgets/navbar";
 import * as helpers from "../helpers";
-import { MenuInfo } from "../../src/ts/widgets/root";
+import { MenuInfo } from "../../src/ts/loaders/menus";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

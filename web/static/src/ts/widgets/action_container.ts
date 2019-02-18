@@ -1,4 +1,4 @@
-import { ActionStack } from "../services/action_manager";
+import { ActionStack } from "../store/action_manager";
 import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------

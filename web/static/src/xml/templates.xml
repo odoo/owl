@@ -9,11 +9,7 @@
     <t t-else="1">
       <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>
     </t>
-    <div class="o_notification_container">
-      <t t-foreach="state.notifications" t-as="notif">
-        <t t-widget="Notification" t-props="notif"/>
-      </t>
-    </div>
+    <div class="o_notification_container" t-ref="notification_container"/>
     <div class="o_loading d-none" t-ref="loading_indicator">Loading</div>
   </div>
 

@@ -1,4 +1,3 @@
-import { INotification } from "../core/notifications";
 import { Query } from "../core/router";
 import { debounce } from "../core/utils";
 import { ActionStack } from "../services/action_manager";
@@ -37,7 +36,6 @@ export interface Props {
 }
 
 interface State {
-  notifications: INotification[];
   stack: ActionStack;
   inHome: boolean;
   currentApp: MenuItem | null;
@@ -49,14 +47,15 @@ interface State {
 
 export class Root extends Widget<Props, State> {
   template = "web.web_client";
-  widgets = { Navbar, Notification, HomeMenu, ActionContainer };
+  widgets = { Navbar, HomeMenu, ActionContainer };
 
   state: State = {
-    notifications: [],
     stack: [],
     inHome: false,
     currentApp: null
   };
+
+  notifications: { [id: number]: Notification } = {};
 
   constructor(env: Env, props: Props) {
     super(env, props);
@@ -69,9 +68,15 @@ export class Root extends Widget<Props, State> {
   }
   mounted() {
     // notifications
-    this.env.notifications.on("notifications_updated", this, notifs =>
-      this.updateState({ notifications: notifs })
-    );
+    this.env.notifications.on("notification_added", this, notif => {
+      const notification = new Notification(this, notif);
+      this.notifications[notif.id] = notification;
+      notification.mount(<any>this.refs.notification_container);
+    });
+    this.env.notifications.on("notification_closed", this, id => {
+      this.notifications[id].destroy();
+      delete this.notifications[id];
+    });
 
     // loading indicator
     this.env.ajax.on("rpc_status", this, status => {

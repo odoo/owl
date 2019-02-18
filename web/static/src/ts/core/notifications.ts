@@ -12,14 +12,19 @@ export interface INotification {
   sticky: boolean;
 }
 
-export type NotificationEvent = "notifications_updated";
-
-export type Callback = (notifs: INotification[]) => void;
-
 export interface INotificationManager {
   add(notif: Partial<INotification>): number;
   close(id: number): void;
-  on(event: NotificationEvent, owner: any, callback: Callback): void;
+  on(
+    event: "notification_added",
+    owner: any,
+    callback: (notif: INotification) => void
+  ): void;
+  on(
+    event: "notification_closed",
+    owner: any,
+    callback: (id: number) => void
+  ): void;
 }
 
 //------------------------------------------------------------------------------
@@ -28,7 +33,6 @@ export interface INotificationManager {
 
 export class NotificationManager extends Bus implements INotificationManager {
   nextID = 1;
-  notifications: INotification[] = [];
 
   add(notif: Partial<INotification>): number {
     const id = this.nextID++;
@@ -39,15 +43,13 @@ export class NotificationManager extends Bus implements INotificationManager {
       sticky: false
     };
     const notification = Object.assign(defaultVals, notif, { id });
-    this.notifications.push(notification);
-    this.trigger("notifications_updated", this.notifications);
+    this.trigger("notification_added", notification);
     if (!notification.sticky) {
       setTimeout(() => this.close(id), 2500);
     }
     return id;
   }
   close(id: number) {
-    this.notifications = this.notifications.filter(n => n.id !== id);
-    this.trigger("notifications_updated", this.notifications);
+    this.trigger("notification_closed", id);
   }
 }

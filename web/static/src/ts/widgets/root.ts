@@ -6,7 +6,8 @@ import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
-import { Env, Widget } from "./widget";
+import { Widget } from "./widget";
+import { Env } from "../env";
 
 //------------------------------------------------------------------------------
 // Types

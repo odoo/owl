@@ -1,17 +1,43 @@
+import { WEnv } from "./core/component";
 import { QWeb } from "./core/qweb_vdom";
+import { Registry } from "./core/registry";
 import { idGenerator, memoize } from "./core/utils";
 import { TemplateLoader } from "./loaders/templates";
 import { actionRegistry } from "./registries";
 import { RPC } from "./services/ajax";
-import { ActionManager } from "./store/action_manager";
-import { Ajax } from "./store/ajax";
-import { NotificationManager } from "./store/notifications";
-import { Router } from "./store/router";
-import { Env } from "./widgets/widget";
+import {
+  ActionManager,
+  ActionWidget,
+  IActionManager
+} from "./store/action_manager";
+import { Ajax, IAjax } from "./store/ajax";
+import {
+  INotificationManager,
+  NotificationManager
+} from "./store/notifications";
+import { IRouter, Router } from "./store/router";
 
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
+
+export interface Env extends WEnv {
+  // services
+  actionManager: IActionManager;
+  ajax: IAjax;
+  notifications: INotificationManager;
+  router: IRouter;
+
+  // registries
+  actionRegistry: Registry<ActionWidget>;
+
+  // helpers
+  rpc: IAjax["rpc"];
+
+  // configuration
+  debug: boolean;
+  isMobile: boolean;
+}
 
 interface Loaders {
   loadTemplates: TemplateLoader;

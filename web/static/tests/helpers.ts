@@ -9,7 +9,7 @@ import { getMenuInfo, MenuInfo } from "../src/ts/loaders/menus";
 import { actionRegistry } from "../src/ts/registries";
 import { ActionManager } from "../src/ts/store/action_manager";
 import { Ajax } from "../src/ts/store/ajax";
-import { Env } from "../src/ts/widgets/widget";
+import { Env } from "../src/ts/env";
 
 export function makeTestFixture() {
   let fixture = document.createElement("div");

@@ -2,9 +2,9 @@
 <templates id="template" xml:space="preserve">
 
   <div t-name="web.web_client" class="o_web_client">
-    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" t-on-toggle_home_menu="toggleHome" t-on-open_menu="openMenu"/>
+    <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" />
     <t t-if="state.inHome">
-      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" t-on-open_menu="openMenu"/>
+      <t t-widget="HomeMenu" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" />
     </t>
     <t t-else="1">
       <t t-widget="ActionContainer" t-props="{stack:state.stack}" t-keep-alive="1"/>

@@ -1,4 +1,4 @@
-import { INotification } from "../store/notifications";
+import { INotification } from "../store";
 import { Widget } from "./widget";
 
 export class Notification extends Widget<INotification, {}> {
@@ -7,6 +7,6 @@ export class Notification extends Widget<INotification, {}> {
   close(ev: MouseEvent) {
     // we do not want the url to change
     ev.preventDefault();
-    this.env.notifications.close(this.props.id);
+    this.env.dispatch("close_notification", this.props.id);
   }
 }

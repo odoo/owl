@@ -1,9 +1,11 @@
 ///<amd-module name="main" />
 
 import { makeEnv } from "./env";
+import { loadMenus, loadTemplates } from "./loaders";
+import { actionRegistry } from "./registries";
 import { rpc } from "./services/ajax";
-import { loadMenus } from "./loaders/menus";
-import { loadTemplates } from "./loaders/templates";
+import { Router } from "./services/router";
+import { Store } from "./store";
 import { Root } from "./widgets/root";
 
 //------------------------------------------------------------------------------
@@ -12,16 +14,17 @@ import { Root } from "./widgets/root";
 
 document.addEventListener("DOMContentLoaded", async function() {
   const services = {
-    rpc
+    rpc,
+    router: new Router()
   };
-  const loaders = {
-    loadTemplates
-  };
-  const env = await makeEnv(loaders, services);
+
+  const templates = await loadTemplates();
   const menuInfo = loadMenus();
+  const store = new Store(services, menuInfo, actionRegistry);
+  const env = makeEnv(store, templates);
 
   // Creating root widget
-  const rootWidget = new Root(env, { menuInfo });
+  const rootWidget = new Root(env, store);
   await rootWidget.mount(document.body);
 
   // For debugging purpose, we keep a reference to the root widget in odoo

@@ -20,6 +20,9 @@ export class Clock extends Widget<{}, State> {
     currentTime: ""
   };
 
+  willStart() {
+    return this.env.rpc({ model: "res.partner", method: "fetch" });
+  }
   mounted() {
     this.updateTime();
     this.startClock();

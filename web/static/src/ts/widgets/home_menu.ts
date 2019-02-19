@@ -1,4 +1,4 @@
-import { MenuInfo, MenuItem } from "../loaders/menus";
+import { MenuInfo, MenuItem } from "../store";
 import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------
@@ -23,6 +23,6 @@ export class HomeMenu extends Widget<Props, {}> {
 
   openMenu(app: MenuItem, event: MouseEvent) {
     event.preventDefault();
-    this.trigger("open_menu", app);
+    this.env.dispatch("open_menu", app);
   }
 }

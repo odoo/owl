@@ -1,28 +1,24 @@
-import { findInTree } from "../core/utils";
+import { findInTree } from "./core/utils";
+import { MenuItem, MenuInfo } from "./store";
 
 //------------------------------------------------------------------------------
-// Types
+// Templates
 //------------------------------------------------------------------------------
 
-export interface MenuItem {
-  id: number;
-  name: string;
-  parentId: number | false;
-  action: string | false;
-  icon: string | false;
-
-  // root menu id
-  app: MenuItem;
-  actionId: number;
-  children: MenuItem[];
+/**
+ * Load xml templates as a string.
+ */
+export async function loadTemplates(): Promise<string> {
+  const result = await fetch("templates.xml");
+  if (!result.ok) {
+    throw new Error("Error while fetching xml templates");
+  }
+  return result.text();
 }
 
-export interface MenuInfo {
-  menus: { [key: number]: MenuItem | undefined };
-
-  actionMap: { [id: number]: MenuItem | undefined };
-  roots: number[];
-}
+//------------------------------------------------------------------------------
+// Menus
+//------------------------------------------------------------------------------
 
 interface BaseMenuItem {
   id: number;
@@ -32,10 +28,6 @@ interface BaseMenuItem {
   icon: string | false;
   children: BaseMenuItem[];
 }
-
-//------------------------------------------------------------------------------
-// Code
-//------------------------------------------------------------------------------
 
 /**
  * Load all menu items

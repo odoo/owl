@@ -1,77 +1,49 @@
-import { Query } from "../store/router";
 import { debounce } from "../core/utils";
-import { MenuInfo, MenuItem } from "../loaders/menus";
-import { ActionStack } from "../store/action_manager";
+import { Env } from "../env";
+import { State, Store } from "../store";
 import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
 import { Widget } from "./widget";
-import { Env } from "../env";
-
-//------------------------------------------------------------------------------
-// Types
-//------------------------------------------------------------------------------
-
-export interface Props {
-  menuInfo: MenuInfo;
-}
-
-interface State {
-  stack: ActionStack;
-  inHome: boolean;
-  currentApp: MenuItem | null;
-}
 
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
 
-export class Root extends Widget<Props, State> {
+export class Root extends Widget<Store, State> {
   template = "web.web_client";
   widgets = { Navbar, HomeMenu, ActionContainer };
 
-  state: State = {
-    stack: [],
-    inHome: false,
-    currentApp: null
-  };
-
   notifications: { [id: number]: Notification } = {};
+  store: Store;
 
-  constructor(env: Env, props: Props) {
-    super(env, props);
-    const query = this.env.router.getQuery();
-    let { app, actionId } = this.getAppAndAction(query);
-    this.state.currentApp = app;
-    if (!actionId) {
-      this.state.inHome = true;
-    }
+  constructor(env: Env, store: Store) {
+    super(env, store);
+    this.store = store;
+    this.state = store.state;
   }
   mounted() {
+    this.store.on("state_updated", this, newState => {
+      this.updateState(newState);
+    });
+
     // notifications
-    this.env.notifications.on("notification_added", this, notif => {
+    this.store.on("notification_added", this, notif => {
       const notification = new Notification(this, notif);
       this.notifications[notif.id] = notification;
       notification.mount(<any>this.refs.notification_container);
     });
-    this.env.notifications.on("notification_closed", this, id => {
+    this.store.on("notification_closed", this, id => {
       this.notifications[id].destroy();
       delete this.notifications[id];
     });
 
     // loading indicator
-    this.env.ajax.on("rpc_status", this, status => {
+    this.store.on("rpc_status", this, status => {
       const method = status === "loading" ? "remove" : "add";
       (<any>this.refs.loading_indicator).classList[method]("d-none");
     });
-
-    // actions
-    this.env.actionManager.on("action_stack_updated", this, stack =>
-      this.updateState({ stack, inHome: false })
-    );
-    this.env.router.on("query_changed", this, this.updateAction);
-    this.updateAction(this.env.router.getQuery());
 
     // adding reactiveness to mobile/non mobile
     window.addEventListener("resize", <any>debounce(() => {
@@ -81,62 +53,5 @@ export class Root extends Widget<Props, State> {
         this.render();
       }
     }, 50));
-  }
-
-  private updateAction(query: Query) {
-    let { app, actionId } = this.getAppAndAction(query);
-    this.updateAppState(app, actionId);
-  }
-
-  private updateAppState(app: MenuItem | null, actionId: number | null) {
-    const newApp = app || this.state.currentApp;
-    if (actionId) {
-      const query: Query = { action_id: String(actionId) };
-      const menuId = newApp ? newApp.app.id : false;
-      if (menuId) {
-        query.menu_id = String(menuId);
-      }
-      if (app) {
-        this.updateState({ currentApp: app });
-      }
-      this.env.router.navigate(query);
-      this.env.actionManager.doAction(actionId);
-    } else {
-      this.updateState({ inHome: true, currentApp: newApp });
-    }
-  }
-
-  toggleHome() {
-    this.updateState({ inHome: !this.state.inHome });
-  }
-
-  openMenu(menu: MenuItem) {
-    this.updateAppState(menu.app, menu.actionId);
-  }
-
-  private getAppAndAction(
-    query: Query
-  ): { app: MenuItem | null; actionId: number | null } {
-    const menuInfo = this.props.menuInfo;
-    let app: MenuItem | null = null;
-    let actionId: number | null = null;
-    if ("action_id" in query) {
-      actionId = parseInt(query.action_id, 10);
-      if (menuInfo.actionMap[actionId]) {
-        const menu = menuInfo.actionMap[actionId]!;
-        app = menu.app;
-      }
-    }
-    if ("menu_id" in query) {
-      const menuId = parseInt(query.menu_id, 10);
-      const menu = menuInfo.menus[menuId];
-      if (menu) {
-        app = menu.app;
-        if (!actionId) {
-          actionId = menu.actionId;
-        }
-      }
-    }
-    return { app, actionId };
   }
 }

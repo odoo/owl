@@ -3,8 +3,8 @@ import sdAttrs from "../../../libs/snabbdom/src/modules/attributes";
 import sdListeners from "../../../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../../../libs/snabbdom/src/snabbdom";
 import { VNode } from "../../../libs/snabbdom/src/vnode";
-import { QWeb } from "./qweb_vdom";
 import { EventBus } from "./event_bus";
+import { QWeb } from "./qweb_vdom";
 
 //------------------------------------------------------------------------------
 // Types/helpers

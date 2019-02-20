@@ -25,10 +25,10 @@ export class Navbar extends PureWidget<Props, {}> {
 
   toggleHome(ev: MouseEvent) {
     ev.preventDefault();
-    this.env.dispatch("toggle_home_menu");
+    this.env.toggleHomeMenu();
   }
 
   openMenu(menu: MenuItem) {
-    this.env.dispatch("open_menu", menu);
+    this.env.activateMenuItem(menu.id);
   }
 }

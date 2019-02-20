@@ -23,6 +23,6 @@ export class HomeMenu extends Widget<Props, {}> {
 
   openMenu(app: MenuItem, event: MouseEvent) {
     event.preventDefault();
-    this.env.dispatch("open_menu", app);
+    this.env.activateMenuItem(app.id);
   }
 }

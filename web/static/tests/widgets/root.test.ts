@@ -41,6 +41,7 @@ test("if url has action_id, will render action and navigate to proper menu_id", 
   const router = new helpers.MockRouter({ action_id: "595" });
   store = helpers.makeTestStore({ router });
   env = makeEnv(store, templates);
+  await helpers.nextTick();
 
   const root = new Root(env, store);
   await root.mount(fixture);

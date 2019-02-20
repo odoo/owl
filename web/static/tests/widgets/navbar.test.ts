@@ -62,3 +62,13 @@ test("mobile mode: navbar is different", async () => {
   await navbar.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();
 });
+
+test("clicking on left icon toggle home menu ", async () => {
+  props.app = menuInfo.menus[96]!;
+  store.state.inHome = false;
+  const navbar = new Navbar(env, props);
+  await navbar.mount(fixture);
+  expect(store.state.inHome).toBe(false);
+  (<any>fixture).getElementsByClassName("o_title")[0].click();
+  expect(store.state.inHome).toBe(true);
+});

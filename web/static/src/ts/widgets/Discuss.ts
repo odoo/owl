@@ -46,7 +46,7 @@ export class Discuss extends Widget<{}, State> {
   addNotif(sticky: boolean) {
     const text = (<any>this.refs.textinput).value;
     const message = `It is now ${new Date().toLocaleTimeString()}.<br/> Msg: ${text}`;
-    this.env.dispatch("add_notification", {
+    this.env.addNotification({
       title: "hey",
       message: message,
       sticky

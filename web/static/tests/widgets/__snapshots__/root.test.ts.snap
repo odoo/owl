@@ -100,10 +100,12 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     
   </div>
     
-      <div class=\\"o_content\\"></div>
+      <div class=\\"o_content\\"><div class=\\"o_crm\\">
+    <span>CRM!!!!</span>
+  </div></div>
     
     <div class=\\"o_notification_container\\"></div>
-    <div class=\\"o_loading\\">Loading</div>
+    <div class=\\"o_loading d-none\\">Loading</div>
   </div>"
 `;
 

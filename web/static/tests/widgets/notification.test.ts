@@ -1,23 +1,26 @@
-import { INotification } from "../../src/ts/store/notifications";
+import { Env, makeEnv } from "../../src/ts/env";
+import { INotification, Store } from "../../src/ts/store";
 import { Notification } from "../../src/ts/widgets/notification";
-import { makeTestEnv, makeTestFixture, loadTemplates } from "../helpers";
+import * as helpers from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: ReturnType<typeof makeTestEnv>;
+let store: Store;
+let env: Env;
 let templates: string;
 
 beforeAll(async () => {
-  templates = await loadTemplates();
+  templates = await helpers.loadTemplates();
 });
 
 beforeEach(() => {
-  fixture = makeTestFixture();
-  env = makeTestEnv();
-  env.qweb.loadTemplates(templates);
+  fixture = helpers.makeTestFixture();
+  fixture = helpers.makeTestFixture();
+  store = helpers.makeTestStore();
+  env = makeEnv(store, templates);
 });
 
 afterEach(() => {
@@ -49,13 +52,13 @@ test("can be rendered", async () => {
 test("can be closed by clicking on it (if sticky)", async () => {
   let n = 0;
   let notif;
-  env.notifications.on("notification_added", null, _notif => {
+  store.on("notification_added", null, _notif => {
     n++;
     notif = _notif;
   });
-  env.notifications.on("notification_closed", null, () => n--);
+  store.on("notification_closed", null, () => n--);
 
-  env.notifications.add({
+  env.addNotification({
     title: "title",
     message: "message",
     sticky: true

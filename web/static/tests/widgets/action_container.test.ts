@@ -1,4 +1,5 @@
-import { ActionStack } from "../../src/ts/store/action_manager";
+import { Env, makeEnv } from "../../src/ts/env";
+import { ActionStack, Store } from "../../src/ts/store";
 import { ActionContainer, Props } from "../../src/ts/widgets/action_container";
 import { Widget } from "../../src/ts/widgets/widget";
 import * as helpers from "../helpers";
@@ -8,7 +9,8 @@ import * as helpers from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: ReturnType<typeof helpers.makeTestEnv>;
+let store: Store;
+let env: Env;
 let props: Props;
 let templates: string;
 
@@ -18,8 +20,8 @@ beforeAll(async () => {
 
 beforeEach(() => {
   fixture = helpers.makeTestFixture();
-  env = helpers.makeTestEnv();
-  env.qweb.loadTemplates(templates);
+  store = helpers.makeTestStore();
+  env = makeEnv(store, templates);
   props = { stack: [] };
 });
 

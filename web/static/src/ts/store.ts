@@ -152,10 +152,10 @@ export class Store extends EventBus {
         this.updateState({ inHome: !this.state.inHome });
         break;
       case "add_notification":
-        this.add(params);
+        this.addNotification(params);
         break;
       case "close_notification":
-        this.close(params);
+        this.closeNotification(params);
         break;
     }
   }
@@ -167,7 +167,7 @@ export class Store extends EventBus {
 
   nextID = 1;
 
-  add(notif: Partial<INotification>): number {
+  addNotification(notif: Partial<INotification>): number {
     const id = this.nextID++;
     const defaultVals = {
       title: "",
@@ -178,11 +178,11 @@ export class Store extends EventBus {
     const notification = Object.assign(defaultVals, notif, { id });
     this.trigger("notification_added", notification);
     if (!notification.sticky) {
-      setTimeout(() => this.close(id), 2500);
+      setTimeout(() => this.closeNotification(id), 2500);
     }
     return id;
   }
-  close(id: number) {
+  closeNotification(id: number) {
     this.trigger("notification_closed", id);
   }
 

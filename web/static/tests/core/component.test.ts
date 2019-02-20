@@ -802,7 +802,6 @@ describe("random stuff/miscellaneous", () => {
     }
     const widget = new Test(env);
     await widget.mount(fixture);
-    // console.log(children(widget)[0].__widget__)
     expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
   });
 

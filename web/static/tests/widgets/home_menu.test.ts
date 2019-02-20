@@ -1,3 +1,5 @@
+import { Env, makeEnv } from "../../src/ts/env";
+import { Store } from "../../src/ts/store";
 import { HomeMenu, Props } from "../../src/ts/widgets/home_menu";
 import * as helpers from "../helpers";
 
@@ -6,7 +8,8 @@ import * as helpers from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let env: ReturnType<typeof helpers.makeTestEnv>;
+let store: Store;
+let env: Env;
 let props: Props;
 let templates: string;
 
@@ -16,8 +19,8 @@ beforeAll(async () => {
 
 beforeEach(() => {
   fixture = helpers.makeTestFixture();
-  env = helpers.makeTestEnv();
-  env.qweb.loadTemplates(templates);
+  store = helpers.makeTestStore();
+  env = makeEnv(store, templates);
   props = { menuInfo: helpers.makeDemoMenuInfo() };
 });
 

@@ -1,15 +1,12 @@
 import { readFile } from "fs";
 import { WEnv } from "../src/ts/core/component";
 import { Callback } from "../src/ts/core/event_bus";
-import { NotificationManager } from "../src/ts/store/notifications";
 import { QWeb } from "../src/ts/core/qweb_vdom";
-import { IRouter, Query, RouterEvent } from "../src/ts/store/router";
 import { idGenerator } from "../src/ts/core/utils";
-import { getMenuInfo, MenuInfo } from "../src/ts/loaders/menus";
+import { getMenuInfo } from "../src/ts/loaders";
 import { actionRegistry } from "../src/ts/registries";
-import { ActionManager } from "../src/ts/store/action_manager";
-import { Ajax } from "../src/ts/store/ajax";
-import { Env } from "../src/ts/env";
+import { IRouter, Query, RouterEvent } from "../src/ts/services/router";
+import { MenuInfo, Services, Store } from "../src/ts/store";
 
 export function makeTestFixture() {
   let fixture = document.createElement("div");
@@ -24,37 +21,29 @@ export function makeTestWEnv(): WEnv {
   };
 }
 
-export interface MockEnv extends Env {
-  router: MockRouter;
-}
-
-export function makeTestEnv(): MockEnv {
-  const ajax = new MockAjax(mockFetch);
-  const actionManager = new ActionManager(actionRegistry, ajax);
-  const router = new MockRouter();
-  const notifications = new NotificationManager();
-  let { qweb, getID } = makeTestWEnv();
-  return {
-    qweb,
-    getID,
-    actionRegistry,
-    ajax,
-    actionManager,
-    notifications,
-    router,
-    rpc: ajax.rpc,
-    debug: false,
-    isMobile: false
-  };
+export function makeTestStore(services: Partial<Services> = {}): Store {
+  const fullservices: Services = Object.assign(
+    {
+      rpc: mockFetch,
+      router: new MockRouter()
+    },
+    services
+  );
+  const menuInfo = makeDemoMenuInfo();
+  const store = new Store(fullservices, menuInfo, actionRegistry);
+  return store;
 }
 
 function mockFetch(route: string, params: any): Promise<any> {
   return Promise.resolve(true);
 }
-class MockAjax extends Ajax {}
 
-class MockRouter implements IRouter {
-  currentQuery: Query = {};
+export class MockRouter implements IRouter {
+  currentQuery: Query;
+
+  constructor(query: Query = {}) {
+    this.currentQuery = query;
+  }
 
   navigate(query: Query) {
     this.currentQuery = query;
@@ -66,10 +55,6 @@ class MockRouter implements IRouter {
 
   formatURL(path: string, query: Query): string {
     return "";
-  }
-
-  setQuery(query: Query) {
-    this.currentQuery = query;
   }
 }
 

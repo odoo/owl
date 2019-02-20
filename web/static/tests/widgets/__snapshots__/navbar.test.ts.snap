@@ -1,8 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`can be rendered 1`] = `
-"<div class=\\"o_navbar\\">
-    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+exports[`can be rendered (in home menu, no app) 1`] = `
+"<div class=\\"o_navbar o_in_home\\">
+    
+    
+  </div>"
+`;
+
+exports[`can be rendered (in home menu, one active app) 1`] = `
+"<div class=\\"o_navbar o_in_home\\">
+    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-chevron-left\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
     
   </div>"
 `;

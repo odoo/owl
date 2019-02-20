@@ -34,7 +34,15 @@ afterEach(() => {
 // Tests
 //------------------------------------------------------------------------------
 
-test("can be rendered", async () => {
+test("can be rendered (in home menu, no app)", async () => {
+  props.inHome = true;
+  const navbar = new Navbar(env, props);
+  await navbar.mount(fixture);
+  expect(fixture.innerHTML).toMatchSnapshot();
+});
+
+test("can be rendered (in home menu, one active app)", async () => {
+  props = { inHome: true, app: menuInfo.menus[96]! };
   const navbar = new Navbar(env, props);
   await navbar.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();

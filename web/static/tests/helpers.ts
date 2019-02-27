@@ -6,7 +6,7 @@ import { idGenerator } from "../src/ts/core/utils";
 import { getMenuInfo } from "../src/ts/loaders";
 import { actionRegistry } from "../src/ts/registries";
 import { IRouter, Query, RouterEvent } from "../src/ts/services/router";
-import { MenuInfo, Services, Store } from "../src/ts/store";
+import { MenuInfo, Services, Store } from "../src/ts/store/store";
 
 export function makeTestFixture() {
   let fixture = document.createElement("div");

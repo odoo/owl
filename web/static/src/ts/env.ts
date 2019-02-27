@@ -1,7 +1,7 @@
 import { WEnv } from "./core/component";
 import { QWeb } from "./core/qweb_vdom";
 import { idGenerator } from "./core/utils";
-import { INotification, RPC, Services, Store } from "./store";
+import { INotification, RPC, Services, Store } from "./store/store";
 
 //------------------------------------------------------------------------------
 // Types

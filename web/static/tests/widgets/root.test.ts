@@ -1,5 +1,5 @@
 import { Env, makeEnv } from "../../src/ts/env";
-import { Store } from "../../src/ts/store";
+import { Store } from "../../src/ts/store/store";
 import { Root } from "../../src/ts/widgets/root";
 import * as helpers from "../helpers";
 

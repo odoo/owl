@@ -1,5 +1,5 @@
 import { Env, makeEnv } from "../../src/ts/env";
-import { Store } from "../../src/ts/store";
+import { Store } from "../../src/ts/store/store";
 import { HomeMenu, Props } from "../../src/ts/widgets/home_menu";
 import * as helpers from "../helpers";
 

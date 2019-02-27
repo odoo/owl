@@ -1,5 +1,5 @@
 import { Env, makeEnv } from "../../src/ts/env";
-import { ActionStack, Store } from "../../src/ts/store";
+import { ActionStack, Store } from "../../src/ts/store/store";
 import { ActionContainer, Props } from "../../src/ts/widgets/action_container";
 import { Widget } from "../../src/ts/widgets/widget";
 import * as helpers from "../helpers";

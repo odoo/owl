@@ -1,5 +1,5 @@
 import { findInTree } from "./core/utils";
-import { MenuInfo, MenuItem } from "./store";
+import { MenuInfo, MenuItem } from "./store/store";
 
 //------------------------------------------------------------------------------
 // Templates

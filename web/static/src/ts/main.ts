@@ -5,7 +5,7 @@ import { loadMenus, loadTemplates } from "./loaders";
 import { actionRegistry } from "./registries";
 import { rpc } from "./services/ajax";
 import { Router } from "./services/router";
-import { Store } from "./store";
+import { Store } from "./store/store";
 import { Root } from "./widgets/root";
 
 //------------------------------------------------------------------------------

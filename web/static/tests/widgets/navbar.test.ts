@@ -1,5 +1,5 @@
 import { Env, makeEnv } from "../../src/ts/env";
-import { MenuInfo, Store } from "../../src/ts/store";
+import { MenuInfo, Store } from "../../src/ts/store/store";
 import { Navbar, Props } from "../../src/ts/widgets/navbar";
 import * as helpers from "../helpers";
 

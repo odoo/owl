@@ -1,4 +1,4 @@
-import { MenuItem } from "../store";
+import { MenuItem } from "../store/store";
 import { PureWidget } from "./widget";
 
 //------------------------------------------------------------------------------

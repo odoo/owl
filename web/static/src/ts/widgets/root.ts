@@ -1,6 +1,6 @@
 import { debounce } from "../core/utils";
 import { Env } from "../env";
-import { State, Store } from "../store";
+import { State, Store } from "../store/store";
 import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";

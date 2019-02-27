@@ -1,5 +1,5 @@
 import { Registry } from "./core/registry";
-import { ActionWidget } from "./store";
+import { ActionWidget } from "./store/store";
 import { CRM } from "./widgets/crm";
 import { Discuss } from "./widgets/discuss";
 

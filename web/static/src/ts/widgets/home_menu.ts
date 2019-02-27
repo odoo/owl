@@ -1,4 +1,4 @@
-import { MenuInfo, MenuItem } from "../store";
+import { MenuInfo, MenuItem } from "../store/store";
 import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------

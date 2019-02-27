@@ -1,4 +1,4 @@
-import { ActionStack } from "../store";
+import { ActionStack } from "../store/store";
 import { Widget } from "./widget";
 
 //------------------------------------------------------------------------------

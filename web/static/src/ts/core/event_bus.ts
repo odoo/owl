@@ -22,7 +22,7 @@ export interface Subscription {
 //------------------------------------------------------------------------------
 
 export class EventBus {
-  private subscriptions: { [eventType: string]: Subscription[] } = {};
+  subscriptions: { [eventType: string]: Subscription[] } = {};
 
   /**
    * Add a listener for the 'eventType' events.

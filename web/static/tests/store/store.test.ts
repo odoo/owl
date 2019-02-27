@@ -108,7 +108,7 @@ describe("state transitions", () => {
     // should still be in home menu since no app is currently active
     expect(store.state.inHome).toBe(true);
 
-    store.activateMenuItem(96);
+    await store.activateMenuItem(96);
     expect(store.state.inHome).toBe(false);
 
     store.toggleHomeMenu();

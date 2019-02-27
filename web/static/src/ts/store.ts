@@ -249,10 +249,13 @@ function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(Base: T) {
       if (!menu) {
         throw new Error("Invalid menu id");
       }
-      this.updateAppState(menu.app, menu.actionId);
+      return this.updateAppState(menu.app, menu.actionId);
     }
 
-    private updateAppState(app: MenuItem | null, actionId: number | null) {
+    private async updateAppState(
+      app: MenuItem | null,
+      actionId: number | null
+    ) {
       const newApp = app || this.state.currentApp;
       if (actionId) {
         const query: Query = { action_id: String(actionId) };
@@ -264,7 +267,7 @@ function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(Base: T) {
           this.update({ currentApp: app });
         }
         this.services.router.navigate(query);
-        this.doAction(actionId);
+        return this.doAction(actionId);
       } else {
         this.update({ inHome: true, currentApp: newApp });
       }
@@ -296,9 +299,9 @@ function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(Base: T) {
       return { app, actionId };
     }
 
-    doAction(request: ActionRequest) {
+    async doAction(request: ActionRequest) {
       if (typeof request === "number") {
-        this.loadAction(request);
+        await this.loadAction(request);
         // this is an action ID
         let name = request === 131 ? "discuss" : "crm";
         let title =

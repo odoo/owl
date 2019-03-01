@@ -26,11 +26,28 @@ export interface ActWindowInfo extends CommonActionInfo {
   view: string;
 }
 
-export interface ActionDescription {
+interface BaseActionDescription {
   id: number;
-  type: "ir.actions.act_window" | "ir.actions.client";
   target: "current";
+  name: string;
 }
+interface ClientActionDescription extends BaseActionDescription {
+  type: "ir.actions.client";
+  tag: string;
+}
+
+interface ActWindowActionDescription extends BaseActionDescription {
+  type: "ir.actions.act_window";
+  views: [false | number, string][];
+  domain: false | string;
+  res_id: number;
+  res_model: string;
+  context: Object | string;
+}
+
+export type ActionDescription =
+  | ClientActionDescription
+  | ActWindowActionDescription;
 
 export type ActionInfo = ClientActionInfo | ActWindowInfo;
 export type ActionStack = ActionInfo[];

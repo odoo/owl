@@ -43,6 +43,8 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
   Base: T
 ) {
   return class extends Base {
+    actionCache: { [key: number]: Promise<ActionDescription> } = {};
+
     async doAction(request: ActionRequest) {
       if (typeof request === "number") {
         await this.loadAction(request);
@@ -68,13 +70,16 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
       }
     }
 
-    loadAction(id: number) {
-      return this.rpc({
+    loadAction(id: number): Promise<ActionDescription> {
+      if (id in this.actionCache) {
+        return this.actionCache[id];
+      }
+      return (this.actionCache[id] = this.rpc({
         route: "web/action/load",
         params: {
           action_id: id
         }
-      });
+      }));
     }
   };
 }

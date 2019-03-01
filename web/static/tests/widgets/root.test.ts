@@ -57,7 +57,7 @@ test("start with no action => clicks on client action => discuss is rendered", a
   const root = new Root(env, store);
   await root.mount(fixture);
 
-  expect(env.services.router.getQuery()).toEqual({});
+  expect(env.services.router.getQuery()).toEqual({ home: true });
 
   // discuss menu item
   await (<any>document.querySelector('[data-menu="96"]')).click();

@@ -4,11 +4,7 @@ import { EventBus, Callback } from "../core/event_bus";
 // Types and helpers
 //------------------------------------------------------------------------------
 
-export type Query = { [key: string]: string };
-
-function clearSlashes(s: string): string {
-  return s.replace(/\/$/, "").replace(/^\//, "");
-}
+export type Query = { [key: string]: string | true };
 
 export type RouterEvent = "query_changed";
 
@@ -22,6 +18,10 @@ export interface IRouter {
 //------------------------------------------------------------------------------
 // Router
 //------------------------------------------------------------------------------
+
+function clearSlashes(s: string): string {
+  return s.replace(/\/$/, "").replace(/^\//, "");
+}
 
 export class Router extends EventBus implements IRouter {
   currentQuery: Query;
@@ -46,7 +46,11 @@ export class Router extends EventBus implements IRouter {
   formatQuery(query: Query): string {
     let parts: string[] = [];
     for (let key in query) {
-      parts.push(`${key}=${query[key]}`);
+      if (query[key] === true) {
+        parts.push(key);
+      } else {
+        parts.push(`${key}=${query[key]}`);
+      }
     }
     return parts.join("&");
   }

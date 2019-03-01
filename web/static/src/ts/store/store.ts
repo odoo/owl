@@ -62,6 +62,7 @@ export class BaseStore extends EventBus {
   menuInfo: MenuInfo;
   services: Services;
   actionRegistry: Registry<ActionWidget>;
+  currentQuery: Query;
 
   constructor(
     services: Services,
@@ -72,6 +73,7 @@ export class BaseStore extends EventBus {
     this.services = services;
     this.menuInfo = menuInfo;
     this.actionRegistry = actionRegistry;
+    this.currentQuery = {};
   }
 
   update(nextState: Partial<State>) {
@@ -84,6 +86,16 @@ export class BaseStore extends EventBus {
       return;
     }
     this.update({ inHome: !this.state.inHome });
+    if (this.state.inHome) {
+      this.services.router.navigate({ home: true });
+    } else {
+      this.updateQuery(this.currentQuery);
+    }
+  }
+
+  updateQuery(query: Query) {
+    this.currentQuery = query;
+    this.services.router.navigate(query);
   }
 }
 
@@ -101,6 +113,7 @@ export class Store extends actionManagerMixin(
     this.state.currentApp = app;
     if (!actionId) {
       this.state.inHome = true;
+      this.services.router.navigate({ home: true });
     }
 
     this.services.router.on("query_changed", this, this.updateAction);
@@ -131,8 +144,8 @@ export class Store extends actionManagerMixin(
       if (app) {
         this.update({ currentApp: app });
       }
-      this.services.router.navigate(query);
-      return this.doAction(actionId);
+      await this.doAction(actionId);
+      this.updateQuery(query);
     } else {
       this.update({ inHome: true, currentApp: newApp });
     }
@@ -144,14 +157,14 @@ export class Store extends actionManagerMixin(
     const menuInfo = this.menuInfo;
     let app: MenuItem | null = null;
     let actionId: number | null = null;
-    if ("action_id" in query) {
+    if (typeof query.action_id === "string") {
       actionId = parseInt(query.action_id, 10);
       if (menuInfo.actionMap[actionId]) {
         const menu = menuInfo.actionMap[actionId]!;
         app = menu.app;
       }
     }
-    if ("menu_id" in query) {
+    if (typeof query.menu_id === "string") {
       const menuId = parseInt(query.menu_id, 10);
       const menu = menuInfo.menus[menuId];
       if (menu) {

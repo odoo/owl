@@ -107,13 +107,26 @@ describe("state transitions", () => {
 
     // should still be in home menu since no app is currently active
     expect(store.state.inHome).toBe(true);
+    expect(store.services.router.getQuery()).toEqual({ home: true });
 
-    await store.activateMenuItem(96);
+    const promise = store.activateMenuItem(96);
+    expect(store.services.router.getQuery()).toEqual({ home: true });
+
+    await promise;
     expect(store.state.inHome).toBe(false);
+    expect(store.services.router.getQuery()).toEqual({
+      action_id: "131",
+      menu_id: "96"
+    });
 
     store.toggleHomeMenu();
     expect(store.state.inHome).toBe(true);
+    expect(store.services.router.getQuery()).toEqual({ home: true });
     store.toggleHomeMenu();
     expect(store.state.inHome).toBe(false);
+    expect(store.services.router.getQuery()).toEqual({
+      action_id: "131",
+      menu_id: "96"
+    });
   });
 });

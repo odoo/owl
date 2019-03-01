@@ -20,7 +20,7 @@ export async function loadTemplates(): Promise<string> {
 // Menus
 //------------------------------------------------------------------------------
 
-interface BaseMenuItem {
+export interface BaseMenuItem {
   id: number;
   name: string;
   parent_id: number | false;

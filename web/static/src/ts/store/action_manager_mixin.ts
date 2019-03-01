@@ -64,7 +64,7 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
 
     async doAction(request: ActionRequest) {
       if (typeof request === "number") {
-        await this.loadAction(request);
+        const descr = await this.loadAction(request);
         // this is an action ID
         let name = request === 131 ? "discuss" : "crm";
         let title =
@@ -84,6 +84,7 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
             }
           ]
         });
+        document.title = descr.name + " - Odoo";
       }
     }
 

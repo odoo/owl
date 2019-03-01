@@ -118,24 +118,7 @@ exports[`start with no action => clicks on client action => discuss is rendered 
         Discuss
       </a>
       <ul class=\\"o_menu_sections\\">
-        <li>
-          
-            <a href=\\"#\\" role=\\"button\\" class=\\"dropdown-toggle o-no-caret\\" data-toggle=\\"dropdown\\">
-              <span>
-                Integrations
-              </span>
-            </a>
-            <div class=\\"dropdown-menu\\" role=\\"menu\\">
-              
-                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
-                  <span>
-                    Github Repositories
-                  </span>
-                </a>
-              
-            </div>
-          
-        </li>
+        
         
       </ul>
     

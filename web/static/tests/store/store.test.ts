@@ -129,4 +129,19 @@ describe("state transitions", () => {
       menu_id: "96"
     });
   });
+
+  test("document title", async () => {
+    document.title = "Odoo";
+    const store = makeTestStore();
+    expect(store.state.inHome).toBe(true);
+    expect(document.title).toBe("Odoo");
+    const promise = store.activateMenuItem(96);
+    expect(document.title).toBe("Odoo");
+    await promise;
+    expect(document.title).toBe("Discuss - Odoo");
+
+    store.toggleHomeMenu();
+
+    expect(document.title).toBe("Discuss - Odoo");
+  });
 });

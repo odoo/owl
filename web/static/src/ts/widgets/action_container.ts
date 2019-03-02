@@ -38,7 +38,7 @@ export class ActionContainer extends Widget<Props, {}> {
 
   async setContentWidget() {
     const info = this.props.stack[this.props.stack.length - 1];
-    if (info && info.type === "client") {
+    if (info) {
       const Widget = info.Widget;
       let widget = new Widget(this, {});
       await widget.mount(this.el || document.createElement("div"));

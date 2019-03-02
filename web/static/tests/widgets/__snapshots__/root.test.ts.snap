@@ -39,69 +39,41 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
     
       <a class=\\"o_menu_brand\\" href=\\"\\" role=\\"button\\">
-        CRM
+        Discuss
       </a>
       <ul class=\\"o_menu_sections\\">
-        <li>
-          
-            <a href=\\"#\\" role=\\"button\\" class=\\"dropdown-toggle o-no-caret\\" data-toggle=\\"dropdown\\">
-              <span>
-                Sales
-              </span>
-            </a>
-            <div class=\\"dropdown-menu\\" role=\\"menu\\">
-              
-                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
-                  <span>
-                    My Pipeline
-                  </span>
-                </a>
-              
-                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
-                  <span>
-                    My Quotations
-                  </span>
-                </a>
-              
-                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
-                  <span>
-                    Team Pipelines
-                  </span>
-                </a>
-              
-            </div>
-          
-        </li><li>
-          
-            <a href=\\"#\\" role=\\"button\\" class=\\"dropdown-toggle o-no-caret\\" data-toggle=\\"dropdown\\">
-              <span>
-                Leads
-              </span>
-            </a>
-            <div class=\\"dropdown-menu\\" role=\\"menu\\">
-              
-                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
-                  <span>
-                    Leads
-                  </span>
-                </a>
-              
-                <a href=\\"\\" data-toggle=\\"collapse\\" data-target=\\"#someid\\" role=\\"menuitem\\" class=\\"dropdown-item\\">
-                  <span>
-                    Scoring Rules
-                  </span>
-                </a>
-              
-            </div>
-          
-        </li>
+        
         
       </ul>
     
   </div>
     
-      <div class=\\"o_content\\"><div class=\\"o_crm\\">
-    <span>CRM!!!!</span>
+      <div class=\\"o_content\\"><div class=\\"o_discuss\\">
+    <span>DISCUSS!!</span>
+    <button>Reset first counter</button>
+    <button>Reset counter 2 in 3s</button>
+    <button>Toggle  Clock/counters</button>
+    <button>Toggle Color</button>
+    <button>Rerender this widget</button>
+    <input>
+    
+      <div>
+      <button>-</button>
+      <span style=\\"font-weight:bold\\">Value: 4</span>
+      <button>+</button>
+    </div>
+      <div>
+      <button>-</button>
+      <span style=\\"font-weight:bold\\">Value: 400</span>
+      <button>+</button>
+    </div>
+    
+    <div>
+      <span>Current Color: </span>
+      red
+    </div>
+    <button>Add notif</button>
+    <button>Add sticky notif</button>
   </div></div>
     
     <div class=\\"o_notification_container\\"></div>

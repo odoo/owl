@@ -38,7 +38,7 @@ test("can be rendered (in home menu)", async () => {
 });
 
 test("if url has action_id, will render action and navigate to proper menu_id", async () => {
-  const router = new helpers.MockRouter({ action_id: "595" });
+  const router = new helpers.MockRouter({ action_id: "131" });
   store = helpers.makeTestStore({ router });
   env = makeEnv(store, templates);
   await helpers.nextTick();
@@ -46,8 +46,8 @@ test("if url has action_id, will render action and navigate to proper menu_id", 
   const root = new Root(env, store);
   await root.mount(fixture);
   expect(env.services.router.getQuery()).toEqual({
-    action_id: "595",
-    menu_id: "409"
+    action_id: "131",
+    menu_id: "96"
   });
   expect(fixture.innerHTML).toMatchSnapshot();
   // we check here that the url was changed to set app id as menu_id

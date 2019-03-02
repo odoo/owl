@@ -73,10 +73,6 @@
 
   <div t-name="web.action_container" class="o_content"/>
 
-  <div t-name="web.crm" class="o_crm">
-    <span>CRM!!!!</span>
-  </div>
-
   <div t-name="web.discuss" class="o_discuss">
     <span>DISCUSS!!</span>
     <button t-on-click="resetCounter">Reset first counter</button>

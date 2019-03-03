@@ -202,3 +202,32 @@ We have 3 main folders and 3 main files:
 - allow t-if t-widget and t-else t-widget on same t tag
 
 - should we allow class and t-add-class to be additive?
+
+# Advantages/Pros/Cons
+
+Cons:
+
+- big rewrite, lot of work
+
+Pros:
+
+- much lighter (prototype code for web client with template engine,
+  services, component system, and misc core code is less than the size of jquery.
+  Also, current web client code is convoluted and too complex for what it does)
+
+- much simpler: declarative and composable widgets will be so much easier to
+  learn. No need to be an expert in how a odoo widget works. Also, the architecture will be much closer to the state of the art in js frameworks (such as react+redux)
+  So, new hires will be productive faster
+
+- core code independant of jquery/underscore/jquery ui/whatever.
+
+- faster speed of development: I expect composable widgets+declarative framework
+  and better organized code to allow us to develop much faster in the future,
+  because the fundamentals are much better
+
+- more powerful extension system: xpath on templates may modify widget hierarchy
+
+- more powerful responsive system: a t-if="env.isMobile" will allow the
+  framework to create/destroy widgets/dom stuff on the fly.
+
+So, Antony, do you choose AMBITION or MEDIOCRITY?

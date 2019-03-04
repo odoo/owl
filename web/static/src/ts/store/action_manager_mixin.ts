@@ -30,12 +30,12 @@ interface BaseActionDescription {
   target: "current";
   name: string;
 }
-interface ClientActionDescription extends BaseActionDescription {
+export interface ClientActionDescription extends BaseActionDescription {
   type: "ir.actions.client";
   tag: string;
 }
 
-interface ActWindowActionDescription extends BaseActionDescription {
+export interface ActWindowActionDescription extends BaseActionDescription {
   type: "ir.actions.act_window";
   views: [false | number, string][];
   domain: false | string;

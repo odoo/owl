@@ -40,7 +40,6 @@ const demoStack: ActionStack = [
     title: "some title",
     target: "new",
     type: "client",
-    name: "hey",
     Widget: ClientAction
   }
 ];

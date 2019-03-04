@@ -767,7 +767,7 @@ describe("props evaluation (with t-props directive)", () => {
   });
 });
 
-describe("t-on directive on widgets", () => {
+describe("other directives with t-widget", () => {
   test("t-on works as expected", async () => {
     let n = 0;
     class ParentWidget extends Widget {
@@ -788,6 +788,28 @@ describe("t-on directive on widgets", () => {
     child.destroy();
     child.trigger("customevent", 43);
     expect(n).toBe(1);
+  });
+
+  test("t-if works with t-widget", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div><t t-widget="child" t-if="state.flag"/></div>`;
+      widgets = { child: Child };
+      state = { flag: true };
+    }
+    class Child extends Widget {
+      inlineTemplate = "<span>hey</span>";
+    }
+
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+
+    await widget.updateState({ flag: false });
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    await widget.updateState({ flag: true });
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
 });
 

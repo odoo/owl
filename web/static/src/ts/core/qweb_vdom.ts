@@ -269,11 +269,16 @@ export class QWeb {
     if (isDebug) {
       ctx.code.unshift("    debugger");
     }
-    let template = new Function(
-      "context",
-      "extra",
-      ctx.code.join("\n")
-    ) as CompiledTemplate<VNode>;
+    let template;
+    try {
+      template = new Function(
+        "context",
+        "extra",
+        ctx.code.join("\n")
+      ) as CompiledTemplate<VNode>;
+    } catch (e) {
+      throw new Error(`Invalid template (or compiled code): ${e.message}`);
+    }
     if (isDebug) {
       console.log(
         `Template: ${
@@ -875,6 +880,10 @@ const widgetDirective: Directive = {
     ctx.closeIf();
 
     ctx.addLine(`extra.promises.push(def${defID});`);
+
+    if (node.getAttribute("t-if")) {
+      ctx.closeIf();
+    }
 
     return true;
   }

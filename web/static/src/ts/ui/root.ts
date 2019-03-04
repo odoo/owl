@@ -4,7 +4,7 @@ import { State, Store } from "../store/store";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
-import { Widget } from "./widget";
+import { Widget } from "../widget";
 import { Action } from "../store/action_manager_mixin";
 
 //------------------------------------------------------------------------------

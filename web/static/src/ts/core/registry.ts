@@ -16,8 +16,3 @@ export class Registry<T> {
     return this.map[key];
   }
 }
-
-//------------------------------------------------------------------------------
-// Main registry instance
-//------------------------------------------------------------------------------
-export const registry = new Registry();

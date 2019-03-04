@@ -1,5 +1,5 @@
 import { MenuItem } from "../store/store";
-import { PureWidget } from "./widget";
+import { PureWidget } from "../widget";
 
 //------------------------------------------------------------------------------
 // Types

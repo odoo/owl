@@ -1,5 +1,5 @@
 import { MenuInfo, MenuItem } from "../store/store";
-import { Widget } from "./widget";
+import { Widget } from "../widget";
 
 //------------------------------------------------------------------------------
 // Types

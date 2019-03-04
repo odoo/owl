@@ -1,5 +1,5 @@
-import { Component, PureComponent } from "../core/component";
-import { Env } from "../env";
+import { Component, PureComponent } from "./core/component";
+import { Env } from "./env";
 
 //------------------------------------------------------------------------------
 // Widget classes

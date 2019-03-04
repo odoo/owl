@@ -103,7 +103,7 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
 
     doActWindowAction(descr: ActWindowActionDescription) {
       return async function executor(this: Action, parent: Widget<any, any>) {
-        const widget = new View(parent, {});
+        const widget = new View(parent, { info: descr.views[0][1] });
         const div = document.createElement("div");
         await widget.mount(div);
         this.widget = widget;

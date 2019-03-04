@@ -406,11 +406,19 @@ export class QWeb {
       // dynamic attributes
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
-        const formattedValue = this._formatExpression(ctx.getValue(value!));
+        let formattedValue = this._formatExpression(ctx.getValue(value!));
         const attID = ctx.generateID();
         if (!attName.match(/^[a-zA-Z]+$/)) {
           // attribute contains 'non letters' => we want to quote it
           attName = '"' + attName + '"';
+        }
+        // we need to combine dynamic with non dynamic attributes:
+        // class="a" t-att-class="'yop'" should be rendered as class="a yop"
+        const attValue = (<Element>node).getAttribute(attName);
+        if (attValue) {
+          const attValueID = ctx.generateID();
+          ctx.addLine(`let _${attValueID} = ${formattedValue};`);
+          formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
         }
         ctx.addLine(`let _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);

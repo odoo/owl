@@ -11,8 +11,8 @@
     <div class="o_loading d-none" t-ref="loading_indicator">Loading</div>
   </div>
 
-  <div t-name="web.navbar" class="o_navbar" t-att-class="props.inHome ? 'o_navbar o_in_home' : 'o_navbar'">
-    <a aria-label="Applications" t-if="!props.inHome || props.app" t-att-class="props.inHome ? 'o_title fa fa-chevron-left' : 'o_title fa fa-th'" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
+  <div t-name="web.navbar" class="o_navbar" t-att-class="props.inHome ? 'o_in_home' : ''">
+    <a aria-label="Applications" t-if="!props.inHome || props.app" class="o_title fa" t-att-class="props.inHome ? 'fa-chevron-left' : 'fa-th'" href="#" title="Applications" accesskey="h" t-on-click="toggleHome"/>
     <t t-if="!props.inHome &amp;&amp; props.app">
       <a class="o_menu_brand" t-att-href="getUrl(props.app)" role="button" t-on-click="openMenu(props.app)">
         <t t-esc="props.app.name"/>

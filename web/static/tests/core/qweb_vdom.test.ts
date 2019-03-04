@@ -420,6 +420,12 @@ describe("attributes", () => {
     const expected = `<div foo="&lt;foo" bar="&lt;bar&gt;" baz="&lt;&quot;&lt;baz&gt;&quot;&gt;" qux="&lt;&gt;"></div>`;
     expect(result).toBe(expected);
   });
+
+  test("t-att-class and class should combine together", () => {
+    qweb.addTemplate("test", `<div class="hello" t-att-class="value"/>`);
+    const result = renderToString(qweb, "test", { value: "world" });
+    expect(result).toBe(`<div class="hello world"></div>`);
+  });
 });
 
 describe("t-call (template calling", () => {

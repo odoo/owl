@@ -1,5 +1,5 @@
 import { Env, makeEnv } from "../../src/ts/env";
-import { INotification, Store } from "../../src/ts/store/store";
+import { Notification as INotification, Store } from "../../src/ts/store/store";
 import { Notification } from "../../src/ts/ui/notification";
 import * as helpers from "../helpers";
 
@@ -50,23 +50,15 @@ test("can be rendered", async () => {
 });
 
 test("can be closed by clicking on it (if sticky)", async () => {
-  let n = 0;
-  let notif;
-  store.on("notification_added", null, _notif => {
-    n++;
-    notif = _notif;
-  });
-  store.on("notification_closed", null, () => n--);
-
   env.addNotification({
     title: "title",
     message: "message",
     sticky: true
   });
 
-  const navbar = new Notification(env, notif);
+  const navbar = new Notification(env, store.state.notifications[0]);
   await navbar.mount(fixture);
-  expect(n).toBe(1);
+  expect(store.state.notifications.length).toBe(1);
   (<any>fixture.getElementsByClassName("o_close")[0]).click();
-  expect(n).toBe(0);
+  expect(store.state.notifications.length).toBe(0);
 });

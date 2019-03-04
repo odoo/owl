@@ -5,7 +5,11 @@
     <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" />
     <t t-widget="HomeMenu" t-if="state.inHome" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" />
     <div class="o_content" t-att-class="state.inHome ? 'o_hidden' : ''" t-ref="content"/>
-    <div class="o_notification_container" t-ref="notification_container"/>
+    <div class="o_notification_container">
+      <t t-foreach="state.notifications" t-as="notif">
+        <t t-widget="Notification" t-props="notif"/>
+      </t>
+    </div>
     <div class="o_loading d-none" t-ref="loading_indicator">Loading</div>
   </div>
 

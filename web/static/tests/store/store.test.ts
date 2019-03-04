@@ -35,56 +35,44 @@ describe("rpc", () => {
 
 describe("notifications", () => {
   test("can subscribe and add notification", () => {
-    let n = 0;
     const store = makeTestStore();
-    store.on("notification_added", null, () => n++);
-    store.on("notification_closed", null, () => n--);
-    expect(n).toBe(0);
+    expect(store.state.notifications.length).toBe(0);
     const id = store.addNotification({
       title: "test",
       message: "message"
     });
-    expect(n).toBe(1);
+    expect(store.state.notifications.length).toBe(1);
     expect(id).toBeDefined();
   });
 
   test("can close a notification", () => {
-    let n = 0;
     const store = makeTestStore();
-    store.on("notification_added", null, () => n++);
-    store.on("notification_closed", null, () => n--);
 
     const id = store.addNotification({
       title: "test",
       message: "message"
     });
-    expect(n).toBe(1);
+    expect(store.state.notifications.length).toBe(1);
 
     store.closeNotification(id);
-    expect(n).toBe(0);
+    expect(store.state.notifications.length).toBe(0);
   });
 
   test("notifications closes themselves after a while", () => {
     jest.useFakeTimers();
-    let n = 0;
     const store = makeTestStore();
-    store.on("notification_added", null, () => n++);
-    store.on("notification_closed", null, () => n--);
 
     store.addNotification({ title: "test", message: "message" });
 
     expect(setTimeout).toHaveBeenCalledTimes(1);
-    expect(n).toBe(1);
+    expect(store.state.notifications.length).toBe(1);
     jest.runAllTimers();
-    expect(n).toBe(0);
+    expect(store.state.notifications.length).toBe(0);
   });
 
   test("sticky notifications do not close themselves after a while", () => {
     jest.useFakeTimers();
-    let n = 0;
     const store = makeTestStore();
-    store.on("notification_added", null, () => n++);
-    store.on("notification_closed", null, () => n--);
 
     store.addNotification({
       title: "test",
@@ -93,9 +81,9 @@ describe("notifications", () => {
     });
 
     expect(setTimeout).toHaveBeenCalledTimes(0);
-    expect(n).toBe(1);
+    expect(store.state.notifications.length).toBe(1);
     jest.runAllTimers();
-    expect(n).toBe(1);
+    expect(store.state.notifications.length).toBe(1);
   });
 });
 

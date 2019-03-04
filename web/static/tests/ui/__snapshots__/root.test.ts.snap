@@ -27,7 +27,9 @@ exports[`can be rendered (in home menu) 1`] = `
     </div>
   </div>
     <div class=\\"o_content o_hidden\\"></div>
-    <div class=\\"o_notification_container\\"></div>
+    <div class=\\"o_notification_container\\">
+      
+    </div>
     <div class=\\"o_loading d-none\\">Loading</div>
   </div>"
 `;
@@ -74,7 +76,9 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     <button>Add notif</button>
     <button>Add sticky notif</button>
   </div></div>
-    <div class=\\"o_notification_container\\"></div>
+    <div class=\\"o_notification_container\\">
+      
+    </div>
     <div class=\\"o_loading d-none\\">Loading</div>
   </div>"
 `;
@@ -121,7 +125,9 @@ exports[`start with no action => clicks on client action => discuss is rendered 
     <button>Add notif</button>
     <button>Add sticky notif</button>
   </div></div>
-    <div class=\\"o_notification_container\\"></div>
+    <div class=\\"o_notification_container\\">
+      
+    </div>
     <div class=\\"o_loading d-none\\">Loading</div>
   </div>"
 `;

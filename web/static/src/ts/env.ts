@@ -1,7 +1,7 @@
 import { WEnv } from "./core/component";
 import { QWeb } from "./core/qweb_vdom";
 import { idGenerator } from "./core/utils";
-import { INotification, RPC, Services, Store } from "./store/store";
+import { Notification, RPC, Services, Store } from "./store/store";
 
 //------------------------------------------------------------------------------
 // Types
@@ -12,7 +12,7 @@ export interface Env extends WEnv {
 
   // commands
   activateMenuItem(menuId: number): void;
-  addNotification(notif: Partial<INotification>): number;
+  addNotification(notif: Partial<Notification>): number;
   closeNotification(id: number): void;
   toggleHomeMenu(): void;
 

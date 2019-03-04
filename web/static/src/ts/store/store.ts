@@ -4,7 +4,6 @@ import { idGenerator } from "../core/utils";
 import { RPC } from "../services/ajax";
 import { IRouter, Query } from "../services/router";
 import { actionManagerMixin, ActionWidget } from "./action_manager_mixin";
-import { notificationMixin } from "./notification_mixin";
 import { rpcMixin } from "./rpc_mixin";
 import { MenuItem } from "./store";
 
@@ -13,7 +12,6 @@ import { MenuItem } from "./store";
 //------------------------------------------------------------------------------
 
 export { ActionWidget } from "./action_manager_mixin";
-export { INotification } from "./notification_mixin";
 export { RPC } from "./rpc_mixin";
 
 export interface MenuItem {
@@ -39,11 +37,20 @@ export interface MenuInfo {
 export interface State {
   inHome: boolean;
   currentApp: MenuItem | null;
+  notifications: Notification[];
 }
 
 export interface Services {
   rpc: RPC;
   router: IRouter;
+}
+
+export interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  type: "notification" | "warning";
+  sticky: boolean;
 }
 
 //------------------------------------------------------------------------------
@@ -52,7 +59,8 @@ export interface Services {
 export class BaseStore extends EventBus {
   state: State = {
     inHome: false,
-    currentApp: null
+    currentApp: null,
+    notifications: []
   };
   menuInfo: MenuInfo;
   services: Services;
@@ -93,11 +101,31 @@ export class BaseStore extends EventBus {
     this.currentQuery = query;
     this.services.router.navigate(query);
   }
+
+  addNotification(notif: Partial<Notification>): number {
+    const id = this.generateID();
+    const defaultVals = {
+      title: "",
+      message: "",
+      type: "notification",
+      sticky: false
+    };
+    const notification = Object.assign(defaultVals, notif, { id });
+    const notifs = this.state.notifications.concat(notification);
+    this.update({ notifications: notifs });
+    if (!notification.sticky) {
+      setTimeout(() => this.closeNotification(id), 2500);
+    }
+    return id;
+  }
+
+  closeNotification(id: number) {
+    const notifs = this.state.notifications.filter(n => n.id !== id);
+    this.update({ notifications: notifs });
+  }
 }
 
-export class Store extends actionManagerMixin(
-  rpcMixin(notificationMixin(BaseStore))
-) {
+export class Store extends actionManagerMixin(rpcMixin(BaseStore)) {
   constructor(
     services: Services,
     menuInfo: MenuInfo,

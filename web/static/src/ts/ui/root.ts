@@ -13,9 +13,8 @@ import { Action } from "../store/action_manager_mixin";
 
 export class Root extends Widget<Store, State> {
   template = "web.web_client";
-  widgets = { Navbar, HomeMenu };
+  widgets = { Navbar, HomeMenu, Notification };
 
-  notifications: { [id: number]: Notification } = {};
   store: Store;
 
   constructor(env: Env, store: Store) {
@@ -23,20 +22,10 @@ export class Root extends Widget<Store, State> {
     this.store = store;
     this.state = store.state;
   }
+
   mounted() {
     this.store.on("state_updated", this, newState => {
       this.updateState(newState);
-    });
-
-    // notifications
-    this.store.on("notification_added", this, notif => {
-      const notification = new Notification(this, notif);
-      this.notifications[notif.id] = notification;
-      notification.mount(<any>this.refs.notification_container);
-    });
-    this.store.on("notification_closed", this, id => {
-      this.notifications[id].destroy();
-      delete this.notifications[id];
     });
 
     // loading indicator

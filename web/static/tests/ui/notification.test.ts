@@ -1,6 +1,6 @@
 import { Env, makeEnv } from "../../src/ts/env";
 import { INotification, Store } from "../../src/ts/store/store";
-import { Notification } from "../../src/ts/widgets/notification";
+import { Notification } from "../../src/ts/ui/notification";
 import * as helpers from "../helpers";
 
 //------------------------------------------------------------------------------

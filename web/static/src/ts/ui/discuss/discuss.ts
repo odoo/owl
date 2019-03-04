@@ -1,6 +1,6 @@
 import { Clock } from "./clock";
 import { Counter } from "./counter";
-import { Widget } from "./widget";
+import { Widget } from "../widget";
 
 //------------------------------------------------------------------------------
 // Types

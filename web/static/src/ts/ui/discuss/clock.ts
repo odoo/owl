@@ -1,4 +1,4 @@
-import { Widget } from "./widget";
+import { Widget } from "../widget";
 
 //------------------------------------------------------------------------------
 // Types

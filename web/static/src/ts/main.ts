@@ -6,7 +6,7 @@ import { actionRegistry } from "./registries";
 import { rpc } from "./services/ajax";
 import { Router } from "./services/router";
 import { Store } from "./store/store";
-import { Root } from "./widgets/root";
+import { Root } from "./ui/root";
 
 //------------------------------------------------------------------------------
 // Web Client Bootstrapping

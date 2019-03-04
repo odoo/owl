@@ -1,7 +1,7 @@
 import { Type } from "../core/component";
 import { rpcMixin } from "./rpc_mixin";
-import { Widget } from "../widgets/widget";
-import { View } from "../widgets/view";
+import { Widget } from "../ui/widget";
+import { View } from "../ui/view";
 
 export type Context = { [key: string]: any };
 

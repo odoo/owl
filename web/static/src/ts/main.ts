@@ -30,16 +30,3 @@ document.addEventListener("DOMContentLoaded", async function() {
   // For debugging purpose, we keep a reference to the root widget in odoo
   (<any>window).odoo.rootWidget = rootWidget;
 });
-
-let testMixin = Base =>
-  class extends Base {
-    calc() {
-      return 32;
-    }
-  };
-
-class Foo {}
-
-class Bar extends testMixin(Foo) {}
-
-console.log(new Bar().calc());

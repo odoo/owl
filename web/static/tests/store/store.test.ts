@@ -113,6 +113,7 @@ describe("state transitions", () => {
     expect(store.services.router.getQuery()).toEqual({ home: true });
 
     await promise;
+    store.lastAction!.activate();
     expect(store.state.inHome).toBe(false);
     expect(store.services.router.getQuery()).toEqual({
       action_id: "131",
@@ -138,6 +139,8 @@ describe("state transitions", () => {
     const promise = store.activateMenuItem(96);
     expect(document.title).toBe("Odoo");
     await promise;
+    store.lastAction!.activate();
+
     expect(document.title).toBe("Discuss - Odoo");
 
     store.toggleHomeMenu();

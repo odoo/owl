@@ -26,6 +26,7 @@ exports[`can be rendered (in home menu) 1`] = `
       </a>
     </div>
   </div>
+    <div class=\\"o_content o_hidden\\"></div>
     <div class=\\"o_notification_container\\"></div>
     <div class=\\"o_loading d-none\\">Loading</div>
   </div>"
@@ -46,7 +47,7 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     
   </div>
     
-      <div class=\\"o_content\\"><div class=\\"o_discuss\\">
+    <div class=\\"o_content\\"><div class=\\"o_discuss\\">
     <span>DISCUSS!!</span>
     <button>Reset first counter</button>
     <button>Reset counter 2 in 3s</button>
@@ -73,7 +74,6 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     <button>Add notif</button>
     <button>Add sticky notif</button>
   </div></div>
-    
     <div class=\\"o_notification_container\\"></div>
     <div class=\\"o_loading d-none\\">Loading</div>
   </div>"
@@ -94,7 +94,7 @@ exports[`start with no action => clicks on client action => discuss is rendered 
     
   </div>
     
-      <div class=\\"o_content\\"><div class=\\"o_discuss\\">
+    <div class=\\"o_content\\"><div class=\\"o_discuss\\">
     <span>DISCUSS!!</span>
     <button>Reset first counter</button>
     <button>Reset counter 2 in 3s</button>
@@ -121,7 +121,6 @@ exports[`start with no action => clicks on client action => discuss is rendered 
     <button>Add notif</button>
     <button>Add sticky notif</button>
   </div></div>
-    
     <div class=\\"o_notification_container\\"></div>
     <div class=\\"o_loading d-none\\">Loading</div>
   </div>"

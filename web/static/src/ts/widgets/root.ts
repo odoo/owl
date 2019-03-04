@@ -1,11 +1,11 @@
 import { debounce } from "../core/utils";
 import { Env } from "../env";
 import { State, Store } from "../store/store";
-import { ActionContainer } from "./action_container";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
 import { Widget } from "./widget";
+import { Action } from "../store/action_manager_mixin";
 
 //------------------------------------------------------------------------------
 // Root Widget
@@ -13,7 +13,7 @@ import { Widget } from "./widget";
 
 export class Root extends Widget<Store, State> {
   template = "web.web_client";
-  widgets = { Navbar, HomeMenu, ActionContainer };
+  widgets = { Navbar, HomeMenu };
 
   notifications: { [id: number]: Notification } = {};
   store: Store;
@@ -53,5 +53,21 @@ export class Root extends Widget<Store, State> {
         this.render();
       }
     }, 50));
+
+    // actions
+    this.store.on("update_action", this, this.applyAction);
+    if (this.store.lastAction) {
+      this.applyAction(this.store.lastAction);
+    }
+  }
+
+  async applyAction(action: Action) {
+    const widget = await action.executor(this);
+    if (widget) {
+      // to do: call some public method of widget instead...
+      (<HTMLElement>this.refs.content).appendChild(widget.el!);
+      widget.__mount();
+      action.activate();
+    }
   }
 }

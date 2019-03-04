@@ -45,12 +45,12 @@ test("if url has action_id, will render action and navigate to proper menu_id", 
 
   const root = new Root(env, store);
   await root.mount(fixture);
+  await helpers.nextTick();
   expect(env.services.router.getQuery()).toEqual({
     action_id: "131",
     menu_id: "96"
   });
   expect(fixture.innerHTML).toMatchSnapshot();
-  // we check here that the url was changed to set app id as menu_id
 });
 
 test("start with no action => clicks on client action => discuss is rendered", async () => {

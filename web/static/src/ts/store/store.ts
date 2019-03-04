@@ -1,12 +1,9 @@
 import { EventBus } from "../core/event_bus";
 import { Registry } from "../core/registry";
+import { idGenerator } from "../core/utils";
 import { RPC } from "../services/ajax";
 import { IRouter, Query } from "../services/router";
-import {
-  actionManagerMixin,
-  ActionStack,
-  ActionWidget
-} from "./action_manager_mixin";
+import { actionManagerMixin, ActionWidget } from "./action_manager_mixin";
 import { notificationMixin } from "./notification_mixin";
 import { rpcMixin } from "./rpc_mixin";
 import { MenuItem } from "./store";
@@ -15,7 +12,7 @@ import { MenuItem } from "./store";
 // Types
 //------------------------------------------------------------------------------
 
-export { ActionStack, ActionWidget } from "./action_manager_mixin";
+export { ActionWidget } from "./action_manager_mixin";
 export { INotification } from "./notification_mixin";
 export { RPC } from "./rpc_mixin";
 
@@ -40,7 +37,6 @@ export interface MenuInfo {
 }
 
 export interface State {
-  stack: ActionStack;
   inHome: boolean;
   currentApp: MenuItem | null;
 }
@@ -55,7 +51,6 @@ export interface Services {
 //------------------------------------------------------------------------------
 export class BaseStore extends EventBus {
   state: State = {
-    stack: [],
     inHome: false,
     currentApp: null
   };
@@ -63,6 +58,7 @@ export class BaseStore extends EventBus {
   services: Services;
   actionRegistry: Registry<ActionWidget>;
   currentQuery: Query;
+  generateID = idGenerator();
 
   constructor(
     services: Services,
@@ -115,7 +111,6 @@ export class Store extends actionManagerMixin(
       this.state.inHome = true;
       this.services.router.navigate({ home: true });
     }
-
     this.services.router.on("query_changed", this, this.updateAction);
     this.updateAction(this.services.router.getQuery());
   }

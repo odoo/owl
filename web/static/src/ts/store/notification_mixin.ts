@@ -1,6 +1,5 @@
 import { Type } from "../core/component";
 import { BaseStore } from "./store";
-import { idGenerator } from "../core/utils";
 
 //------------------------------------------------------------------------------
 // Notifications Mixin
@@ -15,8 +14,6 @@ export interface INotification {
 
 export function notificationMixin<T extends Type<BaseStore>>(Base: T) {
   return class extends Base {
-    generateID = idGenerator();
-
     addNotification(notif: Partial<INotification>): number {
       const id = this.generateID();
       const defaultVals = {

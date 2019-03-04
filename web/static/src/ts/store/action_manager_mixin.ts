@@ -49,7 +49,13 @@ export type ActionDescription =
   | ActWindowActionDescription;
 
 export type ActionInfo = ClientActionInfo | ActWindowInfo;
-export type ActionStack = ActionInfo[];
+
+export interface Action {
+  id: number;
+  widget?: Widget<any, any>;
+  executor(parent: Widget<any, any>): Promise<Widget<any, any> | null>;
+  activate(): void;
+}
 
 //------------------------------------------------------------------------------
 // Action Manager Mixin
@@ -60,55 +66,61 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
 ) {
   return class extends Base {
     actionCache: { [key: number]: Promise<ActionDescription> } = {};
+    currentAction?: Action;
+    lastAction?: Action;
 
     async doAction(request: ActionRequest) {
+      const self = this;
       const descr = await this.loadAction(request);
+      let executor;
       switch (descr.type) {
         case "ir.actions.client":
-          return this.doClientAction(descr);
+          executor = this.doClientAction(descr);
+          break;
         case "ir.actions.act_window":
-          return this.doActWindowAction(descr);
+          executor = this.doActWindowAction(descr);
+          break;
         default:
           throw new Error("unhandled action");
       }
+      const action: Action = {
+        id: this.generateID(),
+        executor,
+        activate() {
+          if (self.currentAction && self.currentAction.widget) {
+            self.currentAction.widget.destroy();
+          }
+          self.currentAction = action;
+          self.update({
+            inHome: false
+          });
+          document.title = descr.name + " - Odoo";
+        }
+      };
+      self.lastAction = action;
+      this.trigger("update_action", action);
     }
 
     doActWindowAction(descr: ActWindowActionDescription) {
-      let title = descr.name;
-      this.update({
-        inHome: false,
-        stack: [
-          {
-            id: 1,
-            context: {},
-            target: "current",
-            type: "act_window",
-            title,
-            Widget: View
-          }
-        ]
-      });
-      document.title = descr.name + " - Odoo";
+      return async function executor(this: Action, parent: Widget<any, any>) {
+        const widget = new View(parent, {});
+        const div = document.createElement("div");
+        await widget.mount(div);
+        this.widget = widget;
+        return widget;
+      };
     }
 
     doClientAction(descr: ClientActionDescription) {
       let key = descr.tag;
-      let title = descr.name;
       let Widget = this.actionRegistry.get(key);
-      this.update({
-        inHome: false,
-        stack: [
-          {
-            id: 1,
-            context: {},
-            target: "current",
-            type: "client",
-            title,
-            Widget: Widget
-          }
-        ]
-      });
-      document.title = descr.name + " - Odoo";
+      return async function executor(this: Action, parent: Widget<any, any>) {
+        const widget = new Widget(parent, {});
+        const div = document.createElement("div");
+        await widget.mount(div);
+        this.widget = widget;
+        return widget;
+      };
     }
 
     loadAction(id: number): Promise<ActionDescription> {

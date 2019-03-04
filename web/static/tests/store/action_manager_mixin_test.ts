@@ -1,4 +1,4 @@
-import { makeTestStore } from "../helpers";
+import { makeTestStore, mockFetch } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Tests
@@ -6,14 +6,19 @@ import { makeTestStore } from "../helpers";
 
 test("does not reload action if already done", async () => {
   const routes: string[] = [];
-  const store = makeTestStore({ rpc: async route => routes.push(route) });
+  const store = makeTestStore({
+    rpc: async (route, params) => {
+      routes.push(route);
+      return mockFetch(route, params);
+    }
+  });
   expect(routes).toEqual([]);
 
-  store.doAction(32);
+  store.doAction(131);
 
   expect(routes).toEqual(["web/action/load"]);
 
-  store.doAction(32);
+  store.doAction(131);
 
   expect(routes).toEqual(["web/action/load"]);
 });

@@ -35,7 +35,7 @@ export function makeTestStore(services: Partial<Services> = {}): Store {
   return store;
 }
 
-function mockFetch(route: string, params: any): Promise<any> {
+export function mockFetch(route: string, params: any): Promise<any> {
   if (route === "web/action/load") {
     const action = actions.find(a => a.id === params.action_id);
     return Promise.resolve(action);

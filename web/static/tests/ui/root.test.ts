@@ -1,26 +1,15 @@
-import { Env, makeEnv } from "../../src/ts/env";
-import { Store } from "../../src/ts/store/store";
 import { Root } from "../../src/ts/ui/root";
 import * as helpers from "../helpers";
+import { makeTestData, makeTestEnv } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let store: Store;
-let env: Env;
-let templates: string;
-
-beforeAll(async () => {
-  templates = await helpers.loadTemplates();
-});
 
 beforeEach(() => {
   fixture = helpers.makeTestFixture();
-  store = helpers.makeTestStore();
-  env = makeEnv(store, templates);
-  // props = { menuInfo: helpers.makeDemoMenuInfo() };
 });
 
 afterEach(() => {
@@ -32,21 +21,23 @@ afterEach(() => {
 //------------------------------------------------------------------------------
 
 test("can be rendered (in home menu)", async () => {
-  const root = new Root(env, store);
+  const data = await makeTestData();
+  const testEnv = makeTestEnv(data);
+  const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();
 });
 
 test("if url has action_id, will render action and navigate to proper menu_id", async () => {
+  const data = await makeTestData();
   const router = new helpers.MockRouter({ action_id: "131" });
-  store = helpers.makeTestStore({ router });
-  env = makeEnv(store, templates);
+  const testEnv = makeTestEnv({ ...data, router });
   await helpers.nextTick();
 
-  const root = new Root(env, store);
+  const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
   await helpers.nextTick();
-  expect(env.services.router.getQuery()).toEqual({
+  expect(router.getQuery()).toEqual({
     action_id: "131",
     menu_id: "96"
   });
@@ -54,16 +45,18 @@ test("if url has action_id, will render action and navigate to proper menu_id", 
 });
 
 test("start with no action => clicks on client action => discuss is rendered", async () => {
-  const root = new Root(env, store);
+  const data = await makeTestData();
+  const testEnv = makeTestEnv(data);
+  const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
 
-  expect(env.services.router.getQuery()).toEqual({ home: true });
+  expect(testEnv.services.router.getQuery()).toEqual({ home: true });
 
   // discuss menu item
   await (<any>document.querySelector('[data-menu="96"]')).click();
   await helpers.nextTick();
   expect(fixture.innerHTML).toMatchSnapshot();
-  expect(env.services.router.getQuery()).toEqual({
+  expect(testEnv.services.router.getQuery()).toEqual({
     action_id: "131",
     menu_id: "96"
   });

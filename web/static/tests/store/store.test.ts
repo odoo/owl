@@ -1,12 +1,4 @@
-import { makeTestStore, nextMicroTick } from "../helpers";
-
-//------------------------------------------------------------------------------
-// Setup and helpers
-//------------------------------------------------------------------------------
-
-function mockFetch(route: string, params: any): Promise<any> {
-  return Promise.resolve(`${route}`);
-}
+import { makeTestData, makeTestEnv, nextMicroTick } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Tests
@@ -14,13 +6,20 @@ function mockFetch(route: string, params: any): Promise<any> {
 
 describe("rpc", () => {
   test("properly translate query in route", async () => {
-    const store = makeTestStore({ rpc: mockFetch });
-    const result = await store.rpc({ model: "test", method: "hey" });
-    expect(result).toBe("/web/dataset/call_kw/test/hey");
+    expect.assertions(1);
+
+    const store = makeTestEnv({
+      mockRPC(route, params) {
+        expect(route).toBe("/web/dataset/call_kw/test/hey");
+        return this.rpc(route, params);
+      }
+    }).store;
+
+    await store.rpc({ model: "test", method: "hey" });
   });
 
   test("trigger proper events", async () => {
-    const store = makeTestStore({ rpc: mockFetch });
+    const store = makeTestEnv().store;
     const events: string[] = [];
     store.on("rpc_status", null, s => {
       events.push(s);
@@ -35,7 +34,7 @@ describe("rpc", () => {
 
 describe("notifications", () => {
   test("can subscribe and add notification", () => {
-    const store = makeTestStore();
+    const store = makeTestEnv().store;
     expect(store.state.notifications.length).toBe(0);
     const id = store.addNotification({
       title: "test",
@@ -46,7 +45,7 @@ describe("notifications", () => {
   });
 
   test("can close a notification", () => {
-    const store = makeTestStore();
+    const store = makeTestEnv().store;
 
     const id = store.addNotification({
       title: "test",
@@ -60,7 +59,7 @@ describe("notifications", () => {
 
   test("notifications closes themselves after a while", () => {
     jest.useFakeTimers();
-    const store = makeTestStore();
+    const store = makeTestEnv().store;
 
     store.addNotification({ title: "test", message: "message" });
 
@@ -72,7 +71,7 @@ describe("notifications", () => {
 
   test("sticky notifications do not close themselves after a while", () => {
     jest.useFakeTimers();
-    const store = makeTestStore();
+    const store = makeTestEnv().store;
 
     store.addNotification({
       title: "test",
@@ -89,7 +88,8 @@ describe("notifications", () => {
 
 describe("state transitions", () => {
   test("toggle menu", async () => {
-    const store = makeTestStore();
+    const data = await makeTestData();
+    const store = makeTestEnv(data).store;
     expect(store.state.inHome).toBe(true);
     store.toggleHomeMenu();
 
@@ -121,7 +121,8 @@ describe("state transitions", () => {
 
   test("document title", async () => {
     document.title = "Odoo";
-    const store = makeTestStore();
+    const data = await makeTestData();
+    const store = makeTestEnv(data).store;
     expect(store.state.inHome).toBe(true);
     expect(document.title).toBe("Odoo");
     const promise = store.activateMenuItem(96);

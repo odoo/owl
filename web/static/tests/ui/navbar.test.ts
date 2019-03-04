@@ -1,5 +1,4 @@
-import { Env, makeEnv } from "../../src/ts/env";
-import { MenuInfo, Store } from "../../src/ts/store/store";
+import { MenuInfo } from "../../src/ts/store/store";
 import { Navbar, Props } from "../../src/ts/ui/navbar";
 import * as helpers from "../helpers";
 
@@ -8,22 +7,16 @@ import * as helpers from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let store: Store;
-let env: Env;
+let env: helpers.TestEnv;
 let props: Props;
 let menuInfo: MenuInfo;
-let templates: string;
 
-beforeAll(async () => {
-  templates = await helpers.loadTemplates();
-});
-
-beforeEach(() => {
+beforeEach(async () => {
   fixture = helpers.makeTestFixture();
-  store = helpers.makeTestStore();
-  env = makeEnv(store, templates);
+  const data = await helpers.makeTestData();
+  env = helpers.makeTestEnv(data);
   props = { inHome: false, app: null };
-  menuInfo = helpers.makeDemoMenuInfo();
+  menuInfo = helpers.makeMenuInfo();
 });
 
 afterEach(() => {
@@ -65,10 +58,10 @@ test("mobile mode: navbar is different", async () => {
 
 test("clicking on left icon toggle home menu ", async () => {
   props.app = menuInfo.menus[96]!;
-  store.state.inHome = false;
+  env.store.state.inHome = false;
   const navbar = new Navbar(env, props);
   await navbar.mount(fixture);
-  expect(store.state.inHome).toBe(false);
+  expect(env.store.state.inHome).toBe(false);
   (<any>fixture).getElementsByClassName("o_title")[0].click();
-  expect(store.state.inHome).toBe(true);
+  expect(env.store.state.inHome).toBe(true);
 });

@@ -1,4 +1,5 @@
-import { makeTestStore, mockFetch } from "../helpers";
+import { makeTestData, makeTestEnv } from "../helpers";
+import { Registry } from "../../src/ts/core/registry";
 
 //------------------------------------------------------------------------------
 // Tests
@@ -6,19 +7,34 @@ import { makeTestStore, mockFetch } from "../helpers";
 
 test("does not reload action if already done", async () => {
   const routes: string[] = [];
-  const store = makeTestStore({
-    rpc: async (route, params) => {
+  const data = await makeTestData();
+  const testEnv = makeTestEnv({
+    ...data,
+    mockRPC(route, params) {
       routes.push(route);
-      return mockFetch(route, params);
+      return this.rpc(route, params);
     }
   });
+
   expect(routes).toEqual([]);
 
-  store.doAction(131);
+  testEnv.store.doAction(131);
 
   expect(routes).toEqual(["web/action/load"]);
 
-  store.doAction(131);
+  testEnv.store.doAction(131);
 
   expect(routes).toEqual(["web/action/load"]);
+});
+
+test("display a warning if client action is not in registry", async () => {
+  const data = await makeTestData();
+  data.actionRegistry = new Registry();
+  const testEnv = makeTestEnv(data);
+
+  await testEnv.store.doAction(131);
+
+  const notifs = testEnv.store.state.notifications;
+  expect(notifs.length).toBe(1);
+  expect(notifs[0].type).toBe("warning");
 });

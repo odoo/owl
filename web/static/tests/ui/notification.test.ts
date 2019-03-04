@@ -1,5 +1,4 @@
-import { Env, makeEnv } from "../../src/ts/env";
-import { Notification as INotification, Store } from "../../src/ts/store/store";
+import { Notification as INotification } from "../../src/ts/store/store";
 import { Notification } from "../../src/ts/ui/notification";
 import * as helpers from "../helpers";
 
@@ -8,19 +7,12 @@ import * as helpers from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let store: Store;
-let env: Env;
-let templates: string;
+let env: helpers.TestEnv;
 
-beforeAll(async () => {
-  templates = await helpers.loadTemplates();
-});
-
-beforeEach(() => {
+beforeEach(async () => {
   fixture = helpers.makeTestFixture();
-  fixture = helpers.makeTestFixture();
-  store = helpers.makeTestStore();
-  env = makeEnv(store, templates);
+  const data = await helpers.makeTestData();
+  env = helpers.makeTestEnv(data);
 });
 
 afterEach(() => {
@@ -67,9 +59,9 @@ test("can be closed by clicking on it (if sticky)", async () => {
     sticky: true
   });
 
-  const navbar = new Notification(env, store.state.notifications[0]);
+  const navbar = new Notification(env, env.store.state.notifications[0]);
   await navbar.mount(fixture);
-  expect(store.state.notifications.length).toBe(1);
+  expect(env.store.state.notifications.length).toBe(1);
   (<any>fixture.getElementsByClassName("o_close")[0]).click();
-  expect(store.state.notifications.length).toBe(0);
+  expect(env.store.state.notifications.length).toBe(0);
 });

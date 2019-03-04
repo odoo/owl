@@ -232,6 +232,9 @@ export class QWeb {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlstr, "text/xml");
     const templates = doc.getElementsByTagName("templates")[0];
+    if (!templates) {
+      return;
+    }
     for (let elem of <any>templates.children) {
       const name = elem.getAttribute("t-name");
       this._processTemplate(elem);

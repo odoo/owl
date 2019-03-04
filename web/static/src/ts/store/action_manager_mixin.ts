@@ -83,22 +83,24 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
         default:
           throw new Error("unhandled action");
       }
-      const action: Action = {
-        id: this.generateID(),
-        executor,
-        activate() {
-          if (self.currentAction && self.currentAction.widget) {
-            self.currentAction.widget.destroy();
+      if (executor) {
+        const action: Action = {
+          id: this.generateID(),
+          executor,
+          activate() {
+            if (self.currentAction && self.currentAction.widget) {
+              self.currentAction.widget.destroy();
+            }
+            self.currentAction = action;
+            self.update({
+              inHome: false
+            });
+            document.title = descr.name + " - Odoo";
           }
-          self.currentAction = action;
-          self.update({
-            inHome: false
-          });
-          document.title = descr.name + " - Odoo";
-        }
-      };
-      self.lastAction = action;
-      this.trigger("update_action", action);
+        };
+        self.lastAction = action;
+        this.trigger("update_action", action);
+      }
     }
 
     doActWindowAction(descr: ActWindowActionDescription) {
@@ -111,11 +113,21 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
       };
     }
 
-    doClientAction(descr: ClientActionDescription) {
+    doClientAction(
+      descr: ClientActionDescription
+    ): Action["executor"] | undefined {
       let key = descr.tag;
       let Widget = this.actionRegistry.get(key);
+      if (!Widget) {
+        this.addNotification({
+          title: "Invalid Client Action",
+          type: "warning",
+          message: `Cannot find widget '${key}' in the action registry`
+        });
+        return;
+      }
       return async function executor(this: Action, parent: Widget<any, any>) {
-        const widget = new Widget(parent, {});
+        const widget = new Widget!(parent, {});
         const div = document.createElement("div");
         await widget.mount(div);
         this.widget = widget;

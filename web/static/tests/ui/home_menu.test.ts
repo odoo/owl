@@ -1,27 +1,14 @@
-import { Env, makeEnv } from "../../src/ts/env";
-import { Store } from "../../src/ts/store/store";
-import { HomeMenu, Props } from "../../src/ts/ui/home_menu";
-import * as helpers from "../helpers";
+import { HomeMenu } from "../../src/ts/ui/home_menu";
+import { makeTestData, makeTestEnv, makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let store: Store;
-let env: Env;
-let props: Props;
-let templates: string;
-
-beforeAll(async () => {
-  templates = await helpers.loadTemplates();
-});
 
 beforeEach(() => {
-  fixture = helpers.makeTestFixture();
-  store = helpers.makeTestStore();
-  env = makeEnv(store, templates);
-  props = { menuInfo: helpers.makeDemoMenuInfo() };
+  fixture = makeTestFixture();
 });
 
 afterEach(() => {
@@ -33,7 +20,10 @@ afterEach(() => {
 //------------------------------------------------------------------------------
 
 test("can be rendered", async () => {
-  const homeMenu = new HomeMenu(env, props);
+  const data = await makeTestData();
+  const testEnv = makeTestEnv(data);
+  const props = { menuInfo: data.menuInfo };
+  const homeMenu = new HomeMenu(testEnv, props);
   await homeMenu.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();
 });

@@ -9,4 +9,8 @@ export class Notification extends Widget<INotification, {}> {
     ev.preventDefault();
     this.env.closeNotification(this.props.id);
   }
+
+  get icon() {
+    return this.props.type === "warning" ? "fa-exclamation" : "fa-lightbulb";
+  }
 }

@@ -1,6 +1,5 @@
 $navbar-height: 46px;
 $main-color: #875a7b;
-$o-notification-info-bg-color: #fcfbea;
 $o-main-text-color: #666666;
 
 html {
@@ -139,6 +138,9 @@ body {
 }
 
 /***** Notifications *****/
+$o-notification-info-bg-color: #fcfbea;
+$o-notification-error-bg-color: #f16567;
+
 .o_notification_container {
   position: absolute;
   width: 300px;
@@ -152,6 +154,11 @@ body {
     background-color: $o-notification-info-bg-color;
     box-shadow: 0px 0px 5px 1px $o-main-text-color;
     position: relative;
+
+    &.o_error {
+      color: white;
+      background-color: $o-notification-error-bg-color;
+    }
 
     .o_close {
       position: absolute;

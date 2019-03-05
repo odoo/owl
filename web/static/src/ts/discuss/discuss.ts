@@ -52,6 +52,15 @@ export class Discuss extends Widget<{}, State> {
       sticky
     });
   }
+
+  addWarning() {
+    this.env.addNotification({
+      title: "This is a warning",
+      message: "All your bases are belong to us",
+      type: "warning",
+      sticky: true
+    });
+  }
 }
 
 class ColorWidget extends Widget<{ color: "red" | "blue" }, {}> {

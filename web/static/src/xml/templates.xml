@@ -61,9 +61,10 @@
     </div>
   </div>
 
-  <div t-name="web.notification" class="o_notification">
+  <div t-name="web.notification" class="o_notification" t-att-class="props.type === 'warning' ? 'o_error' : ''">
     <a t-if="props.sticky" class="fa fa-times o_close" href="#" title="Close" aria-label="Close" t-on-click="close"/>
     <div class="o_notification_title">
+      <span t-attf-class="o_icon fa fa-3x {{icon}}" role="img" t-attf-aria-label="Notification {{props.title}}" t-attf-title="Notification {{props.title}}"/>
       <t t-raw="props.title"/>
     </div>
     <div class="o_notification_content" t-if="props.message.length">
@@ -89,6 +90,7 @@
     <t t-widget="ColorWidget" t-props="{color: state.color}"/>
     <button t-on-click="addNotif(false)">Add notif</button>
     <button t-on-click="addNotif(true)">Add sticky notif</button>
+    <button t-on-click="addWarning">Add warning</button>
   </div>
 
 </templates>

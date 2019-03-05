@@ -75,6 +75,7 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     </div>
     <button>Add notif</button>
     <button>Add sticky notif</button>
+    <button>Add warning</button>
   </div></div>
     <div class=\\"o_notification_container\\">
       
@@ -124,6 +125,7 @@ exports[`start with no action => clicks on client action => discuss is rendered 
     </div>
     <button>Add notif</button>
     <button>Add sticky notif</button>
+    <button>Add warning</button>
   </div></div>
     <div class=\\"o_notification_container\\">
       

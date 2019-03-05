@@ -1,9 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`can be rendered (type = warning) 1`] = `
+"<div class=\\"o_notification o_error\\">
+    
+    <div class=\\"o_notification_title\\">
+      <span class=\\"o_icon fa fa-3x fa-exclamation\\" role=\\"img\\" aria-label=\\"Notification title\\" title=\\"Notification title\\"></span>
+      title
+    </div>
+    <div class=\\"o_notification_content\\">
+      message
+    </div>
+  </div>"
+`;
+
 exports[`can be rendered 1`] = `
 "<div class=\\"o_notification\\">
     
     <div class=\\"o_notification_title\\">
+      <span class=\\"o_icon fa fa-3x fa-lightbulb\\" role=\\"img\\" aria-label=\\"Notification title\\" title=\\"Notification title\\"></span>
       title
     </div>
     <div class=\\"o_notification_content\\">

@@ -49,6 +49,17 @@ test("can be rendered", async () => {
   expect(fixture.innerHTML).toMatchSnapshot();
 });
 
+test("can be rendered (type = warning)", async () => {
+  const notif = makeNotification({
+    title: "title",
+    message: "message",
+    type: "warning"
+  });
+  const navbar = new Notification(env, notif);
+  await navbar.mount(fixture);
+  expect(fixture.innerHTML).toMatchSnapshot();
+});
+
 test("can be closed by clicking on it (if sticky)", async () => {
   env.addNotification({
     title: "title",

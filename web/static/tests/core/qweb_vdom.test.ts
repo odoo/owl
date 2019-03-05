@@ -153,6 +153,13 @@ describe("t-raw", () => {
       "<div><ok></ok></div>"
     );
   });
+
+  test("t-raw and another sibling node", () => {
+    qweb.addTemplate("test", `<span><span>hello</span><t t-raw="var"/></span>`);
+    expect(renderToString(qweb, "test", { var: "<ok>world</ok>" })).toBe(
+      "<span><span>hello</span><ok>world</ok></span>"
+    );
+  });
 });
 
 describe("t-set", () => {

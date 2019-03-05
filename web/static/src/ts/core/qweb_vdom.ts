@@ -34,7 +34,7 @@ export class Context {
 
   constructor() {
     this.rootContext = this;
-    this.addLine("let h = this.h;");
+    this.addLine("let h = this.utils.h;");
   }
 
   generateID(): number {
@@ -119,7 +119,6 @@ export class Context {
 export class QWeb {
   processedTemplates: { [name: string]: ProcessedTemplate } = {};
   templates: { [name: string]: CompiledTemplate<VNode> } = {};
-  h = h;
   exprCache: { [key: string]: string } = {};
   directives: Directive[] = [];
 
@@ -138,6 +137,15 @@ export class QWeb {
       widgetDirective
     ].forEach(d => this.addDirective(d));
   }
+
+  utils = {
+    h: h,
+    getFragment(str: string): DocumentFragment {
+      const temp = document.createElement("template");
+      temp.innerHTML = str;
+      return temp.content;
+    }
+  };
 
   addDirective(dir: Directive) {
     this.directives.push(dir);
@@ -564,10 +572,16 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
     if (ctx.escaping) {
       ctx.addLine(`c${ctx.parentNode}.push({text: ${text}});`);
     } else {
-      ctx.addLine(`p${ctx.parentNode}.hook = {
-            create: (_, n) => n.elm.innerHTML = e${exprID},
-            update: (_, n) => n.elm.innerHTML = e${exprID},
-        };`); // p${ctx.parentNode}.elm.innerHTML = e${exprID}
+      let fragID = ctx.generateID();
+      ctx.addLine(`let frag${fragID} = this.utils.getFragment(e${exprID})`);
+      let tempNodeID = ctx.generateID();
+      ctx.addLine(`let p${tempNodeID} = {hook: {`);
+      ctx.addLine(
+        `  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`
+      );
+      ctx.addLine(`}};`);
+      ctx.addLine(`let vn${tempNodeID} = h('div', p${tempNodeID})`);
+      ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
     }
     if (node.childNodes.length) {
       ctx.addElse();

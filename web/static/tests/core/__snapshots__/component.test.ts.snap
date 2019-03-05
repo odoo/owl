@@ -4,7 +4,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     //WIDGET

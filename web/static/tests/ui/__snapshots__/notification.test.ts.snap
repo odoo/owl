@@ -3,7 +3,11 @@
 exports[`can be rendered 1`] = `
 "<div class=\\"o_notification\\">
     
-    <div class=\\"o_notification_title\\">title</div>
-    <div class=\\"o_notification_content\\">message</div>
+    <div class=\\"o_notification_title\\">
+      title
+    </div>
+    <div class=\\"o_notification_content\\">
+      message
+    </div>
   </div>"
 `;

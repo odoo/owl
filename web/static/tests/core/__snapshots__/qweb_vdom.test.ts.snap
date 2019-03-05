@@ -3,7 +3,7 @@
 exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -14,7 +14,7 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
 exports[`attributes dynamic attribute with a dash 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = context['id'];
     let c2 = [], p2 = {key:2,attrs:{\\"data-action-id\\": _1}};
     let vn2 = h('div', p2, c2);
@@ -25,7 +25,7 @@ exports[`attributes dynamic attribute with a dash 1`] = `
 exports[`attributes dynamic attributes 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = 'bar';
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -36,7 +36,7 @@ exports[`attributes dynamic attributes 1`] = `
 exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = \`Some text \${context['id']}\`;
     let c2 = [], p2 = {key:2,attrs:{\\"aria-label\\": _1}};
     let vn2 = h('div', p2, c2);
@@ -47,7 +47,7 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 exports[`attributes fixed variable 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -58,7 +58,7 @@ exports[`attributes fixed variable 1`] = `
 exports[`attributes format expression 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = \`\${context['value'] + 37}\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -69,7 +69,7 @@ exports[`attributes format expression 1`] = `
 exports[`attributes format literal 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = \`bar\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -80,7 +80,7 @@ exports[`attributes format literal 1`] = `
 exports[`attributes format multiple 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = \`a \${context['value1']} is \${context['value2']} of \${context['value3']} ]\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -91,7 +91,7 @@ exports[`attributes format multiple 1`] = `
 exports[`attributes format value 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = \`b\${context['value']}r\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     let vn2 = h('div', p2, c2);
@@ -102,7 +102,7 @@ exports[`attributes format value 1`] = `
 exports[`attributes from variables set previously 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let _2 = 'def';
@@ -116,7 +116,7 @@ exports[`attributes from variables set previously 1`] = `
 exports[`attributes object 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{}};
     if (_1 instanceof Array) {
@@ -134,7 +134,7 @@ exports[`attributes object 1`] = `
 exports[`attributes static attributes 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = 'a';
     let _2 = 'b';
     let _3 = 'c';
@@ -147,7 +147,7 @@ exports[`attributes static attributes 1`] = `
 exports[`attributes static attributes on void elements 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = '/test.jpg';
     let _2 = 'Test';
     let c3 = [], p3 = {key:3,attrs:{src: _1,alt: _2}};
@@ -159,7 +159,7 @@ exports[`attributes static attributes on void elements 1`] = `
 exports[`attributes static attributes with dashes 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = 'Close';
     let c2 = [], p2 = {key:2,attrs:{\\"aria-label\\": _1}};
     let vn2 = h('div', p2, c2);
@@ -170,7 +170,7 @@ exports[`attributes static attributes with dashes 1`] = `
 exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = 'hello';
     let _3 = context['value'];
     let _2 = 'hello' + (_3 ? ' ' + _3 : '');
@@ -183,7 +183,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 exports[`attributes tuple literal 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = ['foo', 'bar'];
     let c2 = [], p2 = {key:2,attrs:{}};
     if (_1 instanceof Array) {
@@ -201,7 +201,7 @@ exports[`attributes tuple literal 1`] = `
 exports[`attributes tuple variable 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{}};
     if (_1 instanceof Array) {
@@ -220,7 +220,7 @@ exports[`foreach does not pollute the rendering context 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -252,7 +252,7 @@ exports[`foreach iterate on items (on a element node) 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -287,7 +287,7 @@ exports[`foreach iterate on items 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -333,7 +333,7 @@ exports[`foreach iterate, dict param 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -384,7 +384,7 @@ exports[`foreach iterate, integer param 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let _2 = 3;
@@ -426,7 +426,7 @@ exports[`foreach iterate, position 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -468,7 +468,7 @@ exports[`foreach iterate, position 1`] = `
 exports[`loading templates can load a few templates from a xml string 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('ul', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -487,7 +487,7 @@ exports[`misc global 1`] = `
 "function anonymous(context,extra
 ) {
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -566,10 +566,12 @@ exports[`misc global 1`] = `
     c1.push(vn15);
     let e16 = context['toto'];
     if (e16 || e16 === 0) {
-        p15.hook = {
-            create: (_, n) => n.elm.innerHTML = e16,
-            update: (_, n) => n.elm.innerHTML = e16,
-        };
+        let frag17 = this.utils.getFragment(e16)
+        let p18 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag17, n.elm),
+        }};
+        let vn18 = h('div', p18)
+        c15.push(vn18);
     } else {
         c15.push({text: \`toto default\`});
     }
@@ -582,7 +584,7 @@ exports[`misc global 1`] = `
 exports[`static templates div with a span child node 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -596,7 +598,7 @@ exports[`static templates div with a span child node 1`] = `
 exports[`static templates div with a text node 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`word\`});
@@ -607,7 +609,7 @@ exports[`static templates div with a text node 1`] = `
 exports[`static templates empty div 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     return vn1;
@@ -617,7 +619,7 @@ exports[`static templates empty div 1`] = `
 exports[`static templates simple string 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let vn1 = {text: \`hello vdom\`};
     return vn1;
 }"
@@ -626,7 +628,7 @@ exports[`static templates simple string 1`] = `
 exports[`t-call (template calling basic caller 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`ok\`});
@@ -637,7 +639,7 @@ exports[`t-call (template calling basic caller 1`] = `
 exports[`t-call (template calling inherit context 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = 1;
@@ -651,7 +653,7 @@ exports[`t-call (template calling inherit context 1`] = `
 exports[`t-call (template calling scoped parameters 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -672,7 +674,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
 exports[`t-call (template calling with unused body 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`ok\`});
@@ -683,7 +685,7 @@ exports[`t-call (template calling with unused body 1`] = `
 exports[`t-call (template calling with unused setbody 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`ok\`});
@@ -694,7 +696,7 @@ exports[`t-call (template calling with unused setbody 1`] = `
 exports[`t-call (template calling with used body 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('h1', p1, c1);
     c1.push({text: \`ok\`});
@@ -705,7 +707,7 @@ exports[`t-call (template calling with used body 1`] = `
 exports[`t-call (template calling with used set body 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
@@ -719,7 +721,7 @@ exports[`t-call (template calling with used set body 1`] = `
 exports[`t-esc escaping on a node 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
@@ -733,7 +735,7 @@ exports[`t-esc escaping on a node 1`] = `
 exports[`t-esc escaping on a node with a body 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
@@ -749,7 +751,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
 exports[`t-esc escaping on a node with a body, as a default 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = context['var'];
@@ -765,7 +767,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
 exports[`t-esc literal 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
@@ -779,7 +781,7 @@ exports[`t-esc literal 1`] = `
 exports[`t-esc variable 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = context['var'];
@@ -793,7 +795,7 @@ exports[`t-esc variable 1`] = `
 exports[`t-if boolean value condition elif 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (context['color'] == 'black') {
@@ -815,7 +817,7 @@ exports[`t-if boolean value condition elif 1`] = `
 exports[`t-if boolean value condition else 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     c1.push({text: \`
@@ -847,7 +849,7 @@ exports[`t-if boolean value condition else 1`] = `
 exports[`t-if boolean value condition false else 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -871,7 +873,7 @@ exports[`t-if boolean value condition false else 1`] = `
 exports[`t-if boolean value condition missing 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     if (context['condition']) {
@@ -884,7 +886,7 @@ exports[`t-if boolean value condition missing 1`] = `
 exports[`t-if boolean value false condition 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (context['condition']) {
@@ -897,7 +899,7 @@ exports[`t-if boolean value false condition 1`] = `
 exports[`t-if boolean value true condition 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (context['condition']) {
@@ -911,7 +913,7 @@ exports[`t-on can bind event handler 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('button', p1, c1);
     extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner);
@@ -925,7 +927,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('button', p1, c1);
     p1.on = {click: context['add'].bind(owner, 5)};
@@ -939,7 +941,7 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
 ) {
     let owner = context;
     context = Object.create(context);
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('ul', p1, c1);
     c1.push({text: \`
@@ -975,7 +977,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('button', p1, c1);
     extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner);
@@ -988,15 +990,17 @@ exports[`t-on handler is bound to proper owner 1`] = `
 exports[`t-raw literal 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
     if (e2 || e2 === 0) {
-        p1.hook = {
-            create: (_, n) => n.elm.innerHTML = e2,
-            update: (_, n) => n.elm.innerHTML = e2,
-        };
+        let frag3 = this.utils.getFragment(e2)
+        let p4 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
+        }};
+        let vn4 = h('div', p4)
+        c1.push(vn4);
     }
     return vn1;
 }"
@@ -1005,15 +1009,40 @@ exports[`t-raw literal 1`] = `
 exports[`t-raw not escaping 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = context['var'];
     if (e2 || e2 === 0) {
-        p1.hook = {
-            create: (_, n) => n.elm.innerHTML = e2,
-            update: (_, n) => n.elm.innerHTML = e2,
-        };
+        let frag3 = this.utils.getFragment(e2)
+        let p4 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
+        }};
+        let vn4 = h('div', p4)
+        c1.push(vn4);
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-raw t-raw and another sibling node 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`hello\`});
+    let e3 = context['var'];
+    if (e3 || e3 === 0) {
+        let frag4 = this.utils.getFragment(e3)
+        let p5 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag4, n.elm),
+        }};
+        let vn5 = h('div', p5)
+        c1.push(vn5);
     }
     return vn1;
 }"
@@ -1022,15 +1051,17 @@ exports[`t-raw not escaping 1`] = `
 exports[`t-raw variable 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let e2 = context['var'];
     if (e2 || e2 === 0) {
-        p1.hook = {
-            create: (_, n) => n.elm.innerHTML = e2,
-            update: (_, n) => n.elm.innerHTML = e2,
-        };
+        let frag3 = this.utils.getFragment(e2)
+        let p4 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
+        }};
+        let vn4 = h('div', p4)
+        c1.push(vn4);
     }
     return vn1;
 }"
@@ -1039,7 +1070,7 @@ exports[`t-raw variable 1`] = `
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -1055,7 +1086,7 @@ exports[`t-ref can get a ref on a node 1`] = `
 exports[`t-set evaluate value expression 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = 1 + 2;
@@ -1069,7 +1100,7 @@ exports[`t-set evaluate value expression 1`] = `
 exports[`t-set evaluate value expression, part 2 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = context['somevariable'] + 2;
@@ -1083,7 +1114,7 @@ exports[`t-set evaluate value expression, part 2 1`] = `
 exports[`t-set set from attribute literal 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = 'ok';
@@ -1097,7 +1128,7 @@ exports[`t-set set from attribute literal 1`] = `
 exports[`t-set set from attribute lookup 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = context['value'];
@@ -1111,7 +1142,7 @@ exports[`t-set set from attribute lookup 1`] = `
 exports[`t-set set from body literal 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let vn1 = {text: \`ok\`};
     return vn1;
 }"
@@ -1120,7 +1151,7 @@ exports[`t-set set from body literal 1`] = `
 exports[`t-set set from body lookup 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = context['value'];
@@ -1134,7 +1165,7 @@ exports[`t-set set from body lookup 1`] = `
 exports[`t-set set from empty body 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     return vn1;
@@ -1144,7 +1175,7 @@ exports[`t-set set from empty body 1`] = `
 exports[`t-set value priority 1`] = `
 "function anonymous(context,extra
 ) {
-    let h = this.h;
+    let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let e2 = 1;

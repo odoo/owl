@@ -316,6 +316,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div data-action-id="32"></div>`);
   });
 
+  test("dynamic formatted attributes with a dash", () => {
+    qweb.addTemplate("test", `<div t-attf-aria-label="Some text {{id}}"/>`);
+    const result = renderToString(qweb, "test", { id: 32 });
+    expect(result).toBe(`<div aria-label="Some text 32"></div>`);
+  });
+
   test("fixed variable", () => {
     qweb.addTemplate("test", `<div t-att-foo="value"/>`);
     const result = renderToString(qweb, "test", { value: "ok" });

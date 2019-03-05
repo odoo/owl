@@ -33,6 +33,17 @@ exports[`attributes dynamic attributes 1`] = `
 }"
 `;
 
+exports[`attributes dynamic formatted attributes with a dash 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.h;
+    let _1 = \`Some text \${context['id']}\`;
+    let c2 = [], p2 = {key:2,attrs:{\\"aria-label\\": _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
 exports[`attributes fixed variable 1`] = `
 "function anonymous(context,extra
 ) {

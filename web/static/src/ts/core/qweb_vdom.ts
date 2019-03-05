@@ -425,7 +425,11 @@ export class QWeb {
       }
 
       if (name.startsWith("t-attf-")) {
-        const attName = name.slice(7);
+        let attName = name.slice(7);
+        if (!attName.match(/^[a-zA-Z]+$/)) {
+          // attribute contains 'non letters' => we want to quote it
+          attName = '"' + attName + '"';
+        }
         const formattedExpr = value!.replace(
           /\{\{.*?\}\}/g,
           s => "${" + this._formatExpression(s.slice(2, -2)) + "}"

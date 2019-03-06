@@ -767,4 +767,10 @@ describe("loading templates", () => {
     const result = renderToString(qweb, "main");
     expect(result).toBe("<ul><li>ok</li><li>foo</li></ul>");
   });
+
+  test("does not crash if string does not have templates", () => {
+    const data = "";
+    qweb.loadTemplates(data);
+    expect(qweb.processedTemplates).toEqual({});
+  });
 });

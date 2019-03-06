@@ -25,27 +25,29 @@ export class Root extends Widget<Store, State> {
 
   mounted() {
     this.store.on("state_updated", this, this.updateState);
-
-    // loading indicator
-    this.store.on("rpc_status", this, status => {
-      const method = status === "loading" ? "remove" : "add";
-      (<any>this.refs.loading_indicator).classList[method]("d-none");
-    });
-
-    // adding reactiveness to mobile/non mobile
-    window.addEventListener("resize", <any>debounce(() => {
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile !== this.env.isMobile) {
-        this.env.isMobile = isMobile;
-        this.render();
-      }
-    }, 50));
-
-    // actions
+    this.store.on("rpc_status", this, this.toggleLoadingIndicator);
     this.store.on("update_action", this, this.applyAction);
     if (this.store.lastAction) {
       this.applyAction(this.store.lastAction);
     }
+
+    // adding reactiveness to mobile/non mobile
+    window.addEventListener("resize", <any>(
+      debounce(this.applyMobileInterface.bind(this), 50)
+    ));
+  }
+
+  applyMobileInterface() {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile !== this.env.isMobile) {
+      this.env.isMobile = isMobile;
+      this.render();
+    }
+  }
+
+  toggleLoadingIndicator(status: "loading" | "notloading") {
+    const method = status === "loading" ? "remove" : "add";
+    (<any>this.refs.loading_indicator).classList[method]("d-none");
   }
 
   async applyAction(action: Action) {

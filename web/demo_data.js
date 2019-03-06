@@ -181,13 +181,21 @@
     }
   ];
 
+  let rpcId = 1;
   window.demoData.mockAjax = async function(route, params) {
-    console.log("RPC", route, params);
+    let id = rpcId++;
+    console.log(`[RPC Request ${id}]`, route, params);
 
     // wait some random delay
     const delay = Math.random() * 1000;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    return new Promise(resolve => setTimeout(resolve, delay)).then(() => {
+      const result = _mock(route, params);
+      console.log(`[RPC Response ${id}]`, result);
+      return result;
+    });
+  };
 
+  function _mock(route, params) {
     // mock action
     if (route === "web/action/load") {
       const action = actions.find(a => a.id === params.action_id);
@@ -200,5 +208,5 @@
     // unknown route
     console.warn("Unknown route", route);
     return true;
-  };
+  }
 })(window);

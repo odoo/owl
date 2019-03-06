@@ -3,7 +3,7 @@ import { Registry } from "../core/registry";
 import { idGenerator } from "../core/utils";
 import { RPC } from "../services/ajax";
 import { IRouter, Query } from "../services/router";
-import { actionManagerMixin, ActionWidget } from "./action_manager_mixin";
+import { actionManagerMixin, ControllerWidget } from "./action_manager_mixin";
 import { rpcMixin } from "./rpc_mixin";
 import { MenuItem } from "./store";
 
@@ -11,7 +11,7 @@ import { MenuItem } from "./store";
 // Types
 //------------------------------------------------------------------------------
 
-export { ActionWidget } from "./action_manager_mixin";
+export { ControllerWidget } from "./action_manager_mixin";
 export { RPC } from "./rpc_mixin";
 
 export interface MenuItem {
@@ -64,14 +64,14 @@ export class BaseStore extends EventBus {
   };
   menuInfo: MenuInfo;
   services: Services;
-  actionRegistry: Registry<ActionWidget>;
+  actionRegistry: Registry<ControllerWidget>;
   currentQuery: Query;
   generateID = idGenerator();
 
   constructor(
     services: Services,
     menuInfo: MenuInfo,
-    actionRegistry: Registry<ActionWidget>
+    actionRegistry: Registry<ControllerWidget>
   ) {
     super();
     this.services = services;
@@ -129,7 +129,7 @@ export class Store extends actionManagerMixin(rpcMixin(BaseStore)) {
   constructor(
     services: Services,
     menuInfo: MenuInfo,
-    actionRegistry: Registry<ActionWidget>
+    actionRegistry: Registry<ControllerWidget>
   ) {
     super(services, menuInfo, actionRegistry);
     const query = this.services.router.getQuery();

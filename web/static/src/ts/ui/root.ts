@@ -5,7 +5,7 @@ import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
 import { Widget } from "../widget";
-import { Action } from "../store/action_manager_mixin";
+import { Controller } from "../store/action_manager_mixin";
 
 //------------------------------------------------------------------------------
 // Root Widget
@@ -26,9 +26,9 @@ export class Root extends Widget<Store, State> {
   mounted() {
     this.store.on("state_updated", this, this.updateState);
     this.store.on("rpc_status", this, this.toggleLoadingIndicator);
-    this.store.on("update_action", this, this.applyAction);
-    if (this.store.lastAction) {
-      this.applyAction(this.store.lastAction);
+    this.store.on("update_action", this, this.applyController);
+    if (this.store.lastController) {
+      this.applyController(this.store.lastController);
     }
 
     // adding reactiveness to mobile/non mobile
@@ -50,13 +50,13 @@ export class Root extends Widget<Store, State> {
     (<any>this.refs.loading_indicator).classList[method]("d-none");
   }
 
-  async applyAction(action: Action) {
-    const widget = await action.executor(this);
+  async applyController(controller: Controller) {
+    const widget = await controller.create(this);
     if (widget) {
       // to do: call some public method of widget instead...
       (<HTMLElement>this.refs.content).appendChild(widget.el!);
       widget.__mount();
-      action.activate();
+      this.store.activateController(controller);
     }
   }
 }

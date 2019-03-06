@@ -896,15 +896,13 @@ const widgetDirective: Directive = {
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${
         keepAlive ? "detach" : "destroy"
-      }()}}});`
+      }()}}; w${widgetID}.__widget__.pvnode = pvnode;});`
     );
     ctx.addElse();
     ctx.addLine(
-      `def${defID} = def${defID}.then(()=>{if (!w${widgetID}.__widget__.vnode) {return};let vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;c${
-        ctx.parentNode
-      }[_${dummyID}_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
+      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
         keepAlive ? "detach" : "destroy"
-      }()}}});`
+      }()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`
     );
     ctx.closeIf();
 

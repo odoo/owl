@@ -41,9 +41,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         }
     }
     if (isNew4) {
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()}}});
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
     } else {
-        def3 = def3.then(()=>{if (!w4.__widget__.vnode) {return};let vnode=h(w4.__widget__.vnode.sel, {key: 4});vnode.elm=w4.el;c1[_2_index]=vnode;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}}});
+        def3 = def3.then(()=>{if (w4.__widget__.isDestroyed) {return};let vnode;if (!w4.__widget__.vnode){vnode=w4.__widget__.pvnode} else { vnode=h(w4.__widget__.vnode.sel, {key: 4});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}}}c1[_2_index]=vnode;});
     }
     extra.promises.push(def3);
     return vn1;

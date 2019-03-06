@@ -118,6 +118,40 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
   </div>"
 `;
 
+exports[`open act window action with invalid viewtype => empty widget is rendered + warning 1`] = `
+"<div class=\\"o_web_client\\">
+    <div class=\\"o_navbar\\">
+    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+    
+      <a class=\\"o_menu_brand\\" href=\\"\\" role=\\"button\\">
+        Notes
+      </a>
+      <ul class=\\"o_menu_sections\\">
+        
+        
+      </ul>
+    
+  </div>
+    
+    <div class=\\"o_content\\"><div></div></div>
+    <div class=\\"o_notification_container\\">
+      
+        <div class=\\"o_notification o_error\\">
+    
+    <div class=\\"o_notification_title\\">
+      <span class=\\"o_icon fa fa-3x fa-exclamation\\" role=\\"img\\" aria-label=\\"Notification Invalid View type\\" title=\\"Notification Invalid View type\\"></span>
+      Invalid View type
+    </div>
+    <div class=\\"o_notification_content\\">
+      Cannot find view of type 'kanban' in the view registry
+    </div>
+  </div>
+      
+    </div>
+    <div class=\\"o_loading d-none\\">Loading</div>
+  </div>"
+`;
+
 exports[`start with no action => clicks on client action => discuss is rendered 1`] = `
 "<div class=\\"o_web_client\\">
     <div class=\\"o_navbar\\">

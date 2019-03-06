@@ -2,7 +2,7 @@
 
 import { makeEnv } from "./env";
 import { loadMenus, loadTemplates } from "./loaders";
-import { actionRegistry } from "./registries";
+import { actionRegistry, viewRegistry } from "./registries";
 import { rpc } from "./services/ajax";
 import { Router } from "./services/router";
 import { Store } from "./store/store";
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   const templates = await loadTemplates();
   const menuInfo = loadMenus();
-  const store = new Store(services, menuInfo, actionRegistry);
+  const store = new Store(services, menuInfo, actionRegistry, viewRegistry);
   const env = makeEnv(store, templates);
 
   // Creating root widget

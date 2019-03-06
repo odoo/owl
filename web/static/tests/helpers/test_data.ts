@@ -1,6 +1,6 @@
 import { readFile } from "fs";
 import { BaseMenuItem, getMenuInfo } from "../../src/ts/loaders";
-import { actionRegistry } from "../../src/ts/registries";
+import { actionRegistry, viewRegistry } from "../../src/ts/registries";
 import { ActionDescription } from "../../src/ts/store/action_manager_mixin";
 import { MenuInfo } from "../../src/ts/store/store";
 import { Registry } from "../../src/ts/core/registry";
@@ -9,6 +9,7 @@ export interface TestData {
   menuInfo: MenuInfo;
   actions: ActionDescription[];
   actionRegistry: typeof actionRegistry;
+  viewRegistry: typeof viewRegistry;
   templates: string;
 }
 
@@ -18,13 +19,16 @@ export async function makeTestData(): Promise<TestData> {
   if (!templates) {
     templates = await loadTemplates();
   }
-  const registry: typeof actionRegistry = new Registry();
-  (<any>registry).map = Object.assign({}, (<any>actionRegistry).map);
+  const _actionRegistry: typeof actionRegistry = new Registry();
+  (<any>_actionRegistry).map = Object.assign({}, (<any>actionRegistry).map);
+  const _viewRegistry: typeof actionRegistry = new Registry();
+  (<any>_viewRegistry).map = Object.assign({}, (<any>actionRegistry).map);
 
   return {
     menuInfo: makeMenuInfo(),
     actions: makeActionData(),
-    actionRegistry: registry,
+    actionRegistry: _actionRegistry,
+    viewRegistry: _viewRegistry,
     templates
   };
 }

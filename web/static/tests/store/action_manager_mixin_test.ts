@@ -38,3 +38,15 @@ test("display a warning if client action is not in registry", async () => {
   expect(notifs.length).toBe(1);
   expect(notifs[0].type).toBe("warning");
 });
+
+test("display a warning if view is not in registry", async () => {
+  const data = await makeTestData();
+  data.viewRegistry = new Registry();
+  const testEnv = makeTestEnv(data);
+
+  await testEnv.store.doAction(250);
+
+  const notifs = testEnv.store.state.notifications;
+  expect(notifs.length).toBe(1);
+  expect(notifs[0].type).toBe("warning");
+});

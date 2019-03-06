@@ -41,12 +41,14 @@ export function makeTestEnv(info: TestInfo = {}): TestEnv {
     roots: []
   };
   const actionRegistry = info.actionRegistry || new Registry();
+  const viewRegistry = info.viewRegistry || new Registry();
   const actions = info.actions || [];
 
   const data: TestData = {
     menuInfo,
     actions,
     actionRegistry,
+    viewRegistry,
     templates
   };
 
@@ -63,7 +65,7 @@ export function makeTestEnv(info: TestInfo = {}): TestEnv {
     router: info.router || new MockRouter()
   };
 
-  const store = new Store(services, menuInfo, actionRegistry);
+  const store = new Store(services, menuInfo, actionRegistry, viewRegistry);
   const env = makeEnv(store, templates);
   const testEnv = Object.assign({ store }, env);
   return testEnv;

@@ -76,3 +76,17 @@ test("clicks on client action with invalid key => empty widget is rendered + war
 
   expect(fixture.innerHTML).toMatchSnapshot();
 });
+
+test("open act window action with invalid viewtype => empty widget is rendered + warning", async () => {
+  const data = await makeTestData();
+  data.viewRegistry = new Registry();
+  const testEnv = makeTestEnv(data);
+  const root = new Root(testEnv, testEnv.store);
+  await root.mount(fixture);
+
+  // note menu item
+  await (<any>document.querySelector('[data-menu="205"]')).click();
+  await helpers.nextTick();
+
+  expect(fixture.innerHTML).toMatchSnapshot();
+});

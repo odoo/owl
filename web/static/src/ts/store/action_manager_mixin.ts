@@ -1,7 +1,6 @@
 import { Type } from "../core/component";
 import { rpcMixin } from "./rpc_mixin";
 import { Widget } from "../widget";
-import { View } from "../views/view";
 
 //------------------------------------------------------------------------------
 // Types
@@ -82,11 +81,21 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
     }
 
     doActWindowAction(descr: ActWindowActionDescription) {
+      const tag = descr.views[0][1];
+      let View = this.viewRegistry.get(tag);
+      if (!View) {
+        this.addNotification({
+          title: "Invalid View type",
+          type: "warning",
+          message: `Cannot find view of type '${tag}' in the view registry`
+        });
+        View = Widget;
+      }
       return async function executor(
         this: Controller,
         parent: Widget<any, any>
       ) {
-        const widget = new View(parent, { info: descr.views[0][1] });
+        const widget = new View!(parent, { info: descr.views[0][1] });
         const div = document.createElement("div");
         await widget.mount(div);
         this.widget = widget;

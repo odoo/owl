@@ -65,18 +65,21 @@ export class BaseStore extends EventBus {
   menuInfo: MenuInfo;
   services: Services;
   actionRegistry: Registry<ControllerWidget>;
+  viewRegistry: Registry<ControllerWidget>;
   currentQuery: Query;
   generateID = idGenerator();
 
   constructor(
     services: Services,
     menuInfo: MenuInfo,
-    actionRegistry: Registry<ControllerWidget>
+    actionRegistry: Registry<ControllerWidget>,
+    viewRegistry: Registry<ControllerWidget>
   ) {
     super();
     this.services = services;
     this.menuInfo = menuInfo;
     this.actionRegistry = actionRegistry;
+    this.viewRegistry = viewRegistry;
     this.currentQuery = {};
   }
 
@@ -129,9 +132,10 @@ export class Store extends actionManagerMixin(rpcMixin(BaseStore)) {
   constructor(
     services: Services,
     menuInfo: MenuInfo,
-    actionRegistry: Registry<ControllerWidget>
+    actionRegistry: Registry<ControllerWidget>,
+    viewRegistry: Registry<ControllerWidget>
   ) {
-    super(services, menuInfo, actionRegistry);
+    super(services, menuInfo, actionRegistry, viewRegistry);
     const query = this.services.router.getQuery();
     let { app, actionId } = this.getAppAndAction(query);
     this.state.currentApp = app;

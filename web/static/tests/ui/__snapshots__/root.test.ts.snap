@@ -34,6 +34,40 @@ exports[`can be rendered (in home menu) 1`] = `
   </div>"
 `;
 
+exports[`clicks on client action with invalid key => empty widget is rendered + warning 1`] = `
+"<div class=\\"o_web_client\\">
+    <div class=\\"o_navbar\\">
+    <a aria-label=\\"Applications\\" class=\\"o_title fa fa-th\\" href=\\"#\\" title=\\"Applications\\" accesskey=\\"h\\"></a>
+    
+      <a class=\\"o_menu_brand\\" href=\\"\\" role=\\"button\\">
+        Discuss
+      </a>
+      <ul class=\\"o_menu_sections\\">
+        
+        
+      </ul>
+    
+  </div>
+    
+    <div class=\\"o_content\\"><div></div></div>
+    <div class=\\"o_notification_container\\">
+      
+        <div class=\\"o_notification o_error\\">
+    
+    <div class=\\"o_notification_title\\">
+      <span class=\\"o_icon fa fa-3x fa-exclamation\\" role=\\"img\\" aria-label=\\"Notification Invalid Client Action\\" title=\\"Notification Invalid Client Action\\"></span>
+      Invalid Client Action
+    </div>
+    <div class=\\"o_notification_content\\">
+      Cannot find widget 'mail.discuss' in the action registry
+    </div>
+  </div>
+      
+    </div>
+    <div class=\\"o_loading d-none\\">Loading</div>
+  </div>"
+`;
+
 exports[`if url has action_id, will render action and navigate to proper menu_id 1`] = `
 "<div class=\\"o_web_client\\">
     <div class=\\"o_navbar\\">

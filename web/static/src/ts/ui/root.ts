@@ -24,9 +24,7 @@ export class Root extends Widget<Store, State> {
   }
 
   mounted() {
-    this.store.on("state_updated", this, newState => {
-      this.updateState(newState);
-    });
+    this.store.on("state_updated", this, this.updateState);
 
     // loading indicator
     this.store.on("rpc_status", this, status => {

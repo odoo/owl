@@ -117,17 +117,17 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
       descr: ClientActionDescription
     ): Action["executor"] | undefined {
       let key = descr.tag;
-      let Widget = this.actionRegistry.get(key);
-      if (!Widget) {
+      let ActionWidget = this.actionRegistry.get(key);
+      if (!ActionWidget) {
         this.addNotification({
           title: "Invalid Client Action",
           type: "warning",
           message: `Cannot find widget '${key}' in the action registry`
         });
-        return;
+        ActionWidget = Widget;
       }
       return async function executor(this: Action, parent: Widget<any, any>) {
-        const widget = new Widget!(parent, {});
+        const widget = new ActionWidget!(parent, {});
         const div = document.createElement("div");
         await widget.mount(div);
         this.widget = widget;

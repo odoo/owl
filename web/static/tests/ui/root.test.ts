@@ -1,6 +1,7 @@
 import { Root } from "../../src/ts/ui/root";
 import * as helpers from "../helpers";
 import { makeTestData, makeTestEnv } from "../helpers";
+import { Registry } from "../../src/ts/core/registry";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -60,4 +61,18 @@ test("start with no action => clicks on client action => discuss is rendered", a
     action_id: "131",
     menu_id: "96"
   });
+});
+
+test("clicks on client action with invalid key => empty widget is rendered + warning", async () => {
+  const data = await makeTestData();
+  data.actionRegistry = new Registry();
+  const testEnv = makeTestEnv(data);
+  const root = new Root(testEnv, testEnv.store);
+  await root.mount(fixture);
+
+  // discuss menu item
+  await (<any>document.querySelector('[data-menu="96"]')).click();
+  await helpers.nextTick();
+
+  expect(fixture.innerHTML).toMatchSnapshot();
 });

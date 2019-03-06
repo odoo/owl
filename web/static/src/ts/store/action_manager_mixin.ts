@@ -3,6 +3,10 @@ import { rpcMixin } from "./rpc_mixin";
 import { Widget } from "../widget";
 import { View } from "../views/view";
 
+//------------------------------------------------------------------------------
+// Types
+//------------------------------------------------------------------------------
+
 export type Context = { [key: string]: any };
 
 export interface CommonActionInfo {

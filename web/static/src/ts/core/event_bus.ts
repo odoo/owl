@@ -68,6 +68,9 @@ export class EventBus {
     }
   }
 
+  /**
+   * Remove all subscriptions.
+   */
   clear() {
     this.subscriptions = {};
   }

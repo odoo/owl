@@ -27,7 +27,10 @@ export function htmlTrim(s: string): string {
   return result;
 }
 
-export function idGenerator(): (() => number) {
+/**
+ * Create a function that will generate unique id numbers
+ */
+export function idGenerator(): () => number {
   let nextID = 1;
   return () => nextID++;
 }
@@ -88,6 +91,12 @@ interface Tree<T> {
   children: T[];
 }
 
+/**
+ * Find a node in a tree.
+ *
+ * This will traverse the tree (depth first) and return the first child that
+ * matches the predicate, if any
+ */
 export function findInTree<T extends Tree<T>>(
   tree: T,
   predicate: (t: T) => boolean

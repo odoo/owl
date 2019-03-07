@@ -1,5 +1,5 @@
-import { makeTestData, makeTestEnv } from "../helpers";
 import { Registry } from "../../src/ts/core/registry";
+import { makeTestEnv } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Tests
@@ -7,9 +7,7 @@ import { Registry } from "../../src/ts/core/registry";
 
 test("does not reload action if already done", async () => {
   const routes: string[] = [];
-  const data = await makeTestData();
   const testEnv = makeTestEnv({
-    ...data,
     mockRPC(route, params) {
       routes.push(route);
       return this.rpc(route, params);
@@ -28,9 +26,7 @@ test("does not reload action if already done", async () => {
 });
 
 test("display a warning if client action is not in registry", async () => {
-  const data = await makeTestData();
-  data.actionRegistry = new Registry();
-  const testEnv = makeTestEnv(data);
+  const testEnv = makeTestEnv({ actionRegistry: new Registry() });
 
   await testEnv.store.doAction(131);
 
@@ -40,9 +36,7 @@ test("display a warning if client action is not in registry", async () => {
 });
 
 test("display a warning if view is not in registry", async () => {
-  const data = await makeTestData();
-  data.viewRegistry = new Registry();
-  const testEnv = makeTestEnv(data);
+  const testEnv = makeTestEnv({ viewRegistry: new Registry() });
 
   await testEnv.store.doAction(250);
 

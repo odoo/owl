@@ -82,7 +82,7 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
 
     doActWindowAction(descr: ActWindowActionDescription) {
       const tag = descr.views[0][1];
-      let View = this.viewRegistry.get(tag);
+      let View = this.env.viewRegistry.get(tag);
       if (!View) {
         this.addNotification({
           title: "Invalid View type",
@@ -105,7 +105,7 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
 
     doClientAction(descr: ClientActionDescription): Controller["create"] {
       let key = descr.tag;
-      let ActionWidget = this.actionRegistry.get(key);
+      let ActionWidget = this.env.actionRegistry.get(key);
       if (!ActionWidget) {
         this.addNotification({
           title: "Invalid Client Action",

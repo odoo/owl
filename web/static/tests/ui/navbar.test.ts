@@ -11,12 +11,11 @@ let env: helpers.TestEnv;
 let props: Props;
 let menuInfo: MenuInfo;
 
-beforeEach(async () => {
+beforeEach(() => {
   fixture = helpers.makeTestFixture();
-  const data = await helpers.makeTestData();
-  env = helpers.makeTestEnv(data);
+  env = helpers.makeTestEnv();
   props = { inHome: false, app: null };
-  menuInfo = helpers.makeMenuInfo();
+  menuInfo = env.store.menuInfo;
 });
 
 afterEach(() => {

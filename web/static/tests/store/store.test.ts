@@ -1,4 +1,9 @@
-import { makeTestData, makeTestEnv, nextMicroTick } from "../helpers";
+import { Store } from "../../src/ts/store/store";
+import { makeTestEnv, nextMicroTick, TestInfo } from "../helpers";
+
+function makeTestStore(info?: TestInfo): Store {
+  return makeTestEnv(info).store;
+}
 
 //------------------------------------------------------------------------------
 // Tests
@@ -8,18 +13,18 @@ describe("rpc", () => {
   test("properly translate query in route", async () => {
     expect.assertions(1);
 
-    const store = makeTestEnv({
+    const store = makeTestStore({
       mockRPC(route, params) {
         expect(route).toBe("/web/dataset/call_kw/test/hey");
         return this.rpc(route, params);
       }
-    }).store;
+    });
 
     await store.rpc({ model: "test", method: "hey" });
   });
 
   test("trigger proper events", async () => {
-    const store = makeTestEnv().store;
+    const store = makeTestStore();
     const events: string[] = [];
     store.on("rpc_status", null, s => {
       events.push(s);
@@ -34,7 +39,7 @@ describe("rpc", () => {
 
 describe("notifications", () => {
   test("can subscribe and add notification", () => {
-    const store = makeTestEnv().store;
+    const store = makeTestStore();
     expect(store.state.notifications.length).toBe(0);
     const id = store.addNotification({
       title: "test",
@@ -45,7 +50,7 @@ describe("notifications", () => {
   });
 
   test("can close a notification", () => {
-    const store = makeTestEnv().store;
+    const store = makeTestStore();
 
     const id = store.addNotification({
       title: "test",
@@ -59,7 +64,7 @@ describe("notifications", () => {
 
   test("notifications closes themselves after a while", () => {
     jest.useFakeTimers();
-    const store = makeTestEnv().store;
+    const store = makeTestStore();
 
     store.addNotification({ title: "test", message: "message" });
 
@@ -71,7 +76,7 @@ describe("notifications", () => {
 
   test("sticky notifications do not close themselves after a while", () => {
     jest.useFakeTimers();
-    const store = makeTestEnv().store;
+    const store = makeTestStore();
 
     store.addNotification({
       title: "test",
@@ -88,32 +93,32 @@ describe("notifications", () => {
 
 describe("state transitions", () => {
   test("toggle menu", async () => {
-    const data = await makeTestData();
-    const store = makeTestEnv(data).store;
+    const env = makeTestEnv();
+    const store = env.store;
     expect(store.state.inHome).toBe(true);
     store.toggleHomeMenu();
 
     // should still be in home menu since no app is currently active
     expect(store.state.inHome).toBe(true);
-    expect(store.services.router.getQuery()).toEqual({ home: true });
+    expect(env.services.router.getQuery()).toEqual({ home: true });
 
     const promise = store.activateMenuItem(96);
-    expect(store.services.router.getQuery()).toEqual({ home: true });
+    expect(env.services.router.getQuery()).toEqual({ home: true });
 
     await promise;
     store.activateController(store.lastController!);
     expect(store.state.inHome).toBe(false);
-    expect(store.services.router.getQuery()).toEqual({
+    expect(env.services.router.getQuery()).toEqual({
       action_id: "131",
       menu_id: "96"
     });
 
     store.toggleHomeMenu();
     expect(store.state.inHome).toBe(true);
-    expect(store.services.router.getQuery()).toEqual({ home: true });
+    expect(env.services.router.getQuery()).toEqual({ home: true });
     store.toggleHomeMenu();
     expect(store.state.inHome).toBe(false);
-    expect(store.services.router.getQuery()).toEqual({
+    expect(env.services.router.getQuery()).toEqual({
       action_id: "131",
       menu_id: "96"
     });
@@ -121,8 +126,7 @@ describe("state transitions", () => {
 
   test("document title", async () => {
     document.title = "Odoo";
-    const data = await makeTestData();
-    const store = makeTestEnv(data).store;
+    const store = makeTestStore();
     expect(store.state.inHome).toBe(true);
     expect(document.title).toBe("Odoo");
     const promise = store.activateMenuItem(96);

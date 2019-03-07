@@ -1,7 +1,7 @@
+import { Registry } from "../../src/ts/core/registry";
 import { Root } from "../../src/ts/ui/root";
 import * as helpers from "../helpers";
-import { makeTestData, makeTestEnv } from "../helpers";
-import { Registry } from "../../src/ts/core/registry";
+import { makeTestEnv } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -22,17 +22,15 @@ afterEach(() => {
 //------------------------------------------------------------------------------
 
 test("can be rendered (in home menu)", async () => {
-  const data = await makeTestData();
-  const testEnv = makeTestEnv(data);
+  const testEnv = makeTestEnv();
   const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();
 });
 
 test("if url has action_id, will render action and navigate to proper menu_id", async () => {
-  const data = await makeTestData();
   const router = new helpers.MockRouter({ action_id: "131" });
-  const testEnv = makeTestEnv({ ...data, router });
+  const testEnv = makeTestEnv({ services: <any>{ router } });
   await helpers.nextTick();
 
   const root = new Root(testEnv, testEnv.store);
@@ -46,8 +44,7 @@ test("if url has action_id, will render action and navigate to proper menu_id", 
 });
 
 test("start with no action => clicks on client action => discuss is rendered", async () => {
-  const data = await makeTestData();
-  const testEnv = makeTestEnv(data);
+  const testEnv = makeTestEnv();
   const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
 
@@ -64,9 +61,7 @@ test("start with no action => clicks on client action => discuss is rendered", a
 });
 
 test("clicks on client action with invalid key => empty widget is rendered + warning", async () => {
-  const data = await makeTestData();
-  data.actionRegistry = new Registry();
-  const testEnv = makeTestEnv(data);
+  const testEnv = makeTestEnv({ actionRegistry: new Registry() });
   const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
 
@@ -78,9 +73,7 @@ test("clicks on client action with invalid key => empty widget is rendered + war
 });
 
 test("open act window action with invalid viewtype => empty widget is rendered + warning", async () => {
-  const data = await makeTestData();
-  data.viewRegistry = new Registry();
-  const testEnv = makeTestEnv(data);
+  const testEnv = makeTestEnv({ viewRegistry: new Registry() });
   const root = new Root(testEnv, testEnv.store);
   await root.mount(fixture);
 

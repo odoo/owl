@@ -1,6 +1,6 @@
 ///<amd-module name="main" />
 
-import { makeEnv } from "./env";
+import { makeEnv, linkStoreToEnv } from "./env";
 import { loadMenus, loadTemplates } from "./loaders";
 import { actionRegistry, viewRegistry } from "./registries";
 import { rpc } from "./services/ajax";
@@ -20,8 +20,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   const templates = await loadTemplates();
   const menuInfo = loadMenus();
-  const store = new Store(services, menuInfo, actionRegistry, viewRegistry);
-  const env = makeEnv(store, templates);
+  const env = makeEnv({ services, templates, actionRegistry, viewRegistry });
+  const store = new Store(env, menuInfo);
+  linkStoreToEnv(env, store);
 
   // Creating root widget
   const rootWidget = new Root(env, store);

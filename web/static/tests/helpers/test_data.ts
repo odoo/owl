@@ -1,39 +1,20 @@
-import { readFile } from "fs";
 import { BaseMenuItem, getMenuInfo } from "../../src/ts/loaders";
-import { actionRegistry, viewRegistry } from "../../src/ts/registries";
 import { ActionDescription } from "../../src/ts/store/action_manager_mixin";
 import { MenuInfo } from "../../src/ts/store/store";
-import { Registry } from "../../src/ts/core/registry";
 
 export interface TestData {
   menuInfo: MenuInfo;
   actions: ActionDescription[];
-  actionRegistry: typeof actionRegistry;
-  viewRegistry: typeof viewRegistry;
-  templates: string;
 }
 
-let templates: string;
-
-export async function makeTestData(): Promise<TestData> {
-  if (!templates) {
-    templates = await loadTemplates();
-  }
-  const _actionRegistry: typeof actionRegistry = new Registry();
-  (<any>_actionRegistry).map = Object.assign({}, (<any>actionRegistry).map);
-  const _viewRegistry: typeof actionRegistry = new Registry();
-  (<any>_viewRegistry).map = Object.assign({}, (<any>actionRegistry).map);
-
+export function makeTestData(): TestData {
   return {
     menuInfo: makeMenuInfo(),
-    actions: makeActionData(),
-    actionRegistry: _actionRegistry,
-    viewRegistry: _viewRegistry,
-    templates
+    actions: makeActionData()
   };
 }
 
-export function makeMenuInfo(): MenuInfo {
+function makeMenuInfo(): MenuInfo {
   const items: BaseMenuItem[] = [
     {
       id: 96,
@@ -215,10 +196,28 @@ function makeActionData(): ActionDescription[] {
   ];
 }
 
-function loadTemplates(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    readFile("web/static/src/xml/templates.xml", "utf-8", (err, result) => {
-      resolve(result);
-    });
-  });
-}
+// function loadTemplates(): Promise<string> {
+//   return new Promise((resolve, reject) => {
+//     readFile("web/static/src/xml/templates.xml", "utf-8", (err, result) => {
+//       resolve(result);
+//     });
+//   });
+// }
+
+// export async function makeTestData(): Promise<TestData> {
+//   if (!templates) {
+//     templates = await loadTemplates();
+//   }
+//   const _actionRegistry: typeof actionRegistry = new Registry();
+//   (<any>_actionRegistry).map = Object.assign({}, (<any>actionRegistry).map);
+//   const _viewRegistry: typeof actionRegistry = new Registry();
+//   (<any>_viewRegistry).map = Object.assign({}, (<any>actionRegistry).map);
+
+//   return {
+//     menuInfo: makeMenuInfo(),
+//     actions: makeActionData(),
+//     actionRegistry: _actionRegistry,
+//     viewRegistry: _viewRegistry,
+//     templates
+//   };
+// }

@@ -1,11 +1,11 @@
 import { debounce } from "../core/utils";
 import { Env } from "../env";
+import { Controller } from "../store/action_manager_mixin";
 import { State, Store } from "../store/store";
+import { Widget } from "../widget";
 import { HomeMenu } from "./home_menu";
 import { Navbar } from "./navbar";
 import { Notification } from "./notification";
-import { Widget } from "../widget";
-import { Controller } from "../store/action_manager_mixin";
 
 //------------------------------------------------------------------------------
 // Root Widget

@@ -1,9 +1,8 @@
 import { EventBus } from "../core/event_bus";
-import { Registry } from "../core/registry";
 import { idGenerator } from "../core/utils";
-import { RPC } from "../services/ajax";
-import { IRouter, Query } from "../services/router";
-import { actionManagerMixin, ControllerWidget } from "./action_manager_mixin";
+import { Env } from "../env";
+import { Query } from "../services/router";
+import { actionManagerMixin } from "./action_manager_mixin";
 import { rpcMixin } from "./rpc_mixin";
 import { MenuItem } from "./store";
 
@@ -27,6 +26,14 @@ export interface MenuItem {
   children: MenuItem[];
 }
 
+export interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  type: "notification" | "warning";
+  sticky: boolean;
+}
+
 export interface MenuInfo {
   menus: { [key: number]: MenuItem | undefined };
 
@@ -40,19 +47,6 @@ export interface State {
   notifications: Notification[];
 }
 
-export interface Services {
-  rpc: RPC;
-  router: IRouter;
-}
-
-export interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  type: "notification" | "warning";
-  sticky: boolean;
-}
-
 //------------------------------------------------------------------------------
 // Store
 //------------------------------------------------------------------------------
@@ -63,23 +57,14 @@ export class BaseStore extends EventBus {
     notifications: []
   };
   menuInfo: MenuInfo;
-  services: Services;
-  actionRegistry: Registry<ControllerWidget>;
-  viewRegistry: Registry<ControllerWidget>;
+  env: Env;
   currentQuery: Query;
   generateID = idGenerator();
 
-  constructor(
-    services: Services,
-    menuInfo: MenuInfo,
-    actionRegistry: Registry<ControllerWidget>,
-    viewRegistry: Registry<ControllerWidget>
-  ) {
+  constructor(env: Env, menuInfo: MenuInfo) {
     super();
-    this.services = services;
+    this.env = env;
     this.menuInfo = menuInfo;
-    this.actionRegistry = actionRegistry;
-    this.viewRegistry = viewRegistry;
     this.currentQuery = {};
   }
 
@@ -94,7 +79,7 @@ export class BaseStore extends EventBus {
     }
     this.update({ inHome: !this.state.inHome });
     if (this.state.inHome) {
-      this.services.router.navigate({ home: true });
+      this.env.services.router.navigate({ home: true });
     } else {
       this.updateQuery(this.currentQuery);
     }
@@ -102,7 +87,7 @@ export class BaseStore extends EventBus {
 
   updateQuery(query: Query) {
     this.currentQuery = query;
-    this.services.router.navigate(query);
+    this.env.services.router.navigate(query);
   }
 
   addNotification(notif: Partial<Notification>): number {
@@ -129,22 +114,17 @@ export class BaseStore extends EventBus {
 }
 
 export class Store extends actionManagerMixin(rpcMixin(BaseStore)) {
-  constructor(
-    services: Services,
-    menuInfo: MenuInfo,
-    actionRegistry: Registry<ControllerWidget>,
-    viewRegistry: Registry<ControllerWidget>
-  ) {
-    super(services, menuInfo, actionRegistry, viewRegistry);
-    const query = this.services.router.getQuery();
+  constructor(env: Env, menuInfo: MenuInfo) {
+    super(env, menuInfo);
+    const query = this.env.services.router.getQuery();
     let { app, actionId } = this.getAppAndAction(query);
     this.state.currentApp = app;
     if (!actionId) {
       this.state.inHome = true;
-      this.services.router.navigate({ home: true });
+      this.env.services.router.navigate({ home: true });
     }
-    this.services.router.on("query_changed", this, this.updateAction);
-    this.updateAction(this.services.router.getQuery());
+    this.env.services.router.on("query_changed", this, this.updateAction);
+    this.updateAction(this.env.services.router.getQuery());
   }
 
   private updateAction(query: Query) {

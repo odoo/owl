@@ -1,5 +1,5 @@
 import { HomeMenu } from "../../src/ts/ui/home_menu";
-import { makeTestData, makeTestEnv, makeTestFixture } from "../helpers";
+import { makeTestEnv, makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -20,9 +20,8 @@ afterEach(() => {
 //------------------------------------------------------------------------------
 
 test("can be rendered", async () => {
-  const data = await makeTestData();
-  const testEnv = makeTestEnv(data);
-  const props = { menuInfo: data.menuInfo };
+  const testEnv = makeTestEnv();
+  const props = { menuInfo: testEnv.store.menuInfo };
   const homeMenu = new HomeMenu(testEnv, props);
   await homeMenu.mount(fixture);
   expect(fixture.innerHTML).toMatchSnapshot();

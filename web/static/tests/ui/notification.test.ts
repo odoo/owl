@@ -11,8 +11,7 @@ let env: helpers.TestEnv;
 
 beforeEach(async () => {
   fixture = helpers.makeTestFixture();
-  const data = await helpers.makeTestData();
-  env = helpers.makeTestEnv(data);
+  env = helpers.makeTestEnv();
 });
 
 afterEach(() => {

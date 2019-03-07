@@ -41,7 +41,7 @@ export function rpcMixin<T extends Type<BaseStore>>(Base: T) {
         this.trigger("rpc_status", "loading");
       }
       this.counter++;
-      const result = await this.services.rpc(request.route, request.params);
+      const result = await this.env.services.rpc(request.route, request.params);
       this.counter--;
       if (this.counter === 0) {
         this.trigger("rpc_status", "notloading");

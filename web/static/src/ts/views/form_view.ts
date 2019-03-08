@@ -1,5 +1,5 @@
-import { Widget } from "../widget";
+import { BaseView } from "./base_view";
 
-export class FormView extends Widget<{ info: any }, {}> {
-  inlineTemplate = `<div>form view: <span t-esc="props.info"/></div>`;
+export class FormView extends BaseView {
+  viewType = "form";
 }

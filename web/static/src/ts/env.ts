@@ -2,7 +2,8 @@ import { WEnv } from "./core/component";
 import { QWeb } from "./core/qweb_vdom";
 import { Registry } from "./core/registry";
 import { idGenerator } from "./core/utils";
-import { RPC } from "./services/ajax";
+import { RPC as RPCService } from "./services/ajax";
+import { RPC } from "./store/store";
 import { IRouter } from "./services/router";
 import { ControllerWidget, Store, Notification } from "./store/store";
 
@@ -11,7 +12,7 @@ import { ControllerWidget, Store, Notification } from "./store/store";
 //------------------------------------------------------------------------------
 
 export interface Services {
-  rpc: RPC;
+  rpc: RPCService;
   router: IRouter;
 }
 

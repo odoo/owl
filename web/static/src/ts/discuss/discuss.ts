@@ -1,7 +1,7 @@
 import { Clock } from "./clock";
 import { Counter } from "./counter";
 import { Widget } from "../widget";
-
+import { ControlPanel } from "../ui/control_panel";
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ interface State {
 
 export class Discuss extends Widget<{}, State> {
   template = "web.discuss";
-  widgets = { Clock, Counter, ColorWidget };
+  widgets = { Clock, Counter, ColorWidget, ControlPanel };
   state: State = { validcounter: true, color: "red" };
 
   resetCounter(ev: MouseEvent) {

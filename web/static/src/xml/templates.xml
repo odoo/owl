@@ -50,6 +50,37 @@
     </t>
   </div>
 
+  <div t-name="web.control_panel" class="o_control_panel">
+    <ol class="breadcrumb" role="navigation">
+      <li class="breadcrumb-item active">
+        <t t-esc="props.title"/>
+      </li>
+    </ol>
+    <div class="o_cp_searchview" role="search">
+      <t t-call="web.search_view"/>
+    </div>
+    <div class="o_cp_left">
+      <div class="o_cp_buttons" role="toolbar" aria-label="Control panel toolbar"/>
+      <aside class="o_cp_sidebar"/>
+    </div>
+    <div class="o_cp_right">
+      <div class="btn-group o_search_options" role="search"/>
+      <nav class="o_cp_pager" role="search" aria-label="Pager"/>
+      <nav class="btn-group o_cp_switch_buttons" role="toolbar" aria-label="View switcher"/>
+    </div>
+  </div>
+
+  <div t-name="web.search_view" class="o_searchview" role="search" aria-autocomplete="list">
+    <span class="o_searchview_more fa" title="Advanced Search..." role="img" aria-label="Advanced Search..."/>
+  </div>
+
+  <div t-name="web.base_view" class="o_view_controller">
+    <t t-widget="ControlPanel" t-props="{title: props.title}"/>
+    <div class="o_content">
+      <span t-esc="viewType"/>
+    </div>
+  </div>
+
   <div t-name="web.home_menu" class="o_home_menu">
     <div class="o_apps">
       <a t-foreach="apps" t-as="app" t-att-href="'#menu_id=' + app.id + '&amp;action_id=' + app.actionId" class="o_app" t-on-click="openMenu(app)" t-att-data-menu="app.id">
@@ -73,24 +104,31 @@
   </div>
 
   <div t-name="web.discuss" class="o_discuss">
-    <span>DISCUSS!!</span>
-    <button t-on-click="resetCounter">Reset first counter</button>
-    <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
-    <button t-on-click="toggle">Toggle  Clock/counters</button>
-    <button t-on-click="toggleColor">Toggle Color</button>
-    <button t-on-click="updateState({})">Rerender this widget</button>
-    <input t-ref="textinput"/>
-    <t t-if="state.validcounter">
-      <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
-      <t t-widget="Counter" t-ref="counter2" t-props="{initialState:400}"/>
-    </t>
-    <t t-else="1">
-      <t t-widget="Clock"/>
-    </t>
-    <t t-widget="ColorWidget" t-props="{color: state.color}"/>
-    <button t-on-click="addNotif(false)">Add notif</button>
-    <button t-on-click="addNotif(true)">Add sticky notif</button>
-    <button t-on-click="addWarning">Add warning</button>
+    <t t-widget="ControlPanel" t-props="{title: 'Discuss'}"/>
+    <div class="o_content">
+      <div class="o_discuss_sidebar">
+        <span>DISCUSS!!</span>
+      </div>
+      <div class="o_discuss_content">
+        <button t-on-click="resetCounter">Reset first counter</button>
+        <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
+        <button t-on-click="toggle">Toggle  Clock/counters</button>
+        <button t-on-click="toggleColor">Toggle Color</button>
+        <button t-on-click="updateState({})">Rerender this widget</button>
+        <input t-ref="textinput"/>
+        <t t-if="state.validcounter">
+          <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>
+          <t t-widget="Counter" t-ref="counter2" t-props="{initialState:400}"/>
+        </t>
+        <t t-else="1">
+          <t t-widget="Clock"/>
+        </t>
+        <t t-widget="ColorWidget" t-props="{color: state.color}"/>
+        <button t-on-click="addNotif(false)">Add notif</button>
+        <button t-on-click="addNotif(true)">Add sticky notif</button>
+        <button t-on-click="addWarning">Add warning</button>
+      </div>
+    </div>
   </div>
 
 </templates>

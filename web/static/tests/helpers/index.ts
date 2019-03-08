@@ -1,11 +1,11 @@
 export { MockRouter } from "./mock_router";
 export { MockServer } from "./mock_server";
-export { TestData, makeTestData, makeMenuInfo } from "./test_data";
-export { TestEnv, TestInfo, makeTestWEnv, makeTestEnv } from "./test_env";
+export { makeMenuInfo, makeTestData, TestData } from "./test_data";
+export { makeTestEnv, makeTestWEnv, TestEnv, TestInfo } from "./test_env";
 export {
+  makeDeferred,
+  makeTestFixture,
   nextMicroTick,
   nextTick,
-  makeTestFixture,
-  normalize,
-  makeDeferred
+  normalize
 } from "./test_utils";

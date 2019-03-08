@@ -1,5 +1,5 @@
-import { Widget } from "../widget";
+import { BaseView } from "./base_view";
 
-export class KanbanView extends Widget<{ info: any }, {}> {
-  inlineTemplate = `<div>kanban view: <span t-esc="props.info"/></div>`;
+export class KanbanView extends BaseView {
+  viewType = "kanban";
 }

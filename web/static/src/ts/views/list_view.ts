@@ -1,5 +1,5 @@
-import { Widget } from "../widget";
+import { BaseView } from "./base_view";
 
-export class ListView extends Widget<{ info: any }, {}> {
-  inlineTemplate = `<div>list view: <span t-esc="props.info"/></div>`;
+export class ListView extends BaseView {
+  viewType = "list";
 }

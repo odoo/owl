@@ -1,7 +1,50 @@
+// ------------------------------------------------------------------
+// Variables
+// ------------------------------------------------------------------
 $navbar-height: 46px;
 $main-color: #875a7b;
 $o-main-text-color: #666666;
+$o-notification-info-bg-color: #fcfbea;
+$o-notification-error-bg-color: #f16567;
+$o-view-background-color: white;
+$o-control-panel-background-color: $o-view-background-color;
+$o-horizontal-padding: 16px;
+$o-cp-breadcrumb-height: 30px;
 
+// bootstrap overrides
+// this does not work: $breadcrumb-bg: $o-control-panel-background-color;
+.breadcrumb {
+  background-color: white;
+  padding: 0;
+}
+
+// ------------------------------------------------------------------
+// Mixins
+// ------------------------------------------------------------------
+@mixin o-webclient-padding(
+  $top: 0px,
+  $right: $o-horizontal-padding,
+  $bottom: 0px,
+  $left: $o-horizontal-padding
+) {
+  padding-top: $top;
+  padding-right: $right;
+  padding-bottom: $bottom;
+  padding-left: $left;
+}
+
+@mixin o-text-overflow($display: inline-block, $max-width: 100%) {
+  display: $display;
+  max-width: $max-width;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top; // To update display context changed by overflow:hidden
+}
+
+// ------------------------------------------------------------------
+// CSS
+// ------------------------------------------------------------------
 html {
   height: 100%;
 }
@@ -138,9 +181,6 @@ body {
 }
 
 /***** Notifications *****/
-$o-notification-info-bg-color: #fcfbea;
-$o-notification-error-bg-color: #f16567;
-
 .o_notification_container {
   position: absolute;
   width: 300px;
@@ -190,9 +230,20 @@ $o-notification-error-bg-color: #f16567;
 }
 
 /***** Discuss *****/
-.o_discuss {
-  padding: 20px;
+.o_discuss .o_content {
   font-size: 15px;
+  display: flex;
+
+  .o_discuss_sidebar {
+    background-color: #212529;
+    flex: 0 0 300px;
+    color: white;
+    padding: 20px;
+  }
+  .o_discuss_content {
+    padding: 20px;
+    flex: 1 1 auto;
+  }
 
   button {
     padding: 5px;
@@ -209,4 +260,82 @@ $o-notification-error-bg-color: #f16567;
   color: white;
   padding: 4px;
   font-size: 14px;
+}
+
+/***** Control Panel *****/
+.o_control_panel {
+  display: flex;
+  flex-flow: row wrap;
+  border-bottom: 1px solid darken($o-control-panel-background-color, 20%);
+  @include o-webclient-padding($top: 10px, $bottom: 10px);
+  background-color: $o-control-panel-background-color;
+
+  > .breadcrumb {
+    width: 50%;
+    font-size: 18px;
+
+    > li {
+      @include o-text-overflow($max-width: 90%);
+
+      > a {
+        cursor: pointer;
+      }
+    }
+  }
+
+  > .o_cp_searchview {
+    width: 50%;
+    min-height: $o-cp-breadcrumb-height;
+  }
+
+  > .o_cp_left {
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+    margin-top: 5px;
+
+    > .o_cp_sidebar {
+      padding-right: 10px;
+    }
+  }
+
+  > .o_cp_right {
+    display: flex;
+    width: 50%;
+    margin-top: 5px;
+
+    > .o_cp_pager {
+      margin: auto 0 auto auto;
+      padding-left: 5px;
+      text-align: center;
+      user-select: none;
+
+      > div {
+        display: flex;
+        align-items: center;
+      }
+
+      .o_pager_counter {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+/***** Action Controller *****/
+.o_action_controller {
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 0;
+
+  > .o_cp_controller {
+    flex: 0 0 auto;
+  }
+
+  > .o_content {
+    overflow: auto;
+    flex: 1 1 100%;
+    position: relative;
+  }
 }

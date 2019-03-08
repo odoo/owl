@@ -14,7 +14,7 @@ export function makeTestData(): TestData {
   };
 }
 
-function makeMenuInfo(): MenuInfo {
+export function makeMenuInfo(): MenuInfo {
   const items: BaseMenuItem[] = [
     {
       id: 96,

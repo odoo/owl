@@ -56,6 +56,7 @@ export class Root extends Widget<Store, State> {
       // to do: call some public method of widget instead...
       (<HTMLElement>this.refs.content).appendChild(widget.el!);
       widget.__mount();
+      widget.el!.classList.add("o_action_controller");
       this.store.activateController(controller);
     }
   }

@@ -95,7 +95,10 @@ export function actionManagerMixin<T extends ReturnType<typeof rpcMixin>>(
         this: Controller,
         parent: Widget<any, any>
       ) {
-        const widget = new View!(parent, { info: descr.views[0][1] });
+        const widget = new View!(parent, {
+          info: descr.views[0][1],
+          title: descr.name
+        });
         const div = document.createElement("div");
         await widget.mount(div);
         this.widget = widget;

@@ -49,7 +49,7 @@ exports[`clicks on client action with invalid key => empty widget is rendered + 
     
   </div>
     
-    <div class=\\"o_content\\"><div></div></div>
+    <div class=\\"o_content\\"><div class=\\"o_action_controller\\"></div></div>
     <div class=\\"o_notification_container\\">
       
         <div class=\\"o_notification o_error\\">
@@ -83,33 +83,60 @@ exports[`if url has action_id, will render action and navigate to proper menu_id
     
   </div>
     
-    <div class=\\"o_content\\"><div class=\\"o_discuss\\">
-    <span>DISCUSS!!</span>
-    <button>Reset first counter</button>
-    <button>Reset counter 2 in 3s</button>
-    <button>Toggle  Clock/counters</button>
-    <button>Toggle Color</button>
-    <button>Rerender this widget</button>
-    <input>
-    
-      <div>
+    <div class=\\"o_content\\"><div class=\\"o_discuss o_action_controller\\">
+    <div class=\\"o_control_panel\\">
+    <ol class=\\"breadcrumb\\" role=\\"navigation\\">
+      <li class=\\"breadcrumb-item active\\">
+        Discuss
+      </li>
+    </ol>
+    <div class=\\"o_cp_searchview\\" role=\\"search\\">
+      <div class=\\"o_searchview\\" role=\\"search\\" aria-autocomplete=\\"list\\">
+    <span class=\\"o_searchview_more fa\\" title=\\"Advanced Search...\\" role=\\"img\\" aria-label=\\"Advanced Search...\\"></span>
+  </div>
+    </div>
+    <div class=\\"o_cp_left\\">
+      <div class=\\"o_cp_buttons\\" role=\\"toolbar\\" aria-label=\\"Control panel toolbar\\"></div>
+      <aside class=\\"o_cp_sidebar\\"></aside>
+    </div>
+    <div class=\\"o_cp_right\\">
+      <div class=\\"btn-group o_search_options\\" role=\\"search\\"></div>
+      <nav class=\\"o_cp_pager\\" role=\\"search\\" aria-label=\\"Pager\\"></nav>
+      <nav class=\\"btn-group o_cp_switch_buttons\\" role=\\"toolbar\\" aria-label=\\"View switcher\\"></nav>
+    </div>
+  </div>
+    <div class=\\"o_content\\">
+      <div class=\\"o_discuss_sidebar\\">
+        <span>DISCUSS!!</span>
+      </div>
+      <div class=\\"o_discuss_content\\">
+        <button>Reset first counter</button>
+        <button>Reset counter 2 in 3s</button>
+        <button>Toggle  Clock/counters</button>
+        <button>Toggle Color</button>
+        <button>Rerender this widget</button>
+        <input>
+        
+          <div>
       <button>-</button>
       <span style=\\"font-weight:bold\\">Value: 4</span>
       <button>+</button>
     </div>
-      <div>
+          <div>
       <button>-</button>
       <span style=\\"font-weight:bold\\">Value: 400</span>
       <button>+</button>
     </div>
-    
-    <div>
+        
+        <div>
       <span>Current Color: </span>
       red
     </div>
-    <button>Add notif</button>
-    <button>Add sticky notif</button>
-    <button>Add warning</button>
+        <button>Add notif</button>
+        <button>Add sticky notif</button>
+        <button>Add warning</button>
+      </div>
+    </div>
   </div></div>
     <div class=\\"o_notification_container\\">
       
@@ -133,7 +160,7 @@ exports[`open act window action with invalid viewtype => empty widget is rendere
     
   </div>
     
-    <div class=\\"o_content\\"><div></div></div>
+    <div class=\\"o_content\\"><div class=\\"o_action_controller\\"></div></div>
     <div class=\\"o_notification_container\\">
       
         <div class=\\"o_notification o_error\\">
@@ -167,33 +194,60 @@ exports[`start with no action => clicks on client action => discuss is rendered 
     
   </div>
     
-    <div class=\\"o_content\\"><div class=\\"o_discuss\\">
-    <span>DISCUSS!!</span>
-    <button>Reset first counter</button>
-    <button>Reset counter 2 in 3s</button>
-    <button>Toggle  Clock/counters</button>
-    <button>Toggle Color</button>
-    <button>Rerender this widget</button>
-    <input>
-    
-      <div>
+    <div class=\\"o_content\\"><div class=\\"o_discuss o_action_controller\\">
+    <div class=\\"o_control_panel\\">
+    <ol class=\\"breadcrumb\\" role=\\"navigation\\">
+      <li class=\\"breadcrumb-item active\\">
+        Discuss
+      </li>
+    </ol>
+    <div class=\\"o_cp_searchview\\" role=\\"search\\">
+      <div class=\\"o_searchview\\" role=\\"search\\" aria-autocomplete=\\"list\\">
+    <span class=\\"o_searchview_more fa\\" title=\\"Advanced Search...\\" role=\\"img\\" aria-label=\\"Advanced Search...\\"></span>
+  </div>
+    </div>
+    <div class=\\"o_cp_left\\">
+      <div class=\\"o_cp_buttons\\" role=\\"toolbar\\" aria-label=\\"Control panel toolbar\\"></div>
+      <aside class=\\"o_cp_sidebar\\"></aside>
+    </div>
+    <div class=\\"o_cp_right\\">
+      <div class=\\"btn-group o_search_options\\" role=\\"search\\"></div>
+      <nav class=\\"o_cp_pager\\" role=\\"search\\" aria-label=\\"Pager\\"></nav>
+      <nav class=\\"btn-group o_cp_switch_buttons\\" role=\\"toolbar\\" aria-label=\\"View switcher\\"></nav>
+    </div>
+  </div>
+    <div class=\\"o_content\\">
+      <div class=\\"o_discuss_sidebar\\">
+        <span>DISCUSS!!</span>
+      </div>
+      <div class=\\"o_discuss_content\\">
+        <button>Reset first counter</button>
+        <button>Reset counter 2 in 3s</button>
+        <button>Toggle  Clock/counters</button>
+        <button>Toggle Color</button>
+        <button>Rerender this widget</button>
+        <input>
+        
+          <div>
       <button>-</button>
       <span style=\\"font-weight:bold\\">Value: 4</span>
       <button>+</button>
     </div>
-      <div>
+          <div>
       <button>-</button>
       <span style=\\"font-weight:bold\\">Value: 400</span>
       <button>+</button>
     </div>
-    
-    <div>
+        
+        <div>
       <span>Current Color: </span>
       red
     </div>
-    <button>Add notif</button>
-    <button>Add sticky notif</button>
-    <button>Add warning</button>
+        <button>Add notif</button>
+        <button>Add sticky notif</button>
+        <button>Add warning</button>
+      </div>
+    </div>
   </div></div>
     <div class=\\"o_notification_container\\">
       

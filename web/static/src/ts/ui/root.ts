@@ -53,9 +53,7 @@ export class Root extends Widget<Store, State> {
   async applyController(controller: Controller) {
     const widget = await controller.create(this);
     if (widget) {
-      // to do: call some public method of widget instead...
-      (<HTMLElement>this.refs.content).appendChild(widget.el!);
-      widget.__mount();
+      this.attachChild(widget, <HTMLElement>this.refs.content);
       widget.el!.classList.add("o_action_controller");
       this.store.activateController(controller);
     }

@@ -121,6 +121,23 @@ export class Component<
   // Public
   //--------------------------------------------------------------------------
 
+  /**
+   * Attach a child widget to a given html element
+   *
+   * This is most of the time not necessary, since widgets should primarily be
+   * created/managed with the t-widget directive in a qweb template.  However,
+   * for the cases where we need more control, this method will do what is
+   * necessary to make sure all the proper hooks are called (for example,
+   * mounted/willUnmount)
+   *
+   * Note that this method makes a few assumptions:
+   * - the child widget is indeed a child of the current widget
+   * - the target is inside the dom of the current widget (typically a ref)
+   */
+  attachChild(child: Component<T, any, any>, target: HTMLElement) {
+    target.appendChild(child.el!);
+    child.__mount();
+  }
   async mount(target: HTMLElement): Promise<void> {
     const vnode = await this._start();
     if (this.__widget__.isDestroyed) {

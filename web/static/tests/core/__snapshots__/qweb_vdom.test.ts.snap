@@ -506,7 +506,7 @@ exports[`misc global 1`] = `
         context.value_value = _4[i];
         c1.push({text: \`
           \`});
-        let c5 = [], p5 = {key:5};
+        let c5 = [], p5 = {key:5,on:{}};
         let vn5 = h('span', p5, c5);
         c1.push(vn5);
         let e6 = context['value'];
@@ -516,12 +516,12 @@ exports[`misc global 1`] = `
         c1.push({text: \`
           \`});
         let _7 = 'agüero';
-        let c8 = [], p8 = {key:8,attrs:{\\"falló\\": _7}};
+        let c8 = [], p8 = {key:8,attrs:{\\"falló\\": _7},on:{}};
         let vn8 = h('Año', p8, c8);
         c1.push(vn8);
         c8.push({text: \`
             \`});
-        let c9 = [], p9 = {key:9};
+        let c9 = [], p9 = {key:9,on:{}};
         let vn9 = h('span', p9, c9);
         c8.push(vn9);
         let e10 = 'aaa';
@@ -532,7 +532,7 @@ exports[`misc global 1`] = `
         }
         c8.push({text: \`
             \`});
-        let c11 = [], p11 = {key:11};
+        let c11 = [], p11 = {key:11,on:{}};
         let vn11 = h('span', p11, c11);
         c8.push(vn11);
         let e12 = context['foo'];
@@ -545,7 +545,7 @@ exports[`misc global 1`] = `
             \`});
         c8.push({text: \`
             \`});
-        let c13 = [], p13 = {key:13};
+        let c13 = [], p13 = {key:13,on:{}};
         let vn13 = h('span', p13, c13);
         c8.push(vn13);
         let e14 = 'bbb';
@@ -561,7 +561,7 @@ exports[`misc global 1`] = `
     }
     c1.push({text: \`
         \`});
-    let c15 = [], p15 = {key:15};
+    let c15 = [], p15 = {key:15,on:{}};
     let vn15 = h('div', p15, c15);
     c1.push(vn15);
     let e16 = context['toto'];
@@ -722,7 +722,7 @@ exports[`t-esc escaping on a node 1`] = `
 "function anonymous(context,extra
 ) {
     let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
     if (e2 || e2 === 0) {
@@ -736,7 +736,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
 "function anonymous(context,extra
 ) {
     let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('span', p1, c1);
     let e2 = 'ok';
     if (e2 || e2 === 0) {
@@ -752,7 +752,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
 "function anonymous(context,extra
 ) {
     let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('span', p1, c1);
     let e2 = context['var'];
     if (e2 || e2 === 0) {
@@ -914,10 +914,10 @@ exports[`t-on can bind event handler 1`] = `
 ) {
     let owner = context;
     let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner);
-    p1.on = {click: extra.handlers[1]};
+    extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
+    p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -928,9 +928,9 @@ exports[`t-on can bind handlers with arguments 1`] = `
 ) {
     let owner = context;
     let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    p1.on = {click: context['add'].bind(owner, 5)};
+    p1.on['click'] = context['add'].bind(owner, 5);
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -961,14 +961,30 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         let c5 = [], p5 = {key:5};
         let vn5 = h('li', p5, c5);
         c1.push(vn5);
-        let c6 = [], p6 = {key:6};
+        let c6 = [], p6 = {key:6,on:{}};
         let vn6 = h('a', p6, c6);
         c5.push(vn6);
-        p6.on = {click: context['activate'].bind(owner, context['action'])};
+        p6.on['click'] = context['activate'].bind(owner, context['action']);
         c6.push({text: \`link\`});
     }
     c1.push({text: \`
       \`});
+    return vn1;
+}"
+`;
+
+exports[`t-on can bind two event handlers 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    let vn1 = h('button', p1, c1);
+    extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['handleClick'].bind(owner);
+    p1.on['click'] = extra.handlers['click' + 1];
+    extra.handlers['dblclick' + 1] = extra.handlers['dblclick' + 1] || context['handleDblClick'].bind(owner);
+    p1.on['dblclick'] = extra.handlers['dblclick' + 1];
+    c1.push({text: \`Click\`});
     return vn1;
 }"
 `;
@@ -978,10 +994,10 @@ exports[`t-on handler is bound to proper owner 1`] = `
 ) {
     let owner = context;
     let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers[1] = extra.handlers[1] || context['add'].bind(owner);
-    p1.on = {click: extra.handlers[1]};
+    extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
+    p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
     return vn1;
 }"

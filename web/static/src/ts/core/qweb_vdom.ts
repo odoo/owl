@@ -330,6 +330,8 @@ export class QWeb {
       fullName: string;
     }[] = [];
 
+    let withHandlers = false;
+
     for (let directive of this.directives) {
       // const value = attributes[i].textContent!;
       let fullName;
@@ -342,13 +344,13 @@ export class QWeb {
         ) {
           fullName = name;
           value = attributes[i].textContent;
+          validDirectives.push({ directive, value, fullName });
+          if (directive.name === "on") {
+            withHandlers = true;
+          }
         }
       }
-      if (fullName) {
-        validDirectives.push({ directive, value, fullName });
-      }
     }
-
     for (let { directive, value, fullName } of validDirectives) {
       if (directive.atNodeEncounter) {
         const isDone = directive.atNodeEncounter({
@@ -365,7 +367,7 @@ export class QWeb {
     }
 
     if (node.nodeName !== "t") {
-      let nodeID = this._compileGenericNode(node, ctx);
+      let nodeID = this._compileGenericNode(node, ctx, withHandlers);
       ctx = ctx.withParent(nodeID);
 
       for (let { directive, value, fullName } of validDirectives) {
@@ -391,7 +393,11 @@ export class QWeb {
     }
   }
 
-  _compileGenericNode(node: ChildNode, ctx: Context): number {
+  _compileGenericNode(
+    node: ChildNode,
+    ctx: Context,
+    withHandlers: boolean = true
+  ): number {
     // nodeType 1 is generic tag
     if (node.nodeType !== 1) {
       throw new Error("unsupported node type");
@@ -458,11 +464,15 @@ export class QWeb {
       }
     }
     let nodeID = ctx.generateID();
-    let p =
-      attrs.length + tattrs.length > 0
-        ? `{key:${nodeID},attrs:{${attrs.join(",")}}}`
-        : `{key:${nodeID}}`;
-    ctx.addLine(`let c${nodeID} = [], p${nodeID} = ${p};`);
+    const parts = [`key:${nodeID}`];
+    if (attrs.length + tattrs.length > 0) {
+      parts.push(`attrs:{${attrs.join(",")}}`);
+    }
+    if (withHandlers) {
+      parts.push(`on:{}`);
+    }
+
+    ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
     for (let id of tattrs) {
       ctx.addIf(`_${id} instanceof Array`);
       ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
@@ -763,15 +773,17 @@ const onDirective: Directive = {
     });
     if (extraArgs) {
       ctx.addLine(
-        `p${nodeID}.on = {${eventName}: context['${handler}'].bind(owner, ${qweb._formatExpression(
+        `p${nodeID}.on['${eventName}'] = context['${handler}'].bind(owner, ${qweb._formatExpression(
           extraArgs
-        )})};`
+        )});`
       );
     } else {
       ctx.addLine(
-        `extra.handlers[${nodeID}] = extra.handlers[${nodeID}] || context['${handler}'].bind(owner);`
+        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || context['${handler}'].bind(owner);`
       );
-      ctx.addLine(`p${nodeID}.on = {${eventName}: extra.handlers[${nodeID}]};`);
+      ctx.addLine(
+        `p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`
+      );
     }
   }
 };

@@ -692,6 +692,32 @@ describe("t-on", () => {
     expect(a).toBe(3);
   });
 
+  test("can bind two event handlers", () => {
+    qweb.addTemplate(
+      "test",
+      `<button t-on-click="handleClick" t-on-dblclick="handleDblClick">Click</button>`
+    );
+    let steps: string[] = [];
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        handleClick() {
+          steps.push("click");
+        },
+        handleDblClick() {
+          steps.push("dblclick");
+        }
+      },
+      { handlers: [] }
+    );
+    expect(steps).toEqual([]);
+    (<HTMLElement>node).click();
+    expect(steps).toEqual(["click"]);
+    (<HTMLElement>node).dispatchEvent(new Event("dblclick"));
+    expect(steps).toEqual(["click", "dblclick"]);
+  });
+
   test("can bind handlers with arguments", () => {
     qweb.addTemplate("test", `<button t-on-click="add(5)">Click</button>`);
     let a = 1;

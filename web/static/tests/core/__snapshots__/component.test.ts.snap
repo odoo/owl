@@ -16,11 +16,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let isNew4 = !w4;
     if (w4 && w4.__widget__.renderPromise) {
         if (w4.__widget__.isStarted) {
-            if (props4 === w4.__widget__.renderProps) {
-                def3 = w4.__widget__.renderPromise;
-            } else {
-                def3 = w4.updateProps(props4);
-            }
+            def3 = w4.updateProps(props4);
         } else {
             isNew4 = true
             if (props4 === w4.__widget__.renderProps) {

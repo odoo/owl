@@ -18,7 +18,7 @@ export interface WEnv {
 let wl: any[] = [];
 (<any>window).wl = wl;
 
-interface Meta<T extends WEnv> {
+export interface Meta<T extends WEnv, Props> {
   readonly id: number;
   vnode: VNode | null;
   isStarted: boolean;
@@ -31,7 +31,7 @@ interface Meta<T extends WEnv> {
   cmap: { [key: number]: number };
 
   renderId: number;
-  renderProps: any;
+  renderProps: Props | null;
   renderPromise: Promise<VNode> | null;
   boundHandlers: { [key: number]: any };
 }
@@ -51,7 +51,7 @@ export class Component<
   Props,
   State extends {}
 > extends EventBus {
-  readonly __widget__: Meta<WEnv>;
+  readonly __widget__: Meta<WEnv, Props>;
   template: string = "default";
   inlineTemplate: string | null = null;
 
@@ -101,7 +101,7 @@ export class Component<
       cmap: {},
       renderId: 1,
       renderPromise: null,
-      renderProps: props,
+      renderProps: props || null,
       boundHandlers: {}
     };
   }
@@ -216,15 +216,23 @@ export class Component<
     }
   }
 
-  updateProps(nextProps: Props): Promise<void> {
+  async updateProps(nextProps: Props): Promise<void> {
+    if (nextProps === this.__widget__.renderProps) {
+      await this.__widget__.renderPromise;
+      return;
+    }
     const shouldUpdate = this.shouldUpdate(nextProps);
-    this.props = nextProps;
-    return shouldUpdate ? this.render() : Promise.resolve();
+    return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
   }
 
   //--------------------------------------------------------------------------
   // Private
   //--------------------------------------------------------------------------
+
+  async _updateProps(nextProps: Props): Promise<void> {
+    this.props = nextProps;
+    return this.render();
+  }
 
   async render(): Promise<void> {
     if (this.__widget__.isDestroyed) {
@@ -240,14 +248,14 @@ export class Component<
     }
   }
 
-  private _patch(vnode) {
+  _patch(vnode) {
     this.__widget__.renderPromise = null;
     this.__widget__.vnode = patch(
       this.__widget__.vnode || document.createElement(vnode.sel!),
       vnode
     );
   }
-  private async _start(): Promise<VNode> {
+  async _start(): Promise<VNode> {
     this.__widget__.renderProps = this.props;
     this.__widget__.renderPromise = this.willStart().then(() => {
       if (this.__widget__.isDestroyed) {
@@ -311,30 +319,12 @@ export class Component<
     }
   }
 
-  private visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
+  visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
     const shouldVisitChildren = callback(this);
     if (shouldVisitChildren) {
       const children = this.__widget__.children;
       for (let id in children) {
         children[id].visitSubTree(callback);
-      }
-    }
-  }
-}
-
-export class PureComponent<T extends WEnv, P, S> extends Component<T, P, S> {
-  shouldUpdate(nextProps: P): boolean {
-    for (let k in nextProps) {
-      if (nextProps[k] !== this.props[k]) {
-        return true;
-      }
-    }
-    return false;
-  }
-  async updateState(nextState: Partial<S>) {
-    for (let k in nextState) {
-      if (nextState[k] !== this.state[k]) {
-        return super.updateState(nextState);
       }
     }
   }

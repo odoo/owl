@@ -852,11 +852,7 @@ const widgetDirective: Directive = {
     // check if we can reuse current rendering promise
     ctx.addIf(`w${widgetID} && w${widgetID}.__widget__.renderPromise`);
     ctx.addIf(`w${widgetID}.__widget__.isStarted`);
-    ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);
-    ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
-    ctx.addElse();
     ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
-    ctx.closeIf();
     ctx.addElse();
     ctx.addLine(`isNew${widgetID} = true`);
     ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);

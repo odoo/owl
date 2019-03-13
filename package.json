@@ -13,7 +13,10 @@
     "minify": "uglifyjs dist/app/main.js -o dist/app/main.js --compress --mangle",
     "serve": "live-server --entry-file=index.html dist/app/",
     "predev": "npm run build",
-    "dev": "npm-run-all --parallel \"build:* -- --watch\" serve"
+    "dev": "npm-run-all --parallel \"build:* -- --watch\" serve",
+    "prepackage:core": "tsc --allowjs --lib es2017,dom --target esnext --outDir dist/core web/static/src/ts/core/*",
+    "package:core": "rollup dist/core/src/ts/core/index.js --file dist/core.js --format umd --name \"odoocore\"",
+    "postpackage:core": "uglifyjs dist/core.js -o dist/core.min.js --compress --mangle"
   },
   "repository": {
     "type": "git",
@@ -31,8 +34,8 @@
     "jest": "^23.6.0",
     "live-server": "^1.2.1",
     "npm-run-all": "^4.1.5",
-    "rollup": "^1.1.0",
-    "rollup-plugin-typescript2": "^0.19.0",
+    "rollup": "^1.6.0",
+    "rollup-plugin-typescript2": "^0.19.3",
     "sass": "^1.16.1",
     "snabbdom-to-html": "^5.1.1",
     "source-map-support": "^0.5.10",

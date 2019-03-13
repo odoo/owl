@@ -14,6 +14,15 @@ const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in
   ","
 );
 
+const WORD_REPLACEMENT = {
+  and: "&&",
+  or: "||",
+  gt: ">",
+  gte: ">=",
+  lt: "<",
+  lte: "<="
+};
+
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
@@ -528,7 +537,7 @@ export class QWeb {
       } else if (c.match(/\W/) && invar.length) {
         // TODO: Should check for possible spaces before dot
         if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          invar = "context['" + invar + "']";
+          invar = WORD_REPLACEMENT[invar] || "context['" + invar + "']";
         }
         r += invar;
         invar = "";

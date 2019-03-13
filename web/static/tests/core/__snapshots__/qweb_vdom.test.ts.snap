@@ -909,6 +909,58 @@ exports[`t-if boolean value true condition 1`] = `
 }"
 `;
 
+exports[`t-if can use some boolean operators in expressions 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    if (context['cond1'] && context['cond2']) {
+        c1.push({text: \`and\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['cond1'] && context['cond3']) {
+        c1.push({text: \`nope\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['cond1'] || context['cond3']) {
+        c1.push({text: \`or\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['cond3'] || context['cond4']) {
+        c1.push({text: \`nope\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['m'] > 3) {
+        c1.push({text: \`mgt\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['n'] > 3) {
+        c1.push({text: \`ngt\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['m'] < 3) {
+        c1.push({text: \`mlt\`});
+    }
+    c1.push({text: \`
+        \`});
+    if (context['n'] < 3) {
+        c1.push({text: \`nlt\`});
+    }
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
 exports[`t-on can bind event handler 1`] = `
 "function anonymous(context,extra
 ) {

@@ -2,7 +2,7 @@ import sdAttributes from "../../libs/snabbdom/src/modules/attributes";
 import sdListeners from "../../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../../libs/snabbdom/src/snabbdom";
 import { EvalContext, QWeb } from "../../src/ts/core/qweb_vdom";
-
+import { normalize } from "../helpers";
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
@@ -286,6 +286,33 @@ describe("t-if", () => {
     const result = trim(renderToString(qweb, "test", { condition: false }));
     expect(result).toBe(
       "<div><span>begin</span>fail-else<span>end</span></div>"
+    );
+  });
+
+  test("can use some boolean operators in expressions", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-if="cond1 and cond2">and</t>
+        <t t-if="cond1 and cond3">nope</t>
+        <t t-if="cond1 or cond3">or</t>
+        <t t-if="cond3 or cond4">nope</t>
+        <t t-if="m gt 3">mgt</t>
+        <t t-if="n gt 3">ngt</t>
+        <t t-if="m lt 3">mlt</t>
+        <t t-if="n lt 3">nlt</t>
+      </div>`
+    );
+    const context = {
+      cond1: true,
+      cond2: true,
+      cond3: false,
+      cond4: false,
+      m: 5,
+      n: 2
+    };
+    expect(normalize(renderToString(qweb, "test", context))).toBe(
+      "<div>andormgtnlt</div>"
     );
   });
 });

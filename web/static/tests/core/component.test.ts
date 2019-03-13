@@ -665,12 +665,16 @@ describe("composition", () => {
       }
     }
 
-    class Parent extends Widget {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "parent",
+      `<div>
           <t t-foreach="state.numbers" t-as="number">
-            <t t-widget="ChildWidget" t-key="number"/>
+            <t t-widget="ChildWidget" t-att-key="number"/>
           </t>
-        </div>`;
+        </div>`
+    );
+    class Parent extends Widget {
+      template = "parent";
       state = {
         numbers: [1, 2, 3]
       };
@@ -687,6 +691,7 @@ describe("composition", () => {
       </div>
     `)
     );
+    expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
   });
 
   test("sub widgets between t-ifs", async () => {
@@ -851,7 +856,7 @@ describe("random stuff/miscellaneous", () => {
   test("snapshotting compiled code", async () => {
     env.qweb.addTemplate(
       "parent",
-      `<div><t t-widget="child" t-props="{flag:state.flag}"/></div>`
+      `<div><t t-widget="child" t-key="somestring" t-props="{flag:state.flag}"/></div>`
     );
     class Parent extends Widget {
       inlineTemplate = "parent";

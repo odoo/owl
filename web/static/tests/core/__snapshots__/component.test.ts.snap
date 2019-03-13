@@ -1,5 +1,74 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`composition sub widgets with some state rendered in a loop 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+          \`});
+    let _2 = context['state'].numbers;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.number_first = i === 0;
+        context.number_last = i === _3.length - 1;
+        context.number_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.number_index = i;
+        context.number = _3[i];
+        context.number_value = _4[i];
+        c1.push({text: \`
+            \`});
+        //WIDGET
+        let key8 = context['number'];
+        let _5_index = c1.length;
+        c1.push(null);
+        let def6;
+        let w7 = key8 in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[key8]] : false;
+        let props7 = null;
+        let isNew7 = !w7;
+        if (w7 && w7.__widget__.renderPromise) {
+            if (w7.__widget__.isStarted) {
+                def6 = w7.updateProps(props7);
+            } else {
+                isNew7 = true
+                if (props7 === w7.__widget__.renderProps) {
+                    def6 = w7.__widget__.renderPromise;
+                } else {
+                    w7.destroy();
+                    w7 = false
+                }
+            }
+        }
+        if (!def6) {
+            if (w7) {
+                def6 = w7.updateProps(props7);
+            } else {
+                w7 = new context.widgets['ChildWidget'](owner, props7);
+                context.__widget__.cmap[key8] = w7.__widget__.id;
+                def6 = w7._start();
+            }
+        }
+        if (isNew7) {
+            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8});c1[_5_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w7._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w7.destroy()}}; w7.__widget__.pvnode = pvnode;});
+        } else {
+            def6 = def6.then(()=>{if (w7.__widget__.isDestroyed) {return};let vnode;if (!w7.__widget__.vnode){vnode=w7.__widget__.pvnode} else { vnode=h(w7.__widget__.vnode.sel, {key: key8});vnode.elm=w7.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w7.el,a.elm);a.elm=w7.el;w7.__mount();},remove(){w7.destroy()}}}c1[_5_index]=vnode;});
+        }
+        extra.promises.push(def6);
+        c1.push({text: \`
+          \`});
+    }
+    c1.push({text: \`
+        \`});
+    return vn1;
+}"
+`;
+
 exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {
@@ -8,10 +77,11 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     //WIDGET
+    let key5 = \\"somestring\\";
     let _2_index = c1.length;
     c1.push(null);
     let def3;
-    let w4 = 4 in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[4]] : false;
+    let w4 = key5 in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[key5]] : false;
     let props4 = {flag: context['state'].flag};
     let isNew4 = !w4;
     if (w4 && w4.__widget__.renderPromise) {
@@ -32,14 +102,14 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
             def3 = w4.updateProps(props4);
         } else {
             w4 = new context.widgets['child'](owner, props4);
-            context.__widget__.cmap[4] = w4.__widget__.id;
+            context.__widget__.cmap[key5] = w4.__widget__.id;
             def3 = w4._start();
         }
     }
     if (isNew4) {
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
     } else {
-        def3 = def3.then(()=>{if (w4.__widget__.isDestroyed) {return};let vnode;if (!w4.__widget__.vnode){vnode=w4.__widget__.pvnode} else { vnode=h(w4.__widget__.vnode.sel, {key: 4});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}}}c1[_2_index]=vnode;});
+        def3 = def3.then(()=>{if (w4.__widget__.isDestroyed) {return};let vnode;if (!w4.__widget__.vnode){vnode=w4.__widget__.pvnode} else { vnode=h(w4.__widget__.vnode.sel, {key: key5});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}}}c1[_2_index]=vnode;});
     }
     extra.promises.push(def3);
     return vn1;

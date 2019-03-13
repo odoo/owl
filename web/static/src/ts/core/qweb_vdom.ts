@@ -820,7 +820,12 @@ const widgetDirective: Directive = {
 
     let key = node.getAttribute("t-key");
     if (key) {
-      key = qweb._formatExpression(key);
+      key = `"${key}"`;
+    } else {
+      key = node.getAttribute("t-att-key");
+      if (key) {
+        key = qweb._formatExpression(key);
+      }
     }
     if (props) {
       props = props.trim();

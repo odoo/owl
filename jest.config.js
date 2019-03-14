@@ -1,5 +1,5 @@
 module.exports = {
-  roots: ["<rootDir>/demo/static"],
+  roots: ["<rootDir>/demo/static", "<rootDir>/tests"],
   transform: {
     "^.+\\.ts?$": "ts-jest"
   },

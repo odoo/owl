@@ -1,4 +1,4 @@
-import { Component, WEnv } from "../../../../src/component";
+import { Component, WEnv } from "../src/component";
 import {
   makeDeferred,
   makeTestFixture,
@@ -6,7 +6,7 @@ import {
   nextMicroTick,
   nextTick,
   normalize
-} from "../helpers";
+} from "../demo/static/tests/helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

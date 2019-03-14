@@ -4,7 +4,7 @@
   "description": "Core Utils for Odoo Web Client",
   "main": "src/index.ts",
   "scripts": {
-    "prebuild": "tsc --allowjs --lib es2017,dom --target esnext --outDir dist/core src/*",
+    "prebuild": "tsc --lib es2017,dom --target esnext --outDir dist/core src/*",
     "build": "rollup -c",
     "postbuild": "uglifyjs dist/core.js -o dist/core.min.js --compress --mangle",
     "test": "jest",

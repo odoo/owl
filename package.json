@@ -23,7 +23,7 @@
     "url": "git+https://github.com/ged-odoo/web-core.git"
   },
   "author": "Odoo",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/ged-odoo/web-core/issues"
   },

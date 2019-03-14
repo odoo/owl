@@ -2,7 +2,6 @@ import { readFileSync } from "fs";
 import { WEnv } from "../../src/ts/core/component";
 import { QWeb } from "../../src/ts/core/qweb_vdom";
 import { Registry } from "../../src/ts/core/registry";
-import { idGenerator } from "../../src/ts/core/utils";
 import { Env, InitData, linkStoreToEnv, makeEnv } from "../../src/ts/env";
 import {
   actionRegistry as AR,
@@ -29,12 +28,11 @@ export interface TestInfo extends Partial<InitData>, Partial<TestData> {
 // Code
 //------------------------------------------------------------------------------
 
-const TEMPLATES = readFileSync("web/static/src/xml/templates.xml", "utf-8");
+const TEMPLATES = readFileSync("demo/static/src/xml/templates.xml", "utf-8");
 
 export function makeTestWEnv(): WEnv {
   return {
-    qweb: new QWeb(),
-    getID: idGenerator()
+    qweb: new QWeb()
   };
 }
 

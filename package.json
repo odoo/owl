@@ -1,6 +1,6 @@
 {
   "name": "web-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Core Utils for Odoo Web Client",
   "main": "index.js",
   "scripts": {
@@ -15,14 +15,14 @@
     "predev": "npm run build",
     "dev": "npm-run-all --parallel \"build:* -- --watch\" serve",
     "prepackage:core": "tsc --allowjs --lib es2017,dom --target esnext --outDir dist/core web/static/src/ts/core/*",
-    "package:core": "rollup dist/core/src/ts/core/index.js --file dist/core.js --format umd --name \"odoocore\"",
+    "package:core": "rollup -c",
     "postpackage:core": "uglifyjs dist/core.js -o dist/core.min.js --compress --mangle"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ged-odoo/web-core.git"
   },
-  "author": "",
+  "author": "Odoo",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ged-odoo/web-core/issues"

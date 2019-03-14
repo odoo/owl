@@ -1,3 +1,5 @@
-export { QWeb } from "./qweb_vdom";
-export { EventBus } from "./event_bus";
-export { Component } from "./component";
+import { QWeb } from "./qweb_vdom";
+import { EventBus } from "./event_bus";
+import { Component } from "./component";
+
+export const core = { QWeb, EventBus, Component };

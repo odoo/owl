@@ -1,6 +1,6 @@
-import sdAttributes from "../../../../src/snabbdom/src/modules/attributes";
-import sdListeners from "../../../../src/snabbdom/src/modules/eventlisteners";
-import { init } from "../../../../src/snabbdom/src/snabbdom";
+import sdAttributes from "../../../../libs/snabbdom/src/modules/attributes";
+import sdListeners from "../../../../libs/snabbdom/src/modules/eventlisteners";
+import { init } from "../../../../libs/snabbdom/src/snabbdom";
 import { EvalContext, QWeb } from "../../../../src/qweb_vdom";
 import { normalize } from "../helpers";
 //------------------------------------------------------------------------------

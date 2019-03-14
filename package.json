@@ -14,7 +14,7 @@
     "serve": "live-server --entry-file=index.html dist/app/",
     "predev": "npm run build",
     "dev": "npm-run-all --parallel \"build:* -- --watch\" serve",
-    "prepackage:core": "tsc --allowjs --lib es2017,dom --target esnext --outDir dist/core demo/static/src/ts/core/*",
+    "prepackage:core": "tsc --allowjs --lib es2017,dom --target esnext --outDir dist/core src/*",
     "package:core": "rollup -c",
     "postpackage:core": "uglifyjs dist/core.js -o dist/core.min.js --compress --mangle"
   },

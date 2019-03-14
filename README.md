@@ -72,5 +72,6 @@ that assets are properly rebuilt if necessary, and then reloaded.
 
 ## Documentation
 
-[Component](doc/component.md)
-[QWeb](doc/qweb.md)
+- [Quick Start](doc/quick_start.md)
+- [Component](doc/component.md)
+- [QWeb](doc/qweb.md)

@@ -1,3 +1,6 @@
+import { WEnv } from "../src/component";
+import { QWeb } from "../src/qweb_vdom";
+
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
 }
@@ -30,4 +33,10 @@ export function makeDeferred(): Deferred {
   (<Deferred>def).resolve = resolve;
   (<Deferred>def).reject = reject;
   return <Deferred>def;
+}
+
+export function makeTestWEnv(): WEnv {
+  return {
+    qweb: new QWeb()
+  };
 }

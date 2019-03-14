@@ -6,7 +6,7 @@ import {
   nextMicroTick,
   nextTick,
   normalize
-} from "../demo/static/tests/helpers";
+} from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

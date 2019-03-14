@@ -844,6 +844,9 @@ const widgetDirective: Directive = {
           .split(",")
           .map(p => {
             let [key, val] = p.split(":");
+            if (!val) {
+              val = key;
+            }
             return `${key}: ${qweb._formatExpression(val)}`;
           })
           .join(",");

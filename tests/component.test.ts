@@ -1,4 +1,4 @@
-import { Component, WEnv } from "../src/component";
+import { Component, Env } from "../src/component";
 import {
   makeDeferred,
   makeTestFixture,
@@ -18,7 +18,7 @@ import {
 // - env: a WEnv, necessary to create new widgets
 
 let fixture: HTMLElement;
-let env: WEnv;
+let env: Env;
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -36,7 +36,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-class Widget extends Component<WEnv, {}, {}> {}
+class Widget extends Component<Env, any, any> {}
 
 function children(w: Widget): Widget[] {
   const childrenMap = w.__widget__.children;
@@ -769,6 +769,23 @@ describe("props evaluation (with t-props directive)", () => {
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+  });
+
+  test("accept ES6-like syntax for props (with getters)", async () => {
+    class Child extends Widget {
+      inlineTemplate = `<span><t t-esc="props.greetings"/></span>`;
+    }
+
+    class Parent extends Widget {
+      inlineTemplate = `<div><t t-widget="child" t-props="{greetings}"/></div>`;
+      widgets = { child: Child };
+      get greetings() {
+        return `hello ${this.props.name}`;
+      }
+    }
+    const widget = new Parent(env, { name: "aaron" });
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>hello aaron</span></div>");
   });
 });
 

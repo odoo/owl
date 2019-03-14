@@ -5,6 +5,9 @@ import { init } from "../../../libs/snabbdom/src/snabbdom";
 import { VNode } from "../../../libs/snabbdom/src/vnode";
 import { EventBus } from "./event_bus";
 import { QWeb } from "./qweb_vdom";
+import { idGenerator } from "./utils";
+
+let getId = idGenerator();
 
 //------------------------------------------------------------------------------
 // Types/helpers
@@ -12,7 +15,6 @@ import { QWeb } from "./qweb_vdom";
 
 export interface WEnv {
   qweb: QWeb;
-  getID(): number;
 }
 
 let wl: any[] = [];
@@ -84,11 +86,11 @@ export class Component<
     if (parent instanceof Component) {
       p = parent;
       this.env = parent.env;
-      id = this.env.getID();
+      id = getId();
       parent.__widget__.children[id] = this;
     } else {
       this.env = parent;
-      id = this.env.getID();
+      id = getId();
     }
     this.__widget__ = {
       id: id,

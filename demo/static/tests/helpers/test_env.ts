@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
-import { WEnv } from "../../src/ts/core/component";
-import { QWeb } from "../../src/ts/core/qweb_vdom";
-import { Registry } from "../../src/ts/core/registry";
+import { WEnv } from "../../../../src/component";
+import { QWeb } from "../../../../src/qweb_vdom";
+import { Registry } from "../../../../src/registry";
 import { Env, InitData, linkStoreToEnv, makeEnv } from "../../src/ts/env";
 import {
   actionRegistry as AR,

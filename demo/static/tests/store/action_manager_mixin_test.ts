@@ -1,4 +1,4 @@
-import { Registry } from "../../src/ts/core/registry";
+import { Registry } from "../../../../src/registry";
 import { makeTestEnv } from "../helpers";
 
 //------------------------------------------------------------------------------

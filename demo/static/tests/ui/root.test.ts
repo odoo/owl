@@ -1,4 +1,4 @@
-import { Registry } from "../../src/ts/core/registry";
+import { Registry } from "../../../../src/registry";
 import { Root } from "../../src/ts/ui/root";
 import * as helpers from "../helpers";
 import { makeTestEnv } from "../helpers";

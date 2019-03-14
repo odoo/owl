@@ -1,4 +1,4 @@
-import { debounce } from "../core/utils";
+import { debounce } from "../../../../../src/utils";
 import { Env } from "../env";
 import { Controller } from "../store/action_manager_mixin";
 import { State, Store } from "../store/store";

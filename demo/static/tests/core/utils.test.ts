@@ -5,7 +5,7 @@ import {
   memoize,
   debounce,
   findInTree
-} from "../../src/ts/core/utils";
+} from "../../../../src/utils";
 
 describe("escape", () => {
   test("normal strings", () => {

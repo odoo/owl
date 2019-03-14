@@ -1,4 +1,4 @@
-import { Component, WEnv } from "../../src/ts/core/component";
+import { Component, WEnv } from "../../../../src/component";
 import {
   makeDeferred,
   makeTestFixture,

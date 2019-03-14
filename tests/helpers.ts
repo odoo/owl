@@ -1,4 +1,4 @@
-import { WEnv } from "../src/component";
+import { Env } from "../src/component";
 import { QWeb } from "../src/qweb_vdom";
 
 export function nextMicroTick(): Promise<void> {
@@ -35,7 +35,7 @@ export function makeDeferred(): Deferred {
   return <Deferred>def;
 }
 
-export function makeTestWEnv(): WEnv {
+export function makeTestWEnv(): Env {
   return {
     qweb: new QWeb()
   };

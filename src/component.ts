@@ -13,14 +13,14 @@ let getId = idGenerator();
 // Types/helpers
 //------------------------------------------------------------------------------
 
-export interface WEnv {
+export interface Env {
   qweb: QWeb;
 }
 
 let wl: any[] = [];
 (<any>window).wl = wl;
 
-export interface Meta<T extends WEnv, Props> {
+export interface Meta<T extends Env, Props> {
   readonly id: number;
   vnode: VNode | null;
   isStarted: boolean;
@@ -49,11 +49,11 @@ export interface Type<T> extends Function {
 //------------------------------------------------------------------------------
 
 export class Component<
-  T extends WEnv,
+  T extends Env,
   Props,
   State extends {}
 > extends EventBus {
-  readonly __widget__: Meta<WEnv, Props>;
+  readonly __widget__: Meta<Env, Props>;
   template: string = "default";
   inlineTemplate: string | null = null;
 

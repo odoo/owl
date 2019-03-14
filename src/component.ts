@@ -4,7 +4,7 @@ import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../libs/snabbdom/src/snabbdom";
 import { VNode } from "../libs/snabbdom/src/vnode";
 import { EventBus } from "./event_bus";
-import { QWeb } from "./qweb_vdom";
+import { QWeb } from "./qweb";
 import { idGenerator } from "./utils";
 
 let getId = idGenerator();

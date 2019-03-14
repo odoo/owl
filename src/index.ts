@@ -1,4 +1,4 @@
-import { QWeb } from "./qweb_vdom";
+import { QWeb } from "./qweb";
 import { EventBus } from "./event_bus";
 import { Component } from "./component";
 

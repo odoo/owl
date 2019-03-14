@@ -1,5 +1,5 @@
 import { Env } from "../src/component";
-import { QWeb } from "../src/qweb_vdom";
+import { QWeb } from "../src/qweb";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();

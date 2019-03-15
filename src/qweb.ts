@@ -511,7 +511,7 @@ export class QWeb {
     }
   }
 
-  _formatExpression(e: string): string {
+  _formatExpression(e: string, ctx?: Context): string {
     if (e in this.exprCache) {
       return this.exprCache[e];
     }
@@ -537,7 +537,10 @@ export class QWeb {
       } else if (c.match(/\W/) && invar.length) {
         // TODO: Should check for possible spaces before dot
         if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          invar = WORD_REPLACEMENT[invar] || "context['" + invar + "']";
+          invar =
+            WORD_REPLACEMENT[invar] ||
+            (ctx && invar in ctx.variables && ctx.variables[invar]) ||
+            "context['" + invar + "']";
         }
         r += invar;
         invar = "";
@@ -847,7 +850,7 @@ const widgetDirective: Directive = {
             if (!val) {
               val = key;
             }
-            return `${key}: ${qweb._formatExpression(val)}`;
+            return `${key}: ${qweb._formatExpression(val, ctx)}`;
           })
           .join(",");
         props = "{" + innerProp + "}";

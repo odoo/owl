@@ -787,6 +787,27 @@ describe("props evaluation (with t-props directive)", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>hello aaron</span></div>");
   });
+
+  test("t-set works with t-props", async () => {
+    class Parent extends Widget {
+      inlineTemplate = `
+        <div>
+          <t t-set="val" t-value="42"/>
+          <t t-widget="child" t-props="{val:val}"/>
+        </div>`;
+        widgets = { child: Child }
+    }
+    class Child extends Widget {
+      inlineTemplate = `
+        <span>
+          <t t-esc="props.val"/>
+        </span>`;
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(normalize(fixture.innerHTML)).toBe("<div><span>42</span></div>");
+  });
 });
 
 describe("other directives with t-widget", () => {

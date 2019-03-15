@@ -1,4 +1,4 @@
-import { Type } from "../../../../../src/component";
+import { Type } from "../../../../../../src/component";
 import { rpcMixin } from "./rpc_mixin";
 import { Widget } from "../widget";
 

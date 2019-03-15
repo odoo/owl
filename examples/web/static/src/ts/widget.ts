@@ -1,4 +1,4 @@
-import { Component } from "../../../../src/component";
+import { Component } from "../../../../../src/component";
 import { Env } from "./env";
 
 //------------------------------------------------------------------------------

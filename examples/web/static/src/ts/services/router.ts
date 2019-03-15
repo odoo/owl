@@ -1,4 +1,4 @@
-import { EventBus, Callback } from "../../../../../src/event_bus";
+import { EventBus, Callback } from "../../../../../../src/event_bus";
 
 //------------------------------------------------------------------------------
 // Types and helpers

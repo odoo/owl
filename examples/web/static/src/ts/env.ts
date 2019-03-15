@@ -1,6 +1,6 @@
-import { Env as WEnv } from "../../../../src/component";
-import { QWeb } from "../../../../src/qweb";
-import { Registry } from "../../../../src/registry";
+import { Env as WEnv } from "../../../../../src/component";
+import { QWeb } from "../../../../../src/qweb";
+import { Registry } from "../../../../../src/registry";
 import { RPC as RPCService } from "./services/ajax";
 import { RPC } from "./store/store";
 import { IRouter } from "./services/router";

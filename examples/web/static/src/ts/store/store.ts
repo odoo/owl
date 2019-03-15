@@ -1,5 +1,5 @@
-import { EventBus } from "../../../../../src/event_bus";
-import { idGenerator } from "../../../../../src/utils";
+import { EventBus } from "../../../../../../src/event_bus";
+import { idGenerator } from "../../../../../../src/utils";
 import { Env } from "../env";
 import { Query } from "../services/router";
 import { actionManagerMixin } from "./action_manager_mixin";

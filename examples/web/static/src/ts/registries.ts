@@ -1,4 +1,4 @@
-import { Registry } from "../../../../src/registry";
+import { Registry } from "../../../../../src/registry";
 import { ControllerWidget } from "./store/store";
 import { Discuss } from "./discuss/discuss";
 import { ListView } from "./views/list_view";

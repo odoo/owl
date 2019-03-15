@@ -1,4 +1,4 @@
-import { Callback } from "../../../../src/event_bus";
+import { Callback } from "../../../../../src/event_bus";
 import { IRouter, Query, RouterEvent } from "../../src/ts/services/router";
 
 export class MockRouter implements IRouter {

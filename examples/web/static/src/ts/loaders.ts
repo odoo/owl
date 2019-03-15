@@ -1,4 +1,4 @@
-import { findInTree } from "../../../../src/utils";
+import { findInTree } from "../../../../../src/utils";
 import { MenuInfo, MenuItem } from "./store/store";
 
 //------------------------------------------------------------------------------

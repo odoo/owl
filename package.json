@@ -9,14 +9,14 @@
     "postbuild": "uglifyjs dist/core.js -o dist/core.min.js --compress --mangle",
     "test": "jest",
     "test:watch": "jest --watch",
-    "demo:build": "cpx \"demo/**/*.{html,js,css,ttf,woff,woff2}\" dist/app && npm-run-all --parallel demo:build:*",
-    "demo:build:css": "sass demo/static/src/scss/app.scss dist/app/app.css",
-    "demo:build:js": "tsc --allowjs -m amd --lib es2017,dom --target esnext --outfile dist/app/main.js demo/static/src/ts/main.ts",
-    "demo:build:xml": "cpx demo/static/src/xml/templates.xml dist/app",
-    "demo:minify": "uglifyjs dist/app/main.js -o dist/app/main.js --compress --mangle",
-    "demo:serve": "live-server --entry-file=index.html dist/app/",
-    "predemo:dev": "npm run demo:build",
-    "demo:dev": "npm-run-all --parallel \"demo:build:* -- --watch\" demo:serve"
+    "example:web:build": "cpx \"examples/web/**/*.{html,js,css,ttf,woff,woff2}\" dist/examples/web && npm-run-all --parallel example:web:build:*",
+    "example:web:build:css": "sass examples/web/static/src/scss/app.scss dist/examples/web/app.css",
+    "example:web:build:js": "tsc --allowjs -m amd --lib es2017,dom --target esnext --outfile dist/examples/web/main.js examples/web/static/src/ts/main.ts",
+    "example:web:build:xml": "cpx examples/web/static/src/xml/templates.xml dist/examples/web",
+    "example:web:minify": "uglifyjs dist/examples/web/main.js -o dist/examples/web/main.js --compress --mangle",
+    "example:web:serve": "live-server --entry-file=index.html dist/examples/web/",
+    "preexample:web:dev": "npm run example:web:build",
+    "example:web:dev": "npm-run-all --parallel \"example:web:build:* -- --watch\" example:web:serve"
   },
   "repository": {
     "type": "git",

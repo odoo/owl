@@ -52,7 +52,7 @@ class Counter extends Widget {
   };
 
   inc() {
-    this.updateState({ counter: this.state.counter + 1 });
+    this.setState({ counter: this.state.counter + 1 });
   }
 }
 
@@ -103,11 +103,11 @@ describe("basic widget properties", () => {
     );
   });
 
-  test("updateState before first render does not trigger a render", async () => {
+  test("setState before first render does not trigger a render", async () => {
     let renderCalls = 0;
     class TestW extends Widget {
       async willStart() {
-        this.updateState({});
+        this.setState({});
       }
       async _render() {
         renderCalls++;
@@ -119,10 +119,10 @@ describe("basic widget properties", () => {
     expect(renderCalls).toBe(1);
   });
 
-  test("updateState does not allow adding extra keys", async () => {
+  test("setState does not allow adding extra keys", async () => {
     const widget = new Widget(env);
     try {
-      await widget.updateState({ extra: 1 });
+      await widget.setState({ extra: 1 });
     } catch (e) {
       expect(e.message).toMatch("Invalid key:");
     }
@@ -253,7 +253,7 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(hookCounter).toBe(0); // sub widget not created yet
-    await widget.updateState({ ok: true });
+    await widget.setState({ ok: true });
     expect(hookCounter).toBe(2);
   });
 
@@ -313,7 +313,7 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual(["init", "willstart", "mounted"]);
-    await widget.updateState({ ok: false });
+    await widget.setState({ ok: false });
     expect(steps).toEqual([
       "init",
       "willstart",
@@ -568,9 +568,9 @@ describe("composition", () => {
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
-    await widget.updateState({ ok: false });
+    await widget.setState({ ok: false });
     expect(fixture.innerHTML).toBe("<div></div>");
-    await widget.updateState({ ok: true });
+    await widget.setState({ ok: true });
     expect(fixture.innerHTML).toBe(
       "<div><div>0<button>Inc</button></div></div>"
     );
@@ -592,10 +592,10 @@ describe("composition", () => {
     );
     const counter = children(widget)[0];
     expect(counter.__widget__.isMounted).toBe(true);
-    await widget.updateState({ ok: false });
+    await widget.setState({ ok: false });
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(counter.__widget__.isMounted).toBe(false);
-    await widget.updateState({ ok: true });
+    await widget.setState({ ok: true });
     expect(counter.__widget__.isMounted).toBe(true);
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
@@ -615,9 +615,9 @@ describe("composition", () => {
     await widget.mount(fixture);
     const input = fixture.getElementsByTagName("input")[0];
     input.value = "test";
-    await widget.updateState({ ok: false });
+    await widget.setState({ ok: false });
     expect(fixture.innerHTML).toBe("<div></div>");
-    await widget.updateState({ ok: true });
+    await widget.setState({ ok: true });
     expect(fixture.innerHTML).toBe("<div><input></div>");
     const input2 = fixture.getElementsByTagName("input")[0];
     expect(input).toBe(input2);
@@ -682,7 +682,7 @@ describe("composition", () => {
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
-    await parent.updateState({ numbers: [1, 3] });
+    await parent.setState({ numbers: [1, 3] });
     expect(normalize(fixture.innerHTML)).toBe(
       normalize(`
       <div>
@@ -713,7 +713,7 @@ describe("composition", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
     const child = children(parent)[0];
-    await parent.updateState({ flag: true });
+    await parent.setState({ flag: true });
     expect(children(parent)[0]).toBe(child);
     expect(child.__widget__.isDestroyed).toBe(false);
     expect(normalize(fixture.innerHTML)).toBe(
@@ -795,7 +795,7 @@ describe("props evaluation (with t-props directive)", () => {
           <t t-set="val" t-value="42"/>
           <t t-widget="child" t-props="{val:val}"/>
         </div>`;
-        widgets = { child: Child }
+      widgets = { child: Child };
     }
     class Child extends Widget {
       inlineTemplate = `
@@ -848,10 +848,10 @@ describe("other directives with t-widget", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
 
-    await widget.updateState({ flag: false });
+    await widget.setState({ flag: false });
     expect(fixture.innerHTML).toBe("<div></div>");
 
-    await widget.updateState({ flag: true });
+    await widget.setState({ flag: true });
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
 
@@ -874,7 +874,7 @@ describe("other directives with t-widget", () => {
 
     expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
 
-    await widget.updateState({ flag: false });
+    await widget.setState({ flag: false });
     expect(normalize(fixture.innerHTML)).toBe("<div><span>hey</span></div>");
   });
 });
@@ -910,7 +910,7 @@ describe("random stuff/miscellaneous", () => {
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
-    await widget.updateState({ flag: true });
+    await widget.setState({ flag: true });
     expect(fixture.innerHTML).toBe("<div><span>abcdef</span></div>");
   });
 
@@ -979,10 +979,10 @@ describe("async rendering", () => {
     const w = new W(env);
     await w.mount(fixture);
     expect(n).toBe(0);
-    w.updateState({ val: 2 });
+    w.setState({ val: 2 });
     expect(n).toBe(1);
     await nextTick();
-    w.updateState({ val: 3 });
+    w.setState({ val: 3 });
     expect(n).toBe(2);
     def.resolve();
     await nextTick();
@@ -1019,10 +1019,10 @@ describe("async rendering", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
-    parent.updateState({ flagA: true });
+    parent.setState({ flagA: true });
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
-    parent.updateState({ flagB: true });
+    parent.setState({ flagB: true });
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
     defB.resolve();
@@ -1065,12 +1065,12 @@ describe("async rendering", () => {
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a1</span></div>"
     );
-    parent.updateState({ valA: 2 });
+    parent.setState({ valA: 2 });
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a1</span></div>"
     );
-    parent.updateState({ flagB: true });
+    parent.setState({ flagB: true });
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a1</span></div>"

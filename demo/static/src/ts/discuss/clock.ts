@@ -33,7 +33,7 @@ export class Clock extends Widget<{}, State> {
   }
 
   updateTime() {
-    this.updateState({ currentTime: new Date().toLocaleTimeString() });
+    this.setState({ currentTime: new Date().toLocaleTimeString() });
   }
 
   startClock() {

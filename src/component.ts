@@ -205,10 +205,10 @@ export class Component<
    *
    * Notes:
    * - it checks if we do not add extra keys to the state.
-   * - it is ok to call updateState before the widget is started. In that
+   * - it is ok to call setState before the widget is started. In that
    * case, it will simply update the state and will not rerender
    */
-  async updateState(nextState: Partial<State>) {
+  async setState(nextState: Partial<State>) {
     if (Object.keys(nextState).length === 0) {
       return;
     }

@@ -34,6 +34,6 @@ export class Counter extends Widget<Props, State> {
   }
 
   increment(delta: number) {
-    this.updateState({ counter: this.state.counter + delta });
+    this.setState({ counter: this.state.counter + delta });
   }
 }

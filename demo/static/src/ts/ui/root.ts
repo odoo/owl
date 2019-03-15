@@ -24,7 +24,7 @@ export class Root extends Widget<Store, State> {
   }
 
   mounted() {
-    this.store.on("state_updated", this, this.updateState);
+    this.store.on("state_updated", this, this.setState);
     this.store.on("rpc_status", this, this.toggleLoadingIndicator);
     this.store.on("update_action", this, this.applyController);
     if (this.store.lastController) {

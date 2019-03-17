@@ -31,14 +31,6 @@ ideas:
 Note: the code is written in typescript. This does not mean that the main web
 client will ever be converted to typescript (even though I would really like it).
 
-## Web client demo
-
-To test and play with the component class, there is a demo application located
-in the _demo/_ folder. It is a rethink of what the web client could look like
-if it is ever rebuilt from scratch. It is currently an experiment. But
-obviously, we hope someday to be able to use this work and actually rewrite
-completely the odoo web client.
-
 ## Main scripts
 
 To install every dependency needed to play with this code:
@@ -60,18 +52,27 @@ npm run test
 npm run test:watch
 ```
 
-To play with the demo application:
-
-```
-npm run demo:build # make a build in dist/app/
-npm run demo:dev   # make a build in dist/app/, and make a live server to access it
-```
-
-The _demo:dev_ task will build the app (without minification), then start a live-server with hot-reloading, and watch the file system to make sure
-that assets are properly rebuilt if necessary, and then reloaded.
+Note that the test scripts also run the example tests suites.
 
 ## Documentation
 
 - [Quick Start](doc/quick_start.md)
 - [Component](doc/component.md)
 - [QWeb](doc/qweb.md)
+
+## Examples
+
+There are two examples of how to work with this web framework:
+
+- [Demo Application](examples/demo/readme.md)
+- [Web Client](examples/web/readme.md)
+
+To play with the examples:
+
+```
+npm run example:build # make a build in dist/app/
+npm run example:dev   # make a build in dist/app/, and make a live server to access it
+```
+
+The _example_:dev\_ task will build the app (without minification), then start a live-server with hot-reloading, and watch the file system to make sure
+that assets are properly rebuilt if necessary, and then reloaded.

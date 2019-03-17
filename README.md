@@ -60,19 +60,9 @@ Note that the test scripts also run the example tests suites.
 - [Component](doc/component.md)
 - [QWeb](doc/qweb.md)
 
-## Examples
+# Examples
 
 There are two examples of how to work with this web framework:
 
-- [Demo Application](examples/demo/readme.md)
-- [Web Client](examples/web/readme.md)
-
-To play with the examples:
-
-```
-npm run example:build # make a build in dist/app/
-npm run example:dev   # make a build in dist/app/, and make a live server to access it
-```
-
-The _example_:dev\_ task will build the app (without minification), then start a live-server with hot-reloading, and watch the file system to make sure
-that assets are properly rebuilt if necessary, and then reloaded.
+- [Demo Application](examples/readme.md#demo)
+- [Web Client](examples/readme.md#web-client-example)

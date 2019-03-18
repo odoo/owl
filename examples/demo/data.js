@@ -12,7 +12,7 @@ function chooseRandomly(array) {
   return array[index];
 }
 
-for (let i = 1; i < 6000; i++) {
+for (let i = 1; i < 16000; i++) {
   messages.push({
     id: i,
     author: chooseRandomly(authors),

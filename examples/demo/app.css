@@ -18,6 +18,14 @@
   width: 100%;
 }
 
+.left-thing .counter span {
+  color: white;
+}
+
+.left-thing .counter button {
+  width: 40px;
+}
+
 .right-thing {
   padding: 20px;
   overflow: auto;

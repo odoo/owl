@@ -17,9 +17,6 @@ export interface Env {
   qweb: QWeb;
 }
 
-let wl: any[] = [];
-(<any>window).wl = wl;
-
 export interface Meta<T extends Env, Props> {
   readonly id: number;
   vnode: VNode | null;
@@ -74,7 +71,6 @@ export class Component<
 
   constructor(parent: Component<T, any, any> | T, props?: Props) {
     super();
-    wl.push(this);
 
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a widget

@@ -69,6 +69,25 @@ export class Component<
   // Lifecycle
   //--------------------------------------------------------------------------
 
+  /**
+   * Creates an instance of Component.
+   *
+   * The root widget of a component tree needs an environment:
+   *
+   * ```javascript
+   *   const root = new RootWidget(env, props);
+   * ```
+   *
+   * Every other widget simply needs a reference to its parent:
+   *
+   * ```javascript
+   *   const child = new SomeWidget(parent, props);
+   * ```
+   *
+   * Note that most of the time, only the root widget needs to be created by
+   * hand.  Other widgets should be created automatically by the framework (with
+   * the t-widget directive in a template)
+   */
   constructor(parent: Component<T, any, any> | T, props?: Props) {
     super();
 
@@ -77,16 +96,14 @@ export class Component<
     //   Con: this is not really safe
     //   Pro: but creating widget (by a template) is always unsafe anyway
     this.props = <Props>props;
-    let id: number;
+    let id: number = getId();
     let p: Component<T, any, any> | null = null;
     if (parent instanceof Component) {
       p = parent;
       this.env = parent.env;
-      id = getId();
       parent.__widget__.children[id] = this;
     } else {
       this.env = parent;
-      id = getId();
     }
     this.__widget__ = {
       id: id,
@@ -104,13 +121,51 @@ export class Component<
     };
   }
 
+  /**
+   * willStart is an asynchronous hook that can be implemented to perform some
+   * action before the initial rendering of a component.
+   *
+   * It will be called exactly once before the initial rendering. It is useful
+   * in some cases, for example, to load external assets (such as a JS library)
+   * before the widget is rendered.
+   *
+   * Note that a slow willStart method will slow down the rendering of the user
+   * interface.  Therefore, some effort should be made to make this method as
+   * fast as possible.
+   *
+   * Note: this method should not be called manually.
+   */
   async willStart() {}
 
+  /**
+   * mounted is a hook that is called each time a component is attached to the
+   * DOM. This is a good place to add some listeners, or to interact with the
+   * DOM, if the component needs to perform some measure for example.
+   *
+   * Note: this method should not be called manually.
+   *
+   * @see willUnmount
+   */
   mounted() {}
 
+  /**
+   * willUnmount is a hook that is called each time a component is detached from
+   * the DOM. This is a good place to remove some listeners, for example.
+   *
+   * Note: this method should not be called manually.
+   *
+   * @see mounted
+   */
   willUnmount() {}
 
+  /**
+   * destroyed is a hook called exactly once, when a component is destroyed.
+   * When a component is destroyed, its children will be destroyed first.
+   *
+   * Note: this method should not be called manually.
+   */
   destroyed() {}
+
   //--------------------------------------------------------------------------
   // Public
   //--------------------------------------------------------------------------
@@ -143,7 +198,7 @@ export class Component<
     target.appendChild(this.el!);
 
     if (document.body.contains(target)) {
-      this.visitSubTree(w => {
+      this._visitSubTree(w => {
         if (!w.__widget__.isMounted && this.el!.contains(w.el)) {
           w.__widget__.isMounted = true;
           w.mounted();
@@ -156,7 +211,7 @@ export class Component<
 
   detach() {
     if (this.el) {
-      this.visitSubTree(w => {
+      this._visitSubTree(w => {
         if (w.__widget__.isMounted) {
           w.willUnmount();
           w.__widget__.isMounted = false;
@@ -165,6 +220,20 @@ export class Component<
         return false;
       });
       this.el.remove();
+    }
+  }
+
+  async render(): Promise<void> {
+    if (this.__widget__.isDestroyed) {
+      return;
+    }
+    const renderVDom = this._render();
+    const renderId = this.__widget__.renderId;
+    const vnode = await renderVDom;
+    if (renderId === this.__widget__.renderId) {
+      // we only update the vnode and the actual DOM if no other rendering
+      // occurred between now and when the render method was initially called.
+      this._patch(vnode);
     }
   }
 
@@ -250,20 +319,6 @@ export class Component<
     return this.render();
   }
 
-  async render(): Promise<void> {
-    if (this.__widget__.isDestroyed) {
-      return;
-    }
-    const renderVDom = this._render();
-    const renderId = this.__widget__.renderId;
-    const vnode = await renderVDom;
-    if (renderId === this.__widget__.renderId) {
-      // we only update the vnode and the actual DOM if no other rendering
-      // occurred between now and when the render method was initially called.
-      this._patch(vnode);
-    }
-  }
-
   _patch(vnode) {
     this.__widget__.renderPromise = null;
     this.__widget__.vnode = patch(
@@ -335,12 +390,12 @@ export class Component<
     }
   }
 
-  visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
+  _visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
     const shouldVisitChildren = callback(this);
     if (shouldVisitChildren) {
       const children = this.__widget__.children;
       for (let id in children) {
-        children[id].visitSubTree(callback);
+        children[id]._visitSubTree(callback);
       }
     }
   }

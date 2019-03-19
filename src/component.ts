@@ -108,10 +108,6 @@ export class Component<
 
   mounted() {}
 
-  shouldUpdate(nextProps: Props): boolean {
-    return true;
-  }
-
   willUnmount() {}
 
   destroyed() {}
@@ -136,6 +132,7 @@ export class Component<
     target.appendChild(child.el!);
     child.__mount();
   }
+
   async mount(target: HTMLElement): Promise<void> {
     const vnode = await this._start();
     if (this.__widget__.isDestroyed) {
@@ -195,23 +192,8 @@ export class Component<
     }
   }
 
-  /**
-   * This is the safest update method for widget: its job is to update the state
-   * and rerender (if widget is mounted).
-   *
-   * Notes:
-   * - it checks if we do not add extra keys to the state.
-   * - it is ok to call setState before the widget is started. In that
-   * case, it will simply update the state and will not rerender
-   */
-  async setState(nextState: Partial<State>) {
-    if (Object.keys(nextState).length === 0) {
-      return;
-    }
-    Object.assign(this.state, nextState);
-    if (this.__widget__.isStarted) {
-      return this.render();
-    }
+  shouldUpdate(nextProps: Props): boolean {
+    return true;
   }
 
   async updateProps(nextProps: Props): Promise<void> {
@@ -221,6 +203,25 @@ export class Component<
     }
     const shouldUpdate = this.shouldUpdate(nextProps);
     return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
+  }
+
+  /**
+   * This is the safest update method for widget: its job is to update the state
+   * and rerender (if widget is mounted).
+   *
+   * Notes:
+   * - it checks if we do not add extra keys to the state.
+   * - it is ok to call updateState before the widget is started. In that
+   * case, it will simply update the state and will not rerender
+   */
+  async updateState(nextState: Partial<State>) {
+    if (Object.keys(nextState).length === 0) {
+      return;
+    }
+    Object.assign(this.state, nextState);
+    if (this.__widget__.isStarted) {
+      return this.render();
+    }
   }
 
   //--------------------------------------------------------------------------

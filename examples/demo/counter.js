@@ -13,6 +13,6 @@ export class Counter extends odoo.core.Component {
   }
 
   increment(delta) {
-    this.setState({ counter: this.state.counter + delta });
+    this.updateState({ counter: this.state.counter + delta });
   }
 }

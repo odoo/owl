@@ -22,25 +22,25 @@ export class Discuss extends Widget<{}, State> {
 
   resetCounter(ev: MouseEvent) {
     if (this.refs.counter instanceof Counter) {
-      this.refs.counter.setState({ counter: 3 });
+      this.refs.counter.updateState({ counter: 3 });
     }
   }
 
   resetCounterAsync(ev: MouseEvent) {
     setTimeout(() => {
       if (this.refs.counter2 instanceof Counter) {
-        this.refs.counter2.setState({ counter: 300 });
+        this.refs.counter2.updateState({ counter: 300 });
       }
     }, 3000);
   }
 
   toggle() {
-    this.setState({ validcounter: !this.state.validcounter });
+    this.updateState({ validcounter: !this.state.validcounter });
   }
 
   toggleColor() {
     const newColor = this.state.color === "red" ? "blue" : "red";
-    this.setState({ color: newColor });
+    this.updateState({ color: newColor });
   }
 
   addNotif(sticky: boolean) {

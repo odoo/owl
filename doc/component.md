@@ -24,7 +24,7 @@ export class Counter extends Component {
   }
 
   increment(delta) {
-    this.setState({ counter: this.state.counter + delta });
+    this.updateState({ counter: this.state.counter + delta });
   }
 }
 ```

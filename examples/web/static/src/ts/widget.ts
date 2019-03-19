@@ -28,10 +28,10 @@ export class PureWidget<P, S> extends Widget<P, S> {
     }
     return false;
   }
-  async setState(nextState: Partial<S>) {
+  async updateState(nextState: Partial<S>) {
     for (let k in nextState) {
       if (nextState[k] !== this.state[k]) {
-        return super.setState(nextState);
+        return super.updateState(nextState);
       }
     }
   }

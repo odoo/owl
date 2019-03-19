@@ -114,7 +114,7 @@
         <button t-on-click="resetCounterAsync">Reset counter 2 in 3s</button>
         <button t-on-click="toggle">Toggle  Clock/counters</button>
         <button t-on-click="toggleColor">Toggle Color</button>
-        <button t-on-click="setState({})">Rerender this widget</button>
+        <button t-on-click="updateState({})">Rerender this widget</button>
         <input t-ref="textinput"/>
         <t t-if="state.validcounter">
           <t t-widget="Counter" t-ref="counter" t-props="{initialState:4}"/>

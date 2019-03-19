@@ -36,7 +36,7 @@ export class App extends odoo.core.Component {
   }
 
   setMessageCount(n) {
-    this.setState({
+    this.updateState({
       messages: messages.slice(0, n)
     });
   }
@@ -45,7 +45,7 @@ export class App extends odoo.core.Component {
     const index = messages.findIndex(m => m.id === data.id);
     const n = this.state.messages.length;
     messages.splice(index, 1);
-    this.setState({ messages: messages.slice(0, n - 1) });
+    this.updateState({ messages: messages.slice(0, n - 1) });
   }
 
   increment(delta) {

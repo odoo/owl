@@ -196,6 +196,23 @@ export class Component<
     return true;
   }
 
+  /**
+   * This method is the correct way to update the environment of a widget. Doing
+   * this will cause a full rerender of the widget and its children, so this is
+   * an operation that should not be done frequently.
+   *
+   * A good usecase for updating the environment would be to update some mostly
+   * static config keys, such as a boolean to determine if we are in mobile
+   * mode or not.
+   */
+  async updateEnv(nextEnv: Partial<T>): Promise<void> {
+    if (this.__widget__.parent && this.__widget__.parent.env === this.env) {
+      this.env = Object.create(this.env);
+    }
+    Object.assign(this.env, nextEnv);
+    return this.render();
+  }
+
   async updateProps(nextProps: Props): Promise<void> {
     if (nextProps === this.__widget__.renderProps) {
       await this.__widget__.renderPromise;

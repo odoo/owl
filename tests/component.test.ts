@@ -36,7 +36,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-class Widget extends Component<Env, any, any> {}
+class Widget extends Component<any, any, any> {}
 
 function children(w: Widget): Widget[] {
   const childrenMap = w.__widget__.children;
@@ -1084,5 +1084,68 @@ describe("async rendering", () => {
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a2</span><span>b2</span></div>"
     );
+  });
+});
+
+describe("updating environment", () => {
+  test("can update widget env", async () => {
+    const widget = new Widget(env);
+    expect(widget.env).toBe(env);
+    await widget.updateEnv(<any>{ somekey: 4 });
+    expect(widget.env).toBe(env);
+    expect((<any>widget).env.somekey).toBe(4);
+  });
+
+  test("updating child env does not modify parent env", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div><t t-widget="child"/></div>`;
+      widgets = { child: Widget };
+    }
+    const parent = new ParentWidget(env);
+    await parent.mount(fixture);
+    const child = children(parent)[0];
+    expect(child.env).toBe(parent.env);
+    await child.updateEnv(<any>{ somekey: 4 });
+    expect(child.env).not.toBe(parent.env);
+    expect((<any>parent).env.somekey).toBeUndefined();
+  });
+
+  test("updating parent env does modify child env", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div><t t-widget="child"/></div>`;
+      widgets = { child: Widget };
+    }
+    const parent = new ParentWidget(env);
+    await parent.mount(fixture);
+    const child = children(parent)[0];
+    expect(child.env.somekey).toBeUndefined();
+    await parent.updateEnv({ somekey: 4 });
+    expect(child.env.somekey).toBe(4);
+  });
+
+  test("updating parent env does modify child env, part 2", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div><t t-widget="child"/></div>`;
+      widgets = { child: Widget };
+    }
+    const parent = new ParentWidget(env);
+    await parent.mount(fixture);
+    const child = children(parent)[0];
+    expect(child.env.somekey).toBeUndefined();
+    await child.updateEnv({ somekey: 4 });
+    await parent.updateEnv({ someotherkey: 4 });
+    expect(child.env.someotherkey).toBe(4);
+  });
+
+  test("updating env force a rerender", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><t t-esc="env.someKey"/></div>`;
+    }
+    (<any>env).someKey = "hey";
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>hey</div>");
+    await widget.updateEnv(<any>{ someKey: "rerendered" });
+    expect(fixture.innerHTML).toBe("<div>rerendered</div>");
   });
 });

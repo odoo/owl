@@ -17,11 +17,11 @@
     "example:web:serve": "live-server --entry-file=index.html dist/examples/web/",
     "preexample:web:dev": "npm run example:web:build",
     "example:web:dev": "npm-run-all --parallel \"example:web:build:* -- --watch\" example:web:serve",
-    "example:demo:build:core": "npm run build && cpx \"dist/core.js\" dist/examples/demo",
-    "example:demo:build:js": "cpx \"examples/demo/{*.html,*.js,*.css}\" dist/examples/demo",
-    "example:demo:build": "npm-run-all --parallel example:demo:build:*",
-    "example:demo:serve": "live-server --entry-file=index.html dist/examples/demo/",
-    "example:demo:dev": "npm-run-all --parallel \"example:demo:build:* -- --watch\" example:demo:serve"
+    "example:benchmarks:build:core": "npm run build && cpx \"dist/core.js\" dist/examples/benchmarks",
+    "example:benchmarks:build:js": "cpx \"examples/benchmarks/{*.html,*.js,*.css}\" dist/examples/benchmarks",
+    "example:benchmarks:build": "npm-run-all --parallel example:benchmarks:build:*",
+    "example:benchmarks:serve": "live-server --entry-file=index.html dist/examples/benchmarks/",
+    "example:benchmarks:dev": "npm-run-all --parallel \"example:benchmarks:build:* -- --watch\" example:benchmarks:serve"
   },
   "repository": {
     "type": "git",

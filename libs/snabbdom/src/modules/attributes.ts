@@ -1,25 +1,30 @@
-import {VNode, VNodeData} from '../vnode';
-import {Module} from './module';
+import { VNode, VNodeData } from "../vnode";
+import { Module } from "./module";
 
 // because those in TypeScript are too restrictive: https://github.com/Microsoft/TSJS-lib-generator/pull/237
 declare global {
   interface Element {
     setAttribute(name: string, value: string | number | boolean): void;
-    setAttributeNS(namespaceURI: string, qualifiedName: string, value: string | number | boolean): void;
+    setAttributeNS(
+      namespaceURI: string,
+      qualifiedName: string,
+      value: string | number | boolean
+    ): void;
   }
 }
 
-export type Attrs = Record<string, string | number | boolean>
+export type Attrs = Record<string, string | number | boolean>;
 
-const xlinkNS = 'http://www.w3.org/1999/xlink';
-const xmlNS = 'http://www.w3.org/XML/1998/namespace';
+const xlinkNS = "http://www.w3.org/1999/xlink";
+const xmlNS = "http://www.w3.org/XML/1998/namespace";
 const colonChar = 58;
 const xChar = 120;
 
 function updateAttrs(oldVnode: VNode, vnode: VNode): void {
-  var key: string, elm: Element = vnode.elm as Element,
-      oldAttrs = (oldVnode.data as VNodeData).attrs,
-      attrs = (vnode.data as VNodeData).attrs;
+  var key: string,
+    elm: Element = vnode.elm as Element,
+    oldAttrs = (oldVnode.data as VNodeData).attrs,
+    attrs = (vnode.data as VNodeData).attrs;
 
   if (!oldAttrs && !attrs) return;
   if (oldAttrs === attrs) return;
@@ -30,6 +35,7 @@ function updateAttrs(oldVnode: VNode, vnode: VNode): void {
   for (key in attrs) {
     const cur = attrs[key];
     const old = oldAttrs[key];
+    debugger;
     if (old !== cur) {
       if (cur === true) {
         elm.setAttribute(key, "");
@@ -60,5 +66,8 @@ function updateAttrs(oldVnode: VNode, vnode: VNode): void {
   }
 }
 
-export const attributesModule = {create: updateAttrs, update: updateAttrs} as Module;
+export const attributesModule = {
+  create: updateAttrs,
+  update: updateAttrs
+} as Module;
 export default attributesModule;

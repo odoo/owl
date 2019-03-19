@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <section t-name="todoapp" class="todoapp">
+        <!-- header -->
+        <header class="header">
+            <h1>todos</h1>
+            <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
+        </header>
+        <!-- main section -->
+        <section class="main" t-if="todos.length">
+            <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="toggleAll"/>
+            <label for="toggle-all"></label>
+            <ul class="todo-list">
+                <t t-foreach="todos" t-as="todo">
+                    <t t-widget="TodoItem" t-props="todo"/>
+                </t>
+            </ul>
+        </section>
+        <!-- footer -->
+        <footer class="footer" t-if="todos.length">
+            <span class="todo-count">
+                <strong>
+                    <t t-esc="remaining"/>
+                </strong>
+                <t t-esc="remainingText"/>
+            </span>
+            <button class="clear-completed" t-if="todos.length gt remaining" t-on-click="clearCompleted">
+        Clear completed
+            </button>
+        </footer>
+    </section>
+
+    <li t-name="todoitem" class="todo">
+        <div class="view">
+            <input class="toggle" type="checkbox" t-on-change="toggleTodo" t-att-checked="props.done"/>
+            <label>
+                <t t-esc="props.text"/>
+            </label>
+            <button class="destroy" t-on-click="removeTodo"></button>
+        </div>
+    </li>
+
+</templates>

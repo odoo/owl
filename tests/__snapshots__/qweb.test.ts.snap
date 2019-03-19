@@ -988,6 +988,32 @@ exports[`t-on can bind handlers with arguments 1`] = `
 }"
 `;
 
+exports[`t-on can bind handlers with empty object (with non empty inner string 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    let vn1 = h('button', p1, c1);
+    p1.on['click'] = context['doSomething'].bind(owner, {});
+    c1.push({text: \`Click\`});
+    return vn1;
+}"
+`;
+
+exports[`t-on can bind handlers with empty object 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    let vn1 = h('button', p1, c1);
+    p1.on['click'] = context['doSomething'].bind(owner, {});
+    c1.push({text: \`Click\`});
+    return vn1;
+}"
+`;
+
 exports[`t-on can bind handlers with loop variable as argument 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1021,6 +1047,19 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
     }
     c1.push({text: \`
       \`});
+    return vn1;
+}"
+`;
+
+exports[`t-on can bind handlers with object arguments 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    let vn1 = h('button', p1, c1);
+    p1.on['click'] = context['add'].bind(owner, {val: 5});
+    c1.push({text: \`Click\`});
     return vn1;
 }"
 `;

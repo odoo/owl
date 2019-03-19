@@ -763,6 +763,64 @@ describe("t-on", () => {
     expect(a).toBe(6);
   });
 
+  test("can bind handlers with object arguments", () => {
+    qweb.addTemplate(
+      "test",
+      `<button t-on-click="add({val: 5})">Click</button>`
+    );
+    let a = 1;
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        add({ val }) {
+          a = a + val;
+        }
+      },
+      { handlers: [] }
+    );
+    (<HTMLElement>node).click();
+    expect(a).toBe(6);
+  });
+
+  test("can bind handlers with empty object", () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<button t-on-click="doSomething({})">Click</button>`
+    );
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        doSomething(arg) {
+          expect(arg).toEqual({});
+        }
+      },
+      { handlers: [] }
+    );
+    (<HTMLElement>node).click();
+  });
+
+  test("can bind handlers with empty object (with non empty inner string", () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<button t-on-click="doSomething({ })">Click</button>`
+    );
+    const node = renderToDOM(
+      qweb,
+      "test",
+      {
+        doSomething(arg) {
+          expect(arg).toEqual({});
+        }
+      },
+      { handlers: [] }
+    );
+    (<HTMLElement>node).click();
+  });
+
   test("can bind handlers with loop variable as argument", () => {
     expect.assertions(2);
     qweb.addTemplate(

@@ -512,9 +512,28 @@ export class QWeb {
   }
 
   _formatExpression(e: string, ctx?: Context): string {
+    e = e.trim();
     if (e in this.exprCache) {
       return this.exprCache[e];
     }
+    if (e[0] === "{" && e[e.length - 1] === "}") {
+      const innerExpr = e
+        .slice(1, -1)
+        .split(",")
+        .map(p => {
+          let [key, val] = p.trim().split(":");
+          if (key === "") {
+            return "";
+          }
+          if (!val) {
+            val = key;
+          }
+          return `${key}: ${this._formatExpression(val, ctx)}`;
+        })
+        .join(",");
+      return "{" + innerExpr + "}";
+    }
+
     // Thanks CHM for this code...
     const chars = e.split("");
     let instring = "";
@@ -840,23 +859,7 @@ const widgetDirective: Directive = {
       }
     }
     if (props) {
-      props = props.trim();
-      if (props[0] === "{" && props[props.length - 1] === "}") {
-        const innerProp = props
-          .slice(1, -1)
-          .split(",")
-          .map(p => {
-            let [key, val] = p.split(":");
-            if (!val) {
-              val = key;
-            }
-            return `${key}: ${qweb._formatExpression(val, ctx)}`;
-          })
-          .join(",");
-        props = "{" + innerProp + "}";
-      } else {
-        props = qweb._formatExpression(props);
-      }
+      props = qweb._formatExpression(props, ctx);
     }
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();

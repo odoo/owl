@@ -886,3 +886,32 @@ describe("loading templates", () => {
     expect(qweb.processedTemplates).toEqual({});
   });
 });
+
+describe("special cases for some boolean html attributes/properties", () => {
+  test("input type= checkbox, with t-att-checked", () => {
+    qweb.addTemplate("test", `<input type="checkbox" t-att-checked="flag"/>`);
+    const result = renderToString(qweb, "test", { flag: true });
+    expect(result).toBe(`<input type="checkbox" checked="">`);
+  });
+
+  test("various boolean html attributes", () => {
+    // the unique assertion here is the code snapshot automatically done by
+    // renderToString
+    expect.assertions(1);
+    qweb.addTemplate(
+      "test",
+      `
+      <div>
+        <input type="checkbox" checked="checked"/>
+        <input checked="checked"/>
+        <div checked="checked"/>
+        <div selected="selected"/>
+        <option selected="selected" other="1"/>
+        <input readonly="readonly"/>
+        <button disabled="disabled"/>
+      </div>
+      `
+    );
+    renderToString(qweb, "test", { flag: true });
+  });
+});

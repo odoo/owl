@@ -581,6 +581,74 @@ exports[`misc global 1`] = `
 }"
 `;
 
+exports[`special cases for some boolean html attributes/properties input type= checkbox, with t-att-checked 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let _1 = 'checkbox';
+    let _2 = context['flag'];
+    let c3 = [], p3 = {key:3,attrs:{type: _1,checked: _2},props:{checked: _2}};
+    let vn3 = h('input', p3, c3);
+    return vn3;
+}"
+`;
+
+exports[`special cases for some boolean html attributes/properties various boolean html attributes 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`
+        \`});
+    let _2 = 'checkbox';
+    let _3 = 'checked';
+    let c4 = [], p4 = {key:4,attrs:{type: _2,checked: _3},props:{checked: _3}};
+    let vn4 = h('input', p4, c4);
+    c1.push(vn4);
+    c1.push({text: \`
+        \`});
+    let _5 = 'checked';
+    let c6 = [], p6 = {key:6,attrs:{checked: _5}};
+    let vn6 = h('input', p6, c6);
+    c1.push(vn6);
+    c1.push({text: \`
+        \`});
+    let _7 = 'checked';
+    let c8 = [], p8 = {key:8,attrs:{checked: _7}};
+    let vn8 = h('div', p8, c8);
+    c1.push(vn8);
+    c1.push({text: \`
+        \`});
+    let _9 = 'selected';
+    let c10 = [], p10 = {key:10,attrs:{selected: _9}};
+    let vn10 = h('div', p10, c10);
+    c1.push(vn10);
+    c1.push({text: \`
+        \`});
+    let _11 = 'selected';
+    let _12 = '1';
+    let c13 = [], p13 = {key:13,attrs:{selected: _11,other: _12},props:{selected: _11}};
+    let vn13 = h('option', p13, c13);
+    c1.push(vn13);
+    c1.push({text: \`
+        \`});
+    let _14 = 'readonly';
+    let c15 = [], p15 = {key:15,attrs:{readonly: _14},props:{readonly: _14}};
+    let vn15 = h('input', p15, c15);
+    c1.push(vn15);
+    c1.push({text: \`
+        \`});
+    let _16 = 'disabled';
+    let c17 = [], p17 = {key:17,attrs:{disabled: _16},props:{disabled: _16}};
+    let vn17 = h('button', p17, c17);
+    c1.push(vn17);
+    c1.push({text: \`
+      \`});
+    return vn1;
+}"
+`;
+
 exports[`static templates div with a span child node 1`] = `
 "function anonymous(context,extra
 ) {

@@ -23,6 +23,15 @@ const WORD_REPLACEMENT = {
   lte: "<="
 };
 
+const DISABLED_TAGS = [
+  "input",
+  "textarea",
+  "button",
+  "select",
+  "option",
+  "optgroup"
+];
+
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
@@ -413,7 +422,34 @@ export class QWeb {
     }
     const attributes = (<Element>node).attributes;
     const attrs: string[] = [];
+    const props: string[] = [];
     const tattrs: number[] = [];
+
+    function handleBooleanProps(key, val) {
+      let isProp = false;
+      if (node.nodeName === "input" && key === "checked") {
+        let type = (<Element>node).getAttribute("type");
+        if (type === "checkbox" || type === "radio") {
+          isProp = true;
+        }
+      }
+      if (node.nodeName === "option" && key === "selected") {
+        isProp = true;
+      }
+      if (key === "disabled" && DISABLED_TAGS.indexOf(node.nodeName) > -1) {
+        isProp = true;
+      }
+      if (
+        (key === "readonly" && node.nodeName === "input") ||
+        node.nodeName === "textarea"
+      ) {
+        isProp = true;
+      }
+      if (isProp) {
+        props.push(`${key}: _${val}`);
+      }
+    }
+
     for (let i = 0; i < attributes.length; i++) {
       let name = attributes[i].name;
       const value = attributes[i].textContent!;
@@ -427,6 +463,7 @@ export class QWeb {
           name = '"' + name + '"';
         }
         attrs.push(`${name}: _${attID}`);
+        handleBooleanProps(name, attID);
       }
 
       // dynamic attributes
@@ -448,6 +485,7 @@ export class QWeb {
         }
         ctx.addLine(`let _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);
+        handleBooleanProps(attName, attID);
       }
 
       if (name.startsWith("t-attf-")) {
@@ -476,6 +514,9 @@ export class QWeb {
     const parts = [`key:${nodeID}`];
     if (attrs.length + tattrs.length > 0) {
       parts.push(`attrs:{${attrs.join(",")}}`);
+    }
+    if (props.length > 0) {
+      parts.push(`props:{${props.join(",")}}`);
     }
     if (withHandlers) {
       parts.push(`on:{}`);

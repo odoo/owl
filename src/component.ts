@@ -1,5 +1,6 @@
 import h from "../libs/snabbdom/src/h";
 import sdAttrs from "../libs/snabbdom/src/modules/attributes";
+import sdProps from "../libs/snabbdom/src/modules/props";
 import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../libs/snabbdom/src/snabbdom";
 import { VNode } from "../libs/snabbdom/src/vnode";
@@ -35,7 +36,7 @@ export interface Meta<T extends Env, Props> {
   boundHandlers: { [key: number]: any };
 }
 
-const patch = init([sdListeners, sdAttrs]);
+const patch = init([sdListeners, sdAttrs, sdProps]);
 
 export interface Type<T> extends Function {
   new (...args: any[]): T;

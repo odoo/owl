@@ -35,7 +35,6 @@ function updateAttrs(oldVnode: VNode, vnode: VNode): void {
   for (key in attrs) {
     const cur = attrs[key];
     const old = oldAttrs[key];
-    debugger;
     if (old !== cur) {
       if (cur === true) {
         elm.setAttribute(key, "");

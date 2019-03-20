@@ -12,7 +12,7 @@
             <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="toggleAll"/>
             <label for="toggle-all"></label>
             <ul class="todo-list">
-                <t t-foreach="todos" t-as="todo">
+                <t t-foreach="visibleTodos" t-as="todo">
                     <t t-widget="TodoItem" t-props="todo"/>
                 </t>
             </ul>
@@ -25,20 +25,32 @@
                 </strong>
                 <t t-esc="remainingText"/>
             </span>
+            <ul class="filters">
+                <li>
+                    <a href="#/all" t-on-click="updateState({filter:'all'})" t-att-class="state.filter === 'all' ? 'selected' : ''">All</a>
+                </li>
+                <li>
+                    <a href="#/active" t-on-click="updateState({filter:'active'})" t-att-class="state.filter === 'active' ? 'selected' : ''">Active</a>
+                </li>
+                <li>
+                    <a href="#/completed" t-on-click="updateState({filter:'completed'})" t-att-class="state.filter === 'completed' ? 'selected' : ''">Completed</a>
+                </li>
+            </ul>
             <button class="clear-completed" t-if="todos.length gt remaining" t-on-click="clearCompleted">
         Clear completed
             </button>
         </footer>
     </section>
 
-    <li t-name="todoitem" class="todo">
+    <li t-name="todoitem" class="todo" t-att-class="(props.completed ? 'completed ' : ' ') + (state.isEditing ? 'editing' : '')">
         <div class="view">
-            <input class="toggle" type="checkbox" t-on-change="toggleTodo" t-att-checked="props.done"/>
-            <label>
-                <t t-esc="props.text"/>
+            <input class="toggle" type="checkbox" t-on-change="toggleTodo" t-att-checked="props.completed"/>
+            <label t-on-dblclick="editTodo">
+                <t t-esc="props.title"/>
             </label>
             <button class="destroy" t-on-click="removeTodo"></button>
         </div>
+        <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-on-blur="handleBlur"/>
     </li>
 
 </templates>

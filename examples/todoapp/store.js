@@ -3,27 +3,30 @@
 //------------------------------------------------------------------------------
 
 const actions = {
-  addTodo({ commit }, text) {
-    commit("addTodo", text);
+  addTodo({ commit }, title) {
+    commit("addTodo", title);
   },
   removeTodo({ commit }, id) {
     commit("removeTodo", id);
   },
   toggleTodo({ state, commit }, id) {
     const todo = state.todos.find(t => t.id === id);
-    commit("editTodo", { id, done: !todo.done });
+    commit("editTodo", { id, completed: !todo.completed });
   },
   clearCompleted({ state, commit }) {
     state.todos
-      .filter(todo => todo.done)
+      .filter(todo => todo.completed)
       .forEach(todo => {
         commit("removeTodo", todo.id);
       });
   },
-  toggleAll({ state, commit }, done) {
+  toggleAll({ state, commit }, completed) {
     state.todos.forEach(todo => {
-      commit("editTodo", { id: todo.id, done });
+      commit("editTodo", { id: todo.id, completed });
     });
+  },
+  editTodo({ commit }, { id, title }) {
+    commit("editTodo", { id, title });
   }
 };
 
@@ -32,35 +35,41 @@ const actions = {
 //------------------------------------------------------------------------------
 
 const mutations = {
-  addTodo(state, text) {
+  addTodo(state, title) {
     const id = state.nextId++;
-    const todo = { id, text, done: false };
+    const todo = { id, title, completed: false };
     state.todos.push(todo);
   },
   removeTodo(state, id) {
     const index = state.todos.findIndex(t => t.id === id);
     state.todos.splice(index, 1);
   },
-  editTodo(state, { id, text, done }) {
+  editTodo(state, { id, title, completed }) {
     const todo = state.todos.find(t => t.id === id);
-    if (text !== undefined) {
-      todo.text = text;
+    if (title !== undefined) {
+      todo.title = title;
     }
-    if (done !== undefined) {
-      todo.done = done;
+    if (completed !== undefined) {
+      todo.completed = completed;
     }
   }
 };
 
-class TodoStore extends odoo.core.Store {
-  commit(...args) {
-    super.commit(...args);
-    window.localStorage.setItem("todos", JSON.stringify(this.state.todos));
-  }
-}
+//------------------------------------------------------------------------------
+// STORE
+//------------------------------------------------------------------------------
+const LOCALSTORAGE_KEY = "todos-odoo";
+
 export function makeStore() {
-  const todos = JSON.parse(window.localStorage.getItem("todos") || "[]");
+  const todos = JSON.parse(
+    window.localStorage.getItem(LOCALSTORAGE_KEY) || "[]"
+  );
   const nextId = Math.max(0, ...todos.map(t => t.id || 0)) + 1;
   const state = { todos, nextId };
-  return new TodoStore({ state, actions, mutations });
+  const store = new odoo.core.Store({ state, actions, mutations });
+  store.on("update", null, () => {
+    const state = JSON.stringify(store.state.todos);
+    window.localStorage.setItem(LOCALSTORAGE_KEY, state);
+  });
+  return store;
 }

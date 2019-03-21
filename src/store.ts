@@ -43,18 +43,18 @@ export class Store extends EventBus {
     );
   }
 
-  commit(type, payload) {
+  async commit(type, payload) {
     if (!this.mutations[type]) {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
     this._isMutating = true;
+
     this.mutations[type].call(null, this._state, payload);
-    Promise.resolve().then(() => {
-      if (this._isMutating) {
-        this._isMutating = false;
-        this.trigger("update");
-      }
-    });
+    await Promise.resolve();
+    if (this._isMutating) {
+      this._isMutating = false;
+      this.trigger("update");
+    }
   }
 
   _clone(obj) {

@@ -34,7 +34,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         let isNew7 = !w7;
         if (w7 && w7.__widget__.renderPromise) {
             if (w7.__widget__.isStarted) {
-                def6 = w7.updateProps(props7);
+                def6 = w7.updateProps(props7, extra.forceUpdate);
             } else {
                 isNew7 = true
                 if (props7 === w7.__widget__.renderProps) {
@@ -47,7 +47,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         }
         if (!def6) {
             if (w7) {
-                def6 = w7.updateProps(props7);
+                def6 = w7.updateProps(props7, extra.forceUpdate);
             } else {
                 w7 = new context.widgets['ChildWidget'](owner, props7);
                 context.__widget__.cmap[key8] = w7.__widget__.id;
@@ -86,7 +86,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let isNew4 = !w4;
     if (w4 && w4.__widget__.renderPromise) {
         if (w4.__widget__.isStarted) {
-            def3 = w4.updateProps(props4);
+            def3 = w4.updateProps(props4, extra.forceUpdate);
         } else {
             isNew4 = true
             if (props4 === w4.__widget__.renderProps) {
@@ -99,7 +99,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     }
     if (!def3) {
         if (w4) {
-            def3 = w4.updateProps(props4);
+            def3 = w4.updateProps(props4, extra.forceUpdate);
         } else {
             w4 = new context.widgets['child'](owner, props4);
             context.__widget__.cmap[key5] = w4.__widget__.id;

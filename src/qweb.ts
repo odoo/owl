@@ -947,7 +947,9 @@ const widgetDirective: Directive = {
     // check if we can reuse current rendering promise
     ctx.addIf(`w${widgetID} && w${widgetID}.__widget__.renderPromise`);
     ctx.addIf(`w${widgetID}.__widget__.isStarted`);
-    ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
+    ctx.addLine(
+      `def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`
+    );
     ctx.addElse();
     ctx.addLine(`isNew${widgetID} = true`);
     ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);
@@ -961,7 +963,9 @@ const widgetDirective: Directive = {
 
     ctx.addIf(`!def${defID}`);
     ctx.addIf(`w${widgetID}`);
-    ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID});`);
+    ctx.addLine(
+      `def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`
+    );
     ctx.addElse();
     ctx.addLine(
       `w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`

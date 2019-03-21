@@ -224,11 +224,11 @@ export class Component<
     }
   }
 
-  async render(): Promise<void> {
+  async render(force: boolean = false): Promise<void> {
     if (this.__widget__.isDestroyed) {
       return;
     }
-    const renderVDom = this._render();
+    const renderVDom = this._render(force);
     const renderId = this.__widget__.renderId;
     const vnode = await renderVDom;
     if (renderId === this.__widget__.renderId) {
@@ -281,16 +281,19 @@ export class Component<
     }
     Object.assign(this.env, nextEnv);
     if (this.__widget__.isMounted) {
-      return this.render();
+      return this.render(true);
     }
   }
 
-  async updateProps(nextProps: Props): Promise<void> {
-    if (nextProps === this.__widget__.renderProps) {
+  async updateProps(
+    nextProps: Props,
+    forceUpdate: boolean = false
+  ): Promise<void> {
+    if (nextProps === this.__widget__.renderProps && !forceUpdate) {
       await this.__widget__.renderPromise;
       return;
     }
-    const shouldUpdate = this.shouldUpdate(nextProps);
+    const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
     return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
   }
 
@@ -348,13 +351,14 @@ export class Component<
     return this.__widget__.renderPromise;
   }
 
-  async _render(): Promise<VNode> {
+  async _render(force: boolean = false): Promise<VNode> {
     this.__widget__.renderId++;
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
     let vnode = this.env.qweb.render(template, this, {
       promises,
-      handlers: this.__widget__.boundHandlers
+      handlers: this.__widget__.boundHandlers,
+      forceUpdate: force
     });
 
     // this part is critical for the patching process to be done correctly. The

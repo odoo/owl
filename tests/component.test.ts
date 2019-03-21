@@ -1171,4 +1171,21 @@ describe("updating environment", () => {
     await widget.updateEnv(<any>{ someKey: "rerendered" });
     expect(fixture.innerHTML).toBe("<div>rerendered</div>");
   });
+
+  test("updating env force rerendering children", async () => {
+    class Parent extends Widget {
+      inlineTemplate = `<div><t t-widget="Child"/></div>`;
+      widgets = { Child };
+    }
+    class Child extends Widget {
+      inlineTemplate = `<div><t t-esc="env.someKey"/></div>`;
+    }
+    (<any>env).someKey = "hey";
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
+    await widget.updateEnv(<any>{ someKey: "rerendered" });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>rerendered</div></div>");
+  });
 });

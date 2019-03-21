@@ -188,7 +188,20 @@ exports[`attributes t-att-class and class should combine together 1`] = `
     let _1 = 'hello';
     let _3 = context['value'];
     let _2 = 'hello' + (_3 ? ' ' + _3 : '');
-    let c4 = [], p4 = {key:4,attrs:{class: _1,class: _2}};
+    let c4 = [], p4 = {key:4,attrs:{class: _2}};
+    let vn4 = h('div', p4, c4);
+    return vn4;
+}"
+`;
+
+exports[`attributes t-att-class with object 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let _1 = 'static';
+    let _3 = this.utils.objectToAttrString({a: context['b'],c: context['d'],e: context['f']});
+    let _2 = 'static' + (_3 ? ' ' + _3 : '');
+    let c4 = [], p4 = {key:4,attrs:{class: _2}};
     let vn4 = h('div', p4, c4);
     return vn4;
 }"

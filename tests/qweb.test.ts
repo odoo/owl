@@ -464,6 +464,15 @@ describe("attributes", () => {
     const result = renderToString(qweb, "test", { value: "world" });
     expect(result).toBe(`<div class="hello world"></div>`);
   });
+
+  test("t-att-class with object", () => {
+    qweb.addTemplate(
+      "test",
+      `<div class="static" t-att-class="{a: b, c: d, e: f}"/>`
+    );
+    const result = renderToString(qweb, "test", { b: true, d: false, f: true });
+    expect(result).toBe(`<div class="static a e"></div>`);
+  });
 });
 
 describe("t-call (template calling", () => {

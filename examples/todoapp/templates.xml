@@ -27,13 +27,13 @@
             </span>
             <ul class="filters">
                 <li>
-                    <a href="#/all" t-on-click="updateState({filter:'all'})" t-att-class="state.filter === 'all' ? 'selected' : ''">All</a>
+                    <a href="#/all" t-on-click="updateState({filter:'all'})" t-att-class="{selected: state.filter === 'all'}">All</a>
                 </li>
                 <li>
-                    <a href="#/active" t-on-click="updateState({filter:'active'})" t-att-class="state.filter === 'active' ? 'selected' : ''">Active</a>
+                    <a href="#/active" t-on-click="updateState({filter:'active'})" t-att-class="{selected: state.filter === 'active'}">Active</a>
                 </li>
                 <li>
-                    <a href="#/completed" t-on-click="updateState({filter:'completed'})" t-att-class="state.filter === 'completed' ? 'selected' : ''">Completed</a>
+                    <a href="#/completed" t-on-click="updateState({filter:'completed'})" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
                 </li>
             </ul>
             <button class="clear-completed" t-if="todos.length gt remaining" t-on-click="clearCompleted">
@@ -42,7 +42,7 @@
         </footer>
     </section>
 
-    <li t-name="todoitem" class="todo" t-att-class="(props.completed ? 'completed ' : ' ') + (state.isEditing ? 'editing' : '')">
+    <li t-name="todoitem" class="todo" t-att-class="{completed: props.completed, editing: state.isEditing}">
         <div class="view">
             <input class="toggle" type="checkbox" t-on-change="toggleTodo" t-att-checked="props.completed"/>
             <label t-on-dblclick="editTodo">

@@ -162,6 +162,15 @@ export class QWeb {
       const temp = document.createElement("template");
       temp.innerHTML = str;
       return temp.content;
+    },
+    objectToAttrString(obj: Object): string {
+      let classes: string[] = [];
+      for (let k in obj) {
+        if (obj[k]) {
+          classes.push(k);
+        }
+      }
+      return classes.join(" ");
     }
   };
 
@@ -470,6 +479,12 @@ export class QWeb {
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
         let formattedValue = this._formatExpression(ctx.getValue(value!), ctx);
+        if (
+          formattedValue[0] === "{" &&
+          formattedValue[formattedValue.length - 1] === "}"
+        ) {
+          formattedValue = `this.utils.objectToAttrString(${formattedValue})`;
+        }
         const attID = ctx.generateID();
         if (!attName.match(/^[a-zA-Z]+$/)) {
           // attribute contains 'non letters' => we want to quote it
@@ -482,6 +497,10 @@ export class QWeb {
           const attValueID = ctx.generateID();
           ctx.addLine(`let _${attValueID} = ${formattedValue};`);
           formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
+          const attrIndex = attrs.findIndex(att =>
+            att.startsWith(attName + ":")
+          );
+          attrs.splice(attrIndex, 1);
         }
         ctx.addLine(`let _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);

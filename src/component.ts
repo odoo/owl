@@ -280,7 +280,9 @@ export class Component<
       this.env = Object.create(this.env);
     }
     Object.assign(this.env, nextEnv);
-    return this.render();
+    if (this.__widget__.isMounted) {
+      return this.render();
+    }
   }
 
   async updateProps(nextProps: Props): Promise<void> {

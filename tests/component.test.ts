@@ -1096,6 +1096,29 @@ describe("updating environment", () => {
     expect((<any>widget).env.somekey).toBe(4);
   });
 
+  test("updating widget env does not render widget (if not mounted)", async () => {
+    let n = 0;
+    class TestWidget extends Widget {
+      _render() {
+        n++;
+        return super._render();
+      }
+    }
+
+    const widget = new TestWidget(env);
+    expect(n).toBe(0);
+    await widget.updateEnv(<any>{ somekey: 4 });
+    expect(n).toBe(0);
+    await widget.mount(fixture);
+    expect(n).toBe(1);
+    await widget.updateEnv(<any>{ somekey: 5 });
+    expect(n).toBe(2);
+    widget.detach();
+    expect(n).toBe(2);
+    await widget.updateEnv(<any>{ somekey: 5 });
+    expect(n).toBe(2);
+  });
+
   test("updating child env does not modify parent env", async () => {
     class ParentWidget extends Widget {
       inlineTemplate = `<div><t t-widget="child"/></div>`;

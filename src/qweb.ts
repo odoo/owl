@@ -469,7 +469,7 @@ export class QWeb {
       // dynamic attributes
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
-        let formattedValue = this._formatExpression(ctx.getValue(value!));
+        let formattedValue = this._formatExpression(ctx.getValue(value!), ctx);
         const attID = ctx.generateID();
         if (!attName.match(/^[a-zA-Z]+$/)) {
           // attribute contains 'non letters' => we want to quote it

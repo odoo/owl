@@ -51,6 +51,7 @@
     "source-map-support": "^0.5.10",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.2",
+    "git-rev-sync": "^1.12.0",
     "uglify-es": "^3.3.9"
   },
   "dependencies": {

@@ -1,4 +1,5 @@
 import { version } from "./package.json";
+import git from "git-rev-sync";
 
 // rollup.config.js
 export default {
@@ -8,6 +9,6 @@ export default {
     format: "iife",
     name: "odoo",
     extend: true,
-    outro: `exports.core.version = '${version}';`
+    outro: `exports.core._version = '${version}';\nexports.core._date = '${new Date().toISOString()}';\nexports.core._hash = '${git.short()}';`
   }
 };

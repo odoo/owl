@@ -40,8 +40,7 @@ export class Root extends Widget<Store, State> {
   applyMobileInterface() {
     const isMobile = window.innerWidth <= 768;
     if (isMobile !== this.env.isMobile) {
-      this.env.isMobile = isMobile;
-      this.render();
+      this.updateEnv({ isMobile });
     }
   }
 

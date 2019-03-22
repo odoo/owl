@@ -250,8 +250,6 @@ exports[`foreach does not pollute the rendering context 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = [1];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -269,8 +267,6 @@ exports[`foreach does not pollute the rendering context 1`] = `
             c1.push({text: e5});
         }
     }
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -282,8 +278,6 @@ exports[`foreach iterate on items (on a element node) 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = [1, 2];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -304,8 +298,6 @@ exports[`foreach iterate on items (on a element node) 1`] = `
             c5.push({text: e6});
         }
     }
-    c1.push({text: \`
-    \`});
     return vn1;
 }"
 `;
@@ -317,8 +309,6 @@ exports[`foreach iterate on items 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = [3, 2, 1];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -331,8 +321,7 @@ exports[`foreach iterate on items 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        c1.push({text: \`
-          [\`});
+        c1.push({text: \` [\`});
         let e5 = context['item_index'];
         if (e5 || e5 === 0) {
             c1.push({text: e5});
@@ -347,11 +336,8 @@ exports[`foreach iterate on items 1`] = `
         if (e7 || e7 === 0) {
             c1.push({text: e7});
         }
-        c1.push({text: \`]
-        \`});
+        c1.push({text: \`] \`});
     }
-    c1.push({text: \`
-    \`});
     return vn1;
 }"
 `;
@@ -363,8 +349,6 @@ exports[`foreach iterate, dict param 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = context['value'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -377,8 +361,7 @@ exports[`foreach iterate, dict param 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        c1.push({text: \`
-          [\`});
+        c1.push({text: \` [\`});
         let e5 = context['item_index'];
         if (e5 || e5 === 0) {
             c1.push({text: e5});
@@ -398,11 +381,8 @@ exports[`foreach iterate, dict param 1`] = `
         if (e8 || e8 === 0) {
             c1.push({text: e8});
         }
-        c1.push({text: \`]
-        \`});
+        c1.push({text: \`] \`});
     }
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -426,8 +406,7 @@ exports[`foreach iterate, integer param 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        c1.push({text: \`
-        [\`});
+        c1.push({text: \` [\`});
         let e5 = context['item_index'];
         if (e5 || e5 === 0) {
             c1.push({text: e5});
@@ -442,8 +421,7 @@ exports[`foreach iterate, integer param 1`] = `
         if (e7 || e7 === 0) {
             c1.push({text: e7});
         }
-        c1.push({text: \`]
-      \`});
+        c1.push({text: \`] \`});
     }
     return vn1;
 }"
@@ -456,8 +434,6 @@ exports[`foreach iterate, position 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = 5;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -470,8 +446,7 @@ exports[`foreach iterate, position 1`] = `
         context.elem_index = i;
         context.elem = _3[i];
         context.elem_value = _4[i];
-        c1.push({text: \`
-          -\`});
+        c1.push({text: \` -\`});
         if (context['elem_first']) {
             c1.push({text: \` first\`});
         }
@@ -483,11 +458,8 @@ exports[`foreach iterate, position 1`] = `
         if (e5 || e5 === 0) {
             c1.push({text: e5});
         }
-        c1.push({text: \`)
-        \`});
+        c1.push({text: \`) \`});
     }
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -517,8 +489,6 @@ exports[`misc global 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = [4,5,6];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -531,8 +501,6 @@ exports[`misc global 1`] = `
         context.value_index = i;
         context.value = _3[i];
         context.value_value = _4[i];
-        c1.push({text: \`
-          \`});
         let c5 = [], p5 = {key:5,on:{}};
         let vn5 = h('span', p5, c5);
         c1.push(vn5);
@@ -540,14 +508,10 @@ exports[`misc global 1`] = `
         if (e6 || e6 === 0) {
             c5.push({text: e6});
         }
-        c1.push({text: \`
-          \`});
         let _7 = 'agüero';
         let c8 = [], p8 = {key:8,attrs:{\\"falló\\": _7},on:{}};
         let vn8 = h('Año', p8, c8);
         c1.push(vn8);
-        c8.push({text: \`
-            \`});
         let c9 = [], p9 = {key:9,on:{}};
         let vn9 = h('span', p9, c9);
         c8.push(vn9);
@@ -557,8 +521,6 @@ exports[`misc global 1`] = `
         } else {
             c9.push({text: \`foo default\`});
         }
-        c8.push({text: \`
-            \`});
         let c11 = [], p11 = {key:11,on:{}};
         let vn11 = h('span', p11, c11);
         c8.push(vn11);
@@ -568,10 +530,6 @@ exports[`misc global 1`] = `
         } else {
             c11.push({text: \`foo default\`});
         }
-        c8.push({text: \`
-            \`});
-        c8.push({text: \`
-            \`});
         let c13 = [], p13 = {key:13,on:{}};
         let vn13 = h('span', p13, c13);
         c8.push(vn13);
@@ -581,13 +539,7 @@ exports[`misc global 1`] = `
         } else {
             c13.push({text: \`foo default\`});
         }
-        c8.push({text: \`
-          \`});
-        c1.push({text: \`
-        \`});
     }
-    c1.push({text: \`
-        \`});
     let c15 = [], p15 = {key:15,on:{}};
     let vn15 = h('div', p15, c15);
     c1.push(vn15);
@@ -602,8 +554,6 @@ exports[`misc global 1`] = `
     } else {
         c15.push({text: \`toto default\`});
     }
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -626,52 +576,36 @@ exports[`special cases for some boolean html attributes/properties various boole
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = 'checkbox';
     let _3 = 'checked';
     let c4 = [], p4 = {key:4,attrs:{type: _2,checked: _3},props:{checked: _3}};
     let vn4 = h('input', p4, c4);
     c1.push(vn4);
-    c1.push({text: \`
-        \`});
     let _5 = 'checked';
     let c6 = [], p6 = {key:6,attrs:{checked: _5}};
     let vn6 = h('input', p6, c6);
     c1.push(vn6);
-    c1.push({text: \`
-        \`});
     let _7 = 'checked';
     let c8 = [], p8 = {key:8,attrs:{checked: _7}};
     let vn8 = h('div', p8, c8);
     c1.push(vn8);
-    c1.push({text: \`
-        \`});
     let _9 = 'selected';
     let c10 = [], p10 = {key:10,attrs:{selected: _9}};
     let vn10 = h('div', p10, c10);
     c1.push(vn10);
-    c1.push({text: \`
-        \`});
     let _11 = 'selected';
     let _12 = '1';
     let c13 = [], p13 = {key:13,attrs:{selected: _11,other: _12},props:{selected: _11}};
     let vn13 = h('option', p13, c13);
     c1.push(vn13);
-    c1.push({text: \`
-        \`});
     let _14 = 'readonly';
     let c15 = [], p15 = {key:15,attrs:{readonly: _14},props:{readonly: _14}};
     let vn15 = h('input', p15, c15);
     c1.push(vn15);
-    c1.push({text: \`
-        \`});
     let _16 = 'disabled';
     let c17 = [], p17 = {key:17,attrs:{disabled: _16},props:{disabled: _16}};
     let vn17 = h('button', p17, c17);
     c1.push(vn17);
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -751,17 +685,11 @@ exports[`t-call (template calling scoped parameters 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-            \`});
     c1.push({text: \`ok\`});
-    c1.push({text: \`
-            \`});
     let e2 = context['foo'];
     if (e2 || e2 === 0) {
         c1.push({text: e2});
     }
-    c1.push({text: \`
-        \`});
     return vn1;
 }"
 `;
@@ -915,28 +843,20 @@ exports[`t-if boolean value condition else 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     let c2 = [], p2 = {key:2};
     let vn2 = h('span', p2, c2);
     c1.push(vn2);
     c2.push({text: \`begin\`});
-    c1.push({text: \`
-        \`});
     if (context['condition']) {
         c1.push({text: \`ok\`});
     }
     else {
         c1.push({text: \`ok-else\`});
     }
-    c1.push({text: \`
-        \`});
     let c3 = [], p3 = {key:3};
     let vn3 = h('span', p3, c3);
     c1.push(vn3);
     c3.push({text: \`end\`});
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -1010,48 +930,30 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-        \`});
     if (context['cond1'] && context['cond2']) {
         c1.push({text: \`and\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['cond1'] && context['cond3']) {
         c1.push({text: \`nope\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['cond1'] || context['cond3']) {
         c1.push({text: \`or\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['cond3'] || context['cond4']) {
         c1.push({text: \`nope\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['m'] > 3) {
         c1.push({text: \`mgt\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['n'] > 3) {
         c1.push({text: \`ngt\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['m'] < 3) {
         c1.push({text: \`mlt\`});
     }
-    c1.push({text: \`
-        \`});
     if (context['n'] < 3) {
         c1.push({text: \`nlt\`});
     }
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -1117,8 +1019,6 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('ul', p1, c1);
-    c1.push({text: \`
-        \`});
     let _2 = ['someval'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -1140,8 +1040,6 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         p6.on['click'] = context['activate'].bind(owner, context['action']);
         c6.push({text: \`link\`});
     }
-    c1.push({text: \`
-      \`});
     return vn1;
 }"
 `;
@@ -1384,6 +1282,79 @@ exports[`t-set value priority 1`] = `
     if (e2 || e2 === 0) {
         c1.push({text: e2});
     }
+    return vn1;
+}"
+`;
+
+exports[`whitespace handling consecutives whitespaces are condensed into a single space 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \` abc \`});
+    return vn1;
+}"
+`;
+
+exports[`whitespace handling nothing is done in pre tags 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('pre', p1, c1);
+    c1.push({text: \`  \`});
+    return vn1;
+}"
+`;
+
+exports[`whitespace handling nothing is done in pre tags 2`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('pre', p1, c1);
+    c1.push({text: \`
+        some text
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`whitespace handling nothing is done in pre tags 3`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('pre', p1, c1);
+    c1.push({text: \`
+        
+      \`});
+    return vn1;
+}"
+`;
+
+exports[`whitespace handling white space only text nodes are condensed into a single space 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \` \`});
+    return vn1;
+}"
+`;
+
+exports[`whitespace handling whitespace only text nodes with newlines are removed 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`abc\`});
     return vn1;
 }"
 `;

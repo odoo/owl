@@ -8,8 +8,6 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    c1.push({text: \`
-          \`});
     let _2 = context['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
@@ -22,8 +20,6 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         context.number_index = i;
         context.number = _3[i];
         context.number_value = _4[i];
-        c1.push({text: \`
-            \`});
         //WIDGET
         let key8 = context['number'];
         let _5_index = c1.length;
@@ -60,11 +56,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             def6 = def6.then(()=>{if (w7.__widget__.isDestroyed) {return};let vnode;if (!w7.__widget__.vnode){vnode=w7.__widget__.pvnode} else { vnode=h(w7.__widget__.vnode.sel, {key: key8});vnode.elm=w7.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w7.el,a.elm);a.elm=w7.el;w7.__mount();},remove(){w7.destroy()}}}c1[_5_index]=vnode;});
         }
         extra.promises.push(def6);
-        c1.push({text: \`
-          \`});
     }
-    c1.push({text: \`
-        \`});
     return vn1;
 }"
 `;

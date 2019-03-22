@@ -921,3 +921,48 @@ describe("special cases for some boolean html attributes/properties", () => {
     renderToString(qweb, "test", { flag: true });
   });
 });
+
+describe("whitespace handling", () => {
+  test("white space only text nodes are condensed into a single space", () => {
+    qweb.addTemplate("test", `<div>  </div>`);
+    const result = renderToString(qweb, "test");
+    expect(result).toBe(`<div> </div>`);
+  });
+
+  test("consecutives whitespaces are condensed into a single space", () => {
+    qweb.addTemplate("test", `<div>  abc  </div>`);
+    const result = renderToString(qweb, "test");
+    expect(result).toBe(`<div> abc </div>`);
+  });
+
+  test("whitespace only text nodes with newlines are removed", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <span>abc</span>
+       </div>`
+    );
+    const result = renderToString(qweb, "test");
+    expect(result).toBe(`<div><span>abc</span></div>`);
+  });
+
+  test("nothing is done in pre tags", () => {
+    qweb.addTemplate("test", `<pre>  </pre>`);
+    const result = renderToString(qweb, "test");
+    expect(result).toBe(`<pre>  </pre>`);
+
+    const pretagtext = `<pre>
+        some text
+      </pre>`;
+    qweb.addTemplate("test2", pretagtext);
+    const result2 = renderToString(qweb, "test2");
+    expect(result2).toBe(pretagtext);
+
+    const pretagwithonlywhitespace = `<pre>
+        
+      </pre>`;
+    qweb.addTemplate("test3", pretagwithonlywhitespace);
+    const result3 = renderToString(qweb, "test3");
+    expect(result3).toBe(pretagwithonlywhitespace);
+  });
+});

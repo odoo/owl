@@ -33,7 +33,8 @@ class TodoApp extends Component {
   }
 
   get remainingText() {
-    return (this.remaining < 2 ? "item" : "items") + " left";
+    const items = this.remaining < 2 ? "item" : "items";
+    return ` ${items} left`;
   }
 
   addTodo(ev) {

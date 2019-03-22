@@ -32,6 +32,9 @@ const DISABLED_TAGS = [
   "optgroup"
 ];
 
+const lineBreakRE = /[\r\n]/;
+const whitespaceRE = /\s+/g;
+
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
@@ -49,6 +52,7 @@ export class Context {
   shouldDefineOwner: boolean = false;
   shouldProtectContext: boolean = false;
   inLoop: boolean = false;
+  inPreTag: boolean = false;
 
   constructor() {
     this.rootContext = this;
@@ -81,6 +85,12 @@ export class Context {
   withInLoop(): Context {
     const newContext = Object.create(this);
     newContext.inLoop = true;
+    return newContext;
+  }
+
+  withInPre(): Context {
+    const newContext = Object.create(this);
+    newContext.inPreTag = true;
     return newContext;
   }
 
@@ -336,6 +346,12 @@ export class QWeb {
     if (!(node instanceof Element)) {
       // this is a text node, there are no directive to apply
       let text = node.textContent!;
+      if (!ctx.inPreTag) {
+        if (lineBreakRE.test(text) && !text.trim()) {
+          return;
+        }
+        text = text.replace(whitespaceRE, " ");
+      }
       if (ctx.parentNode) {
         ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
       } else {
@@ -409,6 +425,9 @@ export class QWeb {
           });
         }
       }
+    }
+    if (node.nodeName === "pre") {
+      ctx = ctx.withInPre();
     }
 
     this._compileChildren(node, ctx);

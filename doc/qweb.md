@@ -25,3 +25,11 @@ result = qweb.render("sometemplate", { name: "world" });
 - t-on directive
 - t-widget, t-props, t-key
 - t-ref
+
+## Note on white spaces
+
+White spaces in a templates are handled in a special way:
+
+- consecutive whitespaces are always condensed to a single whitespace
+- if a whitespace-only text node contains a linebreak, it is ignored
+- the previous rules do not apply if we are in a `<pre>` tag

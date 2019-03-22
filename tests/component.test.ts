@@ -70,6 +70,12 @@ class WidgetB extends Widget {
 //------------------------------------------------------------------------------
 
 describe("basic widget properties", () => {
+  test("props and state are properly defined", async () => {
+    const widget = new Widget(env);
+    expect(widget.props).toEqual({});
+    expect(widget.state).toEqual({});
+  });
+
   test("has no el after creation", async () => {
     const widget = new Widget(env);
     expect(widget.el).toBe(null);

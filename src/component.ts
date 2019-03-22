@@ -48,7 +48,7 @@ export interface Type<T> extends Function {
 
 export class Component<
   T extends Env,
-  Props,
+  Props extends {},
   State extends {}
 > extends EventBus {
   readonly __widget__: Meta<Env, Props>;
@@ -96,7 +96,7 @@ export class Component<
     //   Pro: if props is empty, we can create easily a widget
     //   Con: this is not really safe
     //   Pro: but creating widget (by a template) is always unsafe anyway
-    this.props = <Props>props;
+    this.props = <Props>props || <Props>{};
     let id: number = getId();
     let p: Component<T, any, any> | null = null;
     if (parent instanceof Component) {

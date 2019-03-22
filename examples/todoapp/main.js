@@ -1,4 +1,4 @@
-import { TodoApp } from "./components/TodoApp.js";
+import TodoApp from "./components/TodoApp.js";
 import { makeStore } from "./store.js";
 
 async function makeEnv() {

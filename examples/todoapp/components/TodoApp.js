@@ -1,20 +1,20 @@
 import { TodoItem } from "./TodoItem.js";
 
-const { StoreMixin, Component } = odoo.core;
+const { connect, Component } = odoo.core;
 
 const ENTER_KEY = 13;
 
-export class TodoApp extends StoreMixin(Component) {
+function mapStateToProps(state) {
+  return { todos: state.todos };
+}
+
+class TodoApp extends Component {
   template = "todoapp";
   widgets = { TodoItem };
   state = { filter: "all" };
 
-  get todos() {
-    return this.env.store.state.todos;
-  }
-
   get visibleTodos() {
-    let todos = this.todos;
+    let todos = this.props.todos;
     if (this.state.filter === "active") {
       todos = todos.filter(t => !t.completed);
     }
@@ -25,11 +25,11 @@ export class TodoApp extends StoreMixin(Component) {
   }
 
   get allChecked() {
-    return this.todos.every(todo => todo.completed);
+    return this.props.todos.every(todo => todo.completed);
   }
 
   get remaining() {
-    return this.todos.filter(todo => !todo.completed).length;
+    return this.props.todos.filter(todo => !todo.completed).length;
   }
 
   get remainingText() {
@@ -54,3 +54,5 @@ export class TodoApp extends StoreMixin(Component) {
     this.env.store.dispatch("toggleAll", !this.allChecked);
   }
 }
+
+export default connect(mapStateToProps)(TodoApp);

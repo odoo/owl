@@ -1,10 +1,41 @@
 import { EventBus } from "./event_bus";
+import { Component } from "./component";
+import { shallowEqual } from "./utils";
 
-export function StoreMixin(Component) {
-  return class extends Component {
-    mounted() {
-      this.env.store.on("update", this, this.render);
-    }
+export function connect(mapStateToProps) {
+  return function(Comp) {
+    return class extends Comp {
+      constructor(parent, props?: any) {
+        const env = parent instanceof Component ? parent.env : parent;
+        const storeProps = mapStateToProps(env.store.state);
+        props = Object.assign(props || {}, storeProps);
+        super(parent, props);
+        this.__widget__.currentStoreProps = storeProps;
+      }
+      mounted() {
+        this.env.store.on("update", this, () => {
+          const storeProps = mapStateToProps(this.env.store.state);
+          if (!shallowEqual(storeProps, this.__widget__.currentStoreProps)) {
+            this.__widget__.currentStoreProps = storeProps;
+            // probably not optimal, will do 2 object.assign, one here and
+            // one in updateProps.
+            const nextProps = Object.assign(
+              {},
+              this.props,
+              this.__widget__.currentStoreProps
+            );
+            this.updateProps(nextProps, false);
+          }
+        });
+      }
+      willUnmount() {
+        this.env.store.off("update", this);
+      }
+      updateProps(nextProps, forceUpdate) {
+        nextProps = Object.assign(nextProps, this.__widget__.currentStoreProps);
+        return super.updateProps(nextProps, forceUpdate);
+      }
+    };
   };
 }
 
@@ -53,7 +84,7 @@ export class Store extends EventBus {
     await Promise.resolve();
     if (this._isMutating) {
       this._isMutating = false;
-      this.trigger("update");
+      this.trigger("update", this.state);
     }
   }
 

@@ -112,3 +112,16 @@ export function findInTree<T extends Tree<T>>(
   }
   return null;
 }
+
+export function shallowEqual(objA, objB) {
+  if (objA === objB) {
+    return true;
+  }
+  const keysA = Object.keys(objA);
+  for (let key of keysA) {
+    if (!(key in objB) || objA[key] !== objB[key]) {
+      return false;
+    }
+  }
+  return true;
+}

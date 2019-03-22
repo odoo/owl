@@ -1,7 +1,7 @@
 import { QWeb } from "./qweb";
 import { EventBus } from "./event_bus";
 import { Component, PureComponent } from "./component";
-import { Store, StoreMixin } from "./store";
+import { Store, connect } from "./store";
 
 export const core = {
   QWeb,
@@ -9,5 +9,5 @@ export const core = {
   Component,
   PureComponent,
   Store,
-  StoreMixin
+  connect
 };

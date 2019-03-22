@@ -8,7 +8,7 @@
             <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
         </header>
         <!-- main section -->
-        <section class="main" t-if="todos.length">
+        <section class="main" t-if="props.todos.length">
             <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="toggleAll"/>
             <label for="toggle-all"></label>
             <ul class="todo-list">
@@ -18,7 +18,7 @@
             </ul>
         </section>
         <!-- footer -->
-        <footer class="footer" t-if="todos.length">
+        <footer class="footer" t-if="props.todos.length">
             <span class="todo-count">
                 <strong>
                     <t t-esc="remaining"/>
@@ -36,7 +36,7 @@
                     <a href="#/completed" t-on-click="updateState({filter:'completed'})" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
                 </li>
             </ul>
-            <button class="clear-completed" t-if="todos.length gt remaining" t-on-click="clearCompleted">
+            <button class="clear-completed" t-if="props.todos.length gt remaining" t-on-click="clearCompleted">
         Clear completed
             </button>
         </footer>

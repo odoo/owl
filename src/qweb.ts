@@ -147,7 +147,6 @@ export class Context {
 export class QWeb {
   processedTemplates: { [name: string]: ProcessedTemplate } = {};
   templates: { [name: string]: CompiledTemplate<VNode> } = {};
-  exprCache: { [key: string]: string } = {};
   directives: Directive[] = [];
 
   constructor() {
@@ -592,9 +591,6 @@ export class QWeb {
 
   _formatExpression(e: string, ctx?: Context): string {
     e = e.trim();
-    if (e in this.exprCache) {
-      return this.exprCache[e];
-    }
     if (e[0] === "{" && e[e.length - 1] === "}") {
       const innerExpr = e
         .slice(1, -1)
@@ -649,7 +645,6 @@ export class QWeb {
       r += c;
     }
     const result = r.slice(0, -1);
-    this.exprCache[e] = result;
     return result;
   }
 }

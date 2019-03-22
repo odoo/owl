@@ -65,44 +65,18 @@ export class Context {
   }
 
   withParent(node: number): Context {
-    const newContext: Context = Object.create(this);
     if (this === this.rootContext && this.parentNode) {
       throw new Error("A template should not have more than one root node");
     }
-    newContext.parentNode = node;
     if (!this.rootContext.rootNode) {
       this.rootContext.rootNode = node;
     }
-    return newContext;
+    return this.subContext("parentNode", node);
   }
 
-  withVariables(variables: { [key: string]: any }) {
+  subContext(key: keyof Context, value: any): Context {
     const newContext = Object.create(this);
-    newContext.variables = Object.create(variables);
-    return newContext;
-  }
-
-  withInLoop(): Context {
-    const newContext = Object.create(this);
-    newContext.inLoop = true;
-    return newContext;
-  }
-
-  withInPre(): Context {
-    const newContext = Object.create(this);
-    newContext.inPreTag = true;
-    return newContext;
-  }
-
-  withCaller(node: Element): Context {
-    const newContext = Object.create(this);
-    newContext.caller = node;
-    return newContext;
-  }
-
-  withEscaping(): Context {
-    const newContext = Object.create(this);
-    newContext.escaping = true;
+    newContext[key] = value;
     return newContext;
   }
 
@@ -485,7 +459,7 @@ export class QWeb {
       }
     }
     if (node.nodeName === "pre") {
-      ctx = ctx.withInPre();
+      ctx = ctx.subContext("inPreTag", true);
     }
 
     this._compileChildren(node, ctx);
@@ -724,7 +698,7 @@ const escDirective: Directive = {
       ctx = ctx.withParent(nodeID);
     }
     let value = ctx.getValue(node.getAttribute("t-esc")!);
-    compileValueNode(value, node, qweb, ctx.withEscaping());
+    compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
     return true;
   }
 };
@@ -817,7 +791,9 @@ const callDirective: Directive = {
     const tempCtx = new Context();
     qweb._compileNode(nodeCopy, tempCtx);
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
-    const subCtx = ctx.withCaller(nodeCopy).withVariables(vars);
+    const subCtx = ctx
+      .subContext("caller", nodeCopy)
+      .subContext("variables", Object.create(vars));
 
     qweb._compileNode(nodeTemplate, subCtx);
     return true;
@@ -829,7 +805,7 @@ const forEachDirective: Directive = {
   priority: 10,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldProtectContext = true;
-    ctx = ctx.withInLoop();
+    ctx = ctx.subContext("inLoop", true);
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();

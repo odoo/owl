@@ -44,17 +44,28 @@ interface StoreConfig {
   actions?: any;
   mutations?: any;
 }
+
+interface StoreOption {
+  debug?: boolean;
+}
 export class Store extends EventBus {
   _state: any;
   actions: any;
   mutations: any;
   _isMutating: boolean = false;
+  history: any[] = [];
+  debug: boolean;
 
-  constructor(config: StoreConfig = {}) {
+  constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
+    this.debug = options.debug || false;
     this._state = Object.assign({}, config.state);
     this.actions = config.actions;
     this.mutations = config.mutations;
+
+    if (this.debug) {
+      this.history.push({ state: this.state });
+    }
   }
 
   get state() {
@@ -81,6 +92,13 @@ export class Store extends EventBus {
     this._isMutating = true;
 
     this.mutations[type].call(null, this._state, payload);
+    if (this.debug) {
+      this.history.push({
+        state: this.state,
+        mutation: type,
+        payload: payload
+      });
+    }
     await Promise.resolve();
     if (this._isMutating) {
       this._isMutating = false;

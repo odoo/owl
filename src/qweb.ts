@@ -138,6 +138,65 @@ export class Context {
   getValue(val: any): any {
     return val in this.variables ? this.getValue(this.variables[val]) : val;
   }
+
+  formatExpression(e: string): string {
+    e = e.trim();
+    if (e[0] === "{" && e[e.length - 1] === "}") {
+      const innerExpr = e
+        .slice(1, -1)
+        .split(",")
+        .map(p => {
+          let [key, val] = p.trim().split(":");
+          if (key === "") {
+            return "";
+          }
+          if (!val) {
+            val = key;
+          }
+          return `${key}: ${this.formatExpression(val)}`;
+        })
+        .join(",");
+      return "{" + innerExpr + "}";
+    }
+
+    // Thanks CHM for this code...
+    const chars = e.split("");
+    let instring = "";
+    let invar = "";
+    let invarPos = 0;
+    let r = "";
+    chars.push(" ");
+    for (var i = 0, ilen = chars.length; i < ilen; i++) {
+      var c = chars[i];
+      if (instring.length) {
+        if (c === instring && chars[i - 1] !== "\\") {
+          instring = "";
+        }
+      } else if (c === '"' || c === "'") {
+        instring = c;
+      } else if (c.match(/[a-zA-Z_\$]/) && !invar.length) {
+        invar = c;
+        invarPos = i;
+        continue;
+      } else if (c.match(/\W/) && invar.length) {
+        // TODO: Should check for possible spaces before dot
+        if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
+          invar =
+            WORD_REPLACEMENT[invar] ||
+            (invar in this.variables && this.variables[invar]) ||
+            "context['" + invar + "']";
+        }
+        r += invar;
+        invar = "";
+      } else if (invar.length) {
+        invar += c;
+        continue;
+      }
+      r += c;
+    }
+    const result = r.slice(0, -1);
+    return result;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -496,7 +555,7 @@ export class QWeb {
       // dynamic attributes
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
-        let formattedValue = this._formatExpression(ctx.getValue(value!), ctx);
+        let formattedValue = ctx.formatExpression(ctx.getValue(value!));
         if (
           formattedValue[0] === "{" &&
           formattedValue[formattedValue.length - 1] === "}"
@@ -533,7 +592,7 @@ export class QWeb {
         }
         const formattedExpr = value!.replace(
           /\{\{.*?\}\}/g,
-          s => "${" + this._formatExpression(s.slice(2, -2)) + "}"
+          s => "${" + ctx.formatExpression(s.slice(2, -2)) + "}"
         );
         const attID = ctx.generateID();
         ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
@@ -543,7 +602,7 @@ export class QWeb {
       // t-att= attributes
       if (name === "t-att") {
         let id = ctx.generateID();
-        ctx.addLine(`let _${id} = ${this._formatExpression(value!)};`);
+        ctx.addLine(`let _${id} = ${ctx.formatExpression(value!)};`);
         tattrs.push(id);
       }
     }
@@ -588,65 +647,6 @@ export class QWeb {
       }
     }
   }
-
-  _formatExpression(e: string, ctx?: Context): string {
-    e = e.trim();
-    if (e[0] === "{" && e[e.length - 1] === "}") {
-      const innerExpr = e
-        .slice(1, -1)
-        .split(",")
-        .map(p => {
-          let [key, val] = p.trim().split(":");
-          if (key === "") {
-            return "";
-          }
-          if (!val) {
-            val = key;
-          }
-          return `${key}: ${this._formatExpression(val, ctx)}`;
-        })
-        .join(",");
-      return "{" + innerExpr + "}";
-    }
-
-    // Thanks CHM for this code...
-    const chars = e.split("");
-    let instring = "";
-    let invar = "";
-    let invarPos = 0;
-    let r = "";
-    chars.push(" ");
-    for (var i = 0, ilen = chars.length; i < ilen; i++) {
-      var c = chars[i];
-      if (instring.length) {
-        if (c === instring && chars[i - 1] !== "\\") {
-          instring = "";
-        }
-      } else if (c === '"' || c === "'") {
-        instring = c;
-      } else if (c.match(/[a-zA-Z_\$]/) && !invar.length) {
-        invar = c;
-        invarPos = i;
-        continue;
-      } else if (c.match(/\W/) && invar.length) {
-        // TODO: Should check for possible spaces before dot
-        if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          invar =
-            WORD_REPLACEMENT[invar] ||
-            (ctx && invar in ctx.variables && ctx.variables[invar]) ||
-            "context['" + invar + "']";
-        }
-        r += invar;
-        invar = "";
-      } else if (invar.length) {
-        invar += c;
-        continue;
-      }
-      r += c;
-    }
-    const result = r.slice(0, -1);
-    return result;
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -680,7 +680,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
 
   if (typeof value === "string") {
     const exprID = ctx.generateID();
-    ctx.addLine(`let e${exprID} = ${qweb._formatExpression(value)};`);
+    ctx.addLine(`let e${exprID} = ${ctx.formatExpression(value)};`);
     ctx.addIf(`e${exprID} || e${exprID} === 0`);
     let text = `e${exprID}`;
 
@@ -763,7 +763,7 @@ const ifDirective: Directive = {
   priority: 20,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-if")!);
-    ctx.addIf(`${qweb._formatExpression(cond)}`);
+    ctx.addIf(`${ctx.formatExpression(cond)}`);
     return false;
   },
   finalize({ ctx }) {
@@ -776,7 +776,7 @@ const elifDirective: Directive = {
   priority: 30,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-elif")!);
-    ctx.addLine(`else if (${qweb._formatExpression(cond)}) {`);
+    ctx.addLine(`else if (${ctx.formatExpression(cond)}) {`);
     ctx.indent();
     return false;
   },
@@ -833,7 +833,7 @@ const forEachDirective: Directive = {
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
-    ctx.addLine(`let _${arrayID} = ${qweb._formatExpression(elems)};`);
+    ctx.addLine(`let _${arrayID} = ${ctx.formatExpression(elems)};`);
     ctx.addLine(
       `if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`
     );
@@ -878,7 +878,7 @@ const onDirective: Directive = {
     });
     if (extraArgs) {
       ctx.addLine(
-        `p${nodeID}.on['${eventName}'] = context['${handler}'].bind(owner, ${qweb._formatExpression(
+        `p${nodeID}.on['${eventName}'] = context['${handler}'].bind(owner, ${ctx.formatExpression(
           extraArgs
         )});`
       );
@@ -929,11 +929,11 @@ const widgetDirective: Directive = {
     } else {
       key = node.getAttribute("t-att-key");
       if (key) {
-        key = qweb._formatExpression(key);
+        key = ctx.formatExpression(key);
       }
     }
     if (props) {
-      props = qweb._formatExpression(props, ctx);
+      props = ctx.formatExpression(props);
     }
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();

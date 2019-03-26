@@ -125,3 +125,54 @@ export function shallowEqual(objA, objB) {
   }
   return true;
 }
+
+export function patch(C: any, patchName: string, patch: any) {
+  const proto = C.prototype;
+  if (!proto.__patches) {
+    proto.__patches = {
+      origMethods: {},
+      patches: {},
+      current: []
+    };
+  }
+  if (proto.__patches.patches[patchName]) {
+    throw new Error(`Patch [${patchName}] already exists`);
+  }
+  proto.__patches.patches[patchName] = patch;
+  applyPatch(proto, patch);
+  proto.__patches.current.push(patchName);
+
+  function applyPatch(proto, patch) {
+    Object.keys(patch).forEach(function(methodName) {
+      const method = patch[methodName];
+      if (typeof method === "function") {
+        const original = proto[methodName];
+        if (!(methodName in proto.__patches.origMethods)) {
+          proto.__patches.origMethods[methodName] = original;
+        }
+        proto[methodName] = function(...args) {
+          this._super = original;
+          return method.call(this, ...args);
+        };
+      }
+    });
+  }
+}
+
+export function unpatch(C: any, patchName: string) {
+  const proto = C.prototype;
+  const patchInfo = proto.__patches;
+  delete proto.__patches;
+
+  // reset to original
+  for (let k in patchInfo.origMethods) {
+    proto[k] = patchInfo.origMethods[k];
+  }
+
+  // apply other patches
+  for (let name of patchInfo.current) {
+    if (name !== patchName) {
+      patch(C, name, patchInfo.patches[name]);
+    }
+  }
+}

@@ -5,12 +5,14 @@ We hope to use it in the Odoo web client soon.
 
 ---
 
-# Core Utility for Odoo Web Client
+# 🦉 Odoo Web Lab 🦉
 
 ## Overview
 
-This repository contains some useful building block for building web applications.
-We made some efforts to make sure the code is reusable and generic. However, since this is the basis for the Odoo web client, we will not hesitate to design
+Odoo Web Lab (OWL) is a project to collect some useful, reusable, well designed
+building block for building web applications.
+
+However, since this is the basis for the Odoo web client, we will not hesitate to design
 the code here to better match the Odoo architecture/design principles.
 
 Currently, this repository contains:

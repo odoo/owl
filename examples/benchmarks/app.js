@@ -25,7 +25,7 @@ const template = `
         </div>
     </div>`;
 
-export class App extends odoo.core.Component {
+export class App extends owl.core.Component {
   constructor(parent, props) {
     super(parent, props);
     this.inlineTemplate = template;

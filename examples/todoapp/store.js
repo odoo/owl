@@ -66,7 +66,7 @@ export function makeStore() {
   );
   const nextId = Math.max(0, ...todos.map(t => t.id || 0)) + 1;
   const state = { todos, nextId };
-  const store = new odoo.extras.Store({ state, actions, mutations });
+  const store = new owl.extras.Store({ state, actions, mutations });
   store.on("update", null, () => {
     const state = JSON.stringify(store.state.todos);
     window.localStorage.setItem(LOCALSTORAGE_KEY, state);

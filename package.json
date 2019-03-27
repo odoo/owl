@@ -1,7 +1,7 @@
 {
-  "name": "web-core",
+  "name": "owl",
   "version": "0.3.0",
-  "description": "Core Utils for Odoo Web Client",
+  "description": "Odoo Web Lab",
   "main": "src/index.ts",
   "scripts": {
     "build:js": "tsc --lib es2017,dom --target esnext --outDir dist/core src/*",

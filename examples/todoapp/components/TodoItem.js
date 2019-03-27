@@ -1,7 +1,7 @@
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
 
-export class TodoItem extends odoo.core.Component {
+export class TodoItem extends owl.core.Component {
   template = "todoitem";
 
   state = { isEditing: false };

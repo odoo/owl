@@ -2,7 +2,7 @@ import { App } from "./app.js";
 
 function createApp(el) {
   const env = {
-    qweb: new odoo.core.QWeb()
+    qweb: new owl.core.QWeb()
   };
   const app = new App(env, { initialState: 13 });
   app.mount(el);

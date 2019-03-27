@@ -7,8 +7,8 @@ export default {
   output: {
     file: "dist/core.js",
     format: "iife",
-    name: "odoo",
+    name: "owl",
     extend: true,
-    outro: `exports.core._version = '${version}';\nexports.core._date = '${new Date().toISOString()}';\nexports.core._hash = '${git.short()}';`
+    outro: `exports._version = '${version}';\nexports._date = '${new Date().toISOString()}';\nexports._hash = '${git.short()}';`
   }
 };

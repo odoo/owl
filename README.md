@@ -1,37 +1,46 @@
-**Warning!**
-
-This is currently a proof of concept, definitely not a production-ready codebase.
-We hope to use it in the Odoo web client soon.
-
----
-
 # 🦉 Odoo Web Lab 🦉
 
 ## Overview
 
-Odoo Web Lab (OWL) is a project to collect some useful, reusable, well designed
-building block for building web applications.
+Odoo Web Lab (OWL) is a project to collect some useful, reusable, (hopefully)
+well designed building blocks for building web applications.
 
-However, since this is the basis for the Odoo web client, we will not hesitate to design
-the code here to better match the Odoo architecture/design principles.
+However, since this is the basis for the Odoo web client, we will not hesitate
+to design the code here to better match the Odoo architecture/design principles.
+
+This project is also a playground to experiment with some ideas related to web
+technologies.
 
 Currently, this repository contains:
 
-- some utility functions/classes
-- an implementation/extension of the QWeb template engine that outputs a virtual
-  dom (using the snabbdom library)
-- a Component class, which uses the QWeb engine as its underlying rendering
-  mechanism. The component class is designed to be declarative, with
-  asynchronous rendering.
+1. **core**
 
-In the future, this repository may includes other features. Here are some possible
+   - an implementation/extension of the QWeb template engine that outputs a virtual
+     dom (using the snabbdom library)
+   - a Component class, which uses the QWeb engine as its underlying rendering
+     mechanism. The component class is designed to be declarative, with
+     asynchronous rendering.
+   - some utility functions/classes
+
+2. **extras**
+   - a Store class and a connect function, to help manage the state of an application (like react-redux)
+   - a Registry: this is a simple key/store mapping
+
+In the future, this repository may includes other features. Here are some
 ideas:
 
 - a (frontend) router could be included.
-- a store base class (as in the flux/redux architecture)
+- basic infrastructure code for web views (form/list/kanban)
+- a mechanism to aggregate/query/dispatch rpcs (a little bit like graphql)
 
 Note: the code is written in typescript. This does not mean that the main web
 client will ever be converted to typescript (even though I would really like it).
+
+---
+
+**Warning!**
+
+This is currently a proof of concept, not yet production-ready.
 
 ## Main scripts
 

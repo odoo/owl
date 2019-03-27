@@ -64,7 +64,23 @@ Note that the test scripts also run the example tests suites.
 
 # Examples
 
-There are two examples of how to work with this web framework:
+Here is a minimal Hello World example:
 
-- [Demo Application](examples/readme.md#demo)
+```javascript
+class HelloWorld extends owl.core.Component {
+  inlineTemplate = `<div>Hello <t t-esc="state.name"/></div>`;
+}
+
+const env = {
+  qweb: new owl.core.QWeb()
+};
+
+const hello = new HelloWorld(env, { name: "World" });
+hello.mount(document.body);
+```
+
+More interesting examples on how to work with this web framework can be found in the _examples/_ folder:
+
+- [Todo Application](examples/readme.md#todo-app)
 - [Web Client](examples/readme.md#web-client-example)
+- [Benchmarks](examples/readme.md#benchmarks)

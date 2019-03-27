@@ -1,6 +1,7 @@
 import { TodoItem } from "./TodoItem.js";
 
-const { connect, Component } = odoo.core;
+const { Component } = odoo.core;
+const { connect } = odoo.extras;
 
 const ENTER_KEY = 13;
 

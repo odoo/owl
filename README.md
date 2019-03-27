@@ -87,28 +87,30 @@ class Counter extends owl.core.Component {
   inlineTemplate = `
     <div>
       <button t-on-click="increment(-1)">-</button>
-      <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
+      <span style="font-weight:bold">Value: <t t-esc="state.value"/></span>
       <button t-on-click="increment(1)">+</button>
     </div>`;
 
   constructor(parent, props) {
     super(parent, props);
     this.state = {
-      counter: props.initialState || 0
+      value: props.initialState || 0
     };
   }
 
   increment(delta) {
-    this.updateState({ counter: this.state.counter + delta });
+    this.updateState({ value: this.state.value + delta });
   }
 }
 
 class App extends owl.core.Component {
   inlineTemplate = `
     <div>
-        <t t-widget="Counter" t-props="{initialState: 1}">
-        <t t-widget="Counter" t-props="{initialState: 42}">
+        <t t-widget="Counter" t-props="{initialState: 1}"/>
+        <t t-widget="Counter" t-props="{initialState: 42}"/>
     </div>`;
+
+  widgets = { Counter };
 }
 
 const env = {

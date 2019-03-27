@@ -79,6 +79,46 @@ const hello = new HelloWorld(env, { name: "World" });
 hello.mount(document.body);
 ```
 
+The next example show how interactive widgets can be created and how widget
+composition works:
+
+```javascript
+class Counter extends owl.core.Component {
+  inlineTemplate = `
+    <div>
+      <button t-on-click="increment(-1)">-</button>
+      <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
+      <button t-on-click="increment(1)">+</button>
+    </div>`;
+
+  constructor(parent, props) {
+    super(parent, props);
+    this.state = {
+      counter: props.initialState || 0
+    };
+  }
+
+  increment(delta) {
+    this.updateState({ counter: this.state.counter + delta });
+  }
+}
+
+class App extends owl.core.Component {
+  inlineTemplate = `
+    <div>
+        <t t-widget="Counter" t-props="{initialState: 1}">
+        <t t-widget="Counter" t-props="{initialState: 42}">
+    </div>`;
+}
+
+const env = {
+  qweb: new owl.core.QWeb()
+};
+
+const app = new App(env);
+app.mount(document.body);
+```
+
 More interesting examples on how to work with this web framework can be found in the _examples/_ folder:
 
 - [Todo Application](examples/readme.md#todo-app)

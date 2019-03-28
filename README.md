@@ -1,48 +1,34 @@
 # 🦉 Odoo Web Lab 🦉
 
-## Overview
+## Project Overview
 
 Odoo Web Lab (OWL) is a project to collect some useful, reusable, (hopefully)
-well designed building blocks for building web applications.
-
-However, since this is the basis for the Odoo web client, we will not hesitate
+well designed building blocks for building web applications. However, since this is the basis for the Odoo web client, we will not hesitate
 to design the code here to better match the Odoo architecture/design principles.
 
-This project is also a playground to experiment with some ideas related to web
-technologies.
+The most important element of this repository is certainly the component system.
+It is designed to be:
 
-Currently, this repository contains:
+1. **declarative:** the user interface should be described in term of the state
+   of the application, not as a sequence of imperative steps.
 
-1. **core**
+2. **composable:** each widget can seamlessly be created in a parent widget by
+   a simple directive in its template.
 
-   - an implementation/extension of the QWeb template engine that outputs a virtual
-     dom (using the snabbdom library)
-   - a Component class, which uses the QWeb engine as its underlying rendering
-     mechanism. The component class is designed to be declarative, with
-     asynchronous rendering.
-   - some utility functions/classes
+3. **asynchronous rendering:** the framework will transparently wait for each
+   subwidgets to be ready before applying the rendering. It uses native promises
+   under the hood.
 
-2. **extras**
-   - a Store class and a connect function, to help manage the state of an application (like react-redux)
-   - a Registry: this is a simple key/store mapping
+4. **uses QWeb as a template system:** the templates are described in XML
+   and follow the QWeb specification. This is a requirement for Odoo.
 
-In the future, this repository may includes other features. Here are some
-ideas:
-
-- a (frontend) router could be included.
-- basic infrastructure code for web views (form/list/kanban)
-- a mechanism to aggregate/query/dispatch rpcs (a little bit like graphql)
+5. **with an imperative escape hatch:** if necessary, sub widgets can easily be
+   manually created/destroyed.
 
 Note: the code is written in typescript. This does not mean that the main web
 client will ever be converted to typescript (even though I would really like it).
 
----
-
-**Warning!**
-
-This is currently a proof of concept, not yet production-ready.
-
-## Main scripts
+## Installing/Building
 
 To install every dependency needed to play with this code:
 
@@ -67,7 +53,10 @@ Note that the test scripts also run the example tests suites.
 
 ## Documentation
 
+The complete documentation can be found [here](doc/readme.md). The most important sections are:
+
 - [Quick Start](doc/quick_start.md)
+- [Tutorial](doc/tutorial.md)
 - [Component](doc/component.md)
 - [QWeb](doc/qweb.md)
 
@@ -135,3 +124,7 @@ More interesting examples on how to work with this web framework can be found in
 - [Todo Application](examples/readme.md#todo-app)
 - [Web Client](examples/readme.md#web-client-example)
 - [Benchmarks](examples/readme.md#benchmarks)
+
+## License
+
+React is [GPL licensed](./LICENSE).

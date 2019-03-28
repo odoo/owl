@@ -1,0 +1,41 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.playground {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: 50% 50%;
+}
+
+.left-bar {
+  position: relative;
+  background-color: gray;
+}
+
+.left-bar > button {
+  position: absolute;
+  top: 15px;
+  left: 50px;
+  width: 100px;
+  height: 25px;
+}
+
+.code-editor {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.content iframe {
+  width: 100%;
+  height: 100%;
+}

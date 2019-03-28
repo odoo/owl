@@ -55,7 +55,7 @@ Here is a minimal Hello World example:
 
 ```javascript
 class HelloWorld extends owl.core.Component {
-  inlineTemplate = `<div>Hello <t t-esc="state.name"/></div>`;
+  inlineTemplate = `<div>Hello <t t-esc="props.name"/></div>`;
 }
 
 const env = {

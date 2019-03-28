@@ -1,12 +1,19 @@
+/* GENERIC STUFF  ****************************************/
 html,
 body {
   height: 100%;
+  font-family: sans-serif;
 }
 
 body {
   margin: 0;
 }
 
+.btn {
+  cursor: pointer;
+}
+
+/* APPLICATION ROOT ****************************************/
 .playground {
   display: grid;
   height: 100%;
@@ -14,28 +21,90 @@ body {
   grid-template-columns: 50% 50%;
 }
 
+/* LEFT BAR ****************************************/
 .left-bar {
-  position: relative;
-  background-color: gray;
+  display: grid;
+  grid-template-rows: 50px auto;
+  background-color: #2f3129;
 }
 
-.left-bar > button {
-  position: absolute;
-  top: 15px;
-  left: 50px;
-  width: 100px;
-  height: 25px;
+.menubar {
+  padding-left: 8px;
+  background-color: #1c2128;
+  color: white;
+  line-height: 50px;
+  font-size: 18px;
+}
+
+.tab {
+  display: inline-block;
+  cursor: pointer;
+  padding: 0 8px;
+  vertical-align: -9px;
+  font-size: 16px;
+  line-height: 26px;
+  width: 34px;
+  text-align: center;
+}
+
+.tab.active {
+  border-bottom: 2px solid gray;
+}
+
+.tab:hover {
+  font-weight: bold;
+}
+
+.right-thing {
+  float: right;
+}
+
+.right-thing select {
+  margin-right: 15px;
+  font-size: 16px;
+}
+.run-code {
+  margin-right: 12px;
+  padding: 4px;
+}
+.run-code:hover {
+  border-bottom: 2px solid gray;
 }
 
 .code-editor {
-  position: absolute;
-  top: 50px;
-  right: 0;
-  left: 0;
-  bottom: 0;
+  margin-top: 8px;
+}
+
+/* CONTENT ****************************************/
+.content {
+  background-color: lightgray;
+  overflow: hidden;
 }
 
 .content iframe {
+  background-color: white;
   width: 100%;
   height: 100%;
+  border: 0;
+}
+
+.content .welcome {
+  text-align: center;
+  font-size: 30px;
+  color: gray;
+  margin-top: 50px;
+}
+
+.content .url {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.url a {
+  color: gray;
+}
+
+.content .note {
+  font-size: 20px;
+  margin-top: 20px;
 }

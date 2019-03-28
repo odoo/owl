@@ -1942,7 +1942,7 @@
                     ? `String(-${widgetID} - i)`
                     : String(widgetID);
             ctx.addLine(`let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`);
-            ctx.addLine(`let props${widgetID} = ${props};`);
+            ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
             ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
             // check if we can reuse current rendering promise
             ctx.addIf(`w${widgetID} && w${widgetID}.__widget__.renderPromise`);
@@ -2114,7 +2114,7 @@
     exports.extras = extras;
 
     exports._version = '0.4.0';
-    exports._date = '2019-03-28T09:56:02.347Z';
-    exports._hash = 'b94a99c';
+    exports._date = '2019-03-28T16:39:38.294Z';
+    exports._hash = '3a65823';
 
 }(this.owl = this.owl || {}));

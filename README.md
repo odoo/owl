@@ -1,4 +1,4 @@
-# 🦉 Odoo Web Lab 🦉
+<p align="center" style="font-weight: bold;font-size: 32px;color: cadet-blue;">🦉 Odoo Web Lab 🦉</p>
 
 ## Project Overview
 

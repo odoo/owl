@@ -1,4 +1,4 @@
-<p align="center" style="font-weight: bold;font-size: 32px;color: cadet-blue;">🦉 Odoo Web Lab 🦉</p>
+<h1 align="center">🦉 Odoo Web Lab 🦉</h1>
 
 ## Project Overview
 
@@ -30,26 +30,15 @@ client will ever be converted to typescript (even though I would really like it)
 
 ## Installing/Building
 
-To install every dependency needed to play with this code:
+Some npm scripts are available:
 
-```
-npm install
-```
-
-To build a bundle of this as a library:
-
-```
-npm run build
-```
-
-To run tests:
-
-```
-npm run test
-npm run test:watch
-```
-
-Note that the test scripts also run the example tests suites.
+| Command            | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| npm install        | install every dependency required for this project |
+| npm run build      | build a bundle of _owl_ in the _/dist/_ folder     |
+| npm run minify     | minify the prebuilt owl.js file                    |
+| npm run test       | run all tests                                      |
+| npm run test:watch | run all tests, and keep a watcher                  |
 
 ## Documentation
 

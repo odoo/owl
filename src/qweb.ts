@@ -931,7 +931,7 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
     );
-    ctx.addLine(`let props${widgetID} = ${props};`);
+    ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
     ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
 
     // check if we can reuse current rendering promise

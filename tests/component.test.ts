@@ -939,6 +939,22 @@ describe("random stuff/miscellaneous", () => {
     await widget.mount(fixture);
     expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
   });
+
+  test("t-props should not be undefined (snapshotting)", async () => {
+    env.qweb.addTemplate("parent", `<div><t t-widget="child"/></div>`);
+    class Parent extends Widget {
+      inlineTemplate = "parent";
+      widgets = { child: Child };
+    }
+
+    class Child extends Widget {
+      inlineTemplate = `<span>abc</span>`;
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
+  });
 });
 
 describe("async rendering", () => {

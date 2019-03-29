@@ -27,9 +27,11 @@ export function connect(mapStateToProps) {
             this.updateProps(nextProps, false);
           }
         });
+        super.mounted();
       }
       willUnmount() {
         this.env.store.off("update", this);
+        super.willUnmount();
       }
       updateProps(nextProps, forceUpdate) {
         nextProps = Object.assign(nextProps, this.__widget__.currentStoreProps);

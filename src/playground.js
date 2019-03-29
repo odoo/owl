@@ -62,23 +62,28 @@ class Playground extends Component {
   runCode() {
     this.updateStateFromEditor();
 
-    // inject js
+    // create iframe
     const iframe = document.createElement("iframe");
-    iframe.src = "playground-iframe.html";
 
     iframe.onload = () => {
       const doc = iframe.contentWindow.document;
-      const script = doc.createElement("script");
-      script.type = "text/javascript";
-      script.innerHTML = this.state.js;
-      doc.body.appendChild(script);
+      // inject js
+      const owlScript = doc.createElement("script");
+      owlScript.type = "text/javascript";
+      owlScript.src = "libs/owl.js";
+      owlScript.addEventListener("load", () => {
+        const script = doc.createElement("script");
+        script.type = "text/javascript";
+        script.innerHTML = this.state.js;
+        doc.body.appendChild(script);
+      });
+      doc.head.appendChild(owlScript);
 
       // inject css
       const style = document.createElement("style");
       style.innerHTML = this.state.css;
       doc.head.appendChild(style);
     };
-
     this.refs.content.innerHTML = "";
     this.refs.content.appendChild(iframe);
   }

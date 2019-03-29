@@ -97,14 +97,14 @@ for (let i = 1; i < 16000; i++) {
 // Counter Widget
 //------------------------------------------------------------------------------
 class Counter extends owl.core.Component {
-  inlineTemplate = \`
-    <div>
-      <button t-on-click="increment(-1)">-</button>
-      <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
-      <button t-on-click="increment(1)">+</button>
-    </div>\`;
   constructor(parent, props) {
     super(parent, props);
+    this.inlineTemplate = \`
+      <div>
+        <button t-on-click="increment(-1)">-</button>
+        <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
+        <button t-on-click="increment(1)">+</button>
+      </div>\`;
     this.state = {
       counter: props.initialState || 0
     };
@@ -119,16 +119,16 @@ class Counter extends owl.core.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.core.Component {
-  inlineTemplate = \`
-    <div class="message">
-        <span class="author"><t t-esc="props.author"/></span>
-        <span class="msg"><t t-esc="props.msg"/></span>
-        <button class="remove" t-on-click="removeMessage">Remove</button>
-        <t t-widget="Counter" t-props="{initialState: props.id}"/>
-    </div>\`;
 
   constructor(parent, props) {
     super(parent, props);
+    this.inlineTemplate = \`
+      <div class="message">
+          <span class="author"><t t-esc="props.author"/></span>
+          <span class="msg"><t t-esc="props.msg"/></span>
+          <button class="remove" t-on-click="removeMessage">Remove</button>
+          <t t-widget="Counter" t-props="{initialState: props.id}"/>
+      </div>\`;
     this.widgets = { Counter };
   }
 

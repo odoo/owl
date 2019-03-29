@@ -106,4 +106,52 @@ describe("connecting a component to store", () => {
     await nextTick();
     expect(fixture.innerHTML).toMatchSnapshot();
   });
+
+  test("connected child components with custom hooks", async () => {
+    let steps: any = [];
+    class Child extends Component<any, any, any> {
+      inlineTemplate = `<div/>`;
+      mounted() {
+        steps.push('child:mounted');
+      }
+      willUnmount() {
+        steps.push('child:willUnmount')
+      }
+      destroyed() {
+        steps.push('child:destroyed');
+      }
+    }
+
+    const ConnectedChild = connect(s => s)(Child);
+
+    class Parent extends Component<any, any, any> {
+      inlineTemplate = `
+        <div>
+            <t t-if="state.child" t-widget="ConnectedChild"/>
+        </div>`;
+      widgets = { ConnectedChild };
+
+      constructor(env: Env) {
+        super(env);
+        this.state = { child: true };
+      }
+    }
+
+    const store = new Store({ state: {} });
+    (<any>env).store = store;
+    const parent = new Parent(env);
+
+    await parent.mount(fixture);
+    expect(steps).toEqual([
+      'child:mounted',
+    ]);
+
+    await parent.updateState({ child: false });
+    expect(steps).toEqual([
+      'child:mounted',
+      'child:willUnmount',
+      'child:destroyed',
+    ]);
+  });
+
 });

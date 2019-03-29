@@ -26,7 +26,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         c1.push(null);
         let def6;
         let w7 = key8 in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[key8]] : false;
-        let props7 = null;
+        let props7 = {};
         let isNew7 = !w7;
         if (w7 && w7.__widget__.renderPromise) {
             if (w7.__widget__.isStarted) {
@@ -120,7 +120,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
     c1.push(null);
     let def3;
     let w4 = 4 in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[4]] : false;
-    let props4 = null;
+    let props4 = {};
     let isNew4 = !w4;
     if (w4 && w4.__widget__.renderPromise) {
         if (w4.__widget__.isStarted) {

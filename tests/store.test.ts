@@ -41,6 +41,19 @@ describe("basic use", () => {
     expect(store.state.n).toBe(15);
   });
 
+  test("env is given to actions", () => {
+    expect.assertions(1);
+    const someEnv = {};
+    const actions = {
+      someaction({ env }) {
+        expect(env).toBe(someEnv);
+      }
+    };
+    const store = new Store({ state: {}, actions, env: someEnv });
+
+    store.dispatch("someaction");
+  });
+
   test("multiple commits trigger one update", async () => {
     let updateCounter = 0;
     const state = { n: 1 };

@@ -49,6 +49,7 @@ export function connect(mapStateToProps) {
 }
 
 interface StoreConfig {
+  env?: any;
   state?: any;
   actions?: any;
   mutations?: any;
@@ -64,6 +65,7 @@ export class Store extends EventBus {
   _isMutating: boolean = false;
   history: any[] = [];
   debug: boolean;
+  env: any;
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -71,6 +73,7 @@ export class Store extends EventBus {
     this._state = Object.assign({}, config.state);
     this.actions = config.actions;
     this.mutations = config.mutations;
+    this.env = config.env;
 
     if (this.debug) {
       this.history.push({ state: this.state });
@@ -81,14 +84,15 @@ export class Store extends EventBus {
     return this._clone(this._state);
   }
 
-  dispatch(action, payload) {
+  dispatch(action, payload?: any) {
     if (!this.actions[action]) {
       throw new Error(`[Error] action ${action} is undefined`);
     }
     this.actions[action](
       {
         commit: this.commit.bind(this),
-        state: this.state
+        state: this.state,
+        env: this.env
       },
       payload
     );

@@ -74,11 +74,9 @@ class Playground extends Component {
       doc.body.appendChild(script);
 
       // inject css
-      const link = document.createElement("link");
-      link.type = "text/css";
-      link.rel = "stylesheet";
-      link.innerHTML = this.state.css;
-      doc.body.appendChild(link);
+      const style = document.createElement("style");
+      style.innerHTML = this.state.css;
+      doc.head.appendChild(style);
     };
 
     this.refs.content.innerHTML = "";

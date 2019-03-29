@@ -1975,7 +1975,7 @@
             ctx.closeIf();
             ctx.closeIf();
             ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()}}; w${widgetID}.__widget__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()}}; w${widgetID}.__widget__.pvnode = pvnode;});`);
             ctx.addElse();
             ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
@@ -2114,7 +2114,7 @@
     exports.extras = extras;
 
     exports._version = '0.4.0';
-    exports._date = '2019-03-28T16:39:38.294Z';
-    exports._hash = '3a65823';
+    exports._date = '2019-03-29T11:57:27.820Z';
+    exports._hash = '5cd45b5';
 
 }(this.owl = this.owl || {}));

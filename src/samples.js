@@ -1,7 +1,7 @@
 const HELLO_WORLD = `class HelloWorld extends owl.core.Component {
   constructor(...args) {
     super(...args);
-    this.inlineTemplate = \`<div>Hello <t t-esc="props.name"/></div>\`;
+    this.inlineTemplate = \`<div class="hello">Hello <t t-esc="props.name"/></div>\`;
   }
 }
 
@@ -13,9 +13,14 @@ const hello = new HelloWorld(env, { name: "World" });
 hello.mount(document.body);
 `;
 
+const HELLO_WORLD_CSS = `.hello {
+    color: darkred;
+    font-size: 30px;
+}`;
+
 const HELLO_WORLD_ESNEXT = `// This example will not work if your browser does not support ESNext Class Fields
 class HelloWorld extends owl.core.Component {
-  inlineTemplate = \`<div>Hello <t t-esc="props.name"/></div>\`;
+  inlineTemplate = \`<div class="hello">Hello <t t-esc="props.name"/></div>\`;
 }
 
 const env = {
@@ -99,12 +104,7 @@ for (let i = 1; i < 16000; i++) {
 class Counter extends owl.core.Component {
   constructor(parent, props) {
     super(parent, props);
-    this.inlineTemplate = \`
-      <div>
-        <button t-on-click="increment(-1)">-</button>
-        <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
-        <button t-on-click="increment(1)">+</button>
-      </div>\`;
+    this.template = "counter";
     this.state = {
       counter: props.initialState || 0
     };
@@ -122,13 +122,7 @@ class Message extends owl.core.Component {
 
   constructor(parent, props) {
     super(parent, props);
-    this.inlineTemplate = \`
-      <div class="message">
-          <span class="author"><t t-esc="props.author"/></span>
-          <span class="msg"><t t-esc="props.msg"/></span>
-          <button class="remove" t-on-click="removeMessage">Remove</button>
-          <t t-widget="Counter" t-props="{initialState: props.id}"/>
-      </div>\`;
+    this.template = "message";
     this.widgets = { Counter };
   }
 
@@ -142,34 +136,10 @@ class Message extends owl.core.Component {
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
-const template = \`
-    <div class="main">
-        <div class="left-thing">
-            <div class="counter">
-                <button t-on-click="increment(-1)">-</button>
-                <span style="font-weight:bold">Value: <t t-esc="state.messages.length"/></span>
-                <button t-on-click="increment(1)">+</button>
-            </div>
-            <button t-on-click="setMessageCount(10)">10 messages</button>
-            <button t-on-click="setMessageCount(20)">20 messages</button>
-            <button t-on-click="setMessageCount(500)">500 messages</button>
-            <button t-on-click="setMessageCount(1000)">1000 messages</button>
-            <button t-on-click="setMessageCount(5000)">5000 messages</button>
-            <button t-on-click="setMessageCount(15000)">15000 messages</button>
-        </div>
-        <div class="right-thing">
-            <div class="content">
-                <t t-foreach="state.messages" t-as="message">
-                    <t t-widget="Message" t-att-key="message.id" t-props="message" t-on-remove_message="removeMessage"/>
-                </t>
-            </div>
-        </div>
-    </div>\`;
-
 class App extends owl.core.Component {
   constructor(parent, props) {
     super(parent, props);
-    this.inlineTemplate = template;
+    this.template = "root";
     this.widgets = { Message };
     this.state = {
       messages: messages.slice(0, 10)
@@ -198,9 +168,9 @@ class App extends owl.core.Component {
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
-const env = {
-    qweb: new owl.core.QWeb()
-};
+const qweb = new owl.core.QWeb();
+qweb.loadTemplates(TEMPLATES);
+const env = {qweb};
 
 const app = new App(env);
 app.mount(document.body);
@@ -252,6 +222,45 @@ const BENCHMARK_APP_CSS = `.main {
   padding: 5px;
 }`;
 
+const BENCHMARK_APP_XML = `<templates>
+  <div t-name="root" class="main">
+      <div class="left-thing">
+          <div class="counter">
+              <button t-on-click="increment(-1)">-</button>
+              <span style="font-weight:bold">Value: <t t-esc="state.messages.length"/></span>
+              <button t-on-click="increment(1)">+</button>
+          </div>
+          <button t-on-click="setMessageCount(10)">10 messages</button>
+          <button t-on-click="setMessageCount(20)">20 messages</button>
+          <button t-on-click="setMessageCount(500)">500 messages</button>
+          <button t-on-click="setMessageCount(1000)">1000 messages</button>
+          <button t-on-click="setMessageCount(5000)">5000 messages</button>
+          <button t-on-click="setMessageCount(15000)">15000 messages</button>
+      </div>
+      <div class="right-thing">
+          <div class="content">
+              <t t-foreach="state.messages" t-as="message">
+                  <t t-widget="Message" t-att-key="message.id" t-props="message" t-on-remove_message="removeMessage"/>
+              </t>
+          </div>
+      </div>
+  </div>
+
+  <div t-name="message" class="message">
+    <span class="author"><t t-esc="props.author"/></span>
+    <span class="msg"><t t-esc="props.msg"/></span>
+    <button class="remove" t-on-click="removeMessage">Remove</button>
+    <t t-widget="Counter" t-props="{initialState: props.id}"/>
+  </div>
+
+  <div t-name="counter">
+    <button t-on-click="increment(-1)">-</button>
+    <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
+    <button t-on-click="increment(1)">+</button>
+  </div>
+
+</templates>`;
+
 const STATE_MANAGEMENT = `// todo`;
 
 const EMPTY = ``;
@@ -259,11 +268,13 @@ const EMPTY = ``;
 export const SAMPLES = [
   {
     description: "Hello World",
-    code: HELLO_WORLD
+    code: HELLO_WORLD,
+    css: HELLO_WORLD_CSS
   },
   {
     description: "Hello World (ESNext)",
-    code: HELLO_WORLD_ESNEXT
+    code: HELLO_WORLD_ESNEXT,
+    css: HELLO_WORLD_CSS
   },
   {
     description: "Widget Composition",
@@ -272,7 +283,8 @@ export const SAMPLES = [
   {
     description: "Benchmark application",
     code: BENCHMARK_APP,
-    css: BENCHMARK_APP_CSS
+    css: BENCHMARK_APP_CSS,
+    xml: BENCHMARK_APP_XML
   },
   {
     description: "State management app",

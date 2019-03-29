@@ -1418,6 +1418,9 @@
         loadTemplates(xmlstr) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(xmlstr, "text/xml");
+            if (doc.getElementsByTagName("parsererror").length) {
+                throw new Error("Invalid XML in template");
+            }
             const templates = doc.getElementsByTagName("templates")[0];
             if (!templates) {
                 return;
@@ -2114,7 +2117,7 @@
     exports.extras = extras;
 
     exports._version = '0.4.0';
-    exports._date = '2019-03-29T11:57:27.820Z';
-    exports._hash = '5cd45b5';
+    exports._date = '2019-03-29T14:38:00.073Z';
+    exports._hash = 'e6b0d06';
 
 }(this.owl = this.owl || {}));

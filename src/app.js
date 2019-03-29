@@ -43,7 +43,7 @@ const TEMPLATE = `
       </div>
   </div>`;
 
-class Playground extends Component {
+class App extends Component {
   constructor(...args) {
     super(...args);
     this.version = owl._version;
@@ -142,9 +142,13 @@ class Playground extends Component {
   }
 }
 
+//------------------------------------------------------------------------------
+// Application initialization
+//------------------------------------------------------------------------------
+document.title = `${document.title} (v${owl._version})`;
 document.addEventListener("DOMContentLoaded", async function() {
   const qweb = new QWeb();
   const env = { qweb };
-  const playground = new Playground(env);
-  playground.mount(document.body);
+  const app = new App(env);
+  app.mount(document.body);
 });

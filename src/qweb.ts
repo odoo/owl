@@ -300,6 +300,9 @@ export class QWeb {
   loadTemplates(xmlstr: string) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlstr, "text/xml");
+    if (doc.getElementsByTagName("parsererror").length) {
+      throw new Error("Invalid XML in template");
+    }
     const templates = doc.getElementsByTagName("templates")[0];
     if (!templates) {
       return;

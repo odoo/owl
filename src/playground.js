@@ -45,7 +45,7 @@ class Playground extends Component {
     this.state = {
       currentTab: "js",
       js: SAMPLES[0].code,
-      css: "",
+      css: SAMPLES[0].css || "",
       xml: ""
     };
   }
@@ -87,7 +87,7 @@ class Playground extends Component {
     const sample = SAMPLES.find(s => s.description === ev.target.value);
     this.updateState({
       js: sample.code,
-      css: "",
+      css: sample.css || "",
       xml: ""
     });
     this.editor.setValue(this.state[this.state.currentTab], -1);

@@ -404,6 +404,45 @@ describe("lifecycle hooks", () => {
     await widget.updateProps({ val: 666 });
     expect(fixture.innerHTML).toBe("<div>666</div>");
   });
+
+  test("sub widget (inside sub node): hooks are correctly called", async () => {
+    let destroyed = false;
+    let created = false;
+    let mounted = false;
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+          <t t-if="state.flag">
+            <div><t t-widget="child"/></div>
+          </t>
+        </div>`;
+      widgets = { child: ChildWidget };
+      state = { flag: false };
+    }
+
+    class ChildWidget extends Widget {
+      constructor(parent, props) {
+        super(parent, props);
+        created = true;
+      }
+      mounted() {
+        mounted = true;
+      }
+      destroyed() {
+        destroyed = true;
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(created).toBe(false);
+    expect(mounted).toBe(false);
+    await widget.updateState({ flag: true });
+    expect(mounted).toBe(true);
+    expect(created).toBe(true);
+    expect(destroyed).toBe(false);
+    await widget.updateState({ flag: false });
+    expect(destroyed).toBe(true);
+  });
 });
 
 describe("destroy method", () => {

@@ -51,7 +51,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             }
         }
         if (isNew7) {
-            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8});c1[_5_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w7._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w7.destroy()}}; w7.__widget__.pvnode = pvnode;});
+            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8});c1[_5_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w7._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w7.destroy()},destroy(){w7.destroy()}}; w7.__widget__.pvnode = pvnode;});
         } else {
             def6 = def6.then(()=>{if (w7.__widget__.isDestroyed) {return};let vnode;if (!w7.__widget__.vnode){vnode=w7.__widget__.pvnode} else { vnode=h(w7.__widget__.vnode.sel, {key: key8});vnode.elm=w7.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w7.el,a.elm);a.elm=w7.el;w7.__mount();},remove(){w7.destroy()}}}c1[_5_index]=vnode;});
         }
@@ -99,7 +99,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         }
     }
     if (isNew4) {
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()},destroy(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
     } else {
         def3 = def3.then(()=>{if (w4.__widget__.isDestroyed) {return};let vnode;if (!w4.__widget__.vnode){vnode=w4.__widget__.pvnode} else { vnode=h(w4.__widget__.vnode.sel, {key: key5});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}}}c1[_2_index]=vnode;});
     }
@@ -145,7 +145,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
         }
     }
     if (isNew4) {
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4});c1[_2_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w4._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w4.destroy()},destroy(){w4.destroy()}}; w4.__widget__.pvnode = pvnode;});
     } else {
         def3 = def3.then(()=>{if (w4.__widget__.isDestroyed) {return};let vnode;if (!w4.__widget__.vnode){vnode=w4.__widget__.pvnode} else { vnode=h(w4.__widget__.vnode.sel, {key: 4});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}}}c1[_2_index]=vnode;});
     }

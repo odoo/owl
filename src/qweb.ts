@@ -981,6 +981,8 @@ const widgetDirective: Directive = {
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${
         keepAlive ? "detach" : "destroy"
+      }()},destroy(){w${widgetID}.${
+        keepAlive ? "detach" : "destroy"
       }()}}; w${widgetID}.__widget__.pvnode = pvnode;});`
     );
     ctx.addElse();

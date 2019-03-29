@@ -168,9 +168,9 @@ class App extends owl.core.Component {
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
-const qweb = new owl.core.QWeb();
-qweb.loadTemplates(TEMPLATES);
-const env = {qweb};
+const env = {
+  qweb: new owl.core.QWeb(TEMPLATES)
+};
 
 const app = new App(env);
 app.mount(document.body);

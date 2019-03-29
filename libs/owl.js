@@ -1312,7 +1312,7 @@
     // QWeb rendering engine
     //------------------------------------------------------------------------------
     class QWeb {
-        constructor() {
+        constructor(data) {
             this.processedTemplates = {};
             this.templates = {};
             this.directives = [];
@@ -1346,6 +1346,9 @@
                 refDirective,
                 widgetDirective
             ].forEach(d => this.addDirective(d));
+            if (data) {
+                this.loadTemplates(data);
+            }
         }
         addDirective(dir) {
             this.directives.push(dir);
@@ -2117,7 +2120,7 @@
     exports.extras = extras;
 
     exports._version = '0.4.0';
-    exports._date = '2019-03-29T14:38:00.073Z';
-    exports._hash = 'e6b0d06';
+    exports._date = '2019-03-29T15:41:21.984Z';
+    exports._hash = 'd6e61c2';
 
 }(this.owl = this.owl || {}));

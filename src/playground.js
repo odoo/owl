@@ -85,7 +85,12 @@ class Playground extends Component {
 
   setSample(ev) {
     const sample = SAMPLES.find(s => s.description === ev.target.value);
-    this.editor.setValue(sample.code, -1);
+    this.updateState({
+      js: sample.code,
+      css: "",
+      xml: ""
+    });
+    this.editor.setValue(this.state[this.state.currentTab], -1);
   }
 
   updateStateFromEditor() {

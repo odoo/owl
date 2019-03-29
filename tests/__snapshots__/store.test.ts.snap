@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`connecting a component to store connecting a component works 1`] = `"<div></div>"`;
-
-exports[`connecting a component to store connecting a component works 2`] = `"<div><span>hello</span></div>"`;

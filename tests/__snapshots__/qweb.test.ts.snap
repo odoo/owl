@@ -464,6 +464,17 @@ exports[`foreach iterate, position 1`] = `
 }"
 `;
 
+exports[`loading templates can initialize qweb with a string 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \`jupiler\`});
+    return vn1;
+}"
+`;
+
 exports[`loading templates can load a few templates from a xml string 1`] = `
 "function anonymous(context,extra
 ) {

@@ -878,6 +878,16 @@ describe("t-ref", () => {
 });
 
 describe("loading templates", () => {
+  test("can initialize qweb with a string", () => {
+    const data = `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <templates id="template" xml:space="preserve">
+        <div t-name="hey">jupiler</div>
+      </templates>`;
+    const qweb = new QWeb(data);
+    expect(renderToString(qweb, "hey")).toBe("<div>jupiler</div>");
+  });
+
   test("can load a few templates from a xml string", () => {
     const data = `
       <?xml version="1.0" encoding="UTF-8"?>

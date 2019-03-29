@@ -182,7 +182,7 @@ export class QWeb {
   templates: { [name: string]: CompiledTemplate<VNode> } = {};
   directives: Directive[] = [];
 
-  constructor() {
+  constructor(data?: string) {
     [
       forEachDirective,
       escDirective,
@@ -196,6 +196,10 @@ export class QWeb {
       refDirective,
       widgetDirective
     ].forEach(d => this.addDirective(d));
+
+    if (data) {
+      this.loadTemplates(data);
+    }
   }
 
   utils = {

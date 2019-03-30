@@ -13,7 +13,7 @@ const DEFAULT_XML = `<templates>
 
 const TEMPLATE = `
   <div class="playground">
-      <div class="left-bar">
+      <div class="left-bar" t-att-style="leftPaneStyle">
         <div class="menubar">
           <a class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
           <a class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
@@ -29,7 +29,8 @@ const TEMPLATE = `
         </div>
         <div class="code-editor" t-ref="editor"></div>
       </div>
-      <div class="right-pane">
+      <div class="separator horizontal" t-on-mousedown="onMouseDown"/>
+      <div class="right-pane"  t-att-style="rightPaneStyle">
         <div class="welcome" t-if="state.displayWelcome">
           <div>🦉 Odoo Web Lab 🦉</div>
           <div>v<t t-esc="version"/></div>
@@ -55,7 +56,8 @@ class App extends Component {
       css: SAMPLES[0].css || "",
       xml: SAMPLES[0].xml || DEFAULT_XML,
       error: false,
-      displayWelcome: true
+      displayWelcome: true,
+      leftPaneWidth: window.innerWidth / 2
     };
   }
 
@@ -139,6 +141,32 @@ class App extends Component {
     const mode = MODES[tab];
     this.editor.session.setMode(mode);
     this.updateState({ currentTab: tab });
+  }
+
+  get leftPaneStyle() {
+    return `width:${this.state.leftPaneWidth}px`;
+  }
+
+  get rightPaneStyle() {
+    return `width:${window.innerWidth - 5 - this.state.leftPaneWidth}px`;
+  }
+
+  onMouseDown(ev) {
+    const resizer = ev => {
+      this.updateState({ leftPaneWidth: ev.clientX });
+    };
+
+    document.body.addEventListener("mousemove", resizer);
+    for (let iframe of document.getElementsByTagName("iframe")) {
+      iframe.classList.add("disabled");
+    }
+
+    document.body.addEventListener("mouseup", () => {
+      document.body.removeEventListener("mousemove", resizer);
+      for (let iframe of document.getElementsByTagName("iframe")) {
+        iframe.classList.remove("disabled");
+      }
+    });
   }
 }
 

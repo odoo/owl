@@ -1,6 +1,6 @@
 const HELLO_WORLD = `class HelloWorld extends owl.core.Component {
-  constructor(...args) {
-    super(...args);
+  constructor() {
+    super(...arguments);
     this.inlineTemplate = \`<div class="hello">Hello <t t-esc="props.name"/></div>\`;
   }
 }
@@ -53,8 +53,8 @@ const WIDGET_COMPOSITION = `class Counter extends owl.core.Component {
 
 class App extends owl.core.Component {
 
-  constructor(...args) {
-    super(...args);
+  constructor() {
+    super(...arguments);
     this.inlineTemplate = \`
       <div>
           <t t-widget="Counter" t-props="{initialState: 1}"/>
@@ -120,8 +120,8 @@ class Counter extends owl.core.Component {
 //------------------------------------------------------------------------------
 class Message extends owl.core.Component {
 
-  constructor(parent, props) {
-    super(parent, props);
+  constructor() {
+    super(...arguments);
     this.template = "message";
     this.widgets = { Counter };
   }
@@ -137,8 +137,8 @@ class Message extends owl.core.Component {
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.core.Component {
-  constructor(parent, props) {
-    super(parent, props);
+  constructor() {
+    super(...arguments);
     this.template = "root";
     this.widgets = { Message };
     this.state = {

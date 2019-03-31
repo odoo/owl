@@ -28,6 +28,10 @@ body {
   background-color: #2f3129;
 }
 
+.left-bar.split {
+  grid-template-rows: 50px auto 23px auto;
+}
+
 .menubar {
   background-color: #1c2128;
   color: white;
@@ -52,6 +56,20 @@ body {
   border-bottom: 2px solid gray;
 }
 
+.layout-selector {
+  font-size: 33px;
+  padding: 0px 3px;
+  margin-right: 17px;
+  cursor: pointer;
+  margin: 8px;
+  color: #cccccc;
+  transform: rotate(90deg);
+}
+
+.layout-selector.active {
+  font-weight: bold;
+  color: white;
+}
 /* TABBED EDITOR ****************************************/
 
 .tabBar {

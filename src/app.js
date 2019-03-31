@@ -17,9 +17,9 @@ const DEFAULT_XML = `<templates>
 const EDITOR_TEMPLATE = `
   <div class="tabbed-editor">
     <div class="tabBar">
-      <a class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
-      <a class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
-      <a class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
+      <a t-if="tabs.js" class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
+      <a t-if="tabs.xml" class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
+      <a t-if="tabs.css" class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
     </div>
     <div class="code-editor" t-ref="editor"></div>
   </div>`;
@@ -29,7 +29,12 @@ class TabbedEditor extends Component {
     super(...arguments);
     this.inlineTemplate = EDITOR_TEMPLATE;
     this.state = {
-      currentTab: "js"
+      currentTab: this.props.display.split("|")[0]
+    };
+    this.tabs = {
+      js: this.props.display.includes("js"),
+      xml: this.props.display.includes("xml"),
+      css: this.props.display.includes("css")
     };
   }
 
@@ -38,7 +43,7 @@ class TabbedEditor extends Component {
 
     // remove this for xml/css (?)
     this.editor.session.setOption("useWorker", false);
-    this.editor.setValue(this.props.js, -1);
+    this.editor.setValue(this.props[this.state.currentTab], -1);
     this.editor.setFontSize("14px");
     this.editor.setTheme("ace/theme/monokai");
     this.editor.session.setMode("ace/mode/javascript");
@@ -82,7 +87,7 @@ class TabbedEditor extends Component {
 
 const TEMPLATE = `
   <div class="playground">
-      <div class="left-bar" t-att-style="leftPaneStyle">
+      <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
         <div class="menubar">
           <a class="btn run-code" t-on-click="runCode">▶ Run</a>
           <select t-on-change="setSample">
@@ -90,8 +95,16 @@ const TEMPLATE = `
               <t t-esc="sample.description"/>
             </option>
           </select>
+          <div class="layout-selector" t-att-class="{active:state.splitLayout}" t-on-click="toggleLayout">◫</div>
         </div>
-        <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml}" t-on-updateCode="updateCode"/>
+        <t t-if="!state.splitLayout">
+          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
+        </t>
+        <t t-else="1">
+          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js'}" t-on-updateCode="updateCode"/>
+          <div class="separator vertical"/>
+          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css'}" t-on-updateCode="updateCode"/>
+        </t>
       </div>
       <div class="separator horizontal" t-on-mousedown="onMouseDown"/>
       <div class="right-pane"  t-att-style="rightPaneStyle">
@@ -117,12 +130,12 @@ class App extends Component {
     this.widgets = { TabbedEditor };
 
     this.state = {
-      currentTab: "js",
       js: SAMPLES[0].code,
       css: SAMPLES[0].css || "",
       xml: SAMPLES[0].xml || DEFAULT_XML,
       error: false,
       displayWelcome: true,
+      splitLayout: false,
       leftPaneWidth: Math.ceil(window.innerWidth / 2)
     };
   }
@@ -208,6 +221,9 @@ class App extends Component {
   }
   updateCode(ev) {
     this.state[ev.type] = ev.value;
+  }
+  toggleLayout() {
+    this.updateState({ splitLayout: !this.state.splitLayout });
   }
 }
 

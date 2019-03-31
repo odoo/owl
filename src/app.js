@@ -11,23 +11,87 @@ const MODES = {
 const DEFAULT_XML = `<templates>
 </templates>`;
 
+//------------------------------------------------------------------------------
+// Tabbed editor
+//------------------------------------------------------------------------------
+const EDITOR_TEMPLATE = `
+  <div class="tabbed-editor">
+    <div class="tabBar">
+      <a class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
+      <a class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
+      <a class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
+    </div>
+    <div class="code-editor" t-ref="editor"></div>
+  </div>`;
+
+class TabbedEditor extends Component {
+  constructor() {
+    super(...arguments);
+    this.inlineTemplate = EDITOR_TEMPLATE;
+    this.state = {
+      currentTab: "js"
+    };
+  }
+
+  mounted() {
+    this.editor = ace.edit(this.refs.editor);
+
+    // remove this for xml/css (?)
+    this.editor.session.setOption("useWorker", false);
+    this.editor.setValue(this.props.js, -1);
+    this.editor.setFontSize("14px");
+    this.editor.setTheme("ace/theme/monokai");
+    this.editor.session.setMode("ace/mode/javascript");
+    this.editor.on("blur", () => {
+      const editorValue = this.editor.getValue();
+      const propsValue = this.props[this.state.currentTab];
+      if (editorValue !== propsValue) {
+        this.trigger("updateCode", {
+          type: this.state.currentTab,
+          value: editorValue
+        });
+      }
+    });
+  }
+
+  updateProps() {
+    const result = super.updateProps(...arguments);
+    if (this.editor) {
+      this.editor.setValue(this.props[this.state.currentTab], -1);
+    }
+    return result;
+  }
+
+  willUnmount() {
+    this.editor.destroy();
+    delete this.editor;
+  }
+
+  setTab(tab) {
+    this.editor.setValue(this.props[tab], -1);
+
+    const mode = MODES[tab];
+    this.editor.session.setMode(mode);
+    this.updateState({ currentTab: tab });
+  }
+}
+
+//------------------------------------------------------------------------------
+// MAIN APP
+//------------------------------------------------------------------------------
+
 const TEMPLATE = `
   <div class="playground">
       <div class="left-bar" t-att-style="leftPaneStyle">
         <div class="menubar">
-          <a class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
-          <a class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
-          <a class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
-          <div class="right-thing">
-            <select t-on-change="setSample">
-              <option t-foreach="SAMPLES" t-as="sample">
-                <t t-esc="sample.description"/>
-              </option>
-            </select>
-            <a class="btn run-code" t-on-click="runCode">▶ Run</a>
-          </div>
+          <a class="btn run-code" t-on-click="runCode">▶ Run</a>
+          <select t-on-change="setSample">
+            <option t-foreach="SAMPLES" t-as="sample">
+              <t t-esc="sample.description"/>
+            </option>
+          </select>
         </div>
-        <div class="code-editor" t-ref="editor"></div>
+        <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml}" t-on-updateCode="updateCode"/>
       </div>
       <div class="separator horizontal" t-on-mousedown="onMouseDown"/>
       <div class="right-pane"  t-att-style="rightPaneStyle">
@@ -50,6 +114,8 @@ class App extends Component {
     this.version = owl._version;
     this.SAMPLES = SAMPLES;
     this.inlineTemplate = TEMPLATE;
+    this.widgets = { TabbedEditor };
+
     this.state = {
       currentTab: "js",
       js: SAMPLES[0].code,
@@ -57,22 +123,11 @@ class App extends Component {
       xml: SAMPLES[0].xml || DEFAULT_XML,
       error: false,
       displayWelcome: true,
-      leftPaneWidth: window.innerWidth / 2
+      leftPaneWidth: Math.ceil(window.innerWidth / 2)
     };
   }
 
-  mounted() {
-    this.editor = ace.edit(this.refs.editor);
-    this.editor.session.setOption("useWorker", false);
-    this.editor.setValue(this.state.js, -1);
-    this.editor.setFontSize("14px");
-    this.editor.setTheme("ace/theme/monokai");
-    this.editor.session.setMode("ace/mode/javascript");
-  }
-
   async runCode() {
-    this.updateStateFromEditor();
-
     // check templates
     var qweb = new owl.core.QWeb();
     var error = false;
@@ -124,23 +179,6 @@ class App extends Component {
       css: sample.css || "",
       xml: sample.xml || DEFAULT_XML
     });
-    this.editor.setValue(this.state[this.state.currentTab], -1);
-  }
-
-  updateStateFromEditor() {
-    const value = this.editor.getValue();
-    this.updateState({
-      [this.state.currentTab]: value
-    });
-  }
-
-  setTab(tab) {
-    this.updateStateFromEditor();
-    this.editor.setValue(this.state[tab], -1);
-
-    const mode = MODES[tab];
-    this.editor.session.setMode(mode);
-    this.updateState({ currentTab: tab });
   }
 
   get leftPaneStyle() {
@@ -148,7 +186,7 @@ class App extends Component {
   }
 
   get rightPaneStyle() {
-    return `width:${window.innerWidth - 5 - this.state.leftPaneWidth}px`;
+    return `width:${window.innerWidth - 6 - this.state.leftPaneWidth}px`;
   }
 
   onMouseDown(ev) {
@@ -167,6 +205,9 @@ class App extends Component {
         iframe.classList.remove("disabled");
       }
     });
+  }
+  updateCode(ev) {
+    this.state[ev.type] = ev.value;
   }
 }
 

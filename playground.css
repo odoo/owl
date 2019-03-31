@@ -29,20 +29,44 @@ body {
 }
 
 .menubar {
-  padding-left: 8px;
   background-color: #1c2128;
   color: white;
-  line-height: 50px;
   font-size: 18px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.menubar select {
+  margin-right: 15px;
+  font-size: 16px;
+  height: 25px;
+}
+
+.run-code {
+  margin-right: 12px;
+  height: 25px;
+  border: 2px solid transparent;
+}
+.run-code:hover {
+  border-bottom: 2px solid gray;
+}
+
+/* TABBED EDITOR ****************************************/
+
+.tabBar {
+  color: white;
+  height: 22px;
+  margin-top: -22px;
+  padding-left: 5px;
 }
 
 .tab {
   display: inline-block;
   cursor: pointer;
   padding: 0 8px;
-  vertical-align: -9px;
   font-size: 16px;
-  line-height: 26px;
+  line-height: 20px;
   width: 34px;
   text-align: center;
 }
@@ -55,24 +79,9 @@ body {
   font-weight: bold;
 }
 
-.right-thing {
-  float: right;
-}
-
-.right-thing select {
-  margin-right: 15px;
-  font-size: 16px;
-}
-.run-code {
-  margin-right: 12px;
-  padding: 4px;
-}
-.run-code:hover {
-  border-bottom: 2px solid gray;
-}
-
 .code-editor {
   margin-top: 8px;
+  height: calc(100% - 10px);
 }
 
 /* SEPARATOR ****************************************/

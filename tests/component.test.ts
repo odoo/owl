@@ -387,6 +387,61 @@ describe("lifecycle hooks", () => {
     ]);
   });
 
+  test("componentDidUpdate hook is called after updateState", async () => {
+    let n = 0;
+
+    class TestWidget extends Widget {
+      state = { a: 1 };
+
+      componentDidUpdate() {
+        n++;
+      }
+    }
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+    expect(n).toBe(0);
+
+    await widget.updateState({}); // empty update, should do nothing
+    expect(n).toBe(0);
+
+    await widget.updateState({ a: 3 });
+    expect(n).toBe(1);
+  });
+
+  test("componentDidUpdate hook is called after updateProps", async () => {
+    let n = 0;
+
+    class TestWidget extends Widget {
+      componentDidUpdate() {
+        n++;
+      }
+    }
+    const widget = new TestWidget(env, { a: 1 });
+    await widget.mount(fixture);
+    expect(n).toBe(0);
+
+    await widget.updateProps({ a: 2 });
+    expect(n).toBe(1);
+  });
+
+  test("componentDidUpdate hook is called after updateEnv", async () => {
+    let n = 0;
+
+    class TestWidget extends Widget {
+      state = { a: 1 };
+
+      componentDidUpdate() {
+        n++;
+      }
+    }
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+    expect(n).toBe(0);
+
+    await widget.updateEnv({ isMobile: true });
+    expect(n).toBe(1);
+  });
+
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
     class TestWidget extends Widget {

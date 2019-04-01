@@ -150,6 +150,16 @@ export class Component<
   mounted() {}
 
   /**
+   * This hook is called whenever a component did actually update its props,
+   * state or env.
+   *
+   * This method is not called on the initial render. It is useful to interact
+   * with the DOM (for example, through an external library) whenever the
+   * component was updated.
+   */
+  componentDidUpdate() {}
+
+  /**
    * willUnmount is a hook that is called each time a component is detached from
    * the DOM. This is a good place to remove some listeners, for example.
    *
@@ -281,8 +291,9 @@ export class Component<
     }
     Object.assign(this.env, nextEnv);
     if (this.__widget__.isMounted) {
-      return this.render(true);
+      await this.render(true);
     }
+    this.componentDidUpdate();
   }
 
   async updateProps(
@@ -312,8 +323,9 @@ export class Component<
     }
     Object.assign(this.state, nextState);
     if (this.__widget__.isStarted) {
-      return this.render();
+      await this.render();
     }
+    this.componentDidUpdate();
   }
 
   //--------------------------------------------------------------------------
@@ -322,7 +334,8 @@ export class Component<
 
   async _updateProps(nextProps: Props): Promise<void> {
     this.props = nextProps;
-    return this.render();
+    await this.render();
+    this.componentDidUpdate();
   }
 
   _patch(vnode) {

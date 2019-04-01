@@ -1,17 +1,22 @@
-const HELLO_WORLD = `class HelloWorld extends owl.core.Component {
+const HELLO_WORLD = `const {Component, QWeb} = owl.core;
+
+class HelloWorld extends Component {
   constructor() {
     super(...arguments);
-    this.inlineTemplate = \`<div class="hello">Hello <t t-esc="props.name"/></div>\`;
+    this.template = "demo.hello";
   }
 }
 
-const env = {
-    qweb: new owl.core.QWeb()
-};
-
-const hello = new HelloWorld(env, { name: "World" });
+const qweb = new QWeb(TEMPLATES);
+const hello = new HelloWorld({qweb}, { name: "World" });
 hello.mount(document.body);
 `;
+
+const HELLO_WORLD_XML = `<templates>
+  <div t-name="demo.hello" class="hello">
+    Hello <t t-esc="props.name"/>
+  </div>
+</templates>`;
 
 const HELLO_WORLD_CSS = `.hello {
     color: darkred;
@@ -19,28 +24,20 @@ const HELLO_WORLD_CSS = `.hello {
 }`;
 
 const HELLO_WORLD_ESNEXT = `// This example will not work if your browser does not support ESNext Class Fields
-class HelloWorld extends owl.core.Component {
-  inlineTemplate = \`<div class="hello">Hello <t t-esc="props.name"/></div>\`;
+const {Component, QWeb} = owl.core;
+
+class HelloWorld extends Component {
+  template = "demo.hello";
 }
 
-const env = {
-    qweb: new owl.core.QWeb()
-};
-
-const hello = new HelloWorld(env, { name: "World" });
-hello.mount(document.body);
-`;
+const qweb = new QWeb(TEMPLATES);
+const hello = new HelloWorld({qweb}, { name: "World" });
+hello.mount(document.body);`;
 
 const WIDGET_COMPOSITION = `class Counter extends owl.core.Component {
-
   constructor(parent, props) {
     super(parent, props);
-    this.inlineTemplate = \`
-      <div>
-        <button t-on-click="increment(-1)">-</button>
-        <span style="font-weight:bold">Value: <t t-esc="state.value"/></span>
-        <button t-on-click="increment(1)">+</button>
-      </div>\`;
+    this.template="counter";
     this.state = {
       value: props.initialState || 0
     };
@@ -52,26 +49,32 @@ const WIDGET_COMPOSITION = `class Counter extends owl.core.Component {
 }
 
 class App extends owl.core.Component {
-
   constructor() {
     super(...arguments);
-    this.inlineTemplate = \`
-      <div>
-          <t t-widget="Counter" t-props="{initialState: 1}"/>
-          <t t-widget="Counter" t-props="{initialState: 42}"/>
-      </div>\`;
+    this.template="app";
     this.widgets = { Counter };
   }
-
 }
 
 const env = {
-  qweb: new owl.core.QWeb()
+  qweb: new owl.core.QWeb(TEMPLATES)
 };
 
 const app = new App(env);
 app.mount(document.body);
 `;
+
+const WIDGET_COMPOSITION_XML = `<templates>
+  <div t-name="counter">
+    <button t-on-click="increment(-1)">-</button>
+    <span style="font-weight:bold">Value: <t t-esc="state.value"/></span>
+    <button t-on-click="increment(1)">+</button>
+  </div>
+  <div t-name="app">
+      <t t-widget="Counter" t-props="{initialState: 1}"/>
+      <t t-widget="Counter" t-props="{initialState: 42}"/>
+  </div>
+</templates>`;
 
 const BENCHMARK_APP = `//------------------------------------------------------------------------------
 // Generating demo data
@@ -119,7 +122,6 @@ class Counter extends owl.core.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.core.Component {
-
   constructor() {
     super(...arguments);
     this.template = "message";
@@ -269,16 +271,19 @@ export const SAMPLES = [
   {
     description: "Hello World",
     code: HELLO_WORLD,
+    xml: HELLO_WORLD_XML,
     css: HELLO_WORLD_CSS
   },
   {
     description: "Hello World (ESNext)",
     code: HELLO_WORLD_ESNEXT,
+    xml: HELLO_WORLD_XML,
     css: HELLO_WORLD_CSS
   },
   {
     description: "Widget Composition",
-    code: WIDGET_COMPOSITION
+    code: WIDGET_COMPOSITION,
+    xml: WIDGET_COMPOSITION_XML
   },
   {
     description: "Benchmark application",

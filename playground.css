@@ -40,6 +40,7 @@ body {
   flex: 0 0 50px;
   flex-direction: row-reverse;
   align-items: center;
+  user-select: none;
 }
 
 .menubar select {

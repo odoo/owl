@@ -44,9 +44,9 @@ class TabbedEditor extends Component {
     // remove this for xml/css (?)
     this.editor.session.setOption("useWorker", false);
     this.editor.setValue(this.props[this.state.currentTab], -1);
-    this.editor.setFontSize("14px");
+    this.editor.setFontSize("13px");
     this.editor.setTheme("ace/theme/monokai");
-    this.editor.session.setMode("ace/mode/javascript");
+    this.editor.session.setMode(MODES[this.state.currentTab]);
     this.editor.on("blur", () => {
       const editorValue = this.editor.getValue();
       const propsValue = this.props[this.state.currentTab];
@@ -129,7 +129,7 @@ const TEMPLATE = `
         <t t-else="1">
           <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js', style:topEditorStyle}" t-on-updateCode="updateCode"/>
           <div class="separator horizontal"/>
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
+          <t t-widget="TabbedEditor" t-keep-alive="1" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>

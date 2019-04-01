@@ -374,7 +374,14 @@ const STATE_MANAGEMENT_CSS = `.action {
 }
 `;
 
-const EMPTY = ``;
+const EMPTY = `const {Component, QWeb} = owl.core;
+class Widget extends Component {
+}
+
+const qweb = new QWeb(TEMPLATES);
+const widget = new Widget({qweb});
+widget.mount(document.body);
+`;
 
 export const SAMPLES = [
   {

@@ -15,8 +15,8 @@ const DEFAULT_XML = `<templates>
 // Tabbed editor
 //------------------------------------------------------------------------------
 const EDITOR_TEMPLATE = `
-  <div class="tabbed-editor">
-    <div class="tabBar">
+  <div class="tabbed-editor" t-att-style="props.style">
+    <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
       <a t-if="tabs.js" class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
       <a t-if="tabs.xml" class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
       <a t-if="tabs.css" class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
@@ -79,6 +79,32 @@ class TabbedEditor extends Component {
     this.editor.session.setMode(mode);
     this.updateState({ currentTab: tab });
   }
+
+  onMouseDown(ev) {
+    if (ev.target.tagName === "DIV") {
+      let y = ev.clientY;
+      const resizer = ev => {
+        const delta = ev.clientY - y;
+        y = ev.clientY;
+        this.trigger("updatePanelHeight", { delta });
+      };
+      document.body.addEventListener("mousemove", resizer);
+      document.body.addEventListener("mouseup", () => {
+        document.body.removeEventListener("mousemove", resizer);
+      });
+    }
+    // document.body.addEventListener("mousemove", resizer);
+    // for (let iframe of document.getElementsByTagName("iframe")) {
+    //   iframe.classList.add("disabled");
+    // }
+
+    // document.body.addEventListener("mouseup", () => {
+    //   document.body.removeEventListener("mousemove", resizer);
+    //   for (let iframe of document.getElementsByTagName("iframe")) {
+    //     iframe.classList.remove("disabled");
+    //   }
+    // });
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -101,12 +127,12 @@ const TEMPLATE = `
           <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
         </t>
         <t t-else="1">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js'}" t-on-updateCode="updateCode"/>
-          <div class="separator vertical"/>
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css'}" t-on-updateCode="updateCode"/>
+          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js', style:topEditorStyle}" t-on-updateCode="updateCode"/>
+          <div class="separator horizontal"/>
+          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
         </t>
       </div>
-      <div class="separator horizontal" t-on-mousedown="onMouseDown"/>
+      <div class="separator vertical" t-on-mousedown="onMouseDown"/>
       <div class="right-pane"  t-att-style="rightPaneStyle">
         <div class="welcome" t-if="state.displayWelcome">
           <div>🦉 Odoo Web Lab 🦉</div>
@@ -136,7 +162,8 @@ class App extends Component {
       error: false,
       displayWelcome: true,
       splitLayout: true,
-      leftPaneWidth: Math.ceil(window.innerWidth / 2)
+      leftPaneWidth: Math.ceil(window.innerWidth / 2),
+      topPanelHeight: null
     };
   }
 
@@ -202,7 +229,11 @@ class App extends Component {
     return `width:${window.innerWidth - 6 - this.state.leftPaneWidth}px`;
   }
 
-  onMouseDown(ev) {
+  get topEditorStyle() {
+    return `flex: 0 0 ${this.state.topPanelHeight}px`;
+  }
+
+  onMouseDown() {
     const resizer = ev => {
       this.updateState({ leftPaneWidth: ev.clientX });
     };
@@ -224,6 +255,16 @@ class App extends Component {
   }
   toggleLayout() {
     this.updateState({ splitLayout: !this.state.splitLayout });
+  }
+  updatePanelHeight(ev) {
+    if (!ev.delta) {
+      return;
+    }
+    let height = this.state.topPanelHeight;
+    if (!height) {
+      height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
+    }
+    this.updateState({ topPanelHeight: height + ev.delta });
   }
 }
 

@@ -23,8 +23,8 @@ body {
 
 /* LEFT BAR ****************************************/
 .left-bar {
-  display: grid;
-  grid-template-rows: 50px auto;
+  display: flex;
+  flex-direction: column;
   background-color: #2f3129;
 }
 
@@ -37,6 +37,7 @@ body {
   color: white;
   font-size: 18px;
   display: flex;
+  flex: 0 0 50px;
   flex-direction: row-reverse;
   align-items: center;
 }
@@ -72,11 +73,25 @@ body {
 }
 /* TABBED EDITOR ****************************************/
 
+.tabbed-editor {
+  flex: 2 2 auto;
+  position: relative;
+}
+
+.separator.horizontal + .tabbed-editor {
+  flex: 1 1 auto;
+}
+
 .tabBar {
   color: white;
   height: 22px;
   margin-top: -22px;
   padding-left: 5px;
+  user-select: none;
+}
+
+.tabBar.resizeable {
+  cursor: row-resize;
 }
 
 .tab {
@@ -87,14 +102,11 @@ body {
   line-height: 20px;
   width: 34px;
   text-align: center;
+  border-bottom: 2px solid transparent;
 }
 
 .tab.active {
   border-bottom: 2px solid gray;
-}
-
-.tab:hover {
-  font-weight: bold;
 }
 
 .code-editor {
@@ -107,6 +119,10 @@ body {
 .separator {
   background-color: #1c2128;
   cursor: col-resize;
+}
+
+.separator.horizontal {
+  height: 20px;
 }
 
 /* RIGHT PANE ****************************************/

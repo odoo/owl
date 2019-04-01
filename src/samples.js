@@ -186,7 +186,7 @@ const BENCHMARK_APP_CSS = `.main {
   bottom: 0;
 
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 220px 1fr;
 }
 
 .left-thing {
@@ -263,7 +263,116 @@ const BENCHMARK_APP_XML = `<templates>
 
 </templates>`;
 
-const STATE_MANAGEMENT = `// todo`;
+const STATE_MANAGEMENT = `const { Component, QWeb } = owl.core;
+const { Store, connect } = owl.extras;
+
+//------------------------------------------------------------------------------
+// Store Definition
+//------------------------------------------------------------------------------
+const actions = {
+  addTodo({ commit }, title) {
+    commit("addTodo", title);
+  },
+  removeTodo({ commit }, id) {
+    commit("removeTodo", id);
+  },
+  toggleTodo({ state, commit }, id) {
+    commit("toggleTodo", id);
+  },
+  clearCompleted({ state, commit }) {
+    state.todos
+      .filter(todo => todo.completed)
+      .forEach(todo => {
+        commit("removeTodo", todo.id);
+      });
+  }
+};
+
+const mutations = {
+  addTodo(state, title) {
+    const id = state.nextId++;
+    const todo = { id, title, completed: false };
+    state.todos.push(todo);
+  },
+  removeTodo(state, id) {
+    const index = state.todos.findIndex(t => t.id === id);
+    state.todos.splice(index, 1);
+  },
+  toggleTodo(state, id) {
+    const todo = state.todos.find(t => t.id === id);
+    todo.completed = !todo.completed;
+  }
+};
+
+const state = { todos: [], nextId: 1 };
+
+//------------------------------------------------------------------------------
+// TodoList root widget
+//------------------------------------------------------------------------------
+class TodoList extends Component {
+  constructor() {
+    super(...arguments);
+    this.template = "todoapp";
+  }
+  addTodo(ev) {
+    if (ev.keyCode === 13) {
+      const title = ev.target.value;
+      if (title.trim()) {
+        this.env.store.dispatch("addTodo", title);
+      }
+      ev.target.value = "";
+    }
+  }
+  toggleTodo(todo) {
+    this.env.store.dispatch("toggleTodo", todo.id);
+  }
+  removeTodo(todo) {
+    this.env.store.dispatch("removeTodo", todo.id);
+  }
+}
+
+function mapStateToProps(state) {
+  return { todos: state.todos };
+}
+
+const App = connect(mapStateToProps)(TodoList);
+
+//------------------------------------------------------------------------------
+// App Initialization
+//------------------------------------------------------------------------------
+const store = new Store({ state, actions, mutations });
+const qweb = new QWeb(TEMPLATES);
+const env = {
+  qweb,
+  store
+};
+const app = new App(env);
+app.mount(document.body);
+`;
+
+const STATE_MANAGEMENT_XML = `<templates>
+  <div t-name="todoapp">
+    <input autofocus="true" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
+    <ul>
+        <li class="todo" t-foreach="props.todos" t-as="todo">
+            <span t-att-class="{completed: todo.completed}"><t t-esc="todo.id"/>. <t t-esc="todo.title"/></span>
+            <span class="action" t-on-click="toggleTodo(todo)">(toggle)</span>
+            <span class="action" t-on-click="removeTodo(todo)">(remove)</span>
+        </li>
+    </ul>
+  </div>
+</templates>
+`;
+
+const STATE_MANAGEMENT_CSS = `.action {
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.completed {
+    text-decoration: line-through;
+}
+`;
 
 const EMPTY = ``;
 
@@ -293,7 +402,9 @@ export const SAMPLES = [
   },
   {
     description: "State management app",
-    code: STATE_MANAGEMENT
+    code: STATE_MANAGEMENT,
+    css: STATE_MANAGEMENT_CSS,
+    xml: STATE_MANAGEMENT_XML
   },
   {
     description: "Empty",

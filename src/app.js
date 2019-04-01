@@ -59,13 +59,11 @@ class TabbedEditor extends Component {
     });
   }
 
-  updateProps() {
-    const result = super.updateProps(...arguments);
+  componentDidUpdate() {
     if (this.editor) {
       window.dispatchEvent(new Event("resize"));
       this.editor.setValue(this.props[this.state.currentTab], -1);
     }
-    return result;
   }
 
   willUnmount() {

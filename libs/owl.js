@@ -919,6 +919,15 @@
          */
         mounted() { }
         /**
+         * This hook is called whenever a component did actually update its props,
+         * state or env.
+         *
+         * This method is not called on the initial render. It is useful to interact
+         * with the DOM (for example, through an external library) whenever the
+         * component was updated.
+         */
+        componentDidUpdate() { }
+        /**
          * willUnmount is a hook that is called each time a component is detached from
          * the DOM. This is a good place to remove some listeners, for example.
          *
@@ -1040,8 +1049,9 @@
             }
             Object.assign(this.env, nextEnv);
             if (this.__widget__.isMounted) {
-                return this.render(true);
+                await this.render(true);
             }
+            this.componentDidUpdate();
         }
         async updateProps(nextProps, forceUpdate = false) {
             if (nextProps === this.__widget__.renderProps && !forceUpdate) {
@@ -1066,15 +1076,17 @@
             }
             Object.assign(this.state, nextState);
             if (this.__widget__.isStarted) {
-                return this.render();
+                await this.render();
             }
+            this.componentDidUpdate();
         }
         //--------------------------------------------------------------------------
         // Private
         //--------------------------------------------------------------------------
         async _updateProps(nextProps) {
             this.props = nextProps;
-            return this.render();
+            await this.render();
+            this.componentDidUpdate();
         }
         _patch(vnode) {
             this.__widget__.renderPromise = null;
@@ -2043,9 +2055,11 @@
                             this.updateProps(nextProps, false);
                         }
                     });
+                    super.mounted();
                 }
                 willUnmount() {
                     this.env.store.off("update", this);
+                    super.willUnmount();
                 }
                 updateProps(nextProps, forceUpdate) {
                     nextProps = Object.assign(nextProps, this.__widget__.currentStoreProps);
@@ -2120,7 +2134,7 @@
     exports.extras = extras;
 
     exports._version = '0.4.0';
-    exports._date = '2019-03-29T15:41:21.984Z';
-    exports._hash = 'd6e61c2';
+    exports._date = '2019-04-01T14:01:57.709Z';
+    exports._hash = '990a08d';
 
 }(this.owl = this.owl || {}));

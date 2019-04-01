@@ -29,7 +29,7 @@ body {
 }
 
 .left-bar.split {
-  grid-template-rows: 50px auto 23px auto;
+  grid-template-rows: 50px 60% 23px 30%;
 }
 
 .menubar {

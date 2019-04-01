@@ -135,7 +135,7 @@ class App extends Component {
       xml: SAMPLES[0].xml || DEFAULT_XML,
       error: false,
       displayWelcome: true,
-      splitLayout: false,
+      splitLayout: true,
       leftPaneWidth: Math.ceil(window.innerWidth / 2)
     };
   }

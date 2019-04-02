@@ -374,6 +374,75 @@ const STATE_MANAGEMENT_CSS = `.action {
 }
 `;
 
+const RESPONSIVE = `const { Component, QWeb, utils } = owl.core;
+
+class SubWidget extends Component {
+  constructor() {
+    super(...arguments);
+    this.template = "subwidget";
+  }
+}
+
+class ResponsiveWidget extends Component {
+  constructor() {
+    super(...arguments);
+    this.template = "responsivewidget";
+    this.widgets = { SubWidget };
+  }
+}
+
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
+const env = {
+  qweb: new QWeb(TEMPLATES),
+  isMobile: isMobile()
+};
+
+const widget = new ResponsiveWidget(env);
+widget.mount(document.body);
+
+window.addEventListener(
+  "resize",
+  utils.debounce(function() {
+    const _isMobile = isMobile();
+    if (_isMobile !== env.isMobile) {
+      widget.updateEnv({ isMobile: _isMobile });
+    }
+  }, 20)
+);
+`;
+
+const RESPONSIVE_XML = `<templates>
+    <div t-name="responsivewidget">
+        <div class="info">
+            <span class="mobile" t-if="env.isMobile">Mobile</span>
+            <span class="desktop" t-else="1">Desktop</span>
+            mode
+        </div>
+        <t t-widget="SubWidget" t-if="!env.isMobile"/>
+    </div>
+    <div t-name="subwidget" class="subwidget">
+        This widget is only instantiated in desktop mode.  It will be destroyed
+        and recreated if the mode changes from destop to mobile, and back to desktop
+    </div>
+</templates>
+`;
+
+const RESPONSIVE_CSS = `.info {
+    font-size: 30px;
+}
+.desktop {
+    color: green;
+}
+.mobile {
+    color: blue;
+}
+.subwidget {
+    margin: 30px;
+}`;
+
 const EMPTY = `const {Component, QWeb} = owl.core;
 class Widget extends Component {
 }
@@ -412,6 +481,12 @@ export const SAMPLES = [
     code: STATE_MANAGEMENT,
     css: STATE_MANAGEMENT_CSS,
     xml: STATE_MANAGEMENT_XML
+  },
+  {
+    description: "Responsive app",
+    code: RESPONSIVE,
+    css: RESPONSIVE_CSS,
+    xml: RESPONSIVE_XML
   },
   {
     description: "Empty",

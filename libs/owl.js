@@ -1199,7 +1199,7 @@
     // Compilation Context
     //------------------------------------------------------------------------------
     class Context {
-        constructor() {
+        constructor(name) {
             this.nextID = 1;
             this.code = [];
             this.variables = {};
@@ -1212,6 +1212,7 @@
             this.inLoop = false;
             this.inPreTag = false;
             this.rootContext = this;
+            this.templateName = name || "noname";
             this.addLine("let h = this.utils.h;");
         }
         generateID() {
@@ -1464,7 +1465,7 @@
             }
             const mainNode = this.processedTemplates[name];
             const isDebug = mainNode.attributes.hasOwnProperty("t-debug");
-            const ctx = new Context();
+            const ctx = new Context(name);
             this._compileNode(mainNode, ctx);
             if (ctx.shouldProtectContext) {
                 ctx.code.unshift("    context = Object.create(context);");
@@ -1486,7 +1487,7 @@
                 template = new Function("context", "extra", ctx.code.join("\n"));
             }
             catch (e) {
-                throw new Error(`Invalid template (or compiled code): ${e.message}`);
+                throw new Error(`Invalid generated code while compiling template '${ctx.templateName.replace(/`/g, "'")}': ${e.message}`);
             }
             if (isDebug) {
                 console.log(`Template: ${this.processedTemplates[name].outerHTML}\nCompiled code:\n` + template.toString());
@@ -1616,7 +1617,8 @@
                 let name = attributes[i].name;
                 const value = attributes[i].textContent;
                 // regular attributes
-                if (!name.startsWith("t-")) {
+                if (!name.startsWith("t-") &&
+                    !node.getAttribute("t-attf-" + name)) {
                     const attID = ctx.generateID();
                     ctx.addLine(`let _${attID} = '${value}';`);
                     if (!name.match(/^[a-zA-Z]+$/)) {
@@ -1661,7 +1663,13 @@
                     }
                     const formattedExpr = value.replace(/\{\{.*?\}\}/g, s => "${" + ctx.formatExpression(s.slice(2, -2)) + "}");
                     const attID = ctx.generateID();
-                    ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
+                    let staticVal = node.getAttribute(attName);
+                    if (staticVal) {
+                        ctx.addLine(`let _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`);
+                    }
+                    else {
+                        ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
+                    }
                     attrs.push(`${attName}: _${attID}`);
                 }
                 // t-att= attributes
@@ -1893,11 +1901,12 @@
                 extraArgs = args.slice(1, -1);
                 return "";
             });
+            let error = `(function () {throw new Error('Missing handler \\'' + '${handler}' + \`\\' when evaluating template '${ctx.templateName.replace(/`/g, "'")}'\`)})()`;
             if (extraArgs) {
-                ctx.addLine(`p${nodeID}.on['${eventName}'] = context['${handler}'].bind(owner, ${ctx.formatExpression(extraArgs)});`);
+                ctx.addLine(`p${nodeID}.on['${eventName}'] = (context['${handler}'] || ${error}).bind(owner, ${ctx.formatExpression(extraArgs)});`);
             }
             else {
-                ctx.addLine(`extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || context['${handler}'].bind(owner);`);
+                ctx.addLine(`extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`);
                 ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
             }
         }
@@ -2134,7 +2143,7 @@
     exports.extras = extras;
 
     exports._version = '0.4.0';
-    exports._date = '2019-04-01T14:01:57.709Z';
-    exports._hash = '990a08d';
+    exports._date = '2019-04-02T11:40:29.730Z';
+    exports._hash = '15f973c';
 
 }(this.owl = this.owl || {}));

@@ -112,13 +112,13 @@ describe("connecting a component to store", () => {
     class Child extends Component<any, any, any> {
       inlineTemplate = `<div/>`;
       mounted() {
-        steps.push('child:mounted');
+        steps.push("child:mounted");
       }
       willUnmount() {
-        steps.push('child:willUnmount')
+        steps.push("child:willUnmount");
       }
       destroyed() {
-        steps.push('child:destroyed');
+        steps.push("child:destroyed");
       }
     }
 
@@ -142,16 +142,55 @@ describe("connecting a component to store", () => {
     const parent = new Parent(env);
 
     await parent.mount(fixture);
-    expect(steps).toEqual([
-      'child:mounted',
-    ]);
+    expect(steps).toEqual(["child:mounted"]);
 
     await parent.updateState({ child: false });
     expect(steps).toEqual([
-      'child:mounted',
-      'child:willUnmount',
-      'child:destroyed',
+      "child:mounted",
+      "child:willUnmount",
+      "child:destroyed"
     ]);
   });
 
+  test("connect receives ownprops as second argument", async () => {
+    const state = { todos: [{ id: 1, text: "jupiler" }] };
+    let nextId = 2;
+    const mutations = {
+      addTodo(state, text) {
+        state.todos.push({ text, id: nextId++ });
+      }
+    };
+    const store = new Store({ state, mutations });
+
+    class TodoItem extends Component<any, any, any> {
+      inlineTemplate = `<span><t t-esc="props.text"/></span>`;
+    }
+    const ConnectedTodo = connect((state, props) => {
+      const todo = state.todos.find(t => t.id === props.id);
+      return todo;
+    })(TodoItem);
+
+    class TodoList extends Component<any, any, any> {
+      inlineTemplate = `<div>
+          <t t-foreach="props.todos" t-as="todo">
+            <t t-widget="ConnectedTodo" t-props="todo"/>
+          </t>
+        </div>`;
+      widgets = { ConnectedTodo };
+    }
+
+    const ConnectedTodoList = connect(state => state)(TodoList);
+
+    (<any>env).store = store;
+    const app = new ConnectedTodoList(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
+
+    store.commit("addTodo", "hoegaarden");
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><span>jupiler</span><span>hoegaarden</span></div>"
+    );
+  });
 });

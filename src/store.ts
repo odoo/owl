@@ -7,24 +7,20 @@ export function connect(mapStateToProps) {
     return class extends Comp {
       constructor(parent, props?: any) {
         const env = parent instanceof Component ? parent.env : parent;
-        const storeProps = mapStateToProps(env.store.state);
-        props = Object.assign(props || {}, storeProps);
-        super(parent, props);
+        const ownProps = Object.assign({}, props || {});
+        const storeProps = mapStateToProps(env.store.state, ownProps);
+        const mergedProps = Object.assign(props || {}, storeProps);
+        super(parent, mergedProps);
         this.__widget__.currentStoreProps = storeProps;
+        this.__widget__.ownProps = ownProps;
       }
       mounted() {
         this.env.store.on("update", this, () => {
-          const storeProps = mapStateToProps(this.env.store.state);
+          const ownProps = this.__widget__.ownProps;
+          const storeProps = mapStateToProps(this.env.store.state, ownProps);
           if (!shallowEqual(storeProps, this.__widget__.currentStoreProps)) {
             this.__widget__.currentStoreProps = storeProps;
-            // probably not optimal, will do 2 object.assign, one here and
-            // one in updateProps.
-            const nextProps = Object.assign(
-              {},
-              this.props,
-              this.__widget__.currentStoreProps
-            );
-            this.updateProps(nextProps, false);
+            this.updateProps(ownProps, false);
           }
         });
         super.mounted();
@@ -34,8 +30,13 @@ export function connect(mapStateToProps) {
         super.willUnmount();
       }
       updateProps(nextProps, forceUpdate) {
-        nextProps = Object.assign(nextProps, this.__widget__.currentStoreProps);
-        return super.updateProps(nextProps, forceUpdate);
+        this.__widget__.ownProps = nextProps;
+        const mergedProps = Object.assign(
+          {},
+          nextProps,
+          this.__widget__.currentStoreProps
+        );
+        return super.updateProps(mergedProps, forceUpdate);
       }
     };
   };

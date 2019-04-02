@@ -522,7 +522,10 @@ export class QWeb {
       const value = attributes[i].textContent!;
 
       // regular attributes
-      if (!name.startsWith("t-")) {
+      if (
+        !name.startsWith("t-") &&
+        !(<Element>node).getAttribute("t-attf-" + name)
+      ) {
         const attID = ctx.generateID();
         ctx.addLine(`let _${attID} = '${value}';`);
         if (!name.match(/^[a-zA-Z]+$/)) {
@@ -576,7 +579,14 @@ export class QWeb {
           s => "${" + ctx.formatExpression(s.slice(2, -2)) + "}"
         );
         const attID = ctx.generateID();
-        ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
+        let staticVal = (<Element>node).getAttribute(attName);
+        if (staticVal) {
+          ctx.addLine(
+            `let _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`
+          );
+        } else {
+          ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
+        }
         attrs.push(`${attName}: _${attID}`);
       }
 

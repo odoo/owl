@@ -401,6 +401,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
+  test("t-attf-class should combine with class", () => {
+    qweb.addTemplate("test", `<div class="hello" t-attf-class="world"/>`);
+    const result = renderToString(qweb, "test");
+    expect(result).toBe(`<div class="hello world"></div>`);
+  });
+
   test("format value", () => {
     qweb.addTemplate("test", `<div t-attf-foo="b{{value}}r"/>`);
     const result = renderToString(qweb, "test", { value: "a" });

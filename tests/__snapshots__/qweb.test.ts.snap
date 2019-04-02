@@ -207,6 +207,17 @@ exports[`attributes t-att-class with object 1`] = `
 }"
 `;
 
+exports[`attributes t-attf-class should combine with class 1`] = `
+"function anonymous(context,extra
+) {
+    let h = this.utils.h;
+    let _1 = 'hello ' + \`world\`;
+    let c2 = [], p2 = {key:2,attrs:{class: _1}};
+    let vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
 exports[`attributes tuple literal 1`] = `
 "function anonymous(context,extra
 ) {

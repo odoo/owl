@@ -987,7 +987,7 @@ exports[`t-on can bind event handler 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
+    extra.handlers['click' + 1] = extra.handlers['click' + 1] || (context['add'] || (function () {throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner);
     p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
     return vn1;
@@ -1001,7 +1001,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    p1.on['click'] = context['add'].bind(owner, 5);
+    p1.on['click'] = (context['add'] || (function () {throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner, 5);
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -1014,7 +1014,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string 1
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    p1.on['click'] = context['doSomething'].bind(owner, {});
+    p1.on['click'] = (context['doSomething'] || (function () {throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner, {});
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -1027,7 +1027,7 @@ exports[`t-on can bind handlers with empty object 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    p1.on['click'] = context['doSomething'].bind(owner, {});
+    p1.on['click'] = (context['doSomething'] || (function () {throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner, {});
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -1059,7 +1059,7 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         let c6 = [], p6 = {key:6,on:{}};
         let vn6 = h('a', p6, c6);
         c5.push(vn6);
-        p6.on['click'] = context['activate'].bind(owner, context['action']);
+        p6.on['click'] = (context['activate'] || (function () {throw new Error('Missing handler \\\\'' + 'activate' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner, context['action']);
         c6.push({text: \`link\`});
     }
     return vn1;
@@ -1073,7 +1073,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    p1.on['click'] = context['add'].bind(owner, {val: 5});
+    p1.on['click'] = (context['add'] || (function () {throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner, {val: 5});
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -1086,9 +1086,9 @@ exports[`t-on can bind two event handlers 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['handleClick'].bind(owner);
+    extra.handlers['click' + 1] = extra.handlers['click' + 1] || (context['handleClick'] || (function () {throw new Error('Missing handler \\\\'' + 'handleClick' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner);
     p1.on['click'] = extra.handlers['click' + 1];
-    extra.handlers['dblclick' + 1] = extra.handlers['dblclick' + 1] || context['handleDblClick'].bind(owner);
+    extra.handlers['dblclick' + 1] = extra.handlers['dblclick' + 1] || (context['handleDblClick'] || (function () {throw new Error('Missing handler \\\\'' + 'handleDblClick' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner);
     p1.on['dblclick'] = extra.handlers['dblclick' + 1];
     c1.push({text: \`Click\`});
     return vn1;
@@ -1102,7 +1102,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
     let h = this.utils.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
+    extra.handlers['click' + 1] = extra.handlers['click' + 1] || (context['add'] || (function () {throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)})()).bind(owner);
     p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
     return vn1;

@@ -53,9 +53,11 @@ export class Context {
   shouldProtectContext: boolean = false;
   inLoop: boolean = false;
   inPreTag: boolean = false;
+  templateName: string;
 
-  constructor() {
+  constructor(name?: string) {
     this.rootContext = this;
+    this.templateName = name || "noname";
     this.addLine("let h = this.utils.h;");
   }
 
@@ -337,7 +339,7 @@ export class QWeb {
 
     const mainNode = this.processedTemplates[name];
     const isDebug = (<Element>mainNode).attributes.hasOwnProperty("t-debug");
-    const ctx = new Context();
+    const ctx = new Context(name);
     this._compileNode(mainNode, ctx);
 
     if (ctx.shouldProtectContext) {
@@ -364,7 +366,12 @@ export class QWeb {
         ctx.code.join("\n")
       ) as CompiledTemplate<VNode>;
     } catch (e) {
-      throw new Error(`Invalid template (or compiled code): ${e.message}`);
+      throw new Error(
+        `Invalid generated code while compiling template '${ctx.templateName.replace(
+          /`/g,
+          "'"
+        )}': ${e.message}`
+      );
     }
     if (isDebug) {
       console.log(
@@ -869,15 +876,19 @@ const onDirective: Directive = {
       extraArgs = args.slice(1, -1);
       return "";
     });
+    let error = `(function () {throw new Error('Missing handler \\'' + '${handler}' + \`\\' when evaluating template '${ctx.templateName.replace(
+      /`/g,
+      "'"
+    )}'\`)})()`;
     if (extraArgs) {
       ctx.addLine(
-        `p${nodeID}.on['${eventName}'] = context['${handler}'].bind(owner, ${ctx.formatExpression(
+        `p${nodeID}.on['${eventName}'] = (context['${handler}'] || ${error}).bind(owner, ${ctx.formatExpression(
           extraArgs
         )});`
       );
     } else {
       ctx.addLine(
-        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || context['${handler}'].bind(owner);`
+        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`
       );
       ctx.addLine(
         `p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`

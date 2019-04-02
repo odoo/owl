@@ -107,6 +107,23 @@ describe("error handling", () => {
       qweb.loadTemplates("<templates><abc>></templates>");
     }).toThrow("Invalid XML in template");
   });
+
+  test("nice error when t-on-directive is evaluated with a missing handler", () => {
+    qweb.addTemplate("templatename", `<div t-on-click="somemethod"></div>`);
+    expect(() => qweb.render("templatename", {}, { handlers: [] })).toThrow(
+      "Missing handler 'somemethod' when evaluating template 'templatename'"
+    );
+  });
+
+  test("error when compiled code is invalid", () => {
+    qweb.addTemplate(
+      "templatename",
+      `<div t-att-hey="}/^function invalid{{>'"></div>`
+    );
+    expect(() => qweb.render("templatename")).toThrow(
+      "Invalid generated code while compiling template 'templatename': Unexpected token }"
+    );
+  });
 });
 
 describe("t-esc", () => {

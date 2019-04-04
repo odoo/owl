@@ -92,17 +92,6 @@ class TabbedEditor extends Component {
         document.body.removeEventListener("mousemove", resizer);
       });
     }
-    // document.body.addEventListener("mousemove", resizer);
-    // for (let iframe of document.getElementsByTagName("iframe")) {
-    //   iframe.classList.add("disabled");
-    // }
-
-    // document.body.addEventListener("mouseup", () => {
-    //   document.body.removeEventListener("mousemove", resizer);
-    //   for (let iframe of document.getElementsByTagName("iframe")) {
-    //     iframe.classList.remove("disabled");
-    //   }
-    // });
   }
 }
 

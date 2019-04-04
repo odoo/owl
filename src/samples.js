@@ -34,6 +34,35 @@ const qweb = new QWeb(TEMPLATES);
 const hello = new HelloWorld({qweb}, { name: "World" });
 hello.mount(document.body);`;
 
+const HELLO_WORLD_ES5 = `const { Component, QWeb } = owl.core;
+
+function HelloWorld(env, props) {
+  var obj = new Component(env, props);
+  Object.setPrototypeOf(obj, HelloWorld.prototype);
+  obj.template = "demo.hello";
+  obj.state = { greeting: "Hello" };
+  return obj;
+}
+
+HelloWorld.prototype = Object.create(Component.prototype);
+
+// we show here how to add methods to sub components
+HelloWorld.prototype.changeGreeting = function() {
+  var newGreeting = this.state.greeting === "Hello" ? "Hi" : "Hello";
+  this.updateState({ greeting: newGreeting });
+};
+
+const qweb = new QWeb(TEMPLATES);
+const hello = new HelloWorld({ qweb }, { name: "ES5 World" });
+hello.mount(document.body);
+`;
+
+const HELLO_WORLD_ES5_XML = `<templates>
+  <div t-name="demo.hello" class="hello" t-on-click="changeGreeting">
+    <t t-esc="state.greeting"/> <t t-esc="props.name"/>
+  </div>
+</templates>`;
+
 const WIDGET_COMPOSITION = `class Counter extends owl.core.Component {
   constructor(parent, props) {
     super(parent, props);
@@ -463,6 +492,12 @@ export const SAMPLES = [
     description: "Hello World (ESNext)",
     code: HELLO_WORLD_ESNEXT,
     xml: HELLO_WORLD_XML,
+    css: HELLO_WORLD_CSS
+  },
+  {
+    description: "Hello World (ES5)",
+    code: HELLO_WORLD_ES5,
+    xml: HELLO_WORLD_ES5_XML,
     css: HELLO_WORLD_CSS
   },
   {

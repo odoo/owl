@@ -5,14 +5,14 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
 ) {
     let owner = context;
     context = Object.create(context);
-    let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
-    let _2 = context['state'].numbers;
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
-    let _3 = _2 instanceof Array ? _2 : Object.keys(_2);
-    let _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _4 = _2 instanceof Array ? _2 : Object.values(_2);
     for (let i = 0; i < _3.length; i++) {
         context.number_first = i === 0;
         context.number_last = i === _3.length - 1;
@@ -65,9 +65,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
     //WIDGET
     let key5 = \\"somestring\\";
     let _2_index = c1.length;
@@ -112,9 +112,9 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
 "function anonymous(context,extra
 ) {
     let owner = context;
-    let h = this.utils.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
     //WIDGET
     let _2_index = c1.length;
     c1.push(null);

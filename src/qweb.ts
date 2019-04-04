@@ -58,7 +58,7 @@ export class Context {
   constructor(name?: string) {
     this.rootContext = this;
     this.templateName = name || "noname";
-    this.addLine("let h = this.utils.h;");
+    this.addLine("var h = this.utils.h;");
   }
 
   generateID(): number {
@@ -404,7 +404,7 @@ export class QWeb {
         // this is an unusual situation: this text node is the result of the
         // template rendering.
         let nodeID = ctx.generateID();
-        ctx.addLine(`let vn${nodeID} = {text: \`${text}\`};`);
+        ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
         ctx.rootContext.rootNode = nodeID;
         ctx.rootContext.parentNode = nodeID;
       }
@@ -534,7 +534,7 @@ export class QWeb {
         !(<Element>node).getAttribute("t-attf-" + name)
       ) {
         const attID = ctx.generateID();
-        ctx.addLine(`let _${attID} = '${value}';`);
+        ctx.addLine(`var _${attID} = '${value}';`);
         if (!name.match(/^[a-zA-Z]+$/)) {
           // attribute contains 'non letters' => we want to quote it
           name = '"' + name + '"';
@@ -563,14 +563,14 @@ export class QWeb {
         const attValue = (<Element>node).getAttribute(attName);
         if (attValue) {
           const attValueID = ctx.generateID();
-          ctx.addLine(`let _${attValueID} = ${formattedValue};`);
+          ctx.addLine(`var _${attValueID} = ${formattedValue};`);
           formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
           const attrIndex = attrs.findIndex(att =>
             att.startsWith(attName + ":")
           );
           attrs.splice(attrIndex, 1);
         }
-        ctx.addLine(`let _${attID} = ${formattedValue};`);
+        ctx.addLine(`var _${attID} = ${formattedValue};`);
         attrs.push(`${attName}: _${attID}`);
         handleBooleanProps(attName, attID);
       }
@@ -589,10 +589,10 @@ export class QWeb {
         let staticVal = (<Element>node).getAttribute(attName);
         if (staticVal) {
           ctx.addLine(
-            `let _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`
+            `var _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`
           );
         } else {
-          ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
+          ctx.addLine(`var _${attID} = \`${formattedExpr}\`;`);
         }
         attrs.push(`${attName}: _${attID}`);
       }
@@ -600,7 +600,7 @@ export class QWeb {
       // t-att= attributes
       if (name === "t-att") {
         let id = ctx.generateID();
-        ctx.addLine(`let _${id} = ${ctx.formatExpression(value!)};`);
+        ctx.addLine(`var _${id} = ${ctx.formatExpression(value!)};`);
         tattrs.push(id);
       }
     }
@@ -616,7 +616,7 @@ export class QWeb {
       parts.push(`on:{}`);
     }
 
-    ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
+    ctx.addLine(`var c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
     for (let id of tattrs) {
       ctx.addIf(`_${id} instanceof Array`);
       ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
@@ -629,7 +629,7 @@ export class QWeb {
       ctx.closeIf();
     }
     ctx.addLine(
-      `let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`
+      `var vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`
     );
     if (ctx.parentNode) {
       ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
@@ -678,7 +678,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
 
   if (typeof value === "string") {
     const exprID = ctx.generateID();
-    ctx.addLine(`let e${exprID} = ${ctx.formatExpression(value)};`);
+    ctx.addLine(`var e${exprID} = ${ctx.formatExpression(value)};`);
     ctx.addIf(`e${exprID} || e${exprID} === 0`);
     let text = `e${exprID}`;
 
@@ -689,14 +689,14 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
       ctx.addLine(`c${ctx.parentNode}.push({text: ${text}});`);
     } else {
       let fragID = ctx.generateID();
-      ctx.addLine(`let frag${fragID} = this.utils.getFragment(e${exprID})`);
+      ctx.addLine(`var frag${fragID} = this.utils.getFragment(e${exprID})`);
       let tempNodeID = ctx.generateID();
-      ctx.addLine(`let p${tempNodeID} = {hook: {`);
+      ctx.addLine(`var p${tempNodeID} = {hook: {`);
       ctx.addLine(
         `  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`
       );
       ctx.addLine(`}};`);
-      ctx.addLine(`let vn${tempNodeID} = h('div', p${tempNodeID})`);
+      ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
       ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
     }
     if (node.childNodes.length) {
@@ -833,7 +833,7 @@ const forEachDirective: Directive = {
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
-    ctx.addLine(`let _${arrayID} = ${ctx.formatExpression(elems)};`);
+    ctx.addLine(`var _${arrayID} = ${ctx.formatExpression(elems)};`);
     ctx.addLine(
       `if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`
     );
@@ -842,11 +842,11 @@ const forEachDirective: Directive = {
     );
     let keysID = ctx.generateID();
     ctx.addLine(
-      `let _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`
+      `var _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`
     );
     let valuesID = ctx.generateID();
     ctx.addLine(
-      `let _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`
+      `var _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`
     );
     ctx.addLine(`for (let i = 0; i < _${keysID}.length; i++) {`);
     ctx.indent();

@@ -117,4 +117,4 @@ More interesting examples on how to work with this web framework can be found in
 
 ## License
 
-React is [GPL licensed](./LICENSE).
+OWL is [GPL licensed](./LICENSE).

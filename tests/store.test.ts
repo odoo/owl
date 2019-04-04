@@ -193,4 +193,32 @@ describe("connecting a component to store", () => {
       "<div><span>jupiler</span><span>hoegaarden</span></div>"
     );
   });
+
+  test("connected component is updated when props are updated", async () => {
+    class Beer extends Component<any, any, any> {
+      inlineTemplate = `<span><t t-esc="props.name"/></span>`;
+    }
+    const ConnectedBeer = connect((state, props) => {
+      return state.beers[props.id];
+    })(Beer);
+
+    class App extends Component<any, any, any> {
+      inlineTemplate = `<div>
+            <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+        </div>`;
+      widgets = { ConnectedBeer };
+      state = { beerId: 1 };
+    }
+
+    const state = { beers: { 1: { name: "jupiler" }, 2: { name: "kwak" } } };
+    const store = new Store({ state });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
+
+    await app.updateState({ beerId: 2 });
+    expect(fixture.innerHTML).toBe("<div><span>kwak</span></div>");
+  });
 });

@@ -30,6 +30,12 @@ export function connect(mapStateToProps) {
         super.willUnmount();
       }
       updateProps(nextProps, forceUpdate) {
+        if (this.__widget__.ownProps !== nextProps) {
+          this.__widget__.currentStoreProps = mapStateToProps(
+            this.env.store.state,
+            nextProps
+          );
+        }
         this.__widget__.ownProps = nextProps;
         const mergedProps = Object.assign(
           {},

@@ -1213,7 +1213,7 @@
             this.inPreTag = false;
             this.rootContext = this;
             this.templateName = name || "noname";
-            this.addLine("let h = this.utils.h;");
+            this.addLine("var h = this.utils.h;");
         }
         generateID() {
             const id = this.rootContext.nextID++;
@@ -1516,7 +1516,7 @@
                     // this is an unusual situation: this text node is the result of the
                     // template rendering.
                     let nodeID = ctx.generateID();
-                    ctx.addLine(`let vn${nodeID} = {text: \`${text}\`};`);
+                    ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
                     ctx.rootContext.rootNode = nodeID;
                     ctx.rootContext.parentNode = nodeID;
                 }
@@ -1620,7 +1620,7 @@
                 if (!name.startsWith("t-") &&
                     !node.getAttribute("t-attf-" + name)) {
                     const attID = ctx.generateID();
-                    ctx.addLine(`let _${attID} = '${value}';`);
+                    ctx.addLine(`var _${attID} = '${value}';`);
                     if (!name.match(/^[a-zA-Z]+$/)) {
                         // attribute contains 'non letters' => we want to quote it
                         name = '"' + name + '"';
@@ -1646,12 +1646,12 @@
                     const attValue = node.getAttribute(attName);
                     if (attValue) {
                         const attValueID = ctx.generateID();
-                        ctx.addLine(`let _${attValueID} = ${formattedValue};`);
+                        ctx.addLine(`var _${attValueID} = ${formattedValue};`);
                         formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
                         const attrIndex = attrs.findIndex(att => att.startsWith(attName + ":"));
                         attrs.splice(attrIndex, 1);
                     }
-                    ctx.addLine(`let _${attID} = ${formattedValue};`);
+                    ctx.addLine(`var _${attID} = ${formattedValue};`);
                     attrs.push(`${attName}: _${attID}`);
                     handleBooleanProps(attName, attID);
                 }
@@ -1665,17 +1665,17 @@
                     const attID = ctx.generateID();
                     let staticVal = node.getAttribute(attName);
                     if (staticVal) {
-                        ctx.addLine(`let _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`);
+                        ctx.addLine(`var _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`);
                     }
                     else {
-                        ctx.addLine(`let _${attID} = \`${formattedExpr}\`;`);
+                        ctx.addLine(`var _${attID} = \`${formattedExpr}\`;`);
                     }
                     attrs.push(`${attName}: _${attID}`);
                 }
                 // t-att= attributes
                 if (name === "t-att") {
                     let id = ctx.generateID();
-                    ctx.addLine(`let _${id} = ${ctx.formatExpression(value)};`);
+                    ctx.addLine(`var _${id} = ${ctx.formatExpression(value)};`);
                     tattrs.push(id);
                 }
             }
@@ -1690,7 +1690,7 @@
             if (withHandlers) {
                 parts.push(`on:{}`);
             }
-            ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
+            ctx.addLine(`var c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
             for (let id of tattrs) {
                 ctx.addIf(`_${id} instanceof Array`);
                 ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
@@ -1702,7 +1702,7 @@
                 ctx.addLine(`}`);
                 ctx.closeIf();
             }
-            ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
+            ctx.addLine(`var vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
             if (ctx.parentNode) {
                 ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
             }
@@ -1723,7 +1723,7 @@
         }
         if (typeof value === "string") {
             const exprID = ctx.generateID();
-            ctx.addLine(`let e${exprID} = ${ctx.formatExpression(value)};`);
+            ctx.addLine(`var e${exprID} = ${ctx.formatExpression(value)};`);
             ctx.addIf(`e${exprID} || e${exprID} === 0`);
             let text = `e${exprID}`;
             if (!ctx.parentNode) {
@@ -1734,12 +1734,12 @@
             }
             else {
                 let fragID = ctx.generateID();
-                ctx.addLine(`let frag${fragID} = this.utils.getFragment(e${exprID})`);
+                ctx.addLine(`var frag${fragID} = this.utils.getFragment(e${exprID})`);
                 let tempNodeID = ctx.generateID();
-                ctx.addLine(`let p${tempNodeID} = {hook: {`);
+                ctx.addLine(`var p${tempNodeID} = {hook: {`);
                 ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
                 ctx.addLine(`}};`);
-                ctx.addLine(`let vn${tempNodeID} = h('div', p${tempNodeID})`);
+                ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
                 ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
             }
             if (node.childNodes.length) {
@@ -1867,13 +1867,13 @@
             const elems = node.getAttribute("t-foreach");
             const name = node.getAttribute("t-as");
             let arrayID = ctx.generateID();
-            ctx.addLine(`let _${arrayID} = ${ctx.formatExpression(elems)};`);
+            ctx.addLine(`var _${arrayID} = ${ctx.formatExpression(elems)};`);
             ctx.addLine(`if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`);
             ctx.addLine(`if (typeof _${arrayID} === 'number') { _${arrayID} = Array.from(Array(_${arrayID}).keys())}`);
             let keysID = ctx.generateID();
-            ctx.addLine(`let _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`);
+            ctx.addLine(`var _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`);
             let valuesID = ctx.generateID();
-            ctx.addLine(`let _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`);
+            ctx.addLine(`var _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`);
             ctx.addLine(`for (let i = 0; i < _${keysID}.length; i++) {`);
             ctx.indent();
             ctx.addLine(`context.${name}_first = i === 0;`);
@@ -2048,20 +2048,20 @@
             return class extends Comp {
                 constructor(parent, props) {
                     const env = parent instanceof Component ? parent.env : parent;
-                    const storeProps = mapStateToProps(env.store.state);
-                    props = Object.assign(props || {}, storeProps);
-                    super(parent, props);
+                    const ownProps = Object.assign({}, props || {});
+                    const storeProps = mapStateToProps(env.store.state, ownProps);
+                    const mergedProps = Object.assign(props || {}, storeProps);
+                    super(parent, mergedProps);
                     this.__widget__.currentStoreProps = storeProps;
+                    this.__widget__.ownProps = ownProps;
                 }
                 mounted() {
                     this.env.store.on("update", this, () => {
-                        const storeProps = mapStateToProps(this.env.store.state);
+                        const ownProps = this.__widget__.ownProps;
+                        const storeProps = mapStateToProps(this.env.store.state, ownProps);
                         if (!shallowEqual(storeProps, this.__widget__.currentStoreProps)) {
                             this.__widget__.currentStoreProps = storeProps;
-                            // probably not optimal, will do 2 object.assign, one here and
-                            // one in updateProps.
-                            const nextProps = Object.assign({}, this.props, this.__widget__.currentStoreProps);
-                            this.updateProps(nextProps, false);
+                            this.updateProps(ownProps, false);
                         }
                     });
                     super.mounted();
@@ -2071,8 +2071,9 @@
                     super.willUnmount();
                 }
                 updateProps(nextProps, forceUpdate) {
-                    nextProps = Object.assign(nextProps, this.__widget__.currentStoreProps);
-                    return super.updateProps(nextProps, forceUpdate);
+                    this.__widget__.ownProps = nextProps;
+                    const mergedProps = Object.assign({}, nextProps, this.__widget__.currentStoreProps);
+                    return super.updateProps(mergedProps, forceUpdate);
                 }
             };
         };
@@ -2142,8 +2143,8 @@
     exports.core = core;
     exports.extras = extras;
 
-    exports._version = '0.4.0';
-    exports._date = '2019-04-02T11:40:29.730Z';
-    exports._hash = '15f973c';
+    exports._version = '0.5.0';
+    exports._date = '2019-04-04T12:21:38.285Z';
+    exports._hash = '5a75e5e';
 
 }(this.owl = this.owl || {}));

@@ -32,13 +32,14 @@ client will ever be converted to typescript (even though I would really like it)
 
 Some npm scripts are available:
 
-| Command            | Description                                        |
-| ------------------ | -------------------------------------------------- |
-| npm install        | install every dependency required for this project |
-| npm run build      | build a bundle of _owl_ in the _/dist/_ folder     |
-| npm run minify     | minify the prebuilt owl.js file                    |
-| npm run test       | run all tests                                      |
-| npm run test:watch | run all tests, and keep a watcher                  |
+| Command            | Description                                               |
+| ------------------ | --------------------------------------------------------- |
+| npm install        | install every dependency required for this project        |
+| npm run build      | build a bundle of _owl_ in the _/dist/_ folder            |
+| npm run build:es5  | build a bundle of _owl_ in the _/dist/_ folder (ES5 code) |
+| npm run minify     | minify the prebuilt owl.js file                           |
+| npm run test       | run all tests                                             |
+| npm run test:watch | run all tests, and keep a watcher                         |
 
 ## Documentation
 

@@ -4,9 +4,11 @@
   "description": "Odoo Web Lab",
   "main": "src/index.ts",
   "scripts": {
-    "build:js": "tsc --lib es2017,dom --target esnext --outDir dist/owl src/*",
+    "build:js": "tsc --target esnext --module es6 --outDir dist/owl src/*",
+    "build:js:es5": "tsc --target es5 --module es6 --outDir dist/owl src/*",
     "build:bundle": "rollup -c",
     "build": "npm run build:js && npm run build:bundle",
+    "build:es5": "npm run build:js:es5 && npm run build:bundle",
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
     "dev": "npm-run-all --parallel \"build:* -- --watch\"",
     "test": "jest",

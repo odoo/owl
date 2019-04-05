@@ -154,6 +154,9 @@ export class Component<
    * It is not called on the initial render.  This is useful to get some
    * information which are in the DOM.  For example, the current position of the
    * scrollbar
+   *
+   * Note that at this point, it is not safe to rerender the widget. In
+   * particular, updateState calls should be avoided.
    */
   willPatch() {}
 
@@ -164,8 +167,13 @@ export class Component<
    * This method is not called on the initial render. It is useful to interact
    * with the DOM (for example, through an external library) whenever the
    * component was updated.
+   *
+   * Updating the widget state in this hook is possible, but not encouraged.
+   * One need to be careful, because updates here will cause rerender, which in
+   * turn will cause other calls to updated. So, we need to be particularly
+   * careful at avoiding endless cycles.
    */
-  componentDidUpdate() {}
+  updated() {}
 
   /**
    * willUnmount is a hook that is called each time a component is detached from
@@ -301,7 +309,7 @@ export class Component<
     if (this.__widget__.isMounted) {
       await this.render(true);
     }
-    this.componentDidUpdate();
+    this.updated();
   }
 
   async updateProps(
@@ -333,7 +341,7 @@ export class Component<
     if (this.__widget__.isStarted) {
       await this.render();
     }
-    this.componentDidUpdate();
+    this.updated();
   }
 
   //--------------------------------------------------------------------------
@@ -343,7 +351,7 @@ export class Component<
   async _updateProps(nextProps: Props): Promise<void> {
     this.props = nextProps;
     await this.render();
-    this.componentDidUpdate();
+    this.updated();
   }
 
   _patch(vnode) {

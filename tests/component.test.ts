@@ -387,13 +387,13 @@ describe("lifecycle hooks", () => {
     ]);
   });
 
-  test("componentDidUpdate hook is called after updateState", async () => {
+  test("updated hook is called after updateState", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
       state = { a: 1 };
 
-      componentDidUpdate() {
+      updated() {
         n++;
       }
     }
@@ -408,11 +408,11 @@ describe("lifecycle hooks", () => {
     expect(n).toBe(1);
   });
 
-  test("componentDidUpdate hook is called after updateProps", async () => {
+  test("updated hook is called after updateProps", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
-      componentDidUpdate() {
+      updated() {
         n++;
       }
     }
@@ -424,13 +424,13 @@ describe("lifecycle hooks", () => {
     expect(n).toBe(1);
   });
 
-  test("componentDidUpdate hook is called after updateEnv", async () => {
+  test("updated hook is called after updateEnv", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
       state = { a: 1 };
 
-      componentDidUpdate() {
+      updated() {
         n++;
       }
     }
@@ -511,7 +511,7 @@ describe("lifecycle hooks", () => {
       willPatch() {
         steps.push("parent:willPatch");
       }
-      componentDidUpdate() {
+      updated() {
         steps.push("parent:updated");
       }
     }
@@ -520,7 +520,7 @@ describe("lifecycle hooks", () => {
       willPatch() {
         steps.push("child:willPatch");
       }
-      componentDidUpdate() {
+      updated() {
         steps.push("child:updated");
       }
     }

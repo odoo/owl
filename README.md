@@ -28,6 +28,10 @@ It is designed to be:
 Note: the code is written in typescript. This does not mean that the main web
 client will ever be converted to typescript (even though I would really like it).
 
+## Try it online
+
+You can experiment with the OWL project online: [https://odoo.github.io/owl/](https://odoo.github.io/owl/)
+
 ## Installing/Building
 
 Some npm scripts are available:

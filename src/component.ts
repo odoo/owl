@@ -150,6 +150,14 @@ export class Component<
   mounted() {}
 
   /**
+   * The willPatch hook is called just before the DOM patching process starts.
+   * It is not called on the initial render.  This is useful to get some
+   * information which are in the DOM.  For example, the current position of the
+   * scrollbar
+   */
+  willPatch() {}
+
+  /**
    * This hook is called whenever a component did actually update its props,
    * state or env.
    *
@@ -340,10 +348,12 @@ export class Component<
 
   _patch(vnode) {
     this.__widget__.renderPromise = null;
-    this.__widget__.vnode = patch(
-      this.__widget__.vnode || document.createElement(vnode.sel!),
-      vnode
-    );
+    if (this.__widget__.vnode) {
+      this.willPatch();
+      this.__widget__.vnode = patch(this.__widget__.vnode, vnode);
+    } else {
+      this.__widget__.vnode = patch(document.createElement(vnode.sel!), vnode);
+    }
   }
   async _start(): Promise<VNode> {
     this.__widget__.renderProps = this.props;

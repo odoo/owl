@@ -498,6 +498,45 @@ describe("lifecycle hooks", () => {
     await widget.updateState({ flag: false });
     expect(destroyed).toBe(true);
   });
+
+  test("willPatch/updated hook", async () => {
+    const steps: string[] = [];
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+            <t t-widget="child" t-props="{v: state.n}"/>
+        </div>`;
+      widgets = { child: ChildWidget };
+      state = { n: 1 };
+      willPatch() {
+        steps.push("parent:willPatch");
+      }
+      componentDidUpdate() {
+        steps.push("parent:updated");
+      }
+    }
+
+    class ChildWidget extends Widget {
+      willPatch() {
+        steps.push("child:willPatch");
+      }
+      componentDidUpdate() {
+        steps.push("child:updated");
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(steps).toEqual([]);
+    await widget.updateState({ n: 2 });
+
+    // Not sure about this order.  If you disagree, feel free to open an issue...
+    expect(steps).toEqual([
+      "child:willPatch",
+      "child:updated",
+      "parent:willPatch",
+      "parent:updated"
+    ]);
+  });
 });
 
 describe("destroy method", () => {

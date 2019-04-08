@@ -27,11 +27,14 @@ export class Store extends EventBus {
     super();
     this.debug = options.debug || false;
     this.state = Object.assign({}, config.state);
+    const self = this;
     this.mstate = magify({
       raw: this.state,
       key: "state",
       parent: this,
-      onDirty: () => (this._isDirty = true)
+      onDirty: function() {
+        self._isDirty = true;
+      }
     });
     this.actions = config.actions;
     this.mutations = config.mutations;

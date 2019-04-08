@@ -101,8 +101,20 @@ describe("advanced state properties", () => {
     expect(state.rochefort).toBe(8);
     store.commit("dosomething");
     expect(store.state.rochefort).toBe(10);
-    expect(store.state.rochefort).toBe(10);
     expect(store.state).not.toBe(state);
+  });
+
+  test("state is reference equal after pushing in a list", async () => {
+    const mutations = {
+      addRochefort(state) {
+        state.rocheforts.push(10);
+      }
+    };
+    const store = new Store({ state: { rocheforts: [] }, mutations });
+    const state = store.state;
+    store.commit("addRochefort");
+    expect(store.state.rocheforts).toEqual([10]);
+    expect(store.state).toBe(state);
   });
 
   test("nested state in the store behaves properly", async () => {
@@ -153,6 +165,20 @@ describe("advanced state properties", () => {
     const jupiler = store.state.jupiler;
     store.commit("dostuffB", 10);
     expect(store.state.jupiler).not.toBe(jupiler);
+  });
+
+  test("can use object assign in store", async () => {
+    const mutations = {
+      dosomething(state) {
+        Object.assign(state.westmalle, { a: 3, b: 4 });
+      }
+    };
+    const store = new Store({
+      state: { westmalle: { a: 1, b: 2 } },
+      mutations
+    });
+    store.commit("dosomething");
+    expect(store.state.westmalle).toEqual({ a: 3, b: 4 });
   });
 
   test("aku reactive store state 1", async () => {
@@ -444,14 +470,17 @@ describe("connecting a component to store", () => {
     inlineTemplate = `<span><t t-esc="props.msg"/></span>`;
   }
 
-  test.skip("connecting a component works", async () => {
+  test("connecting a component works", async () => {
     const state = { todos: [] };
     const mutations = {
       addTodo(state, msg) {
         state.todos.push({ msg });
       }
     };
-    const TodoApp = connect(s => s)(App);
+    function mapStateToProps(s) {
+      return { todos: s.todos };
+    }
+    const TodoApp = connect(mapStateToProps)(App);
     const store = new Store({ state, mutations });
     (<any>env).store = store;
     const app = new TodoApp(env);

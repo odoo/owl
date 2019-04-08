@@ -1,6 +1,86 @@
 import { EventBus } from "./event_bus";
 import { Component } from "./component";
-import { shallowEqual } from "./utils";
+import { shallowEqual, magify } from "./utils";
+
+interface StoreConfig {
+  env?: any;
+  state?: any;
+  actions?: any;
+  mutations?: any;
+}
+
+interface StoreOption {
+  debug?: boolean;
+}
+export class Store extends EventBus {
+  state: any;
+  mstate: any;
+  actions: any;
+  mutations: any;
+  _isMutating: boolean = false;
+  _isDirty: boolean = false;
+  history: any[] = [];
+  debug: boolean;
+  env: any;
+
+  constructor(config: StoreConfig, options: StoreOption = {}) {
+    super();
+    this.debug = options.debug || false;
+    this.state = Object.assign({}, config.state);
+    this.mstate = magify({
+      raw: this.state,
+      key: "state",
+      parent: this,
+      onDirty: () => (this._isDirty = true)
+    });
+    this.actions = config.actions;
+    this.mutations = config.mutations;
+    this.env = config.env;
+
+    if (this.debug) {
+      this.history.push({ state: this.state });
+    }
+  }
+
+  dispatch(action, payload?: any) {
+    if (!this.actions[action]) {
+      throw new Error(`[Error] action ${action} is undefined`);
+    }
+    this.actions[action](
+      {
+        commit: this.commit.bind(this),
+        dispatch: this.dispatch.bind(this),
+        env: this.env,
+        state: this.state
+      },
+      payload
+    );
+  }
+
+  async commit(type, payload?: any) {
+    if (!this.mutations[type]) {
+      throw new Error(`[Error] mutation ${type} is undefined`);
+    }
+    this._isMutating = true;
+
+    this.mutations[type].call(null, this.mstate, payload);
+    if (this.debug) {
+      this.history.push({
+        state: this.state,
+        mutation: type,
+        payload: payload
+      });
+    }
+    await Promise.resolve();
+    if (this._isMutating) {
+      this._isMutating = false;
+      if (this._isDirty) {
+        this._isDirty = false;
+        this.trigger("update", this.state);
+      }
+    }
+  }
+}
 
 export function connect(mapStateToProps) {
   return function(Comp) {
@@ -46,81 +126,4 @@ export function connect(mapStateToProps) {
       }
     };
   };
-}
-
-interface StoreConfig {
-  env?: any;
-  state?: any;
-  actions?: any;
-  mutations?: any;
-}
-
-interface StoreOption {
-  debug?: boolean;
-}
-export class Store extends EventBus {
-  _state: any;
-  actions: any;
-  mutations: any;
-  _isMutating: boolean = false;
-  history: any[] = [];
-  debug: boolean;
-  env: any;
-
-  constructor(config: StoreConfig, options: StoreOption = {}) {
-    super();
-    this.debug = options.debug || false;
-    this._state = Object.assign({}, config.state);
-    this.actions = config.actions;
-    this.mutations = config.mutations;
-    this.env = config.env;
-
-    if (this.debug) {
-      this.history.push({ state: this.state });
-    }
-  }
-
-  get state() {
-    return this._clone(this._state);
-  }
-
-  dispatch(action, payload?: any) {
-    if (!this.actions[action]) {
-      throw new Error(`[Error] action ${action} is undefined`);
-    }
-    this.actions[action](
-      {
-        commit: this.commit.bind(this),
-        dispatch: this.dispatch.bind(this),
-        env: this.env,
-        state: this.state
-      },
-      payload
-    );
-  }
-
-  async commit(type, payload) {
-    if (!this.mutations[type]) {
-      throw new Error(`[Error] mutation ${type} is undefined`);
-    }
-    this._isMutating = true;
-
-    this.mutations[type].call(null, this._state, payload);
-    if (this.debug) {
-      this.history.push({
-        state: this.state,
-        mutation: type,
-        payload: payload
-      });
-    }
-    await Promise.resolve();
-    if (this._isMutating) {
-      this._isMutating = false;
-      this.trigger("update", this.state);
-    }
-  }
-
-  _clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
 }

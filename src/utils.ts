@@ -176,3 +176,93 @@ export function unpatch(C: any, patchName: string) {
     }
   }
 }
+
+function _magifyArray({ raw, key, parent, magic, onDirty }) {
+  Object.defineProperty(magic, "length", {
+    get() {
+      return magic.raw.length;
+    }
+  });
+  Object.assign(magic, {
+    push: function(item) {
+      onDirty();
+      parent.raw[key] = [...magic.raw, item];
+      magic.raw = parent.raw[key];
+      const index = magic.raw.length - 1;
+      let prop = magify({ raw: item, key: index, parent: magic, onDirty });
+      Object.defineProperty(magic, index, {
+        set(newVal) {
+          onDirty();
+          parent.raw[key] = [...magic.raw];
+          parent.raw[key][index] = newVal;
+          magic.raw = parent.raw[key];
+          prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
+        },
+        get() {
+          return prop;
+        }
+      });
+    }
+  });
+  raw.forEach(([value, index]) => {
+    let prop = magify({
+      raw: value,
+      key: index,
+      parent: magic,
+      onDirty
+    });
+    Object.defineProperty(magic, index, {
+      set(newVal) {
+        onDirty();
+        parent.raw[key] = [...magic.raw];
+        parent.raw[key][index] = newVal;
+        magic.raw = parent.raw[key];
+        prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
+      },
+      get() {
+        return prop;
+      }
+    });
+  });
+}
+
+export function magify({ raw, key, parent, onDirty }) {
+  if (!parent.magic) {
+    parent = {
+      raw: parent,
+      magic: true,
+      parent: null
+    };
+  }
+  if (raw.magic) {
+    return raw;
+  }
+  if (typeof raw !== "object") {
+    return raw;
+  }
+  let magic = { raw, key, parent, magic: true };
+  if (Array.isArray(raw)) {
+    _magifyArray({ raw, key, parent, magic, onDirty });
+  } else {
+    Object.keys(raw).forEach(propKey => {
+      let prop = magify({
+        raw: raw[propKey],
+        key: propKey,
+        parent: magic,
+        onDirty
+      });
+      Object.defineProperty(magic, propKey, {
+        set(newVal) {
+          onDirty();
+          parent.raw[key] = { ...magic.raw, [propKey]: newVal };
+          magic.raw = parent.raw[key];
+          prop = magify({ raw: newVal, key: propKey, parent: magic, onDirty });
+        },
+        get() {
+          return prop;
+        }
+      });
+    });
+  }
+  return magic;
+}

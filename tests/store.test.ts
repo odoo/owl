@@ -41,6 +41,28 @@ describe("basic use", () => {
     expect(store.state.n).toBe(15);
   });
 
+  test("can dispatch an action in an action", () => {
+    const state = { n: 1 };
+    const mutations = {
+      inc(state, delta) {
+        state.n += delta;
+      }
+    };
+    const actions = {
+      inc({ commit }, delta) {
+        commit("inc", delta);
+      },
+      inc100({ dispatch }) {
+        dispatch("inc", 100);
+      }
+    };
+    const store = new Store({ state, mutations, actions });
+
+    expect(store.state.n).toBe(1);
+    store.dispatch("inc100");
+    expect(store.state.n).toBe(101);
+  });
+
   test("env is given to actions", () => {
     expect.assertions(1);
     const someEnv = {};

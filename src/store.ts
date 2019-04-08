@@ -91,8 +91,9 @@ export class Store extends EventBus {
     this.actions[action](
       {
         commit: this.commit.bind(this),
-        state: this.state,
-        env: this.env
+        dispatch: this.dispatch.bind(this),
+        env: this.env,
+        state: this.state
       },
       payload
     );

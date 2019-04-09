@@ -329,6 +329,47 @@ describe("lifecycle hooks", () => {
     ]);
   });
 
+  test("widgets are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
+    let childUnmounted = false;
+    class ChildWidget extends Widget {
+      inlineTemplate = `<span><t t-esc="props.n"/></span>`;
+      willUnmount() {
+        childUnmounted = true;
+      }
+      increment() {
+        this.updateState({ n: this.state.n + 1 });
+      }
+    }
+
+    class ParentWidget extends Widget {
+      widgets = { ChildWidget };
+      inlineTemplate = `
+          <div>
+            <div t-if="state.flag">
+              <t t-widget="ChildWidget" t-props="{n: state.n}"/>
+            </div>
+          </div>`;
+      state = { n: 0, flag: true };
+      increment() {
+        this.updateState({ n: this.state.n + 1 });
+      }
+      toggleSubWidget() {
+        this.updateState({ flag: !this.state.flag });
+      }
+    }
+
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>0</span></div></div>");
+    widget.increment();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>1</span></div></div>");
+    widget.toggleSubWidget();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(childUnmounted).toBe(true);
+  });
+
   test("hooks are called in proper order in widget creation/destruction", async () => {
     let steps: string[] = [];
     class ParentWidget extends Widget {

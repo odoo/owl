@@ -1019,7 +1019,9 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
         keepAlive ? "unmount" : "destroy"
-      }()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`
+      }()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${
+        ctx.parentNode
+      }[_${dummyID}_index]=vnode;});`
     );
     ctx.closeIf();
 

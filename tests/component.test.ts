@@ -387,6 +387,27 @@ describe("lifecycle hooks", () => {
     ]);
   });
 
+  test("willUpdateProps hook is called", async () => {
+    let def = makeDeferred();
+    class HookWidget extends Widget {
+      inlineTemplate = '<span><t t-esc="props.n"/></span>';
+
+      willUpdateProps(nextProps) {
+        expect(nextProps.n).toBe(2);
+        return def;
+      }
+    }
+    const widget = new HookWidget(env, { n: 1 });
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+    widget.updateProps({ n: 2 });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+    def.resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>2</span>");
+  });
+
   test("patched hook is called after updateState", async () => {
     let n = 0;
 

@@ -72,6 +72,16 @@ DOM, if the component needs to perform some measure for example.
 It is the opposite of _willUnmount_. If a component has been mounted, it will
 be unmounted at some point.
 
+### willUpdateProps
+
+The willUpdateProps is an asynchronous hook, called just before new props
+are set. This is useful if the component needs some asynchronous task
+performed, depending on the props (for example, assuming that the props are
+some record Id, fetching the record data).
+
+This hook is not called during the first render (but willStart is called
+and performs a similar job).
+
 ### willPatch
 
 The willPatch hook is called just before the DOM patching process starts.
@@ -82,18 +92,18 @@ scrollbar
 Note that at this point, it is not safe to rerender the widget. In
 particular, updateState calls should be avoided.
 
-### updated
+### patched
 
 This hook is called whenever a component did actually update its props,
 state or env.
 
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
-component was updated.
+component was patched.
 
 Updating the widget state in this hook is possible, but not encouraged.
 One need to be careful, because updates here will cause rerender, which in
-turn will cause other calls to updated. So, we need to be particularly
+turn will cause other calls to patched. So, we need to be particularly
 careful at avoiding endless cycles.
 
 ### willUnmount
@@ -101,9 +111,5 @@ careful at avoiding endless cycles.
 willUnmount is a hook that is called each time just before a component is unmounted from
 the DOM. This is a good place to remove some listeners, for example.
 
-This is the opposite method of _mounted_.
-
-### destroyed
-
-destroyed is a hook called exactly once, when a component is destroyed.
-When a component is destroyed, its children will be destroyed first.
+This is the opposite method of _mounted_. The _willUnmount_ method will be
+called in reverse order: first the children, then the parents.

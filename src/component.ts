@@ -150,6 +150,17 @@ export class Component<
   mounted() {}
 
   /**
+   * The willUpdateProps is an asynchronous hook, called just before new props
+   * are set. This is useful if the component needs some asynchronous task
+   * performed, depending on the props (for example, assuming that the props are
+   * some record Id, fetching the record data).
+   *
+   * This hook is not called during the first render (but willStart is called
+   * and performs a similar job).
+   */
+  async willUpdateProps(nextProps: Props) {}
+
+  /**
    * The willPatch hook is called just before the DOM patching process starts.
    * It is not called on the initial render.  This is useful to get some
    * information which are in the DOM.  For example, the current position of the
@@ -350,6 +361,7 @@ export class Component<
   //--------------------------------------------------------------------------
 
   async _updateProps(nextProps: Props): Promise<void> {
+    await this.willUpdateProps(nextProps);
     this.props = nextProps;
     await this.render();
     this.patched();

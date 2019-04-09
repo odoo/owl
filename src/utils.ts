@@ -204,7 +204,7 @@ function _magifyArray({ raw, key, parent, magic, onDirty }) {
       });
     }
   });
-  raw.forEach(([value, index]) => {
+  raw.forEach((value, index) => {
     let prop = magify({
       raw: value,
       key: index,

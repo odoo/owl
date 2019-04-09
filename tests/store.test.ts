@@ -104,6 +104,22 @@ describe("advanced state properties", () => {
     expect(store.state).not.toBe(state);
   });
 
+  test("can push an item in a list with an existing item", async () => {
+    const mutations = {
+      addRochefort(state) {
+        state.rocheforts.push({ taste: 87 });
+      }
+    };
+    const store = new Store({
+      state: { rocheforts: [{ taste: 84 }] },
+      mutations
+    });
+    const state = store.state;
+    store.commit("addRochefort");
+    expect(store.state.rocheforts).toEqual([{ taste: 84 }, { taste: 87 }]);
+    expect(store.state).toBe(state);
+  });
+
   test("state is reference equal after pushing in a list", async () => {
     const mutations = {
       addRochefort(state) {
@@ -538,7 +554,7 @@ describe("connecting a component to store", () => {
     ]);
   });
 
-  test.skip("connect receives ownprops as second argument", async () => {
+  test("connect receives ownprops as second argument", async () => {
     const state = { todos: [{ id: 1, text: "jupiler" }] };
     let nextId = 2;
     const mutations = {
@@ -565,7 +581,10 @@ describe("connecting a component to store", () => {
       widgets = { ConnectedTodo };
     }
 
-    const ConnectedTodoList = connect(state => state)(TodoList);
+    function mapStateToProps(state) {
+      return { todos: state.todos };
+    }
+    const ConnectedTodoList = connect(mapStateToProps)(TodoList);
 
     (<any>env).store = store;
     const app = new ConnectedTodoList(env);

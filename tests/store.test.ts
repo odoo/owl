@@ -63,6 +63,35 @@ describe("basic use", () => {
     expect(store.state.n).toBe(101);
   });
 
+  test("dispatch allow synchronizing between actions", async () => {
+    const state = { n: 1 };
+    const mutations = {
+      inc(state, delta) {
+        state.n += delta;
+      },
+      setN(state, n) {
+        state.n = n;
+      }
+    };
+    const actions = {
+      async dosomething({ commit, dispatch }) {
+        await dispatch("setTo10");
+        commit("inc", 3);
+      },
+      async setTo10({ commit }) {
+        await Promise.resolve();
+        commit("setN", 10);
+      }
+    };
+    const store = new Store({ state, mutations, actions });
+
+    expect(store.state.n).toBe(1);
+    store.dispatch("dosomething");
+    expect(store.state.n).toBe(1);
+    await nextTick();
+    expect(store.state.n).toBe(13);
+  });
+
   test("env is given to actions", () => {
     expect.assertions(1);
     const someEnv = {};

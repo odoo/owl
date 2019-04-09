@@ -45,11 +45,11 @@ export class Store extends EventBus {
     }
   }
 
-  dispatch(action, payload?: any) {
+  dispatch(action, payload?: any): Promise<void> | void {
     if (!this.actions[action]) {
       throw new Error(`[Error] action ${action} is undefined`);
     }
-    this.actions[action](
+    const result = this.actions[action](
       {
         commit: this.commit.bind(this),
         dispatch: this.dispatch.bind(this),
@@ -58,6 +58,12 @@ export class Store extends EventBus {
       },
       payload
     );
+    if (result instanceof Promise) {
+      return new Promise((resolve, reject) => {
+        result.then(() => resolve());
+        result.catch(reject);
+      });
+    }
   }
 
   async commit(type, payload?: any) {

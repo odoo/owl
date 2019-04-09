@@ -176,8 +176,9 @@ export class Component<
   patched() {}
 
   /**
-   * willUnmount is a hook that is called each time a component is detached from
-   * the DOM. This is a good place to remove some listeners, for example.
+   * willUnmount is a hook that is called each time just before a component is
+   * unmounted from the DOM. This is a good place to remove some listeners, for
+   * example.
    *
    * Note: this method should not be called manually.
    *
@@ -236,7 +237,7 @@ export class Component<
     }
   }
 
-  detach() {
+  unmount() {
     if (this.el) {
       this._visitSubTree(w => {
         if (w.__widget__.isMounted) {

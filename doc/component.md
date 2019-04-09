@@ -98,7 +98,7 @@ careful at avoiding endless cycles.
 
 ### willUnmount
 
-willUnmount is a hook that is called each time a component is detached from
+willUnmount is a hook that is called each time just before a component is unmounted from
 the DOM. This is a good place to remove some listeners, for example.
 
 This is the opposite method of _mounted_.

@@ -1010,15 +1010,15 @@ const widgetDirective: Directive = {
       `def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${
-        keepAlive ? "detach" : "destroy"
+        keepAlive ? "unmount" : "destroy"
       }()},destroy(){w${widgetID}.${
-        keepAlive ? "detach" : "destroy"
+        keepAlive ? "unmount" : "destroy"
       }()}}; w${widgetID}.__widget__.pvnode = pvnode;});`
     );
     ctx.addElse();
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
-        keepAlive ? "detach" : "destroy"
+        keepAlive ? "unmount" : "destroy"
       }()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`
     );
     ctx.closeIf();

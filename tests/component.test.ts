@@ -1268,7 +1268,7 @@ describe("updating environment", () => {
     expect(n).toBe(1);
     await widget.updateEnv(<any>{ somekey: 5 });
     expect(n).toBe(2);
-    widget.detach();
+    widget.unmount();
     expect(n).toBe(2);
     await widget.updateEnv(<any>{ somekey: 5 });
     expect(n).toBe(2);

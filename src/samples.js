@@ -105,6 +105,69 @@ const WIDGET_COMPOSITION_XML = `<templates>
   </div>
 </templates>`;
 
+const LIFECYCLE_DEMO = `const { Component, QWeb } = owl.core;
+
+class HookWidget extends Component {
+  constructor() {
+    super(...arguments);
+    this.template = "demo.hookwidget";
+    this.state = { n: 0 };
+    console.log("constructor");
+  }
+  async willStart() {
+    console.log("willstart");
+  }
+  mounted() {
+    console.log("mounted");
+  }
+  async willUpdateProps(nextProps) {
+    console.log("willUpdateProps", nextProps);
+  }
+  willPatch() {
+    console.log("willPatch");
+  }
+  patched() {
+    console.log("patched");
+  }
+  willUnmount() {
+    console.log("willUnmount");
+  }
+  increment() {
+    this.updateState({ n: this.state.n + 1 });
+  }
+}
+
+class ParentWidget extends Component {
+  constructor() {
+    super(...arguments);
+    this.widgets = { HookWidget };
+    this.template = "demo.parentwidget";
+    this.state = { n: 0, flag: true };
+  }
+  increment() {
+    this.updateState({ n: this.state.n + 1 });
+  }
+  toggleSubWidget() {
+    this.updateState({ flag: !this.state.flag });
+  }
+}
+
+const qweb = new QWeb(TEMPLATES);
+const widget = new ParentWidget({ qweb });
+widget.mount(document.body);
+`;
+
+const LIFECYCLE_DEMO_XML = `<templates>
+    <div t-name="demo.parentwidget">
+        <button t-on-click="increment">Increment</button>
+        <button t-on-click="toggleSubWidget">ToggleSubWidget</button>
+        <div t-if="state.flag">
+            <t t-widget="HookWidget" t-props="{n:state.n}"/>
+        </div>
+    </div> 
+    <div t-name="demo.hookwidget" t-on-click="increment">Demo Sub Widget. Props: <t t-esc="props.n"/>. State: <t t-esc="state.n"/>. (click on me to update me)</div>
+</templates>`;
+
 const BENCHMARK_APP = `//------------------------------------------------------------------------------
 // Generating demo data
 //------------------------------------------------------------------------------
@@ -504,6 +567,11 @@ export const SAMPLES = [
     description: "Widget Composition",
     code: WIDGET_COMPOSITION,
     xml: WIDGET_COMPOSITION_XML
+  },
+  {
+    description: "Lifecycle demo",
+    code: LIFECYCLE_DEMO,
+    xml: LIFECYCLE_DEMO_XML
   },
   {
     description: "Benchmark application",

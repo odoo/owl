@@ -919,17 +919,43 @@
          */
         mounted() { }
         /**
+         * The willUpdateProps is an asynchronous hook, called just before new props
+         * are set. This is useful if the component needs some asynchronous task
+         * performed, depending on the props (for example, assuming that the props are
+         * some record Id, fetching the record data).
+         *
+         * This hook is not called during the first render (but willStart is called
+         * and performs a similar job).
+         */
+        async willUpdateProps(nextProps) { }
+        /**
+         * The willPatch hook is called just before the DOM patching process starts.
+         * It is not called on the initial render.  This is useful to get some
+         * information which are in the DOM.  For example, the current position of the
+         * scrollbar
+         *
+         * Note that at this point, it is not safe to rerender the widget. In
+         * particular, updateState calls should be avoided.
+         */
+        willPatch() { }
+        /**
          * This hook is called whenever a component did actually update its props,
          * state or env.
          *
          * This method is not called on the initial render. It is useful to interact
          * with the DOM (for example, through an external library) whenever the
          * component was updated.
+         *
+         * Updating the widget state in this hook is possible, but not encouraged.
+         * One need to be careful, because updates here will cause rerender, which in
+         * turn will cause other calls to updated. So, we need to be particularly
+         * careful at avoiding endless cycles.
          */
-        componentDidUpdate() { }
+        patched() { }
         /**
-         * willUnmount is a hook that is called each time a component is detached from
-         * the DOM. This is a good place to remove some listeners, for example.
+         * willUnmount is a hook that is called each time just before a component is
+         * unmounted from the DOM. This is a good place to remove some listeners, for
+         * example.
          *
          * Note: this method should not be called manually.
          *
@@ -982,7 +1008,7 @@
                 });
             }
         }
-        detach() {
+        unmount() {
             if (this.el) {
                 this._visitSubTree(w => {
                     if (w.__widget__.isMounted) {
@@ -1051,7 +1077,7 @@
             if (this.__widget__.isMounted) {
                 await this.render(true);
             }
-            this.componentDidUpdate();
+            this.patched();
         }
         async updateProps(nextProps, forceUpdate = false) {
             if (nextProps === this.__widget__.renderProps && !forceUpdate) {
@@ -1078,19 +1104,26 @@
             if (this.__widget__.isStarted) {
                 await this.render();
             }
-            this.componentDidUpdate();
+            this.patched();
         }
         //--------------------------------------------------------------------------
         // Private
         //--------------------------------------------------------------------------
         async _updateProps(nextProps) {
+            await this.willUpdateProps(nextProps);
             this.props = nextProps;
             await this.render();
-            this.componentDidUpdate();
+            this.patched();
         }
         _patch(vnode) {
             this.__widget__.renderPromise = null;
-            this.__widget__.vnode = patch$1(this.__widget__.vnode || document.createElement(vnode.sel), vnode);
+            if (this.__widget__.vnode) {
+                this.willPatch();
+                this.__widget__.vnode = patch$1(this.__widget__.vnode, vnode);
+            }
+            else {
+                this.__widget__.vnode = patch$1(document.createElement(vnode.sel), vnode);
+            }
         }
         async _start() {
             this.__widget__.renderProps = this.props;
@@ -1914,10 +1947,10 @@
     const refDirective = {
         name: "ref",
         priority: 95,
-        atNodeCreation({ ctx, node, nodeID }) {
+        atNodeCreation({ ctx, node }) {
             let ref = node.getAttribute("t-ref");
             ctx.addLine(`p${ctx.parentNode}.hook = {
-            create: (_, n) => context.refs['${ref}'] = n.elm,
+            create: (_, n) => context.refs[${ctx.formatExpression(ref)}] = n.elm,
         };`);
         }
     };
@@ -1996,15 +2029,15 @@
             }
             let ref = node.getAttribute("t-ref");
             if (ref) {
-                ctx.addLine(`context.refs['${ref}'] = w${widgetID};`);
+                ctx.addLine(`context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`);
             }
             ctx.addLine(`def${defID} = w${widgetID}._start();`);
             ctx.closeIf();
             ctx.closeIf();
             ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()}}; w${widgetID}.__widget__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}; w${widgetID}.__widget__.pvnode = pvnode;});`);
             ctx.addElse();
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "detach" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
             ctx.addLine(`extra.promises.push(def${defID});`);
             if (node.getAttribute("t-if") || node.getAttribute("t-else")) {
@@ -2043,6 +2076,70 @@
         }
     }
 
+    class Store extends EventBus {
+        constructor(config, options = {}) {
+            super();
+            this._isMutating = false;
+            this._isDirty = false;
+            this.history = [];
+            this.debug = options.debug || false;
+            this.state = Object.assign({}, config.state);
+            const self = this;
+            this.mstate = magify({
+                raw: this.state,
+                key: "state",
+                parent: this,
+                onDirty: function () {
+                    self._isDirty = true;
+                }
+            });
+            this.actions = config.actions;
+            this.mutations = config.mutations;
+            this.env = config.env;
+            if (this.debug) {
+                this.history.push({ state: this.state });
+            }
+        }
+        dispatch(action, payload) {
+            if (!this.actions[action]) {
+                throw new Error(`[Error] action ${action} is undefined`);
+            }
+            const result = this.actions[action]({
+                commit: this.commit.bind(this),
+                dispatch: this.dispatch.bind(this),
+                env: this.env,
+                state: this.state
+            }, payload);
+            if (result instanceof Promise) {
+                return new Promise((resolve, reject) => {
+                    result.then(() => resolve());
+                    result.catch(reject);
+                });
+            }
+        }
+        async commit(type, payload) {
+            if (!this.mutations[type]) {
+                throw new Error(`[Error] mutation ${type} is undefined`);
+            }
+            this._isMutating = true;
+            this.mutations[type].call(null, this.mstate, payload);
+            if (this.debug) {
+                this.history.push({
+                    state: this.state,
+                    mutation: type,
+                    payload: payload
+                });
+            }
+            await Promise.resolve();
+            if (this._isMutating) {
+                this._isMutating = false;
+                if (this._isDirty) {
+                    this._isDirty = false;
+                    this.trigger("update", this.state);
+                }
+            }
+        }
+    }
     function connect(mapStateToProps) {
         return function (Comp) {
             return class extends Comp {
@@ -2071,6 +2168,9 @@
                     super.willUnmount();
                 }
                 updateProps(nextProps, forceUpdate) {
+                    if (this.__widget__.ownProps !== nextProps) {
+                        this.__widget__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps);
+                    }
                     this.__widget__.ownProps = nextProps;
                     const mergedProps = Object.assign({}, nextProps, this.__widget__.currentStoreProps);
                     return super.updateProps(mergedProps, forceUpdate);
@@ -2078,53 +2178,94 @@
             };
         };
     }
-    class Store extends EventBus {
-        constructor(config, options = {}) {
-            super();
-            this._isMutating = false;
-            this.history = [];
-            this.debug = options.debug || false;
-            this._state = Object.assign({}, config.state);
-            this.actions = config.actions;
-            this.mutations = config.mutations;
-            if (this.debug) {
-                this.history.push({ state: this.state });
+    function _magifyArray({ raw, key, parent, magic, onDirty }) {
+        Object.defineProperty(magic, "length", {
+            get() {
+                return magic.raw.length;
             }
-        }
-        get state() {
-            return this._clone(this._state);
-        }
-        dispatch(action, payload) {
-            if (!this.actions[action]) {
-                throw new Error(`[Error] action ${action} is undefined`);
-            }
-            this.actions[action]({
-                commit: this.commit.bind(this),
-                state: this.state
-            }, payload);
-        }
-        async commit(type, payload) {
-            if (!this.mutations[type]) {
-                throw new Error(`[Error] mutation ${type} is undefined`);
-            }
-            this._isMutating = true;
-            this.mutations[type].call(null, this._state, payload);
-            if (this.debug) {
-                this.history.push({
-                    state: this.state,
-                    mutation: type,
-                    payload: payload
+        });
+        Object.assign(magic, {
+            push: function (item) {
+                onDirty();
+                parent.raw[key] = [...magic.raw, item];
+                magic.raw = parent.raw[key];
+                const index = magic.raw.length - 1;
+                let prop = magify({ raw: item, key: index, parent: magic, onDirty });
+                Object.defineProperty(magic, index, {
+                    set(newVal) {
+                        onDirty();
+                        parent.raw[key] = [...magic.raw];
+                        parent.raw[key][index] = newVal;
+                        magic.raw = parent.raw[key];
+                        prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
+                    },
+                    get() {
+                        return prop;
+                    }
                 });
             }
-            await Promise.resolve();
-            if (this._isMutating) {
-                this._isMutating = false;
-                this.trigger("update", this.state);
-            }
+        });
+        raw.forEach((value, index) => {
+            let prop = magify({
+                raw: value,
+                key: index,
+                parent: magic,
+                onDirty
+            });
+            Object.defineProperty(magic, index, {
+                set(newVal) {
+                    onDirty();
+                    parent.raw[key] = [...magic.raw];
+                    parent.raw[key][index] = newVal;
+                    magic.raw = parent.raw[key];
+                    prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
+                },
+                get() {
+                    return prop;
+                }
+            });
+        });
+    }
+    function magify({ raw, key, parent, onDirty }) {
+        if (!parent.magic) {
+            parent = {
+                raw: parent,
+                magic: true,
+                parent: null
+            };
         }
-        _clone(obj) {
-            return JSON.parse(JSON.stringify(obj));
+        if (raw.magic) {
+            return raw;
         }
+        if (typeof raw !== "object") {
+            return raw;
+        }
+        let magic = { raw, key, parent, magic: true };
+        if (Array.isArray(raw)) {
+            _magifyArray({ raw, key, parent, magic, onDirty });
+        }
+        else {
+            Object.keys(raw).forEach(propKey => {
+                let prop = magify({
+                    raw: raw[propKey],
+                    key: propKey,
+                    parent: magic,
+                    onDirty
+                });
+                Object.defineProperty(magic, propKey, {
+                    set(newVal) {
+                        onDirty();
+                        parent.raw[key] = { ...magic.raw, [propKey]: newVal };
+                        magic.raw = parent.raw[key];
+                        prop = magify({ raw: newVal, key: propKey, parent: magic, onDirty });
+                    },
+                    get() {
+                        return prop;
+                    }
+                });
+            });
+        }
+        return magic;
     }
 
     const core = {
@@ -2144,7 +2285,7 @@
     exports.extras = extras;
 
     exports._version = '0.5.0';
-    exports._date = '2019-04-04T12:21:38.285Z';
-    exports._hash = '5a75e5e';
+    exports._date = '2019-04-09T11:55:38.361Z';
+    exports._hash = 'bc07c49';
 
 }(this.owl = this.owl || {}));

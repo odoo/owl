@@ -173,7 +173,7 @@ export class Component<
    * turn will cause other calls to updated. So, we need to be particularly
    * careful at avoiding endless cycles.
    */
-  updated() {}
+  patched() {}
 
   /**
    * willUnmount is a hook that is called each time a component is detached from
@@ -309,7 +309,7 @@ export class Component<
     if (this.__widget__.isMounted) {
       await this.render(true);
     }
-    this.updated();
+    this.patched();
   }
 
   async updateProps(
@@ -341,7 +341,7 @@ export class Component<
     if (this.__widget__.isStarted) {
       await this.render();
     }
-    this.updated();
+    this.patched();
   }
 
   //--------------------------------------------------------------------------
@@ -351,7 +351,7 @@ export class Component<
   async _updateProps(nextProps: Props): Promise<void> {
     this.props = nextProps;
     await this.render();
-    this.updated();
+    this.patched();
   }
 
   _patch(vnode) {

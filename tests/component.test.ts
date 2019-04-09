@@ -387,13 +387,13 @@ describe("lifecycle hooks", () => {
     ]);
   });
 
-  test("updated hook is called after updateState", async () => {
+  test("patched hook is called after updateState", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
       state = { a: 1 };
 
-      updated() {
+      patched() {
         n++;
       }
     }
@@ -408,11 +408,11 @@ describe("lifecycle hooks", () => {
     expect(n).toBe(1);
   });
 
-  test("updated hook is called after updateProps", async () => {
+  test("patched hook is called after updateProps", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
-      updated() {
+      patched() {
         n++;
       }
     }
@@ -424,13 +424,13 @@ describe("lifecycle hooks", () => {
     expect(n).toBe(1);
   });
 
-  test("updated hook is called after updateEnv", async () => {
+  test("patched hook is called after updateEnv", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
       state = { a: 1 };
 
-      updated() {
+      patched() {
         n++;
       }
     }
@@ -499,7 +499,7 @@ describe("lifecycle hooks", () => {
     expect(destroyed).toBe(true);
   });
 
-  test("willPatch/updated hook", async () => {
+  test("willPatch/patched hook", async () => {
     const steps: string[] = [];
     class ParentWidget extends Widget {
       inlineTemplate = `
@@ -511,8 +511,8 @@ describe("lifecycle hooks", () => {
       willPatch() {
         steps.push("parent:willPatch");
       }
-      updated() {
-        steps.push("parent:updated");
+      patched() {
+        steps.push("parent:patched");
       }
     }
 
@@ -520,8 +520,8 @@ describe("lifecycle hooks", () => {
       willPatch() {
         steps.push("child:willPatch");
       }
-      updated() {
-        steps.push("child:updated");
+      patched() {
+        steps.push("child:patched");
       }
     }
     const widget = new ParentWidget(env);
@@ -532,9 +532,9 @@ describe("lifecycle hooks", () => {
     // Not sure about this order.  If you disagree, feel free to open an issue...
     expect(steps).toEqual([
       "child:willPatch",
-      "child:updated",
+      "child:patched",
       "parent:willPatch",
-      "parent:updated"
+      "parent:patched"
     ]);
   });
 });

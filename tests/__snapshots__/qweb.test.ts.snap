@@ -1189,6 +1189,22 @@ exports[`t-raw variable 1`] = `
 }"
 `;
 
+exports[`t-ref can get a dynamic ref on a node 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    p2.hook = {
+            create: (_, n) => context.refs['myspan' + 3] = n.elm,
+        };
+    return vn1;
+}"
+`;
+
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(context,extra
 ) {

@@ -900,10 +900,12 @@ const onDirective: Directive = {
 const refDirective: Directive = {
   name: "ref",
   priority: 95,
-  atNodeCreation({ ctx, node, nodeID }) {
-    let ref = node.getAttribute("t-ref");
+  atNodeCreation({ ctx, node }) {
+    let ref = node.getAttribute("t-ref")!;
     ctx.addLine(`p${ctx.parentNode}.hook = {
-            create: (_, n) => context.refs['${ref}'] = n.elm,
+            create: (_, n) => context.refs[${ctx.formatExpression(
+              ref
+            )}] = n.elm,
         };`);
   }
 };
@@ -996,7 +998,7 @@ const widgetDirective: Directive = {
     }
     let ref = node.getAttribute("t-ref");
     if (ref) {
-      ctx.addLine(`context.refs['${ref}'] = w${widgetID};`);
+      ctx.addLine(`context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`);
     }
 
     ctx.addLine(`def${defID} = w${widgetID}._start();`);

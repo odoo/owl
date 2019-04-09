@@ -628,7 +628,7 @@ describe("composition", () => {
 
   test("t-refs on widget are widgets", async () => {
     class WidgetC extends Widget {
-      inlineTemplate = `<div>Hello<t t-ref="mywidgetb" t-widget="b"/></div>`;
+      inlineTemplate = `<div>Hello<t t-ref="'mywidgetb'" t-widget="b"/></div>`;
       widgets = { b: WidgetB };
     }
     const widget = new WidgetC(env);

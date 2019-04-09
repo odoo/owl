@@ -893,10 +893,17 @@ describe("t-on", () => {
 
 describe("t-ref", () => {
   test("can get a ref on a node", () => {
-    qweb.addTemplate("test", `<div><span t-ref="myspan"/></div>`);
+    qweb.addTemplate("test", `<div><span t-ref="'myspan'"/></div>`);
     let refs: any = {};
     renderToDOM(qweb, "test", { refs });
     expect(refs.myspan.tagName).toBe("SPAN");
+  });
+
+  test("can get a dynamic ref on a node", () => {
+    qweb.addTemplate("test", `<div><span t-ref="'myspan' + 3"/></div>`);
+    let refs: any = {};
+    renderToDOM(qweb, "test", { refs });
+    expect(refs.myspan3.tagName).toBe("SPAN");
   });
 });
 

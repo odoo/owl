@@ -21,7 +21,7 @@ const EDITOR_TEMPLATE = `
       <a t-if="tabs.xml" class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
       <a t-if="tabs.css" class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
     </div>
-    <div class="code-editor" t-ref="editor"></div>
+    <div class="code-editor" t-ref="'editor'"></div>
   </div>`;
 
 class TabbedEditor extends Component {
@@ -59,7 +59,7 @@ class TabbedEditor extends Component {
     });
   }
 
-  componentDidUpdate() {
+  patched() {
     if (this.editor) {
       window.dispatchEvent(new Event("resize"));
       this.editor.setValue(this.props[this.state.currentTab], -1);
@@ -131,7 +131,7 @@ const TEMPLATE = `
         <div t-if="state.error" class="error">
           <t t-esc="state.error.message"/>
         </div>
-        <div class="content" t-ref="content"/>
+        <div class="content" t-ref="'content'"/>
       </div>
   </div>`;
 

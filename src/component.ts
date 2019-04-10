@@ -220,7 +220,7 @@ export class Component<
   }
 
   async mount(target: HTMLElement): Promise<void> {
-    const vnode = await this._start();
+    const vnode = await this._prepare();
     if (this.__widget__.isDestroyed) {
       // widget was destroyed before we get here...
       return;
@@ -367,7 +367,7 @@ export class Component<
       this.__widget__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }
   }
-  async _start(): Promise<VNode> {
+  async _prepare(): Promise<VNode> {
     this.__widget__.renderProps = this.props;
     this.__widget__.renderPromise = this.willStart().then(() => {
       if (this.__widget__.isDestroyed) {

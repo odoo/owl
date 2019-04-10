@@ -47,7 +47,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             } else {
                 w7 = new context.widgets['ChildWidget'](owner, props7);
                 context.__widget__.cmap[key8] = w7.__widget__.id;
-                def6 = w7._start();
+                def6 = w7._prepare();
             }
         }
         if (isNew7) {
@@ -95,7 +95,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         } else {
             w4 = new context.widgets['child'](owner, props4);
             context.__widget__.cmap[key5] = w4.__widget__.id;
-            def3 = w4._start();
+            def3 = w4._prepare();
         }
     }
     if (isNew4) {
@@ -141,7 +141,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
         } else {
             w4 = new context.widgets['child'](owner, props4);
             context.__widget__.cmap[4] = w4.__widget__.id;
-            def3 = w4._start();
+            def3 = w4._prepare();
         }
     }
     if (isNew4) {

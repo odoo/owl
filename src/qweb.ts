@@ -1001,7 +1001,7 @@ const widgetDirective: Directive = {
       ctx.addLine(`context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`);
     }
 
-    ctx.addLine(`def${defID} = w${widgetID}._start();`);
+    ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     ctx.closeIf();
     ctx.closeIf();
 

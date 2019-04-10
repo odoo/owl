@@ -41,7 +41,6 @@ component:
 - **[willPatch](#willPatch)**
 - **[updated](#updated)**
 - **[willUnmount](#willUnmount)**
-- **[destroyed](#destroyed)**
 
 Note: no hook method should ever be called manually. They are supposed to be
 called by the owl framework whenever it is required.

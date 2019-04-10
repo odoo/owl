@@ -312,21 +312,12 @@ describe("lifecycle hooks", () => {
       willUnmount() {
         steps.push("willunmount");
       }
-      destroyed() {
-        steps.push("destroyed");
-      }
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual(["init", "willstart", "mounted"]);
     await widget.updateState({ ok: false });
-    expect(steps).toEqual([
-      "init",
-      "willstart",
-      "mounted",
-      "willunmount",
-      "destroyed"
-    ]);
+    expect(steps).toEqual(["init", "willstart", "mounted", "willunmount"]);
   });
 
   test("widgets are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
@@ -388,9 +379,6 @@ describe("lifecycle hooks", () => {
       willUnmount() {
         steps.push("p willunmount");
       }
-      destroyed() {
-        steps.push("p destroyed");
-      }
     }
 
     class ChildWidget extends Widget {
@@ -407,9 +395,6 @@ describe("lifecycle hooks", () => {
       willUnmount() {
         steps.push("c willunmount");
       }
-      destroyed() {
-        steps.push("c destroyed");
-      }
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -422,9 +407,7 @@ describe("lifecycle hooks", () => {
       "p mounted",
       "c mounted",
       "c willunmount",
-      "c destroyed",
-      "p willunmount",
-      "p destroyed"
+      "p willunmount"
     ]);
   });
 
@@ -523,7 +506,6 @@ describe("lifecycle hooks", () => {
   });
 
   test("sub widget (inside sub node): hooks are correctly called", async () => {
-    let destroyed = false;
     let created = false;
     let mounted = false;
     class ParentWidget extends Widget {
@@ -545,9 +527,6 @@ describe("lifecycle hooks", () => {
       mounted() {
         mounted = true;
       }
-      destroyed() {
-        destroyed = true;
-      }
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -556,9 +535,7 @@ describe("lifecycle hooks", () => {
     await widget.updateState({ flag: true });
     expect(mounted).toBe(true);
     expect(created).toBe(true);
-    expect(destroyed).toBe(false);
     await widget.updateState({ flag: false });
-    expect(destroyed).toBe(true);
   });
 
   test("willPatch/patched hook", async () => {
@@ -610,21 +587,6 @@ describe("destroy method", () => {
     expect(document.contains(widget.el)).toBe(false);
     expect(widget.__widget__.isMounted).toBe(false);
     expect(widget.__widget__.isDestroyed).toBe(true);
-  });
-
-  test("destroying a widget twice only call destroyed once", async () => {
-    let count = 0;
-    class TestWidget extends Widget {
-      destroyed() {
-        count++;
-      }
-    }
-    const widget = new TestWidget(env);
-    await widget.mount(fixture);
-    widget.destroy();
-    expect(count).toBe(1);
-    widget.destroy();
-    expect(count).toBe(1);
   });
 
   test("destroying a parent also destroys its children", async () => {

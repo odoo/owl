@@ -197,14 +197,6 @@ export class Component<
    */
   willUnmount() {}
 
-  /**
-   * destroyed is a hook called exactly once, when a component is destroyed.
-   * When a component is destroyed, its children will be destroyed first.
-   *
-   * Note: this method should not be called manually.
-   */
-  destroyed() {}
-
   //--------------------------------------------------------------------------
   // Public
   //--------------------------------------------------------------------------
@@ -296,7 +288,6 @@ export class Component<
       }
       this.clear();
       this.__widget__.isDestroyed = true;
-      this.destroyed();
     }
   }
 

@@ -548,9 +548,6 @@ describe("connecting a component to store", () => {
       willUnmount() {
         steps.push("child:willUnmount");
       }
-      destroyed() {
-        steps.push("child:destroyed");
-      }
     }
 
     const ConnectedChild = connect(s => s)(Child);
@@ -576,11 +573,7 @@ describe("connecting a component to store", () => {
     expect(steps).toEqual(["child:mounted"]);
 
     await parent.updateState({ child: false });
-    expect(steps).toEqual([
-      "child:mounted",
-      "child:willUnmount",
-      "child:destroyed"
-    ]);
+    expect(steps).toEqual(["child:mounted", "child:willUnmount"]);
   });
 
   test("connect receives ownprops as second argument", async () => {

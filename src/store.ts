@@ -2,6 +2,10 @@ import { EventBus } from "./event_bus";
 import { Component } from "./component";
 import { shallowEqual } from "./utils";
 
+//------------------------------------------------------------------------------
+// Store Definition
+//------------------------------------------------------------------------------
+
 interface StoreConfig {
   env?: any;
   state?: any;
@@ -91,6 +95,9 @@ export class Store extends EventBus {
   }
 }
 
+//------------------------------------------------------------------------------
+// Connect function
+//------------------------------------------------------------------------------
 export function connect(mapStateToProps) {
   return function(Comp) {
     return class extends Comp {
@@ -137,12 +144,12 @@ export function connect(mapStateToProps) {
   };
 }
 
-function _magifyArray({ raw, key, parent, magic, onDirty }) {
-  Object.defineProperty(magic, "length", {
-    get() {
-      return magic.raw.length;
-    }
-  });
+//------------------------------------------------------------------------------
+// Magic Stuff
+//------------------------------------------------------------------------------
+
+function _magifyArray({ raw, key, parent, onDirty }) {
+  let magic = { raw, key, parent, magic: true };
   Object.assign(magic, {
     push: function(item) {
       onDirty();
@@ -184,6 +191,7 @@ function _magifyArray({ raw, key, parent, magic, onDirty }) {
       }
     });
   });
+  return magic;
 }
 
 function magify({ raw, key, parent, onDirty }) {
@@ -200,10 +208,10 @@ function magify({ raw, key, parent, onDirty }) {
   if (typeof raw !== "object") {
     return raw;
   }
-  let magic = { raw, key, parent, magic: true };
   if (Array.isArray(raw)) {
-    _magifyArray({ raw, key, parent, magic, onDirty });
+    return _magifyArray({ raw, key, parent, onDirty });
   } else {
+    let magic = { raw, key, parent, magic: true };
     Object.keys(raw).forEach(propKey => {
       let prop = magify({
         raw: raw[propKey],
@@ -223,6 +231,6 @@ function magify({ raw, key, parent, onDirty }) {
         }
       });
     });
+    return magic;
   }
-  return magic;
 }

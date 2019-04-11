@@ -962,13 +962,6 @@
          * @see mounted
          */
         willUnmount() { }
-        /**
-         * destroyed is a hook called exactly once, when a component is destroyed.
-         * When a component is destroyed, its children will be destroyed first.
-         *
-         * Note: this method should not be called manually.
-         */
-        destroyed() { }
         //--------------------------------------------------------------------------
         // Public
         //--------------------------------------------------------------------------
@@ -990,7 +983,7 @@
             child.__mount();
         }
         async mount(target) {
-            const vnode = await this._start();
+            const vnode = await this._prepare();
             if (this.__widget__.isDestroyed) {
                 // widget was destroyed before we get here...
                 return;
@@ -1054,7 +1047,6 @@
                 }
                 this.clear();
                 this.__widget__.isDestroyed = true;
-                this.destroyed();
             }
         }
         shouldUpdate(nextProps) {
@@ -1125,7 +1117,7 @@
                 this.__widget__.vnode = patch$1(document.createElement(vnode.sel), vnode);
             }
         }
-        async _start() {
+        async _prepare() {
             this.__widget__.renderProps = this.props;
             this.__widget__.renderPromise = this.willStart().then(() => {
                 if (this.__widget__.isDestroyed) {
@@ -2031,7 +2023,7 @@
             if (ref) {
                 ctx.addLine(`context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`);
             }
-            ctx.addLine(`def${defID} = w${widgetID}._start();`);
+            ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
             ctx.closeIf();
             ctx.closeIf();
             ctx.addIf(`isNew${widgetID}`);
@@ -2284,8 +2276,8 @@
     exports.core = core;
     exports.extras = extras;
 
-    exports._version = '0.5.0';
-    exports._date = '2019-04-09T13:33:32.132Z';
-    exports._hash = '74ce6a6';
+    exports._version = '0.6.0';
+    exports._date = '2019-04-11T08:28:47.038Z';
+    exports._hash = 'afc94c5';
 
 }(this.owl = this.owl || {}));

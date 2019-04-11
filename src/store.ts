@@ -1,11 +1,9 @@
 import { EventBus } from "./event_bus";
 import { Component } from "./component";
-import { shallowEqual } from "./utils";
 
 //------------------------------------------------------------------------------
 // Store Definition
 //------------------------------------------------------------------------------
-
 interface StoreConfig {
   env?: any;
   state?: any;
@@ -16,9 +14,9 @@ interface StoreConfig {
 interface StoreOption {
   debug?: boolean;
 }
+
 export class Store extends EventBus {
   state: any;
-  mstate: any;
   actions: any;
   mutations: any;
   _isMutating: boolean = false;
@@ -26,23 +24,17 @@ export class Store extends EventBus {
   history: any[] = [];
   debug: boolean;
   env: any;
+  observer: Observer;
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
     this.debug = options.debug || false;
-    this.state = Object.assign({}, config.state);
-    const self = this;
-    this.mstate = magify({
-      raw: this.state,
-      key: "state",
-      parent: this,
-      onDirty: function() {
-        self._isDirty = true;
-      }
-    });
+    this.state = config.state || {};
     this.actions = config.actions;
     this.mutations = config.mutations;
     this.env = config.env;
+    this.observer = makeObserver();
+    this.observer.observe(this.state);
 
     if (this.debug) {
       this.history.push({ state: this.state });
@@ -75,8 +67,10 @@ export class Store extends EventBus {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
     this._isMutating = true;
+    const currentRev = this.observer.__rev__;
+    // observer.enableMutating()
 
-    this.mutations[type].call(null, this.mstate, payload);
+    this.mutations[type].call(null, this.state, payload);
     if (this.debug) {
       this.history.push({
         state: this.state,
@@ -87,8 +81,8 @@ export class Store extends EventBus {
     await Promise.resolve();
     if (this._isMutating) {
       this._isMutating = false;
-      if (this._isDirty) {
-        this._isDirty = false;
+      // this.observer.disableMutations();
+      if (currentRev !== this.observer.__rev__) {
         this.trigger("update", this.state);
       }
     }
@@ -96,8 +90,113 @@ export class Store extends EventBus {
 }
 
 //------------------------------------------------------------------------------
+// Observer
+//------------------------------------------------------------------------------
+interface Observer {
+  __rev__: number;
+  observe: (val: any) => void;
+  set: (target: any, key: number | string, value: any) => void;
+}
+
+export function makeObserver(): Observer {
+  const observer: Observer = {
+    __rev__: 0,
+    observe: observe,
+    set: set
+  };
+
+  function set(target: any, key: number | string, value: any) {
+    if (Array.isArray(target)) {
+    } else {
+      addProp(target, key as string, value);
+    }
+    target.__rev__++;
+    observer.__rev__++;
+  }
+
+  function addProp<T extends { __rev__?: number }>(
+    obj: T,
+    key: string,
+    value: any
+  ) {
+    Object.defineProperty(obj, key, {
+      get() {
+        return value;
+      },
+      set(newVal) {
+        // if (!isMutating) [
+        //   throw new Error();
+        // ]
+        if (newVal !== value) {
+          value = newVal;
+          // observe(newVal);
+          obj.__rev__!++;
+          observer.__rev__++;
+        }
+      }
+    });
+    observe(value);
+  }
+
+  function observeObj<T extends { __rev__?: number }>(obj: T) {
+    const keys = Object.keys(obj);
+    obj.__rev__ = 0;
+    Object.defineProperty(obj, "__rev__", { enumerable: false });
+    for (let key of keys) {
+      addProp(obj, key, obj[key]);
+    }
+  }
+
+  const ArrayProto = Array.prototype;
+  const ModifiedArrayProto = Object.create(ArrayProto);
+
+  ModifiedArrayProto.push = function(...args) {
+    observer.__rev__++;
+    this.__rev__++;
+    return ArrayProto.push.call(this, ...args);
+  };
+
+  ModifiedArrayProto.pop = function(...args) {
+    observer.__rev__++;
+    this.__rev__++;
+    return ArrayProto.pop.call(this, ...args);
+  };
+  function observeArr(arr: Array<any>) {
+    (<any>arr).__rev__ = 0;
+    Object.defineProperty(arr, "__rev__", { enumerable: false });
+    (<any>arr).__proto__ = ModifiedArrayProto;
+    // for (let i = 0; i < arr.length; i++) {
+    //   observe(arr[i]);
+    // }
+  }
+
+  function observe(value: any) {
+    if (typeof value !== "object") {
+      return;
+    }
+    if (Array.isArray(value)) {
+      observeArr(value);
+    } else {
+      observeObj(value);
+    }
+  }
+
+  return observer;
+}
+
+//------------------------------------------------------------------------------
 // Connect function
 //------------------------------------------------------------------------------
+
+function setStoreProps(__widget__: any, storeProps: any) {
+  __widget__.currentStoreProps = storeProps;
+  __widget__.currentStoreRevs = {};
+  __widget__.currentStoreRev = storeProps.__rev__;
+  for (let key in storeProps) {
+    __widget__.currentStoreRevs[key] = storeProps[key].__rev__;
+  }
+}
+
 export function connect(mapStateToProps) {
   return function(Comp) {
     return class extends Comp {
@@ -107,15 +206,29 @@ export function connect(mapStateToProps) {
         const storeProps = mapStateToProps(env.store.state, ownProps);
         const mergedProps = Object.assign(props || {}, storeProps);
         super(parent, mergedProps);
-        this.__widget__.currentStoreProps = storeProps;
+        setStoreProps(this.__widget__, storeProps);
         this.__widget__.ownProps = ownProps;
       }
       mounted() {
         this.env.store.on("update", this, () => {
           const ownProps = this.__widget__.ownProps;
           const storeProps = mapStateToProps(this.env.store.state, ownProps);
-          if (!shallowEqual(storeProps, this.__widget__.currentStoreProps)) {
-            this.__widget__.currentStoreProps = storeProps;
+          let didChange = false;
+          if (this.__widget__.currentStoreRev !== storeProps.__rev__) {
+            setStoreProps(this.__widget__, storeProps);
+            didChange = true;
+          } else {
+            const revs = this.__widget__.currentStoreRevs;
+            for (let key in storeProps) {
+              const val = storeProps[key];
+              if (val.__rev__ !== revs[key]) {
+                didChange = true;
+                revs[key] = val.__rev__;
+                this.__widget__.currentStoreProps[key] = val;
+              }
+            }
+          }
+          if (didChange) {
             this.updateProps(ownProps, false);
           }
         });
@@ -142,95 +255,4 @@ export function connect(mapStateToProps) {
       }
     };
   };
-}
-
-//------------------------------------------------------------------------------
-// Magic Stuff
-//------------------------------------------------------------------------------
-
-function _magifyArray({ raw, key, parent, onDirty }) {
-  let magic = { raw, key, parent, magic: true };
-  Object.assign(magic, {
-    push: function(item) {
-      onDirty();
-      parent.raw[key] = [...magic.raw, item];
-      magic.raw = parent.raw[key];
-      const index = magic.raw.length - 1;
-      let prop = magify({ raw: item, key: index, parent: magic, onDirty });
-      Object.defineProperty(magic, index, {
-        set(newVal) {
-          onDirty();
-          parent.raw[key] = [...magic.raw];
-          parent.raw[key][index] = newVal;
-          magic.raw = parent.raw[key];
-          prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
-        },
-        get() {
-          return prop;
-        }
-      });
-    }
-  });
-  raw.forEach((value, index) => {
-    let prop = magify({
-      raw: value,
-      key: index,
-      parent: magic,
-      onDirty
-    });
-    Object.defineProperty(magic, index, {
-      set(newVal) {
-        onDirty();
-        parent.raw[key] = [...magic.raw];
-        parent.raw[key][index] = newVal;
-        magic.raw = parent.raw[key];
-        prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
-      },
-      get() {
-        return prop;
-      }
-    });
-  });
-  return magic;
-}
-
-function magify({ raw, key, parent, onDirty }) {
-  if (!parent.magic) {
-    parent = {
-      raw: parent,
-      magic: true,
-      parent: null
-    };
-  }
-  if (raw.magic) {
-    return raw;
-  }
-  if (typeof raw !== "object") {
-    return raw;
-  }
-  if (Array.isArray(raw)) {
-    return _magifyArray({ raw, key, parent, onDirty });
-  } else {
-    let magic = { raw, key, parent, magic: true };
-    Object.keys(raw).forEach(propKey => {
-      let prop = magify({
-        raw: raw[propKey],
-        key: propKey,
-        parent: magic,
-        onDirty
-      });
-      Object.defineProperty(magic, propKey, {
-        set(newVal) {
-          onDirty();
-          parent.raw[key] = { ...magic.raw, [propKey]: newVal };
-          magic.raw = parent.raw[key];
-          prop = magify({ raw: newVal, key: propKey, parent: magic, onDirty });
-        },
-        get() {
-          return prop;
-        }
-      });
-    });
-    return magic;
-  }
 }

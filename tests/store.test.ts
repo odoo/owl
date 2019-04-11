@@ -1,11 +1,11 @@
-import { Store, connect } from "../src/store";
-import { Component, Env } from "../src/component";
+import { Store, makeObserver, connect } from "../src/store";
 import {
+  nextTick,
   nextMicroTick,
-  makeTestWEnv,
   makeTestFixture,
-  nextTick
+  makeTestWEnv
 } from "./helpers";
+import { Env, Component } from "../src/component";
 
 describe("basic use", () => {
   test("commit a mutation", () => {
@@ -106,110 +106,104 @@ describe("basic use", () => {
   });
 });
 
+describe("observer", () => {
+  test("properly observe objects", () => {
+    const observer = makeObserver();
+    const obj: any = {};
+
+    observer.observe(obj);
+    expect(obj.__rev__).toBe(0);
+    expect(observer.__rev__).toBe(0);
+
+    const ob2: any = { a: 1 };
+    observer.observe(ob2);
+    expect(ob2.__rev__).toBe(0);
+    ob2.a = 2;
+    expect(observer.__rev__).toBe(1);
+    expect(ob2.__rev__).toBe(1);
+
+    ob2.b = 3;
+    expect(observer.__rev__).toBe(1);
+    expect(ob2.__rev__).toBe(1);
+
+    observer.set(ob2, "b", 4);
+    expect(observer.__rev__).toBe(2);
+    expect(ob2.__rev__).toBe(2);
+  });
+
+  test("various object property changes", () => {
+    const observer = makeObserver();
+    const obj: any = { a: 1 };
+    observer.observe(obj);
+    expect(obj.__rev__).toBe(0);
+    obj.a = 2;
+    expect(observer.__rev__).toBe(1);
+    expect(obj.__rev__).toBe(1);
+
+    // same value again
+    obj.a = 2;
+    expect(observer.__rev__).toBe(1);
+    expect(obj.__rev__).toBe(1);
+
+    obj.a = 3;
+    expect(observer.__rev__).toBe(2);
+    expect(obj.__rev__).toBe(2);
+  });
+
+  test("properly observe arrays", () => {
+    const observer = makeObserver();
+    const arr: any = [];
+    observer.observe(arr);
+    expect(arr.__rev__).toBe(0);
+    expect(observer.__rev__).toBe(0);
+    expect(arr.length).toBe(0);
+
+    arr.push(1);
+    expect(arr.__rev__).toBe(1);
+    expect(observer.__rev__).toBe(1);
+    expect(arr.length).toBe(1);
+  });
+
+  test("properly observe arrays in object", () => {
+    const observer = makeObserver();
+    const state: any = { arr: [] };
+    observer.observe(state);
+    expect(state.arr.__rev__).toBe(0);
+    expect(observer.__rev__).toBe(0);
+    expect(state.arr.length).toBe(0);
+
+    state.arr.push(1);
+    expect(state.arr.__rev__).toBe(1);
+    expect(observer.__rev__).toBe(1);
+    expect(state.arr.length).toBe(1);
+  });
+});
+
 describe("advanced state properties", () => {
-  test("state in the store is reference equal after empty mutation", async () => {
+  test("state in the store is reference equal after mutation", async () => {
+    const state = {};
     const mutations = {
       donothing() {}
     };
-    const store = new Store({ state: {}, mutations });
-    const state = store.state;
+    const store = new Store({ state, mutations });
+    expect(store.state).toBe(state);
     store.commit("donothing");
     expect(store.state).toBe(state);
   });
 
-  test("state in the store is not reference equal after changing one number value", async () => {
+  test("can use array properties in mutations", () => {
+    expect.assertions(3);
+    const state = { a: [1, 2, 3] };
     const mutations = {
-      dosomething(state) {
-        expect(state.rochefort).toBe(8);
-        state.rochefort += 2;
-        expect(state.rochefort).toBe(10);
-      }
-    };
-    const store = new Store({ state: { rochefort: 8 }, mutations });
-    const state = store.state;
-    expect(state.rochefort).toBe(8);
-    store.commit("dosomething");
-    expect(store.state.rochefort).toBe(10);
-    expect(store.state).not.toBe(state);
-  });
-
-  test("can push an item in a list with an existing item", async () => {
-    const mutations = {
-      addRochefort(state) {
-        state.rocheforts.push({ taste: 87 });
-      }
-    };
-    const store = new Store({
-      state: { rocheforts: [{ taste: 84 }] },
-      mutations
-    });
-    const state = store.state;
-    store.commit("addRochefort");
-    expect(store.state.rocheforts).toEqual([{ taste: 84 }, { taste: 87 }]);
-    expect(store.state).toBe(state);
-  });
-
-  test("state is reference equal after pushing in a list", async () => {
-    const mutations = {
-      addRochefort(state) {
-        state.rocheforts.push(10);
-      }
-    };
-    const store = new Store({ state: { rocheforts: [] }, mutations });
-    const state = store.state;
-    store.commit("addRochefort");
-    expect(store.state.rocheforts).toEqual([10]);
-    expect(store.state).toBe(state);
-  });
-
-  test("nested state in the store behaves properly", async () => {
-    const state = { jupiler: { maes: 1 } };
-    const mutations = {
-      dostuff(state, inc) {
-        state.jupiler.maes += inc;
+      m(state) {
+        expect(state.a.length).toBe(3);
+        const l = state.a.push(53);
+        expect(l).toBe(4);
       }
     };
     const store = new Store({ state, mutations });
-    expect(store.state.jupiler.maes).toBe(1);
-    const stateA = store.state;
-    const jupiler = store.state.jupiler;
-    store.commit("dostuff", 10);
-    expect(store.state.jupiler.maes).toBe(11);
-    expect(store.state).toBe(stateA);
-    expect(store.state.jupiler).not.toBe(jupiler);
-  });
-
-  test("sibling properties are not affected", async () => {
-    const state = { jupiler: { maes: 1 }, stella: 3 };
-    const mutations = {
-      dostuff(state, inc) {
-        state.stella += inc;
-      }
-    };
-    const store = new Store({ state, mutations });
-    const jupiler = store.state.jupiler;
-    const stateA = store.state;
-    store.commit("dostuff", 10);
-    expect(store.state.stella).toBe(13);
-    expect(store.state).not.toBe(stateA);
-    expect(store.state.jupiler).toBe(jupiler);
-  });
-
-  test("interaction between mutations on sibling properties", async () => {
-    const state = { jupiler: { maes: 1 }, stella: 3 };
-    const mutations = {
-      dostuffA(state, inc) {
-        state.stella += inc;
-      },
-      dostuffB(state, inc) {
-        state.jupiler.maes += inc;
-      }
-    };
-    const store = new Store({ state, mutations });
-    store.commit("dostuffA", 10);
-    const jupiler = store.state.jupiler;
-    store.commit("dostuffB", 10);
-    expect(store.state.jupiler).not.toBe(jupiler);
+    store.commit("m");
+    expect(store.state.a).toEqual([1, 2, 3, 53]);
   });
 
   test("can use object assign in store", async () => {
@@ -234,217 +228,9 @@ describe("advanced state properties", () => {
     };
     const state = { counter: 0 };
     const store = new Store({ state, mutations });
-    const curState = store.state;
     expect(store.state.counter).toBe(0);
     store.commit("inc", {});
     expect(store.state.counter).toBe(1);
-    expect(store.state).not.toBe(curState);
-  });
-
-  test("aku reactive store state 2", async () => {
-    const mutations = {
-      inc(state) {
-        state.convo.counter++;
-      }
-    };
-    const state = { convo: { counter: 0 } };
-    const store = new Store({ state, mutations });
-    const curState = store.state;
-    const convo = state.convo;
-    expect(store.state.convo.counter).toBe(0);
-    store.commit("inc", {});
-    expect(store.state.convo.counter).toBe(1);
-    expect(store.state.convo).not.toBe(convo);
-    expect(store.state).toBe(curState);
-  });
-
-  test("aku reactive store state 3", async () => {
-    const mutations = {
-      inc1(state) {
-        state.threads[1].counter++;
-      },
-      inc2(state) {
-        state.threads[2].counter++;
-      }
-    };
-    const state = {
-      threads: {
-        1: { counter: 0 },
-        2: { counter: 0 }
-      }
-    };
-    const store = new Store({ state, mutations });
-    const curState = store.state;
-    const threads = state.threads;
-    const thread1 = state.threads[1];
-    const thread2 = state.threads[2];
-    expect(store.state.threads[1].counter).toBe(0);
-    expect(store.state.threads[2].counter).toBe(0);
-    store.commit("inc1", {});
-    expect(store.state.threads[1].counter).toBe(1);
-    expect(store.state.threads[2].counter).toBe(0);
-    expect(store.state.threads[1]).not.toBe(thread1);
-    expect(store.state.threads[2]).toBe(thread2);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state).toBe(curState);
-    const newThread1 = curState.threads[1];
-    store.commit("inc2", {});
-    expect(store.state.threads[1].counter).toBe(1);
-    expect(store.state.threads[2].counter).toBe(1);
-    expect(store.state.threads[1]).toBe(newThread1);
-    expect(store.state.threads[2]).not.toBe(thread2);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state).toBe(curState);
-  });
-
-  test("aku reactive store state 4", async () => {
-    const mutations = {
-      incT(state) {
-        state.threads[1].counter++;
-      },
-      incM(state) {
-        state.messages[1].counter++;
-      }
-    };
-    const state = {
-      threads: {
-        1: { counter: 0 }
-      },
-      messages: {
-        1: { counter: 0 }
-      }
-    };
-    const store = new Store({ state, mutations });
-    const curState = store.state;
-    const threads = state.threads;
-    const messages = state.messages;
-    const thread = state.threads[1];
-    const message = state.messages[1];
-    expect(store.state.threads[1].counter).toBe(0);
-    expect(store.state.messages[1].counter).toBe(0);
-    store.commit("incT", {});
-    expect(store.state.threads[1].counter).toBe(1);
-    expect(store.state.messages[1].counter).toBe(0);
-    expect(store.state.threads[1]).not.toBe(thread);
-    expect(store.state.messages[1]).toBe(message);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state.messages).toBe(messages);
-    expect(store.state).toBe(curState);
-    const newThread = curState.threads[1];
-    store.commit("incM", {});
-    expect(store.state.threads[1].counter).toBe(1);
-    expect(store.state.messages[1].counter).toBe(1);
-    expect(store.state.threads[1]).toBe(newThread);
-    expect(store.state.messages[1]).not.toBe(message);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state.messages).toBe(messages);
-    expect(store.state).toBe(curState);
-  });
-
-  test("aku reactive store state 5", async () => {
-    const mutations = {
-      inc(state) {
-        state.counter++;
-      },
-      incT(state) {
-        state.threads[1].counter++;
-      }
-    };
-    const state = {
-      threads: {
-        1: { counter: 0 }
-      },
-      counter: 0
-    };
-    const store = new Store({ state, mutations });
-    const curState = store.state;
-    const threads = state.threads;
-    const thread = state.threads[1];
-    expect(store.state.counter).toBe(0);
-    expect(store.state.threads[1].counter).toBe(0);
-    store.commit("inc", {});
-    expect(store.state.counter).toBe(1);
-    expect(store.state.threads[1].counter).toBe(0);
-    expect(store.state.threads[1]).toBe(thread);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state).not.toBe(curState);
-    const newCurState = store.state;
-    store.commit("incT", {});
-    expect(store.state.counter).toBe(1);
-    expect(store.state.threads[1].counter).toBe(1);
-    expect(store.state.threads[1]).not.toBe(thread);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state).toBe(newCurState);
-  });
-
-  test("aku reactive store state 6", async () => {
-    const mutations = {
-      inc1(state) {
-        state.threads[1].c1++;
-      },
-      inc2(state) {
-        state.threads[1].c2++;
-      }
-    };
-    const state = {
-      threads: {
-        1: { c1: 0, c2: 0 }
-      }
-    };
-    const store = new Store({ state, mutations });
-    const curState = store.state;
-    const threads = state.threads;
-    const thread = state.threads[1];
-    expect(store.state.threads[1].c1).toBe(0);
-    expect(store.state.threads[1].c2).toBe(0);
-    store.commit("inc1", {});
-    expect(store.state.threads[1].c1).toBe(1);
-    expect(store.state.threads[1].c2).toBe(0);
-    expect(store.state.threads[1]).not.toBe(thread);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state).toBe(curState);
-    const newThread = store.state.threads[1];
-    store.commit("inc2", {});
-    expect(store.state.threads[1].c1).toBe(1);
-    expect(store.state.threads[1].c2).toBe(1);
-    expect(store.state.threads[1]).not.toBe(newThread);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state).toBe(curState);
-  });
-
-  test("aku reactive store state 7", async () => {
-    const mutations = {
-      register(state) {
-        state.threads[1].messages.push(1);
-      }
-    };
-    const state = {
-      threads: {
-        1: {
-          messages: []
-        }
-      },
-      messages: {
-        1: {}
-      }
-    };
-    const store = new Store({ state, mutations });
-    const curState = store.state;
-    const threads = state.threads;
-    const messages = state.messages;
-    const thread = state.threads[1];
-    const threadMessages = state.threads[1].messages;
-    const message = state.messages[1];
-    expect(store.state.threads[1].messages.length).toBe(0);
-    store.commit("register", {});
-    expect(store.state.threads[1].messages.length).toBe(1);
-    expect(store.state.threads[1].messages[0]).toBe(1);
-    expect(store.state.threads[1].messages).not.toBe(threadMessages);
-    expect(store.state.threads[1]).toBe(thread);
-    expect(store.state.threads).toBe(threads);
-    expect(store.state.messages[1]).toBe(message);
-    expect(store.state.messages).toBe(messages);
-    expect(store.state).toBe(curState);
   });
 });
 
@@ -475,7 +261,11 @@ describe("updates triggered by the store", () => {
       inc(state, delta) {
         state.n += delta;
       },
-      noop() {}
+      noop() {},
+      noop2(state) {
+        const val = state.n;
+        state.n = val;
+      }
     };
     const store = new Store({ state, mutations });
     store.on("update", null, () => updateCounter++);
@@ -483,7 +273,12 @@ describe("updates triggered by the store", () => {
     store.commit("noop");
     await nextMicroTick();
     expect(updateCounter).toBe(0);
+
     store.commit("inc", 50);
+    await nextMicroTick();
+    expect(updateCounter).toBe(1);
+
+    store.commit("noop2");
     await nextMicroTick();
     expect(updateCounter).toBe(1);
   });
@@ -554,9 +349,9 @@ describe("connecting a component to store", () => {
 
     class Parent extends Component<any, any, any> {
       inlineTemplate = `
-        <div>
-            <t t-if="state.child" t-widget="ConnectedChild"/>
-        </div>`;
+          <div>
+              <t t-if="state.child" t-widget="ConnectedChild"/>
+          </div>`;
       widgets = { ConnectedChild };
 
       constructor(env: Env) {
@@ -596,10 +391,10 @@ describe("connecting a component to store", () => {
 
     class TodoList extends Component<any, any, any> {
       inlineTemplate = `<div>
-          <t t-foreach="props.todos" t-as="todo">
-            <t t-widget="ConnectedTodo" t-props="todo"/>
-          </t>
-        </div>`;
+            <t t-foreach="props.todos" t-as="todo">
+              <t t-widget="ConnectedTodo" t-props="todo"/>
+            </t>
+          </div>`;
       widgets = { ConnectedTodo };
     }
 
@@ -631,8 +426,8 @@ describe("connecting a component to store", () => {
 
     class App extends Component<any, any, any> {
       inlineTemplate = `<div>
-            <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
-        </div>`;
+              <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+          </div>`;
       widgets = { ConnectedBeer };
       state = { beerId: 1 };
     }

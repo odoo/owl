@@ -133,7 +133,7 @@ export function makeObserver(): Observer {
         }
         if (newVal !== value) {
           value = newVal;
-          // observe(newVal);
+          observe(newVal);
           obj.__rev__!++;
           observer.__rev__++;
         }

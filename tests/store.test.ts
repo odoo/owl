@@ -190,6 +190,22 @@ describe("observer", () => {
     expect(observer.__rev__).toBe(1);
     expect(state.arr.length).toBe(1);
   });
+
+  test("reobserve new object values", () => {
+    const observer = makeObserver();
+    const obj: any = { a: 1 };
+    observer.observe(obj);
+    expect(obj.__rev__).toBe(0);
+    obj.a = { b: 2 };
+    expect(observer.__rev__).toBe(1);
+    expect(obj.__rev__).toBe(1);
+    expect(obj.a.__rev__).toBe(0);
+
+    obj.a.b = 3;
+    expect(observer.__rev__).toBe(2);
+    expect(obj.__rev__).toBe(1);
+    expect(obj.a.__rev__).toBe(1);
+  });
 });
 
 describe("advanced state properties", () => {

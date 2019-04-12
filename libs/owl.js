@@ -755,18 +755,6 @@
         }
         return null;
     }
-    function shallowEqual(objA, objB) {
-        if (objA === objB) {
-            return true;
-        }
-        const keysA = Object.keys(objA);
-        for (let key of keysA) {
-            if (!(key in objB) || objA[key] !== objB[key]) {
-                return false;
-            }
-        }
-        return true;
-    }
     function patch(C, patchName, patch) {
         const proto = C.prototype;
         if (!proto.__patches) {
@@ -821,7 +809,6 @@
         memoize: memoize,
         debounce: debounce,
         findInTree: findInTree,
-        shallowEqual: shallowEqual,
         patch: patch,
         unpatch: unpatch
     });
@@ -1330,7 +1317,8 @@
                     if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
                         invar =
                             WORD_REPLACEMENT[invar] ||
-                                (invar in this.variables && this.variables[invar]) ||
+                                (invar in this.variables &&
+                                    this.formatExpression(this.variables[invar])) ||
                                 "context['" + invar + "']";
                     }
                     r += invar;
@@ -1824,7 +1812,7 @@
     const ifDirective = {
         name: "if",
         priority: 20,
-        atNodeEncounter({ node, qweb, ctx }) {
+        atNodeEncounter({ node, ctx }) {
             let cond = ctx.getValue(node.getAttribute("t-if"));
             ctx.addIf(`${ctx.formatExpression(cond)}`);
             return false;
@@ -1836,7 +1824,7 @@
     const elifDirective = {
         name: "elif",
         priority: 30,
-        atNodeEncounter({ node, qweb, ctx }) {
+        atNodeEncounter({ node, ctx }) {
             let cond = ctx.getValue(node.getAttribute("t-elif"));
             ctx.addLine(`else if (${ctx.formatExpression(cond)}) {`);
             ctx.indent();
@@ -1918,7 +1906,7 @@
     const onDirective = {
         name: "on",
         priority: 90,
-        atNodeCreation({ ctx, fullName, value, nodeID, qweb }) {
+        atNodeCreation({ ctx, fullName, value, nodeID }) {
             ctx.rootContext.shouldDefineOwner = true;
             const eventName = fullName.slice(5);
             let extraArgs;
@@ -1949,7 +1937,7 @@
     const widgetDirective = {
         name: "widget",
         priority: 100,
-        atNodeEncounter({ ctx, value, node, qweb }) {
+        atNodeEncounter({ ctx, value, node }) {
             ctx.addLine("//WIDGET");
             ctx.rootContext.shouldDefineOwner = true;
             let props = node.getAttribute("t-props");
@@ -2072,22 +2060,15 @@
         constructor(config, options = {}) {
             super();
             this._isMutating = false;
-            this._isDirty = false;
             this.history = [];
             this.debug = options.debug || false;
-            this.state = Object.assign({}, config.state);
-            const self = this;
-            this.mstate = magify({
-                raw: this.state,
-                key: "state",
-                parent: this,
-                onDirty: function () {
-                    self._isDirty = true;
-                }
-            });
+            this.state = config.state || {};
             this.actions = config.actions;
             this.mutations = config.mutations;
             this.env = config.env;
+            this.observer = makeObserver();
+            this.observer.allowMutations = false;
+            this.observer.observe(this.state);
             if (this.debug) {
                 this.history.push({ state: this.state });
             }
@@ -2113,8 +2094,11 @@
             if (!this.mutations[type]) {
                 throw new Error(`[Error] mutation ${type} is undefined`);
             }
+            const currentRev = this.observer.__rev__;
             this._isMutating = true;
-            this.mutations[type].call(null, this.mstate, payload);
+            this.observer.allowMutations = true;
+            this.mutations[type].call(null, { state: this.state, set: this.observer.set }, payload);
+            this.observer.allowMutations = false;
             if (this.debug) {
                 this.history.push({
                     state: this.state,
@@ -2125,11 +2109,120 @@
             await Promise.resolve();
             if (this._isMutating) {
                 this._isMutating = false;
-                if (this._isDirty) {
-                    this._isDirty = false;
+                if (currentRev !== this.observer.__rev__) {
                     this.trigger("update", this.state);
                 }
             }
+        }
+    }
+    function makeObserver() {
+        const observer = {
+            __rev__: 0,
+            allowMutations: true,
+            observe: observe,
+            set: set
+        };
+        function set(target, key, value) {
+            addProp(target, key, value);
+            target.__rev__++;
+            observer.__rev__++;
+        }
+        function addProp(obj, key, value) {
+            Object.defineProperty(obj, key, {
+                enumerable: true,
+                get() {
+                    return value;
+                },
+                set(newVal) {
+                    if (!observer.allowMutations) {
+                        throw new Error(`State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`);
+                    }
+                    if (newVal !== value) {
+                        value = newVal;
+                        observe(newVal);
+                        obj.__rev__++;
+                        observer.__rev__++;
+                    }
+                }
+            });
+            observe(value);
+        }
+        function observeObj(obj) {
+            const keys = Object.keys(obj);
+            obj.__rev__ = 0;
+            Object.defineProperty(obj, "__rev__", { enumerable: false });
+            for (let key of keys) {
+                addProp(obj, key, obj[key]);
+            }
+        }
+        const ArrayProto = Array.prototype;
+        const ModifiedArrayProto = Object.create(ArrayProto);
+        const methodsToPatch = [
+            "push",
+            "pop",
+            "shift",
+            "unshift",
+            "splice",
+            "sort",
+            "reverse"
+        ];
+        for (let method of methodsToPatch) {
+            const initialMethod = ArrayProto[method];
+            ModifiedArrayProto[method] = function (...args) {
+                observer.__rev__++;
+                this.__rev__++;
+                let inserted;
+                switch (method) {
+                    case "push":
+                    case "unshift":
+                        inserted = args;
+                        break;
+                    case "splice":
+                        inserted = args.slice(2);
+                        break;
+                }
+                if (inserted) {
+                    for (let elem of inserted) {
+                        observe(elem);
+                    }
+                }
+                return initialMethod.call(this, ...args);
+            };
+        }
+        function observeArr(arr) {
+            arr.__rev__ = 0;
+            Object.defineProperty(arr, "__rev__", { enumerable: false });
+            arr.__proto__ = ModifiedArrayProto;
+            for (let i = 0; i < arr.length; i++) {
+                observe(arr[i]);
+            }
+        }
+        function observe(value) {
+            if (typeof value !== "object") {
+                return;
+            }
+            if ("__rev__" in value) {
+                // already observed
+                return;
+            }
+            if (Array.isArray(value)) {
+                observeArr(value);
+            }
+            else {
+                observeObj(value);
+            }
+        }
+        return observer;
+    }
+    //------------------------------------------------------------------------------
+    // Connect function
+    //------------------------------------------------------------------------------
+    function setStoreProps(__widget__, storeProps) {
+        __widget__.currentStoreProps = storeProps;
+        __widget__.currentStoreRevs = {};
+        __widget__.currentStoreRev = storeProps.__rev__;
+        for (let key in storeProps) {
+            __widget__.currentStoreRevs[key] = storeProps[key].__rev__;
         }
     }
     function connect(mapStateToProps) {
@@ -2139,17 +2232,32 @@
                     const env = parent instanceof Component ? parent.env : parent;
                     const ownProps = Object.assign({}, props || {});
                     const storeProps = mapStateToProps(env.store.state, ownProps);
-                    const mergedProps = Object.assign(props || {}, storeProps);
+                    const mergedProps = Object.assign({}, props || {}, storeProps);
                     super(parent, mergedProps);
-                    this.__widget__.currentStoreProps = storeProps;
+                    setStoreProps(this.__widget__, storeProps);
                     this.__widget__.ownProps = ownProps;
                 }
                 mounted() {
                     this.env.store.on("update", this, () => {
                         const ownProps = this.__widget__.ownProps;
                         const storeProps = mapStateToProps(this.env.store.state, ownProps);
-                        if (!shallowEqual(storeProps, this.__widget__.currentStoreProps)) {
-                            this.__widget__.currentStoreProps = storeProps;
+                        let didChange = false;
+                        if (this.__widget__.currentStoreRev !== storeProps.__rev__) {
+                            setStoreProps(this.__widget__, storeProps);
+                            didChange = true;
+                        }
+                        else {
+                            const revs = this.__widget__.currentStoreRevs;
+                            for (let key in storeProps) {
+                                const val = storeProps[key];
+                                if (val.__rev__ !== revs[key]) {
+                                    didChange = true;
+                                    revs[key] = val.__rev__;
+                                    this.__widget__.currentStoreProps[key] = val;
+                                }
+                            }
+                        }
+                        if (didChange) {
                             this.updateProps(ownProps, false);
                         }
                     });
@@ -2170,95 +2278,6 @@
             };
         };
     }
-    function _magifyArray({ raw, key, parent, magic, onDirty }) {
-        Object.defineProperty(magic, "length", {
-            get() {
-                return magic.raw.length;
-            }
-        });
-        Object.assign(magic, {
-            push: function (item) {
-                onDirty();
-                parent.raw[key] = [...magic.raw, item];
-                magic.raw = parent.raw[key];
-                const index = magic.raw.length - 1;
-                let prop = magify({ raw: item, key: index, parent: magic, onDirty });
-                Object.defineProperty(magic, index, {
-                    set(newVal) {
-                        onDirty();
-                        parent.raw[key] = [...magic.raw];
-                        parent.raw[key][index] = newVal;
-                        magic.raw = parent.raw[key];
-                        prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
-                    },
-                    get() {
-                        return prop;
-                    }
-                });
-            }
-        });
-        raw.forEach((value, index) => {
-            let prop = magify({
-                raw: value,
-                key: index,
-                parent: magic,
-                onDirty
-            });
-            Object.defineProperty(magic, index, {
-                set(newVal) {
-                    onDirty();
-                    parent.raw[key] = [...magic.raw];
-                    parent.raw[key][index] = newVal;
-                    magic.raw = parent.raw[key];
-                    prop = magify({ raw: newVal, key: index, parent: magic, onDirty });
-                },
-                get() {
-                    return prop;
-                }
-            });
-        });
-    }
-    function magify({ raw, key, parent, onDirty }) {
-        if (!parent.magic) {
-            parent = {
-                raw: parent,
-                magic: true,
-                parent: null
-            };
-        }
-        if (raw.magic) {
-            return raw;
-        }
-        if (typeof raw !== "object") {
-            return raw;
-        }
-        let magic = { raw, key, parent, magic: true };
-        if (Array.isArray(raw)) {
-            _magifyArray({ raw, key, parent, magic, onDirty });
-        }
-        else {
-            Object.keys(raw).forEach(propKey => {
-                let prop = magify({
-                    raw: raw[propKey],
-                    key: propKey,
-                    parent: magic,
-                    onDirty
-                });
-                Object.defineProperty(magic, propKey, {
-                    set(newVal) {
-                        onDirty();
-                        parent.raw[key] = { ...magic.raw, [propKey]: newVal };
-                        magic.raw = parent.raw[key];
-                        prop = magify({ raw: newVal, key: propKey, parent: magic, onDirty });
-                    },
-                    get() {
-                        return prop;
-                    }
-                });
-            });
-        }
-        return magic;
-    }
 
     const core = {
         QWeb,
@@ -2277,7 +2296,7 @@
     exports.extras = extras;
 
     exports._version = '0.6.0';
-    exports._date = '2019-04-11T08:28:47.038Z';
-    exports._hash = 'afc94c5';
+    exports._date = '2019-04-12T13:25:16.523Z';
+    exports._hash = 'd328360';
 
 }(this.owl = this.owl || {}));

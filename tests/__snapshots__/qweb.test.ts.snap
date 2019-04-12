@@ -105,7 +105,7 @@ exports[`attributes from object variables set previously 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = {a:'b'}.a;
+    var _2 = {a: 'b'}.a;
     var c3 = [], p3 = {key:3,attrs:{class: _2}};
     var vn3 = h('span', p3, c3);
     c1.push(vn3);
@@ -1306,6 +1306,19 @@ exports[`t-set set from empty body 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set and t-if 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['value'] === 'ok') {
+        c1.push({text: \`grimbergen\`});
+    }
     return vn1;
 }"
 `;

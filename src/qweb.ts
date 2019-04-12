@@ -159,7 +159,8 @@ export class Context {
         if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
           invar =
             WORD_REPLACEMENT[invar] ||
-            (invar in this.variables && this.variables[invar]) ||
+            (invar in this.variables &&
+              this.formatExpression(this.variables[invar])) ||
             "context['" + invar + "']";
         }
         r += invar;

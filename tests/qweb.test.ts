@@ -195,6 +195,19 @@ describe("t-set", () => {
     expect(renderToString(qweb, "test")).toBe("<div>ok</div>");
   });
 
+  test("t-set and t-if", () => {
+    qweb.addTemplate(
+      "test",
+      `<div >
+        <t t-set="v" t-value="value"/>
+        <t t-if="v === 'ok'">grimbergen</t>
+        </div>`
+    );
+    expect(renderToString(qweb, "test", { value: "ok" })).toBe(
+      "<div>grimbergen</div>"
+    );
+  });
+
   test("set from body literal", () => {
     qweb.addTemplate(
       "test",

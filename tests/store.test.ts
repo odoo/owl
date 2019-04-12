@@ -162,6 +162,23 @@ describe("observer", () => {
     expect(ob2.__rev__).toBe(2);
   });
 
+  test("can change values in array", () => {
+    const observer = makeObserver();
+    const obj: any = { arr: [1, 2] };
+
+    observer.observe(obj);
+    expect(obj.arr.__rev__).toBe(0);
+    expect(observer.__rev__).toBe(0);
+
+    obj.arr[0] = "nope";
+    expect(obj.arr.__rev__).toBe(0);
+    expect(observer.__rev__).toBe(0);
+
+    observer.set(obj.arr, 0, "yep");
+    expect(obj.arr.__rev__).toBe(1);
+    expect(observer.__rev__).toBe(1);
+  });
+
   test("various object property changes", () => {
     const observer = makeObserver();
     const obj: any = { a: 1 };

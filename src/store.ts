@@ -114,18 +114,14 @@ export function makeObserver(): Observer {
   };
 
   function set(target: any, key: number | string, value: any) {
-    if (Array.isArray(target)) {
-      // todo
-    } else {
-      addProp(target, key as string, value);
-    }
+    addProp(target, key, value);
     target.__rev__++;
     observer.__rev__++;
   }
 
   function addProp<T extends { __rev__?: number }>(
     obj: T,
-    key: string,
+    key: string | number,
     value: any
   ) {
     Object.defineProperty(obj, key, {

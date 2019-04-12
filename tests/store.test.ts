@@ -206,6 +206,39 @@ describe("observer", () => {
     expect(obj.__rev__).toBe(1);
     expect(obj.a.__rev__).toBe(1);
   });
+
+  test("properly handle already observed state", () => {
+    const observer = makeObserver();
+    const obj1: any = { a: 1 };
+    const obj2: any = { b: 1 };
+    observer.observe(obj1);
+    observer.observe(obj2);
+    expect(obj1.__rev__).toBe(0);
+    expect(obj2.__rev__).toBe(0);
+
+    obj1.a = 2;
+    obj2.b = 3;
+    expect(obj1.__rev__).toBe(1);
+    expect(obj2.__rev__).toBe(1);
+
+    obj2.b = obj1;
+    expect(obj1.__rev__).toBe(1);
+    expect(obj2.__rev__).toBe(2);
+  });
+
+  test("accept cycles in observed state", () => {
+    const observer = makeObserver();
+    const obj1: any = {};
+    const obj2: any = { b: obj1, key: 1 };
+    obj1.a = obj2;
+    observer.observe(obj1);
+    expect(obj1.__rev__).toBe(0);
+    expect(obj2.__rev__).toBe(0);
+
+    obj2.key = 3;
+    expect(obj1.__rev__).toBe(0);
+    expect(obj2.__rev__).toBe(1);
+  });
 });
 
 describe("advanced state properties", () => {

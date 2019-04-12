@@ -178,6 +178,10 @@ export function makeObserver(): Observer {
     if (typeof value !== "object") {
       return;
     }
+    if ("__rev__" in value) {
+      // already observed
+      return;
+    }
     if (Array.isArray(value)) {
       observeArr(value);
     } else {

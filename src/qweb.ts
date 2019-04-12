@@ -759,7 +759,7 @@ const setDirective: Directive = {
 const ifDirective: Directive = {
   name: "if",
   priority: 20,
-  atNodeEncounter({ node, qweb, ctx }): boolean {
+  atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-if")!);
     ctx.addIf(`${ctx.formatExpression(cond)}`);
     return false;
@@ -772,7 +772,7 @@ const ifDirective: Directive = {
 const elifDirective: Directive = {
   name: "elif",
   priority: 30,
-  atNodeEncounter({ node, qweb, ctx }): boolean {
+  atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-elif")!);
     ctx.addLine(`else if (${ctx.formatExpression(cond)}) {`);
     ctx.indent();
@@ -868,7 +868,7 @@ const forEachDirective: Directive = {
 const onDirective: Directive = {
   name: "on",
   priority: 90,
-  atNodeCreation({ ctx, fullName, value, nodeID, qweb }) {
+  atNodeCreation({ ctx, fullName, value, nodeID }) {
     ctx.rootContext.shouldDefineOwner = true;
     const eventName = fullName.slice(5);
     let extraArgs;
@@ -913,7 +913,7 @@ const refDirective: Directive = {
 const widgetDirective: Directive = {
   name: "widget",
   priority: 100,
-  atNodeEncounter({ ctx, value, node, qweb }): boolean {
+  atNodeEncounter({ ctx, value, node }): boolean {
     ctx.addLine("//WIDGET");
     ctx.rootContext.shouldDefineOwner = true;
     let props = node.getAttribute("t-props");

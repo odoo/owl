@@ -158,17 +158,40 @@ export function makeObserver(): Observer {
   const ArrayProto = Array.prototype;
   const ModifiedArrayProto = Object.create(ArrayProto);
 
-  ModifiedArrayProto.push = function(...args) {
-    observer.__rev__++;
-    this.__rev__++;
-    return ArrayProto.push.call(this, ...args);
-  };
+  const methodsToPatch = [
+    "push",
+    "pop",
+    "shift",
+    "unshift",
+    "splice",
+    "sort",
+    "reverse"
+  ];
 
-  ModifiedArrayProto.pop = function(...args) {
-    observer.__rev__++;
-    this.__rev__++;
-    return ArrayProto.pop.call(this, ...args);
-  };
+  for (let method of methodsToPatch) {
+    const initialMethod = ArrayProto[method];
+    ModifiedArrayProto[method] = function(...args) {
+      observer.__rev__++;
+      this.__rev__++;
+      let inserted;
+      switch (method) {
+        case "push":
+        case "unshift":
+          inserted = args;
+          break;
+        case "splice":
+          inserted = args.slice(2);
+          break;
+      }
+      if (inserted) {
+        for (let elem of inserted) {
+          observe(elem);
+        }
+      }
+      return initialMethod.call(this, ...args);
+    };
+  }
+
   function observeArr(arr: Array<any>) {
     (<any>arr).__rev__ = 0;
     Object.defineProperty(arr, "__rev__", { enumerable: false });

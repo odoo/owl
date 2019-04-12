@@ -210,6 +210,45 @@ describe("observer", () => {
     expect(arr.__rev__).toBe(1);
     expect(observer.__rev__).toBe(1);
     expect(arr.length).toBe(1);
+
+    arr.splice(1, 0, "hey");
+    expect(arr.__rev__).toBe(2);
+    expect(observer.__rev__).toBe(2);
+    expect(arr.length).toBe(2);
+
+    arr.unshift("lindemans");
+    expect(arr.__rev__).toBe(3);
+
+    arr.reverse();
+    expect(arr.__rev__).toBe(4);
+
+    arr.pop();
+    expect(arr.__rev__).toBe(5);
+
+    arr.shift();
+    expect(arr.__rev__).toBe(6);
+
+    arr.sort();
+    expect(arr.__rev__).toBe(7);
+
+    expect(arr).toEqual([1]);
+  });
+
+  test("object pushed into arrays are observed", () => {
+    const observer = makeObserver();
+    const arr: any = [];
+    observer.observe(arr);
+    expect(observer.__rev__).toBe(0);
+
+    arr.push({ kriek: 5 });
+    expect(observer.__rev__).toBe(1);
+    expect(arr.__rev__).toBe(1);
+    expect(arr[0].__rev__).toBe(0);
+
+    arr[0].kriek = 6;
+    expect(observer.__rev__).toBe(2);
+    expect(arr.__rev__).toBe(1);
+    expect(arr[0].__rev__).toBe(1);
   });
 
   test("properly observe arrays in object", () => {

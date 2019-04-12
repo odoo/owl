@@ -41,6 +41,19 @@ describe("basic use", () => {
     expect(store.state.n).toBe(15);
   });
 
+  test("modifying state outside of mutations trigger error", () => {
+    const state = { n: 1 };
+    const actions = {
+      inc({ state }) {
+        state.n++;
+      }
+    };
+    const store = new Store({ state, mutations: {}, actions });
+
+    expect(() => store.dispatch("inc")).toThrow();
+    expect(() => (store.state.n = 15)).toThrow();
+  });
+
   test("can dispatch an action in an action", () => {
     const state = { n: 1 };
     const mutations = {

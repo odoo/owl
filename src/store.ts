@@ -20,7 +20,6 @@ export class Store extends EventBus {
   actions: any;
   mutations: any;
   _isMutating: boolean = false;
-  _isDirty: boolean = false;
   history: any[] = [];
   debug: boolean;
   env: any;
@@ -34,6 +33,7 @@ export class Store extends EventBus {
     this.mutations = config.mutations;
     this.env = config.env;
     this.observer = makeObserver();
+    this.observer.allowMutations = false;
     this.observer.observe(this.state);
 
     if (this.debug) {
@@ -66,11 +66,13 @@ export class Store extends EventBus {
     if (!this.mutations[type]) {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
-    this._isMutating = true;
     const currentRev = this.observer.__rev__;
-    // observer.enableMutating()
 
+    this._isMutating = true;
+    this.observer.allowMutations = true;
     this.mutations[type].call(null, this.state, payload);
+    this.observer.allowMutations = false;
+
     if (this.debug) {
       this.history.push({
         state: this.state,
@@ -94,6 +96,7 @@ export class Store extends EventBus {
 //------------------------------------------------------------------------------
 interface Observer {
   __rev__: number;
+  allowMutations: boolean;
   observe: (val: any) => void;
   set: (target: any, key: number | string, value: any) => void;
 }
@@ -101,6 +104,7 @@ interface Observer {
 export function makeObserver(): Observer {
   const observer: Observer = {
     __rev__: 0,
+    allowMutations: true,
     observe: observe,
     set: set
   };
@@ -124,9 +128,9 @@ export function makeObserver(): Observer {
         return value;
       },
       set(newVal) {
-        // if (!isMutating) [
-        //   throw new Error();
-        // ]
+        if (!observer.allowMutations) {
+          throw new Error("State cannot be changed outside a mutation!");
+        }
         if (newVal !== value) {
           value = newVal;
           // observe(newVal);

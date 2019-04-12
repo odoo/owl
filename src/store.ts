@@ -4,11 +4,12 @@ import { Component } from "./component";
 //------------------------------------------------------------------------------
 // Store Definition
 //------------------------------------------------------------------------------
+
 interface StoreConfig {
   env?: any;
   state?: any;
   actions?: any;
-  mutations?: any;
+  mutations?: { [name: string]: any };
 }
 
 interface StoreOption {
@@ -70,7 +71,11 @@ export class Store extends EventBus {
 
     this._isMutating = true;
     this.observer.allowMutations = true;
-    this.mutations[type].call(null, this.state, payload);
+    this.mutations[type].call(
+      null,
+      { state: this.state, set: this.observer.set },
+      payload
+    );
     this.observer.allowMutations = false;
 
     if (this.debug) {
@@ -83,7 +88,6 @@ export class Store extends EventBus {
     await Promise.resolve();
     if (this._isMutating) {
       this._isMutating = false;
-      // this.observer.disableMutations();
       if (currentRev !== this.observer.__rev__) {
         this.trigger("update", this.state);
       }
@@ -111,6 +115,7 @@ export function makeObserver(): Observer {
 
   function set(target: any, key: number | string, value: any) {
     if (Array.isArray(target)) {
+      // todo
     } else {
       addProp(target, key as string, value);
     }
@@ -124,6 +129,7 @@ export function makeObserver(): Observer {
     value: any
   ) {
     Object.defineProperty(obj, key, {
+      enumerable: true,
       get() {
         return value;
       },

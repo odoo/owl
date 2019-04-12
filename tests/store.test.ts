@@ -11,7 +11,7 @@ describe("basic use", () => {
   test("commit a mutation", () => {
     const state = { n: 1 };
     const mutations = {
-      inc(state, delta) {
+      inc({ state }, delta) {
         state.n += delta;
       }
     };
@@ -25,7 +25,7 @@ describe("basic use", () => {
   test("dispatch an action", () => {
     const state = { n: 1 };
     const mutations = {
-      inc(state, delta) {
+      inc({ state }, delta) {
         state.n += delta;
       }
     };
@@ -57,7 +57,7 @@ describe("basic use", () => {
   test("can dispatch an action in an action", () => {
     const state = { n: 1 };
     const mutations = {
-      inc(state, delta) {
+      inc({ state }, delta) {
         state.n += delta;
       }
     };
@@ -79,10 +79,10 @@ describe("basic use", () => {
   test("dispatch allow synchronizing between actions", async () => {
     const state = { n: 1 };
     const mutations = {
-      inc(state, delta) {
+      inc({ state }, delta) {
         state.n += delta;
       },
-      setN(state, n) {
+      setN({ state }, n) {
         state.n = n;
       }
     };
@@ -116,6 +116,24 @@ describe("basic use", () => {
     const store = new Store({ state: {}, actions, env: someEnv });
 
     store.dispatch("someaction");
+  });
+
+  test("set function is given to mutations", async () => {
+    let updateCounter = 0;
+    const state = { bertinchamps: "brune" };
+    const mutations = {
+      addInfo({ state, set }) {
+        set(state, "chouffe", "blonde");
+      }
+    };
+    const store = new Store({ state, mutations, actions: {} });
+    store.on("update", null, () => updateCounter++);
+
+    expect(updateCounter).toBe(0);
+    store.commit("addInfo");
+    await nextMicroTick();
+    expect(updateCounter).toBe(1);
+    expect(store.state).toEqual({ bertinchamps: "brune", chouffe: "blonde" });
   });
 });
 
@@ -269,7 +287,7 @@ describe("advanced state properties", () => {
     expect.assertions(3);
     const state = { a: [1, 2, 3] };
     const mutations = {
-      m(state) {
+      m({ state }) {
         expect(state.a.length).toBe(3);
         const l = state.a.push(53);
         expect(l).toBe(4);
@@ -282,7 +300,7 @@ describe("advanced state properties", () => {
 
   test("can use object assign in store", async () => {
     const mutations = {
-      dosomething(state) {
+      dosomething({ state }) {
         Object.assign(state.westmalle, { a: 3, b: 4 });
       }
     };
@@ -296,7 +314,7 @@ describe("advanced state properties", () => {
 
   test("aku reactive store state 1", async () => {
     const mutations = {
-      inc(state) {
+      inc({ state }) {
         state.counter++;
       }
     };
@@ -313,7 +331,7 @@ describe("updates triggered by the store", () => {
     let updateCounter = 0;
     const state = { n: 1 };
     const mutations = {
-      inc(state, delta) {
+      inc({ state }, delta) {
         state.n += delta;
       }
     };
@@ -332,11 +350,11 @@ describe("updates triggered by the store", () => {
     let updateCounter = 0;
     const state = { n: 1 };
     const mutations = {
-      inc(state, delta) {
+      inc({ state }, delta) {
         state.n += delta;
       },
       noop() {},
-      noop2(state) {
+      noop2({ state }) {
         const val = state.n;
         state.n = val;
       }
@@ -387,7 +405,7 @@ describe("connecting a component to store", () => {
   test("connecting a component works", async () => {
     const state = { todos: [] };
     const mutations = {
-      addTodo(state, msg) {
+      addTodo({ state }, msg) {
         state.todos.push({ msg });
       }
     };
@@ -449,7 +467,7 @@ describe("connecting a component to store", () => {
     const state = { todos: [{ id: 1, text: "jupiler" }] };
     let nextId = 2;
     const mutations = {
-      addTodo(state, text) {
+      addTodo({ state }, text) {
         state.todos.push({ text, id: nextId++ });
       }
     };

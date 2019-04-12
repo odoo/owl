@@ -35,16 +35,16 @@ const actions = {
 //------------------------------------------------------------------------------
 
 const mutations = {
-  addTodo(state, title) {
+  addTodo({ state }, title) {
     const id = state.nextId++;
     const todo = { id, title, completed: false };
     state.todos.push(todo);
   },
-  removeTodo(state, id) {
+  removeTodo({ state }, id) {
     const index = state.todos.findIndex(t => t.id === id);
     state.todos.splice(index, 1);
   },
-  editTodo(state, { id, title, completed }) {
+  editTodo({ state }, { id, title, completed }) {
     const todo = state.todos.find(t => t.id === id);
     if (title !== undefined) {
       todo.title = title;

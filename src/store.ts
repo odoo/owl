@@ -129,7 +129,9 @@ export function makeObserver(): Observer {
       },
       set(newVal) {
         if (!observer.allowMutations) {
-          throw new Error("State cannot be changed outside a mutation!");
+          throw new Error(
+            `State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`
+          );
         }
         if (newVal !== value) {
           value = newVal;
@@ -169,9 +171,9 @@ export function makeObserver(): Observer {
     (<any>arr).__rev__ = 0;
     Object.defineProperty(arr, "__rev__", { enumerable: false });
     (<any>arr).__proto__ = ModifiedArrayProto;
-    // for (let i = 0; i < arr.length; i++) {
-    //   observe(arr[i]);
-    // }
+    for (let i = 0; i < arr.length; i++) {
+      observe(arr[i]);
+    }
   }
 
   function observe(value: any) {
@@ -212,7 +214,7 @@ export function connect(mapStateToProps) {
         const env = parent instanceof Component ? parent.env : parent;
         const ownProps = Object.assign({}, props || {});
         const storeProps = mapStateToProps(env.store.state, ownProps);
-        const mergedProps = Object.assign(props || {}, storeProps);
+        const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
         setStoreProps(this.__widget__, storeProps);
         this.__widget__.ownProps = ownProps;

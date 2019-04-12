@@ -191,6 +191,18 @@ describe("observer", () => {
     expect(state.arr.length).toBe(1);
   });
 
+  test("properly observe objects in array", () => {
+    const observer = makeObserver();
+    const state: any = { arr: [{ something: 1 }] };
+    observer.observe(state);
+    expect(state.arr.__rev__).toBe(0);
+    expect(state.arr[0].__rev__).toBe(0);
+
+    state.arr[0].something = 2;
+    expect(state.arr.__rev__).toBe(0);
+    expect(state.arr[0].__rev__).toBe(1);
+  });
+
   test("reobserve new object values", () => {
     const observer = makeObserver();
     const obj: any = { a: 1 };

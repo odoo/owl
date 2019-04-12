@@ -162,6 +162,25 @@ describe("observer", () => {
     expect(ob2.__rev__).toBe(2);
   });
 
+  test("properly handle null or undefined", () => {
+    const observer = makeObserver();
+    const obj: any = { a: null, b: undefined };
+
+    observer.observe(obj);
+    expect(obj.__rev__).toBe(0);
+    expect(observer.__rev__).toBe(0);
+
+    obj.a = 3;
+    expect(obj.__rev__).toBe(1);
+
+    obj.b = 5;
+    expect(obj.__rev__).toBe(2);
+
+    obj.a = null;
+    obj.b = undefined;
+    expect(obj.__rev__).toBe(4);
+  });
+
   test("can change values in array", () => {
     const observer = makeObserver();
     const obj: any = { arr: [1, 2] };

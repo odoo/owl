@@ -202,6 +202,10 @@ export function makeObserver(): Observer {
   }
 
   function observe(value: any) {
+    if (value === null) {
+      // fun fact: typeof null === 'object'
+      return;
+    }
     if (typeof value !== "object") {
       return;
     }

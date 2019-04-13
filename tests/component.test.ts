@@ -39,7 +39,7 @@ afterEach(() => {
 class Widget extends Component<any, any, any> {}
 
 function children(w: Widget): Widget[] {
-  const childrenMap = w.__widget__.children;
+  const childrenMap = w.__owl__.children;
   return Object.keys(childrenMap).map(id => childrenMap[id]);
 }
 
@@ -585,8 +585,8 @@ describe("destroy method", () => {
     expect(document.contains(widget.el)).toBe(true);
     widget.destroy();
     expect(document.contains(widget.el)).toBe(false);
-    expect(widget.__widget__.isMounted).toBe(false);
-    expect(widget.__widget__.isDestroyed).toBe(true);
+    expect(widget.__owl__.isMounted).toBe(false);
+    expect(widget.__owl__.isDestroyed).toBe(true);
   });
 
   test("destroying a parent also destroys its children", async () => {
@@ -595,9 +595,9 @@ describe("destroy method", () => {
 
     const child = children(parent)[0];
 
-    expect(child.__widget__.isDestroyed).toBe(false);
+    expect(child.__owl__.isDestroyed).toBe(false);
     parent.destroy();
-    expect(child.__widget__.isDestroyed).toBe(true);
+    expect(child.__owl__.isDestroyed).toBe(true);
   });
 
   test("destroy remove the parent/children link", async () => {
@@ -605,10 +605,10 @@ describe("destroy method", () => {
     await parent.mount(fixture);
 
     const child = children(parent)[0];
-    expect(child.__widget__.parent).toBe(parent);
+    expect(child.__owl__.parent).toBe(parent);
     expect(children(parent).length).toBe(1);
     child.destroy();
-    expect(child.__widget__.parent).toBe(null);
+    expect(child.__owl__.parent).toBe(null);
     expect(children(parent).length).toBe(0);
   });
 
@@ -623,20 +623,20 @@ describe("destroy method", () => {
     expect(fixture.innerHTML).toBe("");
     const widget = new DelayedWidget(env);
     widget.mount(fixture);
-    expect(widget.__widget__.isStarted).toBe(false);
-    expect(widget.__widget__.isMounted).toBe(false);
-    expect(widget.__widget__.isDestroyed).toBe(false);
+    expect(widget.__owl__.isStarted).toBe(false);
+    expect(widget.__owl__.isMounted).toBe(false);
+    expect(widget.__owl__.isDestroyed).toBe(false);
     widget.destroy();
-    expect(widget.__widget__.isMounted).toBe(false);
-    expect(widget.__widget__.isStarted).toBe(false);
-    expect(widget.__widget__.isDestroyed).toBe(true);
+    expect(widget.__owl__.isMounted).toBe(false);
+    expect(widget.__owl__.isStarted).toBe(false);
+    expect(widget.__owl__.isDestroyed).toBe(true);
     def.resolve();
     await nextTick();
 
-    expect(widget.__widget__.isStarted).toBe(false);
-    expect(widget.__widget__.isMounted).toBe(false);
-    expect(widget.__widget__.isDestroyed).toBe(true);
-    expect(widget.__widget__.vnode).toBe(null);
+    expect(widget.__owl__.isStarted).toBe(false);
+    expect(widget.__owl__.isMounted).toBe(false);
+    expect(widget.__owl__.isDestroyed).toBe(true);
+    expect(widget.__owl__.vnode).toBe(null);
     expect(fixture.innerHTML).toBe("");
     expect(isRendered).toBe(false);
   });
@@ -647,7 +647,7 @@ describe("composition", () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
-    expect(children(widget)[0].__widget__.parent).toBe(widget);
+    expect(children(widget)[0].__owl__.parent).toBe(widget);
   });
 
   test("t-refs on widget are widgets", async () => {
@@ -682,12 +682,12 @@ describe("composition", () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);
 
-    expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
-      (<any>children(widget)[0].__widget__.vnode).elm
+    expect((<any>widget.__owl__.vnode!.children![1]).elm).toBe(
+      (<any>children(widget)[0].__owl__.vnode).elm
     );
     await children(widget)[0].render();
-    expect((<any>widget.__widget__.vnode!.children![1]).elm).toBe(
-      (<any>children(widget)[0].__widget__.vnode).elm
+    expect((<any>widget.__owl__.vnode!.children![1]).elm).toBe(
+      (<any>children(widget)[0].__owl__.vnode).elm
     );
   });
 
@@ -754,12 +754,12 @@ describe("composition", () => {
       "<div><div>1<button>Inc</button></div></div>"
     );
     const counter = children(widget)[0];
-    expect(counter.__widget__.isMounted).toBe(true);
+    expect(counter.__owl__.isMounted).toBe(true);
     await widget.updateState({ ok: false });
     expect(fixture.innerHTML).toBe("<div></div>");
-    expect(counter.__widget__.isMounted).toBe(false);
+    expect(counter.__owl__.isMounted).toBe(false);
     await widget.updateState({ ok: true });
-    expect(counter.__widget__.isMounted).toBe(true);
+    expect(counter.__owl__.isMounted).toBe(true);
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
@@ -878,7 +878,7 @@ describe("composition", () => {
     const child = children(parent)[0];
     await parent.updateState({ flag: true });
     expect(children(parent)[0]).toBe(child);
-    expect(child.__widget__.isDestroyed).toBe(false);
+    expect(child.__owl__.isDestroyed).toBe(false);
     expect(normalize(fixture.innerHTML)).toBe(
       normalize(`
       <div>
@@ -1125,15 +1125,15 @@ describe("async rendering", () => {
     }
     const w = new W(env);
     w.mount(fixture);
-    expect(w.__widget__.isDestroyed).toBe(false);
-    expect(w.__widget__.isMounted).toBe(false);
-    expect(w.__widget__.isStarted).toBe(false);
+    expect(w.__owl__.isDestroyed).toBe(false);
+    expect(w.__owl__.isMounted).toBe(false);
+    expect(w.__owl__.isStarted).toBe(false);
     w.destroy();
     def.resolve();
     await nextTick();
-    expect(w.__widget__.isDestroyed).toBe(true);
-    expect(w.__widget__.isMounted).toBe(false);
-    expect(w.__widget__.isStarted).toBe(false);
+    expect(w.__owl__.isDestroyed).toBe(true);
+    expect(w.__owl__.isMounted).toBe(false);
+    expect(w.__owl__.isStarted).toBe(false);
   });
 
   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {

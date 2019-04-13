@@ -227,12 +227,12 @@ export function makeObserver(): Observer {
 // Connect function
 //------------------------------------------------------------------------------
 
-function setStoreProps(__widget__: any, storeProps: any) {
-  __widget__.currentStoreProps = storeProps;
-  __widget__.currentStoreRevs = {};
-  __widget__.currentStoreRev = storeProps.__rev__;
+function setStoreProps(__owl__: any, storeProps: any) {
+  __owl__.currentStoreProps = storeProps;
+  __owl__.currentStoreRevs = {};
+  __owl__.currentStoreRev = storeProps.__rev__;
   for (let key in storeProps) {
-    __widget__.currentStoreRevs[key] = storeProps[key].__rev__;
+    __owl__.currentStoreRevs[key] = storeProps[key].__rev__;
   }
 }
 
@@ -245,25 +245,25 @@ export function connect(mapStateToProps) {
         const storeProps = mapStateToProps(env.store.state, ownProps);
         const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
-        setStoreProps(this.__widget__, storeProps);
-        this.__widget__.ownProps = ownProps;
+        setStoreProps(this.__owl__, storeProps);
+        this.__owl__.ownProps = ownProps;
       }
       mounted() {
         this.env.store.on("update", this, () => {
-          const ownProps = this.__widget__.ownProps;
+          const ownProps = this.__owl__.ownProps;
           const storeProps = mapStateToProps(this.env.store.state, ownProps);
           let didChange = false;
-          if (this.__widget__.currentStoreRev !== storeProps.__rev__) {
-            setStoreProps(this.__widget__, storeProps);
+          if (this.__owl__.currentStoreRev !== storeProps.__rev__) {
+            setStoreProps(this.__owl__, storeProps);
             didChange = true;
           } else {
-            const revs = this.__widget__.currentStoreRevs;
+            const revs = this.__owl__.currentStoreRevs;
             for (let key in storeProps) {
               const val = storeProps[key];
               if (val.__rev__ !== revs[key]) {
                 didChange = true;
                 revs[key] = val.__rev__;
-                this.__widget__.currentStoreProps[key] = val;
+                this.__owl__.currentStoreProps[key] = val;
               }
             }
           }
@@ -278,17 +278,17 @@ export function connect(mapStateToProps) {
         super.willUnmount();
       }
       updateProps(nextProps, forceUpdate) {
-        if (this.__widget__.ownProps !== nextProps) {
-          this.__widget__.currentStoreProps = mapStateToProps(
+        if (this.__owl__.ownProps !== nextProps) {
+          this.__owl__.currentStoreProps = mapStateToProps(
             this.env.store.state,
             nextProps
           );
         }
-        this.__widget__.ownProps = nextProps;
+        this.__owl__.ownProps = nextProps;
         const mergedProps = Object.assign(
           {},
           nextProps,
-          this.__widget__.currentStoreProps
+          this.__owl__.currentStoreProps
         );
         return super.updateProps(mergedProps, forceUpdate);
       }

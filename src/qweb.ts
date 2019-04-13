@@ -960,21 +960,21 @@ const widgetDirective: Directive = {
       ? `String(-${widgetID} - i)`
       : String(widgetID);
     ctx.addLine(
-      `let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`
+      `let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`
     );
     ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
     ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
 
     // check if we can reuse current rendering promise
-    ctx.addIf(`w${widgetID} && w${widgetID}.__widget__.renderPromise`);
-    ctx.addIf(`w${widgetID}.__widget__.isStarted`);
+    ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
+    ctx.addIf(`w${widgetID}.__owl__.isStarted`);
     ctx.addLine(
       `def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`
     );
     ctx.addElse();
     ctx.addLine(`isNew${widgetID} = true`);
-    ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);
-    ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
+    ctx.addIf(`props${widgetID} === w${widgetID}.__owl__.renderProps`);
+    ctx.addLine(`def${defID} = w${widgetID}.__owl__.renderPromise;`);
     ctx.addElse();
     ctx.addLine(`w${widgetID}.destroy();`);
     ctx.addLine(`w${widgetID} = false`);
@@ -992,7 +992,7 @@ const widgetDirective: Directive = {
       `w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`
     );
     ctx.addLine(
-      `context.__widget__.cmap[${templateID}] = w${widgetID}.__widget__.id;`
+      `context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`
     );
     for (let [event, method] of events) {
       ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
@@ -1014,11 +1014,11 @@ const widgetDirective: Directive = {
         keepAlive ? "unmount" : "destroy"
       }()},destroy(){w${widgetID}.${
         keepAlive ? "unmount" : "destroy"
-      }()}}; w${widgetID}.__widget__.pvnode = pvnode;});`
+      }()}}; w${widgetID}.__owl__.pvnode = pvnode;});`
     );
     ctx.addElse();
     ctx.addLine(
-      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
+      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
         keepAlive ? "unmount" : "destroy"
       }()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${
         ctx.parentNode

@@ -51,12 +51,12 @@ export class Component<
   Props extends {},
   State extends {}
 > extends EventBus {
-  readonly __widget__: Meta<Env, Props>;
+  readonly __owl__: Meta<Env, Props>;
   template: string = "default";
   inlineTemplate: string | null = null;
 
   get el(): HTMLElement | null {
-    return this.__widget__.vnode ? (<any>this).__widget__.vnode.elm : null;
+    return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
   }
 
   env: T;
@@ -102,11 +102,11 @@ export class Component<
     if (parent instanceof Component) {
       p = parent;
       this.env = parent.env;
-      parent.__widget__.children[id] = this;
+      parent.__owl__.children[id] = this;
     } else {
       this.env = parent;
     }
-    this.__widget__ = {
+    this.__owl__ = {
       id: id,
       vnode: null,
       isStarted: false,
@@ -221,7 +221,7 @@ export class Component<
 
   async mount(target: HTMLElement): Promise<void> {
     const vnode = await this._prepare();
-    if (this.__widget__.isDestroyed) {
+    if (this.__owl__.isDestroyed) {
       // widget was destroyed before we get here...
       return;
     }
@@ -230,8 +230,8 @@ export class Component<
 
     if (document.body.contains(target)) {
       this._visitSubTree(w => {
-        if (!w.__widget__.isMounted && this.el!.contains(w.el)) {
-          w.__widget__.isMounted = true;
+        if (!w.__owl__.isMounted && this.el!.contains(w.el)) {
+          w.__owl__.isMounted = true;
           w.mounted();
           return true;
         }
@@ -243,9 +243,9 @@ export class Component<
   unmount() {
     if (this.el) {
       this._visitSubTree(w => {
-        if (w.__widget__.isMounted) {
+        if (w.__owl__.isMounted) {
           w.willUnmount();
-          w.__widget__.isMounted = false;
+          w.__owl__.isMounted = false;
           return true;
         }
         return false;
@@ -255,13 +255,13 @@ export class Component<
   }
 
   async render(force: boolean = false): Promise<void> {
-    if (this.__widget__.isDestroyed) {
+    if (this.__owl__.isDestroyed) {
       return;
     }
     const renderVDom = this._render(force);
-    const renderId = this.__widget__.renderId;
+    const renderId = this.__owl__.renderId;
     const vnode = await renderVDom;
-    if (renderId === this.__widget__.renderId) {
+    if (renderId === this.__owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
       this._patch(vnode);
@@ -269,25 +269,25 @@ export class Component<
   }
 
   destroy() {
-    if (!this.__widget__.isDestroyed) {
-      for (let id in this.__widget__.children) {
-        this.__widget__.children[id].destroy();
+    if (!this.__owl__.isDestroyed) {
+      for (let id in this.__owl__.children) {
+        this.__owl__.children[id].destroy();
       }
-      if (this.__widget__.isMounted) {
+      if (this.__owl__.isMounted) {
         this.willUnmount();
       }
       if (this.el) {
         this.el.remove();
-        this.__widget__.isMounted = false;
-        delete this.__widget__.vnode;
+        this.__owl__.isMounted = false;
+        delete this.__owl__.vnode;
       }
-      if (this.__widget__.parent) {
-        let id = this.__widget__.id;
-        delete this.__widget__.parent.__widget__.children[id];
-        this.__widget__.parent = null;
+      if (this.__owl__.parent) {
+        let id = this.__owl__.id;
+        delete this.__owl__.parent.__owl__.children[id];
+        this.__owl__.parent = null;
       }
       this.clear();
-      this.__widget__.isDestroyed = true;
+      this.__owl__.isDestroyed = true;
     }
   }
 
@@ -305,11 +305,11 @@ export class Component<
    * mode or not.
    */
   async updateEnv(nextEnv: Partial<T>): Promise<void> {
-    if (this.__widget__.parent && this.__widget__.parent.env === this.env) {
+    if (this.__owl__.parent && this.__owl__.parent.env === this.env) {
       this.env = Object.create(this.env);
     }
     Object.assign(this.env, nextEnv);
-    if (this.__widget__.isMounted) {
+    if (this.__owl__.isMounted) {
       await this.render(true);
     }
     this.patched();
@@ -319,8 +319,8 @@ export class Component<
     nextProps: Props,
     forceUpdate: boolean = false
   ): Promise<void> {
-    if (nextProps === this.__widget__.renderProps && !forceUpdate) {
-      await this.__widget__.renderPromise;
+    if (nextProps === this.__owl__.renderProps && !forceUpdate) {
+      await this.__owl__.renderPromise;
       return;
     }
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
@@ -341,7 +341,7 @@ export class Component<
       return;
     }
     Object.assign(this.state, nextState);
-    if (this.__widget__.isStarted) {
+    if (this.__owl__.isStarted) {
       await this.render();
     }
     this.patched();
@@ -359,21 +359,21 @@ export class Component<
   }
 
   _patch(vnode) {
-    this.__widget__.renderPromise = null;
-    if (this.__widget__.vnode) {
+    this.__owl__.renderPromise = null;
+    if (this.__owl__.vnode) {
       this.willPatch();
-      this.__widget__.vnode = patch(this.__widget__.vnode, vnode);
+      this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
     } else {
-      this.__widget__.vnode = patch(document.createElement(vnode.sel!), vnode);
+      this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }
   }
   async _prepare(): Promise<VNode> {
-    this.__widget__.renderProps = this.props;
-    this.__widget__.renderPromise = this.willStart().then(() => {
-      if (this.__widget__.isDestroyed) {
+    this.__owl__.renderProps = this.props;
+    this.__owl__.renderPromise = this.willStart().then(() => {
+      if (this.__owl__.isDestroyed) {
         return Promise.resolve(h("div"));
       }
-      this.__widget__.isStarted = true;
+      this.__owl__.isStarted = true;
       if (this.inlineTemplate) {
         this.env.qweb.addTemplate(
           this.inlineTemplate,
@@ -383,16 +383,16 @@ export class Component<
       }
       return this._render();
     });
-    return this.__widget__.renderPromise;
+    return this.__owl__.renderPromise;
   }
 
   async _render(force: boolean = false): Promise<VNode> {
-    this.__widget__.renderId++;
+    this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
     let vnode = this.env.qweb.render(template, this, {
       promises,
-      handlers: this.__widget__.boundHandlers,
+      handlers: this.__owl__.boundHandlers,
       forceUpdate: force
     });
 
@@ -401,30 +401,30 @@ export class Component<
     // will update its own vnode representation without the knowledge of the
     // parent widget.  With this, we make sure that the parent widget will be
     // able to patch itself properly after
-    vnode.key = this.__widget__.id;
-    this.__widget__.renderProps = this.props;
-    this.__widget__.renderPromise = Promise.all(promises).then(() => vnode);
-    return this.__widget__.renderPromise;
+    vnode.key = this.__owl__.id;
+    this.__owl__.renderProps = this.props;
+    this.__owl__.renderPromise = Promise.all(promises).then(() => vnode);
+    return this.__owl__.renderPromise;
   }
 
   /**
    * Only called by qweb t-widget directive
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
-    this.__widget__.vnode = patch(elm, vnode);
+    this.__owl__.vnode = patch(elm, vnode);
     this.__mount();
-    return this.__widget__.vnode;
+    return this.__owl__.vnode;
   }
 
   __mount() {
-    if (this.__widget__.isMounted) {
+    if (this.__owl__.isMounted) {
       return;
     }
-    if (this.__widget__.parent) {
-      if (this.__widget__.parent!.__widget__.isMounted) {
-        this.__widget__.isMounted = true;
+    if (this.__owl__.parent) {
+      if (this.__owl__.parent!.__owl__.isMounted) {
+        this.__owl__.isMounted = true;
         this.mounted();
-        const children = this.__widget__.children;
+        const children = this.__owl__.children;
         for (let id in children) {
           children[id].__mount();
         }
@@ -435,7 +435,7 @@ export class Component<
   _visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
     const shouldVisitChildren = callback(this);
     if (shouldVisitChildren) {
-      const children = this.__widget__.children;
+      const children = this.__owl__.children;
       for (let id in children) {
         children[id]._visitSubTree(callback);
       }

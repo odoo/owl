@@ -3,7 +3,7 @@
 
   <div t-name="web.web_client" class="o_web_client">
     <t t-widget="Navbar" t-props="{inHome:state.inHome,app:state.currentApp}" />
-    <t t-widget="HomeMenu" t-if="state.inHome" t-keep-alive="1" t-props="{menuInfo:props.menuInfo}" />
+    <t t-widget="HomeMenu" t-if="state.inHome" t-keepalive="1" t-props="{menuInfo:props.menuInfo}" />
     <div class="o_content" t-att-class="state.inHome ? 'o_hidden' : ''" t-ref="'content'"/>
     <div class="o_notification_container">
       <t t-foreach="state.notifications" t-as="notif">

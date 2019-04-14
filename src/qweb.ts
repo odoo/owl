@@ -195,7 +195,7 @@ export class QWeb {
       attf: 1,
       props: 1,
       key: 1,
-      keep: 1 // todo: rename keep-alive to keepalive
+      keepalive: 1
     };
     [
       forEachDirective,
@@ -940,7 +940,7 @@ const widgetDirective: Directive = {
     ctx.addLine("//WIDGET");
     ctx.rootContext.shouldDefineOwner = true;
     let props = node.getAttribute("t-props");
-    let keepAlive = node.getAttribute("t-keep-alive") ? true : false;
+    let keepAlive = node.getAttribute("t-keepalive") ? true : false;
 
     // t-on- events...
     const events: [string, string][] = [];

@@ -739,10 +739,10 @@ describe("composition", () => {
     );
   });
 
-  test("sub widgets with t-keep-alive are not destroyed if no longer in dom", async () => {
+  test("sub widgets with t-keepalive are not destroyed if no longer in dom", async () => {
     class ParentWidget extends Widget {
       state = { ok: true };
-      inlineTemplate = `<div><t t-if="state.ok"><t t-widget="counter" t-keep-alive="1"/></t></div>`;
+      inlineTemplate = `<div><t t-if="state.ok"><t t-widget="counter" t-keepalive="1"/></t></div>`;
       widgets = { counter: Counter };
     }
     const widget = new ParentWidget(env);
@@ -765,10 +765,10 @@ describe("composition", () => {
     );
   });
 
-  test("sub widgets dom state with t-keep-alive is preserved", async () => {
+  test("sub widgets dom state with t-keepalive is preserved", async () => {
     class ParentWidget extends Widget {
       state = { ok: true };
-      inlineTemplate = `<div><t t-if="state.ok"><t t-widget="InputWidget" t-keep-alive="1"/></t></div>`;
+      inlineTemplate = `<div><t t-if="state.ok"><t t-widget="InputWidget" t-keepalive="1"/></t></div>`;
       widgets = { InputWidget };
     }
     class InputWidget extends Widget {

@@ -137,18 +137,22 @@ export function makeObserver(): Observer {
         }
         if (newVal !== value) {
           value = newVal;
-          observe(newVal);
+          observe(newVal, obj);
           obj.__owl__.rev!++;
           observer.rev++;
+          let parent = obj;
+          do {
+            parent.__owl__.deepRev++;
+          } while ((parent = parent.__owl__.parent));
         }
       }
     });
-    observe(value);
+    observe(value, obj);
   }
 
-  function observeObj<T extends { __owl__?: any }>(obj: T) {
+  function observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
     const keys = Object.keys(obj);
-    obj.__owl__ = { rev: 1 };
+    obj.__owl__ = { rev: 1, deepRev: 1, parent };
     Object.defineProperty(obj, "__owl__", { enumerable: false });
     for (let key of keys) {
       addProp(obj, key, obj[key]);
@@ -173,6 +177,10 @@ export function makeObserver(): Observer {
     ModifiedArrayProto[method] = function(...args) {
       observer.rev++;
       this.__owl__.rev++;
+      let parent = this;
+      do {
+        parent.__owl__.deepRev++;
+      } while ((parent = parent.__owl__.parent));
       let inserted;
       switch (method) {
         case "push":
@@ -185,23 +193,23 @@ export function makeObserver(): Observer {
       }
       if (inserted) {
         for (let elem of inserted) {
-          observe(elem);
+          observe(elem, this);
         }
       }
       return initialMethod.call(this, ...args);
     };
   }
 
-  function observeArr(arr: Array<any>) {
-    (<any>arr).__owl__ = { rev: 1 };
+  function observeArr(arr: Array<any>, parent?: any) {
+    (<any>arr).__owl__ = { rev: 1, deepRev: 1, parent };
     Object.defineProperty(arr, "__owl__", { enumerable: false });
     (<any>arr).__proto__ = ModifiedArrayProto;
     for (let i = 0; i < arr.length; i++) {
-      observe(arr[i]);
+      observe(arr[i], arr);
     }
   }
 
-  function observe(value: any) {
+  function observe(value: any, parent?: any) {
     if (value === null) {
       // fun fact: typeof null === 'object'
       return;
@@ -214,9 +222,9 @@ export function makeObserver(): Observer {
       return;
     }
     if (Array.isArray(value)) {
-      observeArr(value);
+      observeArr(value, parent);
     } else {
-      observeObj(value);
+      observeObj(value, parent);
     }
   }
 

@@ -296,6 +296,18 @@ describe("observer", () => {
     expect(state.arr[0].__owl__.rev).toBe(2);
   });
 
+  test("properly observe objects in object", () => {
+    const observer = makeObserver();
+    const state: any = { a: { b: 1 } };
+    observer.observe(state);
+    expect(state.__owl__.rev).toBe(1);
+    expect(state.a.__owl__.rev).toBe(1);
+
+    state.a.b = 2;
+    expect(state.__owl__.rev).toBe(1);
+    expect(state.a.__owl__.rev).toBe(2);
+  });
+
   test("reobserve new object values", () => {
     const observer = makeObserver();
     const obj: any = { a: 1 };
@@ -310,6 +322,27 @@ describe("observer", () => {
     expect(observer.rev).toBe(3);
     expect(obj.__owl__.rev).toBe(2);
     expect(obj.a.__owl__.rev).toBe(2);
+  });
+
+  test("deep observe misc changes", () => {
+    const observer = makeObserver();
+    const state: any = { o: { a: 1 }, arr: [1], n: 13 };
+    observer.observe(state);
+    expect(state.__owl__.rev).toBe(1);
+    expect(state.__owl__.deepRev).toBe(1);
+
+    state.o.a = 2;
+    expect(observer.rev).toBe(2);
+    expect(state.__owl__.rev).toBe(1);
+    expect(state.__owl__.deepRev).toBe(2);
+
+    state.arr.push(2);
+    expect(state.__owl__.rev).toBe(1);
+    expect(state.__owl__.deepRev).toBe(3);
+
+    state.n = 155;
+    expect(state.__owl__.rev).toBe(2);
+    expect(state.__owl__.deepRev).toBe(4);
   });
 
   test("properly handle already observed state", () => {

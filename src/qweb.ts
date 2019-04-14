@@ -184,8 +184,19 @@ export class QWeb {
   processedTemplates: { [name: string]: ProcessedTemplate } = {};
   templates: { [name: string]: CompiledTemplate<VNode> } = {};
   directives: Directive[] = [];
+  directiveNames: { [key: string]: 1 };
 
   constructor(data?: string) {
+    this.directiveNames = {
+      as: 1,
+      name: 1,
+      value: 1,
+      att: 1,
+      attf: 1,
+      props: 1,
+      key: 1,
+      keep: 1 // todo: rename keep-alive to keepalive
+    };
     [
       forEachDirective,
       escDirective,
@@ -199,7 +210,6 @@ export class QWeb {
       refDirective,
       widgetDirective
     ].forEach(d => this.addDirective(d));
-
     if (data) {
       this.loadTemplates(data);
     }
@@ -225,6 +235,7 @@ export class QWeb {
 
   addDirective(dir: Directive) {
     this.directives.push(dir);
+    this.directiveNames[dir.name] = 1;
     this.directives.sort((d1, d2) => d1.priority - d2.priority);
   }
 
@@ -422,8 +433,19 @@ export class QWeb {
 
     let withHandlers = false;
 
+    // maybe this is not optimal: we iterate on all attributes here, and again
+    // just after for each directive.
+    for (let i = 0; i < attributes.length; i++) {
+      let attrName = attributes[i].name;
+      if (attrName.startsWith("t-")) {
+        let dName = attrName.slice(2).split("-")[0];
+        if (!(dName in this.directiveNames)) {
+          throw new Error(`Unknown QWeb directive: '${attrName}'`);
+        }
+      }
+    }
+
     for (let directive of this.directives) {
-      // const value = attributes[i].textContent!;
       let fullName;
       let value;
       for (let i = 0; i < attributes.length; i++) {

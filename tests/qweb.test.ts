@@ -124,6 +124,16 @@ describe("error handling", () => {
       "Invalid generated code while compiling template 'templatename': Unexpected token }"
     );
   });
+
+  test("error when unknown directive", () => {
+    qweb.addTemplate(
+      "templatename",
+      `<div t-best-beer="rochefort 10">test</div>`
+    );
+    expect(() => qweb.render("templatename")).toThrow(
+      "Unknown QWeb directive: 't-best-beer'"
+    );
+  });
 });
 
 describe("t-esc", () => {

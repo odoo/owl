@@ -319,10 +319,6 @@ export class Component<
     nextProps: Props,
     forceUpdate: boolean = false
   ): Promise<void> {
-    if (nextProps === this.__owl__.renderProps && !forceUpdate) {
-      await this.__owl__.renderPromise;
-      return;
-    }
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
     return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
   }

@@ -1,4 +1,5 @@
 import { EventBus } from "./event_bus";
+import { shallowEqual } from "./utils";
 import { Component } from "./component";
 
 //------------------------------------------------------------------------------
@@ -235,17 +236,23 @@ export function makeObserver(): Observer {
 // Connect function
 //------------------------------------------------------------------------------
 
-function setStoreProps(__owl__: any, storeProps: any) {
-  __owl__.currentStoreProps = storeProps;
-  __owl__.currentStoreRevs = {};
-  __owl__.currentStoreRev = storeProps.__owl__ && storeProps.__owl__.rev;
-  for (let key in storeProps) {
-    __owl__.currentStoreRevs[key] =
-      storeProps[key].__owl__ && storeProps[key].__owl__.rev;
+function revNumber<T extends Object>(o: T): number {
+  if (!("__owl__" in o)) {
+    return 0;
   }
+  return (<any>o).__owl__.rev;
 }
 
-export function connect(mapStateToProps) {
+function deepRevNumber<T extends Object>(o: T): number {
+  if (!("__owl__" in o)) {
+    return 0;
+  }
+  return (<any>o).__owl__.deepRev;
+}
+
+export function connect(mapStateToProps, options: any = {}) {
+  let hashFunction = options.hashFunction || null;
+
   return function(Comp) {
     return class extends Comp {
       constructor(parent, props?: any) {
@@ -254,32 +261,60 @@ export function connect(mapStateToProps) {
         const storeProps = mapStateToProps(env.store.state, ownProps);
         const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
-        setStoreProps(this.__owl__, storeProps);
         this.__owl__.ownProps = ownProps;
+        this.__owl__.currentStoreProps = storeProps;
+        if (!hashFunction) {
+          if ("__owl__" in storeProps) {
+            hashFunction = s => deepRevNumber(s.storeProps);
+          } else {
+            let areKeyObservable = false;
+            for (let key in storeProps) {
+              areKeyObservable =
+                areKeyObservable || "__owl__" in storeProps[key];
+            }
+            if (areKeyObservable) {
+              hashFunction = function({ storeProps }) {
+                return Object.values(storeProps).reduce(
+                  (sum: number, val: any) => sum + deepRevNumber(val),
+                  0
+                );
+              };
+            }
+          }
+        }
+        if (hashFunction) {
+          this.__owl__.storeHash = hashFunction({
+            state: env.store.state,
+            storeProps: storeProps,
+            revNumber,
+            deepRevNumber
+          });
+        }
       }
       mounted() {
         this.env.store.on("update", this, () => {
           const ownProps = this.__owl__.ownProps;
           const storeProps = mapStateToProps(this.env.store.state, ownProps);
           let didChange = false;
-          if (
-            this.__owl__.currentStoreRev &&
-            this.__owl__.currentStoreRev !== storeProps.__owl__.rev
-          ) {
-            setStoreProps(this.__owl__, storeProps);
-            didChange = true;
-          } else {
-            const revs = this.__owl__.currentStoreRevs;
-            for (let key in storeProps) {
-              const val = storeProps[key];
-              if (val.__owl__ && val.__owl__.rev !== revs[key]) {
-                didChange = true;
-                revs[key] = val.__owl__ && val.__owl__.rev;
-                this.__owl__.currentStoreProps[key] = val;
-              }
+          if (hashFunction) {
+            const storeHash = hashFunction({
+              state: this.env.store.state,
+              storeProps: storeProps,
+              revNumber,
+              deepRevNumber
+            });
+            if (storeHash !== this.__owl__.storeHash) {
+              didChange = true;
+              this.__owl__.storeHash = storeHash;
             }
+          } else {
+            didChange = !shallowEqual(
+              storeProps,
+              this.__owl__.currentStoreProps
+            );
           }
           if (didChange) {
+            this.__owl__.currentStoreProps = storeProps;
             this.updateProps(ownProps, false);
           }
         });

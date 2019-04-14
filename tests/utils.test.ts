@@ -5,6 +5,7 @@ import {
   memoize,
   debounce,
   findInTree,
+  shallowEqual,
   patch,
   unpatch
 } from "../src/utils";
@@ -91,6 +92,17 @@ describe("findInTree", () => {
     expect((<any>match1).key).toBe("hello");
     const match2 = findInTree(tree, t => t.id === 4);
     expect(match2).toBe(null);
+  });
+});
+
+describe("shallowEqual", () => {
+  test("simple comparisons", () => {
+    const obj1 = {};
+    expect(shallowEqual(obj1, obj1)).toBe(true);
+    expect(shallowEqual({}, {})).toBe(true);
+    expect(shallowEqual({ a: 1 }, {})).toBe(false);
+    expect(shallowEqual({ a: 1 }, { a: 1 })).toBe(true);
+    expect(shallowEqual({ a: 1 }, ["a"])).toBe(false);
   });
 });
 

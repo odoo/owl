@@ -67,7 +67,7 @@ export class Store extends EventBus {
     if (!this.mutations[type]) {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
-    const currentRev = this.observer.__rev__;
+    const currentRev = this.observer.rev;
 
     this._isMutating = true;
     this.observer.allowMutations = true;
@@ -88,7 +88,7 @@ export class Store extends EventBus {
     await Promise.resolve();
     if (this._isMutating) {
       this._isMutating = false;
-      if (currentRev !== this.observer.__rev__) {
+      if (currentRev !== this.observer.rev) {
         this.trigger("update", this.state);
       }
     }
@@ -99,7 +99,7 @@ export class Store extends EventBus {
 // Observer
 //------------------------------------------------------------------------------
 interface Observer {
-  __rev__: number;
+  rev: number;
   allowMutations: boolean;
   observe: (val: any) => void;
   set: (target: any, key: number | string, value: any) => void;
@@ -107,7 +107,7 @@ interface Observer {
 
 export function makeObserver(): Observer {
   const observer: Observer = {
-    __rev__: 0,
+    rev: 1,
     allowMutations: true,
     observe: observe,
     set: set
@@ -115,11 +115,11 @@ export function makeObserver(): Observer {
 
   function set(target: any, key: number | string, value: any) {
     addProp(target, key, value);
-    target.__rev__++;
-    observer.__rev__++;
+    target.__owl__.rev++;
+    observer.rev++;
   }
 
-  function addProp<T extends { __rev__?: number }>(
+  function addProp<T extends { __owl__?: any }>(
     obj: T,
     key: string | number,
     value: any
@@ -138,18 +138,18 @@ export function makeObserver(): Observer {
         if (newVal !== value) {
           value = newVal;
           observe(newVal);
-          obj.__rev__!++;
-          observer.__rev__++;
+          obj.__owl__.rev!++;
+          observer.rev++;
         }
       }
     });
     observe(value);
   }
 
-  function observeObj<T extends { __rev__?: number }>(obj: T) {
+  function observeObj<T extends { __owl__?: any }>(obj: T) {
     const keys = Object.keys(obj);
-    obj.__rev__ = 0;
-    Object.defineProperty(obj, "__rev__", { enumerable: false });
+    obj.__owl__ = { rev: 1 };
+    Object.defineProperty(obj, "__owl__", { enumerable: false });
     for (let key of keys) {
       addProp(obj, key, obj[key]);
     }
@@ -171,8 +171,8 @@ export function makeObserver(): Observer {
   for (let method of methodsToPatch) {
     const initialMethod = ArrayProto[method];
     ModifiedArrayProto[method] = function(...args) {
-      observer.__rev__++;
-      this.__rev__++;
+      observer.rev++;
+      this.__owl__.rev++;
       let inserted;
       switch (method) {
         case "push":
@@ -193,8 +193,8 @@ export function makeObserver(): Observer {
   }
 
   function observeArr(arr: Array<any>) {
-    (<any>arr).__rev__ = 0;
-    Object.defineProperty(arr, "__rev__", { enumerable: false });
+    (<any>arr).__owl__ = { rev: 1 };
+    Object.defineProperty(arr, "__owl__", { enumerable: false });
     (<any>arr).__proto__ = ModifiedArrayProto;
     for (let i = 0; i < arr.length; i++) {
       observe(arr[i]);
@@ -209,7 +209,7 @@ export function makeObserver(): Observer {
     if (typeof value !== "object") {
       return;
     }
-    if ("__rev__" in value) {
+    if ("__owl__" in value) {
       // already observed
       return;
     }
@@ -230,9 +230,10 @@ export function makeObserver(): Observer {
 function setStoreProps(__owl__: any, storeProps: any) {
   __owl__.currentStoreProps = storeProps;
   __owl__.currentStoreRevs = {};
-  __owl__.currentStoreRev = storeProps.__rev__;
+  __owl__.currentStoreRev = storeProps.__owl__ && storeProps.__owl__.rev;
   for (let key in storeProps) {
-    __owl__.currentStoreRevs[key] = storeProps[key].__rev__;
+    __owl__.currentStoreRevs[key] =
+      storeProps[key].__owl__ && storeProps[key].__owl__.rev;
   }
 }
 
@@ -253,16 +254,19 @@ export function connect(mapStateToProps) {
           const ownProps = this.__owl__.ownProps;
           const storeProps = mapStateToProps(this.env.store.state, ownProps);
           let didChange = false;
-          if (this.__owl__.currentStoreRev !== storeProps.__rev__) {
+          if (
+            this.__owl__.currentStoreRev &&
+            this.__owl__.currentStoreRev !== storeProps.__owl__.rev
+          ) {
             setStoreProps(this.__owl__, storeProps);
             didChange = true;
           } else {
             const revs = this.__owl__.currentStoreRevs;
             for (let key in storeProps) {
               const val = storeProps[key];
-              if (val.__rev__ !== revs[key]) {
+              if (val.__owl__ && val.__owl__.rev !== revs[key]) {
                 didChange = true;
-                revs[key] = val.__rev__;
+                revs[key] = val.__owl__ && val.__owl__.rev;
                 this.__owl__.currentStoreProps[key] = val;
               }
             }

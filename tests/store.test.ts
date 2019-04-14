@@ -143,23 +143,23 @@ describe("observer", () => {
     const obj: any = {};
 
     observer.observe(obj);
-    expect(obj.__rev__).toBe(0);
-    expect(observer.__rev__).toBe(0);
+    expect(obj.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
 
     const ob2: any = { a: 1 };
     observer.observe(ob2);
-    expect(ob2.__rev__).toBe(0);
+    expect(ob2.__owl__.rev).toBe(1);
     ob2.a = 2;
-    expect(observer.__rev__).toBe(1);
-    expect(ob2.__rev__).toBe(1);
+    expect(observer.rev).toBe(2);
+    expect(ob2.__owl__.rev).toBe(2);
 
     ob2.b = 3;
-    expect(observer.__rev__).toBe(1);
-    expect(ob2.__rev__).toBe(1);
+    expect(observer.rev).toBe(2);
+    expect(ob2.__owl__.rev).toBe(2);
 
     observer.set(ob2, "b", 4);
-    expect(observer.__rev__).toBe(2);
-    expect(ob2.__rev__).toBe(2);
+    expect(observer.rev).toBe(3);
+    expect(ob2.__owl__.rev).toBe(3);
   });
 
   test("properly handle null or undefined", () => {
@@ -167,18 +167,18 @@ describe("observer", () => {
     const obj: any = { a: null, b: undefined };
 
     observer.observe(obj);
-    expect(obj.__rev__).toBe(0);
-    expect(observer.__rev__).toBe(0);
+    expect(obj.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
 
     obj.a = 3;
-    expect(obj.__rev__).toBe(1);
+    expect(obj.__owl__.rev).toBe(2);
 
     obj.b = 5;
-    expect(obj.__rev__).toBe(2);
+    expect(obj.__owl__.rev).toBe(3);
 
     obj.a = null;
     obj.b = undefined;
-    expect(obj.__rev__).toBe(4);
+    expect(obj.__owl__.rev).toBe(5);
   });
 
   test("can change values in array", () => {
@@ -186,69 +186,69 @@ describe("observer", () => {
     const obj: any = { arr: [1, 2] };
 
     observer.observe(obj);
-    expect(obj.arr.__rev__).toBe(0);
-    expect(observer.__rev__).toBe(0);
+    expect(obj.arr.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
 
     obj.arr[0] = "nope";
-    expect(obj.arr.__rev__).toBe(0);
-    expect(observer.__rev__).toBe(0);
+    expect(obj.arr.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
 
     observer.set(obj.arr, 0, "yep");
-    expect(obj.arr.__rev__).toBe(1);
-    expect(observer.__rev__).toBe(1);
+    expect(obj.arr.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
   });
 
   test("various object property changes", () => {
     const observer = makeObserver();
     const obj: any = { a: 1 };
     observer.observe(obj);
-    expect(obj.__rev__).toBe(0);
+    expect(obj.__owl__.rev).toBe(1);
     obj.a = 2;
-    expect(observer.__rev__).toBe(1);
-    expect(obj.__rev__).toBe(1);
+    expect(observer.rev).toBe(2);
+    expect(obj.__owl__.rev).toBe(2);
 
     // same value again
     obj.a = 2;
-    expect(observer.__rev__).toBe(1);
-    expect(obj.__rev__).toBe(1);
+    expect(observer.rev).toBe(2);
+    expect(obj.__owl__.rev).toBe(2);
 
     obj.a = 3;
-    expect(observer.__rev__).toBe(2);
-    expect(obj.__rev__).toBe(2);
+    expect(observer.rev).toBe(3);
+    expect(obj.__owl__.rev).toBe(3);
   });
 
   test("properly observe arrays", () => {
     const observer = makeObserver();
     const arr: any = [];
     observer.observe(arr);
-    expect(arr.__rev__).toBe(0);
-    expect(observer.__rev__).toBe(0);
+    expect(arr.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
     expect(arr.length).toBe(0);
 
     arr.push(1);
-    expect(arr.__rev__).toBe(1);
-    expect(observer.__rev__).toBe(1);
+    expect(arr.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
     expect(arr.length).toBe(1);
 
     arr.splice(1, 0, "hey");
-    expect(arr.__rev__).toBe(2);
-    expect(observer.__rev__).toBe(2);
+    expect(arr.__owl__.rev).toBe(3);
+    expect(observer.rev).toBe(3);
     expect(arr.length).toBe(2);
 
     arr.unshift("lindemans");
-    expect(arr.__rev__).toBe(3);
+    expect(arr.__owl__.rev).toBe(4);
 
     arr.reverse();
-    expect(arr.__rev__).toBe(4);
+    expect(arr.__owl__.rev).toBe(5);
 
     arr.pop();
-    expect(arr.__rev__).toBe(5);
+    expect(arr.__owl__.rev).toBe(6);
 
     arr.shift();
-    expect(arr.__rev__).toBe(6);
+    expect(arr.__owl__.rev).toBe(7);
 
     arr.sort();
-    expect(arr.__rev__).toBe(7);
+    expect(arr.__owl__.rev).toBe(8);
 
     expect(arr).toEqual([1]);
   });
@@ -257,30 +257,30 @@ describe("observer", () => {
     const observer = makeObserver();
     const arr: any = [];
     observer.observe(arr);
-    expect(observer.__rev__).toBe(0);
+    expect(observer.rev).toBe(1);
 
     arr.push({ kriek: 5 });
-    expect(observer.__rev__).toBe(1);
-    expect(arr.__rev__).toBe(1);
-    expect(arr[0].__rev__).toBe(0);
+    expect(observer.rev).toBe(2);
+    expect(arr.__owl__.rev).toBe(2);
+    expect(arr[0].__owl__.rev).toBe(1);
 
     arr[0].kriek = 6;
-    expect(observer.__rev__).toBe(2);
-    expect(arr.__rev__).toBe(1);
-    expect(arr[0].__rev__).toBe(1);
+    expect(observer.rev).toBe(3);
+    expect(arr.__owl__.rev).toBe(2);
+    expect(arr[0].__owl__.rev).toBe(2);
   });
 
   test("properly observe arrays in object", () => {
     const observer = makeObserver();
     const state: any = { arr: [] };
     observer.observe(state);
-    expect(state.arr.__rev__).toBe(0);
-    expect(observer.__rev__).toBe(0);
+    expect(state.arr.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
     expect(state.arr.length).toBe(0);
 
     state.arr.push(1);
-    expect(state.arr.__rev__).toBe(1);
-    expect(observer.__rev__).toBe(1);
+    expect(state.arr.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
     expect(state.arr.length).toBe(1);
   });
 
@@ -288,28 +288,28 @@ describe("observer", () => {
     const observer = makeObserver();
     const state: any = { arr: [{ something: 1 }] };
     observer.observe(state);
-    expect(state.arr.__rev__).toBe(0);
-    expect(state.arr[0].__rev__).toBe(0);
+    expect(state.arr.__owl__.rev).toBe(1);
+    expect(state.arr[0].__owl__.rev).toBe(1);
 
     state.arr[0].something = 2;
-    expect(state.arr.__rev__).toBe(0);
-    expect(state.arr[0].__rev__).toBe(1);
+    expect(state.arr.__owl__.rev).toBe(1);
+    expect(state.arr[0].__owl__.rev).toBe(2);
   });
 
   test("reobserve new object values", () => {
     const observer = makeObserver();
     const obj: any = { a: 1 };
     observer.observe(obj);
-    expect(obj.__rev__).toBe(0);
+    expect(obj.__owl__.rev).toBe(1);
     obj.a = { b: 2 };
-    expect(observer.__rev__).toBe(1);
-    expect(obj.__rev__).toBe(1);
-    expect(obj.a.__rev__).toBe(0);
+    expect(observer.rev).toBe(2);
+    expect(obj.__owl__.rev).toBe(2);
+    expect(obj.a.__owl__.rev).toBe(1);
 
     obj.a.b = 3;
-    expect(observer.__rev__).toBe(2);
-    expect(obj.__rev__).toBe(1);
-    expect(obj.a.__rev__).toBe(1);
+    expect(observer.rev).toBe(3);
+    expect(obj.__owl__.rev).toBe(2);
+    expect(obj.a.__owl__.rev).toBe(2);
   });
 
   test("properly handle already observed state", () => {
@@ -318,17 +318,17 @@ describe("observer", () => {
     const obj2: any = { b: 1 };
     observer.observe(obj1);
     observer.observe(obj2);
-    expect(obj1.__rev__).toBe(0);
-    expect(obj2.__rev__).toBe(0);
+    expect(obj1.__owl__.rev).toBe(1);
+    expect(obj2.__owl__.rev).toBe(1);
 
     obj1.a = 2;
     obj2.b = 3;
-    expect(obj1.__rev__).toBe(1);
-    expect(obj2.__rev__).toBe(1);
+    expect(obj1.__owl__.rev).toBe(2);
+    expect(obj2.__owl__.rev).toBe(2);
 
     obj2.b = obj1;
-    expect(obj1.__rev__).toBe(1);
-    expect(obj2.__rev__).toBe(2);
+    expect(obj1.__owl__.rev).toBe(2);
+    expect(obj2.__owl__.rev).toBe(3);
   });
 
   test("accept cycles in observed state", () => {
@@ -337,12 +337,12 @@ describe("observer", () => {
     const obj2: any = { b: obj1, key: 1 };
     obj1.a = obj2;
     observer.observe(obj1);
-    expect(obj1.__rev__).toBe(0);
-    expect(obj2.__rev__).toBe(0);
+    expect(obj1.__owl__.rev).toBe(1);
+    expect(obj2.__owl__.rev).toBe(1);
 
     obj2.key = 3;
-    expect(obj1.__rev__).toBe(0);
-    expect(obj2.__rev__).toBe(1);
+    expect(obj1.__owl__.rev).toBe(1);
+    expect(obj2.__owl__.rev).toBe(2);
   });
 });
 

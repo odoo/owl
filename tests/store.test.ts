@@ -832,4 +832,76 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>"
     );
   });
+
+  test("connected component deeply reactive with undefined, null and string props", async () => {
+    class Beer extends Component<any, any, any> {
+      inlineTemplate = `<div>
+          <span>taster:<t t-esc="props.taster"/></span>
+          <span t-if="props.selected">selected:<t t-esc="props.selected.name"/></span>
+          <span t-if="props.consumed">consumed:<t t-esc="props.consumed.name"/></span>
+        </div>`;
+    }
+    const ConnectedBeer = connect((state, props) => {
+      return {
+        selected: state.beers[props.id],
+        consumed: state.beers[state.consumedID] || null,
+        taster: state.taster,
+      };
+    })(Beer);
+
+    class App extends Component<any, any, any> {
+      inlineTemplate = `<div>
+              <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+          </div>`;
+      widgets = { ConnectedBeer };
+      state = { beerId: 0 };
+    }
+
+    const mutations = {
+      changeTaster({ state }, newTaster) {
+        state.taster = newTaster;
+      },
+      consume({ state }, beerId) {
+        state.consumedID = beerId;
+      },
+      renameBeer({ state }, { beerId, name }) {
+        state.beers[beerId].name = name;
+      },
+    };
+    const state = {
+      beers: {
+        1: { name: "jupiler" }
+      },
+      consumedID: null,
+      taster: "aaron"
+    };
+    const store = new Store({ state, mutations });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
+
+    await app.updateState({ beerId: 1 });
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>");
+
+    store.commit("renameBeer", { beerId: 1, name: "kwak" });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:kwak</span></div></div>");
+
+    store.commit("consume", 1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:kwak</span><span>consumed:kwak</span></div></div>");
+
+    await app.updateState({ beerId: 0 });
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>consumed:kwak</span></div></div>");
+
+    store.commit("renameBeer", { beerId: 1, name: "jupiler" });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>");
+
+    store.commit("changeTaster", "matthieu");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:matthieu</span><span>consumed:jupiler</span></div></div>");
+  });
 });

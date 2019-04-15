@@ -270,6 +270,8 @@ function deepRevNumber<T extends Object>(o: T): number {
 
 export function connect(mapStateToProps, options: any = {}) {
   let hashFunction = options.hashFunction || null;
+  let deep = "deep" in options ? options.deep : true;
+  let defaultRevFunction = deep ? deepRevNumber : revNumber;
 
   return function(Comp) {
     return class extends Comp {
@@ -283,7 +285,7 @@ export function connect(mapStateToProps, options: any = {}) {
         this.__owl__.currentStoreProps = storeProps;
         if (!hashFunction) {
           if ("__owl__" in storeProps) {
-            hashFunction = s => deepRevNumber(s.storeProps);
+            hashFunction = s => defaultRevFunction(s.storeProps);
           } else {
             let areKeyObservable = false;
             for (let key in storeProps) {
@@ -293,7 +295,7 @@ export function connect(mapStateToProps, options: any = {}) {
             if (areKeyObservable) {
               hashFunction = function({ storeProps }) {
                 return Object.values(storeProps).reduce(
-                  (sum: number, val: any) => sum + deepRevNumber(val),
+                  (sum: number, val: any) => sum + defaultRevFunction(val),
                   0
                 );
               };

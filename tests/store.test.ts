@@ -100,7 +100,7 @@ describe("basic use", () => {
     const mutations = {
       inc({ state }) {
         return ++state.n;
-      },
+      }
     };
     const store = new Store({ state, mutations });
 
@@ -577,6 +577,53 @@ describe("connecting a component to store", () => {
     store.commit("addTodo", "hello");
     await nextTick();
     expect(fixture.innerHTML).toMatchSnapshot();
+  });
+
+  test("deep and shallow connecting a component", async () => {
+    const state = { todos: [{ title: "Kasteel" }] };
+    const mutations = {
+      edit({ state }, title) {
+        state.todos[0].title = title;
+      }
+    };
+    function mapStateToProps(s) {
+      return { todos: s.todos };
+    }
+    const store = new Store({ state, mutations });
+
+    class App extends Component<any, any, any> {
+      inlineTemplate = `
+            <div>
+                <span t-foreach="props.todos" t-as="todo">
+                  <t t-esc="todo.title"/>
+                </span>
+            </div>`;
+    }
+
+    const DeepTodoApp = connect(
+      mapStateToProps,
+      { deep: true }
+    )(App);
+    const ShallowTodoApp = connect(
+      mapStateToProps,
+      { deep: false }
+    )(App);
+    (<any>env).store = store;
+    const deepTodoApp = new DeepTodoApp(env);
+    const shallowTodoApp = new ShallowTodoApp(env);
+
+    await deepTodoApp.mount(fixture);
+
+    const shallowFix = makeTestFixture();
+    await shallowTodoApp.mount(shallowFix);
+
+    expect(fixture.innerHTML).toMatchSnapshot();
+    expect(shallowFix.innerHTML).toMatchSnapshot();
+
+    store.commit("edit", "Bertinchamps");
+    await nextTick();
+    expect(fixture.innerHTML).toMatchSnapshot();
+    expect(shallowFix.innerHTML).toMatchSnapshot();
   });
 
   test("connected child components with custom hooks", async () => {

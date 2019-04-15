@@ -3,3 +3,11 @@
 exports[`connecting a component to store connecting a component works 1`] = `"<div></div>"`;
 
 exports[`connecting a component to store connecting a component works 2`] = `"<div><span>hello</span></div>"`;
+
+exports[`connecting a component to store deep and shallow connecting a component 1`] = `"<div><span>Kasteel</span></div>"`;
+
+exports[`connecting a component to store deep and shallow connecting a component 2`] = `"<div><span>Kasteel</span></div>"`;
+
+exports[`connecting a component to store deep and shallow connecting a component 3`] = `"<div><span>Bertinchamps</span></div>"`;
+
+exports[`connecting a component to store deep and shallow connecting a component 4`] = `"<div><span>Kasteel</span></div>"`;

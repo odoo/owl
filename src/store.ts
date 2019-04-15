@@ -290,7 +290,7 @@ export function connect(mapStateToProps, options: any = {}) {
             let areKeyObservable = false;
             for (let key in storeProps) {
               areKeyObservable =
-                areKeyObservable || "__owl__" in storeProps[key];
+                areKeyObservable || (storeProps[key] && typeof (storeProps[key]) === "object" && "__owl__" in storeProps[key]);
             }
             if (areKeyObservable) {
               hashFunction = function({ storeProps }) {

@@ -736,4 +736,58 @@ describe("connecting a component to store", () => {
     await app.updateState({ beerId: 2 });
     expect(fixture.innerHTML).toBe("<div><span>kwak</span></div>");
   });
+
+  test("connected component with undefined, null and string props", async () => {
+    class Beer extends Component<any, any, any> {
+      inlineTemplate = `<div>
+          <span>taster:<t t-esc="props.taster"/></span>
+          <span t-if="props.selected">selected:<t t-esc="props.selected.name"/></span>
+          <span t-if="props.consumed">consumed:<t t-esc="props.consumed.name"/></span>
+        </div>`;
+    }
+    const ConnectedBeer = connect((state, props) => {
+      return {
+        selected: state.beers[props.id],
+        consumed: state.beers[state.consumedID] || null,
+        taster: state.taster,
+      };
+    })(Beer);
+
+    class App extends Component<any, any, any> {
+      inlineTemplate = `<div>
+              <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+          </div>`;
+      widgets = { ConnectedBeer };
+      state = { beerId: 0 };
+    }
+
+    const mutations = {
+      consume({ state }, beerId) {
+        state.consumedID = beerId;
+      }
+    };
+    const state = {
+      beers: {
+        1: { name: "jupiler" }
+      },
+      consumedID: null,
+      taster: "aaron"
+    };
+    const store = new Store({ state, mutations });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
+
+    await app.updateState({ beerId: 1 });
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>");
+
+    store.commit('consume', 1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:jupiler</span><span>consumed:jupiler</span></div></div>");
+
+    await app.updateState({ beerId: 0 });
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>");
+  });
 });

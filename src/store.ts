@@ -255,6 +255,10 @@ export function makeObserver(): Observer {
 //------------------------------------------------------------------------------
 
 function revNumber<T extends Object>(o: T): number {
+  if (!o || typeof o !== "object") {
+    // not enough for strings
+    return 0;
+  }
   if (!("__owl__" in o)) {
     return 0;
   }
@@ -262,6 +266,10 @@ function revNumber<T extends Object>(o: T): number {
 }
 
 function deepRevNumber<T extends Object>(o: T): number {
+  if (!o || typeof o !== "object") {
+    // not enough for strings
+    return 0;
+  }
   if (!("__owl__" in o)) {
     return 0;
   }
@@ -287,18 +295,11 @@ export function connect(mapStateToProps, options: any = {}) {
           if ("__owl__" in storeProps) {
             hashFunction = s => defaultRevFunction(s.storeProps);
           } else {
-            let areKeyObservable = false;
-            for (let key in storeProps) {
-              areKeyObservable =
-                areKeyObservable || (storeProps[key] && typeof (storeProps[key]) === "object" && "__owl__" in storeProps[key]);
-            }
-            if (areKeyObservable) {
-              hashFunction = function({ storeProps }) {
-                return Object.values(storeProps).reduce(
-                  (sum: number, val: any) => sum + defaultRevFunction(val),
-                  0
-                );
-              };
+            hashFunction = function({ storeProps }) {
+              return Object.values(storeProps).reduce(
+                (sum: number, val: any) => sum + defaultRevFunction(val),
+                0
+              );
             }
           }
         }

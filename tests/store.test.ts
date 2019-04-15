@@ -95,6 +95,21 @@ describe("basic use", () => {
     expect(store.state.n).toBe(11);
   });
 
+  test("return data from committing a mutation", () => {
+    const state = { n: 1 };
+    const mutations = {
+      inc({ state }) {
+        return ++state.n;
+      },
+    };
+    const store = new Store({ state, mutations });
+
+    expect(store.state.n).toBe(1);
+    const res = store.commit("inc");
+    expect(store.state.n).toBe(2);
+    expect(res).toBe(2);
+  });
+
   test("dispatch allow synchronizing between actions", async () => {
     const state = { n: 1 };
     const mutations = {

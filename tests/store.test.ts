@@ -737,6 +737,40 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>kwak</span></div>");
   });
 
+  test("connected component is updated when store is changed", async () => {
+    class App extends Component<any, any, any> {
+      inlineTemplate = `
+          <div>
+              <span t-foreach="props.beers" t-as="beer"><t t-esc="beer.name"/></span>
+          </div>`;
+    }
+
+    const mutations = {
+      addBeer({ state }, name) {
+        state.beers.push({ name });
+      }
+    };
+
+    const state = { beers: [{ name: "jupiler" }] };
+    const store = new Store({ state, mutations });
+    (<any>env).store = store;
+
+    function mapStateToProps(state) {
+      return { beers: state.beers, otherKey: 1 };
+    }
+    const ConnectedApp = connect(mapStateToProps)(App);
+    const app = new ConnectedApp(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
+
+    store.commit("addBeer", "kwak");
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><span>jupiler</span><span>kwak</span></div>"
+    );
+  });
+
   test("connected component with undefined, null and string props", async () => {
     class Beer extends Component<any, any, any> {
       inlineTemplate = `<div>
@@ -749,7 +783,7 @@ describe("connecting a component to store", () => {
       return {
         selected: state.beers[props.id],
         consumed: state.beers[state.consumedID] || null,
-        taster: state.taster,
+        taster: state.taster
       };
     })(Beer);
 
@@ -778,16 +812,24 @@ describe("connecting a component to store", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span></div></div>"
+    );
 
     await app.updateState({ beerId: 1 });
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>"
+    );
 
-    store.commit('consume', 1);
+    store.commit("consume", 1);
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:jupiler</span><span>consumed:jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>selected:jupiler</span><span>consumed:jupiler</span></div></div>"
+    );
 
     await app.updateState({ beerId: 0 });
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>"
+    );
   });
 });

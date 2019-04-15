@@ -1,6 +1,5 @@
-import { EventBus } from "./event_bus";
-import { shallowEqual } from "./utils";
 import { Component } from "./component";
+import { EventBus } from "./event_bus";
 
 //------------------------------------------------------------------------------
 // Store Definition
@@ -255,23 +254,40 @@ export function makeObserver(): Observer {
 //------------------------------------------------------------------------------
 
 function revNumber<T extends Object>(o: T): number {
-  if (!("__owl__" in o)) {
-    return 0;
+  if (o !== null && typeof o === "object" && (<any>o).__owl__) {
+    return (<any>o).__owl__.rev;
   }
-  return (<any>o).__owl__.rev;
+  return 0;
 }
 
 function deepRevNumber<T extends Object>(o: T): number {
-  if (!("__owl__" in o)) {
-    return 0;
+  if (o !== null && typeof o === "object" && (<any>o).__owl__) {
+    return (<any>o).__owl__.deepRev;
   }
-  return (<any>o).__owl__.deepRev;
+  return 0;
 }
 
 export function connect(mapStateToProps, options: any = {}) {
   let hashFunction = options.hashFunction || null;
-  let deep = "deep" in options ? options.deep : true;
-  let defaultRevFunction = deep ? deepRevNumber : revNumber;
+
+  if (!hashFunction) {
+    let deep = "deep" in options ? options.deep : true;
+    let defaultRevFunction = deep ? deepRevNumber : revNumber;
+    hashFunction = function({ storeProps, currentStoreProps }) {
+      if ("__owl__" in storeProps) {
+        return defaultRevFunction(storeProps);
+      }
+      let hash = 0;
+      let currentProps = currentStoreProps;
+      for (let key in storeProps) {
+        const val = storeProps[key];
+        hash +=
+          defaultRevFunction(storeProps[key]) ||
+          (val !== currentProps[key] ? 1 : 0);
+      }
+      return hash;
+    };
+  }
 
   return function(Comp) {
     return class extends Comp {
@@ -283,55 +299,29 @@ export function connect(mapStateToProps, options: any = {}) {
         super(parent, mergedProps);
         this.__owl__.ownProps = ownProps;
         this.__owl__.currentStoreProps = storeProps;
-        if (!hashFunction) {
-          if ("__owl__" in storeProps) {
-            hashFunction = s => defaultRevFunction(s.storeProps);
-          } else {
-            let areKeyObservable = false;
-            for (let key in storeProps) {
-              areKeyObservable =
-                areKeyObservable || (storeProps[key] && typeof (storeProps[key]) === "object" && "__owl__" in storeProps[key]);
-            }
-            if (areKeyObservable) {
-              hashFunction = function({ storeProps }) {
-                return Object.values(storeProps).reduce(
-                  (sum: number, val: any) => sum + defaultRevFunction(val),
-                  0
-                );
-              };
-            }
-          }
-        }
-        if (hashFunction) {
-          this.__owl__.storeHash = hashFunction({
-            state: env.store.state,
-            storeProps: storeProps,
-            revNumber,
-            deepRevNumber
-          });
-        }
+        this.__owl__.storeHash = hashFunction({
+          state: env.store.state,
+          storeProps: storeProps,
+          currentStoreProps: storeProps,
+          revNumber,
+          deepRevNumber
+        });
       }
       mounted() {
         this.env.store.on("update", this, () => {
           const ownProps = this.__owl__.ownProps;
           const storeProps = mapStateToProps(this.env.store.state, ownProps);
           let didChange = false;
-          if (hashFunction) {
-            const storeHash = hashFunction({
-              state: this.env.store.state,
-              storeProps: storeProps,
-              revNumber,
-              deepRevNumber
-            });
-            if (storeHash !== this.__owl__.storeHash) {
-              didChange = true;
-              this.__owl__.storeHash = storeHash;
-            }
-          } else {
-            didChange = !shallowEqual(
-              storeProps,
-              this.__owl__.currentStoreProps
-            );
+          const storeHash = hashFunction({
+            state: this.env.store.state,
+            storeProps: storeProps,
+            currentStoreProps: this.__owl__.currentStoreProps,
+            revNumber,
+            deepRevNumber
+          });
+          if (storeHash !== this.__owl__.storeHash) {
+            didChange = true;
+            this.__owl__.storeHash = storeHash;
           }
           if (didChange) {
             this.__owl__.currentStoreProps = storeProps;

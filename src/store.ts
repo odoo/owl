@@ -74,7 +74,7 @@ export class Store extends EventBus {
     this._isMutating = true;
     this.observer.allowMutations = true;
 
-    this.mutations[type].call(
+    const res = this.mutations[type].call(
       null,
       {
         commit: this.commit.bind(this),
@@ -103,6 +103,7 @@ export class Store extends EventBus {
       });
     }
     this._commitLevel--;
+    return res;
   }
 }
 

@@ -43,6 +43,7 @@ export class Context {
   nextID: number = 1;
   code: string[] = [];
   variables: { [key: string]: any } = {};
+  definedVariables: { [key: string]: string } = {};
   escaping: boolean = false;
   parentNode: number | null = null;
   rootNode: number | null = null;
@@ -157,11 +158,13 @@ export class Context {
       } else if (c.match(/\W/) && invar.length) {
         // TODO: Should check for possible spaces before dot
         if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          invar =
-            WORD_REPLACEMENT[invar] ||
-            (invar in this.variables &&
-              this.formatExpression(this.variables[invar])) ||
-            "context['" + invar + "']";
+          if (!(invar in this.definedVariables)) {
+            invar =
+              WORD_REPLACEMENT[invar] ||
+              (invar in this.variables &&
+                this.formatExpression(this.variables[invar])) ||
+              "context['" + invar + "']";
+          }
         }
         r += invar;
         invar = "";
@@ -700,19 +703,20 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
   }
 
   if (typeof value === "string") {
-    const exprID = ctx.generateID();
-    ctx.addLine(`var e${exprID} = ${ctx.formatExpression(value)};`);
-    ctx.addIf(`e${exprID} || e${exprID} === 0`);
-    let text = `e${exprID}`;
-
+    let exprID = value;
+    if (!(value in ctx.definedVariables)) {
+      exprID = `_${ctx.generateID()}`;
+      ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
+    }
+    ctx.addIf(`${exprID} || ${exprID} === 0`);
     if (!ctx.parentNode) {
       throw new Error("Should not have a text node without a parent");
     }
     if (ctx.escaping) {
-      ctx.addLine(`c${ctx.parentNode}.push({text: ${text}});`);
+      ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
     } else {
       let fragID = ctx.generateID();
-      ctx.addLine(`var frag${fragID} = this.utils.getFragment(e${exprID})`);
+      ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
       let tempNodeID = ctx.generateID();
       ctx.addLine(`var p${tempNodeID} = {hook: {`);
       ctx.addLine(
@@ -771,7 +775,11 @@ const setDirective: Directive = {
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
     if (value) {
-      ctx.variables[variable] = value;
+      const varName = `_${ctx.generateID()}`;
+      const formattedValue = ctx.formatExpression(value);
+      ctx.addLine(`var ${varName} = ${formattedValue}`);
+      ctx.definedVariables[varName] = formattedValue;
+      ctx.variables[variable] = varName;
     } else {
       ctx.variables[variable] = node.childNodes;
     }
@@ -836,13 +844,42 @@ const callDirective: Directive = {
 
     // extract variables from nodecopy
     const tempCtx = new Context();
+    tempCtx.nextID = ctx.rootContext.nextID;
     qweb._compileNode(nodeCopy, tempCtx);
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
+    var definedVariables = Object.assign(
+      {},
+      ctx.definedVariables,
+      tempCtx.definedVariables
+    );
+    ctx.rootContext.nextID = tempCtx.nextID;
+
+    // open new scope, if necessary
+    const hasNewVariables = Object.keys(definedVariables).length > 0;
+    if (hasNewVariables) {
+      ctx.addLine("{");
+      ctx.indent();
+    }
+
+    // add new variables, if any
+    for (let key in definedVariables) {
+      ctx.addLine(`let ${key} = ${definedVariables[key]}`);
+    }
+
+    // compile sub template
     const subCtx = ctx
       .subContext("caller", nodeCopy)
-      .subContext("variables", Object.create(vars));
+      .subContext("variables", Object.create(vars))
+      .subContext("definedVariables", Object.create(definedVariables));
 
     qweb._compileNode(nodeTemplate, subCtx);
+
+    // close new scope
+    if (hasNewVariables) {
+      ctx.dedent();
+      ctx.addLine("}");
+    }
+
     return true;
   }
 };

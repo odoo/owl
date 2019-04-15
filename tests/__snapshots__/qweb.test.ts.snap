@@ -105,10 +105,11 @@ exports[`attributes from object variables set previously 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = {a: 'b'}.a;
-    var c3 = [], p3 = {key:3,attrs:{class: _2}};
-    var vn3 = h('span', p3, c3);
-    c1.push(vn3);
+    var _2 = {a: 'b'}
+    var _3 = _2.a;
+    var c4 = [], p4 = {key:4,attrs:{class: _3}};
+    var vn4 = h('span', p4, c4);
+    c1.push(vn4);
     return vn1;
 }"
 `;
@@ -119,10 +120,11 @@ exports[`attributes from variables set previously 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 'def';
-    var c3 = [], p3 = {key:3,attrs:{class: _2}};
-    var vn3 = h('span', p3, c3);
-    c1.push(vn3);
+    var _2 = 'def'
+    var _3 = _2;
+    var c4 = [], p4 = {key:4,attrs:{class: _3}};
+    var vn4 = h('span', p4, c4);
+    c1.push(vn4);
     return vn1;
 }"
 `;
@@ -273,9 +275,9 @@ exports[`foreach does not pollute the rendering context 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        var e5 = context['item'];
-        if (e5 || e5 === 0) {
-            c1.push({text: e5});
+        var _5 = context['item'];
+        if (_5 || _5 === 0) {
+            c1.push({text: _5});
         }
     }
     return vn1;
@@ -304,9 +306,9 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         var c5 = [], p5 = {key:5};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
-        var e6 = context['item'];
-        if (e6 || e6 === 0) {
-            c5.push({text: e6});
+        var _6 = context['item'];
+        if (_6 || _6 === 0) {
+            c5.push({text: _6});
         }
     }
     return vn1;
@@ -333,19 +335,19 @@ exports[`foreach iterate on items 1`] = `
         context.item = _3[i];
         context.item_value = _4[i];
         c1.push({text: \` [\`});
-        var e5 = context['item_index'];
-        if (e5 || e5 === 0) {
-            c1.push({text: e5});
+        var _5 = context['item_index'];
+        if (_5 || _5 === 0) {
+            c1.push({text: _5});
         }
         c1.push({text: \`: \`});
-        var e6 = context['item'];
-        if (e6 || e6 === 0) {
-            c1.push({text: e6});
+        var _6 = context['item'];
+        if (_6 || _6 === 0) {
+            c1.push({text: _6});
         }
         c1.push({text: \` \`});
-        var e7 = context['item_value'];
-        if (e7 || e7 === 0) {
-            c1.push({text: e7});
+        var _7 = context['item_value'];
+        if (_7 || _7 === 0) {
+            c1.push({text: _7});
         }
         c1.push({text: \`] \`});
     }
@@ -373,24 +375,24 @@ exports[`foreach iterate, dict param 1`] = `
         context.item = _3[i];
         context.item_value = _4[i];
         c1.push({text: \` [\`});
-        var e5 = context['item_index'];
-        if (e5 || e5 === 0) {
-            c1.push({text: e5});
+        var _5 = context['item_index'];
+        if (_5 || _5 === 0) {
+            c1.push({text: _5});
         }
         c1.push({text: \`: \`});
-        var e6 = context['item'];
-        if (e6 || e6 === 0) {
-            c1.push({text: e6});
+        var _6 = context['item'];
+        if (_6 || _6 === 0) {
+            c1.push({text: _6});
         }
         c1.push({text: \` \`});
-        var e7 = context['item_value'];
-        if (e7 || e7 === 0) {
-            c1.push({text: e7});
+        var _7 = context['item_value'];
+        if (_7 || _7 === 0) {
+            c1.push({text: _7});
         }
         c1.push({text: \` - \`});
-        var e8 = context['item_parity'];
-        if (e8 || e8 === 0) {
-            c1.push({text: e8});
+        var _8 = context['item_parity'];
+        if (_8 || _8 === 0) {
+            c1.push({text: _8});
         }
         c1.push({text: \`] \`});
     }
@@ -418,19 +420,19 @@ exports[`foreach iterate, integer param 1`] = `
         context.item = _3[i];
         context.item_value = _4[i];
         c1.push({text: \` [\`});
-        var e5 = context['item_index'];
-        if (e5 || e5 === 0) {
-            c1.push({text: e5});
+        var _5 = context['item_index'];
+        if (_5 || _5 === 0) {
+            c1.push({text: _5});
         }
         c1.push({text: \`: \`});
-        var e6 = context['item'];
-        if (e6 || e6 === 0) {
-            c1.push({text: e6});
+        var _6 = context['item'];
+        if (_6 || _6 === 0) {
+            c1.push({text: _6});
         }
         c1.push({text: \` \`});
-        var e7 = context['item_value'];
-        if (e7 || e7 === 0) {
-            c1.push({text: e7});
+        var _7 = context['item_value'];
+        if (_7 || _7 === 0) {
+            c1.push({text: _7});
         }
         c1.push({text: \`] \`});
     }
@@ -465,9 +467,9 @@ exports[`foreach iterate, position 1`] = `
             c1.push({text: \` last\`});
         }
         c1.push({text: \` (\`});
-        var e5 = context['elem_parity'];
-        if (e5 || e5 === 0) {
-            c1.push({text: e5});
+        var _5 = context['elem_parity'];
+        if (_5 || _5 === 0) {
+            c1.push({text: _5});
         }
         c1.push({text: \`) \`});
     }
@@ -526,55 +528,63 @@ exports[`misc global 1`] = `
         var c5 = [], p5 = {key:5,on:{}};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
-        var e6 = context['value'];
-        if (e6 || e6 === 0) {
-            c5.push({text: e6});
+        var _6 = context['value'];
+        if (_6 || _6 === 0) {
+            c5.push({text: _6});
         }
-        var _7 = 'agüero';
-        var c8 = [], p8 = {key:8,attrs:{\\"falló\\": _7},on:{}};
-        var vn8 = h('Año', p8, c8);
-        c1.push(vn8);
-        var c9 = [], p9 = {key:9,on:{}};
-        var vn9 = h('span', p9, c9);
-        c8.push(vn9);
-        var e10 = 'aaa';
-        if (e10 || e10 === 0) {
-            c9.push({text: e10});
-        } else {
-            c9.push({text: \`foo default\`});
-        }
-        var c11 = [], p11 = {key:11,on:{}};
-        var vn11 = h('span', p11, c11);
-        c8.push(vn11);
-        var e12 = context['foo'];
-        if (e12 || e12 === 0) {
-            c11.push({text: e12});
-        } else {
-            c11.push({text: \`foo default\`});
-        }
-        var c13 = [], p13 = {key:13,on:{}};
-        var vn13 = h('span', p13, c13);
-        c8.push(vn13);
-        var e14 = 'bbb';
-        if (e14 || e14 === 0) {
-            c13.push({text: e14});
-        } else {
-            c13.push({text: \`foo default\`});
+        {
+            let _11 = 'bbb'
+            var _13 = 'agüero';
+            var c14 = [], p14 = {key:14,attrs:{\\"falló\\": _13},on:{}};
+            var vn14 = h('Año', p14, c14);
+            c1.push(vn14);
+            {
+                let _15 = 'aaa'
+                var c16 = [], p16 = {key:16,on:{}};
+                var vn16 = h('span', p16, c16);
+                c14.push(vn16);
+                if (_15 || _15 === 0) {
+                    c16.push({text: _15});
+                } else {
+                    c16.push({text: \`foo default\`});
+                }
+            }
+            var c17 = [], p17 = {key:17,on:{}};
+            var vn17 = h('span', p17, c17);
+            c14.push(vn17);
+            var _18 = context['foo'];
+            if (_18 || _18 === 0) {
+                c17.push({text: _18});
+            } else {
+                c17.push({text: \`foo default\`});
+            }
+            var _19 = 'bbb'
+            {
+                let _19 = 'bbb'
+                var c20 = [], p20 = {key:20,on:{}};
+                var vn20 = h('span', p20, c20);
+                c14.push(vn20);
+                if (_19 || _19 === 0) {
+                    c20.push({text: _19});
+                } else {
+                    c20.push({text: \`foo default\`});
+                }
+            }
         }
     }
-    var c15 = [], p15 = {key:15,on:{}};
-    var vn15 = h('div', p15, c15);
-    c1.push(vn15);
-    var e16 = context['toto'];
-    if (e16 || e16 === 0) {
-        var frag17 = this.utils.getFragment(e16)
-        var p18 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag17, n.elm),
+    var c21 = [], p21 = {key:21,on:{}};
+    var vn21 = h('div', p21, c21);
+    c1.push(vn21);
+    var _22 = context['toto'];
+    if (_22 || _22 === 0) {
+        var frag23 = this.utils.getFragment(_22)
+        var p24 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag23, n.elm),
         }};
-        var vn18 = h('div', p18)
-        c15.push(vn18);
+        var vn24 = h('div', p24)
+        c21.push(vn24);
     } else {
-        c15.push({text: \`toto default\`});
+        c21.push({text: \`toto default\`});
     }
     return vn1;
 }"
@@ -693,9 +703,12 @@ exports[`t-call (template calling inherit context 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = 1;
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 1
+    {
+        let _2 = 1
+        if (_2 || _2 === 0) {
+            c1.push({text: _2});
+        }
     }
     return vn1;
 }"
@@ -707,10 +720,13 @@ exports[`t-call (template calling scoped parameters 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    c1.push({text: \`ok\`});
-    var e2 = context['foo'];
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    {
+        let _2 = 42
+        c1.push({text: \`ok\`});
+    }
+    var _3 = context['foo'];
+    if (_3 || _3 === 0) {
+        c1.push({text: _3});
     }
     return vn1;
 }"
@@ -720,10 +736,10 @@ exports[`t-call (template calling with unused body 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    c1.push({text: \`ok\`});
-    return vn1;
+    var c2 = [], p2 = {key:2};
+    var vn2 = h('div', p2, c2);
+    c2.push({text: \`ok\`});
+    return vn2;
 }"
 `;
 
@@ -731,10 +747,13 @@ exports[`t-call (template calling with unused setbody 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    c1.push({text: \`ok\`});
-    return vn1;
+    {
+        let _1 = 3
+        var c2 = [], p2 = {key:2};
+        var vn2 = h('div', p2, c2);
+        c2.push({text: \`ok\`});
+    }
+    return vn2;
 }"
 `;
 
@@ -742,10 +761,10 @@ exports[`t-call (template calling with used body 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
-    var vn1 = h('h1', p1, c1);
-    c1.push({text: \`ok\`});
-    return vn1;
+    var c2 = [], p2 = {key:2};
+    var vn2 = h('h1', p2, c2);
+    c2.push({text: \`ok\`});
+    return vn2;
 }"
 `;
 
@@ -755,9 +774,11 @@ exports[`t-call (template calling with used set body 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    var e2 = 'ok';
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    {
+        let _2 = 'ok'
+        if (_2 || _2 === 0) {
+            c1.push({text: _2});
+        }
     }
     return vn1;
 }"
@@ -769,9 +790,9 @@ exports[`t-esc escaping on a node 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('span', p1, c1);
-    var e2 = 'ok';
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 'ok';
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -783,9 +804,9 @@ exports[`t-esc escaping on a node with a body 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('span', p1, c1);
-    var e2 = 'ok';
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 'ok';
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     } else {
         c1.push({text: \`nope\`});
     }
@@ -799,9 +820,9 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('span', p1, c1);
-    var e2 = context['var'];
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = context['var'];
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     } else {
         c1.push({text: \`nope\`});
     }
@@ -815,9 +836,9 @@ exports[`t-esc literal 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    var e2 = 'ok';
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 'ok';
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -829,9 +850,9 @@ exports[`t-esc variable 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    var e2 = context['var'];
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = context['var'];
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1115,9 +1136,9 @@ exports[`t-raw literal 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    var e2 = 'ok';
-    if (e2 || e2 === 0) {
-        var frag3 = this.utils.getFragment(e2)
+    var _2 = 'ok';
+    if (_2 || _2 === 0) {
+        var frag3 = this.utils.getFragment(_2)
         var p4 = {hook: {
           insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
         }};
@@ -1134,9 +1155,9 @@ exports[`t-raw not escaping 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = context['var'];
-    if (e2 || e2 === 0) {
-        var frag3 = this.utils.getFragment(e2)
+    var _2 = context['var'];
+    if (_2 || _2 === 0) {
+        var frag3 = this.utils.getFragment(_2)
         var p4 = {hook: {
           insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
         }};
@@ -1157,9 +1178,9 @@ exports[`t-raw t-raw and another sibling node 1`] = `
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
     c2.push({text: \`hello\`});
-    var e3 = context['var'];
-    if (e3 || e3 === 0) {
-        var frag4 = this.utils.getFragment(e3)
+    var _3 = context['var'];
+    if (_3 || _3 === 0) {
+        var frag4 = this.utils.getFragment(_3)
         var p5 = {hook: {
           insert: n => n.elm.parentNode.replaceChild(frag4, n.elm),
         }};
@@ -1176,9 +1197,9 @@ exports[`t-raw variable 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    var e2 = context['var'];
-    if (e2 || e2 === 0) {
-        var frag3 = this.utils.getFragment(e2)
+    var _2 = context['var'];
+    if (_2 || _2 === 0) {
+        var frag3 = this.utils.getFragment(_2)
         var p4 = {hook: {
           insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
         }};
@@ -1227,9 +1248,9 @@ exports[`t-set evaluate value expression 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = 1 + 2;
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 1 + 2
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1241,9 +1262,9 @@ exports[`t-set evaluate value expression, part 2 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = context['somevariable'] + 2;
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = context['somevariable'] + 2
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1255,9 +1276,9 @@ exports[`t-set set from attribute literal 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = 'ok';
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 'ok'
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1269,9 +1290,9 @@ exports[`t-set set from attribute lookup 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = context['value'];
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = context['value']
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1292,9 +1313,9 @@ exports[`t-set set from body lookup 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = context['value'];
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = context['value'];
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1316,8 +1337,26 @@ exports[`t-set t-set and t-if 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    if (context['value'] === 'ok') {
+    var _2 = context['value']
+    if (_2 === 'ok') {
         c1.push({text: \`grimbergen\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set evaluates an expression only once 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['value'] + ' artois'
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    }
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -1329,9 +1368,9 @@ exports[`t-set value priority 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var e2 = 1;
-    if (e2 || e2 === 0) {
-        c1.push({text: e2});
+    var _2 = 1
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"

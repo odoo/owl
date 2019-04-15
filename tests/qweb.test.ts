@@ -234,6 +234,20 @@ describe("t-set", () => {
     expect(renderToString(qweb, "test", { value: "ok" })).toBe("<div>ok</div>");
   });
 
+  test("t-set evaluates an expression only once", () => {
+    qweb.addTemplate(
+      "test",
+      `<div >
+          <t t-set="v" t-value="value + ' artois'"/>
+          <t t-esc="v"/>
+          <t t-esc="v"/>
+        </div>`
+    );
+    expect(renderToString(qweb, "test", { value: "stella" })).toBe(
+      "<div>stella artoisstella artois</div>"
+    );
+  });
+
   test("set from body lookup", () => {
     qweb.addTemplate(
       "test",

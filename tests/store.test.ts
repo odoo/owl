@@ -308,6 +308,18 @@ describe("observer", () => {
     expect(state.a.__owl__.rev).toBe(2);
   });
 
+  test("properly unobserve objects in object", () => {
+    const observer = makeObserver();
+    const state: any = { a: { b: 1 } };
+    observer.observe(state);
+    expect(state.__owl__.rev).toBe(1);
+    const initialA = state.a;
+    expect(initialA.__owl__.rev).toBe(1);
+
+    state.a = "Karlsquell";
+    expect(initialA.__owl__).not.toBeDefined();
+  });
+
   test("reobserve new object values", () => {
     const observer = makeObserver();
     const obj: any = { a: 1 };

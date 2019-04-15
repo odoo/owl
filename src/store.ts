@@ -137,6 +137,7 @@ export function makeObserver(): Observer {
           );
         }
         if (newVal !== value) {
+          unobserve(value);
           value = newVal;
           observe(newVal, obj);
           obj.__owl__.rev!++;
@@ -226,6 +227,12 @@ export function makeObserver(): Observer {
       observeArr(value, parent);
     } else {
       observeObj(value, parent);
+    }
+  }
+
+  function unobserve(target: any) {
+    if (target !== null && typeof target === "object") {
+      delete target.__owl__;
     }
   }
 

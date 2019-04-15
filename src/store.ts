@@ -20,6 +20,7 @@ export class Store extends EventBus {
   state: any;
   actions: any;
   mutations: any;
+  _commitLevel: number = 0;
   _isMutating: boolean = false;
   history: any[] = [];
   debug: boolean;
@@ -63,35 +64,45 @@ export class Store extends EventBus {
     }
   }
 
-  async commit(type, payload?: any) {
+  commit(type, payload?: any) {
     if (!this.mutations[type]) {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
+    this._commitLevel++;
     const currentRev = this.observer.__rev__;
-
     this._isMutating = true;
     this.observer.allowMutations = true;
+
+
     this.mutations[type].call(
       null,
-      { state: this.state, set: this.observer.set },
+      {
+        commit: this.commit.bind(this),
+        state: this.state,
+        set: this.observer.set
+      },
       payload
     );
-    this.observer.allowMutations = false;
 
-    if (this.debug) {
-      this.history.push({
-        state: this.state,
-        mutation: type,
-        payload: payload
+    if (this._commitLevel === 1) {
+      this.observer.allowMutations = false;
+      if (this.debug) {
+        this.history.push({
+          state: this.state,
+          mutation: type,
+          payload: payload
+        });
+      }
+      Promise.resolve().then(() => {
+        if (this._isMutating) {
+          this._isMutating = false;
+          if (currentRev !== this.observer.__rev__) {
+            this.trigger("update", this.state);
+          }
+        }
       });
     }
-    await Promise.resolve();
-    if (this._isMutating) {
-      this._isMutating = false;
-      if (currentRev !== this.observer.__rev__) {
-        this.trigger("update", this.state);
-      }
-    }
+    this._commitLevel--;
   }
 }
 

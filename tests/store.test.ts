@@ -76,6 +76,25 @@ describe("basic use", () => {
     expect(store.state.n).toBe(101);
   });
 
+  test("can commit a mutation in a mutation", () => {
+    const state = { n: 1 };
+    const mutations = {
+      inc({ state }) {
+        state.n++;
+      },
+      inc10({ commit }) {
+        for (let i = 0; i < 10; i++) {
+          commit("inc");
+        }
+      }
+    };
+    const store = new Store({ state, mutations });
+
+    expect(store.state.n).toBe(1);
+    store.commit("inc10");
+    expect(store.state.n).toBe(11);
+  });
+
   test("dispatch allow synchronizing between actions", async () => {
     const state = { n: 1 };
     const mutations = {

@@ -8,6 +8,47 @@ export interface Observer {
   set: (target: any, key: number | string, value: any) => void;
 }
 
+const methodsToPatch = [
+  "push",
+  "pop",
+  "shift",
+  "unshift",
+  "splice",
+  "sort",
+  "reverse"
+];
+
+const ArrayProto = Array.prototype;
+const ModifiedArrayProto = Object.create(ArrayProto);
+
+for (let method of methodsToPatch) {
+  const initialMethod = ArrayProto[method];
+  ModifiedArrayProto[method] = function(...args) {
+    this.__observer__.rev++;
+    this.__owl__.rev++;
+    let parent = this;
+    do {
+      parent.__owl__.deepRev++;
+    } while ((parent = parent.__owl__.parent));
+    let inserted;
+    switch (method) {
+      case "push":
+      case "unshift":
+        inserted = args;
+        break;
+      case "splice":
+        inserted = args.slice(2);
+        break;
+    }
+    if (inserted) {
+      for (let elem of inserted) {
+        this.__observer__.observe(elem, this);
+      }
+    }
+    return initialMethod.call(this, ...args);
+  };
+}
+
 export function makeObserver(): Observer {
   const observer: Observer = {
     rev: 1,
@@ -63,51 +104,11 @@ export function makeObserver(): Observer {
     }
   }
 
-  const ArrayProto = Array.prototype;
-  const ModifiedArrayProto = Object.create(ArrayProto);
-
-  const methodsToPatch = [
-    "push",
-    "pop",
-    "shift",
-    "unshift",
-    "splice",
-    "sort",
-    "reverse"
-  ];
-
-  for (let method of methodsToPatch) {
-    const initialMethod = ArrayProto[method];
-    ModifiedArrayProto[method] = function(...args) {
-      observer.rev++;
-      this.__owl__.rev++;
-      let parent = this;
-      do {
-        parent.__owl__.deepRev++;
-      } while ((parent = parent.__owl__.parent));
-      let inserted;
-      switch (method) {
-        case "push":
-        case "unshift":
-          inserted = args;
-          break;
-        case "splice":
-          inserted = args.slice(2);
-          break;
-      }
-      if (inserted) {
-        for (let elem of inserted) {
-          observe(elem, this);
-        }
-      }
-      return initialMethod.call(this, ...args);
-    };
-  }
-
   function observeArr(arr: Array<any>, parent?: any) {
     (<any>arr).__owl__ = { rev: 1, deepRev: 1, parent };
     Object.defineProperty(arr, "__owl__", { enumerable: false });
-    (<any>arr).__proto__ = ModifiedArrayProto;
+    (<any>arr).__proto__ = Object.create(ModifiedArrayProto);
+    (<any>arr).__proto__.__observer__ = observer;
     for (let i = 0; i < arr.length; i++) {
       observe(arr[i], arr);
     }

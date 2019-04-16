@@ -9,6 +9,6 @@ export default {
     format: "iife",
     name: "owl",
     extend: true,
-    outro: `exports._version = '${version}';\nexports._date = '${new Date().toISOString()}';\nexports._hash = '${git.short()}';`
+    outro: `exports._version = '${version}';\nexports._date = '${new Date().toISOString()}';\nexports._hash = '${git.short()}';\nexports._url = 'https://github.com/odoo/owl';`
   }
 };

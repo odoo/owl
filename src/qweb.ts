@@ -932,6 +932,9 @@ const onDirective: Directive = {
   atNodeCreation({ ctx, fullName, value, nodeID }) {
     ctx.rootContext.shouldDefineOwner = true;
     const eventName = fullName.slice(5);
+    if (!eventName) {
+      throw new Error("Missing event name with t-on directive");
+    }
     let extraArgs;
     let handler = value.replace(/\(.*\)/, function(args) {
       extraArgs = args.slice(1, -1);

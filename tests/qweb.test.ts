@@ -115,6 +115,13 @@ describe("error handling", () => {
     );
   });
 
+  test("nice error when t-on is evaluated with a missing event", () => {
+    qweb.addTemplate("templatename", `<div t-on="somemethod"></div>`);
+    expect(() =>
+      qweb.render("templatename", { someMethod() {} }, { handlers: [] })
+    ).toThrow("Missing event name with t-on directive");
+  });
+
   test("error when compiled code is invalid", () => {
     qweb.addTemplate(
       "templatename",

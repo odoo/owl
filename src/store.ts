@@ -273,17 +273,22 @@ export function connect(mapStateToProps, options: any = {}) {
   if (!hashFunction) {
     let deep = "deep" in options ? options.deep : true;
     let defaultRevFunction = deep ? deepRevNumber : revNumber;
-    hashFunction = function({ storeProps, currentStoreProps }) {
+    hashFunction = function({ storeProps }, options) {
+      const { currentStoreProps } = options;
       if ("__owl__" in storeProps) {
         return defaultRevFunction(storeProps);
       }
       let hash = 0;
-      let currentProps = currentStoreProps;
       for (let key in storeProps) {
         const val = storeProps[key];
-        hash +=
-          defaultRevFunction(storeProps[key]) ||
-          (val !== currentProps[key] ? 1 : 0);
+        const hashVal = defaultRevFunction(val);
+        if (hashVal === 0) {
+          if (val !== currentStoreProps[key]) {
+            options.didChange = true;
+          }
+        } else {
+          hash += hashVal;
+        }
       }
       return hash;
     };
@@ -299,26 +304,35 @@ export function connect(mapStateToProps, options: any = {}) {
         super(parent, mergedProps);
         this.__owl__.ownProps = ownProps;
         this.__owl__.currentStoreProps = storeProps;
-        this.__owl__.storeHash = hashFunction({
-          state: env.store.state,
-          storeProps: storeProps,
-          currentStoreProps: storeProps,
-          revNumber,
-          deepRevNumber
-        });
+        this.__owl__.storeHash = hashFunction(
+          {
+            state: env.store.state,
+            storeProps: storeProps,
+            revNumber,
+            deepRevNumber
+          },
+          {
+            currentStoreProps: storeProps
+          }
+        );
       }
       mounted() {
         this.env.store.on("update", this, () => {
           const ownProps = this.__owl__.ownProps;
           const storeProps = mapStateToProps(this.env.store.state, ownProps);
-          let didChange = false;
-          const storeHash = hashFunction({
-            state: this.env.store.state,
-            storeProps: storeProps,
-            currentStoreProps: this.__owl__.currentStoreProps,
-            revNumber,
-            deepRevNumber
-          });
+          const options: any = {
+            currentStoreProps: this.__owl__.currentStoreProps
+          };
+          const storeHash = hashFunction(
+            {
+              state: this.env.store.state,
+              storeProps: storeProps,
+              revNumber,
+              deepRevNumber
+            },
+            options
+          );
+          let didChange = options.didChange;
           if (storeHash !== this.__owl__.storeHash) {
             didChange = true;
             this.__owl__.storeHash = storeHash;

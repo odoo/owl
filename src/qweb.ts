@@ -1091,7 +1091,7 @@ const widgetDirective: Directive = {
 
     ctx.addLine(`extra.promises.push(def${defID});`);
 
-    if (node.getAttribute("t-if") || node.getAttribute("t-else")) {
+    if (node.hasAttribute("t-if") || node.hasAttribute("t-else")) {
       ctx.closeIf();
     }
 

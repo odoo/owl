@@ -105,7 +105,7 @@ exports[`attributes from object variables set previously 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = {a: 'b'}
+    var _2 = {a: 'b'};
     var _3 = _2.a;
     var c4 = [], p4 = {key:4,attrs:{class: _3}};
     var vn4 = h('span', p4, c4);
@@ -120,7 +120,7 @@ exports[`attributes from variables set previously 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 'def'
+    var _2 = 'def';
     var _3 = _2;
     var c4 = [], p4 = {key:4,attrs:{class: _3}};
     var vn4 = h('span', p4, c4);
@@ -558,7 +558,7 @@ exports[`misc global 1`] = `
             } else {
                 c17.push({text: \`foo default\`});
             }
-            var _19 = 'bbb'
+            var _19 = 'bbb';
             {
                 let _19 = 'bbb'
                 var c20 = [], p20 = {key:20,on:{}};
@@ -703,7 +703,7 @@ exports[`t-call (template calling inherit context 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 1
+    var _2 = 1;
     {
         let _2 = 1
         if (_2 || _2 === 0) {
@@ -1295,7 +1295,7 @@ exports[`t-set evaluate value expression 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 1 + 2
+    var _2 = 1 + 2;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1309,7 +1309,7 @@ exports[`t-set evaluate value expression, part 2 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['somevariable'] + 2
+    var _2 = context['somevariable'] + 2;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1323,7 +1323,7 @@ exports[`t-set set from attribute literal 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 'ok'
+    var _2 = 'ok';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1337,7 +1337,7 @@ exports[`t-set set from attribute lookup 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['value']
+    var _2 = context['value'];
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1384,7 +1384,7 @@ exports[`t-set t-set and t-if 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['value']
+    var _2 = context['value'];
     if (_2 === 'ok') {
         c1.push({text: \`grimbergen\`});
     }
@@ -1398,7 +1398,7 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['value'] + ' artois'
+    var _2 = context['value'] + ' artois';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1416,7 +1416,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 1
+    var _2 = 1;
     var _3 = context['list'];
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _3 === 'number') { _3 = Array.from(Array(_3).keys())}
@@ -1451,7 +1451,7 @@ exports[`t-set value priority 1`] = `
     var h = this.utils.h;
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 1
+    var _2 = 1;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }

@@ -787,7 +787,7 @@ const setDirective: Directive = {
         ctx.addLine(`${ctx.variables[variable]} = ${formattedValue}`);
       } else {
         const varName = `_${ctx.generateID()}`;
-        ctx.addLine(`var ${varName} = ${formattedValue}`);
+        ctx.addLine(`var ${varName} = ${formattedValue};`);
         ctx.definedVariables[varName] = formattedValue;
         ctx.variables[variable] = varName;
       }

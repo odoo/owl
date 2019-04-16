@@ -1,6 +1,6 @@
-const HELLO_WORLD = `const {Component, QWeb} = owl.core;
+const HELLO_WORLD = `const {Component, QWeb} = owl;
 
-class HelloWorld extends Component {
+class App extends Component {
   constructor() {
     super(...arguments);
     this.template = "demo.hello";
@@ -8,8 +8,8 @@ class HelloWorld extends Component {
 }
 
 const qweb = new QWeb(TEMPLATES);
-const hello = new HelloWorld({qweb}, { name: "World" });
-hello.mount(document.body);
+const app = new App({qweb}, { name: "World" });
+app.mount(document.body);
 `;
 
 const HELLO_WORLD_XML = `<templates>
@@ -24,7 +24,7 @@ const HELLO_WORLD_CSS = `.hello {
 }`;
 
 const HELLO_WORLD_ESNEXT = `// This example will not work if your browser does not support ESNext Class Fields
-const {Component, QWeb} = owl.core;
+const {Component, QWeb} = owl;
 
 class HelloWorld extends Component {
   template = "demo.hello";
@@ -34,7 +34,7 @@ const qweb = new QWeb(TEMPLATES);
 const hello = new HelloWorld({qweb}, { name: "World" });
 hello.mount(document.body);`;
 
-const HELLO_WORLD_ES5 = `const { Component, QWeb } = owl.core;
+const HELLO_WORLD_ES5 = `const { Component, QWeb } = owl;
 
 function HelloWorld(env, props) {
   var obj = new Component(env, props);
@@ -63,7 +63,7 @@ const HELLO_WORLD_ES5_XML = `<templates>
   </div>
 </templates>`;
 
-const WIDGET_COMPOSITION = `class Counter extends owl.core.Component {
+const WIDGET_COMPOSITION = `class Counter extends owl.Component {
   constructor(parent, props) {
     super(parent, props);
     this.template="counter";
@@ -77,7 +77,7 @@ const WIDGET_COMPOSITION = `class Counter extends owl.core.Component {
   }
 }
 
-class App extends owl.core.Component {
+class App extends owl.Component {
   constructor() {
     super(...arguments);
     this.template="app";
@@ -86,7 +86,7 @@ class App extends owl.core.Component {
 }
 
 const env = {
-  qweb: new owl.core.QWeb(TEMPLATES)
+  qweb: new owl.QWeb(TEMPLATES)
 };
 
 const app = new App(env);
@@ -105,7 +105,7 @@ const WIDGET_COMPOSITION_XML = `<templates>
   </div>
 </templates>`;
 
-const LIFECYCLE_DEMO = `const { Component, QWeb } = owl.core;
+const LIFECYCLE_DEMO = `const { Component, QWeb } = owl;
 
 class HookWidget extends Component {
   constructor() {
@@ -196,7 +196,7 @@ for (let i = 1; i < 16000; i++) {
 //------------------------------------------------------------------------------
 // Counter Widget
 //------------------------------------------------------------------------------
-class Counter extends owl.core.Component {
+class Counter extends owl.Component {
   constructor(parent, props) {
     super(parent, props);
     this.template = "counter";
@@ -213,7 +213,7 @@ class Counter extends owl.core.Component {
 //------------------------------------------------------------------------------
 // Message Widget
 //------------------------------------------------------------------------------
-class Message extends owl.core.Component {
+class Message extends owl.Component {
   constructor() {
     super(...arguments);
     this.template = "message";
@@ -230,7 +230,7 @@ class Message extends owl.core.Component {
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
-class App extends owl.core.Component {
+class App extends owl.Component {
   constructor() {
     super(...arguments);
     this.template = "root";
@@ -263,7 +263,7 @@ class App extends owl.core.Component {
 // Application initialization
 //------------------------------------------------------------------------------
 const env = {
-  qweb: new owl.core.QWeb(TEMPLATES)
+  qweb: new owl.QWeb(TEMPLATES)
 };
 
 const app = new App(env);
@@ -355,8 +355,7 @@ const BENCHMARK_APP_XML = `<templates>
 
 </templates>`;
 
-const STATE_MANAGEMENT = `const { Component, QWeb } = owl.core;
-const { Store, connect } = owl.extras;
+const STATE_MANAGEMENT = `const { Component, QWeb, Store, connect } = owl;
 
 //------------------------------------------------------------------------------
 // Store Definition
@@ -461,7 +460,7 @@ const STATE_MANAGEMENT_CSS = `.action {
 }
 `;
 
-const RESPONSIVE = `const { Component, QWeb, utils } = owl.core;
+const RESPONSIVE = `const { Component, QWeb, utils } = owl;
 
 class SubWidget extends Component {
   constructor() {
@@ -530,7 +529,7 @@ const RESPONSIVE_CSS = `.info {
     margin: 30px;
 }`;
 
-const EMPTY = `const {Component, QWeb} = owl.core;
+const EMPTY = `const {Component, QWeb} = owl;
 class Widget extends Component {
 }
 

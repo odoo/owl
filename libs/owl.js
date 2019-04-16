@@ -802,7 +802,7 @@
         }
     }
 
-    var utils = /*#__PURE__*/Object.freeze({
+    var _utils = /*#__PURE__*/Object.freeze({
         escape: escape,
         htmlTrim: htmlTrim,
         idGenerator: idGenerator,
@@ -1162,23 +1162,6 @@
                 const children = this.__owl__.children;
                 for (let id in children) {
                     children[id]._visitSubTree(callback);
-                }
-            }
-        }
-    }
-    class PureComponent extends Component {
-        shouldUpdate(nextProps) {
-            for (let k in nextProps) {
-                if (nextProps[k] !== this.props[k]) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        async updateState(nextState) {
-            for (let k in nextState) {
-                if (nextState[k] !== this.state[k]) {
-                    return super.updateState(nextState);
                 }
             }
         }
@@ -1831,11 +1814,16 @@
             const variable = node.getAttribute("t-set");
             let value = node.getAttribute("t-value");
             if (value) {
-                const varName = `_${ctx.generateID()}`;
                 const formattedValue = ctx.formatExpression(value);
-                ctx.addLine(`var ${varName} = ${formattedValue}`);
-                ctx.definedVariables[varName] = formattedValue;
-                ctx.variables[variable] = varName;
+                if (ctx.variables.hasOwnProperty(variable)) {
+                    ctx.addLine(`${ctx.variables[variable]} = ${formattedValue}`);
+                }
+                else {
+                    const varName = `_${ctx.generateID()}`;
+                    ctx.addLine(`var ${varName} = ${formattedValue};`);
+                    ctx.definedVariables[varName] = formattedValue;
+                    ctx.variables[variable] = varName;
+                }
             }
             else {
                 ctx.variables[variable] = node.childNodes;
@@ -2078,35 +2066,44 @@
         }
     };
 
-    /**
-     * The registry is basically a simple hashmap. It is only a little safer and
-     * more structured than a simple object.
-     */
-    class Registry {
-        constructor() {
-            this.map = {};
-        }
-        /**
-         * Add an element to the registry.  Note that the add method returns the
-         * registry, to it can be chained.
-         */
-        add(key, item) {
-            if (key in this.map) {
-                throw new Error(`Key ${key} already exists!`);
+    const methodsToPatch = [
+        "push",
+        "pop",
+        "shift",
+        "unshift",
+        "splice",
+        "sort",
+        "reverse"
+    ];
+    const ArrayProto = Array.prototype;
+    const ModifiedArrayProto = Object.create(ArrayProto);
+    for (let method of methodsToPatch) {
+        const initialMethod = ArrayProto[method];
+        ModifiedArrayProto[method] = function (...args) {
+            this.__observer__.rev++;
+            this.__owl__.rev++;
+            let parent = this;
+            do {
+                parent.__owl__.deepRev++;
+            } while ((parent = parent.__owl__.parent));
+            let inserted;
+            switch (method) {
+                case "push":
+                case "unshift":
+                    inserted = args;
+                    break;
+                case "splice":
+                    inserted = args.slice(2);
+                    break;
             }
-            this.map[key] = item;
-            return this;
-        }
-        /**
-         * Returns the element corresponding to the key
-         *
-         * Nothing is done to check that the key actually exists.
-         */
-        get(key) {
-            return this.map[key];
-        }
+            if (inserted) {
+                for (let elem of inserted) {
+                    this.__observer__.observe(elem, this);
+                }
+            }
+            return initialMethod.call(this, ...args);
+        };
     }
-
     function makeObserver() {
         const observer = {
             rev: 1,
@@ -2152,48 +2149,11 @@
                 addProp(obj, key, obj[key]);
             }
         }
-        const ArrayProto = Array.prototype;
-        const ModifiedArrayProto = Object.create(ArrayProto);
-        const methodsToPatch = [
-            "push",
-            "pop",
-            "shift",
-            "unshift",
-            "splice",
-            "sort",
-            "reverse"
-        ];
-        for (let method of methodsToPatch) {
-            const initialMethod = ArrayProto[method];
-            ModifiedArrayProto[method] = function (...args) {
-                observer.rev++;
-                this.__owl__.rev++;
-                let parent = this;
-                do {
-                    parent.__owl__.deepRev++;
-                } while ((parent = parent.__owl__.parent));
-                let inserted;
-                switch (method) {
-                    case "push":
-                    case "unshift":
-                        inserted = args;
-                        break;
-                    case "splice":
-                        inserted = args.slice(2);
-                        break;
-                }
-                if (inserted) {
-                    for (let elem of inserted) {
-                        observe(elem, this);
-                    }
-                }
-                return initialMethod.call(this, ...args);
-            };
-        }
         function observeArr(arr, parent) {
             arr.__owl__ = { rev: 1, deepRev: 1, parent };
             Object.defineProperty(arr, "__owl__", { enumerable: false });
-            arr.__proto__ = ModifiedArrayProto;
+            arr.__proto__ = Object.create(ModifiedArrayProto);
+            arr.__proto__.__observer__ = observer;
             for (let i = 0; i < arr.length; i++) {
                 observe(arr[i], arr);
             }
@@ -2396,24 +2356,18 @@
         };
     }
 
-    const core = {
-        QWeb,
-        EventBus,
-        Component,
-        PureComponent,
-        utils
-    };
-    const extras = {
-        Store,
-        connect,
-        Registry
-    };
+    const utils = _utils;
 
-    exports.core = core;
-    exports.extras = extras;
+    exports.utils = utils;
+    exports.Component = Component;
+    exports.EventBus = EventBus;
+    exports.QWeb = QWeb;
+    exports.connect = connect;
+    exports.Store = Store;
 
     exports._version = '0.6.0';
-    exports._date = '2019-04-16T12:48:20.169Z';
-    exports._hash = '0ca4cc1';
+    exports._date = '2019-04-16T15:27:25.412Z';
+    exports._hash = 'e19540f';
+    exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

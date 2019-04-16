@@ -1,6 +1,6 @@
 import { SAMPLES } from "./samples.js";
 
-const { QWeb, Component } = owl.core;
+const { QWeb, Component } = owl;
 
 const MODES = {
   js: "ace/mode/javascript",
@@ -157,7 +157,7 @@ class App extends Component {
 
   async runCode() {
     // check templates
-    var qweb = new owl.core.QWeb();
+    var qweb = new owl.QWeb();
     var error = false;
     try {
       qweb.loadTemplates(this.state.xml);

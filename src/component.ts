@@ -5,6 +5,7 @@ import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
 import { init } from "../libs/snabbdom/src/snabbdom";
 import { VNode } from "../libs/snabbdom/src/vnode";
 import { EventBus } from "./event_bus";
+import { Observer } from "./observer";
 import { QWeb } from "./qweb";
 import { idGenerator } from "./utils";
 
@@ -34,6 +35,7 @@ export interface Meta<T extends Env, Props> {
   renderProps: Props | null;
   renderPromise: Promise<VNode> | null;
   boundHandlers: { [key: number]: any };
+  observer: Observer;
 }
 
 const patch = init([sdListeners, sdAttrs, sdProps]);
@@ -118,7 +120,8 @@ export class Component<
       renderId: 1,
       renderPromise: null,
       renderProps: props || null,
-      boundHandlers: {}
+      boundHandlers: {},
+      observer: new Observer()
     };
   }
 
@@ -232,6 +235,7 @@ export class Component<
       this._visitSubTree(w => {
         if (!w.__owl__.isMounted && this.el!.contains(w.el)) {
           w.__owl__.isMounted = true;
+          this._observeState();
           w.mounted();
           return true;
         }
@@ -312,7 +316,6 @@ export class Component<
     if (this.__owl__.isMounted) {
       await this.render(true);
     }
-    this.patched();
   }
 
   async updateProps(
@@ -340,7 +343,6 @@ export class Component<
     if (this.__owl__.isStarted) {
       await this.render();
     }
-    this.patched();
   }
 
   //--------------------------------------------------------------------------
@@ -351,7 +353,6 @@ export class Component<
     await this.willUpdateProps(nextProps);
     this.props = nextProps;
     await this.render();
-    this.patched();
   }
 
   _patch(vnode) {
@@ -359,6 +360,7 @@ export class Component<
     if (this.__owl__.vnode) {
       this.willPatch();
       this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
+      this.patched();
     } else {
       this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }
@@ -419,6 +421,7 @@ export class Component<
     if (this.__owl__.parent) {
       if (this.__owl__.parent!.__owl__.isMounted) {
         this.__owl__.isMounted = true;
+        this._observeState();
         this.mounted();
         const children = this.__owl__.children;
         for (let id in children) {
@@ -435,6 +438,15 @@ export class Component<
       for (let id in children) {
         children[id]._visitSubTree(callback);
       }
+    }
+  }
+
+  _observeState() {
+    if (Object.keys(this.state).length) {
+      this.__owl__.observer.observe(this.state);
+      this.__owl__.observer.notifyCB = () => {
+        this.render();
+      };
     }
   }
 }

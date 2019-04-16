@@ -259,7 +259,8 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(hookCounter).toBe(0); // sub widget not created yet
-    await widget.updateState({ ok: true });
+    widget.state.ok = true;
+    await nextTick();
     expect(hookCounter).toBe(2);
   });
 
@@ -566,7 +567,8 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual([]);
-    await widget.updateState({ n: 2 });
+    widget.state.n = 2;
+    await nextTick();
 
     // Not sure about this order.  If you disagree, feel free to open an issue...
     expect(steps).toEqual([
@@ -1181,10 +1183,12 @@ describe("async rendering", () => {
     const w = new W(env);
     await w.mount(fixture);
     expect(n).toBe(0);
-    w.updateState({ val: 2 });
+    w.state.val = 2;
+
+    await nextMicroTick();
     expect(n).toBe(1);
-    await nextTick();
-    w.updateState({ val: 3 });
+    w.state.val = 3;
+    await nextMicroTick();
     expect(n).toBe(2);
     def.resolve();
     await nextTick();
@@ -1389,5 +1393,24 @@ describe("updating environment", () => {
     await widget.updateEnv(<any>{ someKey: "rerendered" });
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>rerendered</div></div>");
+  });
+});
+
+describe("widget and observable state", () => {
+  test("widget is rerendered when its state is changed", async () => {
+    class TestWidget extends Widget {
+      state = { drink: "water" };
+      inlineTemplate = `<div><t t-esc="state.drink"/></div>`;
+    }
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div>water</div>");
+    widget.state.drink = "beer";
+
+    // 2 microtask ticks: one for observer, one for rendering
+    await nextMicroTick();
+    await nextMicroTick();
+    expect(fixture.innerHTML).toBe("<div>beer</div>");
   });
 });

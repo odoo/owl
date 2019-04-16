@@ -1,7 +1,7 @@
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
 
-export class TodoItem extends owl.core.Component {
+export class TodoItem extends owl.Component {
   template = "todoitem";
 
   state = { isEditing: false };

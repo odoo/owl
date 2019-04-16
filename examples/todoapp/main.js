@@ -8,7 +8,7 @@ async function makeEnv() {
   }
   let templates = await result.text();
   templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-  const qweb = new owl.core.QWeb();
+  const qweb = new owl.QWeb();
   qweb.loadTemplates(templates);
   return {
     qweb,

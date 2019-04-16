@@ -1,7 +1,6 @@
 import { TodoItem } from "./TodoItem.js";
 
-const { Component } = owl.core;
-const { connect } = owl.extras;
+const { Component, connect } = owl;
 
 const ENTER_KEY = 13;
 

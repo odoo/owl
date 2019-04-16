@@ -1,11 +1,11 @@
-import { Store, makeObserver, connect } from "../src/store";
+import { Component, Env } from "../src/component";
+import { connect, Store } from "../src/store";
 import {
-  nextTick,
-  nextMicroTick,
   makeTestFixture,
-  makeTestWEnv
+  makeTestWEnv,
+  nextMicroTick,
+  nextTick
 } from "./helpers";
-import { Env, Component } from "../src/component";
 
 describe("basic use", () => {
   test("commit a mutation", () => {
@@ -168,260 +168,6 @@ describe("basic use", () => {
     await nextMicroTick();
     expect(updateCounter).toBe(1);
     expect(store.state).toEqual({ bertinchamps: "brune", chouffe: "blonde" });
-  });
-});
-
-describe("observer", () => {
-  test("properly observe objects", () => {
-    const observer = makeObserver();
-    const obj: any = {};
-
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-
-    const ob2: any = { a: 1 };
-    observer.observe(ob2);
-    expect(ob2.__owl__.rev).toBe(1);
-    ob2.a = 2;
-    expect(observer.rev).toBe(2);
-    expect(ob2.__owl__.rev).toBe(2);
-
-    ob2.b = 3;
-    expect(observer.rev).toBe(2);
-    expect(ob2.__owl__.rev).toBe(2);
-
-    observer.set(ob2, "b", 4);
-    expect(observer.rev).toBe(3);
-    expect(ob2.__owl__.rev).toBe(3);
-  });
-
-  test("properly handle null or undefined", () => {
-    const observer = makeObserver();
-    const obj: any = { a: null, b: undefined };
-
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-
-    obj.a = 3;
-    expect(obj.__owl__.rev).toBe(2);
-
-    obj.b = 5;
-    expect(obj.__owl__.rev).toBe(3);
-
-    obj.a = null;
-    obj.b = undefined;
-    expect(obj.__owl__.rev).toBe(5);
-  });
-
-  test("can change values in array", () => {
-    const observer = makeObserver();
-    const obj: any = { arr: [1, 2] };
-
-    observer.observe(obj);
-    expect(obj.arr.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-
-    obj.arr[0] = "nope";
-    expect(obj.arr.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-
-    observer.set(obj.arr, 0, "yep");
-    expect(obj.arr.__owl__.rev).toBe(2);
-    expect(observer.rev).toBe(2);
-  });
-
-  test("various object property changes", () => {
-    const observer = makeObserver();
-    const obj: any = { a: 1 };
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
-    obj.a = 2;
-    expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
-
-    // same value again
-    obj.a = 2;
-    expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
-
-    obj.a = 3;
-    expect(observer.rev).toBe(3);
-    expect(obj.__owl__.rev).toBe(3);
-  });
-
-  test("properly observe arrays", () => {
-    const observer = makeObserver();
-    const arr: any = [];
-    observer.observe(arr);
-    expect(arr.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-    expect(arr.length).toBe(0);
-
-    arr.push(1);
-    expect(arr.__owl__.rev).toBe(2);
-    expect(observer.rev).toBe(2);
-    expect(arr.length).toBe(1);
-
-    arr.splice(1, 0, "hey");
-    expect(arr.__owl__.rev).toBe(3);
-    expect(observer.rev).toBe(3);
-    expect(arr.length).toBe(2);
-
-    arr.unshift("lindemans");
-    expect(arr.__owl__.rev).toBe(4);
-
-    arr.reverse();
-    expect(arr.__owl__.rev).toBe(5);
-
-    arr.pop();
-    expect(arr.__owl__.rev).toBe(6);
-
-    arr.shift();
-    expect(arr.__owl__.rev).toBe(7);
-
-    arr.sort();
-    expect(arr.__owl__.rev).toBe(8);
-
-    expect(arr).toEqual([1]);
-  });
-
-  test("object pushed into arrays are observed", () => {
-    const observer = makeObserver();
-    const arr: any = [];
-    observer.observe(arr);
-    expect(observer.rev).toBe(1);
-
-    arr.push({ kriek: 5 });
-    expect(observer.rev).toBe(2);
-    expect(arr.__owl__.rev).toBe(2);
-    expect(arr[0].__owl__.rev).toBe(1);
-
-    arr[0].kriek = 6;
-    expect(observer.rev).toBe(3);
-    expect(arr.__owl__.rev).toBe(2);
-    expect(arr[0].__owl__.rev).toBe(2);
-  });
-
-  test("properly observe arrays in object", () => {
-    const observer = makeObserver();
-    const state: any = { arr: [] };
-    observer.observe(state);
-    expect(state.arr.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-    expect(state.arr.length).toBe(0);
-
-    state.arr.push(1);
-    expect(state.arr.__owl__.rev).toBe(2);
-    expect(observer.rev).toBe(2);
-    expect(state.arr.length).toBe(1);
-  });
-
-  test("properly observe objects in array", () => {
-    const observer = makeObserver();
-    const state: any = { arr: [{ something: 1 }] };
-    observer.observe(state);
-    expect(state.arr.__owl__.rev).toBe(1);
-    expect(state.arr[0].__owl__.rev).toBe(1);
-
-    state.arr[0].something = 2;
-    expect(state.arr.__owl__.rev).toBe(1);
-    expect(state.arr[0].__owl__.rev).toBe(2);
-  });
-
-  test("properly observe objects in object", () => {
-    const observer = makeObserver();
-    const state: any = { a: { b: 1 } };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.a.__owl__.rev).toBe(1);
-
-    state.a.b = 2;
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.a.__owl__.rev).toBe(2);
-  });
-
-  test("properly unobserve objects in object", () => {
-    const observer = makeObserver();
-    const state: any = { a: { b: 1 } };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    const initialA = state.a;
-    expect(initialA.__owl__.rev).toBe(1);
-
-    state.a = "Karlsquell";
-    expect(initialA.__owl__).not.toBeDefined();
-  });
-
-  test("reobserve new object values", () => {
-    const observer = makeObserver();
-    const obj: any = { a: 1 };
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
-    obj.a = { b: 2 };
-    expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
-    expect(obj.a.__owl__.rev).toBe(1);
-
-    obj.a.b = 3;
-    expect(observer.rev).toBe(3);
-    expect(obj.__owl__.rev).toBe(2);
-    expect(obj.a.__owl__.rev).toBe(2);
-  });
-
-  test("deep observe misc changes", () => {
-    const observer = makeObserver();
-    const state: any = { o: { a: 1 }, arr: [1], n: 13 };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.__owl__.deepRev).toBe(1);
-
-    state.o.a = 2;
-    expect(observer.rev).toBe(2);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.__owl__.deepRev).toBe(2);
-
-    state.arr.push(2);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.__owl__.deepRev).toBe(3);
-
-    state.n = 155;
-    expect(state.__owl__.rev).toBe(2);
-    expect(state.__owl__.deepRev).toBe(4);
-  });
-
-  test("properly handle already observed state", () => {
-    const observer = makeObserver();
-    const obj1: any = { a: 1 };
-    const obj2: any = { b: 1 };
-    observer.observe(obj1);
-    observer.observe(obj2);
-    expect(obj1.__owl__.rev).toBe(1);
-    expect(obj2.__owl__.rev).toBe(1);
-
-    obj1.a = 2;
-    obj2.b = 3;
-    expect(obj1.__owl__.rev).toBe(2);
-    expect(obj2.__owl__.rev).toBe(2);
-
-    obj2.b = obj1;
-    expect(obj1.__owl__.rev).toBe(2);
-    expect(obj2.__owl__.rev).toBe(3);
-  });
-
-  test("accept cycles in observed state", () => {
-    const observer = makeObserver();
-    const obj1: any = {};
-    const obj2: any = { b: obj1, key: 1 };
-    obj1.a = obj2;
-    observer.observe(obj1);
-    expect(obj1.__owl__.rev).toBe(1);
-    expect(obj2.__owl__.rev).toBe(1);
-
-    obj2.key = 3;
-    expect(obj1.__owl__.rev).toBe(1);
-    expect(obj2.__owl__.rev).toBe(2);
   });
 });
 
@@ -845,7 +591,7 @@ describe("connecting a component to store", () => {
       return {
         selected: state.beers[props.id],
         consumed: state.beers[state.consumedID] || null,
-        taster: state.taster,
+        taster: state.taster
       };
     })(Beer);
 
@@ -866,7 +612,7 @@ describe("connecting a component to store", () => {
       },
       renameBeer({ state }, { beerId, name }) {
         state.beers[beerId].name = name;
-      },
+      }
     };
     const state = {
       beers: {
@@ -880,28 +626,42 @@ describe("connecting a component to store", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span></div></div>"
+    );
 
     await app.updateState({ beerId: 1 });
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>"
+    );
 
     store.commit("renameBeer", { beerId: 1, name: "kwak" });
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:kwak</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>selected:kwak</span></div></div>"
+    );
 
     store.commit("consume", 1);
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>selected:kwak</span><span>consumed:kwak</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>selected:kwak</span><span>consumed:kwak</span></div></div>"
+    );
 
     await app.updateState({ beerId: 0 });
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>consumed:kwak</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>consumed:kwak</span></div></div>"
+    );
 
     store.commit("renameBeer", { beerId: 1, name: "jupiler" });
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>"
+    );
 
     store.commit("changeTaster", "matthieu");
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div><span>taster:matthieu</span><span>consumed:jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>taster:matthieu</span><span>consumed:jupiler</span></div></div>"
+    );
   });
 });

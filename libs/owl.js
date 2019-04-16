@@ -857,12 +857,12 @@
             if (parent instanceof Component) {
                 p = parent;
                 this.env = parent.env;
-                parent.__widget__.children[id] = this;
+                parent.__owl__.children[id] = this;
             }
             else {
                 this.env = parent;
             }
-            this.__widget__ = {
+            this.__owl__ = {
                 id: id,
                 vnode: null,
                 isStarted: false,
@@ -878,7 +878,7 @@
             };
         }
         get el() {
-            return this.__widget__.vnode ? this.__widget__.vnode.elm : null;
+            return this.__owl__.vnode ? this.__owl__.vnode.elm : null;
         }
         /**
          * willStart is an asynchronous hook that can be implemented to perform some
@@ -971,7 +971,7 @@
         }
         async mount(target) {
             const vnode = await this._prepare();
-            if (this.__widget__.isDestroyed) {
+            if (this.__owl__.isDestroyed) {
                 // widget was destroyed before we get here...
                 return;
             }
@@ -979,8 +979,8 @@
             target.appendChild(this.el);
             if (document.body.contains(target)) {
                 this._visitSubTree(w => {
-                    if (!w.__widget__.isMounted && this.el.contains(w.el)) {
-                        w.__widget__.isMounted = true;
+                    if (!w.__owl__.isMounted && this.el.contains(w.el)) {
+                        w.__owl__.isMounted = true;
                         w.mounted();
                         return true;
                     }
@@ -991,9 +991,9 @@
         unmount() {
             if (this.el) {
                 this._visitSubTree(w => {
-                    if (w.__widget__.isMounted) {
+                    if (w.__owl__.isMounted) {
                         w.willUnmount();
-                        w.__widget__.isMounted = false;
+                        w.__owl__.isMounted = false;
                         return true;
                     }
                     return false;
@@ -1002,38 +1002,38 @@
             }
         }
         async render(force = false) {
-            if (this.__widget__.isDestroyed) {
+            if (this.__owl__.isDestroyed) {
                 return;
             }
             const renderVDom = this._render(force);
-            const renderId = this.__widget__.renderId;
+            const renderId = this.__owl__.renderId;
             const vnode = await renderVDom;
-            if (renderId === this.__widget__.renderId) {
+            if (renderId === this.__owl__.renderId) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
                 this._patch(vnode);
             }
         }
         destroy() {
-            if (!this.__widget__.isDestroyed) {
-                for (let id in this.__widget__.children) {
-                    this.__widget__.children[id].destroy();
+            if (!this.__owl__.isDestroyed) {
+                for (let id in this.__owl__.children) {
+                    this.__owl__.children[id].destroy();
                 }
-                if (this.__widget__.isMounted) {
+                if (this.__owl__.isMounted) {
                     this.willUnmount();
                 }
                 if (this.el) {
                     this.el.remove();
-                    this.__widget__.isMounted = false;
-                    delete this.__widget__.vnode;
+                    this.__owl__.isMounted = false;
+                    delete this.__owl__.vnode;
                 }
-                if (this.__widget__.parent) {
-                    let id = this.__widget__.id;
-                    delete this.__widget__.parent.__widget__.children[id];
-                    this.__widget__.parent = null;
+                if (this.__owl__.parent) {
+                    let id = this.__owl__.id;
+                    delete this.__owl__.parent.__owl__.children[id];
+                    this.__owl__.parent = null;
                 }
                 this.clear();
-                this.__widget__.isDestroyed = true;
+                this.__owl__.isDestroyed = true;
             }
         }
         shouldUpdate(nextProps) {
@@ -1049,20 +1049,16 @@
          * mode or not.
          */
         async updateEnv(nextEnv) {
-            if (this.__widget__.parent && this.__widget__.parent.env === this.env) {
+            if (this.__owl__.parent && this.__owl__.parent.env === this.env) {
                 this.env = Object.create(this.env);
             }
             Object.assign(this.env, nextEnv);
-            if (this.__widget__.isMounted) {
+            if (this.__owl__.isMounted) {
                 await this.render(true);
             }
             this.patched();
         }
         async updateProps(nextProps, forceUpdate = false) {
-            if (nextProps === this.__widget__.renderProps && !forceUpdate) {
-                await this.__widget__.renderPromise;
-                return;
-            }
             const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
             return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
         }
@@ -1080,7 +1076,7 @@
                 return;
             }
             Object.assign(this.state, nextState);
-            if (this.__widget__.isStarted) {
+            if (this.__owl__.isStarted) {
                 await this.render();
             }
             this.patched();
@@ -1095,36 +1091,36 @@
             this.patched();
         }
         _patch(vnode) {
-            this.__widget__.renderPromise = null;
-            if (this.__widget__.vnode) {
+            this.__owl__.renderPromise = null;
+            if (this.__owl__.vnode) {
                 this.willPatch();
-                this.__widget__.vnode = patch$1(this.__widget__.vnode, vnode);
+                this.__owl__.vnode = patch$1(this.__owl__.vnode, vnode);
             }
             else {
-                this.__widget__.vnode = patch$1(document.createElement(vnode.sel), vnode);
+                this.__owl__.vnode = patch$1(document.createElement(vnode.sel), vnode);
             }
         }
         async _prepare() {
-            this.__widget__.renderProps = this.props;
-            this.__widget__.renderPromise = this.willStart().then(() => {
-                if (this.__widget__.isDestroyed) {
+            this.__owl__.renderProps = this.props;
+            this.__owl__.renderPromise = this.willStart().then(() => {
+                if (this.__owl__.isDestroyed) {
                     return Promise.resolve(h("div"));
                 }
-                this.__widget__.isStarted = true;
+                this.__owl__.isStarted = true;
                 if (this.inlineTemplate) {
                     this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
                 }
                 return this._render();
             });
-            return this.__widget__.renderPromise;
+            return this.__owl__.renderPromise;
         }
         async _render(force = false) {
-            this.__widget__.renderId++;
+            this.__owl__.renderId++;
             const promises = [];
             const template = this.inlineTemplate || this.template;
             let vnode = this.env.qweb.render(template, this, {
                 promises,
-                handlers: this.__widget__.boundHandlers,
+                handlers: this.__owl__.boundHandlers,
                 forceUpdate: force
             });
             // this part is critical for the patching process to be done correctly. The
@@ -1132,28 +1128,28 @@
             // will update its own vnode representation without the knowledge of the
             // parent widget.  With this, we make sure that the parent widget will be
             // able to patch itself properly after
-            vnode.key = this.__widget__.id;
-            this.__widget__.renderProps = this.props;
-            this.__widget__.renderPromise = Promise.all(promises).then(() => vnode);
-            return this.__widget__.renderPromise;
+            vnode.key = this.__owl__.id;
+            this.__owl__.renderProps = this.props;
+            this.__owl__.renderPromise = Promise.all(promises).then(() => vnode);
+            return this.__owl__.renderPromise;
         }
         /**
          * Only called by qweb t-widget directive
          */
         _mount(vnode, elm) {
-            this.__widget__.vnode = patch$1(elm, vnode);
+            this.__owl__.vnode = patch$1(elm, vnode);
             this.__mount();
-            return this.__widget__.vnode;
+            return this.__owl__.vnode;
         }
         __mount() {
-            if (this.__widget__.isMounted) {
+            if (this.__owl__.isMounted) {
                 return;
             }
-            if (this.__widget__.parent) {
-                if (this.__widget__.parent.__widget__.isMounted) {
-                    this.__widget__.isMounted = true;
+            if (this.__owl__.parent) {
+                if (this.__owl__.parent.__owl__.isMounted) {
+                    this.__owl__.isMounted = true;
                     this.mounted();
-                    const children = this.__widget__.children;
+                    const children = this.__owl__.children;
                     for (let id in children) {
                         children[id].__mount();
                     }
@@ -1163,7 +1159,7 @@
         _visitSubTree(callback) {
             const shouldVisitChildren = callback(this);
             if (shouldVisitChildren) {
-                const children = this.__widget__.children;
+                const children = this.__owl__.children;
                 for (let id in children) {
                     children[id]._visitSubTree(callback);
                 }
@@ -1215,6 +1211,7 @@
             this.nextID = 1;
             this.code = [];
             this.variables = {};
+            this.definedVariables = {};
             this.escaping = false;
             this.parentNode = null;
             this.rootNode = null;
@@ -1315,11 +1312,13 @@
                 else if (c.match(/\W/) && invar.length) {
                     // TODO: Should check for possible spaces before dot
                     if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-                        invar =
-                            WORD_REPLACEMENT[invar] ||
-                                (invar in this.variables &&
-                                    this.formatExpression(this.variables[invar])) ||
-                                "context['" + invar + "']";
+                        if (!(invar in this.definedVariables)) {
+                            invar =
+                                WORD_REPLACEMENT[invar] ||
+                                    (invar in this.variables &&
+                                        this.formatExpression(this.variables[invar])) ||
+                                    "context['" + invar + "']";
+                        }
                     }
                     r += invar;
                     invar = "";
@@ -1359,6 +1358,17 @@
                     return classes.join(" ");
                 }
             };
+            this.directiveNames = {
+                as: 1,
+                name: 1,
+                value: 1,
+                att: 1,
+                attf: 1,
+                props: 1,
+                key: 1,
+                keepalive: 1,
+                debug: 1
+            };
             [
                 forEachDirective,
                 escDirective,
@@ -1378,6 +1388,7 @@
         }
         addDirective(dir) {
             this.directives.push(dir);
+            this.directiveNames[dir.name] = 1;
             this.directives.sort((d1, d2) => d1.priority - d2.priority);
         }
         /**
@@ -1538,8 +1549,18 @@
             const attributes = node.attributes;
             const validDirectives = [];
             let withHandlers = false;
+            // maybe this is not optimal: we iterate on all attributes here, and again
+            // just after for each directive.
+            for (let i = 0; i < attributes.length; i++) {
+                let attrName = attributes[i].name;
+                if (attrName.startsWith("t-")) {
+                    let dName = attrName.slice(2).split("-")[0];
+                    if (!(dName in this.directiveNames)) {
+                        throw new Error(`Unknown QWeb directive: '${attrName}'`);
+                    }
+                }
+            }
             for (let directive of this.directives) {
-                // const value = attributes[i].textContent!;
                 let fullName;
                 let value;
                 for (let i = 0; i < attributes.length; i++) {
@@ -1735,19 +1756,21 @@
             return;
         }
         if (typeof value === "string") {
-            const exprID = ctx.generateID();
-            ctx.addLine(`var e${exprID} = ${ctx.formatExpression(value)};`);
-            ctx.addIf(`e${exprID} || e${exprID} === 0`);
-            let text = `e${exprID}`;
+            let exprID = value;
+            if (!(value in ctx.definedVariables)) {
+                exprID = `_${ctx.generateID()}`;
+                ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
+            }
+            ctx.addIf(`${exprID} || ${exprID} === 0`);
             if (!ctx.parentNode) {
                 throw new Error("Should not have a text node without a parent");
             }
             if (ctx.escaping) {
-                ctx.addLine(`c${ctx.parentNode}.push({text: ${text}});`);
+                ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
             }
             else {
                 let fragID = ctx.generateID();
-                ctx.addLine(`var frag${fragID} = this.utils.getFragment(e${exprID})`);
+                ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
                 let tempNodeID = ctx.generateID();
                 ctx.addLine(`var p${tempNodeID} = {hook: {`);
                 ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
@@ -1801,7 +1824,11 @@
             const variable = node.getAttribute("t-set");
             let value = node.getAttribute("t-value");
             if (value) {
-                ctx.variables[variable] = value;
+                const varName = `_${ctx.generateID()}`;
+                const formattedValue = ctx.formatExpression(value);
+                ctx.addLine(`var ${varName} = ${formattedValue}`);
+                ctx.definedVariables[varName] = formattedValue;
+                ctx.variables[variable] = varName;
             }
             else {
                 ctx.variables[variable] = node.childNodes;
@@ -1862,12 +1889,32 @@
             nodeCopy.removeAttribute("t-call");
             // extract variables from nodecopy
             const tempCtx = new Context();
+            tempCtx.nextID = ctx.rootContext.nextID;
             qweb._compileNode(nodeCopy, tempCtx);
             const vars = Object.assign({}, ctx.variables, tempCtx.variables);
+            var definedVariables = Object.assign({}, ctx.definedVariables, tempCtx.definedVariables);
+            ctx.rootContext.nextID = tempCtx.nextID;
+            // open new scope, if necessary
+            const hasNewVariables = Object.keys(definedVariables).length > 0;
+            if (hasNewVariables) {
+                ctx.addLine("{");
+                ctx.indent();
+            }
+            // add new variables, if any
+            for (let key in definedVariables) {
+                ctx.addLine(`let ${key} = ${definedVariables[key]}`);
+            }
+            // compile sub template
             const subCtx = ctx
                 .subContext("caller", nodeCopy)
-                .subContext("variables", Object.create(vars));
+                .subContext("variables", Object.create(vars))
+                .subContext("definedVariables", Object.create(definedVariables));
             qweb._compileNode(nodeTemplate, subCtx);
+            // close new scope
+            if (hasNewVariables) {
+                ctx.dedent();
+                ctx.addLine("}");
+            }
             return true;
         }
     };
@@ -1941,7 +1988,7 @@
             ctx.addLine("//WIDGET");
             ctx.rootContext.shouldDefineOwner = true;
             let props = node.getAttribute("t-props");
-            let keepAlive = node.getAttribute("t-keep-alive") ? true : false;
+            let keepAlive = node.getAttribute("t-keepalive") ? true : false;
             // t-on- events...
             const events = [];
             const attributes = node.attributes;
@@ -1981,17 +2028,17 @@
                 : ctx.inLoop
                     ? `String(-${widgetID} - i)`
                     : String(widgetID);
-            ctx.addLine(`let w${widgetID} = ${templateID} in context.__widget__.cmap ? context.__widget__.children[context.__widget__.cmap[${templateID}]] : false;`);
+            ctx.addLine(`let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
             ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
             ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
             // check if we can reuse current rendering promise
-            ctx.addIf(`w${widgetID} && w${widgetID}.__widget__.renderPromise`);
-            ctx.addIf(`w${widgetID}.__widget__.isStarted`);
+            ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
+            ctx.addIf(`w${widgetID}.__owl__.isStarted`);
             ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`);
             ctx.addElse();
             ctx.addLine(`isNew${widgetID} = true`);
-            ctx.addIf(`props${widgetID} === w${widgetID}.__widget__.renderProps`);
-            ctx.addLine(`def${defID} = w${widgetID}.__widget__.renderPromise;`);
+            ctx.addIf(`props${widgetID} === w${widgetID}.__owl__.renderProps`);
+            ctx.addLine(`def${defID} = w${widgetID}.__owl__.renderPromise;`);
             ctx.addElse();
             ctx.addLine(`w${widgetID}.destroy();`);
             ctx.addLine(`w${widgetID} = false`);
@@ -2003,7 +2050,7 @@
             ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`);
             ctx.addElse();
             ctx.addLine(`w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`);
-            ctx.addLine(`context.__widget__.cmap[${templateID}] = w${widgetID}.__widget__.id;`);
+            ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
             for (let [event, method] of events) {
                 ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
             }
@@ -2015,9 +2062,9 @@
             ctx.closeIf();
             ctx.closeIf();
             ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}; w${widgetID}.__widget__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__widget__.isDestroyed) {return};let vnode;if (!w${widgetID}.__widget__.vnode){vnode=w${widgetID}.__widget__.pvnode} else { vnode=h(w${widgetID}.__widget__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
             ctx.addLine(`extra.promises.push(def${defID});`);
             if (node.getAttribute("t-if") || node.getAttribute("t-else")) {
@@ -2059,6 +2106,7 @@
     class Store extends EventBus {
         constructor(config, options = {}) {
             super();
+            this._commitLevel = 0;
             this._isMutating = false;
             this.history = [];
             this.debug = options.debug || false;
@@ -2090,42 +2138,52 @@
                 });
             }
         }
-        async commit(type, payload) {
+        commit(type, payload) {
             if (!this.mutations[type]) {
                 throw new Error(`[Error] mutation ${type} is undefined`);
             }
-            const currentRev = this.observer.__rev__;
+            this._commitLevel++;
+            const currentRev = this.observer.rev;
             this._isMutating = true;
             this.observer.allowMutations = true;
-            this.mutations[type].call(null, { state: this.state, set: this.observer.set }, payload);
-            this.observer.allowMutations = false;
-            if (this.debug) {
-                this.history.push({
-                    state: this.state,
-                    mutation: type,
-                    payload: payload
+            const res = this.mutations[type].call(null, {
+                commit: this.commit.bind(this),
+                state: this.state,
+                set: this.observer.set
+            }, payload);
+            if (this._commitLevel === 1) {
+                this.observer.allowMutations = false;
+                if (this.debug) {
+                    this.history.push({
+                        state: this.state,
+                        mutation: type,
+                        payload: payload
+                    });
+                }
+                Promise.resolve().then(() => {
+                    if (this._isMutating) {
+                        this._isMutating = false;
+                        if (currentRev !== this.observer.rev) {
+                            this.trigger("update", this.state);
+                        }
+                    }
                 });
             }
-            await Promise.resolve();
-            if (this._isMutating) {
-                this._isMutating = false;
-                if (currentRev !== this.observer.__rev__) {
-                    this.trigger("update", this.state);
-                }
-            }
+            this._commitLevel--;
+            return res;
         }
     }
     function makeObserver() {
         const observer = {
-            __rev__: 0,
+            rev: 1,
             allowMutations: true,
             observe: observe,
             set: set
         };
         function set(target, key, value) {
             addProp(target, key, value);
-            target.__rev__++;
-            observer.__rev__++;
+            target.__owl__.rev++;
+            observer.rev++;
         }
         function addProp(obj, key, value) {
             Object.defineProperty(obj, key, {
@@ -2138,19 +2196,24 @@
                         throw new Error(`State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`);
                     }
                     if (newVal !== value) {
+                        unobserve(value);
                         value = newVal;
-                        observe(newVal);
-                        obj.__rev__++;
-                        observer.__rev__++;
+                        observe(newVal, obj);
+                        obj.__owl__.rev++;
+                        observer.rev++;
+                        let parent = obj;
+                        do {
+                            parent.__owl__.deepRev++;
+                        } while ((parent = parent.__owl__.parent));
                     }
                 }
             });
-            observe(value);
+            observe(value, obj);
         }
-        function observeObj(obj) {
+        function observeObj(obj, parent) {
             const keys = Object.keys(obj);
-            obj.__rev__ = 0;
-            Object.defineProperty(obj, "__rev__", { enumerable: false });
+            obj.__owl__ = { rev: 1, deepRev: 1, parent };
+            Object.defineProperty(obj, "__owl__", { enumerable: false });
             for (let key of keys) {
                 addProp(obj, key, obj[key]);
             }
@@ -2169,8 +2232,12 @@
         for (let method of methodsToPatch) {
             const initialMethod = ArrayProto[method];
             ModifiedArrayProto[method] = function (...args) {
-                observer.__rev__++;
-                this.__rev__++;
+                observer.rev++;
+                this.__owl__.rev++;
+                let parent = this;
+                do {
+                    parent.__owl__.deepRev++;
+                } while ((parent = parent.__owl__.parent));
                 let inserted;
                 switch (method) {
                     case "push":
@@ -2183,33 +2250,42 @@
                 }
                 if (inserted) {
                     for (let elem of inserted) {
-                        observe(elem);
+                        observe(elem, this);
                     }
                 }
                 return initialMethod.call(this, ...args);
             };
         }
-        function observeArr(arr) {
-            arr.__rev__ = 0;
-            Object.defineProperty(arr, "__rev__", { enumerable: false });
+        function observeArr(arr, parent) {
+            arr.__owl__ = { rev: 1, deepRev: 1, parent };
+            Object.defineProperty(arr, "__owl__", { enumerable: false });
             arr.__proto__ = ModifiedArrayProto;
             for (let i = 0; i < arr.length; i++) {
-                observe(arr[i]);
+                observe(arr[i], arr);
             }
         }
-        function observe(value) {
+        function observe(value, parent) {
+            if (value === null) {
+                // fun fact: typeof null === 'object'
+                return;
+            }
             if (typeof value !== "object") {
                 return;
             }
-            if ("__rev__" in value) {
+            if ("__owl__" in value) {
                 // already observed
                 return;
             }
             if (Array.isArray(value)) {
-                observeArr(value);
+                observeArr(value, parent);
             }
             else {
-                observeObj(value);
+                observeObj(value, parent);
+            }
+        }
+        function unobserve(target) {
+            if (target !== null && typeof target === "object") {
+                delete target.__owl__;
             }
         }
         return observer;
@@ -2217,15 +2293,44 @@
     //------------------------------------------------------------------------------
     // Connect function
     //------------------------------------------------------------------------------
-    function setStoreProps(__widget__, storeProps) {
-        __widget__.currentStoreProps = storeProps;
-        __widget__.currentStoreRevs = {};
-        __widget__.currentStoreRev = storeProps.__rev__;
-        for (let key in storeProps) {
-            __widget__.currentStoreRevs[key] = storeProps[key].__rev__;
+    function revNumber(o) {
+        if (o !== null && typeof o === "object" && o.__owl__) {
+            return o.__owl__.rev;
         }
+        return 0;
     }
-    function connect(mapStateToProps) {
+    function deepRevNumber(o) {
+        if (o !== null && typeof o === "object" && o.__owl__) {
+            return o.__owl__.deepRev;
+        }
+        return 0;
+    }
+    function connect(mapStateToProps, options = {}) {
+        let hashFunction = options.hashFunction || null;
+        if (!hashFunction) {
+            let deep = "deep" in options ? options.deep : true;
+            let defaultRevFunction = deep ? deepRevNumber : revNumber;
+            hashFunction = function ({ storeProps }, options) {
+                const { currentStoreProps } = options;
+                if ("__owl__" in storeProps) {
+                    return defaultRevFunction(storeProps);
+                }
+                let hash = 0;
+                for (let key in storeProps) {
+                    const val = storeProps[key];
+                    const hashVal = defaultRevFunction(val);
+                    if (hashVal === 0) {
+                        if (val !== currentStoreProps[key]) {
+                            options.didChange = true;
+                        }
+                    }
+                    else {
+                        hash += hashVal;
+                    }
+                }
+                return hash;
+            };
+        }
         return function (Comp) {
             return class extends Comp {
                 constructor(parent, props) {
@@ -2234,30 +2339,37 @@
                     const storeProps = mapStateToProps(env.store.state, ownProps);
                     const mergedProps = Object.assign({}, props || {}, storeProps);
                     super(parent, mergedProps);
-                    setStoreProps(this.__widget__, storeProps);
-                    this.__widget__.ownProps = ownProps;
+                    this.__owl__.ownProps = ownProps;
+                    this.__owl__.currentStoreProps = storeProps;
+                    this.__owl__.storeHash = hashFunction({
+                        state: env.store.state,
+                        storeProps: storeProps,
+                        revNumber,
+                        deepRevNumber
+                    }, {
+                        currentStoreProps: storeProps
+                    });
                 }
                 mounted() {
                     this.env.store.on("update", this, () => {
-                        const ownProps = this.__widget__.ownProps;
+                        const ownProps = this.__owl__.ownProps;
                         const storeProps = mapStateToProps(this.env.store.state, ownProps);
-                        let didChange = false;
-                        if (this.__widget__.currentStoreRev !== storeProps.__rev__) {
-                            setStoreProps(this.__widget__, storeProps);
+                        const options = {
+                            currentStoreProps: this.__owl__.currentStoreProps
+                        };
+                        const storeHash = hashFunction({
+                            state: this.env.store.state,
+                            storeProps: storeProps,
+                            revNumber,
+                            deepRevNumber
+                        }, options);
+                        let didChange = options.didChange;
+                        if (storeHash !== this.__owl__.storeHash) {
                             didChange = true;
-                        }
-                        else {
-                            const revs = this.__widget__.currentStoreRevs;
-                            for (let key in storeProps) {
-                                const val = storeProps[key];
-                                if (val.__rev__ !== revs[key]) {
-                                    didChange = true;
-                                    revs[key] = val.__rev__;
-                                    this.__widget__.currentStoreProps[key] = val;
-                                }
-                            }
+                            this.__owl__.storeHash = storeHash;
                         }
                         if (didChange) {
+                            this.__owl__.currentStoreProps = storeProps;
                             this.updateProps(ownProps, false);
                         }
                     });
@@ -2268,11 +2380,11 @@
                     super.willUnmount();
                 }
                 updateProps(nextProps, forceUpdate) {
-                    if (this.__widget__.ownProps !== nextProps) {
-                        this.__widget__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps);
+                    if (this.__owl__.ownProps !== nextProps) {
+                        this.__owl__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps);
                     }
-                    this.__widget__.ownProps = nextProps;
-                    const mergedProps = Object.assign({}, nextProps, this.__widget__.currentStoreProps);
+                    this.__owl__.ownProps = nextProps;
+                    const mergedProps = Object.assign({}, nextProps, this.__owl__.currentStoreProps);
                     return super.updateProps(mergedProps, forceUpdate);
                 }
             };
@@ -2296,7 +2408,7 @@
     exports.extras = extras;
 
     exports._version = '0.6.0';
-    exports._date = '2019-04-12T13:25:16.523Z';
-    exports._hash = 'd328360';
+    exports._date = '2019-04-16T08:20:25.817Z';
+    exports._hash = '9dd8a36';
 
 }(this.owl = this.owl || {}));

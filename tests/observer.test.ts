@@ -1,8 +1,8 @@
-import { makeObserver } from "../src/observer";
+import { Observer } from "../src/observer";
 
 describe("observer", () => {
   test("properly observe objects", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj: any = {};
 
     observer.observe(obj);
@@ -26,7 +26,7 @@ describe("observer", () => {
   });
 
   test("properly handle null or undefined", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj: any = { a: null, b: undefined };
 
     observer.observe(obj);
@@ -45,7 +45,7 @@ describe("observer", () => {
   });
 
   test("can change values in array", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj: any = { arr: [1, 2] };
 
     observer.observe(obj);
@@ -62,7 +62,7 @@ describe("observer", () => {
   });
 
   test("various object property changes", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj: any = { a: 1 };
     observer.observe(obj);
     expect(obj.__owl__.rev).toBe(1);
@@ -81,7 +81,7 @@ describe("observer", () => {
   });
 
   test("properly observe arrays", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const arr: any = [];
     observer.observe(arr);
     expect(arr.__owl__.rev).toBe(1);
@@ -117,7 +117,7 @@ describe("observer", () => {
   });
 
   test("object pushed into arrays are observed", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const arr: any = [];
     observer.observe(arr);
     expect(observer.rev).toBe(1);
@@ -134,7 +134,7 @@ describe("observer", () => {
   });
 
   test("properly observe arrays in object", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const state: any = { arr: [] };
     observer.observe(state);
     expect(state.arr.__owl__.rev).toBe(1);
@@ -148,7 +148,7 @@ describe("observer", () => {
   });
 
   test("properly observe objects in array", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const state: any = { arr: [{ something: 1 }] };
     observer.observe(state);
     expect(state.arr.__owl__.rev).toBe(1);
@@ -160,7 +160,7 @@ describe("observer", () => {
   });
 
   test("properly observe objects in object", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const state: any = { a: { b: 1 } };
     observer.observe(state);
     expect(state.__owl__.rev).toBe(1);
@@ -172,7 +172,7 @@ describe("observer", () => {
   });
 
   test("properly unobserve objects in object", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const state: any = { a: { b: 1 } };
     observer.observe(state);
     expect(state.__owl__.rev).toBe(1);
@@ -184,7 +184,7 @@ describe("observer", () => {
   });
 
   test("reobserve new object values", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj: any = { a: 1 };
     observer.observe(obj);
     expect(obj.__owl__.rev).toBe(1);
@@ -200,7 +200,7 @@ describe("observer", () => {
   });
 
   test("deep observe misc changes", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const state: any = { o: { a: 1 }, arr: [1], n: 13 };
     observer.observe(state);
     expect(state.__owl__.rev).toBe(1);
@@ -221,7 +221,7 @@ describe("observer", () => {
   });
 
   test("properly handle already observed state", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj1: any = { a: 1 };
     const obj2: any = { b: 1 };
     observer.observe(obj1);
@@ -240,7 +240,7 @@ describe("observer", () => {
   });
 
   test("accept cycles in observed state", () => {
-    const observer = makeObserver();
+    const observer = new Observer();
     const obj1: any = {};
     const obj2: any = { b: obj1, key: 1 };
     obj1.a = obj2;

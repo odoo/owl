@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { EventBus } from "./event_bus";
-import { makeObserver, Observer } from "./observer";
+import { Observer } from "./observer";
 
 //------------------------------------------------------------------------------
 // Store Definition
@@ -27,6 +27,7 @@ export class Store extends EventBus {
   debug: boolean;
   env: any;
   observer: Observer;
+  set: any;
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -35,13 +36,14 @@ export class Store extends EventBus {
     this.actions = config.actions;
     this.mutations = config.mutations;
     this.env = config.env;
-    this.observer = makeObserver();
+    this.observer = new Observer();
     this.observer.allowMutations = false;
     this.observer.observe(this.state);
 
     if (this.debug) {
       this.history.push({ state: this.state });
     }
+    this.set = this.observer.set.bind(this.observer);
   }
 
   dispatch(action, payload?: any): Promise<void> | void {
@@ -79,7 +81,7 @@ export class Store extends EventBus {
       {
         commit: this.commit.bind(this),
         state: this.state,
-        set: this.observer.set
+        set: this.set
       },
       payload
     );

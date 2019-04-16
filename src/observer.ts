@@ -1,12 +1,6 @@
 //------------------------------------------------------------------------------
 // Observer
 //------------------------------------------------------------------------------
-export interface Observer {
-  rev: number;
-  allowMutations: boolean;
-  observe: (val: any) => void;
-  set: (target: any, key: number | string, value: any) => void;
-}
 
 const methodsToPatch = [
   "push",
@@ -49,72 +43,11 @@ for (let method of methodsToPatch) {
   };
 }
 
-export function makeObserver(): Observer {
-  const observer: Observer = {
-    rev: 1,
-    allowMutations: true,
-    observe: observe,
-    set: set
-  };
+export class Observer {
+  rev: number = 1;
+  allowMutations: boolean = true;
 
-  function set(target: any, key: number | string, value: any) {
-    addProp(target, key, value);
-    target.__owl__.rev++;
-    observer.rev++;
-  }
-
-  function addProp<T extends { __owl__?: any }>(
-    obj: T,
-    key: string | number,
-    value: any
-  ) {
-    Object.defineProperty(obj, key, {
-      enumerable: true,
-      get() {
-        return value;
-      },
-      set(newVal) {
-        if (!observer.allowMutations) {
-          throw new Error(
-            `State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`
-          );
-        }
-        if (newVal !== value) {
-          unobserve(value);
-          value = newVal;
-          observe(newVal, obj);
-          obj.__owl__.rev!++;
-          observer.rev++;
-          let parent = obj;
-          do {
-            parent.__owl__.deepRev++;
-          } while ((parent = parent.__owl__.parent));
-        }
-      }
-    });
-    observe(value, obj);
-  }
-
-  function observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
-    const keys = Object.keys(obj);
-    obj.__owl__ = { rev: 1, deepRev: 1, parent };
-    Object.defineProperty(obj, "__owl__", { enumerable: false });
-    for (let key of keys) {
-      addProp(obj, key, obj[key]);
-    }
-  }
-
-  function observeArr(arr: Array<any>, parent?: any) {
-    (<any>arr).__owl__ = { rev: 1, deepRev: 1, parent };
-    Object.defineProperty(arr, "__owl__", { enumerable: false });
-    (<any>arr).__proto__ = Object.create(ModifiedArrayProto);
-    (<any>arr).__proto__.__observer__ = observer;
-    for (let i = 0; i < arr.length; i++) {
-      observe(arr[i], arr);
-    }
-  }
-
-  function observe(value: any, parent?: any) {
+  observe(value: any, parent?: any) {
     if (value === null) {
       // fun fact: typeof null === 'object'
       return;
@@ -127,17 +60,73 @@ export function makeObserver(): Observer {
       return;
     }
     if (Array.isArray(value)) {
-      observeArr(value, parent);
+      this._observeArr(value, parent);
     } else {
-      observeObj(value, parent);
+      this._observeObj(value, parent);
     }
   }
 
-  function unobserve(target: any) {
+  set(target: any, key: number | string, value: any) {
+    this._addProp(target, key, value);
+    target.__owl__.rev++;
+    this.rev++;
+  }
+
+  unobserve(target: any) {
     if (target !== null && typeof target === "object") {
       delete target.__owl__;
     }
   }
 
-  return observer;
+  _observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
+    const keys = Object.keys(obj);
+    obj.__owl__ = { rev: 1, deepRev: 1, parent };
+    Object.defineProperty(obj, "__owl__", { enumerable: false });
+    for (let key of keys) {
+      this._addProp(obj, key, obj[key]);
+    }
+  }
+
+  _observeArr(arr: Array<any>, parent?: any) {
+    (<any>arr).__owl__ = { rev: 1, deepRev: 1, parent };
+    Object.defineProperty(arr, "__owl__", { enumerable: false });
+    (<any>arr).__proto__ = Object.create(ModifiedArrayProto);
+    (<any>arr).__proto__.__observer__ = this;
+    for (let i = 0; i < arr.length; i++) {
+      this.observe(arr[i], arr);
+    }
+  }
+
+  _addProp<T extends { __owl__?: any }>(
+    obj: T,
+    key: string | number,
+    value: any
+  ) {
+    var self = this;
+    Object.defineProperty(obj, key, {
+      enumerable: true,
+      get() {
+        return value;
+      },
+      set(newVal) {
+        if (!self.allowMutations) {
+          throw new Error(
+            `State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`
+          );
+        }
+        if (newVal !== value) {
+          self.unobserve(value);
+          value = newVal;
+          self.observe(newVal, obj);
+          obj.__owl__.rev!++;
+          self.rev++;
+          let parent = obj;
+          do {
+            parent.__owl__.deepRev++;
+          } while ((parent = parent.__owl__.parent));
+        }
+      }
+    });
+    this.observe(value, obj);
+  }
 }

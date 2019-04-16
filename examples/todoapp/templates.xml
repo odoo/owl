@@ -13,7 +13,7 @@
             <label for="toggle-all"></label>
             <ul class="todo-list">
                 <t t-foreach="visibleTodos" t-as="todo">
-                    <t t-widget="TodoItem" t-props="todo"/>
+                    <t t-widget="TodoItem" t-key="todo.id" t-props="todo"/>
                 </t>
             </ul>
         </section>

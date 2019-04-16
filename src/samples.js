@@ -368,7 +368,7 @@ const actions = {
   removeTodo({ commit }, id) {
     commit("removeTodo", id);
   },
-  toggleTodo({ state, commit }, id) {
+  toggleTodo({ commit }, id) {
     commit("toggleTodo", id);
   },
   clearCompleted({ state, commit }) {
@@ -381,16 +381,16 @@ const actions = {
 };
 
 const mutations = {
-  addTodo(state, title) {
+  addTodo({ state }, title) {
     const id = state.nextId++;
     const todo = { id, title, completed: false };
     state.todos.push(todo);
   },
-  removeTodo(state, id) {
+  removeTodo({ state }, id) {
     const index = state.todos.findIndex(t => t.id === id);
     state.todos.splice(index, 1);
   },
-  toggleTodo(state, id) {
+  toggleTodo({ state }, id) {
     const todo = state.todos.find(t => t.id === id);
     todo.completed = !todo.completed;
   }
@@ -423,11 +423,7 @@ class TodoList extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return { todos: state.todos };
-}
-
-const App = connect(mapStateToProps)(TodoList);
+const App = connect(state => state)(TodoList);
 
 //------------------------------------------------------------------------------
 // App Initialization
@@ -447,14 +443,13 @@ const STATE_MANAGEMENT_XML = `<templates>
     <input autofocus="true" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
     <ul>
         <li class="todo" t-foreach="props.todos" t-as="todo">
+            <input type="checkbox" t-att-checked="todo.completed" t-on-change="toggleTodo(todo)"/>
             <span t-att-class="{completed: todo.completed}"><t t-esc="todo.id"/>. <t t-esc="todo.title"/></span>
-            <span class="action" t-on-click="toggleTodo(todo)">(toggle)</span>
             <span class="action" t-on-click="removeTodo(todo)">(remove)</span>
         </li>
     </ul>
   </div>
-</templates>
-`;
+</templates>`;
 
 const STATE_MANAGEMENT_CSS = `.action {
     cursor: pointer;

@@ -1,4 +1,4 @@
-export { Component, PureComponent } from "./component";
+export { Component } from "./component";
 export { EventBus } from "./event_bus";
 export { QWeb } from "./qweb";
 export { connect, Store } from "./store";

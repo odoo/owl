@@ -438,21 +438,3 @@ export class Component<
     }
   }
 }
-
-export class PureComponent<E extends Env, P, S> extends Component<E, P, S> {
-  shouldUpdate(nextProps: P): boolean {
-    for (let k in nextProps) {
-      if (nextProps[k] !== this.props[k]) {
-        return true;
-      }
-    }
-    return false;
-  }
-  async updateState(nextState: Partial<S>) {
-    for (let k in nextState) {
-      if (nextState[k] !== this.state[k]) {
-        return super.updateState(nextState);
-      }
-    }
-  }
-}

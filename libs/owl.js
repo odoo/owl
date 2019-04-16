@@ -1714,7 +1714,14 @@
                 }
             }
             let nodeID = ctx.generateID();
-            const parts = [`key:${nodeID}`];
+            let nodeKey = node.getAttribute("t-key");
+            if (nodeKey) {
+                nodeKey = ctx.formatExpression(nodeKey);
+            }
+            else {
+                nodeKey = nodeID;
+            }
+            const parts = [`key:${nodeKey}`];
             if (attrs.length + tattrs.length > 0) {
                 parts.push(`attrs:{${attrs.join(",")}}`);
             }
@@ -1956,6 +1963,9 @@
         atNodeCreation({ ctx, fullName, value, nodeID }) {
             ctx.rootContext.shouldDefineOwner = true;
             const eventName = fullName.slice(5);
+            if (!eventName) {
+                throw new Error("Missing event name with t-on directive");
+            }
             let extraArgs;
             let handler = value.replace(/\(.*\)/, function (args) {
                 extraArgs = args.slice(1, -1);
@@ -2000,13 +2010,7 @@
             }
             let key = node.getAttribute("t-key");
             if (key) {
-                key = `"${key}"`;
-            }
-            else {
-                key = node.getAttribute("t-att-key");
-                if (key) {
-                    key = ctx.formatExpression(key);
-                }
+                key = ctx.formatExpression(key);
             }
             if (props) {
                 props = ctx.formatExpression(props);
@@ -2067,7 +2071,7 @@
             ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
             ctx.addLine(`extra.promises.push(def${defID});`);
-            if (node.getAttribute("t-if") || node.getAttribute("t-else")) {
+            if (node.hasAttribute("t-if") || node.hasAttribute("t-else")) {
                 ctx.closeIf();
             }
             return true;
@@ -2103,76 +2107,6 @@
         }
     }
 
-    class Store extends EventBus {
-        constructor(config, options = {}) {
-            super();
-            this._commitLevel = 0;
-            this._isMutating = false;
-            this.history = [];
-            this.debug = options.debug || false;
-            this.state = config.state || {};
-            this.actions = config.actions;
-            this.mutations = config.mutations;
-            this.env = config.env;
-            this.observer = makeObserver();
-            this.observer.allowMutations = false;
-            this.observer.observe(this.state);
-            if (this.debug) {
-                this.history.push({ state: this.state });
-            }
-        }
-        dispatch(action, payload) {
-            if (!this.actions[action]) {
-                throw new Error(`[Error] action ${action} is undefined`);
-            }
-            const result = this.actions[action]({
-                commit: this.commit.bind(this),
-                dispatch: this.dispatch.bind(this),
-                env: this.env,
-                state: this.state
-            }, payload);
-            if (result instanceof Promise) {
-                return new Promise((resolve, reject) => {
-                    result.then(() => resolve());
-                    result.catch(reject);
-                });
-            }
-        }
-        commit(type, payload) {
-            if (!this.mutations[type]) {
-                throw new Error(`[Error] mutation ${type} is undefined`);
-            }
-            this._commitLevel++;
-            const currentRev = this.observer.rev;
-            this._isMutating = true;
-            this.observer.allowMutations = true;
-            const res = this.mutations[type].call(null, {
-                commit: this.commit.bind(this),
-                state: this.state,
-                set: this.observer.set
-            }, payload);
-            if (this._commitLevel === 1) {
-                this.observer.allowMutations = false;
-                if (this.debug) {
-                    this.history.push({
-                        state: this.state,
-                        mutation: type,
-                        payload: payload
-                    });
-                }
-                Promise.resolve().then(() => {
-                    if (this._isMutating) {
-                        this._isMutating = false;
-                        if (currentRev !== this.observer.rev) {
-                            this.trigger("update", this.state);
-                        }
-                    }
-                });
-            }
-            this._commitLevel--;
-            return res;
-        }
-    }
     function makeObserver() {
         const observer = {
             rev: 1,
@@ -2289,6 +2223,77 @@
             }
         }
         return observer;
+    }
+
+    class Store extends EventBus {
+        constructor(config, options = {}) {
+            super();
+            this._commitLevel = 0;
+            this._isMutating = false;
+            this.history = [];
+            this.debug = options.debug || false;
+            this.state = config.state || {};
+            this.actions = config.actions;
+            this.mutations = config.mutations;
+            this.env = config.env;
+            this.observer = makeObserver();
+            this.observer.allowMutations = false;
+            this.observer.observe(this.state);
+            if (this.debug) {
+                this.history.push({ state: this.state });
+            }
+        }
+        dispatch(action, payload) {
+            if (!this.actions[action]) {
+                throw new Error(`[Error] action ${action} is undefined`);
+            }
+            const result = this.actions[action]({
+                commit: this.commit.bind(this),
+                dispatch: this.dispatch.bind(this),
+                env: this.env,
+                state: this.state
+            }, payload);
+            if (result instanceof Promise) {
+                return new Promise((resolve, reject) => {
+                    result.then(() => resolve());
+                    result.catch(reject);
+                });
+            }
+        }
+        commit(type, payload) {
+            if (!this.mutations[type]) {
+                throw new Error(`[Error] mutation ${type} is undefined`);
+            }
+            this._commitLevel++;
+            const currentRev = this.observer.rev;
+            this._isMutating = true;
+            this.observer.allowMutations = true;
+            const res = this.mutations[type].call(null, {
+                commit: this.commit.bind(this),
+                state: this.state,
+                set: this.observer.set
+            }, payload);
+            if (this._commitLevel === 1) {
+                this.observer.allowMutations = false;
+                if (this.debug) {
+                    this.history.push({
+                        state: this.state,
+                        mutation: type,
+                        payload: payload
+                    });
+                }
+                Promise.resolve().then(() => {
+                    if (this._isMutating) {
+                        this._isMutating = false;
+                        if (currentRev !== this.observer.rev) {
+                            this.trigger("update", this.state);
+                        }
+                    }
+                });
+            }
+            this._commitLevel--;
+            return res;
+        }
     }
     //------------------------------------------------------------------------------
     // Connect function
@@ -2408,7 +2413,7 @@
     exports.extras = extras;
 
     exports._version = '0.6.0';
-    exports._date = '2019-04-16T08:20:25.817Z';
-    exports._hash = '9dd8a36';
+    exports._date = '2019-04-16T12:48:20.169Z';
+    exports._hash = '0ca4cc1';
 
 }(this.owl = this.owl || {}));

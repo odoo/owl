@@ -832,7 +832,7 @@ describe("composition", () => {
       "parent",
       `<div>
           <t t-foreach="state.numbers" t-as="number">
-            <t t-widget="ChildWidget" t-att-key="number"/>
+            <t t-widget="ChildWidget" t-key="number"/>
           </t>
         </div>`
     );
@@ -1103,7 +1103,7 @@ describe("random stuff/miscellaneous", () => {
   test("snapshotting compiled code", async () => {
     env.qweb.addTemplate(
       "parent",
-      `<div><t t-widget="child" t-key="somestring" t-props="{flag:state.flag}"/></div>`
+      `<div><t t-widget="child" t-key="'somestring'" t-props="{flag:state.flag}"/></div>`
     );
     class Parent extends Widget {
       inlineTemplate = "parent";

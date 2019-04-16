@@ -1001,6 +1001,53 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
 }"
 `;
 
+exports[`t-key can use t-key directive on a node 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:context['beer'].id};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['beer'].name;
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-key t-key directive in a list 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('ul', p1, c1);
+    var _2 = context['beers'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.beer_first = i === 0;
+        context.beer_last = i === _3.length - 1;
+        context.beer_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.beer_index = i;
+        context.beer = _3[i];
+        context.beer_value = _4[i];
+        var c5 = [], p5 = {key:context['beer'].id};
+        var vn5 = h('li', p5, c5);
+        c1.push(vn5);
+        var _6 = context['beer'].name;
+        if (_6 || _6 === 0) {
+            c5.push({text: _6});
+        }
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-key t-key directive in a list 2`] = `"<ul><li>Chimay Rouge</li></ul>"`;
+
 exports[`t-on can bind event handler 1`] = `
 "function anonymous(context,extra
 ) {

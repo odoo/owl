@@ -69,7 +69,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     var c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let key5 = \\"somestring\\";
+    let key5 = 'somestring';
     let _2_index = c1.length;
     c1.push(null);
     let def3;

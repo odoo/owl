@@ -632,7 +632,13 @@ export class QWeb {
       }
     }
     let nodeID = ctx.generateID();
-    const parts = [`key:${nodeID}`];
+    let nodeKey: any = (<Element>node).getAttribute("t-key");
+    if (nodeKey) {
+      nodeKey = ctx.formatExpression(nodeKey);
+    } else {
+      nodeKey = nodeID;
+    }
+    const parts = [`key:${nodeKey}`];
     if (attrs.length + tattrs.length > 0) {
       parts.push(`attrs:{${attrs.join(",")}}`);
     }
@@ -995,12 +1001,7 @@ const widgetDirective: Directive = {
 
     let key = node.getAttribute("t-key");
     if (key) {
-      key = `"${key}"`;
-    } else {
-      key = node.getAttribute("t-att-key");
-      if (key) {
-        key = ctx.formatExpression(key);
-      }
+      key = ctx.formatExpression(key);
     }
     if (props) {
       props = ctx.formatExpression(props);

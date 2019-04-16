@@ -117,7 +117,7 @@ const TEMPLATE = `
         <t t-else="1">
           <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js', style:topEditorStyle}" t-on-updateCode="updateCode"/>
           <div class="separator horizontal"/>
-          <t t-widget="TabbedEditor" t-keep-alive="1" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
+          <t t-widget="TabbedEditor" t-keepalive="1" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>

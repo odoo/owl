@@ -292,7 +292,7 @@ describe("connecting a component to store", () => {
   class App extends Component<any, any, any> {
     inlineTemplate = `
             <div>
-                <t t-foreach="props.todos" t-as="todo">
+                <t t-foreach="props.todos" t-as="todo" t-key="todo">
                     <t t-widget="Todo" t-props="todo"/>
                 </t>
             </div>`;
@@ -340,7 +340,7 @@ describe("connecting a component to store", () => {
     class App extends Component<any, any, any> {
       inlineTemplate = `
             <div>
-                <span t-foreach="props.todos" t-as="todo">
+                <span t-foreach="props.todos" t-as="todo" t-key="todo">
                   <t t-esc="todo.title"/>
                 </span>
             </div>`;
@@ -487,7 +487,7 @@ describe("connecting a component to store", () => {
     class App extends Component<any, any, any> {
       inlineTemplate = `
           <div>
-              <span t-foreach="props.beers" t-as="beer"><t t-esc="beer.name"/></span>
+              <span t-foreach="props.beers" t-as="beer" t-key="beer.name"><t t-esc="beer.name"/></span>
           </div>`;
     }
 

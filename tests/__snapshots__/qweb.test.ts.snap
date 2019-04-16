@@ -303,7 +303,7 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        var c5 = [], p5 = {key:5};
+        var c5 = [], p5 = {key:context['item']};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
         var _6 = context['item'];
@@ -1121,7 +1121,7 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         context.action_index = i;
         context.action = _3[i];
         context.action_value = _4[i];
-        var c5 = [], p5 = {key:5};
+        var c5 = [], p5 = {key:context['action_index']};
         var vn5 = h('li', p5, c5);
         c1.push(vn5);
         var c6 = [], p6 = {key:6,on:{}};
@@ -1429,7 +1429,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         context.elem_index = i;
         context.elem = _4[i];
         context.elem_value = _5[i];
-        var c6 = [], p6 = {key:6};
+        var c6 = [], p6 = {key:context['elem_index']};
         var vn6 = h('div', p6, c6);
         c1.push(vn6);
         var c7 = [], p7 = {key:7};

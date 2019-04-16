@@ -289,7 +289,7 @@ describe("t-set", () => {
       "test",
       `<div>
           <t t-set="v" t-value="1"/>
-          <div t-foreach="list" t-as="elem">
+          <div t-foreach="list" t-as="elem" t-key="elem_index">
               <span>v<t t-esc="v"/></span>
               <t t-set="v" t-value="elem"/>
           </div>
@@ -663,7 +663,7 @@ describe("foreach", () => {
       "test",
       `
       <div>
-        <span t-foreach="[1, 2]" t-as="item"><t t-esc="item"/></span>
+        <span t-foreach="[1, 2]" t-as="item" t-key="item"><t t-esc="item"/></span>
     </div>`
     );
     const result = trim(renderToString(qweb, "test"));
@@ -922,7 +922,7 @@ describe("t-on", () => {
       "test",
       `
       <ul>
-        <li t-foreach="['someval']" t-as="action"><a t-on-click="activate(action)">link</a></li>
+        <li t-foreach="['someval']" t-as="action" t-key="action_index"><a t-on-click="activate(action)">link</a></li>
       </ul>`
     );
     const node = renderToDOM(

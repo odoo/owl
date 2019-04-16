@@ -928,6 +928,13 @@ const forEachDirective: Directive = {
     ctx.addLine(`context.${name} = _${keysID}[i];`);
     ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
     const nodeCopy = <Element>node.cloneNode(true);
+    if (nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key")) {
+      console.warn(
+        `Directive t-foreach should always be used with a t-key! (in template: '${
+          ctx.templateName
+        }')`
+      );
+    }
     nodeCopy.removeAttribute("t-foreach");
     qweb._compileNode(nodeCopy, ctx);
     ctx.dedent();

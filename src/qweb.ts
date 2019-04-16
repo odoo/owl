@@ -198,7 +198,8 @@ export class QWeb {
       attf: 1,
       props: 1,
       key: 1,
-      keepalive: 1
+      keepalive: 1,
+      debug: 1
     };
     [
       forEachDirective,

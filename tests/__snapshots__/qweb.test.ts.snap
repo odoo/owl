@@ -1409,6 +1409,42 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
 }"
 `;
 
+exports[`t-set t-set should reuse variable if possible 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 1
+    var _3 = context['list'];
+    if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _3 === 'number') { _3 = Array.from(Array(_3).keys())}
+    var _4 = _3 instanceof Array ? _3 : Object.keys(_3);
+    var _5 = _3 instanceof Array ? _3 : Object.values(_3);
+    for (let i = 0; i < _4.length; i++) {
+        context.elem_first = i === 0;
+        context.elem_last = i === _4.length - 1;
+        context.elem_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.elem_index = i;
+        context.elem = _4[i];
+        context.elem_value = _5[i];
+        var c6 = [], p6 = {key:6};
+        var vn6 = h('div', p6, c6);
+        c1.push(vn6);
+        var c7 = [], p7 = {key:7};
+        var vn7 = h('span', p7, c7);
+        c6.push(vn7);
+        c7.push({text: \`v\`});
+        if (_2 || _2 === 0) {
+            c7.push({text: _2});
+        }
+        _2 = context['elem']
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-set value priority 1`] = `
 "function anonymous(context,extra
 ) {

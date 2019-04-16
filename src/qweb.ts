@@ -782,11 +782,15 @@ const setDirective: Directive = {
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
     if (value) {
-      const varName = `_${ctx.generateID()}`;
       const formattedValue = ctx.formatExpression(value);
-      ctx.addLine(`var ${varName} = ${formattedValue}`);
-      ctx.definedVariables[varName] = formattedValue;
-      ctx.variables[variable] = varName;
+      if (ctx.variables.hasOwnProperty(variable)) {
+        ctx.addLine(`${ctx.variables[variable]} = ${formattedValue}`);
+      } else {
+        const varName = `_${ctx.generateID()}`;
+        ctx.addLine(`var ${varName} = ${formattedValue}`);
+        ctx.definedVariables[varName] = formattedValue;
+        ctx.variables[variable] = varName;
+      }
     } else {
       ctx.variables[variable] = node.childNodes;
     }

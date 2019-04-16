@@ -284,6 +284,22 @@ describe("t-set", () => {
     expect(renderToString(qweb, "test")).toBe("<div>3</div>");
   });
 
+  test("t-set should reuse variable if possible", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+          <t t-set="v" t-value="1"/>
+          <div t-foreach="list" t-as="elem">
+              <span>v<t t-esc="v"/></span>
+              <t t-set="v" t-value="elem"/>
+          </div>
+        </div>`
+    );
+    expect(normalize(renderToString(qweb, "test", { list: ["a", "b"] }))).toBe(
+      "<div><div><span>v1</span></div><div><span>va</span></div></div>"
+    );
+  });
+
   test("evaluate value expression, part 2", () => {
     qweb.addTemplate(
       "test",

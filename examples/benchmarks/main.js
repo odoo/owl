@@ -2,7 +2,7 @@ import { App } from "./app.js";
 
 function createApp(el) {
   const env = {
-    qweb: new owl.core.QWeb()
+    qweb: new owl.QWeb()
   };
   const app = new App(env, { initialState: 13 });
   app.mount(el);

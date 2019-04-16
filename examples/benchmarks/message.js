@@ -1,6 +1,6 @@
 import { Counter } from "./counter.js";
 
-export class Message extends owl.core.Component {
+export class Message extends owl.Component {
   inlineTemplate = `
     <div class="message">
         <span class="author"><t t-esc="props.author"/></span>

@@ -1,4 +1,4 @@
-export class Counter extends owl.core.Component {
+export class Counter extends owl.Component {
   inlineTemplate = `
     <div>
       <button t-on-click="increment(-1)">-</button>

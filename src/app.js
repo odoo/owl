@@ -47,6 +47,8 @@ class TabbedEditor extends Component {
     this.editor.setFontSize("13px");
     this.editor.setTheme("ace/theme/monokai");
     this.editor.session.setMode(MODES[this.state.currentTab]);
+    const tabSize = this.state.currentTab === "xml" ? 2 : 4;
+    this.editor.session.setOption("tabSize", tabSize);
     this.editor.on("blur", () => {
       const editorValue = this.editor.getValue();
       const propsValue = this.props[this.state.currentTab];
@@ -76,6 +78,8 @@ class TabbedEditor extends Component {
 
     const mode = MODES[tab];
     this.editor.session.setMode(mode);
+    const tabSize = tab === "xml" ? 2 : 4;
+    this.editor.session.setOption("tabSize", tabSize);
     this.state.currentTab = tab;
   }
 

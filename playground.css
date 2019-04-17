@@ -54,10 +54,21 @@ body {
 .run-code {
   margin-right: 12px;
   height: 25px;
+  padding: 5px 10px;
   border: 2px solid transparent;
+  opacity: 0.9;
+  background-position: center;
+  transition: background 0.5s;
 }
+
 .run-code:hover {
-  border-bottom: 2px solid gray;
+  opacity: 1;
+}
+
+.run-code:active {
+  background-color: #41454a;
+  background-size: 100%;
+  transition: background 0s;
 }
 
 .layout-selector {

@@ -662,6 +662,138 @@
         }
     }
 
+    //------------------------------------------------------------------------------
+    // Observer
+    //------------------------------------------------------------------------------
+    const methodsToPatch = [
+        "push",
+        "pop",
+        "shift",
+        "unshift",
+        "splice",
+        "sort",
+        "reverse"
+    ];
+    const ArrayProto = Array.prototype;
+    const ModifiedArrayProto = Object.create(ArrayProto);
+    for (let method of methodsToPatch) {
+        const initialMethod = ArrayProto[method];
+        ModifiedArrayProto[method] = function (...args) {
+            this.__observer__.notifyChange();
+            this.__owl__.rev++;
+            let parent = this;
+            do {
+                parent.__owl__.deepRev++;
+            } while ((parent = parent.__owl__.parent));
+            let inserted;
+            switch (method) {
+                case "push":
+                case "unshift":
+                    inserted = args;
+                    break;
+                case "splice":
+                    inserted = args.slice(2);
+                    break;
+            }
+            if (inserted) {
+                for (let elem of inserted) {
+                    this.__observer__.observe(elem, this);
+                }
+            }
+            return initialMethod.call(this, ...args);
+        };
+    }
+    class Observer {
+        constructor() {
+            this.rev = 1;
+            this.allowMutations = true;
+            this.dirty = false;
+        }
+        notifyCB() { }
+        notifyChange() {
+            this.rev++;
+            this.dirty = true;
+            Promise.resolve().then(() => {
+                if (this.dirty) {
+                    this.dirty = false;
+                    this.notifyCB();
+                }
+            });
+        }
+        observe(value, parent) {
+            if (value === null) {
+                // fun fact: typeof null === 'object'
+                return;
+            }
+            if (typeof value !== "object") {
+                return;
+            }
+            if ("__owl__" in value) {
+                // already observed
+                return;
+            }
+            if (Array.isArray(value)) {
+                this._observeArr(value, parent);
+            }
+            else {
+                this._observeObj(value, parent);
+            }
+        }
+        set(target, key, value) {
+            this._addProp(target, key, value);
+            target.__owl__.rev++;
+            this.notifyChange();
+        }
+        unobserve(target) {
+            if (target !== null && typeof target === "object") {
+                delete target.__owl__;
+            }
+        }
+        _observeObj(obj, parent) {
+            const keys = Object.keys(obj);
+            obj.__owl__ = { rev: 1, deepRev: 1, parent };
+            Object.defineProperty(obj, "__owl__", { enumerable: false });
+            for (let key of keys) {
+                this._addProp(obj, key, obj[key]);
+            }
+        }
+        _observeArr(arr, parent) {
+            arr.__owl__ = { rev: 1, deepRev: 1, parent };
+            Object.defineProperty(arr, "__owl__", { enumerable: false });
+            arr.__proto__ = Object.create(ModifiedArrayProto);
+            arr.__proto__.__observer__ = this;
+            for (let i = 0; i < arr.length; i++) {
+                this.observe(arr[i], arr);
+            }
+        }
+        _addProp(obj, key, value) {
+            var self = this;
+            Object.defineProperty(obj, key, {
+                enumerable: true,
+                get() {
+                    return value;
+                },
+                set(newVal) {
+                    if (!self.allowMutations) {
+                        throw new Error(`State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`);
+                    }
+                    if (newVal !== value) {
+                        self.unobserve(value);
+                        value = newVal;
+                        self.observe(newVal, obj);
+                        obj.__owl__.rev++;
+                        let parent = obj;
+                        do {
+                            parent.__owl__.deepRev++;
+                        } while ((parent = parent.__owl__.parent));
+                        self.notifyChange();
+                    }
+                }
+            });
+            this.observe(value, obj);
+        }
+    }
+
     function escape(str) {
         if (str === undefined) {
             return "";
@@ -874,7 +1006,8 @@
                 renderId: 1,
                 renderPromise: null,
                 renderProps: props || null,
-                boundHandlers: {}
+                boundHandlers: {},
+                observer: new Observer()
             };
         }
         get el() {
@@ -920,9 +1053,6 @@
          * It is not called on the initial render.  This is useful to get some
          * information which are in the DOM.  For example, the current position of the
          * scrollbar
-         *
-         * Note that at this point, it is not safe to rerender the widget. In
-         * particular, updateState calls should be avoided.
          */
         willPatch() { }
         /**
@@ -977,6 +1107,7 @@
             }
             this._patch(vnode);
             target.appendChild(this.el);
+            this._observeState();
             if (document.body.contains(target)) {
                 this._visitSubTree(w => {
                     if (!w.__owl__.isMounted && this.el.contains(w.el)) {
@@ -1056,30 +1187,10 @@
             if (this.__owl__.isMounted) {
                 await this.render(true);
             }
-            this.patched();
         }
         async updateProps(nextProps, forceUpdate = false) {
             const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
             return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
-        }
-        /**
-         * This is the safest update method for widget: its job is to update the state
-         * and rerender (if widget is mounted).
-         *
-         * Notes:
-         * - it checks if we do not add extra keys to the state.
-         * - it is ok to call updateState before the widget is started. In that
-         * case, it will simply update the state and will not rerender
-         */
-        async updateState(nextState) {
-            if (Object.keys(nextState).length === 0) {
-                return;
-            }
-            Object.assign(this.state, nextState);
-            if (this.__owl__.isStarted) {
-                await this.render();
-            }
-            this.patched();
         }
         //--------------------------------------------------------------------------
         // Private
@@ -1088,13 +1199,13 @@
             await this.willUpdateProps(nextProps);
             this.props = nextProps;
             await this.render();
-            this.patched();
         }
         _patch(vnode) {
             this.__owl__.renderPromise = null;
             if (this.__owl__.vnode) {
                 this.willPatch();
                 this.__owl__.vnode = patch$1(this.__owl__.vnode, vnode);
+                this.patched();
             }
             else {
                 this.__owl__.vnode = patch$1(document.createElement(vnode.sel), vnode);
@@ -1145,6 +1256,7 @@
             if (this.__owl__.isMounted) {
                 return;
             }
+            this._observeState();
             if (this.__owl__.parent) {
                 if (this.__owl__.parent.__owl__.isMounted) {
                     this.__owl__.isMounted = true;
@@ -1163,6 +1275,12 @@
                 for (let id in children) {
                     children[id]._visitSubTree(callback);
                 }
+            }
+        }
+        _observeState() {
+            if (Object.keys(this.state).length) {
+                this.__owl__.observer.observe(this.state);
+                this.__owl__.observer.notifyCB = this.render.bind(this);
             }
         }
     }
@@ -1938,6 +2056,9 @@
             ctx.addLine(`context.${name} = _${keysID}[i];`);
             ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
             const nodeCopy = node.cloneNode(true);
+            if (nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key")) {
+                console.warn(`Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`);
+            }
             nodeCopy.removeAttribute("t-foreach");
             qweb._compileNode(nodeCopy, ctx);
             ctx.dedent();
@@ -2066,142 +2187,24 @@
         }
     };
 
-    const methodsToPatch = [
-        "push",
-        "pop",
-        "shift",
-        "unshift",
-        "splice",
-        "sort",
-        "reverse"
-    ];
-    const ArrayProto = Array.prototype;
-    const ModifiedArrayProto = Object.create(ArrayProto);
-    for (let method of methodsToPatch) {
-        const initialMethod = ArrayProto[method];
-        ModifiedArrayProto[method] = function (...args) {
-            this.__observer__.rev++;
-            this.__owl__.rev++;
-            let parent = this;
-            do {
-                parent.__owl__.deepRev++;
-            } while ((parent = parent.__owl__.parent));
-            let inserted;
-            switch (method) {
-                case "push":
-                case "unshift":
-                    inserted = args;
-                    break;
-                case "splice":
-                    inserted = args.slice(2);
-                    break;
-            }
-            if (inserted) {
-                for (let elem of inserted) {
-                    this.__observer__.observe(elem, this);
-                }
-            }
-            return initialMethod.call(this, ...args);
-        };
-    }
-    function makeObserver() {
-        const observer = {
-            rev: 1,
-            allowMutations: true,
-            observe: observe,
-            set: set
-        };
-        function set(target, key, value) {
-            addProp(target, key, value);
-            target.__owl__.rev++;
-            observer.rev++;
-        }
-        function addProp(obj, key, value) {
-            Object.defineProperty(obj, key, {
-                enumerable: true,
-                get() {
-                    return value;
-                },
-                set(newVal) {
-                    if (!observer.allowMutations) {
-                        throw new Error(`State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`);
-                    }
-                    if (newVal !== value) {
-                        unobserve(value);
-                        value = newVal;
-                        observe(newVal, obj);
-                        obj.__owl__.rev++;
-                        observer.rev++;
-                        let parent = obj;
-                        do {
-                            parent.__owl__.deepRev++;
-                        } while ((parent = parent.__owl__.parent));
-                    }
-                }
-            });
-            observe(value, obj);
-        }
-        function observeObj(obj, parent) {
-            const keys = Object.keys(obj);
-            obj.__owl__ = { rev: 1, deepRev: 1, parent };
-            Object.defineProperty(obj, "__owl__", { enumerable: false });
-            for (let key of keys) {
-                addProp(obj, key, obj[key]);
-            }
-        }
-        function observeArr(arr, parent) {
-            arr.__owl__ = { rev: 1, deepRev: 1, parent };
-            Object.defineProperty(arr, "__owl__", { enumerable: false });
-            arr.__proto__ = Object.create(ModifiedArrayProto);
-            arr.__proto__.__observer__ = observer;
-            for (let i = 0; i < arr.length; i++) {
-                observe(arr[i], arr);
-            }
-        }
-        function observe(value, parent) {
-            if (value === null) {
-                // fun fact: typeof null === 'object'
-                return;
-            }
-            if (typeof value !== "object") {
-                return;
-            }
-            if ("__owl__" in value) {
-                // already observed
-                return;
-            }
-            if (Array.isArray(value)) {
-                observeArr(value, parent);
-            }
-            else {
-                observeObj(value, parent);
-            }
-        }
-        function unobserve(target) {
-            if (target !== null && typeof target === "object") {
-                delete target.__owl__;
-            }
-        }
-        return observer;
-    }
-
     class Store extends EventBus {
         constructor(config, options = {}) {
             super();
             this._commitLevel = 0;
-            this._isMutating = false;
             this.history = [];
             this.debug = options.debug || false;
             this.state = config.state || {};
             this.actions = config.actions;
             this.mutations = config.mutations;
             this.env = config.env;
-            this.observer = makeObserver();
+            this.observer = new Observer();
+            this.observer.notifyCB = this.trigger.bind(this, "update");
             this.observer.allowMutations = false;
             this.observer.observe(this.state);
             if (this.debug) {
                 this.history.push({ state: this.state });
             }
+            this.set = this.observer.set.bind(this.observer);
         }
         dispatch(action, payload) {
             if (!this.actions[action]) {
@@ -2225,13 +2228,11 @@
                 throw new Error(`[Error] mutation ${type} is undefined`);
             }
             this._commitLevel++;
-            const currentRev = this.observer.rev;
-            this._isMutating = true;
             this.observer.allowMutations = true;
             const res = this.mutations[type].call(null, {
                 commit: this.commit.bind(this),
                 state: this.state,
-                set: this.observer.set
+                set: this.set
             }, payload);
             if (this._commitLevel === 1) {
                 this.observer.allowMutations = false;
@@ -2242,14 +2243,6 @@
                         payload: payload
                     });
                 }
-                Promise.resolve().then(() => {
-                    if (this._isMutating) {
-                        this._isMutating = false;
-                        if (currentRev !== this.observer.rev) {
-                            this.trigger("update", this.state);
-                        }
-                    }
-                });
             }
             this._commitLevel--;
             return res;
@@ -2365,9 +2358,9 @@
     exports.connect = connect;
     exports.Store = Store;
 
-    exports._version = '0.6.0';
-    exports._date = '2019-04-16T15:27:25.412Z';
-    exports._hash = 'e19540f';
+    exports._version = '0.7.0';
+    exports._date = '2019-04-17T09:08:09.148Z';
+    exports._hash = '4807389';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

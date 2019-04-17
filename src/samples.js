@@ -49,7 +49,7 @@ HelloWorld.prototype = Object.create(Component.prototype);
 // we show here how to add methods to sub components
 HelloWorld.prototype.changeGreeting = function() {
   var newGreeting = this.state.greeting === "Hello" ? "Hi" : "Hello";
-  this.updateState({ greeting: newGreeting });
+  this.state.greeting = newGreeting;
 };
 
 const qweb = new QWeb(TEMPLATES);
@@ -73,7 +73,7 @@ const WIDGET_COMPOSITION = `class Counter extends owl.Component {
   }
 
   increment(delta) {
-    this.updateState({ value: this.state.value + delta });
+    this.state.value += delta;
   }
 }
 
@@ -133,7 +133,7 @@ class HookWidget extends Component {
     console.log("willUnmount");
   }
   increment() {
-    this.updateState({ n: this.state.n + 1 });
+    this.state.n++;
   }
 }
 
@@ -145,10 +145,10 @@ class ParentWidget extends Component {
     this.state = { n: 0, flag: true };
   }
   increment() {
-    this.updateState({ n: this.state.n + 1 });
+    this.state.n++;
   }
   toggleSubWidget() {
-    this.updateState({ flag: !this.state.flag });
+    this.state.flag = !this.state.flag;
   }
 }
 
@@ -206,7 +206,7 @@ class Counter extends owl.Component {
   }
 
   increment(delta) {
-    this.updateState({ counter: this.state.counter + delta });
+    this.state.counter += delta;
   }
 }
 
@@ -241,16 +241,12 @@ class App extends owl.Component {
   }
 
   setMessageCount(n) {
-    this.updateState({
-      messages: messages.slice(0, n)
-    });
+    this.state.messages = messages.slice(0,n);
   }
 
   removeMessage(data) {
     const index = messages.findIndex(m => m.id === data.id);
-    const n = this.state.messages.length;
-    messages.splice(index, 1);
-    this.updateState({ messages: messages.slice(0, n - 1) });
+    this.state.messages.splice(index, 1);
   }
 
   increment(delta) {

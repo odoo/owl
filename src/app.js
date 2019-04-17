@@ -76,7 +76,7 @@ class TabbedEditor extends Component {
 
     const mode = MODES[tab];
     this.editor.session.setMode(mode);
-    this.updateState({ currentTab: tab });
+    this.state.currentTab = tab;
   }
 
   onMouseDown(ev) {
@@ -105,7 +105,7 @@ const TEMPLATE = `
         <div class="menubar">
           <a class="btn run-code" t-on-click="runCode">▶ Run</a>
           <select t-on-change="setSample">
-            <option t-foreach="SAMPLES" t-as="sample">
+            <option t-foreach="SAMPLES" t-as="sample" t-key="sample_index">
               <t t-esc="sample.description"/>
             </option>
           </select>
@@ -165,9 +165,12 @@ class App extends Component {
       error = e;
     }
 
-    await this.updateState({ error, displayWelcome: false });
+    this.state.error = error;
+    this.state.displayWelcome = false;
     if (error) {
-      this.refs.content.innerHTML = "";
+      setTimeout(() => {
+        this.refs.content.innerHTML = "";
+      });
       return;
     }
 
@@ -202,11 +205,9 @@ class App extends Component {
 
   setSample(ev) {
     const sample = SAMPLES.find(s => s.description === ev.target.value);
-    this.updateState({
-      js: sample.code,
-      css: sample.css || "",
-      xml: sample.xml || DEFAULT_XML
-    });
+    this.state.js = sample.code;
+    this.state.css = sample.css || "";
+    this.state.xml = sample.xml || DEFAULT_XML;
   }
 
   get leftPaneStyle() {
@@ -223,7 +224,7 @@ class App extends Component {
 
   onMouseDown() {
     const resizer = ev => {
-      this.updateState({ leftPaneWidth: ev.clientX });
+      this.state.leftPaneWidth = ev.clientX;
     };
 
     document.body.addEventListener("mousemove", resizer);
@@ -242,7 +243,7 @@ class App extends Component {
     this.state[ev.type] = ev.value;
   }
   toggleLayout() {
-    this.updateState({ splitLayout: !this.state.splitLayout });
+    this.state.splitLayout = !this.state.splitLayout;
   }
   updatePanelHeight(ev) {
     if (!ev.delta) {
@@ -252,7 +253,7 @@ class App extends Component {
     if (!height) {
       height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
     }
-    this.updateState({ topPanelHeight: height + ev.delta });
+    this.state.topPanelHeight = height + ev.delta;
   }
 }
 

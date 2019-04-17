@@ -16,7 +16,7 @@ export class Counter extends Component {
   }
 
   increment(delta) {
-    this.updateState({ counter: this.state.counter + delta });
+    this.state.counter += delta;
   }
 }
 ```
@@ -87,9 +87,6 @@ The willPatch hook is called just before the DOM patching process starts.
 It is not called on the initial render. This is useful to get some
 information which are in the DOM. For example, the current position of the
 scrollbar
-
-Note that at this point, it is not safe to rerender the widget. In
-particular, updateState calls should be avoided.
 
 ### patched
 

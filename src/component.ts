@@ -168,9 +168,6 @@ export class Component<
    * It is not called on the initial render.  This is useful to get some
    * information which are in the DOM.  For example, the current position of the
    * scrollbar
-   *
-   * Note that at this point, it is not safe to rerender the widget. In
-   * particular, updateState calls should be avoided.
    */
   willPatch() {}
 

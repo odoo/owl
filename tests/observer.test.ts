@@ -279,4 +279,26 @@ describe("observer", () => {
     await nextMicroTick();
     expect(observer.notifyCB).toBeCalledTimes(4);
   });
+
+  test("throw error when state is mutated in object if allowMutation=false", async () => {
+    const observer = new Observer();
+    observer.allowMutations = false;
+    const obj: any = { a: 1 };
+    observer.observe(obj);
+
+    expect(() => {
+      obj.a = 2;
+    }).toThrow('Observed state cannot be changed here! (key: "a", val: "2")');
+  });
+
+  test("throw error when state is mutated in array if allowMutation=false", async () => {
+    const observer = new Observer();
+    observer.allowMutations = false;
+    const obj: any = { a: [1] };
+    observer.observe(obj);
+
+    expect(() => {
+      obj.a.push(2);
+    }).toThrow("Array cannot be changed here");
+  });
 });

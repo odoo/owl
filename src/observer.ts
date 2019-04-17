@@ -18,6 +18,9 @@ const ModifiedArrayProto = Object.create(ArrayProto);
 for (let method of methodsToPatch) {
   const initialMethod = ArrayProto[method];
   ModifiedArrayProto[method] = function(...args) {
+    if (!this.__observer__.allowMutations) {
+      throw new Error(`Array cannot be changed here")`);
+    }
     this.__observer__.notifyChange();
     this.__owl__.rev++;
     let parent = this;
@@ -122,12 +125,12 @@ export class Observer {
         return value;
       },
       set(newVal) {
-        if (!self.allowMutations) {
-          throw new Error(
-            `State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`
-          );
-        }
         if (newVal !== value) {
+          if (!self.allowMutations) {
+            throw new Error(
+              `Observed state cannot be changed here! (key: "${key}", val: "${newVal}")`
+            );
+          }
           self.unobserve(value);
           value = newVal;
           self.observe(newVal, obj);

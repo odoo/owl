@@ -1,4 +1,5 @@
 import { Observer } from "../src/observer";
+import { nextMicroTick } from "./helpers";
 
 describe("observer", () => {
   test("properly observe objects", () => {
@@ -251,5 +252,31 @@ describe("observer", () => {
     obj2.key = 3;
     expect(obj1.__owl__.rev).toBe(1);
     expect(obj2.__owl__.rev).toBe(2);
+  });
+
+  test("call callback when state is changed", async () => {
+    const observer = new Observer();
+    observer.notifyCB = jest.fn();
+    const obj: any = { a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 };
+
+    observer.observe(obj);
+    expect(observer.notifyCB).toBeCalledTimes(0);
+
+    obj.a = 2;
+    await nextMicroTick();
+    expect(observer.notifyCB).toBeCalledTimes(1);
+
+    obj.b.c = 3;
+    await nextMicroTick();
+    expect(observer.notifyCB).toBeCalledTimes(2);
+
+    obj.d[0].e = 5;
+    await nextMicroTick();
+    expect(observer.notifyCB).toBeCalledTimes(3);
+
+    obj.a = 111;
+    obj.f = 222;
+    await nextMicroTick();
+    expect(observer.notifyCB).toBeCalledTimes(4);
   });
 });

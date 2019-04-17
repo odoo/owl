@@ -18,7 +18,7 @@ const ModifiedArrayProto = Object.create(ArrayProto);
 for (let method of methodsToPatch) {
   const initialMethod = ArrayProto[method];
   ModifiedArrayProto[method] = function(...args) {
-    this.__observer__.rev++;
+    this.__observer__.notifyChange();
     this.__owl__.rev++;
     let parent = this;
     do {
@@ -46,6 +46,19 @@ for (let method of methodsToPatch) {
 export class Observer {
   rev: number = 1;
   allowMutations: boolean = true;
+  dirty: boolean = false;
+
+  notifyCB() {}
+  notifyChange() {
+    this.rev++;
+    this.dirty = true;
+    Promise.resolve().then(() => {
+      if (this.dirty) {
+        this.dirty = false;
+        this.notifyCB();
+      }
+    });
+  }
 
   observe(value: any, parent?: any) {
     if (value === null) {
@@ -69,7 +82,7 @@ export class Observer {
   set(target: any, key: number | string, value: any) {
     this._addProp(target, key, value);
     target.__owl__.rev++;
-    this.rev++;
+    this.notifyChange();
   }
 
   unobserve(target: any) {
@@ -119,11 +132,11 @@ export class Observer {
           value = newVal;
           self.observe(newVal, obj);
           obj.__owl__.rev!++;
-          self.rev++;
           let parent = obj;
           do {
             parent.__owl__.deepRev++;
           } while ((parent = parent.__owl__.parent));
+          self.notifyChange();
         }
       }
     });

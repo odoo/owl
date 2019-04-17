@@ -22,7 +22,6 @@ export class Store extends EventBus {
   actions: any;
   mutations: any;
   _commitLevel: number = 0;
-  _isMutating: boolean = false;
   history: any[] = [];
   debug: boolean;
   env: any;
@@ -37,6 +36,7 @@ export class Store extends EventBus {
     this.mutations = config.mutations;
     this.env = config.env;
     this.observer = new Observer();
+    this.observer.notifyCB = this.trigger.bind(this, "update");
     this.observer.allowMutations = false;
     this.observer.observe(this.state);
 
@@ -72,8 +72,6 @@ export class Store extends EventBus {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
     this._commitLevel++;
-    const currentRev = this.observer.rev;
-    this._isMutating = true;
     this.observer.allowMutations = true;
 
     const res = this.mutations[type].call(
@@ -95,14 +93,6 @@ export class Store extends EventBus {
           payload: payload
         });
       }
-      Promise.resolve().then(() => {
-        if (this._isMutating) {
-          this._isMutating = false;
-          if (currentRev !== this.observer.rev) {
-            this.trigger("update", this.state);
-          }
-        }
-      });
     }
     this._commitLevel--;
     return res;

@@ -230,12 +230,12 @@ export class Component<
     }
     this._patch(vnode);
     target.appendChild(this.el!);
+    this._observeState();
 
     if (document.body.contains(target)) {
       this._visitSubTree(w => {
         if (!w.__owl__.isMounted && this.el!.contains(w.el)) {
           w.__owl__.isMounted = true;
-          this._observeState();
           w.mounted();
           return true;
         }
@@ -326,25 +326,6 @@ export class Component<
     return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
   }
 
-  /**
-   * This is the safest update method for widget: its job is to update the state
-   * and rerender (if widget is mounted).
-   *
-   * Notes:
-   * - it checks if we do not add extra keys to the state.
-   * - it is ok to call updateState before the widget is started. In that
-   * case, it will simply update the state and will not rerender
-   */
-  async updateState(nextState: Partial<State>) {
-    if (Object.keys(nextState).length === 0) {
-      return;
-    }
-    Object.assign(this.state, nextState);
-    if (this.__owl__.isStarted) {
-      await this.render();
-    }
-  }
-
   //--------------------------------------------------------------------------
   // Private
   //--------------------------------------------------------------------------
@@ -418,10 +399,10 @@ export class Component<
     if (this.__owl__.isMounted) {
       return;
     }
+    this._observeState();
     if (this.__owl__.parent) {
       if (this.__owl__.parent!.__owl__.isMounted) {
         this.__owl__.isMounted = true;
-        this._observeState();
         this.mounted();
         const children = this.__owl__.children;
         for (let id in children) {
@@ -444,9 +425,7 @@ export class Component<
   _observeState() {
     if (Object.keys(this.state).length) {
       this.__owl__.observer.observe(this.state);
-      this.__owl__.observer.notifyCB = () => {
-        this.render();
-      };
+      this.__owl__.observer.notifyCB = this.render.bind(this);
     }
   }
 }

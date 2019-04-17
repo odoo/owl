@@ -406,7 +406,8 @@ describe("connecting a component to store", () => {
     await parent.mount(fixture);
     expect(steps).toEqual(["child:mounted"]);
 
-    await parent.updateState({ child: false });
+    parent.state.child = false;
+    await nextTick();
     expect(steps).toEqual(["child:mounted", "child:willUnmount"]);
   });
 
@@ -479,7 +480,8 @@ describe("connecting a component to store", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
 
-    await app.updateState({ beerId: 2 });
+    app.state.beerId = 2;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>kwak</span></div>");
   });
 
@@ -562,7 +564,8 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span></div></div>"
     );
 
-    await app.updateState({ beerId: 1 });
+    app.state.beerId = 1;
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>"
     );
@@ -573,7 +576,8 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span><span>selected:jupiler</span><span>consumed:jupiler</span></div></div>"
     );
 
-    await app.updateState({ beerId: 0 });
+    app.state.beerId = 0;
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>"
     );
@@ -630,7 +634,8 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span></div></div>"
     );
 
-    await app.updateState({ beerId: 1 });
+    app.state.beerId = 1;
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>"
     );
@@ -647,7 +652,8 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span><span>selected:kwak</span><span>consumed:kwak</span></div></div>"
     );
 
-    await app.updateState({ beerId: 0 });
+    app.state.beerId = 0;
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>consumed:kwak</span></div></div>"
     );

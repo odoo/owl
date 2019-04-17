@@ -45,14 +45,13 @@ function children(w: Widget): Widget[] {
 
 // Test widgets
 class Counter extends Widget {
-  // class Counter extends Widget<WEnv, {}, {counter: number}> {
   template = "counter";
   state = {
     counter: 0
   };
 
   inc() {
-    this.updateState({ counter: this.state.counter + 1 });
+    this.state.counter++;
   }
 }
 
@@ -94,7 +93,7 @@ describe("basic widget properties", () => {
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     await button.click();
-    await nextMicroTick();
+    await nextTick();
     expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 
@@ -109,11 +108,12 @@ describe("basic widget properties", () => {
     );
   });
 
-  test("updateState before first render does not trigger a render", async () => {
+  test("changing state before first render does not trigger a render", async () => {
     let renderCalls = 0;
     class TestW extends Widget {
+      state = { drinks: 1 };
       async willStart() {
-        this.updateState({});
+        this.state.drinks++;
       }
       async _render() {
         renderCalls++;
@@ -123,15 +123,6 @@ describe("basic widget properties", () => {
     const widget = new TestW(env);
     await widget.mount(fixture);
     expect(renderCalls).toBe(1);
-  });
-
-  test("updateState does not allow adding extra keys", async () => {
-    const widget = new Widget(env);
-    try {
-      await widget.updateState({ extra: 1 });
-    } catch (e) {
-      expect(e.message).toMatch("Invalid key:");
-    }
   });
 
   test("keeps a reference to env", async () => {
@@ -317,7 +308,8 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual(["init", "willstart", "mounted"]);
-    await widget.updateState({ ok: false });
+    widget.state.ok = false;
+    await nextTick();
     expect(steps).toEqual(["init", "willstart", "mounted", "willunmount"]);
   });
 
@@ -329,7 +321,7 @@ describe("lifecycle hooks", () => {
         childUnmounted = true;
       }
       increment() {
-        this.updateState({ n: this.state.n + 1 });
+        this.state += 1;
       }
     }
 
@@ -343,10 +335,10 @@ describe("lifecycle hooks", () => {
           </div>`;
       state = { n: 0, flag: true };
       increment() {
-        this.updateState({ n: this.state.n + 1 });
+        this.state.n += 1;
       }
       toggleSubWidget() {
-        this.updateState({ flag: !this.state.flag });
+        this.state.flag = !this.state.flag;
       }
     }
 
@@ -433,7 +425,7 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("<span>2</span>");
   });
 
-  test("patched hook is called after updateState", async () => {
+  test("patched hook is called after updating State", async () => {
     let n = 0;
 
     class TestWidget extends Widget {
@@ -447,10 +439,12 @@ describe("lifecycle hooks", () => {
     await widget.mount(fixture);
     expect(n).toBe(0);
 
-    await widget.updateState({}); // empty update, should do nothing
+    widget.state.a = 1; // empty update, should do nothing
+    await nextTick();
     expect(n).toBe(0);
 
-    await widget.updateState({ a: 3 });
+    widget.state.a = 3;
+    await nextTick();
     expect(n).toBe(1);
   });
 
@@ -533,10 +527,11 @@ describe("lifecycle hooks", () => {
     await widget.mount(fixture);
     expect(created).toBe(false);
     expect(mounted).toBe(false);
-    await widget.updateState({ flag: true });
+
+    widget.state.flag = true;
+    await nextTick();
     expect(mounted).toBe(true);
     expect(created).toBe(true);
-    await widget.updateState({ flag: false });
   });
 
   test("willPatch/patched hook", async () => {
@@ -674,7 +669,7 @@ describe("composition", () => {
     );
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextMicroTick();
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
@@ -709,7 +704,7 @@ describe("composition", () => {
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextMicroTick();
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
@@ -729,13 +724,16 @@ describe("composition", () => {
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextMicroTick();
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
-    await widget.updateState({ ok: false });
+    widget.state.ok = false;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
-    await widget.updateState({ ok: true });
+
+    widget.state.ok = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>0<button>Inc</button></div></div>"
     );
@@ -751,16 +749,20 @@ describe("composition", () => {
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
-    await nextMicroTick();
+    await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
     );
     const counter = children(widget)[0];
     expect(counter.__owl__.isMounted).toBe(true);
-    await widget.updateState({ ok: false });
+
+    widget.state.ok = false;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(counter.__owl__.isMounted).toBe(false);
-    await widget.updateState({ ok: true });
+
+    widget.state.ok = true;
+    await nextTick();
     expect(counter.__owl__.isMounted).toBe(true);
     expect(fixture.innerHTML).toBe(
       "<div><div>1<button>Inc</button></div></div>"
@@ -780,9 +782,12 @@ describe("composition", () => {
     await widget.mount(fixture);
     const input = fixture.getElementsByTagName("input")[0];
     input.value = "test";
-    await widget.updateState({ ok: false });
+    widget.state.ok = false;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
-    await widget.updateState({ ok: true });
+
+    widget.state.ok = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><input></div>");
     const input2 = fixture.getElementsByTagName("input")[0];
     expect(input).toBe(input2);
@@ -847,7 +852,8 @@ describe("composition", () => {
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
-    await parent.updateState({ numbers: [1, 3] });
+    parent.state.numbers = [1, 3];
+    await nextTick();
     expect(normalize(fixture.innerHTML)).toBe(
       normalize(`
       <div>
@@ -878,7 +884,9 @@ describe("composition", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
     const child = children(parent)[0];
-    await parent.updateState({ flag: true });
+
+    parent.state.flag = true;
+    await nextTick();
     expect(children(parent)[0]).toBe(child);
     expect(child.__owl__.isDestroyed).toBe(false);
     expect(normalize(fixture.innerHTML)).toBe(
@@ -1013,10 +1021,12 @@ describe("other directives with t-widget", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
 
-    await widget.updateState({ flag: false });
+    widget.state.flag = false;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
 
-    await widget.updateState({ flag: true });
+    widget.state.flag = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
 
@@ -1039,7 +1049,8 @@ describe("other directives with t-widget", () => {
 
     expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
 
-    await widget.updateState({ flag: false });
+    widget.state.flag = false;
+    await nextTick();
     expect(normalize(fixture.innerHTML)).toBe("<div><span>hey</span></div>");
   });
 
@@ -1062,7 +1073,8 @@ describe("other directives with t-widget", () => {
 
     expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
 
-    await widget.updateState({ flag: false });
+    widget.state.flag = false;
+    await nextTick();
     expect(normalize(fixture.innerHTML)).toBe("<div><span>hey</span></div>");
   });
 });
@@ -1098,7 +1110,8 @@ describe("random stuff/miscellaneous", () => {
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
-    await widget.updateState({ flag: true });
+    widget.state.flag = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>abcdef</span></div>");
   });
 
@@ -1225,10 +1238,10 @@ describe("async rendering", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
-    parent.updateState({ flagA: true });
+    parent.state.flagA = true;
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
-    parent.updateState({ flagB: true });
+    parent.state.flagB = true;
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div></div>");
     defB.resolve();
@@ -1271,12 +1284,12 @@ describe("async rendering", () => {
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a1</span></div>"
     );
-    parent.updateState({ valA: 2 });
+    parent.state.valA = 2;
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a1</span></div>"
     );
-    parent.updateState({ flagB: true });
+    parent.state.flagB = true;
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
       "<div><span>a1</span></div>"

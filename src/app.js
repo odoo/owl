@@ -163,8 +163,9 @@ class App extends Component {
     // check templates
     var qweb = new owl.QWeb();
     var error = false;
+    const sanitizedXML = this.state.xml.replace(/<!--[\s\S]*?-->/g, "");
     try {
-      qweb.loadTemplates(this.state.xml);
+      qweb.loadTemplates(sanitizedXML);
     } catch (e) {
       error = e;
     }
@@ -190,7 +191,7 @@ class App extends Component {
       owlScript.addEventListener("load", () => {
         const script = doc.createElement("script");
         script.type = "text/javascript";
-        const content = `window.TEMPLATES = \`${this.state.xml}\`\n${
+        const content = `window.TEMPLATES = \`${sanitizedXML}\`\n${
           this.state.js
         }`;
         script.innerHTML = content;

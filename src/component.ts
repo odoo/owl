@@ -227,7 +227,6 @@ export class Component<
     }
     this._patch(vnode);
     target.appendChild(this.el!);
-    this._observeState();
 
     if (document.body.contains(target)) {
       this._visitSubTree(w => {
@@ -357,6 +356,7 @@ export class Component<
           true
         );
       }
+      this._observeState();
       return this._render();
     });
     return this.__owl__.renderPromise;
@@ -366,11 +366,13 @@ export class Component<
     this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
+    this.__owl__.observer.allowMutations = false;
     let vnode = this.env.qweb.render(template, this, {
       promises,
       handlers: this.__owl__.boundHandlers,
       forceUpdate: force
     });
+    this.__owl__.observer.allowMutations = true;
 
     // this part is critical for the patching process to be done correctly. The
     // tricky part is that a child widget can be rerendered on its own, which

@@ -1426,4 +1426,27 @@ describe("widget and observable state", () => {
     await nextMicroTick();
     expect(fixture.innerHTML).toBe("<div>beer</div>");
   });
+
+  test("subwidgets cannot change observable state received from parent", async () => {
+    expect.assertions(1);
+    class Parent extends Widget {
+      state = { obj: { coffee: 1 } };
+      widgets = { Child };
+      inlineTemplate = `<div><t t-widget="Child" t-props="state.obj"/></div>`;
+    }
+    class Child extends Widget {
+      constructor(parent, props) {
+        super(parent, props);
+        props.coffee = 2;
+      }
+    }
+    const parent = new Parent(env);
+    try {
+      await parent.mount(fixture);
+    } catch (e) {
+      expect(e.message).toBe(
+        'Observed state cannot be changed here! (key: "coffee", val: "2")'
+      );
+    }
+  });
 });

@@ -15,10 +15,12 @@ export class TodoItem extends owl.Component {
   }
 
   async editTodo() {
-    await this.updateState({ isEditing: true });
-    this.refs.input.value = "";
-    this.refs.input.focus();
-    this.refs.input.value = this.props.title;
+    this.state.isEditing = true;
+    setTimeout(() => {
+      this.refs.input.value = "";
+      this.refs.input.focus();
+      this.refs.input.value = this.props.title;
+    });
   }
 
   handleKeyup(ev) {
@@ -27,7 +29,7 @@ export class TodoItem extends owl.Component {
     }
     if (ev.keyCode === ESC_KEY) {
       ev.target.value = this.props.title;
-      this.updateState({ isEditing: false });
+      this.state.isEditing = false;
     }
   }
 
@@ -43,7 +45,7 @@ export class TodoItem extends owl.Component {
         id: this.props.id,
         title: value
       });
-      this.updateState({ isEditing: false });
+      this.state.isEditing = false;
     }
   }
 }

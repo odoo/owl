@@ -27,13 +27,13 @@
             </span>
             <ul class="filters">
                 <li>
-                    <a href="#/all" t-on-click="updateState({filter:'all'})" t-att-class="{selected: state.filter === 'all'}">All</a>
+                    <a href="#/all" t-on-click="setFilter('all')" t-att-class="{selected: state.filter === 'all'}">All</a>
                 </li>
                 <li>
-                    <a href="#/active" t-on-click="updateState({filter:'active'})" t-att-class="{selected: state.filter === 'active'}">Active</a>
+                    <a href="#/active" t-on-click="setFilter('active')" t-att-class="{selected: state.filter === 'active'}">Active</a>
                 </li>
                 <li>
-                    <a href="#/completed" t-on-click="updateState({filter:'completed'})" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
+                    <a href="#/completed" t-on-click="setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
                 </li>
             </ul>
             <button class="clear-completed" t-if="props.todos.length gt remaining" t-on-click="clearCompleted">

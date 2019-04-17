@@ -54,6 +54,10 @@ class TodoApp extends Component {
   toggleAll() {
     this.env.store.dispatch("toggleAll", !this.allChecked);
   }
+
+  setFilter(filter) {
+    this.state.filter = filter;
+  }
 }
 
 export default connect(mapStateToProps)(TodoApp);

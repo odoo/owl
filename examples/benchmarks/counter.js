@@ -13,6 +13,6 @@ export class Counter extends owl.Component {
   }
 
   increment(delta) {
-    this.updateState({ counter: this.state.counter + delta });
+    this.state.counter += delta;
   }
 }

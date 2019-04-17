@@ -36,16 +36,12 @@ export class App extends owl.Component {
   }
 
   setMessageCount(n) {
-    this.updateState({
-      messages: messages.slice(0, n)
-    });
+    this.state.messages = messages.slice(0, n);
   }
 
   removeMessage(data) {
     const index = messages.findIndex(m => m.id === data.id);
-    const n = this.state.messages.length;
-    messages.splice(index, 1);
-    this.updateState({ messages: messages.slice(0, n - 1) });
+    this.state.messages.splice(index, 1);
   }
 
   increment(delta) {

@@ -12,28 +12,18 @@
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
     "dev": "npm-run-all --parallel \"build:* -- --watch\"",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "example:benchmarks:build:core": "npm run build && cpx \"dist/owl.js\" dist/examples/benchmarks",
-    "example:benchmarks:build:js": "cpx \"examples/benchmarks/{*.html,*.js,*.css}\" dist/examples/benchmarks",
-    "example:benchmarks:build": "npm-run-all --parallel example:benchmarks:build:*",
-    "example:benchmarks:serve": "live-server --entry-file=index.html dist/examples/benchmarks/",
-    "example:benchmarks:dev": "npm-run-all --parallel \"example:benchmarks:build:* -- --watch\" example:benchmarks:serve",
-    "example:todoapp:build:core": "npm run build && cpx \"dist/owl.js\" dist/examples/todoapp",
-    "example:todoapp:build:js": "cpx \"examples/todoapp/{*.html,**/*.js,*.css,*.xml}\" dist/examples/todoapp",
-    "example:todoapp:build": "npm-run-all --parallel example:todoapp:build:*",
-    "example:todoapp:serve": "live-server --entry-file=index.html dist/examples/todoapp/",
-    "example:todoapp:dev": "npm-run-all --parallel \"example:todoapp:build:* -- --watch\" example:todoapp:serve"
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ged-odoo/web-core.git"
+    "url": "git+https://github.com/odoo/owl.git"
   },
   "author": "Odoo",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/ged-odoo/web-core/issues"
+    "url": "https://github.com/odoo/owl/issues"
   },
-  "homepage": "https://github.com/ged-odoo/web-core#readme",
+  "homepage": "https://github.com/odoo/owl#readme",
   "devDependencies": {
     "@types/jest": "^23.3.12",
     "cpx": "^1.5.0",

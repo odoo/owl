@@ -321,6 +321,10 @@ export class Component<
     return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
   }
 
+  set(target: any, key: string | number, value: any) {
+    this.__owl__.observer!.set(target, key, value);
+  }
+
   //--------------------------------------------------------------------------
   // Private
   //--------------------------------------------------------------------------

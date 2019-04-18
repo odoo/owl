@@ -1449,4 +1449,19 @@ describe("widget and observable state", () => {
       );
     }
   });
+
+  test("widget can add observed keys to its state", async () => {
+    class TestWidget extends Widget {
+      state: any = { a: 1 };
+      inlineTemplate = `<div><t t-esc="state.a"/><t t-esc="state.b"/></div>`;
+    }
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    widget.set(widget.state, "b", 2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>12</div>");
+  });
 });

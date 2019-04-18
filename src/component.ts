@@ -35,7 +35,7 @@ export interface Meta<T extends Env, Props> {
   renderProps: Props | null;
   renderPromise: Promise<VNode> | null;
   boundHandlers: { [key: number]: any };
-  observer: Observer;
+  observer?: Observer;
 }
 
 const patch = init([sdListeners, sdAttrs, sdProps]);
@@ -62,7 +62,7 @@ export class Component<
   }
 
   env: T;
-  state: State = <State>{};
+  state?: State;
   props: Props;
   refs: {
     [key: string]: Component<T, any, any> | HTMLElement | undefined;
@@ -120,8 +120,7 @@ export class Component<
       renderId: 1,
       renderPromise: null,
       renderProps: props || null,
-      boundHandlers: {},
-      observer: new Observer()
+      boundHandlers: {}
     };
   }
 
@@ -366,13 +365,17 @@ export class Component<
     this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
-    this.__owl__.observer.allowMutations = false;
+    if (this.__owl__.observer) {
+      this.__owl__.observer.allowMutations = false;
+    }
     let vnode = this.env.qweb.render(template, this, {
       promises,
       handlers: this.__owl__.boundHandlers,
       forceUpdate: force
     });
-    this.__owl__.observer.allowMutations = true;
+    if (this.__owl__.observer) {
+      this.__owl__.observer.allowMutations = true;
+    }
 
     // this part is critical for the patching process to be done correctly. The
     // tricky part is that a child widget can be rerendered on its own, which
@@ -422,7 +425,8 @@ export class Component<
   }
 
   _observeState() {
-    if (Object.keys(this.state).length) {
+    if (this.state) {
+      this.__owl__.observer = new Observer();
       this.__owl__.observer.observe(this.state);
       this.__owl__.observer.notifyCB = this.render.bind(this);
     }

@@ -73,6 +73,7 @@ export class Observer {
     }
     if ("__owl__" in value) {
       // already observed
+      value.__owl__.parent = parent;
       return;
     }
     if (Array.isArray(value)) {
@@ -86,12 +87,6 @@ export class Observer {
     this._addProp(target, key, value);
     target.__owl__.rev++;
     this.notifyChange();
-  }
-
-  unobserve(target: any) {
-    if (target !== null && typeof target === "object") {
-      delete target.__owl__;
-    }
   }
 
   _observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
@@ -131,14 +126,13 @@ export class Observer {
               `Observed state cannot be changed here! (key: "${key}", val: "${newVal}")`
             );
           }
-          self.unobserve(value);
           value = newVal;
           self.observe(newVal, obj);
           obj.__owl__.rev!++;
           let parent = obj;
           do {
             parent.__owl__.deepRev++;
-          } while ((parent = parent.__owl__.parent));
+          } while ((parent = parent.__owl__.parent) && parent !== obj);
           self.notifyChange();
         }
       }

@@ -172,18 +172,6 @@ describe("observer", () => {
     expect(state.a.__owl__.rev).toBe(2);
   });
 
-  test("properly unobserve objects in object", () => {
-    const observer = new Observer();
-    const state: any = { a: { b: 1 } };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    const initialA = state.a;
-    expect(initialA.__owl__.rev).toBe(1);
-
-    state.a = "Karlsquell";
-    expect(initialA.__owl__).not.toBeDefined();
-  });
-
   test("reobserve new object values", () => {
     const observer = new Observer();
     const obj: any = { a: 1 };
@@ -238,6 +226,35 @@ describe("observer", () => {
     obj2.b = obj1;
     expect(obj1.__owl__.rev).toBe(2);
     expect(obj2.__owl__.rev).toBe(3);
+  });
+
+  test("properly handle swapping elements", () => {
+    const observer = new Observer();
+    const obj: any = { a: { arr: [] }, b: 1 };
+    observer.observe(obj);
+
+    // swap a and b
+    const b = obj.b;
+    obj.b = obj.a;
+    obj.a = b;
+    expect(observer.rev).toBe(3);
+
+    // push something into array to make sure it works
+    obj.b.arr.push("blanche");
+    expect(observer.rev).toBe(4);
+  });
+
+  test("properly handle assigning observed obj containing array", () => {
+    const observer = new Observer();
+    const obj: any = { a: { arr: [], val: "test" } };
+    observer.observe(obj);
+
+    obj.a = { ...obj.a, val: "test2" };
+    expect(observer.rev).toBe(2);
+
+    // push something into array to make sure it works
+    obj.a.arr.push("blanche");
+    expect(observer.rev).toBe(3);
   });
 
   test("accept cycles in observed state", () => {

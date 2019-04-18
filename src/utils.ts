@@ -163,3 +163,13 @@ export function unpatch(C: any, patchName: string) {
     }
   }
 }
+
+export async function loadTemplates(url: string): Promise<string> {
+  const result = await fetch(url);
+  if (!result.ok) {
+    throw new Error("Error while fetching xml templates");
+  }
+  let templates = await result.text();
+  templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+  return templates;
+}

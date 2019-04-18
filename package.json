@@ -51,6 +51,26 @@
     "uglify-es": "^3.3.9"
   },
   "dependencies": {
+    "jest-environment-jsdom": "^24.7.1",
     "snabbdom": "^0.7.3"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src",
+      "<rootDir>/tests"
+    ],
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "verbose": false,
+    "testRegex": "(/tests/.*(test|spec))\\.ts?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

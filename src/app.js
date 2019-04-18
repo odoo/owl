@@ -127,7 +127,7 @@ const TEMPLATE = `
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>
       <div class="right-pane"  t-att-style="rightPaneStyle">
         <div class="welcome" t-if="state.displayWelcome">
-          <div>🦉 Odoo Web Lab 🦉</div>
+          <div>🦉 Odoo Web Library 🦉</div>
           <div>v<t t-esc="version"/></div>
           <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
           <div class="note">Note: these examples require a recent browser to work without a transpilation step. </div>

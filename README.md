@@ -1,8 +1,8 @@
-<h1 align="center">🦉 Odoo Web Lab 🦉</h1>
+<h1 align="center">🦉 Odoo Web Library 🦉</h1>
 
 ## Project Overview
 
-Odoo Web Lab (OWL) is a project to collect some useful, reusable, (hopefully)
+Odoo Web Library (OWL) is a project to collect some useful, reusable, (hopefully)
 well designed building blocks for building web applications. However, since this is the basis for the Odoo web client, we will not hesitate
 to design the code here to better match the Odoo architecture/design principles.
 

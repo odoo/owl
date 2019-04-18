@@ -1,7 +1,7 @@
 {
   "name": "owl",
   "version": "0.7.0",
-  "description": "Odoo Web Lab",
+  "description": "Odoo Web Library (OWL)",
   "main": "src/index.ts",
   "scripts": {
     "build:js": "tsc --target esnext --module es6 --outDir dist/owl src/*",

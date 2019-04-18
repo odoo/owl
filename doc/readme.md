@@ -1,4 +1,4 @@
-# Odoo Web Lab Documentation
+# Odoo Web Library Documentation
 
 Currently, this repository contains:
 

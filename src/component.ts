@@ -2,14 +2,7 @@ import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
 import { QWeb } from "./qweb";
 import { idGenerator } from "./utils";
-import {
-  attrsModule,
-  eventListenersModule,
-  h,
-  init,
-  propsModule,
-  VNode
-} from "./vdom";
+import { h, patch, VNode } from "./vdom";
 
 let getId = idGenerator();
 
@@ -39,8 +32,6 @@ export interface Meta<T extends Env, Props> {
   boundHandlers: { [key: number]: any };
   observer?: Observer;
 }
-
-const patch = init([eventListenersModule, attrsModule, propsModule]);
 
 export interface Type<T> extends Function {
   new (...args: any[]): T;

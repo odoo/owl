@@ -1,3 +1,12 @@
+
+// because those in TypeScript are too restrictive: https://github.com/Microsoft/TSJS-lib-generator/pull/237
+declare global {
+  interface Element {
+    setAttribute(name: string, value: string | number | boolean): void;
+    setAttributeNS(namespaceURI: string, qualifiedName: string, value: string | number | boolean): void;
+  }
+}
+
 //------------------------------------------------------------------------------
 // vnode.ts
 //------------------------------------------------------------------------------
@@ -41,7 +50,6 @@ function vnode(
     key: key
   };
 }
-
 
 //------------------------------------------------------------------------------
 // snabbdom.ts
@@ -721,7 +729,10 @@ function updateProps(oldVnode: VNode, vnode: VNode): void {
   }
 }
 
-export const propsModule = { create: updateProps, update: updateProps } as Module;
+export const propsModule = {
+  create: updateProps,
+  update: updateProps
+} as Module;
 
 //------------------------------------------------------------------------------
 // module/module.ts
@@ -847,7 +858,6 @@ export const eventListenersModule = {
   destroy: updateEventListeners
 } as Module;
 
-
 //------------------------------------------------------------------------------
 // attributes.ts
 //------------------------------------------------------------------------------
@@ -908,4 +918,4 @@ export const attrsModule = {
   update: updateAttrs
 } as Module;
 
-
+export const patch = init([eventListenersModule, attrsModule, propsModule]);

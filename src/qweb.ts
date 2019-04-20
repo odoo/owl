@@ -1,5 +1,4 @@
-import h from "../libs/snabbdom/src/h";
-import { VNode } from "../libs/snabbdom/src/vnode";
+import { VNode, h } from "./vdom";
 
 //------------------------------------------------------------------------------
 // Types

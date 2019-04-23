@@ -1072,9 +1072,7 @@ const widgetDirective: Directive = {
       ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
     }
     let ref = node.getAttribute("t-ref");
-    if (ref) {
-      ctx.addLine(`context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`);
-    }
+    let refExpr = ref ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};` : '';
 
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     ctx.closeIf();
@@ -1084,7 +1082,7 @@ const widgetDirective: Directive = {
     ctx.addLine(
       `def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
-      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${
+      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){w${widgetID}.${
         keepAlive ? "unmount" : "destroy"
       }()},destroy(){w${widgetID}.${
         keepAlive ? "unmount" : "destroy"

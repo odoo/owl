@@ -657,6 +657,29 @@ describe("composition", () => {
     expect(widget.refs.mywidgetb instanceof WidgetB).toBe(true);
   });
 
+  test("t-refs are bound at proper timing", async () => {
+    expect.assertions(2);
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+          <t t-foreach="state.list" t-ref="'child'" t-widget="Widget"/>
+        </div>`;
+      widgets = { Widget };
+      state = {list: <any>[]};
+      willPatch() {
+        expect(this.refs.child).toBeUndefined();
+      }
+      patched() {
+        expect(this.refs.child).not.toBeUndefined();
+      }
+    }
+
+    const parent = new ParentWidget(env);
+    await parent.mount(fixture);
+    parent.state.list.push(1);
+    await nextTick()
+  });
+
   test("modifying a sub widget", async () => {
     class ParentWidget extends Widget {
       inlineTemplate = `<div><t t-widget="Counter"/></div>`;

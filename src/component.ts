@@ -1,13 +1,8 @@
-import h from "../libs/snabbdom/src/h";
-import sdAttrs from "../libs/snabbdom/src/modules/attributes";
-import sdProps from "../libs/snabbdom/src/modules/props";
-import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
-import { init } from "../libs/snabbdom/src/snabbdom";
-import { VNode } from "../libs/snabbdom/src/vnode";
 import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
 import { QWeb } from "./qweb";
 import { idGenerator } from "./utils";
+import { h, patch, VNode } from "./vdom";
 
 let getId = idGenerator();
 
@@ -37,8 +32,6 @@ export interface Meta<T extends Env, Props> {
   boundHandlers: { [key: number]: any };
   observer?: Observer;
 }
-
-const patch = init([sdListeners, sdAttrs, sdProps]);
 
 export interface Type<T> extends Function {
   new (...args: any[]): T;

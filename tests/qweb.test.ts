@@ -1,6 +1,4 @@
-import sdAttributes from "../libs/snabbdom/src/modules/attributes";
-import sdListeners from "../libs/snabbdom/src/modules/eventlisteners";
-import { init } from "../libs/snabbdom/src/snabbdom";
+import { patch } from "../src/vdom";
 import { EvalContext, QWeb } from "../src/qweb";
 import { normalize } from "./helpers";
 
@@ -10,8 +8,6 @@ import { normalize } from "./helpers";
 
 // We create before each test:
 // - qweb: a new QWeb instance
-
-const patch = init([sdAttributes, sdListeners]);
 
 let qweb: QWeb;
 

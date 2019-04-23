@@ -3,7 +3,7 @@ import git from "git-rev-sync";
 
 // rollup.config.js
 export default {
-  input: "dist/owl/src/index.js",
+  input: "dist/owl/index.js",
   output: {
     file: "dist/owl.js",
     format: "iife",

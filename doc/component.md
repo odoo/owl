@@ -1,5 +1,20 @@
 # Component
 
+The component system is designed to be:
+
+1. **declarative:** the user interface should be described in term of the state
+   of the application, not as a sequence of imperative steps.
+
+2. **composable:** each widget can seamlessly be created in a parent widget by
+   a simple directive in its template.
+
+3. **asynchronous rendering:** the framework will transparently wait for each
+   subwidgets to be ready before applying the rendering. It uses native promises
+   under the hood.
+
+4. **uses QWeb as a template system:** the templates are described in XML
+   and follow the QWeb specification. This is a requirement for Odoo.
+
 Components are the reusable, composable widgets. They are designed to be low
 level, to be declarative, and with asynchronous rendering.
 

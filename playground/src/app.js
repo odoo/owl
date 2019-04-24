@@ -143,7 +143,7 @@ class App extends owl.Component {
     const iframe = document.createElement("iframe");
 
     iframe.onload = () => {
-      const doc = iframe.contentWindow.document;
+      const doc = iframe.contentDocument;
       // inject js
       const owlScript = doc.createElement("script");
       owlScript.type = "text/javascript";
@@ -155,9 +155,13 @@ class App extends owl.Component {
           this.state.js
         }`;
         script.innerHTML = content;
-        iframe.contentWindow.addEventListener("error", e =>
-          this.displayError(e.message)
-        );
+        const errorHandler = e => this.displayError(e.message);
+        iframe.contentWindow.addEventListener("error", errorHandler);
+        setTimeout(function() {
+          if (iframe.contentWindow) {
+            iframe.contentWindow.removeEventListener("error", errorHandler);
+          }
+        }, 100);
         doc.body.appendChild(script);
       });
       doc.head.appendChild(owlScript);

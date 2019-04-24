@@ -1,109 +1,99 @@
-const HELLO_WORLD = `const {Component, QWeb} = owl;
-
-class App extends Component {
+const CLICK_COUNTER = `class ClickCounter extends owl.Component {
   constructor() {
     super(...arguments);
-    this.template = "demo.hello";
+    this.template = "clickcounter";
+    this.state = {value: 0};
+  }
+
+  increment() {
+    this.state.value++;
   }
 }
 
-const qweb = new QWeb(TEMPLATES);
-const app = new App({qweb}, { name: "World" });
-app.mount(document.body);
+const qweb = new owl.QWeb(TEMPLATES);
+const counter = new ClickCounter({qweb});
+counter.mount(document.body);
 `;
 
-const HELLO_WORLD_XML = `<templates>
-  <div t-name="demo.hello" class="hello">
-    Hello <t t-esc="props.name"/>
-  </div>
+const CLICK_COUNTER_XML = `<templates>
+   <button t-name="clickcounter" t-on-click="increment">
+      Click Me! [<t t-esc="state.value"/>]
+    </button>
 </templates>`;
 
-const HELLO_WORLD_CSS = `.hello {
+const CLICK_COUNTER_CSS = `button {
     color: darkred;
     font-size: 30px;
+    width: 220px;
 }`;
 
-const HELLO_WORLD_ESNEXT = `// This example will not work if your browser does not support ESNext Class Fields
-const {Component, QWeb} = owl;
+const CLICK_COUNTER_ESNEXT = `// This example will not work if your browser does not support ESNext class fields
+class ClickCounter extends owl.Component {
+  template = "clickcounter";
+  state = {value: 0};
 
-class HelloWorld extends Component {
-  template = "demo.hello";
+  increment() {
+    this.state.value++;
+  }
 }
 
-const qweb = new QWeb(TEMPLATES);
-const hello = new HelloWorld({qweb}, { name: "World" });
-hello.mount(document.body);`;
-
-const HELLO_WORLD_ES5 = `const { Component, QWeb } = owl;
-
-function HelloWorld(env, props) {
-  var obj = new Component(env, props);
-  Object.setPrototypeOf(obj, HelloWorld.prototype);
-  obj.template = "demo.hello";
-  obj.state = { greeting: "Hello" };
-  return obj;
-}
-
-HelloWorld.prototype = Object.create(Component.prototype);
-
-// we show here how to add methods to sub components
-HelloWorld.prototype.changeGreeting = function() {
-  var newGreeting = this.state.greeting === "Hello" ? "Hi" : "Hello";
-  this.state.greeting = newGreeting;
-};
-
-const qweb = new QWeb(TEMPLATES);
-const hello = new HelloWorld({ qweb }, { name: "ES5 World" });
-hello.mount(document.body);
+const qweb = new owl.QWeb(TEMPLATES);
+const counter = new ClickCounter({qweb});
+counter.mount(document.body);
 `;
 
-const HELLO_WORLD_ES5_XML = `<templates>
-  <div t-name="demo.hello" class="hello" t-on-click="changeGreeting">
-    <t t-esc="state.greeting"/> <t t-esc="props.name"/>
-  </div>
-</templates>`;
-
-const WIDGET_COMPOSITION = `class Counter extends owl.Component {
+const WIDGET_COMPOSITION = `class ClickCounter extends owl.Component {
   constructor(parent, props) {
     super(parent, props);
-    this.template="counter";
-    this.state = {
-      value: props.initialState || 0
-    };
+    this.template = "clickcounter";
+    this.state = {value: props.initialState || 0};
   }
 
-  increment(delta) {
-    this.state.value += delta;
+  increment() {
+    this.state.value++;
   }
 }
+
+
+let nextId = 1;
 
 class App extends owl.Component {
   constructor() {
     super(...arguments);
-    this.template="app";
-    this.widgets = { Counter };
+    this.template = "app";
+    this.state = {counters: []}
+    this.widgets = { ClickCounter };
+  }
+
+  addCounter() {
+    this.state.counters.push(nextId++);
   }
 }
 
-const env = {
-  qweb: new owl.QWeb(TEMPLATES)
-};
-
-const app = new App(env);
-app.mount(document.body);
-`;
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({qweb});
+app.mount(document.body);`;
 
 const WIDGET_COMPOSITION_XML = `<templates>
-  <div t-name="counter">
-    <button t-on-click="increment(-1)">-</button>
-    <span style="font-weight:bold">Value: <t t-esc="state.value"/></span>
-    <button t-on-click="increment(1)">+</button>
-  </div>
+   <button t-name="clickcounter" t-on-click="increment">
+      Click Me! [<t t-esc="state.value"/>]
+    </button>
+
   <div t-name="app">
-      <t t-widget="Counter" t-props="{initialState: 1}"/>
-      <t t-widget="Counter" t-props="{initialState: 42}"/>
+      <div><button t-on-click="addCounter">Add a counter</button></div>
+      <div>
+        <t t-foreach="state.counters" t-as="counter">
+          <t t-widget="ClickCounter" t-key="counter" t-props="{initialState: counter}"/>
+        </t>
+      </div>
   </div>
 </templates>`;
+
+const WIDGET_COMPOSITION_CSS = `button {
+    color: darkred;
+    font-size: 30px;
+    width: 220px;
+}`;
 
 const LIFECYCLE_DEMO = `const { Component, QWeb } = owl;
 
@@ -1060,27 +1050,22 @@ widget.mount(document.body);
 
 export const SAMPLES = [
   {
-    description: "Hello World",
-    code: HELLO_WORLD,
-    xml: HELLO_WORLD_XML,
-    css: HELLO_WORLD_CSS
+    description: "Click Counter",
+    code: CLICK_COUNTER,
+    xml: CLICK_COUNTER_XML,
+    css: CLICK_COUNTER_CSS
   },
   {
-    description: "Hello World (ESNext)",
-    code: HELLO_WORLD_ESNEXT,
-    xml: HELLO_WORLD_XML,
-    css: HELLO_WORLD_CSS
-  },
-  {
-    description: "Hello World (ES5)",
-    code: HELLO_WORLD_ES5,
-    xml: HELLO_WORLD_ES5_XML,
-    css: HELLO_WORLD_CSS
+    description: "Click Counter (ESNext)",
+    code: CLICK_COUNTER_ESNEXT,
+    xml: CLICK_COUNTER_XML,
+    css: CLICK_COUNTER_CSS
   },
   {
     description: "Widget Composition",
     code: WIDGET_COMPOSITION,
-    xml: WIDGET_COMPOSITION_XML
+    xml: WIDGET_COMPOSITION_XML,
+    css: WIDGET_COMPOSITION_CSS
   },
   {
     description: "Lifecycle demo",

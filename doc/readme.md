@@ -1,4 +1,4 @@
-# Odoo Web Library Documentation
+# 🦉 Odoo Web Library 🦉
 
 
 ## Reference

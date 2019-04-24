@@ -1,4 +1,4 @@
-# OWL: State Management
+# 🦉 Store 🦉
 
 Managing the state in an application is not an easy task. Many different
 architectures/designs/systems/... have been created. We propose here to use

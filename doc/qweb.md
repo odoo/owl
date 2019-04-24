@@ -1,4 +1,4 @@
-# QWeb
+# 🦉 QWeb 🦉
 
 QWeb is a template specification. The QWeb class in this repository is:
 

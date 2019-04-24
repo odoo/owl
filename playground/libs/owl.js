@@ -1,604 +1,6 @@
 (function (exports) {
     'use strict';
 
-    function vnode(sel, data, children, text, elm) {
-        let key = data === undefined ? undefined : data.key;
-        return { sel: sel, data: data, children: children,
-            text: text, elm: elm, key: key };
-    }
-
-    const array = Array.isArray;
-    function primitive(s) {
-        return typeof s === 'string' || typeof s === 'number';
-    }
-
-    function addNS(data, children, sel) {
-        data.ns = 'http://www.w3.org/2000/svg';
-        if (sel !== 'foreignObject' && children !== undefined) {
-            for (let i = 0; i < children.length; ++i) {
-                let childData = children[i].data;
-                if (childData !== undefined) {
-                    addNS(childData, children[i].children, children[i].sel);
-                }
-            }
-        }
-    }
-    function h(sel, b, c) {
-        var data = {}, children, text, i;
-        if (c !== undefined) {
-            data = b;
-            if (array(c)) {
-                children = c;
-            }
-            else if (primitive(c)) {
-                text = c;
-            }
-            else if (c && c.sel) {
-                children = [c];
-            }
-        }
-        else if (b !== undefined) {
-            if (array(b)) {
-                children = b;
-            }
-            else if (primitive(b)) {
-                text = b;
-            }
-            else if (b && b.sel) {
-                children = [b];
-            }
-            else {
-                data = b;
-            }
-        }
-        if (children !== undefined) {
-            for (i = 0; i < children.length; ++i) {
-                if (primitive(children[i]))
-                    children[i] = vnode(undefined, undefined, undefined, children[i], undefined);
-            }
-        }
-        if (sel[0] === 's' && sel[1] === 'v' && sel[2] === 'g' &&
-            (sel.length === 3 || sel[3] === '.' || sel[3] === '#')) {
-            addNS(data, children, sel);
-        }
-        return vnode(sel, data, children, text, undefined);
-    }
-
-    const xlinkNS = "http://www.w3.org/1999/xlink";
-    const xmlNS = "http://www.w3.org/XML/1998/namespace";
-    const colonChar = 58;
-    const xChar = 120;
-    function updateAttrs(oldVnode, vnode) {
-        var key, elm = vnode.elm, oldAttrs = oldVnode.data.attrs, attrs = vnode.data.attrs;
-        if (!oldAttrs && !attrs)
-            return;
-        if (oldAttrs === attrs)
-            return;
-        oldAttrs = oldAttrs || {};
-        attrs = attrs || {};
-        // update modified attributes, add new attributes
-        for (key in attrs) {
-            const cur = attrs[key];
-            const old = oldAttrs[key];
-            if (old !== cur) {
-                if (cur === true) {
-                    elm.setAttribute(key, "");
-                }
-                else if (cur === false) {
-                    elm.removeAttribute(key);
-                }
-                else {
-                    if (key.charCodeAt(0) !== xChar) {
-                        elm.setAttribute(key, cur);
-                    }
-                    else if (key.charCodeAt(3) === colonChar) {
-                        // Assume xml namespace
-                        elm.setAttributeNS(xmlNS, key, cur);
-                    }
-                    else if (key.charCodeAt(5) === colonChar) {
-                        // Assume xlink namespace
-                        elm.setAttributeNS(xlinkNS, key, cur);
-                    }
-                    else {
-                        elm.setAttribute(key, cur);
-                    }
-                }
-            }
-        }
-        // remove removed attributes
-        // use `in` operator since the previous `for` iteration uses it (.i.e. add even attributes with undefined value)
-        // the other option is to remove all attributes with value == undefined
-        for (key in oldAttrs) {
-            if (!(key in attrs)) {
-                elm.removeAttribute(key);
-            }
-        }
-    }
-    const attributesModule = {
-        create: updateAttrs,
-        update: updateAttrs
-    };
-
-    function updateProps(oldVnode, vnode) {
-        var key, cur, old, elm = vnode.elm, oldProps = oldVnode.data.props, props = vnode.data.props;
-        if (!oldProps && !props)
-            return;
-        if (oldProps === props)
-            return;
-        oldProps = oldProps || {};
-        props = props || {};
-        for (key in oldProps) {
-            if (!props[key]) {
-                delete elm[key];
-            }
-        }
-        for (key in props) {
-            cur = props[key];
-            old = oldProps[key];
-            if (old !== cur && (key !== 'value' || elm[key] !== cur)) {
-                elm[key] = cur;
-            }
-        }
-    }
-    const propsModule = { create: updateProps, update: updateProps };
-
-    function invokeHandler(handler, vnode, event) {
-        if (typeof handler === "function") {
-            // call function handler
-            handler.call(vnode, event, vnode);
-        }
-        else if (typeof handler === "object") {
-            // call handler with arguments
-            if (typeof handler[0] === "function") {
-                // special case for single argument for performance
-                if (handler.length === 2) {
-                    handler[0].call(vnode, handler[1], event, vnode);
-                }
-                else {
-                    var args = handler.slice(1);
-                    args.push(event);
-                    args.push(vnode);
-                    handler[0].apply(vnode, args);
-                }
-            }
-            else {
-                // call multiple handlers
-                for (var i = 0; i < handler.length; i++) {
-                    invokeHandler(handler[i], vnode, event);
-                }
-            }
-        }
-    }
-    function handleEvent(event, vnode) {
-        var name = event.type, on = vnode.data.on;
-        // call event handler(s) if exists
-        if (on && on[name]) {
-            invokeHandler(on[name], vnode, event);
-        }
-    }
-    function createListener() {
-        return function handler(event) {
-            handleEvent(event, handler.vnode);
-        };
-    }
-    function updateEventListeners(oldVnode, vnode) {
-        var oldOn = oldVnode.data.on, oldListener = oldVnode.listener, oldElm = oldVnode.elm, on = vnode && vnode.data.on, elm = (vnode && vnode.elm), name;
-        // optimization for reused immutable handlers
-        if (oldOn === on) {
-            return;
-        }
-        // remove existing listeners which no longer used
-        if (oldOn && oldListener) {
-            // if element changed or deleted we remove all existing listeners unconditionally
-            if (!on) {
-                for (name in oldOn) {
-                    // remove listener if element was changed or existing listeners removed
-                    oldElm.removeEventListener(name, oldListener, false);
-                }
-            }
-            else {
-                for (name in oldOn) {
-                    // remove listener if existing listener removed
-                    if (!on[name]) {
-                        oldElm.removeEventListener(name, oldListener, false);
-                    }
-                }
-            }
-        }
-        // add new listeners which has not already attached
-        if (on) {
-            // reuse existing listener or create new
-            var listener = vnode.listener = oldVnode.listener || createListener();
-            // update vnode for listener
-            listener.vnode = vnode;
-            // if element changed or added we add all needed listeners unconditionally
-            if (!oldOn) {
-                for (name in on) {
-                    // add listener if element was changed or new listeners added
-                    elm.addEventListener(name, listener, false);
-                }
-            }
-            else {
-                for (name in on) {
-                    // add listener if new listener added
-                    if (!oldOn[name]) {
-                        elm.addEventListener(name, listener, false);
-                    }
-                }
-            }
-        }
-    }
-    const eventListenersModule = {
-        create: updateEventListeners,
-        update: updateEventListeners,
-        destroy: updateEventListeners
-    };
-
-    function createElement(tagName) {
-        return document.createElement(tagName);
-    }
-    function createElementNS(namespaceURI, qualifiedName) {
-        return document.createElementNS(namespaceURI, qualifiedName);
-    }
-    function createTextNode(text) {
-        return document.createTextNode(text);
-    }
-    function createComment(text) {
-        return document.createComment(text);
-    }
-    function insertBefore(parentNode, newNode, referenceNode) {
-        parentNode.insertBefore(newNode, referenceNode);
-    }
-    function removeChild(node, child) {
-        node.removeChild(child);
-    }
-    function appendChild(node, child) {
-        node.appendChild(child);
-    }
-    function parentNode(node) {
-        return node.parentNode;
-    }
-    function nextSibling(node) {
-        return node.nextSibling;
-    }
-    function tagName(elm) {
-        return elm.tagName;
-    }
-    function setTextContent(node, text) {
-        node.textContent = text;
-    }
-    function getTextContent(node) {
-        return node.textContent;
-    }
-    function isElement(node) {
-        return node.nodeType === 1;
-    }
-    function isText(node) {
-        return node.nodeType === 3;
-    }
-    function isComment(node) {
-        return node.nodeType === 8;
-    }
-    const htmlDomApi = {
-        createElement,
-        createElementNS,
-        createTextNode,
-        createComment,
-        insertBefore,
-        removeChild,
-        appendChild,
-        parentNode,
-        nextSibling,
-        tagName,
-        setTextContent,
-        getTextContent,
-        isElement,
-        isText,
-        isComment,
-    };
-
-    function isUndef(s) { return s === undefined; }
-    function isDef(s) { return s !== undefined; }
-    const emptyNode = vnode('', {}, [], undefined, undefined);
-    function sameVnode(vnode1, vnode2) {
-        return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel;
-    }
-    function isVnode(vnode) {
-        return vnode.sel !== undefined;
-    }
-    function createKeyToOldIdx(children, beginIdx, endIdx) {
-        let i, map = {}, key, ch;
-        for (i = beginIdx; i <= endIdx; ++i) {
-            ch = children[i];
-            if (ch != null) {
-                key = ch.key;
-                if (key !== undefined)
-                    map[key] = i;
-            }
-        }
-        return map;
-    }
-    const hooks = ['create', 'update', 'remove', 'destroy', 'pre', 'post'];
-    function init(modules, domApi) {
-        let i, j, cbs = {};
-        const api = domApi !== undefined ? domApi : htmlDomApi;
-        for (i = 0; i < hooks.length; ++i) {
-            cbs[hooks[i]] = [];
-            for (j = 0; j < modules.length; ++j) {
-                const hook = modules[j][hooks[i]];
-                if (hook !== undefined) {
-                    cbs[hooks[i]].push(hook);
-                }
-            }
-        }
-        function emptyNodeAt(elm) {
-            const id = elm.id ? '#' + elm.id : '';
-            const c = elm.className ? '.' + elm.className.split(' ').join('.') : '';
-            return vnode(api.tagName(elm).toLowerCase() + id + c, {}, [], undefined, elm);
-        }
-        function createRmCb(childElm, listeners) {
-            return function rmCb() {
-                if (--listeners === 0) {
-                    const parent = api.parentNode(childElm);
-                    api.removeChild(parent, childElm);
-                }
-            };
-        }
-        function createElm(vnode, insertedVnodeQueue) {
-            let i, data = vnode.data;
-            if (data !== undefined) {
-                if (isDef(i = data.hook) && isDef(i = i.init)) {
-                    i(vnode);
-                    data = vnode.data;
-                }
-            }
-            let children = vnode.children, sel = vnode.sel;
-            if (sel === '!') {
-                if (isUndef(vnode.text)) {
-                    vnode.text = '';
-                }
-                vnode.elm = api.createComment(vnode.text);
-            }
-            else if (sel !== undefined) {
-                // Parse selector
-                const hashIdx = sel.indexOf('#');
-                const dotIdx = sel.indexOf('.', hashIdx);
-                const hash = hashIdx > 0 ? hashIdx : sel.length;
-                const dot = dotIdx > 0 ? dotIdx : sel.length;
-                const tag = hashIdx !== -1 || dotIdx !== -1 ? sel.slice(0, Math.min(hash, dot)) : sel;
-                const elm = vnode.elm = isDef(data) && isDef(i = data.ns) ? api.createElementNS(i, tag)
-                    : api.createElement(tag);
-                if (hash < dot)
-                    elm.setAttribute('id', sel.slice(hash + 1, dot));
-                if (dotIdx > 0)
-                    elm.setAttribute('class', sel.slice(dot + 1).replace(/\./g, ' '));
-                for (i = 0; i < cbs.create.length; ++i)
-                    cbs.create[i](emptyNode, vnode);
-                if (array(children)) {
-                    for (i = 0; i < children.length; ++i) {
-                        const ch = children[i];
-                        if (ch != null) {
-                            api.appendChild(elm, createElm(ch, insertedVnodeQueue));
-                        }
-                    }
-                }
-                else if (primitive(vnode.text)) {
-                    api.appendChild(elm, api.createTextNode(vnode.text));
-                }
-                i = vnode.data.hook; // Reuse variable
-                if (isDef(i)) {
-                    if (i.create)
-                        i.create(emptyNode, vnode);
-                    if (i.insert)
-                        insertedVnodeQueue.push(vnode);
-                }
-            }
-            else {
-                vnode.elm = api.createTextNode(vnode.text);
-            }
-            return vnode.elm;
-        }
-        function addVnodes(parentElm, before, vnodes, startIdx, endIdx, insertedVnodeQueue) {
-            for (; startIdx <= endIdx; ++startIdx) {
-                const ch = vnodes[startIdx];
-                if (ch != null) {
-                    api.insertBefore(parentElm, createElm(ch, insertedVnodeQueue), before);
-                }
-            }
-        }
-        function invokeDestroyHook(vnode) {
-            let i, j, data = vnode.data;
-            if (data !== undefined) {
-                if (isDef(i = data.hook) && isDef(i = i.destroy))
-                    i(vnode);
-                for (i = 0; i < cbs.destroy.length; ++i)
-                    cbs.destroy[i](vnode);
-                if (vnode.children !== undefined) {
-                    for (j = 0; j < vnode.children.length; ++j) {
-                        i = vnode.children[j];
-                        if (i != null && typeof i !== "string") {
-                            invokeDestroyHook(i);
-                        }
-                    }
-                }
-            }
-        }
-        function removeVnodes(parentElm, vnodes, startIdx, endIdx) {
-            for (; startIdx <= endIdx; ++startIdx) {
-                let i, listeners, rm, ch = vnodes[startIdx];
-                if (ch != null) {
-                    if (isDef(ch.sel)) {
-                        invokeDestroyHook(ch);
-                        listeners = cbs.remove.length + 1;
-                        rm = createRmCb(ch.elm, listeners);
-                        for (i = 0; i < cbs.remove.length; ++i)
-                            cbs.remove[i](ch, rm);
-                        if (isDef(i = ch.data) && isDef(i = i.hook) && isDef(i = i.remove)) {
-                            i(ch, rm);
-                        }
-                        else {
-                            rm();
-                        }
-                    }
-                    else { // Text node
-                        api.removeChild(parentElm, ch.elm);
-                    }
-                }
-            }
-        }
-        function updateChildren(parentElm, oldCh, newCh, insertedVnodeQueue) {
-            let oldStartIdx = 0, newStartIdx = 0;
-            let oldEndIdx = oldCh.length - 1;
-            let oldStartVnode = oldCh[0];
-            let oldEndVnode = oldCh[oldEndIdx];
-            let newEndIdx = newCh.length - 1;
-            let newStartVnode = newCh[0];
-            let newEndVnode = newCh[newEndIdx];
-            let oldKeyToIdx;
-            let idxInOld;
-            let elmToMove;
-            let before;
-            while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-                if (oldStartVnode == null) {
-                    oldStartVnode = oldCh[++oldStartIdx]; // Vnode might have been moved left
-                }
-                else if (oldEndVnode == null) {
-                    oldEndVnode = oldCh[--oldEndIdx];
-                }
-                else if (newStartVnode == null) {
-                    newStartVnode = newCh[++newStartIdx];
-                }
-                else if (newEndVnode == null) {
-                    newEndVnode = newCh[--newEndIdx];
-                }
-                else if (sameVnode(oldStartVnode, newStartVnode)) {
-                    patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue);
-                    oldStartVnode = oldCh[++oldStartIdx];
-                    newStartVnode = newCh[++newStartIdx];
-                }
-                else if (sameVnode(oldEndVnode, newEndVnode)) {
-                    patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue);
-                    oldEndVnode = oldCh[--oldEndIdx];
-                    newEndVnode = newCh[--newEndIdx];
-                }
-                else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
-                    patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue);
-                    api.insertBefore(parentElm, oldStartVnode.elm, api.nextSibling(oldEndVnode.elm));
-                    oldStartVnode = oldCh[++oldStartIdx];
-                    newEndVnode = newCh[--newEndIdx];
-                }
-                else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
-                    patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue);
-                    api.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm);
-                    oldEndVnode = oldCh[--oldEndIdx];
-                    newStartVnode = newCh[++newStartIdx];
-                }
-                else {
-                    if (oldKeyToIdx === undefined) {
-                        oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx);
-                    }
-                    idxInOld = oldKeyToIdx[newStartVnode.key];
-                    if (isUndef(idxInOld)) { // New element
-                        api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
-                        newStartVnode = newCh[++newStartIdx];
-                    }
-                    else {
-                        elmToMove = oldCh[idxInOld];
-                        if (elmToMove.sel !== newStartVnode.sel) {
-                            api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
-                        }
-                        else {
-                            patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
-                            oldCh[idxInOld] = undefined;
-                            api.insertBefore(parentElm, elmToMove.elm, oldStartVnode.elm);
-                        }
-                        newStartVnode = newCh[++newStartIdx];
-                    }
-                }
-            }
-            if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
-                if (oldStartIdx > oldEndIdx) {
-                    before = newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].elm;
-                    addVnodes(parentElm, before, newCh, newStartIdx, newEndIdx, insertedVnodeQueue);
-                }
-                else {
-                    removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx);
-                }
-            }
-        }
-        function patchVnode(oldVnode, vnode, insertedVnodeQueue) {
-            let i, hook;
-            if (isDef(i = vnode.data) && isDef(hook = i.hook) && isDef(i = hook.prepatch)) {
-                i(oldVnode, vnode);
-            }
-            const elm = vnode.elm = oldVnode.elm;
-            let oldCh = oldVnode.children;
-            let ch = vnode.children;
-            if (oldVnode === vnode)
-                return;
-            if (vnode.data !== undefined) {
-                for (i = 0; i < cbs.update.length; ++i)
-                    cbs.update[i](oldVnode, vnode);
-                i = vnode.data.hook;
-                if (isDef(i) && isDef(i = i.update))
-                    i(oldVnode, vnode);
-            }
-            if (isUndef(vnode.text)) {
-                if (isDef(oldCh) && isDef(ch)) {
-                    if (oldCh !== ch)
-                        updateChildren(elm, oldCh, ch, insertedVnodeQueue);
-                }
-                else if (isDef(ch)) {
-                    if (isDef(oldVnode.text))
-                        api.setTextContent(elm, '');
-                    addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
-                }
-                else if (isDef(oldCh)) {
-                    removeVnodes(elm, oldCh, 0, oldCh.length - 1);
-                }
-                else if (isDef(oldVnode.text)) {
-                    api.setTextContent(elm, '');
-                }
-            }
-            else if (oldVnode.text !== vnode.text) {
-                if (isDef(oldCh)) {
-                    removeVnodes(elm, oldCh, 0, oldCh.length - 1);
-                }
-                api.setTextContent(elm, vnode.text);
-            }
-            if (isDef(hook) && isDef(i = hook.postpatch)) {
-                i(oldVnode, vnode);
-            }
-        }
-        return function patch(oldVnode, vnode) {
-            let i, elm, parent;
-            const insertedVnodeQueue = [];
-            for (i = 0; i < cbs.pre.length; ++i)
-                cbs.pre[i]();
-            if (!isVnode(oldVnode)) {
-                oldVnode = emptyNodeAt(oldVnode);
-            }
-            if (sameVnode(oldVnode, vnode)) {
-                patchVnode(oldVnode, vnode, insertedVnodeQueue);
-            }
-            else {
-                elm = oldVnode.elm;
-                parent = api.parentNode(elm);
-                createElm(vnode, insertedVnodeQueue);
-                if (parent !== null) {
-                    api.insertBefore(parent, vnode.elm, api.nextSibling(elm));
-                    removeVnodes(parent, [oldVnode], 0, 0);
-                }
-            }
-            for (i = 0; i < insertedVnodeQueue.length; ++i) {
-                insertedVnodeQueue[i].data.hook.insert(insertedVnodeQueue[i]);
-            }
-            for (i = 0; i < cbs.post.length; ++i)
-                cbs.post[i]();
-            return vnode;
-        };
-    }
-
     /**
      * We define here a simple event bus: it can
      * - emit events
@@ -679,6 +81,9 @@
     for (let method of methodsToPatch) {
         const initialMethod = ArrayProto[method];
         ModifiedArrayProto[method] = function (...args) {
+            if (!this.__observer__.allowMutations) {
+                throw new Error(`Array cannot be changed here")`);
+            }
             this.__observer__.notifyChange();
             this.__owl__.rev++;
             let parent = this;
@@ -730,6 +135,7 @@
             }
             if ("__owl__" in value) {
                 // already observed
+                value.__owl__.parent = parent;
                 return;
             }
             if (Array.isArray(value)) {
@@ -743,11 +149,6 @@
             this._addProp(target, key, value);
             target.__owl__.rev++;
             this.notifyChange();
-        }
-        unobserve(target) {
-            if (target !== null && typeof target === "object") {
-                delete target.__owl__;
-            }
         }
         _observeObj(obj, parent) {
             const keys = Object.keys(obj);
@@ -774,18 +175,17 @@
                     return value;
                 },
                 set(newVal) {
-                    if (!self.allowMutations) {
-                        throw new Error(`State cannot be changed outside a mutation! (key: "${key}", val: "${newVal}")`);
-                    }
                     if (newVal !== value) {
-                        self.unobserve(value);
+                        if (!self.allowMutations) {
+                            throw new Error(`Observed state cannot be changed here! (key: "${key}", val: "${newVal}")`);
+                        }
                         value = newVal;
                         self.observe(newVal, obj);
                         obj.__owl__.rev++;
                         let parent = obj;
                         do {
                             parent.__owl__.deepRev++;
-                        } while ((parent = parent.__owl__.parent));
+                        } while ((parent = parent.__owl__.parent) && parent !== obj);
                         self.notifyChange();
                     }
                 }
@@ -933,6 +333,15 @@
             }
         }
     }
+    async function loadTemplates(url) {
+        const result = await fetch(url);
+        if (!result.ok) {
+            throw new Error("Error while fetching xml templates");
+        }
+        let templates = await result.text();
+        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+        return templates;
+    }
 
     var _utils = /*#__PURE__*/Object.freeze({
         escape: escape,
@@ -942,11 +351,644 @@
         debounce: debounce,
         findInTree: findInTree,
         patch: patch,
-        unpatch: unpatch
+        unpatch: unpatch,
+        loadTemplates: loadTemplates
     });
 
+    function vnode(sel, data, children, text, elm) {
+        let key = data === undefined ? undefined : data.key;
+        return {
+            sel: sel,
+            data: data,
+            children: children,
+            text: text,
+            elm: elm,
+            key: key
+        };
+    }
+    //------------------------------------------------------------------------------
+    // snabbdom.ts
+    //------------------------------------------------------------------------------
+    function isUndef(s) {
+        return s === undefined;
+    }
+    function isDef(s) {
+        return s !== undefined;
+    }
+    const emptyNode = vnode("", {}, [], undefined, undefined);
+    function sameVnode(vnode1, vnode2) {
+        return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel;
+    }
+    function isVnode(vnode) {
+        return vnode.sel !== undefined;
+    }
+    function createKeyToOldIdx(children, beginIdx, endIdx) {
+        let i, map = {}, key, ch;
+        for (i = beginIdx; i <= endIdx; ++i) {
+            ch = children[i];
+            if (ch != null) {
+                key = ch.key;
+                if (key !== undefined)
+                    map[key] = i;
+            }
+        }
+        return map;
+    }
+    const hooks = [
+        "create",
+        "update",
+        "remove",
+        "destroy",
+        "pre",
+        "post"
+    ];
+    function init(modules, domApi) {
+        let i, j, cbs = {};
+        const api = domApi !== undefined ? domApi : htmlDomApi;
+        for (i = 0; i < hooks.length; ++i) {
+            cbs[hooks[i]] = [];
+            for (j = 0; j < modules.length; ++j) {
+                const hook = modules[j][hooks[i]];
+                if (hook !== undefined) {
+                    cbs[hooks[i]].push(hook);
+                }
+            }
+        }
+        function emptyNodeAt(elm) {
+            const id = elm.id ? "#" + elm.id : "";
+            const c = elm.className ? "." + elm.className.split(" ").join(".") : "";
+            return vnode(api.tagName(elm).toLowerCase() + id + c, {}, [], undefined, elm);
+        }
+        function createRmCb(childElm, listeners) {
+            return function rmCb() {
+                if (--listeners === 0) {
+                    const parent = api.parentNode(childElm);
+                    api.removeChild(parent, childElm);
+                }
+            };
+        }
+        function createElm(vnode, insertedVnodeQueue) {
+            let i, data = vnode.data;
+            if (data !== undefined) {
+                if (isDef((i = data.hook)) && isDef((i = i.init))) {
+                    i(vnode);
+                    data = vnode.data;
+                }
+            }
+            let children = vnode.children, sel = vnode.sel;
+            if (sel === "!") {
+                if (isUndef(vnode.text)) {
+                    vnode.text = "";
+                }
+                vnode.elm = api.createComment(vnode.text);
+            }
+            else if (sel !== undefined) {
+                // Parse selector
+                const hashIdx = sel.indexOf("#");
+                const dotIdx = sel.indexOf(".", hashIdx);
+                const hash = hashIdx > 0 ? hashIdx : sel.length;
+                const dot = dotIdx > 0 ? dotIdx : sel.length;
+                const tag = hashIdx !== -1 || dotIdx !== -1
+                    ? sel.slice(0, Math.min(hash, dot))
+                    : sel;
+                const elm = (vnode.elm =
+                    isDef(data) && isDef((i = data.ns))
+                        ? api.createElementNS(i, tag)
+                        : api.createElement(tag));
+                if (hash < dot)
+                    elm.setAttribute("id", sel.slice(hash + 1, dot));
+                if (dotIdx > 0)
+                    elm.setAttribute("class", sel.slice(dot + 1).replace(/\./g, " "));
+                for (i = 0; i < cbs.create.length; ++i)
+                    cbs.create[i](emptyNode, vnode);
+                if (array(children)) {
+                    for (i = 0; i < children.length; ++i) {
+                        const ch = children[i];
+                        if (ch != null) {
+                            api.appendChild(elm, createElm(ch, insertedVnodeQueue));
+                        }
+                    }
+                }
+                else if (primitive(vnode.text)) {
+                    api.appendChild(elm, api.createTextNode(vnode.text));
+                }
+                i = vnode.data.hook; // Reuse variable
+                if (isDef(i)) {
+                    if (i.create)
+                        i.create(emptyNode, vnode);
+                    if (i.insert)
+                        insertedVnodeQueue.push(vnode);
+                }
+            }
+            else {
+                vnode.elm = api.createTextNode(vnode.text);
+            }
+            return vnode.elm;
+        }
+        function addVnodes(parentElm, before, vnodes, startIdx, endIdx, insertedVnodeQueue) {
+            for (; startIdx <= endIdx; ++startIdx) {
+                const ch = vnodes[startIdx];
+                if (ch != null) {
+                    api.insertBefore(parentElm, createElm(ch, insertedVnodeQueue), before);
+                }
+            }
+        }
+        function invokeDestroyHook(vnode) {
+            let i, j, data = vnode.data;
+            if (data !== undefined) {
+                if (isDef((i = data.hook)) && isDef((i = i.destroy)))
+                    i(vnode);
+                for (i = 0; i < cbs.destroy.length; ++i)
+                    cbs.destroy[i](vnode);
+                if (vnode.children !== undefined) {
+                    for (j = 0; j < vnode.children.length; ++j) {
+                        i = vnode.children[j];
+                        if (i != null && typeof i !== "string") {
+                            invokeDestroyHook(i);
+                        }
+                    }
+                }
+            }
+        }
+        function removeVnodes(parentElm, vnodes, startIdx, endIdx) {
+            for (; startIdx <= endIdx; ++startIdx) {
+                let i, listeners, rm, ch = vnodes[startIdx];
+                if (ch != null) {
+                    if (isDef(ch.sel)) {
+                        invokeDestroyHook(ch);
+                        listeners = cbs.remove.length + 1;
+                        rm = createRmCb(ch.elm, listeners);
+                        for (i = 0; i < cbs.remove.length; ++i)
+                            cbs.remove[i](ch, rm);
+                        if (isDef((i = ch.data)) &&
+                            isDef((i = i.hook)) &&
+                            isDef((i = i.remove))) {
+                            i(ch, rm);
+                        }
+                        else {
+                            rm();
+                        }
+                    }
+                    else {
+                        // Text node
+                        api.removeChild(parentElm, ch.elm);
+                    }
+                }
+            }
+        }
+        function updateChildren(parentElm, oldCh, newCh, insertedVnodeQueue) {
+            let oldStartIdx = 0, newStartIdx = 0;
+            let oldEndIdx = oldCh.length - 1;
+            let oldStartVnode = oldCh[0];
+            let oldEndVnode = oldCh[oldEndIdx];
+            let newEndIdx = newCh.length - 1;
+            let newStartVnode = newCh[0];
+            let newEndVnode = newCh[newEndIdx];
+            let oldKeyToIdx;
+            let idxInOld;
+            let elmToMove;
+            let before;
+            while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+                if (oldStartVnode == null) {
+                    oldStartVnode = oldCh[++oldStartIdx]; // Vnode might have been moved left
+                }
+                else if (oldEndVnode == null) {
+                    oldEndVnode = oldCh[--oldEndIdx];
+                }
+                else if (newStartVnode == null) {
+                    newStartVnode = newCh[++newStartIdx];
+                }
+                else if (newEndVnode == null) {
+                    newEndVnode = newCh[--newEndIdx];
+                }
+                else if (sameVnode(oldStartVnode, newStartVnode)) {
+                    patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue);
+                    oldStartVnode = oldCh[++oldStartIdx];
+                    newStartVnode = newCh[++newStartIdx];
+                }
+                else if (sameVnode(oldEndVnode, newEndVnode)) {
+                    patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue);
+                    oldEndVnode = oldCh[--oldEndIdx];
+                    newEndVnode = newCh[--newEndIdx];
+                }
+                else if (sameVnode(oldStartVnode, newEndVnode)) {
+                    // Vnode moved right
+                    patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue);
+                    api.insertBefore(parentElm, oldStartVnode.elm, api.nextSibling(oldEndVnode.elm));
+                    oldStartVnode = oldCh[++oldStartIdx];
+                    newEndVnode = newCh[--newEndIdx];
+                }
+                else if (sameVnode(oldEndVnode, newStartVnode)) {
+                    // Vnode moved left
+                    patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue);
+                    api.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm);
+                    oldEndVnode = oldCh[--oldEndIdx];
+                    newStartVnode = newCh[++newStartIdx];
+                }
+                else {
+                    if (oldKeyToIdx === undefined) {
+                        oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx);
+                    }
+                    idxInOld = oldKeyToIdx[newStartVnode.key];
+                    if (isUndef(idxInOld)) {
+                        // New element
+                        api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
+                        newStartVnode = newCh[++newStartIdx];
+                    }
+                    else {
+                        elmToMove = oldCh[idxInOld];
+                        if (elmToMove.sel !== newStartVnode.sel) {
+                            api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
+                        }
+                        else {
+                            patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
+                            oldCh[idxInOld] = undefined;
+                            api.insertBefore(parentElm, elmToMove.elm, oldStartVnode.elm);
+                        }
+                        newStartVnode = newCh[++newStartIdx];
+                    }
+                }
+            }
+            if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
+                if (oldStartIdx > oldEndIdx) {
+                    before = newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].elm;
+                    addVnodes(parentElm, before, newCh, newStartIdx, newEndIdx, insertedVnodeQueue);
+                }
+                else {
+                    removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx);
+                }
+            }
+        }
+        function patchVnode(oldVnode, vnode, insertedVnodeQueue) {
+            let i, hook;
+            if (isDef((i = vnode.data)) &&
+                isDef((hook = i.hook)) &&
+                isDef((i = hook.prepatch))) {
+                i(oldVnode, vnode);
+            }
+            const elm = (vnode.elm = oldVnode.elm);
+            let oldCh = oldVnode.children;
+            let ch = vnode.children;
+            if (oldVnode === vnode)
+                return;
+            if (vnode.data !== undefined) {
+                for (i = 0; i < cbs.update.length; ++i)
+                    cbs.update[i](oldVnode, vnode);
+                i = vnode.data.hook;
+                if (isDef(i) && isDef((i = i.update)))
+                    i(oldVnode, vnode);
+            }
+            if (isUndef(vnode.text)) {
+                if (isDef(oldCh) && isDef(ch)) {
+                    if (oldCh !== ch)
+                        updateChildren(elm, oldCh, ch, insertedVnodeQueue);
+                }
+                else if (isDef(ch)) {
+                    if (isDef(oldVnode.text))
+                        api.setTextContent(elm, "");
+                    addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
+                }
+                else if (isDef(oldCh)) {
+                    removeVnodes(elm, oldCh, 0, oldCh.length - 1);
+                }
+                else if (isDef(oldVnode.text)) {
+                    api.setTextContent(elm, "");
+                }
+            }
+            else if (oldVnode.text !== vnode.text) {
+                if (isDef(oldCh)) {
+                    removeVnodes(elm, oldCh, 0, oldCh.length - 1);
+                }
+                api.setTextContent(elm, vnode.text);
+            }
+            if (isDef(hook) && isDef((i = hook.postpatch))) {
+                i(oldVnode, vnode);
+            }
+        }
+        return function patch(oldVnode, vnode) {
+            let i, elm, parent;
+            const insertedVnodeQueue = [];
+            for (i = 0; i < cbs.pre.length; ++i)
+                cbs.pre[i]();
+            if (!isVnode(oldVnode)) {
+                oldVnode = emptyNodeAt(oldVnode);
+            }
+            if (sameVnode(oldVnode, vnode)) {
+                patchVnode(oldVnode, vnode, insertedVnodeQueue);
+            }
+            else {
+                elm = oldVnode.elm;
+                parent = api.parentNode(elm);
+                createElm(vnode, insertedVnodeQueue);
+                if (parent !== null) {
+                    api.insertBefore(parent, vnode.elm, api.nextSibling(elm));
+                    removeVnodes(parent, [oldVnode], 0, 0);
+                }
+            }
+            for (i = 0; i < insertedVnodeQueue.length; ++i) {
+                insertedVnodeQueue[i].data.hook.insert(insertedVnodeQueue[i]);
+            }
+            for (i = 0; i < cbs.post.length; ++i)
+                cbs.post[i]();
+            return vnode;
+        };
+    }
+    //------------------------------------------------------------------------------
+    // is.ts
+    //------------------------------------------------------------------------------
+    const array = Array.isArray;
+    function primitive(s) {
+        return typeof s === "string" || typeof s === "number";
+    }
+    function createElement(tagName) {
+        return document.createElement(tagName);
+    }
+    function createElementNS(namespaceURI, qualifiedName) {
+        return document.createElementNS(namespaceURI, qualifiedName);
+    }
+    function createTextNode(text) {
+        return document.createTextNode(text);
+    }
+    function createComment(text) {
+        return document.createComment(text);
+    }
+    function insertBefore(parentNode, newNode, referenceNode) {
+        parentNode.insertBefore(newNode, referenceNode);
+    }
+    function removeChild(node, child) {
+        node.removeChild(child);
+    }
+    function appendChild(node, child) {
+        node.appendChild(child);
+    }
+    function parentNode(node) {
+        return node.parentNode;
+    }
+    function nextSibling(node) {
+        return node.nextSibling;
+    }
+    function tagName(elm) {
+        return elm.tagName;
+    }
+    function setTextContent(node, text) {
+        node.textContent = text;
+    }
+    function getTextContent(node) {
+        return node.textContent;
+    }
+    function isElement(node) {
+        return node.nodeType === 1;
+    }
+    function isText(node) {
+        return node.nodeType === 3;
+    }
+    function isComment(node) {
+        return node.nodeType === 8;
+    }
+    const htmlDomApi = {
+        createElement,
+        createElementNS,
+        createTextNode,
+        createComment,
+        insertBefore,
+        removeChild,
+        appendChild,
+        parentNode,
+        nextSibling,
+        tagName,
+        setTextContent,
+        getTextContent,
+        isElement,
+        isText,
+        isComment
+    };
+    function addNS(data, children, sel) {
+        data.ns = "http://www.w3.org/2000/svg";
+        if (sel !== "foreignObject" && children !== undefined) {
+            for (let i = 0; i < children.length; ++i) {
+                let childData = children[i].data;
+                if (childData !== undefined) {
+                    addNS(childData, children[i].children, children[i].sel);
+                }
+            }
+        }
+    }
+    function h(sel, b, c) {
+        var data = {}, children, text, i;
+        if (c !== undefined) {
+            data = b;
+            if (array(c)) {
+                children = c;
+            }
+            else if (primitive(c)) {
+                text = c;
+            }
+            else if (c && c.sel) {
+                children = [c];
+            }
+        }
+        else if (b !== undefined) {
+            if (array(b)) {
+                children = b;
+            }
+            else if (primitive(b)) {
+                text = b;
+            }
+            else if (b && b.sel) {
+                children = [b];
+            }
+            else {
+                data = b;
+            }
+        }
+        if (children !== undefined) {
+            for (i = 0; i < children.length; ++i) {
+                if (primitive(children[i]))
+                    children[i] = vnode(undefined, undefined, undefined, children[i], undefined);
+            }
+        }
+        if (sel[0] === "s" &&
+            sel[1] === "v" &&
+            sel[2] === "g" &&
+            (sel.length === 3 || sel[3] === "." || sel[3] === "#")) {
+            addNS(data, children, sel);
+        }
+        return vnode(sel, data, children, text, undefined);
+    }
+    function updateProps(oldVnode, vnode) {
+        var key, cur, old, elm = vnode.elm, oldProps = oldVnode.data.props, props = vnode.data.props;
+        if (!oldProps && !props)
+            return;
+        if (oldProps === props)
+            return;
+        oldProps = oldProps || {};
+        props = props || {};
+        for (key in oldProps) {
+            if (!props[key]) {
+                delete elm[key];
+            }
+        }
+        for (key in props) {
+            cur = props[key];
+            old = oldProps[key];
+            if (old !== cur && (key !== "value" || elm[key] !== cur)) {
+                elm[key] = cur;
+            }
+        }
+    }
+    const propsModule = {
+        create: updateProps,
+        update: updateProps
+    };
+    function invokeHandler(handler, vnode, event) {
+        if (typeof handler === "function") {
+            // call function handler
+            handler.call(vnode, event, vnode);
+        }
+        else if (typeof handler === "object") {
+            // call handler with arguments
+            if (typeof handler[0] === "function") {
+                // special case for single argument for performance
+                if (handler.length === 2) {
+                    handler[0].call(vnode, handler[1], event, vnode);
+                }
+                else {
+                    var args = handler.slice(1);
+                    args.push(event);
+                    args.push(vnode);
+                    handler[0].apply(vnode, args);
+                }
+            }
+            else {
+                // call multiple handlers
+                for (var i = 0; i < handler.length; i++) {
+                    invokeHandler(handler[i], vnode, event);
+                }
+            }
+        }
+    }
+    function handleEvent(event, vnode) {
+        var name = event.type, on = vnode.data.on;
+        // call event handler(s) if exists
+        if (on && on[name]) {
+            invokeHandler(on[name], vnode, event);
+        }
+    }
+    function createListener() {
+        return function handler(event) {
+            handleEvent(event, handler.vnode);
+        };
+    }
+    function updateEventListeners(oldVnode, vnode) {
+        var oldOn = oldVnode.data.on, oldListener = oldVnode.listener, oldElm = oldVnode.elm, on = vnode && vnode.data.on, elm = (vnode && vnode.elm), name;
+        // optimization for reused immutable handlers
+        if (oldOn === on) {
+            return;
+        }
+        // remove existing listeners which no longer used
+        if (oldOn && oldListener) {
+            // if element changed or deleted we remove all existing listeners unconditionally
+            if (!on) {
+                for (name in oldOn) {
+                    // remove listener if element was changed or existing listeners removed
+                    oldElm.removeEventListener(name, oldListener, false);
+                }
+            }
+            else {
+                for (name in oldOn) {
+                    // remove listener if existing listener removed
+                    if (!on[name]) {
+                        oldElm.removeEventListener(name, oldListener, false);
+                    }
+                }
+            }
+        }
+        // add new listeners which has not already attached
+        if (on) {
+            // reuse existing listener or create new
+            var listener = (vnode.listener =
+                oldVnode.listener || createListener());
+            // update vnode for listener
+            listener.vnode = vnode;
+            // if element changed or added we add all needed listeners unconditionally
+            if (!oldOn) {
+                for (name in on) {
+                    // add listener if element was changed or new listeners added
+                    elm.addEventListener(name, listener, false);
+                }
+            }
+            else {
+                for (name in on) {
+                    // add listener if new listener added
+                    if (!oldOn[name]) {
+                        elm.addEventListener(name, listener, false);
+                    }
+                }
+            }
+        }
+    }
+    const eventListenersModule = {
+        create: updateEventListeners,
+        update: updateEventListeners,
+        destroy: updateEventListeners
+    };
+    const xlinkNS = "http://www.w3.org/1999/xlink";
+    const xmlNS = "http://www.w3.org/XML/1998/namespace";
+    const colonChar = 58;
+    const xChar = 120;
+    function updateAttrs(oldVnode, vnode) {
+        var key, elm = vnode.elm, oldAttrs = oldVnode.data.attrs, attrs = vnode.data.attrs;
+        if (!oldAttrs && !attrs)
+            return;
+        if (oldAttrs === attrs)
+            return;
+        oldAttrs = oldAttrs || {};
+        attrs = attrs || {};
+        // update modified attributes, add new attributes
+        for (key in attrs) {
+            const cur = attrs[key];
+            const old = oldAttrs[key];
+            if (old !== cur) {
+                if (cur === true) {
+                    elm.setAttribute(key, "");
+                }
+                else if (cur === false) {
+                    elm.removeAttribute(key);
+                }
+                else {
+                    if (key.charCodeAt(0) !== xChar) {
+                        elm.setAttribute(key, cur);
+                    }
+                    else if (key.charCodeAt(3) === colonChar) {
+                        // Assume xml namespace
+                        elm.setAttributeNS(xmlNS, key, cur);
+                    }
+                    else if (key.charCodeAt(5) === colonChar) {
+                        // Assume xlink namespace
+                        elm.setAttributeNS(xlinkNS, key, cur);
+                    }
+                    else {
+                        elm.setAttribute(key, cur);
+                    }
+                }
+            }
+        }
+        // remove removed attributes
+        // use `in` operator since the previous `for` iteration uses it (.i.e. add even attributes with undefined value)
+        // the other option is to remove all attributes with value == undefined
+        for (key in oldAttrs) {
+            if (!(key in attrs)) {
+                elm.removeAttribute(key);
+            }
+        }
+    }
+    const attrsModule = {
+        create: updateAttrs,
+        update: updateAttrs
+    };
+    const patch$1 = init([eventListenersModule, attrsModule, propsModule]);
+
     let getId = idGenerator();
-    const patch$1 = init([eventListenersModule, attributesModule, propsModule]);
     //------------------------------------------------------------------------------
     // Widget
     //------------------------------------------------------------------------------
@@ -977,7 +1019,6 @@
             super();
             this.template = "default";
             this.inlineTemplate = null;
-            this.state = {};
             this.refs = {};
             // is this a good idea?
             //   Pro: if props is empty, we can create easily a widget
@@ -1006,8 +1047,7 @@
                 renderId: 1,
                 renderPromise: null,
                 renderProps: props || null,
-                boundHandlers: {},
-                observer: new Observer()
+                boundHandlers: {}
             };
         }
         get el() {
@@ -1107,7 +1147,6 @@
             }
             this._patch(vnode);
             target.appendChild(this.el);
-            this._observeState();
             if (document.body.contains(target)) {
                 this._visitSubTree(w => {
                     if (!w.__owl__.isMounted && this.el.contains(w.el)) {
@@ -1192,6 +1231,9 @@
             const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
             return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
         }
+        set(target, key, value) {
+            this.__owl__.observer.set(target, key, value);
+        }
         //--------------------------------------------------------------------------
         // Private
         //--------------------------------------------------------------------------
@@ -1221,6 +1263,7 @@
                 if (this.inlineTemplate) {
                     this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
                 }
+                this._observeState();
                 return this._render();
             });
             return this.__owl__.renderPromise;
@@ -1229,11 +1272,17 @@
             this.__owl__.renderId++;
             const promises = [];
             const template = this.inlineTemplate || this.template;
+            if (this.__owl__.observer) {
+                this.__owl__.observer.allowMutations = false;
+            }
             let vnode = this.env.qweb.render(template, this, {
                 promises,
                 handlers: this.__owl__.boundHandlers,
                 forceUpdate: force
             });
+            if (this.__owl__.observer) {
+                this.__owl__.observer.allowMutations = true;
+            }
             // this part is critical for the patching process to be done correctly. The
             // tricky part is that a child widget can be rerendered on its own, which
             // will update its own vnode representation without the knowledge of the
@@ -1278,7 +1327,8 @@
             }
         }
         _observeState() {
-            if (Object.keys(this.state).length) {
+            if (this.state) {
+                this.__owl__.observer = new Observer();
                 this.__owl__.observer.observe(this.state);
                 this.__owl__.observer.notifyCB = this.render.bind(this);
             }
@@ -2168,14 +2218,12 @@
                 ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
             }
             let ref = node.getAttribute("t-ref");
-            if (ref) {
-                ctx.addLine(`context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`);
-            }
+            let refExpr = ref ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};` : '';
             ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
             ctx.closeIf();
             ctx.closeIf();
             ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
@@ -2358,9 +2406,9 @@
     exports.connect = connect;
     exports.Store = Store;
 
-    exports._version = '0.7.0';
-    exports._date = '2019-04-17T09:08:09.148Z';
-    exports._hash = '4807389';
+    exports._version = '0.8.0';
+    exports._date = '2019-04-24T08:12:21.164Z';
+    exports._hash = 'b14d264';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

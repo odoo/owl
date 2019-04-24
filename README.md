@@ -27,10 +27,7 @@ class ClickCounter extends owl.Component {
       Click Me! [<t t-esc="state.value"/>]
     </button>`;
 
-  constructor(parent, props) {
-    super(parent, props);
-    this.state = { value: 0 };
-  }
+  state = { value: 0 };
 
   increment() {
     this.state.value++;

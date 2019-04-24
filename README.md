@@ -14,7 +14,7 @@ from React and Vue [here](doc/comparison.md)
 
 ## Try it online!
 
-An online playground is available at [https://odoo.github.io/owl/](https://odoo.github.io/owl/) to let you experiment with the OWL framework.
+An online playground is available at [https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground) to let you experiment with the OWL framework.
 
 # Example
 
@@ -42,7 +42,7 @@ const counter = new ClickCounter({qweb});
 counter.mount(document.body);
 ```
 
-More interesting examples can be found on the [playground](https://odoo.github.io/owl/) application.
+More interesting examples can be found on the [playground](https://odoo.github.io/owl/playground) application.
 
 ## Installing/Building
 

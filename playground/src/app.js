@@ -1,7 +1,5 @@
 import { SAMPLES } from "./samples.js";
 
-const { QWeb, Component } = owl;
-
 const MODES = {
   js: "ace/mode/javascript",
   css: "ace/mode/css",
@@ -14,20 +12,10 @@ const DEFAULT_XML = `<templates>
 //------------------------------------------------------------------------------
 // Tabbed editor
 //------------------------------------------------------------------------------
-const EDITOR_TEMPLATE = `
-  <div class="tabbed-editor" t-att-style="props.style">
-    <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
-      <a t-if="tabs.js" class="tab" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
-      <a t-if="tabs.xml" class="tab" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
-      <a t-if="tabs.css" class="tab" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
-    </div>
-    <div class="code-editor" t-ref="'editor'"></div>
-  </div>`;
-
-class TabbedEditor extends Component {
+class TabbedEditor extends owl.Component {
   constructor() {
     super(...arguments);
-    this.inlineTemplate = EDITOR_TEMPLATE;
+    this.template = "tabbed-editor";
     this.state = {
       currentTab: this.props.display.split("|")[0]
     };
@@ -102,49 +90,12 @@ class TabbedEditor extends Component {
 //------------------------------------------------------------------------------
 // MAIN APP
 //------------------------------------------------------------------------------
-
-const TEMPLATE = `
-  <div class="playground">
-      <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
-        <div class="menubar">
-          <a class="btn run-code" t-on-click="runCode">▶ Run</a>
-          <select t-on-change="setSample">
-            <option t-foreach="SAMPLES" t-as="sample" t-key="sample_index">
-              <t t-esc="sample.description"/>
-            </option>
-          </select>
-          <div class="layout-selector" t-att-class="{active:state.splitLayout}" t-on-click="toggleLayout">◫</div>
-        </div>
-        <t t-if="!state.splitLayout">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
-        </t>
-        <t t-else="1">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js', style:topEditorStyle}" t-on-updateCode="updateCode"/>
-          <div class="separator horizontal"/>
-          <t t-widget="TabbedEditor" t-keepalive="1" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
-        </t>
-      </div>
-      <div class="separator vertical" t-on-mousedown="onMouseDown"/>
-      <div class="right-pane"  t-att-style="rightPaneStyle">
-        <div class="welcome" t-if="state.displayWelcome">
-          <div>🦉 Odoo Web Library 🦉</div>
-          <div>v<t t-esc="version"/></div>
-          <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
-          <div class="note">Note: these examples require a recent browser to work without a transpilation step. </div>
-        </div>
-        <div t-if="state.error" class="error">
-          <t t-esc="state.error"/>
-        </div>
-        <div class="content" t-ref="'content'"/>
-      </div>
-  </div>`;
-
-class App extends Component {
+class App extends owl.Component {
   constructor(...args) {
     super(...args);
+    this.template = "playground";
     this.version = owl._version;
     this.SAMPLES = SAMPLES;
-    this.inlineTemplate = TEMPLATE;
     this.widgets = { TabbedEditor };
 
     this.state = {
@@ -279,7 +230,8 @@ class App extends Component {
 //------------------------------------------------------------------------------
 document.title = `${document.title} (v${owl._version})`;
 document.addEventListener("DOMContentLoaded", async function() {
-  const qweb = new QWeb();
+  const templates = await owl.utils.loadTemplates("src/templates.xml");
+  const qweb = new owl.QWeb(templates);
   const env = { qweb };
   const app = new App(env);
   app.mount(document.body);

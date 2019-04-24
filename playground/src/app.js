@@ -133,7 +133,7 @@ const TEMPLATE = `
           <div class="note">Note: these examples require a recent browser to work without a transpilation step. </div>
         </div>
         <div t-if="state.error" class="error">
-          <t t-esc="state.error.message"/>
+          <t t-esc="state.error"/>
         </div>
         <div class="content" t-ref="'content'"/>
       </div>
@@ -159,7 +159,18 @@ class App extends Component {
     };
   }
 
+  displayError(error) {
+    this.state.error = error;
+    if (error) {
+      setTimeout(() => {
+        this.refs.content.innerHTML = "";
+      });
+      return;
+    }
+  }
+
   async runCode() {
+    this.state.displayWelcome = false;
     // check templates
     var qweb = new owl.QWeb();
     var error = false;
@@ -170,13 +181,11 @@ class App extends Component {
       error = e;
     }
 
-    this.state.error = error;
-    this.state.displayWelcome = false;
     if (error) {
-      setTimeout(() => {
-        this.refs.content.innerHTML = "";
-      });
+      this.displayError(error.message);
       return;
+    } else {
+      this.state.error = false;
     }
 
     // create iframe
@@ -195,6 +204,9 @@ class App extends Component {
           this.state.js
         }`;
         script.innerHTML = content;
+        iframe.contentWindow.addEventListener("error", e =>
+          this.displayError(e.message)
+        );
         doc.body.appendChild(script);
       });
       doc.head.appendChild(owlScript);

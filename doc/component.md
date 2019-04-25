@@ -4,6 +4,7 @@
 
 - [Overview](#overview)
 - [Example](#example)
+- [Templates](#templates)
 - [Reference](#reference)
   - [Properties](#properties)
   - [Methods](#methods)
@@ -63,6 +64,23 @@ Component class. It needs to define a template (`click-counter` here). Also,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
+
+## Templates
+
+The example above shows a QWeb template with a `t-on-click` directive.  Widget
+templates are standard [QWeb](qweb.md) templates, but with an extra directive:
+`t-widget`.  With the `t-widget` directive, widget templates can declare sub
+widgets:
+
+```xml
+  <div>
+    <span>some text</span>
+    <t t-widget="MyWidget" t-props="{info: 13}">
+  </div>
+```
+
+In this example, the template create a widget MyWidget just after the span. See
+the [QWeb](qweb.md) documentation for more information on the `t-widget` directive.
 
 ## Reference
 

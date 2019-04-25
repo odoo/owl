@@ -1072,27 +1072,31 @@ const widgetDirective: Directive = {
       ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
     }
     let ref = node.getAttribute("t-ref");
-    let refExpr = ref ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};` : '';
+    let refExpr = ref
+      ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`
+      : "";
 
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     ctx.closeIf();
     ctx.closeIf();
 
+    let finalizeWidgetCode = `w${widgetID}.${
+      keepAlive ? "unmount" : "destroy"
+    }()`;
+    if (ref) {
+      finalizeWidgetCode += `;delete context.refs[${ctx.formatExpression(
+        ref
+      )}]`;
+    }
     ctx.addIf(`isNew${widgetID}`);
     ctx.addLine(
       `def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
-      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){w${widgetID}.${
-        keepAlive ? "unmount" : "destroy"
-      }()},destroy(){w${widgetID}.${
-        keepAlive ? "unmount" : "destroy"
-      }()}}; w${widgetID}.__owl__.pvnode = pvnode;});`
+      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`
     );
     ctx.addElse();
     ctx.addLine(
-      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${
-        keepAlive ? "unmount" : "destroy"
-      }()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${
+      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${
         ctx.parentNode
       }[_${dummyID}_index]=vnode;});`
     );

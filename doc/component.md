@@ -139,15 +139,15 @@ A solid and robust component system needs useful hooks/methods to help
 developers write components. Here is a complete description of the lifecycle of
 a owl component:
 
-| Method                                  | Description                             |
-| --------------------------------------- | --------------------------------------- |
-| **[constructor](#constructor)**         | constructor                             |
-| **[willStart](#willStart)**             | async, before first rendering           |
-| **[mounted](#mounted)**                 | when component is render and in DOM     |
-| **[willUpdateProps](#willUpdateProps)** | async, before props update              |
-| **[willPatch](#willPatch)**             | just before the DOM is patched          |
-| **[patched](#patched)**                 | just after the DOM is patched           |
-| **[willUnmount](#willUnmount)**         | just before removing component from DOM |
+| Method                                           | Description                             |
+| ------------------------------------------------ | --------------------------------------- |
+| **[constructor](#constructor)**                  | constructor                             |
+| **[willStart](#willStart)**                      | async, before first rendering           |
+| **[mounted](#mounted)**                          | when component is render and in DOM     |
+| **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update              |
+| **[willPatch](#willpatch)**              | just before the DOM is patched          |
+| **[patched](#patchedsnapshot)**                          | just after the DOM is patched           |
+| **[willUnmount](#willUnmount)**                  | just before removing component from DOM |
 
 Note: no hook method should ever be called manually. They are supposed to be
 called by the owl framework whenever it is required.
@@ -248,7 +248,10 @@ Note that modifying the state object is not allowed here. This method is called 
 before an actual DOM patch, and is only intended to be used to save some local
 DOM state.
 
-#### `patched()`
+The return value of this method will be given as the first argument of the
+corresponding `patched` call.
+
+#### `patched(snapshot)`
 
 This hook is called whenever a component did actually update its DOM (most
 likely via a change in its state/props or environment).
@@ -256,6 +259,8 @@ likely via a change in its state/props or environment).
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
 component was patched.
+
+The `snapshot` parameter is the result of the previous `willPatch` call.
 
 Updating the widget state in this hook is possible, but not encouraged.
 One need to be careful, because updates here will cause rerender, which in

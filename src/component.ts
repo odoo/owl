@@ -160,8 +160,10 @@ export class Component<
    * It is not called on the initial render.  This is useful to get some
    * information which are in the DOM.  For example, the current position of the
    * scrollbar
+   * 
+   * The return value of willPatch will be given to the patched function.
    */
-  willPatch() {}
+  willPatch(): any {}
 
   /**
    * This hook is called whenever a component did actually update its props,
@@ -175,8 +177,10 @@ export class Component<
    * One need to be careful, because updates here will cause rerender, which in
    * turn will cause other calls to updated. So, we need to be particularly
    * careful at avoiding endless cycles.
+   *
+   * The snapshot parameter is the result of the call to willPatch.
    */
-  patched() {}
+  patched(snapshot: any) {}
 
   /**
    * willUnmount is a hook that is called each time just before a component is
@@ -331,9 +335,9 @@ export class Component<
   _patch(vnode) {
     this.__owl__.renderPromise = null;
     if (this.__owl__.vnode) {
-      this.willPatch();
+      const snapshot = this.willPatch();
       this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-      this.patched();
+      this.patched(snapshot);
     } else {
       this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }

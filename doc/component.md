@@ -28,6 +28,11 @@ OWL components are the building blocks for user interface. They are designed to 
 
 OWL components are defined as a subclass of Component. The rendering is
 exclusively done by a [QWeb](qweb.md) template (either defined inline or preloaded in QWeb).
+The rendering is done by QWeb, which will generate a virtual dom representation
+of the widget, then patch the DOM to apply the changes in an efficient way.
+
+OWL components observe their states, and rerender themselves whenever it is
+changed. This is done by an [observer](observer.md).
 
 ## Example
 
@@ -105,6 +110,9 @@ will be used to render the component template.
 - **`render()`** (async): calling this method directly will cause a rerender. Note
   that this should be very rare to have to do it manually, the Owl framework is
   most of the time responsible for doing that at an appropriate moment.
+
+  Note that the render method is asynchronous, so one cannot observe the updated
+  DOM in the same stack frame.
 
 - **`shouldUpdate(nextProps)`**: this method is called each time a component's props
   are updated. It returns a boolean, which indicates if the widget should

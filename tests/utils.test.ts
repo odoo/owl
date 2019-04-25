@@ -1,7 +1,6 @@
 import {
   escape,
   htmlTrim,
-  idGenerator,
   memoize,
   debounce,
   findInTree,
@@ -32,15 +31,6 @@ describe("htmlTrim", () => {
     expect(htmlTrim(" \n ")).toBe(" ");
     expect(htmlTrim("  ")).toBe(" ");
     expect(htmlTrim("")).toBe("");
-  });
-});
-
-describe("idGenerator", () => {
-  test("basic use", () => {
-    let gen = idGenerator();
-    expect(gen()).toBe(1);
-    expect(gen()).toBe(2);
-    expect(gen()).toBe(3);
   });
 });
 

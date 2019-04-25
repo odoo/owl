@@ -27,14 +27,6 @@ export function htmlTrim(s: string): string {
   return result;
 }
 
-/**
- * Create a function that will generate unique id numbers
- */
-export function idGenerator(): () => number {
-  let nextID = 1;
-  return () => nextID++;
-}
-
 export type HashFn = (args: any[]) => string;
 
 export function memoize<R, T extends (...args: any[]) => R>(

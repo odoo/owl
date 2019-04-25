@@ -1,10 +1,8 @@
 import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
 import { QWeb } from "./qweb";
-import { idGenerator } from "./utils";
 import { h, patch, VNode } from "./vdom";
 
-let getId = idGenerator();
 
 //------------------------------------------------------------------------------
 // Types/helpers
@@ -33,13 +31,10 @@ export interface Meta<T extends Env, Props> {
   observer?: Observer;
 }
 
-export interface Type<T> extends Function {
-  new (...args: any[]): T;
-}
-
 //------------------------------------------------------------------------------
 // Widget
 //------------------------------------------------------------------------------
+let nextId = 1;
 
 export class Component<
   T extends Env,
@@ -92,7 +87,7 @@ export class Component<
     //   Con: this is not really safe
     //   Pro: but creating widget (by a template) is always unsafe anyway
     this.props = <Props>props || <Props>{};
-    let id: number = getId();
+    let id: number = nextId++;
     let p: Component<T, any, any> | null = null;
     if (parent instanceof Component) {
       p = parent;

@@ -680,6 +680,52 @@ describe("composition", () => {
     await nextTick()
   });
 
+  test("t-refs are bound at proper timing (2)", async () => {
+    expect.assertions(10);
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+          <t t-if="state.child1" t-ref="'child1'" t-widget="Widget"/>
+          <t t-if="state.child2" t-ref="'child2'" t-widget="Widget"/>
+        </div>`;
+      widgets = { Widget };
+      state = { child1: true, child2: false };
+      count = 0;
+      mounted() {
+        expect(this.refs.child1).toBeDefined();
+        expect(this.refs.child2).toBeUndefined();
+      }
+      willPatch() {
+        if (this.count === 0) {
+          expect(this.refs.child1).toBeDefined();
+          expect(this.refs.child2).toBeUndefined();
+        }
+        if (this.count === 1) {
+          expect(this.refs.child1).toBeDefined();
+          expect(this.refs.child2).toBeDefined();
+        }
+      }
+      patched() {
+        if (this.count === 0) {
+          expect(this.refs.child1).toBeDefined();
+          expect(this.refs.child2).toBeDefined();
+        }
+        if (this.count === 1) {
+          expect(this.refs.child1).toBeUndefined();
+          expect(this.refs.child2).toBeDefined();
+        }
+        this.count++;
+      }
+    }
+
+    const parent = new ParentWidget(env);
+    await parent.mount(fixture);
+    parent.state.child2 = true;
+    await nextTick()
+    parent.state.child1 = false;
+    await nextTick()
+  });
+
   test("modifying a sub widget", async () => {
     class ParentWidget extends Widget {
       inlineTemplate = `<div><t t-widget="Counter"/></div>`;

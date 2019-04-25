@@ -11,13 +11,13 @@
   <div t-name="playground" class="playground">
       <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
         <div class="menubar">
-          <a class="btn run-code" t-on-click="runCode">▶ Run</a>
+          <a class="btn run-code" t-on-click="runCode" title="Execute this Code">▶ Run</a>
           <select t-on-change="setSample">
             <option t-foreach="SAMPLES" t-as="sample" t-key="sample_index">
               <t t-esc="sample.description"/>
             </option>
           </select>
-          <div class="layout-selector" t-att-class="{active:state.splitLayout}" t-on-click="toggleLayout">◫</div>
+          <div class="layout-selector" t-att-class="{active:state.splitLayout}" t-on-click="toggleLayout" title="Toggle Layout">◫</div>
         </div>
         <t t-if="!state.splitLayout">
           <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>

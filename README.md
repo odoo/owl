@@ -1,4 +1,4 @@
-<h1 align="center">🦉 Odoo Web Library 🦉</h1>
+<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Odoo Web Library</a> 🦉</h1>
 
 ## Project Overview
 

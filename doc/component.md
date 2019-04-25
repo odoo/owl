@@ -82,6 +82,9 @@ widgets:
 In this example, the template create a widget MyWidget just after the span. See
 the [QWeb](qweb.md) documentation for more information on the `t-widget` directive.
 
+Note that the rendering context for the template is the widget itself.  This means
+that the template can access `state`, `props`, `env`, or any methods defined in the widget.
+
 ## Reference
 
 An Owl component is a small class which represent a widget or some UI element.

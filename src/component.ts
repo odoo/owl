@@ -3,7 +3,6 @@ import { Observer } from "./observer";
 import { QWeb } from "./qweb";
 import { h, patch, VNode } from "./vdom";
 
-
 //------------------------------------------------------------------------------
 // Types/helpers
 //------------------------------------------------------------------------------
@@ -12,7 +11,7 @@ export interface Env {
   qweb: QWeb;
 }
 
-export interface Meta<T extends Env, Props> {
+interface Meta<T extends Env, Props> {
   readonly id: number;
   vnode: VNode | null;
   isStarted: boolean;
@@ -155,7 +154,7 @@ export class Component<
    * It is not called on the initial render.  This is useful to get some
    * information which are in the DOM.  For example, the current position of the
    * scrollbar
-   * 
+   *
    * The return value of willPatch will be given to the patched function.
    */
   willPatch(): any {}

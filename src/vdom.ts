@@ -28,8 +28,6 @@ interface VNodeData {
   hook?: Hooks;
   key?: Key;
   ns?: string; // for SVGs
-  fn?: () => VNode; // for thunks
-  args?: Array<any>; // for thunks
   [key: string]: any; // for any other 3rd party module
 }
 

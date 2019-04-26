@@ -329,9 +329,12 @@ export class Component<
   _patch(vnode) {
     this.__owl__.renderPromise = null;
     if (this.__owl__.vnode) {
-      const snapshot = this.willPatch();
+      const isMounted = this.__owl__.isMounted;
+      const snapshot = isMounted && this.willPatch();
       this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-      this.patched(snapshot);
+      if (isMounted) {
+        this.patched(snapshot);
+      }
     } else {
       this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }

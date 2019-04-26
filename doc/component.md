@@ -275,7 +275,8 @@ scrollbar.
 
 Note that modifying the state object is not allowed here. This method is called just
 before an actual DOM patch, and is only intended to be used to save some local
-DOM state.
+DOM state.  Also, it will not be called if the widget is not in the DOM (this can
+happen with widgets with `t-keepalive`).
 
 The return value of this method will be given as the first argument of the
 corresponding `patched` call.
@@ -287,7 +288,8 @@ likely via a change in its state/props or environment).
 
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
-component was patched.
+component was patched.  Note that this hook will not be called if the widget is
+not in the DOM (this can happen with widgets with `t-keepalive`).
 
 The `snapshot` parameter is the result of the previous `willPatch` call.
 

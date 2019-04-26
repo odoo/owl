@@ -575,6 +575,46 @@ describe("lifecycle hooks", () => {
       "parent:patched"
     ]);
   });
+
+
+  test("willPatch/patched hook with t-keepalive", async () => {
+    // we make sure here that willPatch/patched is only called if widget is in
+    // dom, mounted
+    const steps: string[] = [];
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+            <t t-if="state.flag" t-widget="child" t-props="{v: state.n}" t-keepalive="1"/>
+        </div>`;
+      widgets = { child: ChildWidget };
+      state = { n: 1, flag: true };
+    }
+
+    class ChildWidget extends Widget {
+      willPatch() {
+        steps.push("child:willPatch");
+      }
+      patched() {
+        steps.push("child:patched");
+      }
+      willUnmount() {
+        steps.push("child:willUnmount");
+      }
+      mounted() {
+        steps.push("child:mounted");
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(steps).toEqual(['child:mounted']);
+    widget.state.flag = false;
+    await nextTick();
+    expect(steps).toEqual(['child:mounted', 'child:willUnmount']);
+    widget.state.flag = true;
+    await nextTick();
+    expect(steps).toEqual(['child:mounted', 'child:willUnmount', 'child:mounted']);
+  });
+
 });
 
 describe("destroy method", () => {

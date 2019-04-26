@@ -196,32 +196,29 @@ describe("lifecycle hooks", () => {
   });
 
   test("mounted hook is called on subwidgets, in proper order", async () => {
-    expect.assertions(4);
-    let parentMounted = false;
-    let childMounted = false;
+    const steps: any[] = [];
+
     class ParentWidget extends Widget {
       inlineTemplate = `<div><t t-widget="child"/></div>`;
       widgets = { child: ChildWidget };
       mounted() {
-        expect(childMounted).toBe(false);
-        parentMounted = true;
+        steps.push("parent:mounted");
       }
     }
     class ChildWidget extends Widget {
       mounted() {
         expect(document.body.contains(this.el)).toBe(true);
-        expect(parentMounted).toBe(true);
-        childMounted = true;
+        steps.push("child:mounted");
       }
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
-    expect(childMounted).toBe(true);
+    expect(steps).toEqual(["child:mounted", "parent:mounted"]);
   });
 
   test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
-    expect.assertions(3);
-    let hookCounter = 0;
+    const steps: string[] = [];
+
     // the t-else part in the template is important. This is
     // necessary to have a situation that could confuse the vdom
     // patching algorithm
@@ -240,19 +237,18 @@ describe("lifecycle hooks", () => {
     }
     class ChildWidget extends Widget {
       async willStart() {
-        hookCounter++;
+        steps.push("child:willStart");
       }
       mounted() {
-        expect(hookCounter).toBe(1);
-        hookCounter++;
+        steps.push("child:mounted");
       }
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
-    expect(hookCounter).toBe(0); // sub widget not created yet
+    expect(steps).toEqual([]);
     widget.state.ok = true;
     await nextTick();
-    expect(hookCounter).toBe(2);
+    expect(steps).toEqual(["child:willStart", "child:mounted"]);
   });
 
   test("mounted hook is correctly called on subwidgets created in mounted hook", async done => {
@@ -397,10 +393,10 @@ describe("lifecycle hooks", () => {
       "p willstart",
       "c init",
       "c willstart",
-      "p mounted",
       "c mounted",
-      "c willunmount",
-      "p willunmount"
+      "p mounted",
+      "p willunmount",
+      "c willunmount"
     ]);
   });
 
@@ -545,10 +541,10 @@ describe("lifecycle hooks", () => {
       state = { n: 1 };
       willPatch() {
         steps.push("parent:willPatch");
-        return 'leffe';
+        return "leffe";
       }
       patched(snapshot) {
-        expect(snapshot).toBe('leffe');
+        expect(snapshot).toBe("leffe");
         steps.push("parent:patched");
       }
     }
@@ -575,7 +571,6 @@ describe("lifecycle hooks", () => {
       "parent:patched"
     ]);
   });
-
 
   test("willPatch/patched hook with t-keepalive", async () => {
     // we make sure here that willPatch/patched is only called if widget is in
@@ -606,15 +601,18 @@ describe("lifecycle hooks", () => {
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
-    expect(steps).toEqual(['child:mounted']);
+    expect(steps).toEqual(["child:mounted"]);
     widget.state.flag = false;
     await nextTick();
-    expect(steps).toEqual(['child:mounted', 'child:willUnmount']);
+    expect(steps).toEqual(["child:mounted", "child:willUnmount"]);
     widget.state.flag = true;
     await nextTick();
-    expect(steps).toEqual(['child:mounted', 'child:willUnmount', 'child:mounted']);
+    expect(steps).toEqual([
+      "child:mounted",
+      "child:willUnmount",
+      "child:mounted"
+    ]);
   });
-
 });
 
 describe("destroy method", () => {
@@ -675,7 +673,7 @@ describe("destroy method", () => {
     expect(widget.__owl__.isStarted).toBe(false);
     expect(widget.__owl__.isMounted).toBe(false);
     expect(widget.__owl__.isDestroyed).toBe(true);
-    expect(widget.__owl__.vnode).toBe(null);
+    expect(widget.__owl__.vnode).toBe(undefined);
     expect(fixture.innerHTML).toBe("");
     expect(isRendered).toBe(false);
   });
@@ -707,7 +705,7 @@ describe("composition", () => {
           <t t-foreach="state.list" t-ref="'child'" t-widget="Widget"/>
         </div>`;
       widgets = { Widget };
-      state = {list: <any>[]};
+      state = { list: <any>[] };
       willPatch() {
         expect(this.refs.child).toBeUndefined();
       }
@@ -719,7 +717,7 @@ describe("composition", () => {
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
     parent.state.list.push(1);
-    await nextTick()
+    await nextTick();
   });
 
   test("t-refs are bound at proper timing (2)", async () => {
@@ -763,9 +761,9 @@ describe("composition", () => {
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
     parent.state.child2 = true;
-    await nextTick()
+    await nextTick();
     parent.state.child1 = false;
-    await nextTick()
+    await nextTick();
   });
 
   test("modifying a sub widget", async () => {

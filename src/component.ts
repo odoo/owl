@@ -219,28 +219,38 @@ export class Component<
     target.appendChild(this.el!);
 
     if (document.body.contains(target)) {
-      this._visitSubTree(w => {
-        if (!w.__owl__.isMounted && this.el!.contains(w.el)) {
-          w.__owl__.isMounted = true;
-          w.mounted();
-          return true;
-        }
-        return false;
-      });
+      this._callMounted();
+    }
+  }
+
+  _callMounted() {
+    const children = this.__owl__.children;
+    for (let id in children) {
+      const comp = children[id];
+      if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
+        comp._callMounted();
+      }
+    }
+    this.__owl__.isMounted = true;
+    this.mounted();
+  }
+
+  _callWillUnmount() {
+    this.willUnmount();
+    this.__owl__.isMounted = false;
+    const children = this.__owl__.children;
+    for (let id in children) {
+      const comp = children[id];
+      if (comp.__owl__.isMounted) {
+        comp._callWillUnmount();
+      }
     }
   }
 
   unmount() {
-    if (this.el) {
-      this._visitSubTree(w => {
-        if (w.__owl__.isMounted) {
-          w.willUnmount();
-          w.__owl__.isMounted = false;
-          return true;
-        }
-        return false;
-      });
-      this.el.remove();
+    if (this.__owl__.isMounted) {
+      this._callWillUnmount();
+      this.el!.remove();
     }
   }
 
@@ -260,25 +270,32 @@ export class Component<
 
   destroy() {
     if (!this.__owl__.isDestroyed) {
-      for (let id in this.__owl__.children) {
-        this.__owl__.children[id].destroy();
+      const el = this.el;
+      this._destroy();
+      if (el) {
+        el.remove();
       }
-      if (this.__owl__.isMounted) {
-        this.willUnmount();
-      }
-      if (this.el) {
-        this.el.remove();
-        this.__owl__.isMounted = false;
-        delete this.__owl__.vnode;
-      }
-      if (this.__owl__.parent) {
-        let id = this.__owl__.id;
-        delete this.__owl__.parent.__owl__.children[id];
-        this.__owl__.parent = null;
-      }
-      this.clear();
-      this.__owl__.isDestroyed = true;
     }
+  }
+
+  _destroy() {
+    const isMounted = this.__owl__.isMounted;
+    if (isMounted) {
+      this.willUnmount();
+      this.__owl__.isMounted = false;
+    }
+    const children = Object.values(this.__owl__.children);
+    for (let child of children) {
+      child._destroy();
+    }
+    if (this.__owl__.parent) {
+      let id = this.__owl__.id;
+      delete this.__owl__.parent.__owl__.children[id];
+      this.__owl__.parent = null;
+    }
+    this.clear();
+    this.__owl__.isDestroyed = true;
+    delete this.__owl__.vnode;
   }
 
   shouldUpdate(nextProps: Props): boolean {
@@ -408,16 +425,6 @@ export class Component<
         for (let id in children) {
           children[id].__mount();
         }
-      }
-    }
-  }
-
-  _visitSubTree(callback: (w: Component<T, any, any>) => boolean) {
-    const shouldVisitChildren = callback(this);
-    if (shouldVisitChildren) {
-      const children = this.__owl__.children;
-      for (let id in children) {
-        children[id]._visitSubTree(callback);
       }
     }
   }

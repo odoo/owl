@@ -188,3 +188,11 @@ export function loadJS(url: string): Promise<void> {
   loadedScripts[url] = promise;
   return promise;
 }
+
+export function whenReady(fn) {
+  if (document.readyState === "complete") {
+    fn();
+  } else {
+    document.addEventListener("DOMContentLoaded", fn, false);
+  }
+}

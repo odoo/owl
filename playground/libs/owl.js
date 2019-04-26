@@ -194,167 +194,6 @@
         }
     }
 
-    function escape(str) {
-        if (str === undefined) {
-            return "";
-        }
-        if (typeof str === "number") {
-            return String(str);
-        }
-        return str
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&#x27;")
-            .replace(/`/g, "&#x60;");
-    }
-    /**
-     * Remove trailing and leading spaces
-     */
-    function htmlTrim(s) {
-        let result = s.replace(/(^\s+|\s+$)/g, "");
-        if (s[0] === " ") {
-            result = " " + result;
-        }
-        if (result !== " " && s[s.length - 1] === " ") {
-            result = result + " ";
-        }
-        return result;
-    }
-    /**
-     * Create a function that will generate unique id numbers
-     */
-    function idGenerator() {
-        let nextID = 1;
-        return () => nextID++;
-    }
-    function memoize(f, hash) {
-        if (!hash) {
-            hash = args => args.map(a => String(a)).join(",");
-        }
-        let cache = {};
-        function memoizedFunction(...args) {
-            let hashValue = hash(args);
-            if (!(hashValue in cache)) {
-                cache[hashValue] = f(...args);
-            }
-            return cache[hashValue];
-        }
-        return memoizedFunction;
-    }
-    /**
-     * Returns a function, that, as long as it continues to be invoked, will not
-     * be triggered. The function will be called after it stops being called for
-     * N milliseconds. If `immediate` is passed, trigger the function on the
-     * leading edge, instead of the trailing.
-     *
-     * Inspired by https://davidwalsh.name/javascript-debounce-function
-     */
-    function debounce(func, wait, immediate) {
-        let timeout;
-        return function () {
-            const context = this;
-            const args = arguments;
-            function later() {
-                timeout = null;
-                if (!immediate) {
-                    func.apply(context, args);
-                }
-            }
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) {
-                func.apply(context, args);
-            }
-        };
-    }
-    /**
-     * Find a node in a tree.
-     *
-     * This will traverse the tree (depth first) and return the first child that
-     * matches the predicate, if any
-     */
-    function findInTree(tree, predicate) {
-        if (predicate(tree)) {
-            return tree;
-        }
-        for (let child of tree.children) {
-            let match = findInTree(child, predicate);
-            if (match) {
-                return match;
-            }
-        }
-        return null;
-    }
-    function patch(C, patchName, patch) {
-        const proto = C.prototype;
-        if (!proto.__patches) {
-            proto.__patches = {
-                origMethods: {},
-                patches: {},
-                current: []
-            };
-        }
-        if (proto.__patches.patches[patchName]) {
-            throw new Error(`Patch [${patchName}] already exists`);
-        }
-        proto.__patches.patches[patchName] = patch;
-        applyPatch(proto, patch);
-        proto.__patches.current.push(patchName);
-        function applyPatch(proto, patch) {
-            Object.keys(patch).forEach(function (methodName) {
-                const method = patch[methodName];
-                if (typeof method === "function") {
-                    const original = proto[methodName];
-                    if (!(methodName in proto.__patches.origMethods)) {
-                        proto.__patches.origMethods[methodName] = original;
-                    }
-                    proto[methodName] = function (...args) {
-                        this._super = original;
-                        return method.call(this, ...args);
-                    };
-                }
-            });
-        }
-    }
-    function unpatch(C, patchName) {
-        const proto = C.prototype;
-        const patchInfo = proto.__patches;
-        delete proto.__patches;
-        // reset to original
-        for (let k in patchInfo.origMethods) {
-            proto[k] = patchInfo.origMethods[k];
-        }
-        // apply other patches
-        for (let name of patchInfo.current) {
-            if (name !== patchName) {
-                patch(C, name, patchInfo.patches[name]);
-            }
-        }
-    }
-    async function loadTemplates(url) {
-        const result = await fetch(url);
-        if (!result.ok) {
-            throw new Error("Error while fetching xml templates");
-        }
-        let templates = await result.text();
-        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-        return templates;
-    }
-
-    var _utils = /*#__PURE__*/Object.freeze({
-        escape: escape,
-        htmlTrim: htmlTrim,
-        idGenerator: idGenerator,
-        memoize: memoize,
-        debounce: debounce,
-        findInTree: findInTree,
-        patch: patch,
-        unpatch: unpatch,
-        loadTemplates: loadTemplates
-    });
-
     function vnode(sel, data, children, text, elm) {
         let key = data === undefined ? undefined : data.key;
         return {
@@ -986,12 +825,12 @@
         create: updateAttrs,
         update: updateAttrs
     };
-    const patch$1 = init([eventListenersModule, attrsModule, propsModule]);
+    const patch = init([eventListenersModule, attrsModule, propsModule]);
 
-    let getId = idGenerator();
     //------------------------------------------------------------------------------
     // Widget
     //------------------------------------------------------------------------------
+    let nextId = 1;
     class Component extends EventBus {
         //--------------------------------------------------------------------------
         // Lifecycle
@@ -1025,7 +864,7 @@
             //   Con: this is not really safe
             //   Pro: but creating widget (by a template) is always unsafe anyway
             this.props = props || {};
-            let id = getId();
+            let id = nextId++;
             let p = null;
             if (parent instanceof Component) {
                 p = parent;
@@ -1093,6 +932,8 @@
          * It is not called on the initial render.  This is useful to get some
          * information which are in the DOM.  For example, the current position of the
          * scrollbar
+         *
+         * The return value of willPatch will be given to the patched function.
          */
         willPatch() { }
         /**
@@ -1107,8 +948,10 @@
          * One need to be careful, because updates here will cause rerender, which in
          * turn will cause other calls to updated. So, we need to be particularly
          * careful at avoiding endless cycles.
+         *
+         * The snapshot parameter is the result of the call to willPatch.
          */
-        patched() { }
+        patched(snapshot) { }
         /**
          * willUnmount is a hook that is called each time just before a component is
          * unmounted from the DOM. This is a good place to remove some listeners, for
@@ -1245,12 +1088,12 @@
         _patch(vnode) {
             this.__owl__.renderPromise = null;
             if (this.__owl__.vnode) {
-                this.willPatch();
-                this.__owl__.vnode = patch$1(this.__owl__.vnode, vnode);
-                this.patched();
+                const snapshot = this.willPatch();
+                this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
+                this.patched(snapshot);
             }
             else {
-                this.__owl__.vnode = patch$1(document.createElement(vnode.sel), vnode);
+                this.__owl__.vnode = patch(document.createElement(vnode.sel), vnode);
             }
         }
         async _prepare() {
@@ -1297,7 +1140,7 @@
          * Only called by qweb t-widget directive
          */
         _mount(vnode, elm) {
-            this.__owl__.vnode = patch$1(elm, vnode);
+            this.__owl__.vnode = patch(elm, vnode);
             this.__mount();
             return this.__owl__.vnode;
         }
@@ -2218,14 +2061,20 @@
                 ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
             }
             let ref = node.getAttribute("t-ref");
-            let refExpr = ref ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};` : '';
+            let refExpr = ref
+                ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`
+                : "";
             ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
             ctx.closeIf();
             ctx.closeIf();
+            let finalizeWidgetCode = `w${widgetID}.${keepAlive ? "unmount" : "destroy"}()`;
+            if (ref) {
+                finalizeWidgetCode += `;delete context.refs[${ctx.formatExpression(ref)}]`;
+            }
             ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()},destroy(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}, destroy() {w${widgetID}.${keepAlive ? "unmount" : "destroy"}()}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
             ctx.addLine(`extra.promises.push(def${defID});`);
             if (node.hasAttribute("t-if") || node.hasAttribute("t-else")) {
@@ -2397,18 +2246,203 @@
         };
     }
 
+    function escape(str) {
+        if (str === undefined) {
+            return "";
+        }
+        if (typeof str === "number") {
+            return String(str);
+        }
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&#x27;")
+            .replace(/`/g, "&#x60;");
+    }
+    /**
+     * Remove trailing and leading spaces
+     */
+    function htmlTrim(s) {
+        let result = s.replace(/(^\s+|\s+$)/g, "");
+        if (s[0] === " ") {
+            result = " " + result;
+        }
+        if (result !== " " && s[s.length - 1] === " ") {
+            result = result + " ";
+        }
+        return result;
+    }
+    function memoize(f, hash) {
+        if (!hash) {
+            hash = args => args.map(a => String(a)).join(",");
+        }
+        let cache = {};
+        function memoizedFunction(...args) {
+            let hashValue = hash(args);
+            if (!(hashValue in cache)) {
+                cache[hashValue] = f(...args);
+            }
+            return cache[hashValue];
+        }
+        return memoizedFunction;
+    }
+    /**
+     * Returns a function, that, as long as it continues to be invoked, will not
+     * be triggered. The function will be called after it stops being called for
+     * N milliseconds. If `immediate` is passed, trigger the function on the
+     * leading edge, instead of the trailing.
+     *
+     * Inspired by https://davidwalsh.name/javascript-debounce-function
+     */
+    function debounce(func, wait, immediate) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            function later() {
+                timeout = null;
+                if (!immediate) {
+                    func.apply(context, args);
+                }
+            }
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(context, args);
+            }
+        };
+    }
+    /**
+     * Find a node in a tree.
+     *
+     * This will traverse the tree (depth first) and return the first child that
+     * matches the predicate, if any
+     */
+    function findInTree(tree, predicate) {
+        if (predicate(tree)) {
+            return tree;
+        }
+        for (let child of tree.children) {
+            let match = findInTree(child, predicate);
+            if (match) {
+                return match;
+            }
+        }
+        return null;
+    }
+    function patch$1(C, patchName, patch) {
+        const proto = C.prototype;
+        if (!proto.__patches) {
+            proto.__patches = {
+                origMethods: {},
+                patches: {},
+                current: []
+            };
+        }
+        if (proto.__patches.patches[patchName]) {
+            throw new Error(`Patch [${patchName}] already exists`);
+        }
+        proto.__patches.patches[patchName] = patch;
+        applyPatch(proto, patch);
+        proto.__patches.current.push(patchName);
+        function applyPatch(proto, patch) {
+            Object.keys(patch).forEach(function (methodName) {
+                const method = patch[methodName];
+                if (typeof method === "function") {
+                    const original = proto[methodName];
+                    if (!(methodName in proto.__patches.origMethods)) {
+                        proto.__patches.origMethods[methodName] = original;
+                    }
+                    proto[methodName] = function (...args) {
+                        this._super = original;
+                        return method.call(this, ...args);
+                    };
+                }
+            });
+        }
+    }
+    function unpatch(C, patchName) {
+        const proto = C.prototype;
+        const patchInfo = proto.__patches;
+        delete proto.__patches;
+        // reset to original
+        for (let k in patchInfo.origMethods) {
+            proto[k] = patchInfo.origMethods[k];
+        }
+        // apply other patches
+        for (let name of patchInfo.current) {
+            if (name !== patchName) {
+                patch$1(C, name, patchInfo.patches[name]);
+            }
+        }
+    }
+    async function loadTemplates(url) {
+        const result = await fetch(url);
+        if (!result.ok) {
+            throw new Error("Error while fetching xml templates");
+        }
+        let templates = await result.text();
+        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+        return templates;
+    }
+    const loadedScripts = {};
+    function loadJS(url) {
+        if (url in loadedScripts) {
+            return loadedScripts[url];
+        }
+        const promise = new Promise(function (resolve, reject) {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            script.onload = function () {
+                resolve();
+            };
+            script.onerror = function () {
+                reject(`Error loading file '${url}'`);
+            };
+            const head = document.head || document.getElementsByTagName("head")[0];
+            head.appendChild(script);
+        });
+        loadedScripts[url] = promise;
+        return promise;
+    }
+    function whenReady(fn) {
+        if (document.readyState === "complete") {
+            fn();
+        }
+        else {
+            document.addEventListener("DOMContentLoaded", fn, false);
+        }
+    }
+
+    var _utils = /*#__PURE__*/Object.freeze({
+        escape: escape,
+        htmlTrim: htmlTrim,
+        memoize: memoize,
+        debounce: debounce,
+        findInTree: findInTree,
+        patch: patch$1,
+        unpatch: unpatch,
+        loadTemplates: loadTemplates,
+        loadJS: loadJS,
+        whenReady: whenReady
+    });
+
     const utils = _utils;
 
     exports.utils = utils;
     exports.Component = Component;
     exports.EventBus = EventBus;
+    exports.Observer = Observer;
     exports.QWeb = QWeb;
     exports.connect = connect;
     exports.Store = Store;
 
     exports._version = '0.8.0';
-    exports._date = '2019-04-24T08:12:21.164Z';
-    exports._hash = 'b14d264';
+    exports._date = '2019-04-26T12:23:18.193Z';
+    exports._hash = 'b6bd0f9';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

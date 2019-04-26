@@ -1088,9 +1088,12 @@
         _patch(vnode) {
             this.__owl__.renderPromise = null;
             if (this.__owl__.vnode) {
-                const snapshot = this.willPatch();
+                const isMounted = this.__owl__.isMounted;
+                const snapshot = isMounted && this.willPatch();
                 this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-                this.patched(snapshot);
+                if (isMounted) {
+                    this.patched(snapshot);
+                }
             }
             else {
                 this.__owl__.vnode = patch(document.createElement(vnode.sel), vnode);
@@ -2441,8 +2444,8 @@
     exports.Store = Store;
 
     exports._version = '0.8.0';
-    exports._date = '2019-04-26T12:23:18.193Z';
-    exports._hash = 'b6bd0f9';
+    exports._date = '2019-04-26T13:32:23.079Z';
+    exports._hash = 'b44f274';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

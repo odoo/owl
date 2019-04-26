@@ -165,3 +165,26 @@ export async function loadTemplates(url: string): Promise<string> {
   templates = templates.replace(/<!--[\s\S]*?-->/g, "");
   return templates;
 }
+
+const loadedScripts: { [key: string]: Promise<void> } = {};
+
+export function loadJS(url: string): Promise<void> {
+  if (url in loadedScripts) {
+    return loadedScripts[url];
+  }
+  const promise: Promise<void> = new Promise(function(resolve, reject) {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = url;
+    script.onload = function() {
+      resolve();
+    };
+    script.onerror = function() {
+      reject(`Error loading file '${url}'`);
+    };
+    const head = document.head || document.getElementsByTagName("head")[0];
+    head.appendChild(script);
+  });
+  loadedScripts[url] = promise;
+  return promise;
+}

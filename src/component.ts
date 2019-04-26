@@ -191,24 +191,6 @@ export class Component<
   // Public
   //--------------------------------------------------------------------------
 
-  /**
-   * Attach a child widget to a given html element
-   *
-   * This is most of the time not necessary, since widgets should primarily be
-   * created/managed with the t-widget directive in a qweb template.  However,
-   * for the cases where we need more control, this method will do what is
-   * necessary to make sure all the proper hooks are called (for example,
-   * mounted/willUnmount)
-   *
-   * Note that this method makes a few assumptions:
-   * - the child widget is indeed a child of the current widget
-   * - the target is inside the dom of the current widget (typically a ref)
-   */
-  attachChild(child: Component<T, any, any>, target: HTMLElement) {
-    target.appendChild(child.el!);
-    child.__mount();
-  }
-
   async mount(target: HTMLElement): Promise<void> {
     const vnode = await this._prepare();
     if (this.__owl__.isDestroyed) {
@@ -271,14 +253,14 @@ export class Component<
   destroy() {
     if (!this.__owl__.isDestroyed) {
       const el = this.el;
-      this._destroy();
+      this._destroy(this.__owl__.parent);
       if (el) {
         el.remove();
       }
     }
   }
 
-  _destroy() {
+  _destroy(parent) {
     const isMounted = this.__owl__.isMounted;
     if (isMounted) {
       this.willUnmount();
@@ -286,11 +268,11 @@ export class Component<
     }
     const children = Object.values(this.__owl__.children);
     for (let child of children) {
-      child._destroy();
+      child._destroy(this);
     }
-    if (this.__owl__.parent) {
+    if (parent) {
       let id = this.__owl__.id;
-      delete this.__owl__.parent.__owl__.children[id];
+      delete parent.__owl__.children[id];
       this.__owl__.parent = null;
     }
     this.clear();
@@ -408,24 +390,20 @@ export class Component<
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
     this.__owl__.vnode = patch(elm, vnode);
-    this.__mount();
+    if (
+      this.__owl__.parent &&
+      this.__owl__.parent.__owl__.isMounted &&
+      !this.__owl__.isMounted
+    ) {
+      this._callMounted();
+    }
     return this.__owl__.vnode;
   }
 
   __mount() {
-    if (this.__owl__.isMounted) {
-      return;
-    }
-    this._observeState();
-    if (this.__owl__.parent) {
-      if (this.__owl__.parent!.__owl__.isMounted) {
-        this.__owl__.isMounted = true;
-        this.mounted();
-        const children = this.__owl__.children;
-        for (let id in children) {
-          children[id].__mount();
-        }
-      }
+    if (!this.__owl__.isMounted) {
+      this.__owl__.isMounted = true;
+      this.mounted();
     }
   }
 

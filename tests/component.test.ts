@@ -216,6 +216,54 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual(["child:mounted", "parent:mounted"]);
   });
 
+  test("mounted hook is called on subsubwidgets, in proper order", async () => {
+    const steps: any[] = [];
+
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div><t t-if="state.flag"><t t-widget="child"/></t></div>`;
+      widgets = { child: ChildWidget };
+      state = { flag: false };
+      mounted() {
+        steps.push("parent:mounted");
+      }
+      willUnmount() {
+        steps.push("parent:willUnmount");
+      }
+    }
+    class ChildWidget extends Widget {
+      inlineTemplate = `<div><t t-widget="childchild"/></div>`;
+      widgets = { childchild: ChildChildWidget };
+      mounted() {
+        steps.push("child:mounted");
+      }
+      willUnmount() {
+        steps.push("child:willUnmount");
+      }
+    }
+    class ChildChildWidget extends Widget {
+      mounted() {
+        steps.push("childchild:mounted");
+      }
+      willUnmount() {
+        steps.push("childchild:willUnmount");
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(steps).toEqual(["parent:mounted"]);
+    widget.state.flag = true;
+    await nextTick();
+    widget.destroy();
+    expect(steps).toEqual([
+      "parent:mounted",
+      "childchild:mounted",
+      "child:mounted",
+      "parent:willUnmount",
+      "child:willUnmount",
+      "childchild:willUnmount"
+    ]);
+  });
+
   test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
     const steps: string[] = [];
 

@@ -1,5 +1,16 @@
 import { SAMPLES } from "./samples.js";
 
+let owlJS;
+
+async function owlSourceCode() {
+  if (owlJS) {
+    return owlJS;
+  }
+  const result = await fetch("/playground/libs/owl.js");
+  owlJS = await result.text();
+  return owlJS;
+}
+
 const MODES = {
   js: "ace/mode/javascript",
   css: "ace/mode/css",
@@ -8,6 +19,22 @@ const MODES = {
 
 const DEFAULT_XML = `<templates>
 </templates>`;
+
+const DEFAULT_HTML = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OWL App</title>
+    <link rel="icon" href="data:,">
+
+    <script src="owl.js"></script>
+    <link rel="stylesheet" href="app.css">
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
+`;
 
 //------------------------------------------------------------------------------
 // Tabbed editor
@@ -226,6 +253,29 @@ class App extends owl.Component {
       height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
     }
     this.state.topPanelHeight = height + ev.delta;
+  }
+
+  async downloadCode() {
+    await owl.utils.loadJS("/playground/libs/FileSaver.min.js");
+    await owl.utils.loadJS("/playground/libs/jszip.min.js");
+
+    const zip = new JSZip();
+
+    const JS = `async function startApp() {
+  const TEMPLATES = await owl.utils.loadTemplates('app.xml');
+  ${this.state.js};
+}
+
+owl.utils.whenReady(startApp);`;
+
+    zip.file("app.js", JS);
+    zip.file("app.css", this.state.css);
+    zip.file("app.xml", this.state.xml);
+    zip.file("index.html", DEFAULT_HTML);
+    zip.file("owl.js", owlSourceCode());
+    zip.generateAsync({ type: "blob" }).then(function(content) {
+      saveAs(content, "app.zip");
+    });
   }
 }
 

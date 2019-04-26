@@ -13,6 +13,8 @@ body {
 
 .btn {
   cursor: pointer;
+  padding: 5px;
+  margin: 5px;
 }
 
 /* APPLICATION ROOT ****************************************/
@@ -54,18 +56,20 @@ body {
 .run-code {
   margin-right: 12px;
   height: 25px;
-  padding: 5px 10px;
   border: 2px solid transparent;
   opacity: 0.9;
-  background-position: center;
-  transition: background 0.5s;
 }
 
 .run-code:hover {
   opacity: 1;
 }
 
-.run-code:active {
+.flash {
+  background-position: center;
+  transition: background 0.5s;
+}
+
+.flash:active {
   background-color: #41454a;
   background-size: 100%;
   transition: background 0s;
@@ -73,12 +77,10 @@ body {
 
 .layout-selector {
   font-size: 33px;
-  padding: 0px 3px;
-  margin-right: 17px;
   cursor: pointer;
-  margin: 8px;
   color: #cccccc;
   transform: rotate(90deg);
+  padding: 0 5px;
 }
 
 .layout-selector.active {
@@ -99,6 +101,7 @@ body {
 .tabBar {
   color: white;
   height: 22px;
+  width: 170px;
   margin-top: -22px;
   padding-left: 5px;
   user-select: none;

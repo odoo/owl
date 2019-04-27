@@ -13,20 +13,6 @@ export function escape(str: string | number | undefined): string {
     .replace(/`/g, "&#x60;");
 }
 
-/**
- * Remove trailing and leading spaces
- */
-export function htmlTrim(s: string): string {
-  let result = s.replace(/(^\s+|\s+$)/g, "");
-  if (s[0] === " ") {
-    result = " " + result;
-  }
-  if (result !== " " && s[s.length - 1] === " ") {
-    result = result + " ";
-  }
-  return result;
-}
-
 export type HashFn = (args: any[]) => string;
 
 export function memoize<R, T extends (...args: any[]) => R>(
@@ -77,32 +63,6 @@ export function debounce(
       func.apply(context, args);
     }
   };
-}
-
-interface Tree<T> {
-  children: T[];
-}
-
-/**
- * Find a node in a tree.
- *
- * This will traverse the tree (depth first) and return the first child that
- * matches the predicate, if any
- */
-export function findInTree<T extends Tree<T>>(
-  tree: T,
-  predicate: (t: T) => boolean
-): T | null {
-  if (predicate(tree)) {
-    return tree;
-  }
-  for (let child of tree.children) {
-    let match = findInTree(child, predicate);
-    if (match) {
-      return match;
-    }
-  }
-  return null;
 }
 
 export function patch(C: any, patchName: string, patch: any) {

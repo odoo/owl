@@ -1,9 +1,7 @@
 import {
   escape,
-  htmlTrim,
   memoize,
   debounce,
-  findInTree,
   patch,
   unpatch
 } from "../src/utils";
@@ -17,20 +15,6 @@ describe("escape", () => {
   test("special symbols", () => {
     const text = "<ok>";
     expect(escape(text)).toBe("&lt;ok&gt;");
-  });
-});
-
-describe("htmlTrim", () => {
-  test("basic use", () => {
-    expect(htmlTrim("abc")).toBe("abc");
-    expect(htmlTrim("  abc")).toBe(" abc");
-    expect(htmlTrim("abc  ")).toBe("abc ");
-    expect(htmlTrim("   abc   ")).toBe(" abc ");
-    expect(htmlTrim("abc\n   ")).toBe("abc ");
-    expect(htmlTrim("\n ")).toBe(" ");
-    expect(htmlTrim(" \n ")).toBe(" ");
-    expect(htmlTrim("  ")).toBe(" ");
-    expect(htmlTrim("")).toBe("");
   });
 });
 
@@ -68,19 +52,6 @@ describe("debounce", () => {
     expect(n).toBe(0);
     jest.advanceTimersByTime(20);
     expect(n).toBe(1);
-  });
-});
-
-describe("findInTree", () => {
-  test("can find stuff in tree", () => {
-    let tree = {
-      id: 1,
-      children: [{ id: 2, children: [] }, { id: 3, key: "hello", children: [] }]
-    };
-    const match1 = findInTree(tree, t => t.id === 3);
-    expect((<any>match1).key).toBe("hello");
-    const match2 = findInTree(tree, t => t.id === 4);
-    expect(match2).toBe(null);
   });
 });
 

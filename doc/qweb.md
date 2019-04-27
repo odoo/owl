@@ -3,22 +3,28 @@
 ## Content
 
 - [Overview](#overview)
-- [Base Specification](#qweb-specification)
+- [QWeb Specification](#qweb-specification)
+    - [Static html nodes](#static-html-nodes)
+    - [`t-esc` directive](#t-esc-directive)
+    - [`t-raw` directive](#t-raw-directive)
+    - [`t-set` directive](#t-set-directive)
+    - [`t-if` directive](#t-if-directive)
+    - [Expression evaluation](#expression-evaluation)
 - [OWL Specific Extensions](#owl-specific-extensions)
-
 
 ## Overview
 
 [QWeb](https://www.odoo.com/documentation/12.0/reference/qweb.html) is the primary templating engine used by Odoo. It is based on the XML format, and used
-mostly to generate html.
+mostly to generate html. In OWL, QWeb templates are compiled into functions that
+generate a virtual dom representation of the html.
 
 Template directives are specified as XML attributes prefixed with `t-`, for instance `t-if` for conditionals, with elements and other attributes being rendered directly.
 
 To avoid element rendering, a placeholder element `<t>` is also available, which executes its directive but doesn’t generate any output in and of itself.
 
-The QWeb implementation in the OWL project is slightly different.  It compiles
+The QWeb implementation in the OWL project is slightly different. It compiles
 templates into functions that output a virtual DOM instead of a string. This is
-necessary for the component system.  In addition, it has a few extra directives
+necessary for the component system. In addition, it has a few extra directives
 (see [OWL Specific Extensions](#owlspecificextensions))
 
 **Note on white spaces:** white spaces in a templates are handled in a special way:
@@ -27,14 +33,180 @@ necessary for the component system.  In addition, it has a few extra directives
 - if a whitespace-only text node contains a linebreak, it is ignored
 - the previous rules do not apply if we are in a `<pre>` tag
 
-
 ## QWeb Specification
 
-Todo
+### Static html nodes
+
+Normal, regular html nodes are rendered into themselves:
+
+```xml
+  <div>hello</div> <!–– rendered as itself ––>
+```
+
+### `t-esc` directive
+
+The `t-esc` directive is necessary whenever you want to add a dynamic text
+expression in a template. The text is escaped to avoid security issues.
+
+```xml
+<p><t t-esc="value"/></p>
+```
+
+rendered with the value `value` set to `42` in the rendering context yields:
+
+```html
+<p>42</p>
+```
+
+### `t-raw` directive
+
+The `t-raw` directive is almost the same as `t-esc`, but without the escaping.
+This is mostly useful to inject a raw html string somewhere. Obviously, this
+is unsafe to do in general, and should only be used for strings known to be safe.
+
+```xml
+<p><t t-esc="value"/></p>
+```
+
+rendered with the value `value` set to `<span>foo</span>` in the rendering context yields:
+
+```html
+<p><span>foo</span></p>
+```
+
+### `t-set` directive
+
+QWeb allows creating variables from within the template, to memoize a computation (to use it multiple times), give a piece of data a clearer name, ...
+
+This is done via the `t-set` directive, which takes the name of the variable to create. The value to set can be provided in two ways:
+
+1. a `t-value` attribute containing an expression, and the result of its
+   evaluation will be set:
+
+   ```xml
+   <t t-set="foo" t-value="2 + 1"/>
+   <t t-esc="foo"/>
+   ```
+
+   will print `3`. Note that the evaluation is done at rendering time, not at
+   compilte time.
+
+2. if there is no `t-value` attribute, the node’s body is saved and its value is
+   set as the variable’s value:
+
+   ```xml
+   <t t-set="foo">
+       <li>ok</li>
+   </t>
+   <t t-esc="foo"/>
+   ```
+
+   will generate `&lt;li&gt;ok&lt;/li&gt;` (the content is escaped as we used the `t-esc` directive)
+
+The `t-set` directive acts like a regular variable in most programming language.
+It is lexically scoped (inner nodes are sub scopes), can be shadowed, ...
+
+### `t-if` directive
+
+The `t-if` directive is useful to conditionally render something. It evaluates
+the expression given as attribute value, and then acts accordingly.
+
+```xml
+<div>
+    <t t-if="condition">
+        <p>ok</p>
+    </t>
+</div>
+```
+
+The element is rendered if the condition (evaluated with the current rendering
+context) is true:
+
+```xml
+<div>
+    <p>ok</p>
+</div>
+```
+
+but if the condition is false it is removed from the result:
+
+```xml
+<div>
+</div>
+```
+
+The conditional rendering applies to the bearer of the directive, which does not
+have to be `<t>`:
+
+```xml
+<div>
+    <p t-if="condition">ok</p>
+</div>
+```
+
+will give the same results as the previous example.
+
+Extra conditional branching directives `t-elif` and `t-else` are also available:
+
+```xml
+<div>
+    <p t-if="user.birthday == today()">Happy bithday!</p>
+    <p t-elif="user.login == 'root'">Welcome master!</p>
+    <p t-else="">Welcome!</p>
+</div>
+```
+
+### Expression evaluation
+
+It is useful to explain the various rules that applies on QWeb expressions. These
+expressions are strings that will be converted to a javascript expression at
+compile time.
+
+1. it should be a simple expression which returns a value. It cannot be a statement.
+
+   ```xml
+   <div><p t-if="1 + 2 === 3">ok</p></div>
+   ```
+
+   is valid, but the following is not valid:
+
+   ```xml
+   <div><p t-if="console.log(1)">NOT valid</p></div>
+   ```
+
+2. it can use anything in the rendering context:
+
+   ```xml
+   <p t-if="user.birthday == today()">Happy bithday!</p>
+   ```
+
+   is valid, and will read the `user` object from the context, and call the
+   `today` function.
+
+3. it can use a few special operators to avoid using symbols such as `<`, `>`,
+   `&` or `|`. This is useful to make sure that we still write valid XML.
+
+   | Word  | will be replaced by |
+   | ----- | ------------------- |
+   | `and` | `&&`                |
+   | `or`  | `\|\|`                |
+   | `gt`  | `>`                 |
+   | `gte` | `>=`                |
+   | `lt`  | `<`                 |
+   | `lte` | `<=`                |
+
+   So, one can write this:
+
+   ```xml
+   <div><p t-if="10 + 2 gt 5">ok</p></div>
+   ```
+
+### `t-att` directive (dynamic attributes)
+
+todo
 
 ## OWL Specific Extensions
 
 - t-on directive
 - t-widget, t-props, t-key
 - t-ref
-

@@ -1097,12 +1097,17 @@ describe("t-key", () => {
 
 describe("debugging", () => {
   test("t-debug", () => {
+    const consoleLog = console.log;
+    console.log = jest.fn()
     qweb.addTemplate(
       "test",
       `<div t-debug="1"><t t-if="true"><span t-debug="1">hey</span></t></div>`
     );
     qweb.render('test');
     expect(qweb.templates.test.toString()).toMatchSnapshot();
+
+    expect(console.log).toHaveBeenCalledTimes(1);
+    console.log = consoleLog;
   });
 
   test("t-log", () => {

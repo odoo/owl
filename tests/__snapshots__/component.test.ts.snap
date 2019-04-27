@@ -30,7 +30,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         let isNew7 = !w7;
         if (w7 && w7.__owl__.renderPromise) {
             if (w7.__owl__.isStarted) {
-                def6 = w7.updateProps(props7, extra.forceUpdate);
+                def6 = w7.updateProps(props7, extra.forceUpdate, extra.patchQueue);
             } else {
                 isNew7 = true
                 if (props7 === w7.__owl__.renderProps) {
@@ -43,7 +43,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         }
         if (!def6) {
             if (w7) {
-                def6 = w7.updateProps(props7, extra.forceUpdate);
+                def6 = w7.updateProps(props7, extra.forceUpdate, extra.patchQueue);
             } else {
                 w7 = new context.widgets['ChildWidget'](owner, props7);
                 context.__owl__.cmap[key8] = w7.__owl__.id;
@@ -78,7 +78,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let isNew4 = !w4;
     if (w4 && w4.__owl__.renderPromise) {
         if (w4.__owl__.isStarted) {
-            def3 = w4.updateProps(props4, extra.forceUpdate);
+            def3 = w4.updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
             isNew4 = true
             if (props4 === w4.__owl__.renderProps) {
@@ -91,7 +91,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     }
     if (!def3) {
         if (w4) {
-            def3 = w4.updateProps(props4, extra.forceUpdate);
+            def3 = w4.updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
             w4 = new context.widgets['child'](owner, props4);
             context.__owl__.cmap[key5] = w4.__owl__.id;
@@ -124,7 +124,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
     let isNew4 = !w4;
     if (w4 && w4.__owl__.renderPromise) {
         if (w4.__owl__.isStarted) {
-            def3 = w4.updateProps(props4, extra.forceUpdate);
+            def3 = w4.updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
             isNew4 = true
             if (props4 === w4.__owl__.renderProps) {
@@ -137,7 +137,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
     }
     if (!def3) {
         if (w4) {
-            def3 = w4.updateProps(props4, extra.forceUpdate);
+            def3 = w4.updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
             w4 = new context.widgets['child'](owner, props4);
             context.__owl__.cmap[4] = w4.__owl__.id;

@@ -264,6 +264,55 @@ describe("lifecycle hooks", () => {
     ]);
   });
 
+  test("willPatch, patched hook are called on subsubwidgets, in proper order", async () => {
+    const steps: any[] = [];
+
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div>><t t-widget="child" t-props="{n:state.n}"/></div>`;
+      widgets = { child: ChildWidget };
+      state = { n: 1 };
+      willPatch() {
+        steps.push("parent:willPatch");
+      }
+      patched() {
+        steps.push("parent:patched");
+      }
+    }
+    class ChildWidget extends Widget {
+      inlineTemplate = `<div><t t-widget="childchild" t-props="{n:props.n}"/></div>`;
+      widgets = { childchild: ChildChildWidget };
+      willPatch() {
+        steps.push("child:willPatch");
+      }
+      patched() {
+        steps.push("child:patched");
+      }
+    }
+    class ChildChildWidget extends Widget {
+      inlineTemplate = `<div><t t-esc="props.n"/></div>`;
+      willPatch() {
+        steps.push("childchild:willPatch");
+      }
+      patched() {
+        steps.push("childchild:patched");
+      }
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(steps).toEqual([]);
+    widget.state.n = 2;
+    await nextTick();
+    widget.destroy();
+    expect(steps).toEqual([
+      "parent:willPatch",
+      "child:willPatch",
+      "childchild:willPatch",
+      "childchild:patched",
+      "child:patched",
+      "parent:patched"
+    ]);
+  });
+
   test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
     const steps: string[] = [];
 
@@ -450,6 +499,12 @@ describe("lifecycle hooks", () => {
 
   test("willUpdateProps hook is called", async () => {
     let def = makeDeferred();
+    class Parent extends Widget {
+      inlineTemplate =
+        '<span><t t-widget="Child" t-props="{n: state.n}"/></span>';
+      state = { n: 1 };
+      widgets = { Child: HookWidget };
+    }
     class HookWidget extends Widget {
       inlineTemplate = '<span><t t-esc="props.n"/></span>';
 
@@ -458,15 +513,15 @@ describe("lifecycle hooks", () => {
         return def;
       }
     }
-    const widget = new HookWidget(env, { n: 1 });
+    const widget = new Parent(env);
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<span>1</span>");
-    widget.updateProps({ n: 2 });
+    expect(fixture.innerHTML).toBe("<span><span>1</span></span>");
+    widget.state.n = 2;
     await nextTick();
-    expect(fixture.innerHTML).toBe("<span>1</span>");
+    expect(fixture.innerHTML).toBe("<span><span>1</span></span>");
     def.resolve();
     await nextTick();
-    expect(fixture.innerHTML).toBe("<span>2</span>");
+    expect(fixture.innerHTML).toBe("<span><span>2</span></span>");
   });
 
   test("patched hook is called after updating State", async () => {
@@ -495,16 +550,23 @@ describe("lifecycle hooks", () => {
   test("patched hook is called after updateProps", async () => {
     let n = 0;
 
+    class Parent extends Widget {
+      inlineTemplate = '<div><t t-widget="Child" t-props="{a:state.a}"/></div>';
+      state = { a: 1 };
+      widgets = { Child: TestWidget };
+    }
+
     class TestWidget extends Widget {
       patched() {
         n++;
       }
     }
-    const widget = new TestWidget(env, { a: 1 });
+    const widget = new Parent(env);
     await widget.mount(fixture);
     expect(n).toBe(0);
 
-    await widget.updateProps({ a: 2 });
+    widget.state.a = 2;
+    await nextTick();
     expect(n).toBe(1);
   });
 
@@ -528,20 +590,27 @@ describe("lifecycle hooks", () => {
 
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
+    class Parent extends Widget {
+      inlineTemplate = `<div><t t-widget="Child" t-props="{val:state.val}"/></div>`;
+      state = { val: 42 };
+      widgets = { Child: TestWidget };
+    }
     class TestWidget extends Widget {
       inlineTemplate = `<div><t t-esc="props.val"/></div>`;
       shouldUpdate() {
         return shouldUpdate;
       }
     }
-    const widget = new TestWidget(env, { val: 42 });
+    const widget = new Parent(env);
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div>42</div>");
-    await widget.updateProps({ val: 123 });
-    expect(fixture.innerHTML).toBe("<div>42</div>");
+    expect(fixture.innerHTML).toBe("<div><div>42</div></div>");
+    widget.state.val = 123;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>42</div></div>");
     shouldUpdate = true;
-    await widget.updateProps({ val: 666 });
-    expect(fixture.innerHTML).toBe("<div>666</div>");
+    widget.state.val = 666;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>666</div></div>");
   });
 
   test("sub widget (inside sub node): hooks are correctly called", async () => {
@@ -613,9 +682,9 @@ describe("lifecycle hooks", () => {
 
     // Not sure about this order.  If you disagree, feel free to open an issue...
     expect(steps).toEqual([
+      "parent:willPatch",
       "child:willPatch",
       "child:patched",
-      "parent:willPatch",
       "parent:patched"
     ]);
   });
@@ -1416,8 +1485,8 @@ describe("async rendering", () => {
 
     class ChildA extends Widget {
       inlineTemplate = `<span>a<t t-esc="props.val"/></span>`;
-      updateProps(props): Promise<void> {
-        return defA.then(() => super.updateProps(props));
+      updateProps(props, forceUpdate, fiber): Promise<void> {
+        return defA.then(() => super.updateProps(props, forceUpdate, fiber));
       }
     }
     class ChildB extends Widget {

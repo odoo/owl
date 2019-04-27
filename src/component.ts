@@ -236,17 +236,33 @@ export class Component<
     }
   }
 
-  async render(force: boolean = false): Promise<void> {
+  async render(force: boolean = false, patchQueue?: any[]): Promise<void> {
     if (this.__owl__.isDestroyed) {
       return;
     }
-    const renderVDom = this._render(force);
+    const shouldCallPatchHooks: boolean = !patchQueue;
+    if (shouldCallPatchHooks) {
+      patchQueue = [];
+    }
+    const renderVDom = this._render(force, patchQueue);
     const renderId = this.__owl__.renderId;
     const vnode = await renderVDom;
     if (renderId === this.__owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
+      if (shouldCallPatchHooks) {
+        for (let i = 0; i < patchQueue!.length; i++) {
+          const c = patchQueue![i];
+          c.__owl__.willPatchVal = c.willPatch();
+        }
+      }
       this._patch(vnode);
+      if (shouldCallPatchHooks) {
+        for (let i = patchQueue!.length - 1; i >= 0; i--) {
+          const c = patchQueue![i];
+          c.patched(c.__owl__.willPatchVal);
+        }
+      }
     }
   }
 
@@ -305,10 +321,11 @@ export class Component<
 
   async updateProps(
     nextProps: Props,
-    forceUpdate: boolean = false
+    forceUpdate: boolean = false,
+    patchQueue: any[],
   ): Promise<void> {
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
-    return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
+    return shouldUpdate ? this._updateProps(nextProps, patchQueue) : Promise.resolve();
   }
 
   set(target: any, key: string | number, value: any) {
@@ -319,21 +336,16 @@ export class Component<
   // Private
   //--------------------------------------------------------------------------
 
-  async _updateProps(nextProps: Props): Promise<void> {
+  async _updateProps(nextProps: Props, patchQueue: any[]): Promise<void> {
     await this.willUpdateProps(nextProps);
     this.props = nextProps;
-    await this.render();
+    await this.render(false, patchQueue);
   }
 
   _patch(vnode) {
     this.__owl__.renderPromise = null;
     if (this.__owl__.vnode) {
-      const isMounted = this.__owl__.isMounted;
-      const snapshot = isMounted && this.willPatch();
       this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-      if (isMounted) {
-        this.patched(snapshot);
-      }
     } else {
       this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }
@@ -358,7 +370,10 @@ export class Component<
     return this.__owl__.renderPromise;
   }
 
-  async _render(force: boolean = false): Promise<VNode> {
+  async _render(force: boolean = false, patchQueue: any[] = []): Promise<VNode> {
+    if (this.__owl__.isMounted) {
+      patchQueue.push(this)
+    }
     this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
     const template = this.inlineTemplate || this.template;
@@ -368,7 +383,8 @@ export class Component<
     let vnode = this.env.qweb.render(template, this, {
       promises,
       handlers: this.__owl__.boundHandlers,
-      forceUpdate: force
+      forceUpdate: force,
+      patchQueue,
     });
     if (this.__owl__.observer) {
       this.__owl__.observer.allowMutations = true;

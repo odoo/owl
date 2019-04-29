@@ -178,7 +178,12 @@ a owl component:
 | **[patched](#patchedsnapshot)**                          | just after the DOM is patched           |
 | **[willUnmount](#willUnmount)**                  | just before removing component from DOM |
 
-Note: no hook method should ever be called manually. They are supposed to be
+Notes:
+
+- hooks call order is precisely defined: `[willX]` hooks are called first on parent,
+  then on children, and `[Xed]` are called in the reverse order: first children,
+  then parent.
+- no hook method should ever be called manually. They are supposed to be
 called by the owl framework whenever it is required.
 
 #### `constructor(parent, props)`

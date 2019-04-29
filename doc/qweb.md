@@ -10,6 +10,7 @@
     - [`t-set` directive](#t-set-directive)
     - [`t-if` directive](#t-if-directive)
     - [Expression evaluation](#expression-evaluation)
+    - [t-att directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
     - [t-on directive](#t-on-directive)
     - [Component: t-widget, t-props](#component-t-widget-t-props)
@@ -208,8 +209,20 @@ compile time.
 
 ### `t-att` directive (dynamic attributes)
 
-todo
+One can use the `t-att-` directive to add dynamic attributes. Its main use is to
+evaluate an expression (at rendering time) and bind an attribute to its result:
 
+For example, if we have `id` set to 32 in the rendering context,
+
+```xml
+<div t-att-data-action-id="id"/>  <!-- result: <div data-action-id="32"></div> -->
+```
+
+If an expression evaluates to a falsy value, it will not be set at all:
+
+```xml
+<div t-att-foo="false"/>  <!-- result: <div></div> -->
+```
 
 ## JS/OWL Specific Extensions
 

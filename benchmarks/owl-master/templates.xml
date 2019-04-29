@@ -1,0 +1,32 @@
+<templates>
+  <div t-name="root" class="main">
+      <div class="left-thing">
+          <div>Number of msg: <t t-esc="state.messages.length"/></div>
+          <button t-on-click="addMessages(100)">Add 100 messages</button>
+          <button t-on-click="addMessages(1000)">Add 1000 messages</button>
+          <button t-on-click="addMessages(10000)">Add 10000 messages</button>
+          <button t-on-click="addMessages(50000)">Add 50000 messages</button>
+          <button t-on-click="updateSomeMessages">Update every 10th message</button>
+          <button t-on-click="clear">Clear</button>
+      </div>
+      <div class="right-thing">
+          <div class="content">
+              <t t-foreach="state.messages" t-as="message">
+                  <t t-widget="Message" t-key="message.id" t-props="message" t-on-remove_message="removeMessage"/>
+              </t>
+          </div>
+      </div>
+  </div>
+
+  <div t-name="message" class="message">
+    <span class="author"><t t-esc="props.author"/></span>
+    <span class="msg"><t t-esc="props.msg"/></span>
+    <button class="remove" t-on-click="removeMessage">Remove</button>
+    <t t-widget="Counter"/>
+  </div>
+
+  <div t-name="counter">
+    <button t-on-click="increment">Value: <t t-esc="state.counter"/></button>
+  </div>
+
+</templates>

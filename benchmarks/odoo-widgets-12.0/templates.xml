@@ -1,0 +1,30 @@
+<templates>
+    <div class="main" t-name="root">
+        <div class="left-thing">
+            <div class="message_count">
+                Number of msg: 0
+            </div>
+            <button class="o_btn_msg 100">Add 100 messages</button>
+            <button class="o_btn_msg 1000">Add 1000 messages</button>
+            <button class="o_btn_msg 10000">Add 10000 messages</button>
+            <button class="o_btn_msg 50000">Add 50000 messages</button>
+            <button class="updateSomeMessages">Update every 10th message</button>
+            <button class="clear">Clear</button>
+        </div>
+        <div class="right-thing">
+            <div class="content">
+            </div>
+        </div>
+    </div>
+
+    <div t-name="message" class="message">
+        <span class="author"><t t-esc="widget.author"/></span>
+        <span class="msg"><t t-esc="widget.msg"/></span>
+        <button class="remove" >Remove</button>
+    </div>
+
+  <div t-name="counter">
+    <button class="o_increment"></button>
+  </div>
+
+</templates>

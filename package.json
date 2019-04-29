@@ -12,7 +12,8 @@
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
     "dev": "npm-run-all --parallel \"build:* -- --watch\"",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "benchmarks": "python benchmarks/benchmarks.py"
   },
   "repository": {
     "type": "git",

@@ -189,7 +189,7 @@ export function connect(mapStateToProps, options: any = {}) {
           }
           if (didChange) {
             this.__owl__.currentStoreProps = storeProps;
-            this.updateProps(ownProps, false);
+            this._updateProps(ownProps, false);
           }
         });
         super.mounted();
@@ -198,7 +198,7 @@ export function connect(mapStateToProps, options: any = {}) {
         this.env.store.off("update", this);
         super.willUnmount();
       }
-      updateProps(nextProps, forceUpdate) {
+      _updateProps(nextProps, forceUpdate) {
         if (this.__owl__.ownProps !== nextProps) {
           this.__owl__.currentStoreProps = mapStateToProps(
             this.env.store.state,
@@ -211,7 +211,7 @@ export function connect(mapStateToProps, options: any = {}) {
           nextProps,
           this.__owl__.currentStoreProps
         );
-        return super.updateProps(mergedProps, forceUpdate);
+        return super._updateProps(mergedProps, forceUpdate);
       }
     };
   };

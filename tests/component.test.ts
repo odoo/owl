@@ -1485,8 +1485,8 @@ describe("async rendering", () => {
 
     class ChildA extends Widget {
       inlineTemplate = `<span>a<t t-esc="props.val"/></span>`;
-      updateProps(props, forceUpdate, fiber): Promise<void> {
-        return defA.then(() => super.updateProps(props, forceUpdate, fiber));
+      _updateProps(props, forceUpdate, fiber): Promise<void> {
+        return defA.then(() => super._updateProps(props, forceUpdate, fiber));
       }
     }
     class ChildB extends Widget {

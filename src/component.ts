@@ -319,14 +319,6 @@ export class Component<
     }
   }
 
-  async updateProps(
-    nextProps: Props,
-    forceUpdate: boolean = false,
-    patchQueue: any[],
-  ): Promise<void> {
-    const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
-    return shouldUpdate ? this._updateProps(nextProps, patchQueue) : Promise.resolve();
-  }
 
   set(target: any, key: string | number, value: any) {
     this.__owl__.observer!.set(target, key, value);
@@ -336,10 +328,17 @@ export class Component<
   // Private
   //--------------------------------------------------------------------------
 
-  async _updateProps(nextProps: Props, patchQueue: any[]): Promise<void> {
-    await this.willUpdateProps(nextProps);
-    this.props = nextProps;
-    await this.render(false, patchQueue);
+  async _updateProps(
+    nextProps: Props,
+    forceUpdate: boolean = false,
+    patchQueue: any[]
+  ): Promise<void> {
+    const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
+    if (shouldUpdate) {
+      await this.willUpdateProps(nextProps);
+      this.props = nextProps;
+      await this.render(false, patchQueue);
+    }
   }
 
   _patch(vnode) {
@@ -370,9 +369,12 @@ export class Component<
     return this.__owl__.renderPromise;
   }
 
-  async _render(force: boolean = false, patchQueue: any[] = []): Promise<VNode> {
+  async _render(
+    force: boolean = false,
+    patchQueue: any[] = []
+  ): Promise<VNode> {
     if (this.__owl__.isMounted) {
-      patchQueue.push(this)
+      patchQueue.push(this);
     }
     this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
@@ -384,7 +386,7 @@ export class Component<
       promises,
       handlers: this.__owl__.boundHandlers,
       forceUpdate: force,
-      patchQueue,
+      patchQueue
     });
     if (this.__owl__.observer) {
       this.__owl__.observer.allowMutations = true;

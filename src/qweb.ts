@@ -1060,7 +1060,7 @@ const widgetDirective: Directive = {
     ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
     ctx.addIf(`w${widgetID}.__owl__.isStarted`);
     ctx.addLine(
-      `def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
+      `def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
     );
     ctx.addElse();
     ctx.addLine(`isNew${widgetID} = true`);
@@ -1076,7 +1076,7 @@ const widgetDirective: Directive = {
     ctx.addIf(`!def${defID}`);
     ctx.addIf(`w${widgetID}`);
     ctx.addLine(
-      `def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
+      `def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
     );
     ctx.addElse();
     ctx.addLine(

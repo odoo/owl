@@ -142,10 +142,6 @@ will be used to render the component template.
   always return true. This is an optimization, similar to React's `shouldComponentUpdate`. Most of the time, this should not be used, but it
   can be useful if we are handling large number of components.
 
-- **`updateProps(nextProps)`**: should not be called manually, except on the root
-  component. This method is only supposed to be called by the framework whenever
-  a parent is rerendered.
-
 - **`updateEnv(nextEnv)`**: update the environment of a component and all its
   children. This forces a complete rerender. For example, this could be useful
   if we have a `isMobile` key in the environment, to decide if we want a mobile

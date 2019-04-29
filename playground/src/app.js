@@ -29,11 +29,33 @@ const DEFAULT_HTML = `<!DOCTYPE html>
 
     <script src="owl.js"></script>
     <link rel="stylesheet" href="app.css">
-    <script type="module" src="app.js"></script>
+    <script src="app.js"></script>
   </head>
   <body>
   </body>
 </html>
+`;
+
+const APP_PY = `import sys
+import thread
+import webbrowser
+import time
+
+import BaseHTTPServer, SimpleHTTPServer
+
+def start_server():
+    httpd = BaseHTTPServer.HTTPServer(('127.0.0.1', 3600), SimpleHTTPServer.SimpleHTTPRequestHandler)
+    httpd.serve_forever()
+
+thread.start_new_thread(start_server,())
+url = 'http://127.0.0.1:3600'
+webbrowser.open_new(url)
+
+while True:
+    try:
+        time.sleep(1)
+    except KeyboardInterrupt:
+        sys.exit(0)
 `;
 
 //------------------------------------------------------------------------------
@@ -262,14 +284,25 @@ class App extends owl.Component {
     const zip = new JSZip();
 
     const JS = `async function startApp() {
-  const TEMPLATES = await owl.utils.loadTemplates('app.xml');
-  ${this.state.js};
+  // Loading templates
+  let TEMPLATES;
+  try {
+    TEMPLATES = await owl.utils.loadTemplates('app.xml');
+  } catch(e) {
+    document.write(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
+    return;
+  }
+
+  // Application code
+${this.state.js.split('\n').map(l => l === '' ? '' : '  ' + l).join('\n')}
 }
 
+// wait for DOM ready before starting
 owl.utils.whenReady(startApp);`;
 
     zip.file("app.js", JS);
     zip.file("app.css", this.state.css);
+    zip.file("app.py", APP_PY);
     zip.file("app.xml", this.state.xml);
     zip.file("index.html", DEFAULT_HTML);
     zip.file("owl.js", owlSourceCode());

@@ -4,13 +4,24 @@
 
 The Odoo Web Library (OWL) is a small 
 UI framework intended to be the basis for the [Odoo](https://www.odoo.com/) Web Client, and hopefully many
-other Odoo related projects. OWL's two key features are:
-
-- a _declarative component system_, with QWeb as a template engine, asynchronous rendering, and an underlying virtual dom,
-- and a _store_, which is a state management solution, loosely inspired by VueX and React/Redux.
+other Odoo related projects. OWL's main feature is a _declarative component system_, with QWeb as a template engine, asynchronous rendering, and an underlying virtual dom.
 
 If you are interested, you can find a discussion on what makes OWL different
 from React and Vue [here](doc/comparison.md)
+
+## What makes OWL different
+
+- **XML based**: templates are based on the XML format, which allows interesting
+  applications.  For example, they could be stored in a database and modified
+  dynamically with `xpaths`.
+- **templates compilation in the browser**: this may not be a good fit for all
+  applications, but if you need to generate dynamically user interfaces in the
+  browser, this is very powerful.  For example, a generic form view component
+  could generate a specific form user interface for each various models, from a XML view.
+- **no toolchain required**: this is extremely useful for some applications, if,
+  for various reasons (security/deployment/dynamic modules/specific assets tools),
+  it is not ok to use standard web tools based on `npm`.
+
 
 ## Try it online!
 

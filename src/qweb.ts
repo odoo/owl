@@ -198,7 +198,8 @@ export class QWeb {
       props: 1,
       key: 1,
       keepalive: 1,
-      debug: 1
+      debug: 1,
+      log: 1
     };
     [
       forEachDirective,
@@ -211,6 +212,8 @@ export class QWeb {
       callDirective,
       onDirective,
       refDirective,
+      debugDirective,
+      logDirective,
       widgetDirective
     ].forEach(d => this.addDirective(d));
     if (data) {
@@ -370,9 +373,6 @@ export class QWeb {
       throw new Error("A template should have one root node");
     }
     ctx.addLine(`return vn${ctx.rootNode};`);
-    if (isDebug) {
-      ctx.code.unshift("    debugger");
-    }
     let template;
     try {
       template = new Function(
@@ -697,7 +697,7 @@ export interface Directive {
   priority: number;
   // if return true, then directive is fully applied and there is no need to
   // keep processing node. Otherwise, we keep going.
-  atNodeEncounter?(info: CompilationInfo): boolean;
+  atNodeEncounter?(info: CompilationInfo): boolean | void;
   atNodeCreation?(info: CompilationInfo): void;
   finalize?(info: CompilationInfo): void;
 }
@@ -987,6 +987,23 @@ const refDirective: Directive = {
               ref
             )}] = n.elm,
         };`);
+  }
+};
+
+const debugDirective: Directive = {
+  name: "debug",
+  priority: 99,
+  atNodeEncounter({ ctx }) {
+    ctx.addLine("debugger;");
+  }
+};
+
+const logDirective: Directive = {
+  name: "log",
+  priority: 99,
+  atNodeEncounter({ ctx, value }) {
+    const expr = ctx.formatExpression(value);
+    ctx.addLine(`console.log(${expr})`);
   }
 };
 

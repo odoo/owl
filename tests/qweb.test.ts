@@ -1094,3 +1094,32 @@ describe("t-key", () => {
     ).toMatchSnapshot();
   });
 });
+
+describe("debugging", () => {
+  test("t-debug", () => {
+    qweb.addTemplate(
+      "test",
+      `<div t-debug="1"><t t-if="true"><span t-debug="1">hey</span></t></div>`
+    );
+    qweb.render('test');
+    expect(qweb.templates.test.toString()).toMatchSnapshot();
+  });
+
+  test("t-log", () => {
+    const consoleLog = console.log;
+    console.log = jest.fn()
+
+    qweb.addTemplate(
+      "test",
+      `<div>
+          <t t-set="foo" t-value="42"/>
+          <t t-log="foo + 3"/>
+        </div>`
+    );
+    qweb.render('test');
+    expect(qweb.templates.test.toString()).toMatchSnapshot();
+
+    expect(console.log).toHaveBeenCalledWith(45);
+    console.log = consoleLog;
+  });
+});

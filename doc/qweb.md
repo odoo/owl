@@ -10,7 +10,12 @@
     - [`t-set` directive](#t-set-directive)
     - [`t-if` directive](#t-if-directive)
     - [Expression evaluation](#expression-evaluation)
-- [OWL Specific Extensions](#owl-specific-extensions)
+- [JS/OWL Specific Extensions](#jsowl-specific-extensions)
+    - [t-on directive](#t-on-directive)
+    - [Component: t-widget, t-props](#component-t-widget-t-props)
+    - [t-ref directive](#t-ref-directive)
+    - [t-key directive](#t-key-directive)
+    - [Debugging (t-debug and t-log)](#debugging-t-debug-and-t-log)
 
 ## Overview
 
@@ -205,8 +210,38 @@ compile time.
 
 todo
 
-## OWL Specific Extensions
 
-- t-on directive
-- t-widget, t-props, t-key
-- t-ref
+## JS/OWL Specific Extensions
+
+### t-on directive
+
+### Component: t-widget, t-props
+
+### t-ref
+
+### t-key
+
+
+### Debugging (t-debug and t-log)
+
+The javascript QWeb implementation provides two useful debugging directives:
+
+`t-debug` adds a debugger statement during template rendering:
+
+```xml
+<t t-if="a_test">
+    <t t-debug="">
+</t>
+````
+
+will stop execution if the browser dev tools are open.
+
+`t-log` takes an expression parameter, evaluates the expression during rendering and logs its result with console.log:
+
+```xml
+<t t-set="foo" t-value="42"/>
+<t t-log="foo"/>
+```
+
+will print 42 to the console
+

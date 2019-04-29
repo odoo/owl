@@ -256,6 +256,36 @@ exports[`attributes tuple variable 1`] = `
 }"
 `;
 
+exports[`debugging t-debug 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    debugger;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (true) {
+        debugger;
+        var c2 = [], p2 = {key:2};
+        var vn2 = h('span', p2, c2);
+        c1.push(vn2);
+        c2.push({text: \`hey\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`debugging t-log 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 42;
+    console.log(_2 + 3)
+    return vn1;
+}"
+`;
+
 exports[`foreach does not pollute the rendering context 1`] = `
 "function anonymous(context,extra
 ) {

@@ -220,9 +220,8 @@ in some cases, for example, to load external assets (such as a JS library)
 before the widget is rendered. Another use case is to load data from a server.
 
 ```javascript
-  willStart() {
-    // we assume that utils.lazyLoad return a promise
-    return utils.lazyLoad('my-awesome-lib.js');
+  async willStart() {
+    await owl.utils.loadJS("my-awesome-lib.js");
   }
 ```
 

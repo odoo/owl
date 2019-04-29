@@ -256,8 +256,8 @@ class App extends owl.Component {
   }
 
   async downloadCode() {
-    await owl.utils.loadJS("/playground/libs/FileSaver.min.js");
-    await owl.utils.loadJS("/playground/libs/jszip.min.js");
+    await owl.utils.loadJS("libs/FileSaver.min.js");
+    await owl.utils.loadJS("libs/jszip.min.js");
 
     const zip = new JSZip();
 

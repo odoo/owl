@@ -2,6 +2,6 @@
   "name": "owl-playground",
   "description": "Odoo Web Library",
   "scripts": {
-    "serve": "python -m SimpleHTTPServer 8001"
+    "start": "python -m SimpleHTTPServer 8001"
   }
 }

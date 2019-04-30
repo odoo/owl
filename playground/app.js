@@ -6,7 +6,7 @@ async function owlSourceCode() {
   if (owlJS) {
     return owlJS;
   }
-  const result = await fetch("/playground/libs/owl.js");
+  const result = await fetch("/libs/owl.js");
   owlJS = await result.text();
   return owlJS;
 }
@@ -196,7 +196,7 @@ class App extends owl.Component {
       // inject js
       const owlScript = doc.createElement("script");
       owlScript.type = "text/javascript";
-      owlScript.src = "libs/owl.js";
+      owlScript.src = "/libs/owl.js";
       owlScript.addEventListener("load", () => {
         const script = doc.createElement("script");
         script.type = "text/javascript";
@@ -278,8 +278,8 @@ class App extends owl.Component {
   }
 
   async downloadCode() {
-    await owl.utils.loadJS("libs/FileSaver.min.js");
-    await owl.utils.loadJS("libs/jszip.min.js");
+    await owl.utils.loadJS("/libs/FileSaver.min.js");
+    await owl.utils.loadJS("/libs/jszip.min.js");
 
     const zip = new JSZip();
 
@@ -317,7 +317,7 @@ owl.utils.whenReady(startApp);`;
 //------------------------------------------------------------------------------
 document.title = `${document.title} (v${owl._version})`;
 document.addEventListener("DOMContentLoaded", async function() {
-  const templates = await owl.utils.loadTemplates("src/templates.xml");
+  const templates = await owl.utils.loadTemplates("templates.xml");
   const qweb = new owl.QWeb(templates);
   const env = { qweb };
   const app = new App(env);

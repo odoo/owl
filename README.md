@@ -75,7 +75,7 @@ The complete documentation can be found [here](doc/readme.md). The most importan
 
 - [Quick Start](doc/quick_start.md)
 - [Component](doc/component.md)
-- [Store](doc/store.md)
+- [QWeb](doc/qweb.md)
 
 ## License
 

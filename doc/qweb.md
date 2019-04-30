@@ -226,14 +226,34 @@ If an expression evaluates to a falsy value, it will not be set at all:
 
 ## JS/OWL Specific Extensions
 
-### t-on directive
+### `t-on` directive
 
-### Component: t-widget, t-props
+### Component: `t-widget`, `t-props`
 
-### t-ref
+### `t-ref` directive
 
-### t-key
+### `t-key` directive
 
+Even though Owl tries to be as declarative as possible, some DOM state is still
+locked inside the DOM: for example, the scrolling state, the current user selection,
+the focused element or the state of an input. This is why we use a virtual dom
+algorithm to keep the actual DOM node as much as possible.  However, this is
+sometimes not enough, and we need to help Owl decide if an element is actually
+the same, or is different. The `t-key` directive is used to give an identity to an element.
+
+There are three main use cases:
+
+- *elements in a list*:
+  ```xml
+    <span t-foreach="todos" t-as="todo" t-key="todo.id">
+        <t t-esc="todo.text"/>
+    </span>
+  ```
+
+- *`t-if`/`t-else`*
+
+- *animations*: give a different identity to a component.  Ex: thread id with
+animations on add/remove message.
 
 ### Debugging (t-debug and t-log)
 

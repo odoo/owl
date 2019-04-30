@@ -48,7 +48,7 @@ body {
 }
 
 .menubar select {
-  margin-right: 15px;
+  margin: 10px;
   font-size: 16px;
   height: 25px;
 }
@@ -76,17 +76,11 @@ body {
 }
 
 .layout-selector {
-  font-size: 33px;
   cursor: pointer;
-  color: #cccccc;
-  transform: rotate(90deg);
-  padding: 0 5px;
+  padding: 5px;
+  margin: 5px;
 }
 
-.layout-selector.active {
-  font-weight: bold;
-  color: white;
-}
 /* TABBED EDITOR ****************************************/
 
 .tabbed-editor {

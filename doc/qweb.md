@@ -10,13 +10,15 @@
     - [`t-set` directive](#t-set-directive)
     - [`t-if` directive](#t-if-directive)
     - [Expression evaluation](#expression-evaluation)
-    - [t-att directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
+    - [`t-att` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
-    - [t-on directive](#t-on-directive)
-    - [Component: t-widget, t-props](#component-t-widget-t-props)
-    - [t-ref directive](#t-ref-directive)
-    - [t-key directive](#t-key-directive)
-    - [Debugging (t-debug and t-log)](#debugging-t-debug-and-t-log)
+    - [`t-on` directive](#t-on-directive)
+    - [Component: `t-widget`, `t-props`](#component-t-widget-t-props)
+    - [`t-ref` directive](#t-ref-directive)
+    - [`t-key` directive](#t-key-directive)
+    - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
+    - [White spaces](#white-spaces)
+    - [Root nodes](#root-nodes)
 
 ## Overview
 
@@ -33,13 +35,9 @@ templates into functions that output a virtual DOM instead of a string. This is
 necessary for the component system. In addition, it has a few extra directives
 (see [OWL Specific Extensions](#owlspecificextensions))
 
-**Note on white spaces:** white spaces in a templates are handled in a special way:
-
-- consecutive whitespaces are always condensed to a single whitespace
-- if a whitespace-only text node contains a linebreak, it is ignored
-- the previous rules do not apply if we are in a `<pre>` tag
 
 ## QWeb Specification
+
 
 ### Static html nodes
 
@@ -255,7 +253,7 @@ There are three main use cases:
 - *animations*: give a different identity to a component.  Ex: thread id with
 animations on add/remove message.
 
-### Debugging (t-debug and t-log)
+### Debugging (`t-debug` and `t-log`)
 
 The javascript QWeb implementation provides two useful debugging directives:
 
@@ -278,3 +276,37 @@ will stop execution if the browser dev tools are open.
 
 will print 42 to the console
 
+
+### White spaces
+
+White spaces in a templates are handled in a special way:
+
+- consecutive whitespaces are always condensed to a single whitespace
+- if a whitespace-only text node contains a linebreak, it is ignored
+- the previous rules do not apply if we are in a `<pre>` tag
+
+### Root nodes
+
+For many reasons, Owl QWeb templates should have a single root node.  More
+precisely, the result of a template rendering should have a single root node:
+
+```xml
+<!–– not ok: two root nodes ––>
+<t>
+    <div>foo</div>
+    <div>bar</div>
+</t>
+
+<!–– ok: result has one single root node ––>
+<t>
+    <div t-if="someCondition">foo</div>
+    <span t-else="1">bar</span>
+</t>
+```
+
+Extra root nodes will actually be ignored (even though they will be rendered
+in memory).
+
+Note: this does not apply to subtemplates (see the `t-call` directive).  In that
+case, they will be inlined in the main template, and can actually have many
+root nodes.

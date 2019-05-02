@@ -1,5 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`animations t-transition, on a simple node 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    p2.hook = {
+        create: (_, n) => {
+          this.utils.transitionCreate(n.elm, 'chimay');
+        },
+        insert: vn => {
+          this.utils.transitionInsert(vn.elm, 'chimay');
+        },
+        remove: (vn, rm) => {
+          this.utils.transitionRemove(vn.elm, 'chimay', rm);
+        }
+      };
+    c2.push({text: \`blue\`});
+    return vn1;
+}"
+`;
+
+exports[`animations t-transition, on a simple node 2`] = `"<span class=\\"chimay-enter chimay-enter-active\\">blue</span>"`;
+
 exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(context,extra
 ) {

@@ -16,6 +16,7 @@
     - [Component: `t-widget`, `t-props`](#component-t-widget-t-props)
     - [`t-ref` directive](#t-ref-directive)
     - [`t-key` directive](#t-key-directive)
+    - [`t-transition` directive](#t-transition)
     - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
     - [White spaces](#white-spaces)
     - [Root nodes](#root-nodes)
@@ -252,6 +253,54 @@ There are three main use cases:
 
 - *animations*: give a different identity to a component.  Ex: thread id with
 animations on add/remove message.
+
+### `t-transition` directive
+
+To perform useful transition effects, whenever an element appears or disappears,
+it is necessary to add/remove some css style or class at some precise moment in
+the lifetime of a node.  Since this is not easy to do by hand, Owl `t-transition`
+directive is there to help.
+
+Whenever a node has a `t-transition` directive, with a `name` value, the following
+will happen:
+
+At node creation:
+
+- the css classes `name-enter` and `name-enter-active` will be added before the
+  node is added to the DOM,
+- on the next animation frame: the css class `name-enter` will be removed and the
+  class `name-enter-to` will be added (so they can be used to trigger css
+  transition effects),
+- the css class `name-enter-active` will be removed whenever a css transition
+  ends.
+
+At node destruction:
+- the css classes `name-leave` and `name-leave-active` will be added before the
+  node is removed to the DOM,
+- the css class `name-leave` will be removed on the next animation frame (so it
+  can be used to trigger css transition effects),
+- the css class `name-leave-active` will be removed whenever a css transition
+  ends. Only then will the element be removed from the DOM.
+
+For example, a simple fade in/out effect can be done with this:
+
+```xml
+<div>
+    <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+</div>
+```
+
+```css
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+```
+
+Note: you will find more information on animations in the [animation](doc/animations.md)
+documentation.
 
 ### Debugging (`t-debug` and `t-log`)
 

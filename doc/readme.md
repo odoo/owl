@@ -11,4 +11,5 @@
 
 ## Miscellaneous
 - [Quick Start](quick_start.md)
+- [Animations](animations.md)
 - [Comparison with React/Vue](comparison.md)

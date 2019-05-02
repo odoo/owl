@@ -61,6 +61,37 @@ const UTILS = {
       }
     }
     return classes.join(" ");
+  },
+  nextFrame(cb: () => void) {
+    requestAnimationFrame(() => requestAnimationFrame(cb));
+  },
+  transitionCreate(elm: HTMLElement, name: string) {
+    elm.classList.add(name + "-enter");
+    elm.classList.add(name + "-enter-active");
+  },
+  transitionInsert(elm: HTMLElement, name: string) {
+    const finalize = () => {
+      elm.classList.remove(name + "-enter-active");
+      elm.classList.remove(name + "-enter-to");
+    };
+    elm.addEventListener("transitionend", finalize);
+    this.nextFrame(() => {
+      elm.classList.remove(name + "-enter");
+      elm.classList.add(name + "-enter-to");
+    });
+  },
+  transitionRemove(elm: HTMLElement, name: string, rm: () => void) {
+    elm.classList.add(name + "-leave");
+    elm.classList.add(name + "-leave-active");
+    elm.addEventListener("transitionend", () => {
+      elm.classList.remove(name + "-leave-active");
+      elm.classList.remove(name + "-enter-to");
+      rm();
+    });
+    this.nextFrame(() => {
+      elm.classList.remove(name + "-leave");
+      elm.classList.add(name + "-leave-to");
+    });
   }
 };
 //------------------------------------------------------------------------------
@@ -240,6 +271,7 @@ export class QWeb {
       callDirective,
       onDirective,
       refDirective,
+      transitionDirective,
       debugDirective,
       logDirective,
       widgetDirective
@@ -983,13 +1015,31 @@ const onDirective: Directive = {
 const refDirective: Directive = {
   name: "ref",
   priority: 95,
-  atNodeCreation({ ctx, node }) {
-    let ref = node.getAttribute("t-ref")!;
-    ctx.addLine(`p${ctx.parentNode}.hook = {
+  atNodeCreation({ ctx, nodeID, value }) {
+    ctx.addLine(`p${nodeID}.hook = {
             create: (_, n) => context.refs[${ctx.formatExpression(
-              ref
+              value
             )}] = n.elm,
         };`);
+  }
+};
+
+const transitionDirective: Directive = {
+  name: "transition",
+  priority: 96,
+  atNodeCreation({ ctx, value }) {
+    let name = value;
+    ctx.addLine(`p${ctx.parentNode}.hook = {
+        create: (_, n) => {
+          this.utils.transitionCreate(n.elm, '${name}');
+        },
+        insert: vn => {
+          this.utils.transitionInsert(vn.elm, '${name}');
+        },
+        remove: (vn, rm) => {
+          this.utils.transitionRemove(vn.elm, '${name}', rm);
+        }
+      };`);
   }
 };
 

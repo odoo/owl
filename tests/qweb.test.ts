@@ -1,5 +1,5 @@
-import { patch } from "../src/vdom";
 import { EvalContext, QWeb } from "../src/qweb";
+import { patch } from "../src/vdom";
 import { normalize } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -1098,12 +1098,12 @@ describe("t-key", () => {
 describe("debugging", () => {
   test("t-debug", () => {
     const consoleLog = console.log;
-    console.log = jest.fn()
+    console.log = jest.fn();
     qweb.addTemplate(
       "test",
       `<div t-debug="1"><t t-if="true"><span t-debug="1">hey</span></t></div>`
     );
-    qweb.render('test');
+    qweb.render("test");
     expect(qweb.templates.test.fn.toString()).toMatchSnapshot();
 
     expect(console.log).toHaveBeenCalledTimes(1);
@@ -1112,7 +1112,7 @@ describe("debugging", () => {
 
   test("t-log", () => {
     const consoleLog = console.log;
-    console.log = jest.fn()
+    console.log = jest.fn();
 
     qweb.addTemplate(
       "test",
@@ -1121,10 +1121,23 @@ describe("debugging", () => {
           <t t-log="foo + 3"/>
         </div>`
     );
-    qweb.render('test');
+    qweb.render("test");
     expect(qweb.templates.test.fn.toString()).toMatchSnapshot();
 
     expect(console.log).toHaveBeenCalledWith(45);
     console.log = consoleLog;
+  });
+});
+
+describe("animations", () => {
+  test("t-transition, on a simple node", async () => {
+    // this test does not test much, because it is not easy to test timing
+    // transitions... we should do a little more effort for these tests.
+    qweb.addTemplate(
+      "test",
+      `<div><span t-transition="chimay">blue</span></div>`
+    );
+    let dom: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
+    expect(dom.innerHTML).toMatchSnapshot();
   });
 });

@@ -29,7 +29,7 @@ function renderToDOM(
 
   // we snapshot here the compiled code. This is useful to prevent unwanted code
   // change.
-  expect(qweb.templates[template].toString()).toMatchSnapshot();
+  expect(qweb.templates[template].fn.toString()).toMatchSnapshot();
 
   if (vnode.sel === undefined) {
     return document.createTextNode(vnode.text!);
@@ -991,7 +991,7 @@ describe("loading templates", () => {
   test("does not crash if string does not have templates", () => {
     const data = "";
     qweb.loadTemplates(data);
-    expect(qweb.processedTemplates).toEqual({});
+    expect(qweb.templates).toEqual({});
   });
 });
 
@@ -1104,7 +1104,7 @@ describe("debugging", () => {
       `<div t-debug="1"><t t-if="true"><span t-debug="1">hey</span></t></div>`
     );
     qweb.render('test');
-    expect(qweb.templates.test.toString()).toMatchSnapshot();
+    expect(qweb.templates.test.fn.toString()).toMatchSnapshot();
 
     expect(console.log).toHaveBeenCalledTimes(1);
     console.log = consoleLog;
@@ -1122,7 +1122,7 @@ describe("debugging", () => {
         </div>`
     );
     qweb.render('test');
-    expect(qweb.templates.test.toString()).toMatchSnapshot();
+    expect(qweb.templates.test.fn.toString()).toMatchSnapshot();
 
     expect(console.log).toHaveBeenCalledWith(45);
     console.log = consoleLog;

@@ -1088,7 +1088,7 @@ describe("composition", () => {
       </div>
     `)
     );
-    expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.parent.fn.toString()).toMatchSnapshot();
   });
 
   test("sub widgets between t-ifs", async () => {
@@ -1358,7 +1358,7 @@ describe("random stuff/miscellaneous", () => {
 
     const widget = new Parent(env);
     await widget.mount(fixture);
-    expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.parent.fn.toString()).toMatchSnapshot();
   });
 
   test("t-props should not be undefined (snapshotting)", async () => {
@@ -1374,7 +1374,7 @@ describe("random stuff/miscellaneous", () => {
 
     const widget = new Parent(env);
     await widget.mount(fixture);
-    expect(env.qweb.templates.parent.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.parent.fn.toString()).toMatchSnapshot();
   });
 });
 

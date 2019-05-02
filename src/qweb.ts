@@ -5,9 +5,12 @@ import { VNode, h } from "./vdom";
 //------------------------------------------------------------------------------
 
 export type EvalContext = { [key: string]: any };
-export type RawTemplate = string;
-export type CompiledTemplate<T> = (context: EvalContext, extra: any) => T;
-type ProcessedTemplate = Element;
+export type CompiledTemplate = (context: EvalContext, extra: any) => VNode;
+
+interface Template {
+  elem: Element;
+  fn: CompiledTemplate;
+}
 
 const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
   ","
@@ -34,6 +37,32 @@ const DISABLED_TAGS = [
 const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
 
+function parseXML(xml: string): Document {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xml, "text/xml");
+  if (doc.getElementsByTagName("parsererror").length) {
+    throw new Error("Invalid XML in template");
+  }
+  return doc;
+}
+
+const UTILS = {
+  h: h,
+  getFragment(str: string): DocumentFragment {
+    const temp = document.createElement("template");
+    temp.innerHTML = str;
+    return temp.content;
+  },
+  objectToAttrString(obj: Object): string {
+    let classes: string[] = [];
+    for (let k in obj) {
+      if (obj[k]) {
+        classes.push(k);
+      }
+    }
+    return classes.join(" ");
+  }
+};
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
@@ -181,12 +210,11 @@ export class Context {
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
-
 export class QWeb {
-  processedTemplates: { [name: string]: ProcessedTemplate } = {};
-  templates: { [name: string]: CompiledTemplate<VNode> } = {};
+  templates: { [name: string]: Template } = {};
   directives: Directive[] = [];
   directiveNames: { [key: string]: 1 };
+  utils = UTILS;
 
   constructor(data?: string) {
     this.directiveNames = {
@@ -221,24 +249,6 @@ export class QWeb {
     }
   }
 
-  utils = {
-    h: h,
-    getFragment(str: string): DocumentFragment {
-      const temp = document.createElement("template");
-      temp.innerHTML = str;
-      return temp.content;
-    },
-    objectToAttrString(obj: Object): string {
-      let classes: string[] = [];
-      for (let k in obj) {
-        if (obj[k]) {
-          classes.push(k);
-        }
-      }
-      return classes.join(" ");
-    }
-  };
-
   addDirective(dir: Directive) {
     this.directives.push(dir);
     this.directiveNames[dir.name] = 1;
@@ -251,28 +261,33 @@ export class QWeb {
    */
   addTemplate(
     name: string,
-    template: RawTemplate,
+    xmlString: string,
     allowDuplicates: boolean = false
   ) {
-    if (name in this.processedTemplates) {
-      if (allowDuplicates) {
-        return;
-      } else {
-        throw new Error(`Template ${name} already defined`);
-      }
+    if (name in this.templates && allowDuplicates) {
+      return;
     }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(template, "text/xml");
+    const doc = parseXML(xmlString);
     if (!doc.firstChild) {
       throw new Error("Invalid template (should not be empty)");
     }
-    if (doc.getElementsByTagName("parsererror").length) {
-      throw new Error("Invalid XML in template");
-    }
-    let elem = doc.firstChild as Element;
-    this._processTemplate(elem);
+    this._addTemplate(name, <Element>doc.firstChild);
+  }
 
-    this.processedTemplates[name] = elem;
+  _addTemplate(name: string, elem: Element) {
+    if (name in this.templates) {
+      throw new Error(`Template ${name} already defined`);
+    }
+    this._processTemplate(elem);
+    const template = {
+      elem,
+      fn: (context, extra) => {
+        const compiledFunction = this._compile(name, elem);
+        template.fn = compiledFunction;
+        return compiledFunction.call(this, context, extra);
+      }
+    };
+    this.templates[name] = template;
   }
 
   _processTemplate(elem: Element) {
@@ -322,19 +337,14 @@ export class QWeb {
    * the name given by the t-name attribute.
    */
   loadTemplates(xmlstr: string) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlstr, "text/xml");
-    if (doc.getElementsByTagName("parsererror").length) {
-      throw new Error("Invalid XML in template");
-    }
+    const doc = parseXML(xmlstr);
     const templates = doc.getElementsByTagName("templates")[0];
     if (!templates) {
       return;
     }
     for (let elem of <any>templates.children) {
       const name = elem.getAttribute("t-name");
-      this._processTemplate(elem);
-      this.processedTemplates[name] = elem;
+      this._addTemplate(name, elem);
     }
   }
   /**
@@ -343,22 +353,17 @@ export class QWeb {
    * @param {string} name the template should already have been added
    */
   render(name: string, context: EvalContext = {}, extra: any = null): VNode {
-    if (!(name in this.processedTemplates)) {
+    const template = this.templates[name];
+    if (!template) {
       throw new Error(`Template ${name} does not exist`);
     }
-    const template = this.templates[name] || this._compile(name);
-    return template.call(this, context, extra);
+    return template.fn.call(this, context, extra);
   }
 
-  _compile(name: string): CompiledTemplate<VNode> {
-    if (name in this.templates) {
-      return this.templates[name];
-    }
-
-    const mainNode = this.processedTemplates[name];
-    const isDebug = (<Element>mainNode).attributes.hasOwnProperty("t-debug");
+  _compile(name: string, elem: Element): CompiledTemplate {
+    const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new Context(name);
-    this._compileNode(mainNode, ctx);
+    this._compileNode(elem, ctx);
 
     if (ctx.shouldProtectContext) {
       ctx.code.unshift("    context = Object.create(context);");
@@ -379,7 +384,7 @@ export class QWeb {
         "context",
         "extra",
         ctx.code.join("\n")
-      ) as CompiledTemplate<VNode>;
+      ) as CompiledTemplate;
     } catch (e) {
       throw new Error(
         `Invalid generated code while compiling template '${ctx.templateName.replace(
@@ -390,12 +395,10 @@ export class QWeb {
     }
     if (isDebug) {
       console.log(
-        `Template: ${
-          this.processedTemplates[name].outerHTML
-        }\nCompiled code:\n` + template.toString()
+        `Template: ${this.templates[name].elem.outerHTML}\nCompiled code:\n` +
+          template.toString()
       );
     }
-    this.templates[name] = template;
     return template;
   }
 
@@ -845,7 +848,7 @@ const callDirective: Directive = {
       throw new Error("Invalid tag for t-call directive (should be 't')");
     }
     const subTemplate = node.getAttribute("t-call")!;
-    const nodeTemplate = qweb.processedTemplates[subTemplate];
+    const nodeTemplate = qweb.templates[subTemplate];
     if (!nodeTemplate) {
       throw new Error(`Cannot find template "${subTemplate}" (t-call)`);
     }
@@ -882,7 +885,7 @@ const callDirective: Directive = {
       .subContext("variables", Object.create(vars))
       .subContext("definedVariables", Object.create(definedVariables));
 
-    qweb._compileNode(nodeTemplate, subCtx);
+    qweb._compileNode(nodeTemplate.elem, subCtx);
 
     // close new scope
     if (hasNewVariables) {

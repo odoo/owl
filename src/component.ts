@@ -1,6 +1,6 @@
 import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
-import { QWeb } from "./qweb";
+import { QWeb, CompiledTemplate } from "./qweb";
 import { h, patch, VNode } from "./vdom";
 
 //------------------------------------------------------------------------------
@@ -28,6 +28,7 @@ interface Meta<T extends Env, Props> {
   renderPromise: Promise<VNode> | null;
   boundHandlers: { [key: number]: any };
   observer?: Observer;
+  render?: CompiledTemplate;
 }
 
 //------------------------------------------------------------------------------
@@ -319,7 +320,6 @@ export class Component<
     }
   }
 
-
   set(target: any, key: string | number, value: any) {
     this.__owl__.observer!.set(target, key, value);
   }
@@ -349,26 +349,28 @@ export class Component<
       this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
     }
   }
-  async _prepare(): Promise<VNode> {
+  _prepare(): Promise<VNode> {
     this.__owl__.renderProps = this.props;
-    this.__owl__.renderPromise = this.willStart().then(() => {
-      if (this.__owl__.isDestroyed) {
-        return Promise.resolve(h("div"));
-      }
-      this.__owl__.isStarted = true;
-      if (this.inlineTemplate) {
-        this.env.qweb.addTemplate(
-          this.inlineTemplate,
-          this.inlineTemplate,
-          true
-        );
-      }
-      this._observeState();
-      return this._render();
-    });
+    this.__owl__.renderPromise = this._prepareAndRender();
     return this.__owl__.renderPromise;
   }
 
+  async _prepareAndRender(): Promise<VNode> {
+    await this.willStart();
+    if (this.__owl__.isDestroyed) {
+      return Promise.resolve(h("div"));
+    }
+    this.__owl__.isStarted = true;
+    if (this.inlineTemplate) {
+      this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
+    }
+    this.__owl__.render = this.env.qweb.render.bind(
+      this.env.qweb,
+      this.inlineTemplate || this.template
+    );
+    this._observeState();
+    return this._render();
+  }
   async _render(
     force: boolean = false,
     patchQueue: any[] = []
@@ -378,11 +380,10 @@ export class Component<
     }
     this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
-    const template = this.inlineTemplate || this.template;
     if (this.__owl__.observer) {
       this.__owl__.observer.allowMutations = false;
     }
-    let vnode = this.env.qweb.render(template, this, {
+    let vnode = this.__owl__.render!(this, {
       promises,
       handlers: this.__owl__.boundHandlers,
       forceUpdate: force,

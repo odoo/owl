@@ -8,8 +8,13 @@ import SimpleHTTPServer
 
 HOST = '127.0.0.1'
 PORT = 8000
+URL = 'http://{0}:{1}/extras'.format(HOST, PORT)
 
 
+# We define our own handler here to remap owl.js GET requests to the Owl build
+# in dist/.  This is useful for the benchmarks and playground applications.
+# With this, we can simply copy the playground folder as is in the gh-page when
+# we want to update the playground.
 class OWLHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/extras/owl.js':
@@ -24,8 +29,7 @@ def start_server():
 
 if __name__ == "__main__":
     thread.start_new_thread(start_server, ())
-    url = 'http://{0}:{1}/extras'.format(HOST, PORT)
-    webbrowser.open_new(url)
+    webbrowser.open_new(URL)
 
     while True:
         try:

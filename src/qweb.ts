@@ -46,6 +46,42 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
+function getTimeout(delays: Array<string>, durations: Array<string>): number {
+  /* istanbul ignore next */
+  while (delays.length < durations.length) {
+    delays = delays.concat(delays);
+  }
+
+  return Math.max.apply(
+    null,
+    durations.map((d, i) => {
+      return toMs(d) + toMs(delays[i]);
+    })
+  );
+}
+
+// Old versions of Chromium (below 61.0.3163.100) formats floating pointer numbers
+// in a locale-dependent way, using a comma instead of a dot.
+// If comma is not replaced with a dot, the input will be rounded down (i.e. acting
+// as a floor function) causing unexpected behaviors
+function toMs(s: string): number {
+  return Number(s.slice(0, -1).replace(",", ".")) * 1000;
+}
+
+function whenTransitionEnd(elm: HTMLElement, cb) {
+  const styles = window.getComputedStyle(elm);
+  const delays: Array<string> = (styles.transitionDelay || "").split(", ");
+  const durations: Array<string> = (styles.transitionDuration || "").split(
+    ", "
+  );
+  const timeout: number = getTimeout(delays, durations);
+  if (timeout > 0) {
+    elm.addEventListener("transitionend", cb, { once: true });
+  } else {
+    cb();
+  }
+}
+
 const UTILS = {
   h: h,
   getFragment(str: string): DocumentFragment {
@@ -74,23 +110,24 @@ const UTILS = {
       elm.classList.remove(name + "-enter-active");
       elm.classList.remove(name + "-enter-to");
     };
-    elm.addEventListener("transitionend", finalize);
     this.nextFrame(() => {
       elm.classList.remove(name + "-enter");
       elm.classList.add(name + "-enter-to");
+      whenTransitionEnd(elm, finalize);
     });
   },
   transitionRemove(elm: HTMLElement, name: string, rm: () => void) {
     elm.classList.add(name + "-leave");
     elm.classList.add(name + "-leave-active");
-    elm.addEventListener("transitionend", () => {
-      elm.classList.remove(name + "-leave-active");
-      elm.classList.remove(name + "-enter-to");
-      rm();
-    });
+    const finalize = () => {
+        elm.classList.remove(name + "-leave-active");
+        elm.classList.remove(name + "-enter-to");
+        rm();
+    };
     this.nextFrame(() => {
       elm.classList.remove(name + "-leave");
       elm.classList.add(name + "-leave-to");
+      whenTransitionEnd(elm, finalize);
     });
   }
 };
@@ -971,7 +1008,7 @@ const forEachDirective: Directive = {
       if (
         !shouldWarn &&
         node.children.length === 1 &&
-        node.children[0].tagName !== 't' &&
+        node.children[0].tagName !== "t" &&
         !node.children[0].hasAttribute("t-key")
       ) {
         shouldWarn = true;

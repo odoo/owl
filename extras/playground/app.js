@@ -204,13 +204,15 @@ class App extends owl.Component {
           this.state.js
         }`;
         script.innerHTML = content;
-        const errorHandler = e => this.displayError(e.message);
+        const errorHandler = e => this.displayError(e.message || e.reason.message);
         iframe.contentWindow.addEventListener("error", errorHandler);
+        iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);
         setTimeout(function() {
           if (iframe.contentWindow) {
             iframe.contentWindow.removeEventListener("error", errorHandler);
+            iframe.contentWindow.removeEventListener("unhandledrejection", errorHandler);
           }
-        }, 100);
+        }, 200);
         doc.body.appendChild(script);
       });
       doc.head.appendChild(owlScript);

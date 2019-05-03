@@ -11,12 +11,14 @@
     - [`t-if` directive](#t-if-directive)
     - [Expression evaluation](#expression-evaluation)
     - [`t-att` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
+    - [`t-call` directive (sub templates)](#t-call-directive-sub-templates)
+
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
     - [`t-on` directive](#t-on-directive)
     - [Component: `t-widget`, `t-props`](#component-t-widget-t-props)
     - [`t-ref` directive](#t-ref-directive)
     - [`t-key` directive](#t-key-directive)
-    - [`t-transition` directive](#t-transition)
+    - [`t-transition` directive](#t-transition-directive)
     - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
     - [White spaces](#white-spaces)
     - [Root nodes](#root-nodes)
@@ -223,6 +225,55 @@ If an expression evaluates to a falsy value, it will not be set at all:
 <div t-att-foo="false"/>  <!-- result: <div></div> -->
 ```
 
+### `t-call` directive (sub templates)
+
+QWeb templates can be used for top level rendering, but they can also be used
+from within another template (to avoid duplication or give names to parts of
+templates), using the `t-call` directive:
+
+```xml
+<div t-name="other-template">
+    <p><t t-value="var"/></p>
+</div>
+
+<div t-name="main-template">
+    <t t-set="var" t-value="owl"/>
+    <t t-call="other-template"/>
+</div>
+```
+
+will be rendered as `<div><p>owl</p></div>`.  This example shows that the sub
+template is rendered with the execution context of the parent.  The sub template
+is actually inlined in the main template, but in a sub scope: variables defined
+in the sub template do not escape.
+
+Sometimes, one might want to pass information to the sub template.  In that case,
+the content of the body of the `t-call` directive is available as a special
+magic variable `0`:
+
+```xml
+<t t-name="other-template">
+    This template was called with content:
+    <t t-raw="0"/>
+</t>
+
+<div t-name="main-template">
+    <t t-call="other-template">
+        <em>content</em>
+    </t>
+</div>
+```
+
+will result in :
+
+```xml
+<div>
+    This template was called with content:
+    <em>content</em>
+</div>
+```
+
+
 ## JS/OWL Specific Extensions
 
 ### `t-on` directive
@@ -299,8 +350,7 @@ For example, a simple fade in/out effect can be done with this:
 }
 ```
 
-Note: you will find more information on animations in the [animation](doc/animations.md)
-documentation.
+Note: more information on animations are available [here](doc/animations.md).
 
 ### Debugging (`t-debug` and `t-log`)
 

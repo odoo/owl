@@ -81,7 +81,7 @@ class TabbedEditor extends owl.Component {
     // remove this for xml/css (?)
     this.editor.session.setOption("useWorker", false);
     this.editor.setValue(this.props[this.state.currentTab], -1);
-    this.editor.setFontSize("13px");
+    this.editor.setFontSize("12px");
     this.editor.setTheme("ace/theme/monokai");
     this.editor.session.setMode(MODES[this.state.currentTab]);
     const tabSize = this.state.currentTab === "xml" ? 2 : 4;
@@ -204,13 +204,15 @@ class App extends owl.Component {
           this.state.js
         }`;
         script.innerHTML = content;
-        const errorHandler = e => this.displayError(e.message);
+        const errorHandler = e => this.displayError(e.message || e.reason.message);
         iframe.contentWindow.addEventListener("error", errorHandler);
+        iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);
         setTimeout(function() {
           if (iframe.contentWindow) {
             iframe.contentWindow.removeEventListener("error", errorHandler);
+            iframe.contentWindow.removeEventListener("unhandledrejection", errorHandler);
           }
-        }, 100);
+        }, 200);
         doc.body.appendChild(script);
       });
       doc.head.appendChild(owlScript);

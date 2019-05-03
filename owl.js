@@ -1206,6 +1206,34 @@
         }
         return doc;
     }
+    function getTimeout(delays, durations) {
+        /* istanbul ignore next */
+        while (delays.length < durations.length) {
+            delays = delays.concat(delays);
+        }
+        return Math.max.apply(null, durations.map((d, i) => {
+            return toMs(d) + toMs(delays[i]);
+        }));
+    }
+    // Old versions of Chromium (below 61.0.3163.100) formats floating pointer numbers
+    // in a locale-dependent way, using a comma instead of a dot.
+    // If comma is not replaced with a dot, the input will be rounded down (i.e. acting
+    // as a floor function) causing unexpected behaviors
+    function toMs(s) {
+        return Number(s.slice(0, -1).replace(",", ".")) * 1000;
+    }
+    function whenTransitionEnd(elm, cb) {
+        const styles = window.getComputedStyle(elm);
+        const delays = (styles.transitionDelay || "").split(", ");
+        const durations = (styles.transitionDuration || "").split(", ");
+        const timeout = getTimeout(delays, durations);
+        if (timeout > 0) {
+            elm.addEventListener("transitionend", cb, { once: true });
+        }
+        else {
+            cb();
+        }
+    }
     const UTILS = {
         h: h,
         getFragment(str) {
@@ -1234,23 +1262,24 @@
                 elm.classList.remove(name + "-enter-active");
                 elm.classList.remove(name + "-enter-to");
             };
-            elm.addEventListener("transitionend", finalize);
             this.nextFrame(() => {
                 elm.classList.remove(name + "-enter");
                 elm.classList.add(name + "-enter-to");
+                whenTransitionEnd(elm, finalize);
             });
         },
         transitionRemove(elm, name, rm) {
             elm.classList.add(name + "-leave");
             elm.classList.add(name + "-leave-active");
-            elm.addEventListener("transitionend", () => {
+            const finalize = () => {
                 elm.classList.remove(name + "-leave-active");
                 elm.classList.remove(name + "-enter-to");
                 rm();
-            });
+            };
             this.nextFrame(() => {
                 elm.classList.remove(name + "-leave");
                 elm.classList.add(name + "-leave-to");
+                whenTransitionEnd(elm, finalize);
             });
         }
     };
@@ -1992,7 +2021,7 @@
                 }
                 if (!shouldWarn &&
                     node.children.length === 1 &&
-                    node.children[0].tagName !== 't' &&
+                    node.children[0].tagName !== "t" &&
                     !node.children[0].hasAttribute("t-key")) {
                     shouldWarn = true;
                 }
@@ -2490,8 +2519,8 @@
     exports.Store = Store;
 
     exports._version = '0.9.0';
-    exports._date = '2019-05-03T10:06:05.040Z';
-    exports._hash = '5b9abb6';
+    exports._date = '2019-05-03T12:34:47.418Z';
+    exports._hash = 'ab2a984';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

@@ -10,7 +10,7 @@ def start_server():
     httpd.serve_forever()
 
 thread.start_new_thread(start_server,())
-url = 'http://127.0.0.1:3600/benchmarks'
+url = 'http://127.0.0.1:3600/extras'
 webbrowser.open_new(url)
 
 while True:

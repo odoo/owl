@@ -1,4 +1,4 @@
-import { buildData, startMeasure, stopMeasure } from "/shared/utils.js";
+import { buildData, startMeasure, stopMeasure } from "../shared/utils.js";
 
 //------------------------------------------------------------------------------
 // Counter Widget

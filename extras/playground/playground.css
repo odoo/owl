@@ -1,0 +1,187 @@
+/* GENERIC STUFF  ****************************************/
+html,
+body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body {
+  margin: 0;
+}
+
+.btn {
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+}
+
+/* APPLICATION ROOT ****************************************/
+.playground {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: auto 6px 100%;
+}
+
+/* LEFT BAR ****************************************/
+.left-bar {
+  display: flex;
+  flex-direction: column;
+  background-color: #2f3129;
+}
+
+.left-bar.split {
+  grid-template-rows: 50px 60% 23px 30%;
+}
+
+.menubar {
+  background-color: #1c2128;
+  color: white;
+  font-size: 18px;
+  display: flex;
+  flex: 0 0 50px;
+  flex-direction: row-reverse;
+  align-items: center;
+  user-select: none;
+}
+
+.menubar select {
+  margin: 10px;
+  font-size: 16px;
+  height: 25px;
+}
+
+.run-code {
+  margin-right: 12px;
+  height: 25px;
+  border: 2px solid transparent;
+  opacity: 0.9;
+}
+
+.run-code:hover {
+  opacity: 1;
+}
+
+.flash {
+  background-position: center;
+  transition: background 0.5s;
+}
+
+.flash:active {
+  background-color: #41454a;
+  background-size: 100%;
+  transition: background 0s;
+}
+
+.layout-selector {
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+}
+
+/* TABBED EDITOR ****************************************/
+
+.tabbed-editor {
+  flex: 2 2 auto;
+  position: relative;
+}
+
+.separator.horizontal + .tabbed-editor {
+  flex: 1 1 auto;
+}
+
+.tabBar {
+  color: white;
+  height: 22px;
+  margin-top: -22px;
+  padding-left: 5px;
+  user-select: none;
+  width: 170px;
+}
+
+.tabBar.resizeable {
+  cursor: row-resize;
+  width: 100%;
+}
+
+.tab {
+  display: inline-block;
+  cursor: pointer;
+  padding: 0 8px;
+  font-size: 16px;
+  line-height: 20px;
+  width: 34px;
+  text-align: center;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  border-bottom: 2px solid gray;
+}
+
+.code-editor {
+  margin-top: 8px;
+  height: calc(100% - 10px);
+}
+
+/* SEPARATOR ****************************************/
+
+.separator {
+  background-color: #1c2128;
+  cursor: col-resize;
+}
+
+.separator.horizontal {
+  height: 20px;
+}
+
+/* RIGHT PANE ****************************************/
+.right-pane {
+  background-color: bisque;
+  overflow: hidden;
+}
+
+.right-pane iframe {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.right-pane iframe.disabled {
+  pointer-events: none;
+}
+
+.content {
+  height: 100%;
+}
+.right-pane .welcome {
+  text-align: center;
+  font-size: 30px;
+  color: gray;
+  margin-top: 50px;
+}
+
+.right-pane .url {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.url a {
+  color: gray;
+}
+
+.right-pane .note {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.right-pane .error {
+  height: 100%;
+  padding-top: 40%;
+  font-size: 30px;
+  color: darkred;
+  text-align: center;
+}

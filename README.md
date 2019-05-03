@@ -71,6 +71,7 @@ Some npm scripts are available:
 | `npm run minify`     | minify the prebuilt owl.js file                    |
 | `npm run test`       | run all tests                                      |
 | `npm run test:watch` | run all tests, and keep a watcher                  |
+| `npm run extras`     | build extras applications, start a static server   |
 
 ## Documentation
 

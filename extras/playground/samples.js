@@ -95,6 +95,60 @@ const WIDGET_COMPOSITION_CSS = `button {
     width: 220px;
 }`;
 
+const ANIMATION = `// This example will not work if your browser does not support ESNext class fields
+class App extends owl.Component {
+    template = "app";
+    state = {flag: 0};
+
+    toggle() {
+        this.state.flag = !this.state.flag;
+    }
+}
+
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({qweb});
+app.mount(document.body);
+`;
+
+const ANIMATION_XML = `<templates>
+  <div t-name="app">
+    <button t-on-click="toggle">
+      Click Me!
+    </button>
+    <div>
+      <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+    </div>
+  </div>
+</templates>
+`;
+
+const ANIMATION_CSS = `button {
+    width: 100px;
+    height: 30px;
+    font-size: 20px;
+}
+
+.square {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    color: white;
+    margin: 20px;
+    font-size: 24px;
+    line-height: 100px;
+    text-align: center;
+    line-height: 100px;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+`;
+
+
 const LIFECYCLE_DEMO = `class HookWidget extends owl.Component {
     constructor() {
         super(...arguments);
@@ -1075,6 +1129,12 @@ export const SAMPLES = [
     code: WIDGET_COMPOSITION,
     xml: WIDGET_COMPOSITION_XML,
     css: WIDGET_COMPOSITION_CSS
+  },
+  {
+    description: "Animations",
+    code: ANIMATION,
+    xml: ANIMATION_XML,
+    css: ANIMATION_CSS,
   },
   {
     description: "Lifecycle demo",

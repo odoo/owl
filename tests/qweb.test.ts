@@ -726,10 +726,29 @@ describe("foreach", () => {
   test("throws error if invalid loop expression", () => {
     qweb.addTemplate(
       "test",
-      `<div><t t-foreach="abc" t-as="item"><span/></t></div>`
+      `<div><t t-foreach="abc" t-as="item"><span t-key="item_index"/></t></div>`
     );
     expect(() => qweb.render("test")).toThrow("Invalid loop expression");
   });
+
+  test("warn if no key in some case", () => {
+    const consoleWarn = console.warn;
+    console.warn = jest.fn();
+
+    qweb.addTemplate(
+      "test",
+      `
+      <div>
+        <t t-foreach="[1, 2]" t-as="item">
+          <span><t t-esc="item"/></span>
+        </t>
+    </div>`
+    );
+    renderToString(qweb, "test");
+    expect(console.warn).toHaveBeenCalledTimes(1);
+    console.warn = consoleWarn;
+  });
+
 });
 
 describe("misc", () => {
@@ -966,7 +985,7 @@ describe("t-ref", () => {
     qweb.addTemplate("test", `
       <div>
         <t t-foreach="items" t-as="item">
-          <div t-ref="item"><t t-esc="item"/></div>
+          <div t-ref="item" t-key="item"><t t-esc="item"/></div>
         </t>
       </div>`);
     let refs: any = {};

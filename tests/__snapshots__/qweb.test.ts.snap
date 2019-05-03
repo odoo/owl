@@ -534,6 +534,37 @@ exports[`foreach iterate, position 1`] = `
 }"
 `;
 
+exports[`foreach warn if no key in some case 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = [1, 2];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        var c5 = [], p5 = {key:5};
+        var vn5 = h('span', p5, c5);
+        c1.push(vn5);
+        var _6 = context['item'];
+        if (_6 || _6 === 0) {
+            c5.push({text: _6});
+        }
+    }
+    return vn1;
+}"
+`;
+
 exports[`loading templates can initialize qweb with a string 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1367,7 +1398,7 @@ exports[`t-ref refs in a loop 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        var c5 = [], p5 = {key:5};
+        var c5 = [], p5 = {key:context['item']};
         var vn5 = h('div', p5, c5);
         c1.push(vn5);
         const ref6 = context['item']

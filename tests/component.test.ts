@@ -819,7 +819,7 @@ describe("composition", () => {
     class ParentWidget extends Widget {
       inlineTemplate = `
         <div>
-          <t t-foreach="state.list" t-ref="'child'" t-widget="Widget"/>
+          <t t-foreach="state.list" t-as="elem" t-ref="'child'" t-key="elem" t-widget="Widget"/>
         </div>`;
       widgets = { Widget };
       state = { list: <any>[] };
@@ -1029,7 +1029,7 @@ describe("composition", () => {
       inlineTemplate = `
         <div>
           <t t-foreach="state.numbers" t-as="number">
-            <t t-widget="ChildWidget" t-props="{n: number}"/>
+            <t t-widget="ChildWidget" t-key="number" t-props="{n: number}"/>
           </t>
         </div>`;
       state = {

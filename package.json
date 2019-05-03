@@ -13,7 +13,7 @@
     "dev": "npm-run-all --parallel \"build:* -- --watch\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "preextras": "npm run build && cp dist/owl.js extras/",
+    "preextras": "npm run build",
     "extras": "python extras/server.py"
   },
   "repository": {

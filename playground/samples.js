@@ -1,17 +1,17 @@
 const CLICK_COUNTER = `class ClickCounter extends owl.Component {
-  constructor() {
-    super(...arguments);
-    this.template = "clickcounter";
-    this.state = {value: 0};
-  }
+    constructor() {
+        super(...arguments);
+        this.template = "clickcounter";
+        this.state = { value: 0 };
+    }
 
-  increment() {
-    this.state.value++;
-  }
+    increment() {
+        this.state.value++;
+    }
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
-const counter = new ClickCounter({qweb});
+const counter = new ClickCounter({ qweb });
 counter.mount(document.body);
 `;
 
@@ -29,50 +29,50 @@ const CLICK_COUNTER_CSS = `button {
 
 const CLICK_COUNTER_ESNEXT = `// This example will not work if your browser does not support ESNext class fields
 class ClickCounter extends owl.Component {
-  template = "clickcounter";
-  state = {value: 0};
+    template = "clickcounter";
+    state = { value: 0 };
 
-  increment() {
-    this.state.value++;
-  }
+    increment() {
+        this.state.value++;
+    }
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
-const counter = new ClickCounter({qweb});
+const counter = new ClickCounter({ qweb });
 counter.mount(document.body);
 `;
 
 const WIDGET_COMPOSITION = `class ClickCounter extends owl.Component {
-  constructor(parent, props) {
-    super(parent, props);
-    this.template = "clickcounter";
-    this.state = {value: props.initialState || 0};
-  }
+    constructor(parent, props) {
+        super(parent, props);
+        this.template = "clickcounter";
+        this.state = { value: props.initialState || 0 };
+    }
 
-  increment() {
-    this.state.value++;
-  }
+    increment() {
+        this.state.value++;
+    }
 }
-
 
 let nextId = 1;
 
 class App extends owl.Component {
-  constructor() {
-    super(...arguments);
-    this.template = "app";
-    this.state = {counters: []}
-    this.widgets = { ClickCounter };
-  }
+    constructor() {
+        super(...arguments);
+        this.template = "app";
+        this.state = { counters: [] }
+        this.widgets = { ClickCounter };
+    }
 
-  addCounter() {
-    this.state.counters.push(nextId++);
-  }
+    addCounter() {
+        this.state.counters.push(nextId++);
+    }
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({qweb});
-app.mount(document.body);`;
+const app = new App({ qweb });
+app.mount(document.body);
+`;
 
 const WIDGET_COMPOSITION_XML = `<templates>
    <button t-name="clickcounter" t-on-click="increment">
@@ -95,54 +95,106 @@ const WIDGET_COMPOSITION_CSS = `button {
     width: 220px;
 }`;
 
-const LIFECYCLE_DEMO = `const { Component, QWeb } = owl;
+const ANIMATION = `// This example will not work if your browser does not support ESNext class fields
+class App extends owl.Component {
+    template = "app";
+    state = {flag: 0};
 
-class HookWidget extends Component {
-  constructor() {
-    super(...arguments);
-    this.template = "demo.hookwidget";
-    this.state = { n: 0 };
-    console.log("constructor");
-  }
-  async willStart() {
-    console.log("willstart");
-  }
-  mounted() {
-    console.log("mounted");
-  }
-  async willUpdateProps(nextProps) {
-    console.log("willUpdateProps", nextProps);
-  }
-  willPatch() {
-    console.log("willPatch");
-  }
-  patched() {
-    console.log("patched");
-  }
-  willUnmount() {
-    console.log("willUnmount");
-  }
-  increment() {
-    this.state.n++;
-  }
+    toggle() {
+        this.state.flag = !this.state.flag;
+    }
 }
 
-class ParentWidget extends Component {
-  constructor() {
-    super(...arguments);
-    this.widgets = { HookWidget };
-    this.template = "demo.parentwidget";
-    this.state = { n: 0, flag: true };
-  }
-  increment() {
-    this.state.n++;
-  }
-  toggleSubWidget() {
-    this.state.flag = !this.state.flag;
-  }
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({qweb});
+app.mount(document.body);
+`;
+
+const ANIMATION_XML = `<templates>
+  <div t-name="app">
+    <button t-on-click="toggle">
+      Click Me!
+    </button>
+    <div>
+      <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+    </div>
+  </div>
+</templates>
+`;
+
+const ANIMATION_CSS = `button {
+    width: 100px;
+    height: 30px;
+    font-size: 20px;
 }
 
-const qweb = new QWeb(TEMPLATES);
+.square {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    color: white;
+    margin: 20px;
+    font-size: 24px;
+    line-height: 100px;
+    text-align: center;
+    line-height: 100px;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+`;
+
+
+const LIFECYCLE_DEMO = `class HookWidget extends owl.Component {
+    constructor() {
+        super(...arguments);
+        this.template = "demo.hookwidget";
+        this.state = { n: 0 };
+        console.log("constructor");
+    }
+    async willStart() {
+        console.log("willstart");
+    }
+    mounted() {
+        console.log("mounted");
+    }
+    async willUpdateProps(nextProps) {
+        console.log("willUpdateProps", nextProps);
+    }
+    willPatch() {
+        console.log("willPatch");
+    }
+    patched() {
+        console.log("patched");
+    }
+    willUnmount() {
+        console.log("willUnmount");
+    }
+    increment() {
+        this.state.n++;
+    }
+}
+
+class ParentWidget extends owl.Component {
+    constructor() {
+        super(...arguments);
+        this.widgets = { HookWidget };
+        this.template = "demo.parentwidget";
+        this.state = { n: 0, flag: true };
+    }
+    increment() {
+        this.state.n++;
+    }
+    toggleSubWidget() {
+        this.state.flag = !this.state.flag;
+    }
+}
+
+const qweb = new owl.QWeb(TEMPLATES);
 const widget = new ParentWidget({ qweb });
 widget.mount(document.body);
 `;
@@ -164,92 +216,88 @@ const BENCHMARK_APP = `//-------------------------------------------------------
 const messages = [];
 const authors = ["Aaron", "David", "Vincent"];
 const content = [
-  "Lorem ipsum dolor sit amet",
-  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem",
-  "Excepteur sint occaecat cupidatat non proident"
+    "Lorem ipsum dolor sit amet",
+    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem",
+    "Excepteur sint occaecat cupidatat non proident"
 ];
 
 function chooseRandomly(array) {
-  const index = Math.floor(Math.random() * array.length);
-  return array[index];
+    const index = Math.floor(Math.random() * array.length);
+    return array[index];
 }
 
 for (let i = 1; i < 16000; i++) {
-  messages.push({
-    id: i,
-    author: chooseRandomly(authors),
-    msg: \`\${i}: \${chooseRandomly(content)}\`,
-    likes: 0
-  });
+    messages.push({
+        id: i,
+        author: chooseRandomly(authors),
+        msg: \`\${i}: \${chooseRandomly(content)}\`,
+        likes: 0
+    });
 }
 
 //------------------------------------------------------------------------------
 // Counter Widget
 //------------------------------------------------------------------------------
 class Counter extends owl.Component {
-  constructor(parent, props) {
-    super(parent, props);
-    this.template = "counter";
-    this.state = {
-      counter: props.initialState || 0
-    };
-  }
+    constructor(parent, props) {
+        super(parent, props);
+        this.template = "counter";
+        this.state = { counter: props.initialState || 0 };
+    }
 
-  increment(delta) {
-    this.state.counter += delta;
-  }
+    increment(delta) {
+        this.state.counter += delta;
+    }
 }
 
 //------------------------------------------------------------------------------
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.Component {
-  constructor() {
-    super(...arguments);
-    this.template = "message";
-    this.widgets = { Counter };
-  }
+    constructor() {
+        super(...arguments);
+        this.template = "message";
+        this.widgets = { Counter };
+    }
 
-  removeMessage() {
-    this.trigger("remove_message", {
-      id: this.props.id
-    });
-  }
+    removeMessage() {
+        this.trigger("remove_message", {
+            id: this.props.id
+        });
+    }
 }
 
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  constructor() {
-    super(...arguments);
-    this.template = "root";
-    this.widgets = { Message };
-    this.state = {
-      messages: messages.slice(0, 10)
-    };
-  }
+    constructor() {
+        super(...arguments);
+        this.template = "root";
+        this.widgets = { Message };
+        this.state = { messages: messages.slice(0, 10) };
+    }
 
-  setMessageCount(n) {
-    this.state.messages = messages.slice(0,n);
-  }
+    setMessageCount(n) {
+        this.state.messages = messages.slice(0, n);
+    }
 
-  removeMessage(data) {
-    const index = messages.findIndex(m => m.id === data.id);
-    this.state.messages.splice(index, 1);
-  }
+    removeMessage(data) {
+        const index = messages.findIndex(m => m.id === data.id);
+        this.state.messages.splice(index, 1);
+    }
 
-  increment(delta) {
-    const n = this.state.messages.length + delta;
-    this.setMessageCount(n);
-  }
+    increment(delta) {
+        const n = this.state.messages.length + delta;
+        this.setMessageCount(n);
+    }
 }
 
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
 const env = {
-  qweb: new owl.QWeb(TEMPLATES)
+    qweb: new owl.QWeb(TEMPLATES)
 };
 
 const app = new App(env);
@@ -349,177 +397,193 @@ const LOCALSTORAGE_KEY = "todos-odoo";
 // Store Definition
 //------------------------------------------------------------------------------
 const actions = {
-  addTodo({ commit }, title) {
-    commit("addTodo", title);
-  },
-  removeTodo({ commit }, id) {
-    commit("removeTodo", id);
-  },
-  toggleTodo({ state, commit }, id) {
-    const todo = state.todos.find(t => t.id === id);
-    commit("editTodo", { id, completed: !todo.completed });
-  },
-  clearCompleted({ state, commit }) {
-    state.todos
-      .filter(todo => todo.completed)
-      .forEach(todo => {
-        commit("removeTodo", todo.id);
-      });
-  },
-  toggleAll({ state, commit }, completed) {
-    state.todos.forEach(todo => {
-      commit("editTodo", { id: todo.id, completed });
-    });
-  },
-  editTodo({ commit }, { id, title }) {
-    commit("editTodo", { id, title });
-  }
+    addTodo({ commit }, title) {
+        commit("addTodo", title);
+    },
+    removeTodo({ commit }, id) {
+        commit("removeTodo", id);
+    },
+    toggleTodo({ state, commit }, id) {
+        const todo = state.todos.find(t => t.id === id);
+        commit("editTodo", { id, completed: !todo.completed });
+    },
+    clearCompleted({ state, commit }) {
+        state.todos
+            .filter(todo => todo.completed)
+            .forEach(todo => {
+                commit("removeTodo", todo.id);
+            });
+    },
+    toggleAll({ state, commit }, completed) {
+        state.todos.forEach(todo => {
+            commit("editTodo", {
+                id: todo.id,
+                completed
+            });
+        });
+    },
+    editTodo({ commit }, { id, title }) {
+        commit("editTodo", { id, title });
+    }
 };
 
 const mutations = {
-  addTodo({ state }, title) {
-    const id = state.nextId++;
-    const todo = { id, title, completed: false };
-    state.todos.push(todo);
-  },
-  removeTodo({ state }, id) {
-    const index = state.todos.findIndex(t => t.id === id);
-    state.todos.splice(index, 1);
-  },
-  editTodo({ state }, { id, title, completed }) {
-    const todo = state.todos.find(t => t.id === id);
-    if (title !== undefined) {
-      todo.title = title;
+    addTodo({ state }, title) {
+        const id = state.nextId++;
+        const todo = {
+            id,
+            title,
+            completed: false
+        };
+        state.todos.push(todo);
+    },
+    removeTodo({ state }, id) {
+        const index = state.todos.findIndex(t => t.id === id);
+        state.todos.splice(index, 1);
+    },
+    editTodo({ state }, { id, title, completed }) {
+        const todo = state.todos.find(t => t.id === id);
+        if (title !== undefined) {
+            todo.title = title;
+        }
+        if (completed !== undefined) {
+            todo.completed = completed;
+        }
     }
-    if (completed !== undefined) {
-      todo.completed = completed;
-    }
-  }
 };
 
 function makeStore() {
-  const todos = JSON.parse(
-    window.localStorage.getItem(LOCALSTORAGE_KEY) || "[]"
-  );
-  const nextId = Math.max(0, ...todos.map(t => t.id || 0)) + 1;
-  const state = { todos, nextId };
-  const store = new owl.Store({ state, actions, mutations });
-  store.on("update", null, () => {
-    const state = JSON.stringify(store.state.todos);
-    window.localStorage.setItem(LOCALSTORAGE_KEY, state);
-  });
-  return store;
+    const todos = JSON.parse(
+        window.localStorage.getItem(LOCALSTORAGE_KEY) || "[]"
+    );
+    const nextId = Math.max(0, ...todos.map(t => t.id || 0)) + 1;
+    const state = {
+        todos,
+        nextId
+    };
+    const store = new owl.Store({
+        state,
+        actions,
+        mutations
+    });
+    store.on("update", null, () => {
+        const state = JSON.stringify(store.state.todos);
+        window.localStorage.setItem(LOCALSTORAGE_KEY, state);
+    });
+    return store;
 }
 
 //------------------------------------------------------------------------------
 // TodoItem
 //------------------------------------------------------------------------------
 class TodoItem extends owl.Component {
-  template = "todoitem";
-  state = { isEditing: false };
+    template = "todoitem";
+    state = { isEditing: false };
 
-  removeTodo() {
-    this.env.store.dispatch("removeTodo", this.props.id);
-  }
-
-  toggleTodo() {
-    this.env.store.dispatch("toggleTodo", this.props.id);
-  }
-
-  async editTodo() {
-    this.state.isEditing = true;
-    setTimeout(() => {
-      this.refs.input.value = "";
-      this.refs.input.focus();
-      this.refs.input.value = this.props.title;
-    });
-  }
-
-  handleKeyup(ev) {
-    if (ev.keyCode === ENTER_KEY) {
-      this.updateTitle(ev.target.value);
+    removeTodo() {
+        this.env.store.dispatch("removeTodo", this.props.id);
     }
-    if (ev.keyCode === ESC_KEY) {
-      ev.target.value = this.props.title;
-      this.state.isEditing = false;
-    }
-  }
 
-  handleBlur(ev) {
-    this.updateTitle(ev.target.value);
-  }
- 
-  updateTitle(title) {
-    const value = title.trim();
-    if (!value) {
-      this.removeTodo(this.props.id);
-    } else {
-      this.env.store.dispatch("editTodo", {
-        id: this.props.id,
-        title: value
-      });
-      this.state.isEditing = false;
+    toggleTodo() {
+        this.env.store.dispatch("toggleTodo", this.props.id);
     }
-  }
+
+    async editTodo() {
+        this.state.isEditing = true;
+        setTimeout(() => {
+            this.refs.input.value = "";
+            this.refs.input.focus();
+            this.refs.input.value = this.props.title;
+        });
+    }
+
+    handleKeyup(ev) {
+        if (ev.keyCode === ENTER_KEY) {
+            this.updateTitle(ev.target.value);
+        }
+        if (ev.keyCode === ESC_KEY) {
+            ev.target.value = this.props.title;
+            this.state.isEditing = false;
+        }
+    }
+
+    handleBlur(ev) {
+        this.updateTitle(ev.target.value);
+    }
+
+    updateTitle(title) {
+        const value = title.trim();
+        if (!value) {
+            this.removeTodo(this.props.id);
+        } else {
+            this.env.store.dispatch("editTodo", {
+                id: this.props.id,
+                title: value
+            });
+            this.state.isEditing = false;
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
 function mapStateToProps(state) {
-  return { todos: state.todos };
+    return {
+        todos: state.todos
+    };
 }
 
 class TodoApp extends owl.Component {
-  template = "todoapp";
-  widgets = { TodoItem };
-  state = { filter: "all" };
+    template = "todoapp";
+    widgets = { TodoItem };
+    state = { filter: "all" };
 
-  get visibleTodos() {
-    let todos = this.props.todos;
-    if (this.state.filter === "active") {
-      todos = todos.filter(t => !t.completed);
+    get visibleTodos() {
+        let todos = this.props.todos;
+        if (this.state.filter === "active") {
+            todos = todos.filter(t => !t.completed);
+        }
+        if (this.state.filter === "completed") {
+            todos = todos.filter(t => t.completed);
+        }
+        return todos;
     }
-    if (this.state.filter === "completed") {
-      todos = todos.filter(t => t.completed);
+
+    get allChecked() {
+        return this.props.todos.every(todo => todo.completed);
     }
-    return todos;
-  }
 
-  get allChecked() {
-    return this.props.todos.every(todo => todo.completed);
-  }
-
-  get remaining() {
-    return this.props.todos.filter(todo => !todo.completed).length;
-  }
-
-  get remainingText() {
-    const items = this.remaining < 2 ? "item" : "items";
-    return \` \${items} left\`;
-  }
-
-  addTodo(ev) {
-    if (ev.keyCode === ENTER_KEY) {
-      const title = ev.target.value;
-      if (title.trim()) {
-        this.env.store.dispatch("addTodo", title);
-      }
-      ev.target.value = "";
+    get remaining() {
+        return this.props.todos.filter(todo => !todo.completed).length;
     }
-  }
 
-  clearCompleted() {
-    this.env.store.dispatch("clearCompleted");
-  }
+    get remainingText() {
+        const items = this.remaining < 2 ? "item" : "items";
+        return \` \${items} left\`;
+    }
 
-  toggleAll() {
-    this.env.store.dispatch("toggleAll", !this.allChecked);
-  }
+    addTodo(ev) {
+        if (ev.keyCode === ENTER_KEY) {
+            const title = ev.target.value;
+            if (title.trim()) {
+                this.env.store.dispatch("addTodo", title);
+            }
+            ev.target.value = "";
+        }
+    }
 
-  setFilter(filter) {
-    this.state.filter = filter;
-  }
+    clearCompleted() {
+        this.env.store.dispatch("clearCompleted");
+    }
+
+    toggleAll() {
+        this.env.store.dispatch("toggleAll", !this.allChecked);
+    }
+
+    setFilter(filter) {
+        this.state.filter = filter;
+    }
 }
 
 const ConnectedTodoApp = owl.connect(mapStateToProps)(TodoApp);
@@ -530,8 +594,8 @@ const ConnectedTodoApp = owl.connect(mapStateToProps)(TodoApp);
 const store = makeStore();
 const qweb = new owl.QWeb(TEMPLATES);
 const env = {
-  qweb,
-  store
+    qweb,
+    store
 };
 const app = new ConnectedTodoApp(env);
 app.mount(document.body);
@@ -970,43 +1034,43 @@ html .clear-completed:active {
 }
 `;
 
-const RESPONSIVE = `const { Component, QWeb, utils } = owl;
-
-class SubWidget extends Component {
-  constructor() {
-    super(...arguments);
-    this.template = "subwidget";
-  }
+const RESPONSIVE = `class SubWidget extends owl.Component {
+    constructor() {
+        super(...arguments);
+        this.template = "subwidget";
+    }
 }
 
-class ResponsiveWidget extends Component {
-  constructor() {
-    super(...arguments);
-    this.template = "responsivewidget";
-    this.widgets = { SubWidget };
-  }
+class ResponsiveWidget extends owl.Component {
+    constructor() {
+        super(...arguments);
+        this.template = "responsivewidget";
+        this.widgets = { SubWidget };
+    }
 }
 
 function isMobile() {
-  return window.innerWidth <= 768;
+    return window.innerWidth <= 768;
 }
 
 const env = {
-  qweb: new QWeb(TEMPLATES),
-  isMobile: isMobile()
+    qweb: new owl.QWeb(TEMPLATES),
+    isMobile: isMobile()
 };
 
 const widget = new ResponsiveWidget(env);
 widget.mount(document.body);
 
 window.addEventListener(
-  "resize",
-  utils.debounce(function() {
-    const _isMobile = isMobile();
-    if (_isMobile !== env.isMobile) {
-      widget.updateEnv({ isMobile: _isMobile });
-    }
-  }, 20)
+    "resize",
+    owl.utils.debounce(function() {
+        const _isMobile = isMobile();
+        if (_isMobile !== env.isMobile) {
+            widget.updateEnv({
+                isMobile: _isMobile
+            });
+        }
+    }, 20)
 );
 `;
 
@@ -1039,13 +1103,12 @@ const RESPONSIVE_CSS = `.info {
     margin: 30px;
 }`;
 
-const EMPTY = `const {Component, QWeb} = owl;
-class Widget extends Component {
+const EMPTY = `class App extends owl.Component {
 }
 
-const qweb = new QWeb(TEMPLATES);
-const widget = new Widget({qweb});
-widget.mount(document.body);
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({qweb});
+app.mount(document.body);
 `;
 
 export const SAMPLES = [
@@ -1066,6 +1129,12 @@ export const SAMPLES = [
     code: WIDGET_COMPOSITION,
     xml: WIDGET_COMPOSITION_XML,
     css: WIDGET_COMPOSITION_CSS
+  },
+  {
+    description: "Animations",
+    code: ANIMATION,
+    xml: ANIMATION_XML,
+    css: ANIMATION_CSS,
   },
   {
     description: "Lifecycle demo",

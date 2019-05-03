@@ -6,7 +6,7 @@ async function owlSourceCode() {
   if (owlJS) {
     return owlJS;
   }
-  const result = await fetch("/libs/owl.js");
+  const result = await fetch("../owl.js");
   owlJS = await result.text();
   return owlJS;
 }
@@ -196,7 +196,7 @@ class App extends owl.Component {
       // inject js
       const owlScript = doc.createElement("script");
       owlScript.type = "text/javascript";
-      owlScript.src = "../libs/owl.js";
+      owlScript.src = "../owl.js";
       owlScript.addEventListener("load", () => {
         const script = doc.createElement("script");
         script.type = "text/javascript";
@@ -278,8 +278,8 @@ class App extends owl.Component {
   }
 
   async downloadCode() {
-    await owl.utils.loadJS("../libs/FileSaver.min.js");
-    await owl.utils.loadJS("../libs/jszip.min.js");
+    await owl.utils.loadJS("libs/FileSaver.min.js");
+    await owl.utils.loadJS("libs/jszip.min.js");
 
     const zip = new JSZip();
 

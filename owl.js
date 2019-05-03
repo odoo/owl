@@ -965,23 +965,6 @@
         //--------------------------------------------------------------------------
         // Public
         //--------------------------------------------------------------------------
-        /**
-         * Attach a child widget to a given html element
-         *
-         * This is most of the time not necessary, since widgets should primarily be
-         * created/managed with the t-widget directive in a qweb template.  However,
-         * for the cases where we need more control, this method will do what is
-         * necessary to make sure all the proper hooks are called (for example,
-         * mounted/willUnmount)
-         *
-         * Note that this method makes a few assumptions:
-         * - the child widget is indeed a child of the current widget
-         * - the target is inside the dom of the current widget (typically a ref)
-         */
-        attachChild(child, target) {
-            target.appendChild(child.el);
-            child.__mount();
-        }
         async mount(target) {
             const vnode = await this._prepare();
             if (this.__owl__.isDestroyed) {
@@ -991,63 +974,93 @@
             this._patch(vnode);
             target.appendChild(this.el);
             if (document.body.contains(target)) {
-                this._visitSubTree(w => {
-                    if (!w.__owl__.isMounted && this.el.contains(w.el)) {
-                        w.__owl__.isMounted = true;
-                        w.mounted();
-                        return true;
-                    }
-                    return false;
-                });
+                this._callMounted();
+            }
+        }
+        _callMounted() {
+            const children = this.__owl__.children;
+            for (let id in children) {
+                const comp = children[id];
+                if (!comp.__owl__.isMounted && this.el.contains(comp.el)) {
+                    comp._callMounted();
+                }
+            }
+            this.__owl__.isMounted = true;
+            this.mounted();
+        }
+        _callWillUnmount() {
+            this.willUnmount();
+            this.__owl__.isMounted = false;
+            const children = this.__owl__.children;
+            for (let id in children) {
+                const comp = children[id];
+                if (comp.__owl__.isMounted) {
+                    comp._callWillUnmount();
+                }
             }
         }
         unmount() {
-            if (this.el) {
-                this._visitSubTree(w => {
-                    if (w.__owl__.isMounted) {
-                        w.willUnmount();
-                        w.__owl__.isMounted = false;
-                        return true;
-                    }
-                    return false;
-                });
+            if (this.__owl__.isMounted) {
+                this._callWillUnmount();
                 this.el.remove();
             }
         }
-        async render(force = false) {
+        async render(force = false, patchQueue) {
             if (this.__owl__.isDestroyed) {
                 return;
             }
-            const renderVDom = this._render(force);
+            const shouldCallPatchHooks = !patchQueue;
+            if (shouldCallPatchHooks) {
+                patchQueue = [];
+            }
+            const renderVDom = this._render(force, patchQueue);
             const renderId = this.__owl__.renderId;
             const vnode = await renderVDom;
             if (renderId === this.__owl__.renderId) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
+                if (shouldCallPatchHooks) {
+                    for (let i = 0; i < patchQueue.length; i++) {
+                        const c = patchQueue[i];
+                        c.__owl__.willPatchVal = c.willPatch();
+                    }
+                }
                 this._patch(vnode);
+                if (shouldCallPatchHooks) {
+                    for (let i = patchQueue.length - 1; i >= 0; i--) {
+                        const c = patchQueue[i];
+                        c.patched(c.__owl__.willPatchVal);
+                    }
+                }
             }
         }
         destroy() {
             if (!this.__owl__.isDestroyed) {
-                for (let id in this.__owl__.children) {
-                    this.__owl__.children[id].destroy();
+                const el = this.el;
+                this._destroy(this.__owl__.parent);
+                if (el) {
+                    el.remove();
                 }
-                if (this.__owl__.isMounted) {
-                    this.willUnmount();
-                }
-                if (this.el) {
-                    this.el.remove();
-                    this.__owl__.isMounted = false;
-                    delete this.__owl__.vnode;
-                }
-                if (this.__owl__.parent) {
-                    let id = this.__owl__.id;
-                    delete this.__owl__.parent.__owl__.children[id];
-                    this.__owl__.parent = null;
-                }
-                this.clear();
-                this.__owl__.isDestroyed = true;
             }
+        }
+        _destroy(parent) {
+            const isMounted = this.__owl__.isMounted;
+            if (isMounted) {
+                this.willUnmount();
+                this.__owl__.isMounted = false;
+            }
+            const children = Object.values(this.__owl__.children);
+            for (let child of children) {
+                child._destroy(this);
+            }
+            if (parent) {
+                let id = this.__owl__.id;
+                delete parent.__owl__.children[id];
+                this.__owl__.parent = null;
+            }
+            this.clear();
+            this.__owl__.isDestroyed = true;
+            delete this.__owl__.vnode;
         }
         shouldUpdate(nextProps) {
             return true;
@@ -1070,61 +1083,61 @@
                 await this.render(true);
             }
         }
-        async updateProps(nextProps, forceUpdate = false) {
-            const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
-            return shouldUpdate ? this._updateProps(nextProps) : Promise.resolve();
-        }
         set(target, key, value) {
             this.__owl__.observer.set(target, key, value);
         }
         //--------------------------------------------------------------------------
         // Private
         //--------------------------------------------------------------------------
-        async _updateProps(nextProps) {
-            await this.willUpdateProps(nextProps);
-            this.props = nextProps;
-            await this.render();
+        async _updateProps(nextProps, forceUpdate = false, patchQueue) {
+            const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
+            if (shouldUpdate) {
+                await this.willUpdateProps(nextProps);
+                this.props = nextProps;
+                await this.render(false, patchQueue);
+            }
         }
         _patch(vnode) {
             this.__owl__.renderPromise = null;
             if (this.__owl__.vnode) {
-                const isMounted = this.__owl__.isMounted;
-                const snapshot = isMounted && this.willPatch();
                 this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-                if (isMounted) {
-                    this.patched(snapshot);
-                }
             }
             else {
                 this.__owl__.vnode = patch(document.createElement(vnode.sel), vnode);
             }
         }
-        async _prepare() {
+        _prepare() {
             this.__owl__.renderProps = this.props;
-            this.__owl__.renderPromise = this.willStart().then(() => {
-                if (this.__owl__.isDestroyed) {
-                    return Promise.resolve(h("div"));
-                }
-                this.__owl__.isStarted = true;
-                if (this.inlineTemplate) {
-                    this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
-                }
-                this._observeState();
-                return this._render();
-            });
+            this.__owl__.renderPromise = this._prepareAndRender();
             return this.__owl__.renderPromise;
         }
-        async _render(force = false) {
+        async _prepareAndRender() {
+            await this.willStart();
+            if (this.__owl__.isDestroyed) {
+                return Promise.resolve(h("div"));
+            }
+            this.__owl__.isStarted = true;
+            if (this.inlineTemplate) {
+                this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
+            }
+            this.__owl__.render = this.env.qweb.render.bind(this.env.qweb, this.inlineTemplate || this.template);
+            this._observeState();
+            return this._render();
+        }
+        async _render(force = false, patchQueue = []) {
+            if (this.__owl__.isMounted) {
+                patchQueue.push(this);
+            }
             this.__owl__.renderId++;
             const promises = [];
-            const template = this.inlineTemplate || this.template;
             if (this.__owl__.observer) {
                 this.__owl__.observer.allowMutations = false;
             }
-            let vnode = this.env.qweb.render(template, this, {
+            let vnode = this.__owl__.render(this, {
                 promises,
                 handlers: this.__owl__.boundHandlers,
-                forceUpdate: force
+                forceUpdate: force,
+                patchQueue
             });
             if (this.__owl__.observer) {
                 this.__owl__.observer.allowMutations = true;
@@ -1144,32 +1157,17 @@
          */
         _mount(vnode, elm) {
             this.__owl__.vnode = patch(elm, vnode);
-            this.__mount();
+            if (this.__owl__.parent &&
+                this.__owl__.parent.__owl__.isMounted &&
+                !this.__owl__.isMounted) {
+                this._callMounted();
+            }
             return this.__owl__.vnode;
         }
         __mount() {
-            if (this.__owl__.isMounted) {
-                return;
-            }
-            this._observeState();
-            if (this.__owl__.parent) {
-                if (this.__owl__.parent.__owl__.isMounted) {
-                    this.__owl__.isMounted = true;
-                    this.mounted();
-                    const children = this.__owl__.children;
-                    for (let id in children) {
-                        children[id].__mount();
-                    }
-                }
-            }
-        }
-        _visitSubTree(callback) {
-            const shouldVisitChildren = callback(this);
-            if (shouldVisitChildren) {
-                const children = this.__owl__.children;
-                for (let id in children) {
-                    children[id]._visitSubTree(callback);
-                }
+            if (!this.__owl__.isMounted) {
+                this.__owl__.isMounted = true;
+                this.mounted();
             }
         }
         _observeState() {
@@ -1200,6 +1198,62 @@
     ];
     const lineBreakRE = /[\r\n]/;
     const whitespaceRE = /\s+/g;
+    function parseXML(xml) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xml, "text/xml");
+        if (doc.getElementsByTagName("parsererror").length) {
+            throw new Error("Invalid XML in template");
+        }
+        return doc;
+    }
+    const UTILS = {
+        h: h,
+        getFragment(str) {
+            const temp = document.createElement("template");
+            temp.innerHTML = str;
+            return temp.content;
+        },
+        objectToAttrString(obj) {
+            let classes = [];
+            for (let k in obj) {
+                if (obj[k]) {
+                    classes.push(k);
+                }
+            }
+            return classes.join(" ");
+        },
+        nextFrame(cb) {
+            requestAnimationFrame(() => requestAnimationFrame(cb));
+        },
+        transitionCreate(elm, name) {
+            elm.classList.add(name + "-enter");
+            elm.classList.add(name + "-enter-active");
+        },
+        transitionInsert(elm, name) {
+            const finalize = () => {
+                elm.classList.remove(name + "-enter-active");
+                elm.classList.remove(name + "-enter-to");
+            };
+            elm.addEventListener("transitionend", finalize);
+            this.nextFrame(() => {
+                elm.classList.remove(name + "-enter");
+                elm.classList.add(name + "-enter-to");
+            });
+        },
+        transitionRemove(elm, name, rm) {
+            elm.classList.add(name + "-leave");
+            elm.classList.add(name + "-leave-active");
+            elm.addEventListener("transitionend", () => {
+                elm.classList.remove(name + "-leave-active");
+                elm.classList.remove(name + "-enter-to");
+                rm();
+            });
+            this.nextFrame(() => {
+                elm.classList.remove(name + "-leave");
+                elm.classList.add(name + "-leave-to");
+            });
+        }
+    };
     //------------------------------------------------------------------------------
     // Compilation Context
     //------------------------------------------------------------------------------
@@ -1335,26 +1389,9 @@
     //------------------------------------------------------------------------------
     class QWeb {
         constructor(data) {
-            this.processedTemplates = {};
             this.templates = {};
             this.directives = [];
-            this.utils = {
-                h: h,
-                getFragment(str) {
-                    const temp = document.createElement("template");
-                    temp.innerHTML = str;
-                    return temp.content;
-                },
-                objectToAttrString(obj) {
-                    let classes = [];
-                    for (let k in obj) {
-                        if (obj[k]) {
-                            classes.push(k);
-                        }
-                    }
-                    return classes.join(" ");
-                }
-            };
+            this.utils = UTILS;
             this.directiveNames = {
                 as: 1,
                 name: 1,
@@ -1364,7 +1401,8 @@
                 props: 1,
                 key: 1,
                 keepalive: 1,
-                debug: 1
+                debug: 1,
+                log: 1
             };
             [
                 forEachDirective,
@@ -1377,6 +1415,9 @@
                 callDirective,
                 onDirective,
                 refDirective,
+                transitionDirective,
+                debugDirective,
+                logDirective,
                 widgetDirective
             ].forEach(d => this.addDirective(d));
             if (data) {
@@ -1392,26 +1433,30 @@
          * Add a template to the internal template map.  Note that it is not
          * immediately compiled.
          */
-        addTemplate(name, template, allowDuplicates = false) {
-            if (name in this.processedTemplates) {
-                if (allowDuplicates) {
-                    return;
-                }
-                else {
-                    throw new Error(`Template ${name} already defined`);
-                }
+        addTemplate(name, xmlString, allowDuplicates = false) {
+            if (name in this.templates && allowDuplicates) {
+                return;
             }
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(template, "text/xml");
+            const doc = parseXML(xmlString);
             if (!doc.firstChild) {
                 throw new Error("Invalid template (should not be empty)");
             }
-            if (doc.getElementsByTagName("parsererror").length) {
-                throw new Error("Invalid XML in template");
+            this._addTemplate(name, doc.firstChild);
+        }
+        _addTemplate(name, elem) {
+            if (name in this.templates) {
+                throw new Error(`Template ${name} already defined`);
             }
-            let elem = doc.firstChild;
             this._processTemplate(elem);
-            this.processedTemplates[name] = elem;
+            const template = {
+                elem,
+                fn: (context, extra) => {
+                    const compiledFunction = this._compile(name, elem);
+                    template.fn = compiledFunction;
+                    return compiledFunction.call(this, context, extra);
+                }
+            };
+            this.templates[name] = template;
         }
         _processTemplate(elem) {
             let tbranch = elem.querySelectorAll("[t-elif], [t-else]");
@@ -1453,19 +1498,14 @@
          * the name given by the t-name attribute.
          */
         loadTemplates(xmlstr) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(xmlstr, "text/xml");
-            if (doc.getElementsByTagName("parsererror").length) {
-                throw new Error("Invalid XML in template");
-            }
+            const doc = parseXML(xmlstr);
             const templates = doc.getElementsByTagName("templates")[0];
             if (!templates) {
                 return;
             }
             for (let elem of templates.children) {
                 const name = elem.getAttribute("t-name");
-                this._processTemplate(elem);
-                this.processedTemplates[name] = elem;
+                this._addTemplate(name, elem);
             }
         }
         /**
@@ -1474,20 +1514,16 @@
          * @param {string} name the template should already have been added
          */
         render(name, context = {}, extra = null) {
-            if (!(name in this.processedTemplates)) {
+            const template = this.templates[name];
+            if (!template) {
                 throw new Error(`Template ${name} does not exist`);
             }
-            const template = this.templates[name] || this._compile(name);
-            return template.call(this, context, extra);
+            return template.fn.call(this, context, extra);
         }
-        _compile(name) {
-            if (name in this.templates) {
-                return this.templates[name];
-            }
-            const mainNode = this.processedTemplates[name];
-            const isDebug = mainNode.attributes.hasOwnProperty("t-debug");
+        _compile(name, elem) {
+            const isDebug = elem.attributes.hasOwnProperty("t-debug");
             const ctx = new Context(name);
-            this._compileNode(mainNode, ctx);
+            this._compileNode(elem, ctx);
             if (ctx.shouldProtectContext) {
                 ctx.code.unshift("    context = Object.create(context);");
             }
@@ -1500,9 +1536,6 @@
                 throw new Error("A template should have one root node");
             }
             ctx.addLine(`return vn${ctx.rootNode};`);
-            if (isDebug) {
-                ctx.code.unshift("    debugger");
-            }
             let template;
             try {
                 template = new Function("context", "extra", ctx.code.join("\n"));
@@ -1511,9 +1544,9 @@
                 throw new Error(`Invalid generated code while compiling template '${ctx.templateName.replace(/`/g, "'")}': ${e.message}`);
             }
             if (isDebug) {
-                console.log(`Template: ${this.processedTemplates[name].outerHTML}\nCompiled code:\n` + template.toString());
+                console.log(`Template: ${this.templates[name].elem.outerHTML}\nCompiled code:\n` +
+                    template.toString());
             }
-            this.templates[name] = template;
             return template;
         }
         /**
@@ -1890,7 +1923,7 @@
                 throw new Error("Invalid tag for t-call directive (should be 't')");
             }
             const subTemplate = node.getAttribute("t-call");
-            const nodeTemplate = qweb.processedTemplates[subTemplate];
+            const nodeTemplate = qweb.templates[subTemplate];
             if (!nodeTemplate) {
                 throw new Error(`Cannot find template "${subTemplate}" (t-call)`);
             }
@@ -1918,7 +1951,7 @@
                 .subContext("caller", nodeCopy)
                 .subContext("variables", Object.create(vars))
                 .subContext("definedVariables", Object.create(definedVariables));
-            qweb._compileNode(nodeTemplate, subCtx);
+            qweb._compileNode(nodeTemplate.elem, subCtx);
             // close new scope
             if (hasNewVariables) {
                 ctx.dedent();
@@ -1952,7 +1985,19 @@
             ctx.addLine(`context.${name} = _${keysID}[i];`);
             ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
             const nodeCopy = node.cloneNode(true);
-            if (nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key")) {
+            let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
+            if (!shouldWarn && node.tagName === "t") {
+                if (node.hasAttribute("t-widget") && !node.hasAttribute("t-key")) {
+                    shouldWarn = true;
+                }
+                if (!shouldWarn &&
+                    node.children.length === 1 &&
+                    node.children[0].tagName !== 't' &&
+                    !node.children[0].hasAttribute("t-key")) {
+                    shouldWarn = true;
+                }
+            }
+            if (shouldWarn) {
                 console.warn(`Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`);
             }
             nodeCopy.removeAttribute("t-foreach");
@@ -1989,11 +2034,45 @@
     const refDirective = {
         name: "ref",
         priority: 95,
-        atNodeCreation({ ctx, node }) {
-            let ref = node.getAttribute("t-ref");
-            ctx.addLine(`p${ctx.parentNode}.hook = {
-            create: (_, n) => context.refs[${ctx.formatExpression(ref)}] = n.elm,
+        atNodeCreation({ ctx, nodeID, value }) {
+            const refKey = `ref${ctx.generateID()}`;
+            ctx.addLine(`const ${refKey} = ${ctx.formatExpression(value)}`);
+            ctx.addLine(`p${nodeID}.hook = {
+            create: (_, n) => context.refs[${refKey}] = n.elm,
         };`);
+        }
+    };
+    const transitionDirective = {
+        name: "transition",
+        priority: 96,
+        atNodeCreation({ ctx, value }) {
+            let name = value;
+            ctx.addLine(`p${ctx.parentNode}.hook = {
+        create: (_, n) => {
+          this.utils.transitionCreate(n.elm, '${name}');
+        },
+        insert: vn => {
+          this.utils.transitionInsert(vn.elm, '${name}');
+        },
+        remove: (vn, rm) => {
+          this.utils.transitionRemove(vn.elm, '${name}', rm);
+        }
+      };`);
+        }
+    };
+    const debugDirective = {
+        name: "debug",
+        priority: 99,
+        atNodeEncounter({ ctx }) {
+            ctx.addLine("debugger;");
+        }
+    };
+    const logDirective = {
+        name: "log",
+        priority: 99,
+        atNodeEncounter({ ctx, value }) {
+            const expr = ctx.formatExpression(value);
+            ctx.addLine(`console.log(${expr})`);
         }
     };
     const widgetDirective = {
@@ -2043,7 +2122,7 @@
             // check if we can reuse current rendering promise
             ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
             ctx.addIf(`w${widgetID}.__owl__.isStarted`);
-            ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`);
+            ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
             ctx.addElse();
             ctx.addLine(`isNew${widgetID} = true`);
             ctx.addIf(`props${widgetID} === w${widgetID}.__owl__.renderProps`);
@@ -2056,7 +2135,7 @@
             ctx.closeIf();
             ctx.addIf(`!def${defID}`);
             ctx.addIf(`w${widgetID}`);
-            ctx.addLine(`def${defID} = w${widgetID}.updateProps(props${widgetID}, extra.forceUpdate);`);
+            ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
             ctx.addElse();
             ctx.addLine(`w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`);
             ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
@@ -2228,7 +2307,7 @@
                         }
                         if (didChange) {
                             this.__owl__.currentStoreProps = storeProps;
-                            this.updateProps(ownProps, false);
+                            this._updateProps(ownProps, false);
                         }
                     });
                     super.mounted();
@@ -2237,13 +2316,13 @@
                     this.env.store.off("update", this);
                     super.willUnmount();
                 }
-                updateProps(nextProps, forceUpdate) {
+                _updateProps(nextProps, forceUpdate) {
                     if (this.__owl__.ownProps !== nextProps) {
                         this.__owl__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps);
                     }
                     this.__owl__.ownProps = nextProps;
                     const mergedProps = Object.assign({}, nextProps, this.__owl__.currentStoreProps);
-                    return super.updateProps(mergedProps, forceUpdate);
+                    return super._updateProps(mergedProps, forceUpdate);
                 }
             };
         };
@@ -2262,19 +2341,6 @@
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&#x27;")
             .replace(/`/g, "&#x60;");
-    }
-    /**
-     * Remove trailing and leading spaces
-     */
-    function htmlTrim(s) {
-        let result = s.replace(/(^\s+|\s+$)/g, "");
-        if (s[0] === " ") {
-            result = " " + result;
-        }
-        if (result !== " " && s[s.length - 1] === " ") {
-            result = result + " ";
-        }
-        return result;
     }
     function memoize(f, hash) {
         if (!hash) {
@@ -2316,24 +2382,6 @@
                 func.apply(context, args);
             }
         };
-    }
-    /**
-     * Find a node in a tree.
-     *
-     * This will traverse the tree (depth first) and return the first child that
-     * matches the predicate, if any
-     */
-    function findInTree(tree, predicate) {
-        if (predicate(tree)) {
-            return tree;
-        }
-        for (let child of tree.children) {
-            let match = findInTree(child, predicate);
-            if (match) {
-                return match;
-            }
-        }
-        return null;
     }
     function patch$1(C, patchName, patch) {
         const proto = C.prototype;
@@ -2422,10 +2470,8 @@
 
     var _utils = /*#__PURE__*/Object.freeze({
         escape: escape,
-        htmlTrim: htmlTrim,
         memoize: memoize,
         debounce: debounce,
-        findInTree: findInTree,
         patch: patch$1,
         unpatch: unpatch,
         loadTemplates: loadTemplates,
@@ -2443,9 +2489,9 @@
     exports.connect = connect;
     exports.Store = Store;
 
-    exports._version = '0.8.0';
-    exports._date = '2019-04-26T13:32:23.079Z';
-    exports._hash = 'b44f274';
+    exports._version = '0.9.0';
+    exports._date = '2019-05-03T10:06:05.040Z';
+    exports._hash = '5b9abb6';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

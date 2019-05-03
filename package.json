@@ -1,7 +1,0 @@
-{
-  "name": "owl-playground",
-  "description": "Odoo Web Library",
-  "scripts": {
-    "start": "python server.py"
-  }
-}

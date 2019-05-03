@@ -59,8 +59,8 @@ More interesting examples can be found on the [playground](https://odoo.github.i
 
 If you want to use a simple `<script>` tag, the last release can be downloaded here:
 
-- [owl-0.9.0.js](https://github.com/odoo/owl/releases/download/v0.9.0/owl-0.9.0.js)
-- [owl-0.9.0.min.js](https://github.com/odoo/owl/releases/download/v0.9.0/owl-0.9.0.min.js)
+- [owl-0.9.0.js](https://github.com/odoo/owl/releases/download/v0.9.0/owl.js)
+- [owl-0.9.0.min.js](https://github.com/odoo/owl/releases/download/v0.9.0/owl.min.js)
 
 Some npm scripts are available:
 

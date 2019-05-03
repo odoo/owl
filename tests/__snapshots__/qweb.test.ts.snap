@@ -1323,8 +1323,9 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
     var c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
+    const ref3 = 'myspan' + 3
     p2.hook = {
-            create: (_, n) => context.refs['myspan' + 3] = n.elm,
+            create: (_, n) => context.refs[ref3] = n.elm,
         };
     return vn1;
 }"
@@ -1339,9 +1340,45 @@ exports[`t-ref can get a ref on a node 1`] = `
     var c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
+    const ref3 = 'myspan'
     p2.hook = {
-            create: (_, n) => context.refs['myspan'] = n.elm,
+            create: (_, n) => context.refs[ref3] = n.elm,
         };
+    return vn1;
+}"
+`;
+
+exports[`t-ref refs in a loop 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    var h = this.utils.h;
+    var c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['items'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
+    var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _4 = _2 instanceof Array ? _2 : Object.values(_2);
+    for (let i = 0; i < _3.length; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _3.length - 1;
+        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        var c5 = [], p5 = {key:5};
+        var vn5 = h('div', p5, c5);
+        c1.push(vn5);
+        const ref6 = context['item']
+        p5.hook = {
+            create: (_, n) => context.refs[ref6] = n.elm,
+        };
+        var _7 = context['item'];
+        if (_7 || _7 === 0) {
+            c5.push({text: _7});
+        }
+    }
     return vn1;
 }"
 `;

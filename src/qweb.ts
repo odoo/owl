@@ -1016,10 +1016,10 @@ const refDirective: Directive = {
   name: "ref",
   priority: 95,
   atNodeCreation({ ctx, nodeID, value }) {
+    const refKey = `ref${ctx.generateID()}`;
+    ctx.addLine(`const ${refKey} = ${ctx.formatExpression(value)}`);
     ctx.addLine(`p${nodeID}.hook = {
-            create: (_, n) => context.refs[${ctx.formatExpression(
-              value
-            )}] = n.elm,
+            create: (_, n) => context.refs[${refKey}] = n.elm,
         };`);
   }
 };

@@ -961,6 +961,18 @@ describe("t-ref", () => {
     renderToDOM(qweb, "test", { refs });
     expect(refs.myspan3.tagName).toBe("SPAN");
   });
+
+  test("refs in a loop", () => {
+    qweb.addTemplate("test", `
+      <div>
+        <t t-foreach="items" t-as="item">
+          <div t-ref="item"><t t-esc="item"/></div>
+        </t>
+      </div>`);
+    let refs: any = {};
+    renderToDOM(qweb, "test", { refs, items: [1,2,3] });
+    expect(Object.keys(refs)).toEqual(["1", "2", "3"]);
+  });
 });
 
 describe("loading templates", () => {

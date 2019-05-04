@@ -312,5 +312,4 @@ the DOM. This is a good place to remove some listeners, for example.
   }
 ```
 
-This is the opposite method of `mounted`. The `willUnmount` method will be
-called in reverse order: first the children, then the parents.
+This is the opposite method of `mounted`.

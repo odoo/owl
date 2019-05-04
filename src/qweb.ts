@@ -1212,8 +1212,21 @@ const widgetDirective: Directive = {
       finalizeWidgetCode += `;delete context.refs[${refKey}]`;
     }
     ctx.addIf(`isNew${widgetID}`);
+    let createHook = "";
+    let classAttr = node.getAttribute("class");
+    let styleAttr = node.getAttribute("style");
+    if (classAttr || styleAttr) {
+      const classCode = classAttr
+        ? classAttr
+            .split(" ")
+            .map(c => `vn.elm.classList.add('${c}')`)
+            .join(";") + ";"
+        : "";
+      const styleCode = styleAttr ? `vn.elm.style = '${styleAttr}'` : "";
+      createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}}};`;
+    }
     ctx.addLine(
-      `def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${
+      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`
     );

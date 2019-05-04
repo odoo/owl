@@ -1224,6 +1224,37 @@ describe("props evaluation (with t-props directive)", () => {
   });
 });
 
+describe("class and style attributes with t-widget", () => {
+  test("class is properly added on widget root el", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+            <t t-widget="child" class="a b"/>
+        </div>`;
+      widgets = { child: Child };
+    }
+    class Child extends Widget {
+        inlineTemplate = `<div class="c"/>`
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
+  });
+
+  test("style is properly added on widget root el", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+            <t t-widget="child" style="font-weight: bold;"/>
+        </div>`;
+      widgets = { child: Widget };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div><div style="font-weight: bold;"></div></div>`);
+  });
+});
+
 describe("other directives with t-widget", () => {
   test("t-on works as expected", async () => {
     let n = 0;

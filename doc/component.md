@@ -4,7 +4,7 @@
 
 - [Overview](#overview)
 - [Example](#example)
-- [Templates](#templates)
+- [Composition](#composition)
 - [Reference](#reference)
   - [Properties](#properties)
   - [Methods](#methods)
@@ -65,7 +65,7 @@ a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
 
-## Templates
+## Composition
 
 The example above shows a QWeb template with a `t-on-click` directive.  Widget
 templates are standard [QWeb](qweb.md) templates, but with an extra directive:
@@ -73,17 +73,38 @@ templates are standard [QWeb](qweb.md) templates, but with an extra directive:
 widgets:
 
 ```xml
-  <div>
-    <span>some text</span>
-    <t t-widget="MyWidget" t-props="{info: 13}">
-  </div>
+<div t-name="parent">
+  <span>some text</span>
+  <t t-widget="MyWidget" t-props="{info: 13}">
+</div>
 ```
 
-In this example, the template create a widget MyWidget just after the span. See
-the [QWeb](qweb.md) documentation for more information on the `t-widget` directive.
+```js
+class ParentWidget extends owl.Component {
+    template = 'parent';
+    widgets = { MyWidget: MyWidget};
+    ...
+}
+```
+
+In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
+after the span. See the [QWeb](qweb.md) documentation for more information on the
+`t-widget` directive.
 
 Note that the rendering context for the template is the widget itself.  This means
 that the template can access `state`, `props`, `env`, or any methods defined in the widget.
+
+**CSS and style:** there is some specific support to allow the parent to declare
+additional css classes or style for the sub widget: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
+root widget element.
+
+```xml
+<div t-name="parent">
+  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" t-props="{info: 13}">
+</div>
+```
+
+
 
 ## Reference
 

@@ -901,6 +901,21 @@ describe("composition", () => {
     );
   });
 
+  test("refs in a loop", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `<div>
+        <t t-foreach="state.items" t-as="item">
+          <t t-widget="Child" t-ref="item" t-key="item"/>
+        </t>
+      </div>`;
+      state = { items: [1, 2, 3] };
+      widgets = { Child: Widget };
+    }
+    const parent = new ParentWidget(env);
+    await parent.mount(fixture);
+    expect(Object.keys(parent.refs)).toEqual(["1", "2", "3"]);
+  });
+
   test("parent's elm for a children === children's elm, even after rerender", async () => {
     const widget = new WidgetA(env);
     await widget.mount(fixture);

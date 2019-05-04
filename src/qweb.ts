@@ -120,9 +120,9 @@ const UTILS = {
     elm.classList.add(name + "-leave");
     elm.classList.add(name + "-leave-active");
     const finalize = () => {
-        elm.classList.remove(name + "-leave-active");
-        elm.classList.remove(name + "-enter-to");
-        rm();
+      elm.classList.remove(name + "-leave-active");
+      elm.classList.remove(name + "-enter-to");
+      rm();
     };
     this.nextFrame(() => {
       elm.classList.remove(name + "-leave");
@@ -1193,22 +1193,23 @@ const widgetDirective: Directive = {
     for (let [event, method] of events) {
       ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
     }
-    let ref = node.getAttribute("t-ref");
-    let refExpr = ref
-      ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`
-      : "";
-
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     ctx.closeIf();
     ctx.closeIf();
+    let ref = node.getAttribute("t-ref");
+    let refExpr = "";
+    let refKey: string = "";
+    if (ref) {
+      refKey = `ref${ctx.generateID()}`;
+      ctx.addLine(`const ${refKey} = ${ctx.formatExpression(ref)}`);
+      refExpr = `context.refs[${refKey}] = w${widgetID};`;
+    }
 
     let finalizeWidgetCode = `w${widgetID}.${
       keepAlive ? "unmount" : "destroy"
     }()`;
     if (ref) {
-      finalizeWidgetCode += `;delete context.refs[${ctx.formatExpression(
-        ref
-      )}]`;
+      finalizeWidgetCode += `;delete context.refs[${refKey}]`;
     }
     ctx.addIf(`isNew${widgetID}`);
     ctx.addLine(

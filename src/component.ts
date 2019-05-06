@@ -1,6 +1,6 @@
 import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
-import { QWeb, CompiledTemplate } from "./qweb";
+import { QWeb, CompiledTemplate } from "./qweb_core";
 import { h, patch, VNode } from "./vdom";
 
 //------------------------------------------------------------------------------

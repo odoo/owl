@@ -1,4 +1,4 @@
-import { EvalContext, QWeb } from "../src/qweb";
+import { EvalContext, QWeb } from "../src/qweb_core";
 import { patch } from "../src/vdom";
 import { normalize } from "./helpers";
 

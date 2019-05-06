@@ -75,7 +75,7 @@ widgets:
 ```xml
 <div t-name="parent">
   <span>some text</span>
-  <t t-widget="MyWidget" t-props="{info: 13}">
+  <t t-widget="MyWidget" t-props="{info: 13}"/>
 </div>
 ```
 
@@ -100,7 +100,7 @@ root widget element.
 
 ```xml
 <div t-name="parent">
-  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" t-props="{info: 13}">
+  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" t-props="{info: 13}"/>
 </div>
 ```
 
@@ -112,7 +112,7 @@ class that need to be removed.  This is why we only support the explicit syntax
 with a class object:
 
 ```js
-<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}">
+<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}"/>
 
 ```
 

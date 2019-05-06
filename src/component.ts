@@ -248,7 +248,8 @@ export class Component<
     const renderVDom = this._render(force, patchQueue);
     const renderId = this.__owl__.renderId;
     const vnode = await renderVDom;
-    if (renderId === this.__owl__.renderId) {
+
+    if (this.__owl__.isMounted && renderId === this.__owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
       if (shouldCallPatchHooks) {

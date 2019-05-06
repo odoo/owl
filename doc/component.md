@@ -200,7 +200,7 @@ a owl component:
 | ------------------------------------------------ | --------------------------------------- |
 | **[constructor](#constructor)**                  | constructor                             |
 | **[willStart](#willStart)**                      | async, before first rendering           |
-| **[mounted](#mounted)**                          | when component is render and in DOM     |
+| **[mounted](#mounted)**                          | just after component is rendered and added to the DOM     |
 | **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update              |
 | **[willPatch](#willpatch)**              | just before the DOM is patched          |
 | **[patched](#patchedsnapshot)**                          | just after the DOM is patched           |

@@ -1645,6 +1645,59 @@ describe("async rendering", () => {
       "<div><span>a2</span><span>b2</span></div>"
     );
   });
+
+  test.only("properly behave when destroyed/unmounted while rendering ", async () => {
+    let def = Promise.resolve();
+
+    class Child extends Widget {
+      inlineTemplate = `<div><t t-widget="SubChild"/></div>`;
+      widgets = { SubChild };
+      mounted() {
+        // from now on, each rendering in child widget will be delayed (see
+        // _render)
+        def = makeDeferred();
+      }
+      async _render(f, p) {
+        const result = await super._render(f, p);
+        await def;
+        return result;
+      }
+    }
+
+    class SubChild extends Widget {
+      willPatch() {
+        throw new Error("Should not happen!");
+      }
+      patched() {
+        throw new Error("Should not happen!");
+      }
+    }
+
+    class Parent extends Widget {
+      inlineTemplate = `
+        <div><t t-if="state.flag"><t t-widget="Child" t-props="{val: state.val}"/></t></div>`;
+      widgets = { Child };
+      state = { flag: true, val: "Framboise Lindemans" };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
+
+    // this change triggers a rendering of the parent. This rendering is delayed,
+    // because child is now waiting for def to be resolved
+    parent.state.val = "Framboise Girardin";
+    await nextTick();
+
+    // with this, we remove child, and childchild, even though it is not finished
+    // rendering from previous changes
+    parent.state.flag = false;
+    await nextTick();
+
+    // we now resolve def, so the child rendering is now complete.
+    (<any>def).resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+  });
 });
 
 describe("updating environment", () => {

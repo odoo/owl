@@ -88,13 +88,24 @@ describe("basic widget properties", () => {
 
   test("can be clicked on and updated", async () => {
     const counter = new Counter(env);
+    await counter.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
+    const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
+  });
+
+  test("cannot be clicked on and updated if not in DOM", async () => {
+    const counter = new Counter(env);
     const target = document.createElement("div");
     await counter.mount(target);
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     await button.click();
     await nextTick();
-    expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
+    expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
+    expect(counter.state.counter).toBe(1);
   });
 
   test("widget style and classname", async () => {

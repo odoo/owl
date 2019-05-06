@@ -238,7 +238,7 @@ export class Component<
   }
 
   async render(force: boolean = false, patchQueue?: any[]): Promise<void> {
-    if (this.__owl__.isDestroyed) {
+    if (!this.__owl__.isMounted) {
       return;
     }
     const shouldCallPatchHooks: boolean = !patchQueue;

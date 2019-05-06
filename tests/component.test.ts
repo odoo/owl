@@ -1234,11 +1234,37 @@ describe("class and style attributes with t-widget", () => {
       widgets = { child: Child };
     }
     class Child extends Widget {
-        inlineTemplate = `<div class="c"/>`
+      inlineTemplate = `<div class="c"/>`;
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
+  });
+
+  test("t-att-class is properly added/removed on widget root el", async () => {
+    env.qweb.addTemplate(
+      "parent",
+      `<div>
+            <t t-widget="child" t-att-class="{a:state.a, b:state.b}"/>
+        </div>`
+    );
+    class ParentWidget extends Widget {
+      template = "parent";
+      widgets = { child: Child };
+      state = { a: true, b: false };
+    }
+    class Child extends Widget {
+      inlineTemplate = `<div class="c"/>`;
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
+    expect(env.qweb.templates.parent.fn.toString()).toMatchSnapshot();
+
+    widget.state.a = false;
+    widget.state.b = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<div><div class="c b"></div></div>`);
   });
 
   test("style is properly added on widget root el", async () => {
@@ -1251,7 +1277,39 @@ describe("class and style attributes with t-widget", () => {
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe(`<div><div style="font-weight: bold;"></div></div>`);
+    expect(fixture.innerHTML).toBe(
+      `<div><div style="font-weight: bold;"></div></div>`
+    );
+  });
+
+  test("dynamic t-att-style is properly added and updated on widget root el", async () => {
+    env.qweb.addTemplate(
+      "parent",
+      `
+        <div>
+            <t t-widget="child" t-att-style="state.style"/>
+        </div>`
+    );
+    class ParentWidget extends Widget {
+      template = "parent";
+      widgets = { child: Widget };
+      state = { style: "font-size: 20px" };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    expect(env.qweb.templates.parent.fn.toString()).toMatchSnapshot();
+
+    expect(fixture.innerHTML).toBe(
+      `<div><div style="font-size: 20px;"></div></div>`
+    );
+
+    widget.state.style = "font-size: 30px";
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe(
+      `<div><div style="font-size: 30px;"></div></div>`
+    );
   });
 });
 

@@ -104,6 +104,17 @@ root widget element.
 </div>
 ```
 
+Warning: there is a small caveat with dynamic class attributes: since Owl needs
+to be able to add/remove proper classes whenever necessary, it needs to be aware
+of the possible classes.  Otherwise, it will not be able to make the difference
+between a valid css class added by the component, or some custom code, and a
+class that need to be removed.  This is why we only support the explicit syntax
+with a class object:
+
+```js
+<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}">
+
+```
 
 
 ## Reference

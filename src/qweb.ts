@@ -1211,20 +1211,41 @@ const widgetDirective: Directive = {
     if (ref) {
       finalizeWidgetCode += `;delete context.refs[${refKey}]`;
     }
-    ctx.addIf(`isNew${widgetID}`);
     let createHook = "";
     let classAttr = node.getAttribute("class");
+    let tattClass = node.getAttribute("t-att-class");
     let styleAttr = node.getAttribute("style");
-    if (classAttr || styleAttr) {
-      const classCode = classAttr
-        ? classAttr
+    let tattStyle = node.getAttribute("t-att-style");
+    if (tattStyle) {
+      const attVar = `_${ctx.generateID()}`;
+      ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattStyle)};`);
+      tattStyle = attVar;
+    }
+    let updateClassCode = "";
+    if (classAttr || tattClass || styleAttr || tattStyle) {
+      let classCode = "";
+      if (classAttr) {
+        classCode =
+          classAttr
             .split(" ")
             .map(c => `vn.elm.classList.add('${c}')`)
-            .join(";") + ";"
-        : "";
-      const styleCode = styleAttr ? `vn.elm.style = '${styleAttr}'` : "";
+            .join(";") + ";";
+      }
+      if (tattClass) {
+        const attVar = `_${ctx.generateID()}`;
+        ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattClass)};`);
+        classCode = `for (let k in ${attVar}) {
+              if (${attVar}[k]) {
+                  vn.elm.classList.add(k);
+              }
+          }`;
+        updateClassCode = `let cl=w${widgetID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
+      }
+      const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);
+      const styleCode = styleExpr ? `vn.elm.style = ${styleExpr}` : "";
       createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}}};`;
     }
+    ctx.addIf(`isNew${widgetID}`);
     ctx.addLine(
       `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}});c${
         ctx.parentNode
@@ -1232,7 +1253,9 @@ const widgetDirective: Directive = {
     );
     ctx.addElse();
     ctx.addLine(
-      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${
+      `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${
+        tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""
+      }${updateClassCode}let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${
         ctx.parentNode
       }[_${dummyID}_index]=vnode;});`
     );

@@ -166,39 +166,46 @@ export function connect(mapStateToProps, options: any = {}) {
           }
         );
       }
-      mounted() {
-        this.env.store.on("update", this, () => {
-          const ownProps = this.__owl__.ownProps;
-          const storeProps = mapStateToProps(this.env.store.state, ownProps);
-          const options: any = {
-            currentStoreProps: this.__owl__.currentStoreProps
-          };
-          const storeHash = hashFunction(
-            {
-              state: this.env.store.state,
-              storeProps: storeProps,
-              revNumber,
-              deepRevNumber
-            },
-            options
-          );
-          let didChange = options.didChange;
-          if (storeHash !== this.__owl__.storeHash) {
-            didChange = true;
-            this.__owl__.storeHash = storeHash;
-          }
-          if (didChange) {
-            this.__owl__.currentStoreProps = storeProps;
-            this._updateProps(ownProps, false);
-          }
-        });
-        super.mounted();
+      /**
+       * We do not use the mounted hook here for a subtle reason: we want the
+       * updates to be called for the parents before the children.  However,
+       * if we use the mounted hook, this will be done in the reverse order.
+       */
+      _callMounted() {
+        this.env.store.on("update", this, this._checkUpdate);
+        super._callMounted();
       }
       willUnmount() {
         this.env.store.off("update", this);
         super.willUnmount();
       }
-      _updateProps(nextProps, forceUpdate) {
+
+      _checkUpdate() {
+        const ownProps = this.__owl__.ownProps;
+        const storeProps = mapStateToProps(this.env.store.state, ownProps);
+        const options: any = {
+          currentStoreProps: this.__owl__.currentStoreProps
+        };
+        const storeHash = hashFunction(
+          {
+            state: this.env.store.state,
+            storeProps: storeProps,
+            revNumber,
+            deepRevNumber
+          },
+          options
+        );
+        let didChange = options.didChange;
+        if (storeHash !== this.__owl__.storeHash) {
+          didChange = true;
+          this.__owl__.storeHash = storeHash;
+        }
+        if (didChange) {
+          this.__owl__.currentStoreProps = storeProps;
+          this._updateProps(ownProps, false);
+        }
+      }
+      _updateProps(nextProps, forceUpdate, p?: any) {
         if (this.__owl__.ownProps !== nextProps) {
           this.__owl__.currentStoreProps = mapStateToProps(
             this.env.store.state,
@@ -211,7 +218,7 @@ export function connect(mapStateToProps, options: any = {}) {
           nextProps,
           this.__owl__.currentStoreProps
         );
-        return super._updateProps(mergedProps, forceUpdate);
+        return super._updateProps(mergedProps, forceUpdate, p);
       }
     };
   };

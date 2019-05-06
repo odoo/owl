@@ -670,4 +670,48 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:matthieu</span><span>consumed:jupiler</span></div></div>"
     );
   });
+
+  test("correct update order when parent/children are connected", async () => {
+    const steps: string[] = [];
+    class Parent extends Component<any, any, any> {
+      inlineTemplate = `
+        <div>
+            <t t-widget="Child" t-ref="'child'" t-props="{key: props.current}"/>
+        </div>
+      `;
+      widgets = { Child: ConnectedChild };
+    }
+    const ConnectedParent = connect(function(s) {
+      steps.push("parent");
+      return { current: s.current, isvisible: s.isvisible };
+    })(Parent);
+
+    class Child extends Component<any, any, any> {
+      inlineTemplate = `<span><t t-esc="props.msg"/></span>`;
+    }
+
+    const ConnectedChild = connect(function(s, props) {
+      steps.push("child");
+      return { msg: s.msg[props.key] };
+    })(Child);
+
+    const state = { current: "a", msg: { a: "a", b: "b" } };
+    const mutations = {
+      setCurrent({ state }, c) {
+        state.current = c;
+      }
+    };
+
+    const store = new Store({ state, mutations });
+    (<any>env).store = store;
+    const app = new ConnectedParent(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>a</span></div>");
+    expect(steps).toEqual(["parent", "child"]);
+
+    store.commit("setCurrent", "b");
+    await nextTick();
+    expect(steps).toEqual(["parent", "child", "parent", "child", "child"]);
+  });
 });

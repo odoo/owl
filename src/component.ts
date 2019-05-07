@@ -332,7 +332,7 @@ export class Component<
   async _updateProps(
     nextProps: Props,
     forceUpdate: boolean = false,
-    patchQueue: any[]
+    patchQueue?: any[]
   ): Promise<void> {
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
     if (shouldUpdate) {

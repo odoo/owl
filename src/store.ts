@@ -212,10 +212,10 @@ export function connect(mapStateToProps, options: any = {}) {
         }
         if (didChange) {
           (<any>this.__owl__).currentStoreProps = storeProps;
-          this._updateProps(ownProps, false, []);
+          this._updateProps(ownProps, false);
         }
       }
-      _updateProps(nextProps, forceUpdate, patchQueue: any[]) {
+      _updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
         if ((<any>this.__owl__).ownProps !== nextProps) {
           (<any>this.__owl__).currentStoreProps = mapStateToProps(
             this.env.store.state,

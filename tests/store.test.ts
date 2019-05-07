@@ -714,4 +714,39 @@ describe("connecting a component to store", () => {
     await nextTick();
     expect(steps).toEqual(["parent", "child", "parent", "child", "child"]);
   });
+
+  test("connected component willpatch/patch hooks are called on store updates", async () => {
+    const steps: string[] = [];
+    class App extends Component<any, any, any> {
+      inlineTemplate = `<div><t t-esc="props.msg"/></div>`;
+      willPatch() {
+        steps.push("willpatch");
+      }
+      patched() {
+        steps.push("patched");
+      }
+    }
+    const ConnectedApp = connect(function(s) {
+      return { msg: s.msg };
+    })(App);
+
+    const state = { msg: "a" };
+    const mutations = {
+      setMsg({ state }, c) {
+        state.msg = c;
+      }
+    };
+
+    const store = new Store({ state, mutations });
+    (<any>env).store = store;
+    const app = new ConnectedApp(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>a</div>");
+
+    store.commit("setMsg", "b");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>b</div>");
+    expect(steps).toEqual(["willpatch", "patched"]);
+  });
 });

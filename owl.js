@@ -1006,7 +1006,7 @@
             }
         }
         async render(force = false, patchQueue) {
-            if (this.__owl__.isDestroyed) {
+            if (!this.__owl__.isMounted) {
                 return;
             }
             const shouldCallPatchHooks = !patchQueue;
@@ -1016,7 +1016,7 @@
             const renderVDom = this._render(force, patchQueue);
             const renderId = this.__owl__.renderId;
             const vnode = await renderVDom;
-            if (renderId === this.__owl__.renderId) {
+            if (this.__owl__.isMounted && renderId === this.__owl__.renderId) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
                 if (shouldCallPatchHooks) {
@@ -1179,6 +1179,169 @@
         }
     }
 
+    function escape(str) {
+        if (str === undefined) {
+            return "";
+        }
+        if (typeof str === "number") {
+            return String(str);
+        }
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&#x27;")
+            .replace(/`/g, "&#x60;");
+    }
+    function memoize(f, hash) {
+        if (!hash) {
+            hash = args => args.map(a => String(a)).join(",");
+        }
+        let cache = {};
+        function memoizedFunction(...args) {
+            let hashValue = hash(args);
+            if (!(hashValue in cache)) {
+                cache[hashValue] = f(...args);
+            }
+            return cache[hashValue];
+        }
+        return memoizedFunction;
+    }
+    /**
+     * Returns a function, that, as long as it continues to be invoked, will not
+     * be triggered. The function will be called after it stops being called for
+     * N milliseconds. If `immediate` is passed, trigger the function on the
+     * leading edge, instead of the trailing.
+     *
+     * Inspired by https://davidwalsh.name/javascript-debounce-function
+     */
+    function debounce(func, wait, immediate) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            function later() {
+                timeout = null;
+                if (!immediate) {
+                    func.apply(context, args);
+                }
+            }
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(context, args);
+            }
+        };
+    }
+    function patch$1(C, patchName, patch) {
+        const proto = C.prototype;
+        if (!proto.__patches) {
+            proto.__patches = {
+                origMethods: {},
+                patches: {},
+                current: []
+            };
+        }
+        if (proto.__patches.patches[patchName]) {
+            throw new Error(`Patch [${patchName}] already exists`);
+        }
+        proto.__patches.patches[patchName] = patch;
+        applyPatch(proto, patch);
+        proto.__patches.current.push(patchName);
+        function applyPatch(proto, patch) {
+            Object.keys(patch).forEach(function (methodName) {
+                const method = patch[methodName];
+                if (typeof method === "function") {
+                    const original = proto[methodName];
+                    if (!(methodName in proto.__patches.origMethods)) {
+                        proto.__patches.origMethods[methodName] = original;
+                    }
+                    proto[methodName] = function (...args) {
+                        this._super = original;
+                        return method.call(this, ...args);
+                    };
+                }
+            });
+        }
+    }
+    function unpatch(C, patchName) {
+        const proto = C.prototype;
+        const patchInfo = proto.__patches;
+        delete proto.__patches;
+        // reset to original
+        for (let k in patchInfo.origMethods) {
+            proto[k] = patchInfo.origMethods[k];
+        }
+        // apply other patches
+        for (let name of patchInfo.current) {
+            if (name !== patchName) {
+                patch$1(C, name, patchInfo.patches[name]);
+            }
+        }
+    }
+    async function loadTemplates(url) {
+        const result = await fetch(url);
+        if (!result.ok) {
+            throw new Error("Error while fetching xml templates");
+        }
+        let templates = await result.text();
+        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+        return templates;
+    }
+    const loadedScripts = {};
+    function loadJS(url) {
+        if (url in loadedScripts) {
+            return loadedScripts[url];
+        }
+        const promise = new Promise(function (resolve, reject) {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            script.onload = function () {
+                resolve();
+            };
+            script.onerror = function () {
+                reject(`Error loading file '${url}'`);
+            };
+            const head = document.head || document.getElementsByTagName("head")[0];
+            head.appendChild(script);
+        });
+        loadedScripts[url] = promise;
+        return promise;
+    }
+    function whenReady(fn) {
+        if (document.readyState === "complete") {
+            fn();
+        }
+        else {
+            document.addEventListener("DOMContentLoaded", fn, false);
+        }
+    }
+    function parseXML(xml) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xml, "text/xml");
+        if (doc.getElementsByTagName("parsererror").length) {
+            throw new Error("Invalid XML in template");
+        }
+        return doc;
+    }
+
+    var _utils = /*#__PURE__*/Object.freeze({
+        escape: escape,
+        memoize: memoize,
+        debounce: debounce,
+        patch: patch$1,
+        unpatch: unpatch,
+        loadTemplates: loadTemplates,
+        loadJS: loadJS,
+        whenReady: whenReady,
+        parseXML: parseXML
+    });
+
+    //------------------------------------------------------------------------------
+    // Const/global stuff/helpers
+    //------------------------------------------------------------------------------
     const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(",");
     const WORD_REPLACEMENT = {
         and: "&&",
@@ -1198,49 +1361,15 @@
     ];
     const lineBreakRE = /[\r\n]/;
     const whitespaceRE = /\s+/g;
-    function parseXML(xml) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(xml, "text/xml");
-        if (doc.getElementsByTagName("parsererror").length) {
-            throw new Error("Invalid XML in template");
-        }
-        return doc;
-    }
-    function getTimeout(delays, durations) {
-        /* istanbul ignore next */
-        while (delays.length < durations.length) {
-            delays = delays.concat(delays);
-        }
-        return Math.max.apply(null, durations.map((d, i) => {
-            return toMs(d) + toMs(delays[i]);
-        }));
-    }
-    // Old versions of Chromium (below 61.0.3163.100) formats floating pointer numbers
-    // in a locale-dependent way, using a comma instead of a dot.
-    // If comma is not replaced with a dot, the input will be rounded down (i.e. acting
-    // as a floor function) causing unexpected behaviors
-    function toMs(s) {
-        return Number(s.slice(0, -1).replace(",", ".")) * 1000;
-    }
-    function whenTransitionEnd(elm, cb) {
-        const styles = window.getComputedStyle(elm);
-        const delays = (styles.transitionDelay || "").split(", ");
-        const durations = (styles.transitionDuration || "").split(", ");
-        const timeout = getTimeout(delays, durations);
-        if (timeout > 0) {
-            elm.addEventListener("transitionend", cb, { once: true });
-        }
-        else {
-            cb();
-        }
-    }
+    const DIRECTIVE_NAMES = {
+        name: 1,
+        att: 1,
+        attf: 1,
+        key: 1
+    };
+    const DIRECTIVES = [];
     const UTILS = {
         h: h,
-        getFragment(str) {
-            const temp = document.createElement("template");
-            temp.innerHTML = str;
-            return temp.content;
-        },
         objectToAttrString(obj) {
             let classes = [];
             for (let k in obj) {
@@ -1249,38 +1378,6 @@
                 }
             }
             return classes.join(" ");
-        },
-        nextFrame(cb) {
-            requestAnimationFrame(() => requestAnimationFrame(cb));
-        },
-        transitionCreate(elm, name) {
-            elm.classList.add(name + "-enter");
-            elm.classList.add(name + "-enter-active");
-        },
-        transitionInsert(elm, name) {
-            const finalize = () => {
-                elm.classList.remove(name + "-enter-active");
-                elm.classList.remove(name + "-enter-to");
-            };
-            this.nextFrame(() => {
-                elm.classList.remove(name + "-enter");
-                elm.classList.add(name + "-enter-to");
-                whenTransitionEnd(elm, finalize);
-            });
-        },
-        transitionRemove(elm, name, rm) {
-            elm.classList.add(name + "-leave");
-            elm.classList.add(name + "-leave-active");
-            const finalize = () => {
-                elm.classList.remove(name + "-leave-active");
-                elm.classList.remove(name + "-enter-to");
-                rm();
-            };
-            this.nextFrame(() => {
-                elm.classList.remove(name + "-leave");
-                elm.classList.add(name + "-leave-to");
-                whenTransitionEnd(elm, finalize);
-            });
         }
     };
     //------------------------------------------------------------------------------
@@ -1419,44 +1516,18 @@
     class QWeb {
         constructor(data) {
             this.templates = {};
-            this.directives = [];
             this.utils = UTILS;
-            this.directiveNames = {
-                as: 1,
-                name: 1,
-                value: 1,
-                att: 1,
-                attf: 1,
-                props: 1,
-                key: 1,
-                keepalive: 1,
-                debug: 1,
-                log: 1
-            };
-            [
-                forEachDirective,
-                escDirective,
-                rawDirective,
-                setDirective,
-                elseDirective,
-                elifDirective,
-                ifDirective,
-                callDirective,
-                onDirective,
-                refDirective,
-                transitionDirective,
-                debugDirective,
-                logDirective,
-                widgetDirective
-            ].forEach(d => this.addDirective(d));
             if (data) {
                 this.loadTemplates(data);
             }
         }
-        addDirective(dir) {
-            this.directives.push(dir);
-            this.directiveNames[dir.name] = 1;
-            this.directives.sort((d1, d2) => d1.priority - d2.priority);
+        static addDirective(directive) {
+            DIRECTIVES.push(directive);
+            DIRECTIVE_NAMES[directive.name] = 1;
+            DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
+            if (directive.extraNames) {
+                directive.extraNames.forEach(n => (DIRECTIVE_NAMES[n] = 1));
+            }
         }
         /**
          * Add a template to the internal template map.  Note that it is not
@@ -1614,12 +1685,12 @@
                 let attrName = attributes[i].name;
                 if (attrName.startsWith("t-")) {
                     let dName = attrName.slice(2).split("-")[0];
-                    if (!(dName in this.directiveNames)) {
+                    if (!(dName in DIRECTIVE_NAMES)) {
                         throw new Error(`Unknown QWeb directive: '${attrName}'`);
                     }
                 }
             }
-            for (let directive of this.directives) {
+            for (let directive of DIRECTIVES) {
                 let fullName;
                 let value;
                 for (let i = 0; i < attributes.length; i++) {
@@ -1816,6 +1887,15 @@
             }
         }
     }
+
+    //------------------------------------------------------------------------------
+    // t-esc and t-raw
+    //------------------------------------------------------------------------------
+    UTILS.getFragment = function (str) {
+        const temp = document.createElement("template");
+        temp.innerHTML = str;
+        return temp.content;
+    };
     function compileValueNode(value, node, qweb, ctx) {
         if (value === "0" && ctx.caller) {
             qweb._compileNode(ctx.caller, ctx);
@@ -1857,7 +1937,7 @@
             }
         }
     }
-    const escDirective = {
+    QWeb.addDirective({
         name: "esc",
         priority: 70,
         atNodeEncounter({ node, qweb, ctx }) {
@@ -1869,8 +1949,8 @@
             compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
             return true;
         }
-    };
-    const rawDirective = {
+    });
+    QWeb.addDirective({
         name: "raw",
         priority: 80,
         atNodeEncounter({ node, qweb, ctx }) {
@@ -1882,9 +1962,13 @@
             compileValueNode(value, node, qweb, ctx);
             return true;
         }
-    };
-    const setDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-set
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "set",
+        extraNames: ["value"],
         priority: 60,
         atNodeEncounter({ node, ctx }) {
             const variable = node.getAttribute("t-set");
@@ -1906,8 +1990,11 @@
             }
             return true;
         }
-    };
-    const ifDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-if, t-elif, t-else
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "if",
         priority: 20,
         atNodeEncounter({ node, ctx }) {
@@ -1918,8 +2005,8 @@
         finalize({ ctx }) {
             ctx.closeIf();
         }
-    };
-    const elifDirective = {
+    });
+    QWeb.addDirective({
         name: "elif",
         priority: 30,
         atNodeEncounter({ node, ctx }) {
@@ -1931,8 +2018,8 @@
         finalize({ ctx }) {
             ctx.closeIf();
         }
-    };
-    const elseDirective = {
+    });
+    QWeb.addDirective({
         name: "else",
         priority: 40,
         atNodeEncounter({ ctx }) {
@@ -1943,8 +2030,11 @@
         finalize({ ctx }) {
             ctx.closeIf();
         }
-    };
-    const callDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-call
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "call",
         priority: 50,
         atNodeEncounter({ node, qweb, ctx }) {
@@ -1988,9 +2078,13 @@
             }
             return true;
         }
-    };
-    const forEachDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-foreach
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "foreach",
+        extraNames: ["as"],
         priority: 10,
         atNodeEncounter({ node, qweb, ctx }) {
             ctx.rootContext.shouldProtectContext = true;
@@ -2035,8 +2129,33 @@
             ctx.addLine("}");
             return true;
         }
-    };
-    const onDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-debug
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
+        name: "debug",
+        priority: 99,
+        atNodeEncounter({ ctx }) {
+            ctx.addLine("debugger;");
+        }
+    });
+    //------------------------------------------------------------------------------
+    // t-log
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
+        name: "log",
+        priority: 99,
+        atNodeEncounter({ ctx, value }) {
+            const expr = ctx.formatExpression(value);
+            ctx.addLine(`console.log(${expr})`);
+        }
+    });
+
+    //------------------------------------------------------------------------------
+    // t-on
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "on",
         priority: 90,
         atNodeCreation({ ctx, fullName, value, nodeID }) {
@@ -2059,8 +2178,11 @@
                 ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
             }
         }
-    };
-    const refDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-ref
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "ref",
         priority: 95,
         atNodeCreation({ ctx, nodeID, value }) {
@@ -2070,8 +2192,71 @@
             create: (_, n) => context.refs[${refKey}] = n.elm,
         };`);
         }
+    });
+    //------------------------------------------------------------------------------
+    // t-transition
+    //------------------------------------------------------------------------------
+    UTILS.nextFrame = function (cb) {
+        requestAnimationFrame(() => requestAnimationFrame(cb));
     };
-    const transitionDirective = {
+    UTILS.transitionCreate = function (elm, name) {
+        elm.classList.add(name + "-enter");
+        elm.classList.add(name + "-enter-active");
+    };
+    UTILS.transitionInsert = function (elm, name) {
+        const finalize = () => {
+            elm.classList.remove(name + "-enter-active");
+            elm.classList.remove(name + "-enter-to");
+        };
+        this.nextFrame(() => {
+            elm.classList.remove(name + "-enter");
+            elm.classList.add(name + "-enter-to");
+            whenTransitionEnd(elm, finalize);
+        });
+    };
+    UTILS.transitionRemove = function (elm, name, rm) {
+        elm.classList.add(name + "-leave");
+        elm.classList.add(name + "-leave-active");
+        const finalize = () => {
+            elm.classList.remove(name + "-leave-active");
+            elm.classList.remove(name + "-enter-to");
+            rm();
+        };
+        this.nextFrame(() => {
+            elm.classList.remove(name + "-leave");
+            elm.classList.add(name + "-leave-to");
+            whenTransitionEnd(elm, finalize);
+        });
+    };
+    function getTimeout(delays, durations) {
+        /* istanbul ignore next */
+        while (delays.length < durations.length) {
+            delays = delays.concat(delays);
+        }
+        return Math.max.apply(null, durations.map((d, i) => {
+            return toMs(d) + toMs(delays[i]);
+        }));
+    }
+    // Old versions of Chromium (below 61.0.3163.100) formats floating pointer numbers
+    // in a locale-dependent way, using a comma instead of a dot.
+    // If comma is not replaced with a dot, the input will be rounded down (i.e. acting
+    // as a floor function) causing unexpected behaviors
+    function toMs(s) {
+        return Number(s.slice(0, -1).replace(",", ".")) * 1000;
+    }
+    function whenTransitionEnd(elm, cb) {
+        const styles = window.getComputedStyle(elm);
+        const delays = (styles.transitionDelay || "").split(", ");
+        const durations = (styles.transitionDuration || "").split(", ");
+        const timeout = getTimeout(delays, durations);
+        if (timeout > 0) {
+            elm.addEventListener("transitionend", cb, { once: true });
+        }
+        else {
+            cb();
+        }
+    }
+    QWeb.addDirective({
         name: "transition",
         priority: 96,
         atNodeCreation({ ctx, value }) {
@@ -2088,24 +2273,13 @@
         }
       };`);
         }
-    };
-    const debugDirective = {
-        name: "debug",
-        priority: 99,
-        atNodeEncounter({ ctx }) {
-            ctx.addLine("debugger;");
-        }
-    };
-    const logDirective = {
-        name: "log",
-        priority: 99,
-        atNodeEncounter({ ctx, value }) {
-            const expr = ctx.formatExpression(value);
-            ctx.addLine(`console.log(${expr})`);
-        }
-    };
-    const widgetDirective = {
+    });
+    //------------------------------------------------------------------------------
+    // t-widget
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
         name: "widget",
+        extraNames: ["props", "keepalive"],
         priority: 100,
         atNodeEncounter({ ctx, value, node }) {
             ctx.addLine("//WIDGET");
@@ -2150,7 +2324,8 @@
             ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
             // check if we can reuse current rendering promise
             ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
-            ctx.addIf(`w${widgetID}.__owl__.isStarted`);
+            ctx.addIf(`w${widgetID}.__owl__.vnode`);
+            // ctx.addIf(`w${widgetID}.__owl__.isStarted`);
             ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
             ctx.addElse();
             ctx.addLine(`isNew${widgetID} = true`);
@@ -2171,21 +2346,59 @@
             for (let [event, method] of events) {
                 ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
             }
-            let ref = node.getAttribute("t-ref");
-            let refExpr = ref
-                ? `context.refs[${ctx.formatExpression(ref)}] = w${widgetID};`
-                : "";
             ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
             ctx.closeIf();
             ctx.closeIf();
+            let ref = node.getAttribute("t-ref");
+            let refExpr = "";
+            let refKey = "";
+            if (ref) {
+                refKey = `ref${ctx.generateID()}`;
+                ctx.addLine(`const ${refKey} = ${ctx.formatExpression(ref)}`);
+                refExpr = `context.refs[${refKey}] = w${widgetID};`;
+            }
             let finalizeWidgetCode = `w${widgetID}.${keepAlive ? "unmount" : "destroy"}()`;
             if (ref) {
-                finalizeWidgetCode += `;delete context.refs[${ctx.formatExpression(ref)}]`;
+                finalizeWidgetCode += `;delete context.refs[${refKey}]`;
+            }
+            let createHook = "";
+            let classAttr = node.getAttribute("class");
+            let tattClass = node.getAttribute("t-att-class");
+            let styleAttr = node.getAttribute("style");
+            let tattStyle = node.getAttribute("t-att-style");
+            if (tattStyle) {
+                const attVar = `_${ctx.generateID()}`;
+                ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattStyle)};`);
+                tattStyle = attVar;
+            }
+            let updateClassCode = "";
+            if (classAttr || tattClass || styleAttr || tattStyle) {
+                let classCode = "";
+                if (classAttr) {
+                    classCode =
+                        classAttr
+                            .split(" ")
+                            .map(c => `vn.elm.classList.add('${c}')`)
+                            .join(";") + ";";
+                }
+                if (tattClass) {
+                    const attVar = `_${ctx.generateID()}`;
+                    ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattClass)};`);
+                    classCode = `for (let k in ${attVar}) {
+              if (${attVar}[k]) {
+                  vn.elm.classList.add(k);
+              }
+          }`;
+                    updateClassCode = `let cl=w${widgetID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
+                }
+                const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);
+                const styleCode = styleExpr ? `vn.elm.style = ${styleExpr}` : "";
+                createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}}};`;
             }
             ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""}${updateClassCode}let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
             ctx.closeIf();
             ctx.addLine(`extra.promises.push(def${defID});`);
             if (node.hasAttribute("t-if") || node.hasAttribute("t-else")) {
@@ -2193,7 +2406,7 @@
             }
             return true;
         }
-    };
+    });
 
     class Store extends EventBus {
         constructor(config, options = {}) {
@@ -2316,197 +2529,52 @@
                         currentStoreProps: storeProps
                     });
                 }
-                mounted() {
-                    this.env.store.on("update", this, () => {
-                        const ownProps = this.__owl__.ownProps;
-                        const storeProps = mapStateToProps(this.env.store.state, ownProps);
-                        const options = {
-                            currentStoreProps: this.__owl__.currentStoreProps
-                        };
-                        const storeHash = hashFunction({
-                            state: this.env.store.state,
-                            storeProps: storeProps,
-                            revNumber,
-                            deepRevNumber
-                        }, options);
-                        let didChange = options.didChange;
-                        if (storeHash !== this.__owl__.storeHash) {
-                            didChange = true;
-                            this.__owl__.storeHash = storeHash;
-                        }
-                        if (didChange) {
-                            this.__owl__.currentStoreProps = storeProps;
-                            this._updateProps(ownProps, false);
-                        }
-                    });
-                    super.mounted();
+                /**
+                 * We do not use the mounted hook here for a subtle reason: we want the
+                 * updates to be called for the parents before the children.  However,
+                 * if we use the mounted hook, this will be done in the reverse order.
+                 */
+                _callMounted() {
+                    this.env.store.on("update", this, this._checkUpdate);
+                    super._callMounted();
                 }
                 willUnmount() {
                     this.env.store.off("update", this);
                     super.willUnmount();
                 }
-                _updateProps(nextProps, forceUpdate) {
+                _checkUpdate() {
+                    const ownProps = this.__owl__.ownProps;
+                    const storeProps = mapStateToProps(this.env.store.state, ownProps);
+                    const options = {
+                        currentStoreProps: this.__owl__.currentStoreProps
+                    };
+                    const storeHash = hashFunction({
+                        state: this.env.store.state,
+                        storeProps: storeProps,
+                        revNumber,
+                        deepRevNumber
+                    }, options);
+                    let didChange = options.didChange;
+                    if (storeHash !== this.__owl__.storeHash) {
+                        didChange = true;
+                        this.__owl__.storeHash = storeHash;
+                    }
+                    if (didChange) {
+                        this.__owl__.currentStoreProps = storeProps;
+                        this._updateProps(ownProps, false);
+                    }
+                }
+                _updateProps(nextProps, forceUpdate, patchQueue) {
                     if (this.__owl__.ownProps !== nextProps) {
                         this.__owl__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps);
                     }
                     this.__owl__.ownProps = nextProps;
                     const mergedProps = Object.assign({}, nextProps, this.__owl__.currentStoreProps);
-                    return super._updateProps(mergedProps, forceUpdate);
+                    return super._updateProps(mergedProps, forceUpdate, patchQueue);
                 }
             };
         };
     }
-
-    function escape(str) {
-        if (str === undefined) {
-            return "";
-        }
-        if (typeof str === "number") {
-            return String(str);
-        }
-        return str
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&#x27;")
-            .replace(/`/g, "&#x60;");
-    }
-    function memoize(f, hash) {
-        if (!hash) {
-            hash = args => args.map(a => String(a)).join(",");
-        }
-        let cache = {};
-        function memoizedFunction(...args) {
-            let hashValue = hash(args);
-            if (!(hashValue in cache)) {
-                cache[hashValue] = f(...args);
-            }
-            return cache[hashValue];
-        }
-        return memoizedFunction;
-    }
-    /**
-     * Returns a function, that, as long as it continues to be invoked, will not
-     * be triggered. The function will be called after it stops being called for
-     * N milliseconds. If `immediate` is passed, trigger the function on the
-     * leading edge, instead of the trailing.
-     *
-     * Inspired by https://davidwalsh.name/javascript-debounce-function
-     */
-    function debounce(func, wait, immediate) {
-        let timeout;
-        return function () {
-            const context = this;
-            const args = arguments;
-            function later() {
-                timeout = null;
-                if (!immediate) {
-                    func.apply(context, args);
-                }
-            }
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) {
-                func.apply(context, args);
-            }
-        };
-    }
-    function patch$1(C, patchName, patch) {
-        const proto = C.prototype;
-        if (!proto.__patches) {
-            proto.__patches = {
-                origMethods: {},
-                patches: {},
-                current: []
-            };
-        }
-        if (proto.__patches.patches[patchName]) {
-            throw new Error(`Patch [${patchName}] already exists`);
-        }
-        proto.__patches.patches[patchName] = patch;
-        applyPatch(proto, patch);
-        proto.__patches.current.push(patchName);
-        function applyPatch(proto, patch) {
-            Object.keys(patch).forEach(function (methodName) {
-                const method = patch[methodName];
-                if (typeof method === "function") {
-                    const original = proto[methodName];
-                    if (!(methodName in proto.__patches.origMethods)) {
-                        proto.__patches.origMethods[methodName] = original;
-                    }
-                    proto[methodName] = function (...args) {
-                        this._super = original;
-                        return method.call(this, ...args);
-                    };
-                }
-            });
-        }
-    }
-    function unpatch(C, patchName) {
-        const proto = C.prototype;
-        const patchInfo = proto.__patches;
-        delete proto.__patches;
-        // reset to original
-        for (let k in patchInfo.origMethods) {
-            proto[k] = patchInfo.origMethods[k];
-        }
-        // apply other patches
-        for (let name of patchInfo.current) {
-            if (name !== patchName) {
-                patch$1(C, name, patchInfo.patches[name]);
-            }
-        }
-    }
-    async function loadTemplates(url) {
-        const result = await fetch(url);
-        if (!result.ok) {
-            throw new Error("Error while fetching xml templates");
-        }
-        let templates = await result.text();
-        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-        return templates;
-    }
-    const loadedScripts = {};
-    function loadJS(url) {
-        if (url in loadedScripts) {
-            return loadedScripts[url];
-        }
-        const promise = new Promise(function (resolve, reject) {
-            const script = document.createElement("script");
-            script.type = "text/javascript";
-            script.src = url;
-            script.onload = function () {
-                resolve();
-            };
-            script.onerror = function () {
-                reject(`Error loading file '${url}'`);
-            };
-            const head = document.head || document.getElementsByTagName("head")[0];
-            head.appendChild(script);
-        });
-        loadedScripts[url] = promise;
-        return promise;
-    }
-    function whenReady(fn) {
-        if (document.readyState === "complete") {
-            fn();
-        }
-        else {
-            document.addEventListener("DOMContentLoaded", fn, false);
-        }
-    }
-
-    var _utils = /*#__PURE__*/Object.freeze({
-        escape: escape,
-        memoize: memoize,
-        debounce: debounce,
-        patch: patch$1,
-        unpatch: unpatch,
-        loadTemplates: loadTemplates,
-        loadJS: loadJS,
-        whenReady: whenReady
-    });
 
     const utils = _utils;
 
@@ -2519,8 +2587,8 @@
     exports.Store = Store;
 
     exports._version = '0.9.0';
-    exports._date = '2019-05-03T12:34:47.418Z';
-    exports._hash = 'ab2a984';
+    exports._date = '2019-05-07T18:51:30.761Z';
+    exports._hash = 'edc7d2b';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

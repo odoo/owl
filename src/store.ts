@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component, Env } from "./component";
 import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
 
@@ -6,11 +6,14 @@ import { Observer } from "./observer";
 // Store Definition
 //------------------------------------------------------------------------------
 
+type Mutation = ({state, commit, set}, payload: any) => void;
+type Action = ({commit, state, dispatch, env}, payload: any) => void;
+
 interface StoreConfig {
-  env?: any;
+  env?: Env;
   state?: any;
-  actions?: any;
-  mutations?: { [name: string]: any };
+  actions?: {[name: string]: Action};
+  mutations?: { [name: string]: Mutation };
 }
 
 interface StoreOption {
@@ -46,7 +49,7 @@ export class Store extends EventBus {
     this.set = this.observer.set.bind(this.observer);
   }
 
-  dispatch(action, payload?: any): Promise<void> | void {
+  dispatch(action: string, payload?: any): Promise<void> | void {
     if (!this.actions[action]) {
       throw new Error(`[Error] action ${action} is undefined`);
     }
@@ -67,7 +70,7 @@ export class Store extends EventBus {
     }
   }
 
-  commit(type, payload?: any) {
+  commit(type: string, payload?: any): any {
     if (!this.mutations[type]) {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
@@ -117,6 +120,11 @@ function deepRevNumber<T extends Object>(o: T): number {
   return 0;
 }
 
+type Constructor<T> = new (...args: any[]) => T;
+interface EnvWithStore extends Env {
+  store: Store;
+}
+
 export function connect(mapStateToProps, options: any = {}) {
   let hashFunction = options.hashFunction || null;
 
@@ -144,7 +152,9 @@ export function connect(mapStateToProps, options: any = {}) {
     };
   }
 
-  return function(Comp) {
+  return function<E extends EnvWithStore, P, S>(
+    Comp: Constructor<Component<E, P, S>>
+  ) {
     return class extends Comp {
       constructor(parent, props?: any) {
         const env = parent instanceof Component ? parent.env : parent;
@@ -152,9 +162,9 @@ export function connect(mapStateToProps, options: any = {}) {
         const storeProps = mapStateToProps(env.store.state, ownProps);
         const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
-        this.__owl__.ownProps = ownProps;
-        this.__owl__.currentStoreProps = storeProps;
-        this.__owl__.storeHash = hashFunction(
+        (<any>this.__owl__).ownProps = ownProps;
+        (<any>this.__owl__).currentStoreProps = storeProps;
+        (<any>this.__owl__).storeHash = hashFunction(
           {
             state: env.store.state,
             storeProps: storeProps,
@@ -181,10 +191,10 @@ export function connect(mapStateToProps, options: any = {}) {
       }
 
       _checkUpdate() {
-        const ownProps = this.__owl__.ownProps;
+        const ownProps = (<any>this.__owl__).ownProps;
         const storeProps = mapStateToProps(this.env.store.state, ownProps);
         const options: any = {
-          currentStoreProps: this.__owl__.currentStoreProps
+          currentStoreProps: (<any>this.__owl__).currentStoreProps
         };
         const storeHash = hashFunction(
           {
@@ -196,29 +206,29 @@ export function connect(mapStateToProps, options: any = {}) {
           options
         );
         let didChange = options.didChange;
-        if (storeHash !== this.__owl__.storeHash) {
+        if (storeHash !== (<any>this.__owl__).storeHash) {
           didChange = true;
-          this.__owl__.storeHash = storeHash;
+          (<any>this.__owl__).storeHash = storeHash;
         }
         if (didChange) {
-          this.__owl__.currentStoreProps = storeProps;
-          this._updateProps(ownProps, false);
+          (<any>this.__owl__).currentStoreProps = storeProps;
+          this._updateProps(ownProps, false, []);
         }
       }
-      _updateProps(nextProps, forceUpdate, p?: any) {
-        if (this.__owl__.ownProps !== nextProps) {
-          this.__owl__.currentStoreProps = mapStateToProps(
+      _updateProps(nextProps, forceUpdate, patchQueue: any[]) {
+        if ((<any>this.__owl__).ownProps !== nextProps) {
+          (<any>this.__owl__).currentStoreProps = mapStateToProps(
             this.env.store.state,
             nextProps
           );
         }
-        this.__owl__.ownProps = nextProps;
+        (<any>this.__owl__).ownProps = nextProps;
         const mergedProps = Object.assign(
           {},
           nextProps,
-          this.__owl__.currentStoreProps
+          (<any>this.__owl__).currentStoreProps
         );
-        return super._updateProps(mergedProps, forceUpdate, p);
+        return super._updateProps(mergedProps, forceUpdate, patchQueue);
       }
     };
   };

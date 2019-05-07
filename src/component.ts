@@ -11,7 +11,7 @@ export interface Env {
   qweb: QWeb;
 }
 
-interface Meta<T extends Env, Props> {
+export interface Meta<T extends Env, Props> {
   readonly id: number;
   vnode: VNode | null;
   isStarted: boolean;

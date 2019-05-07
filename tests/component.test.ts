@@ -1646,7 +1646,7 @@ describe("async rendering", () => {
     );
   });
 
-  test.only("properly behave when destroyed/unmounted while rendering ", async () => {
+  test("properly behave when destroyed/unmounted while rendering ", async () => {
     let def = Promise.resolve();
 
     class Child extends Widget {

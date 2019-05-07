@@ -141,7 +141,7 @@ describe("basic use", () => {
 
   test("env is given to actions", () => {
     expect.assertions(1);
-    const someEnv = {};
+    const someEnv = <Env>{};
     const actions = {
       someaction({ env }) {
         expect(env).toBe(someEnv);

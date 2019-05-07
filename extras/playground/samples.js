@@ -1034,18 +1034,38 @@ html .clear-completed:active {
 }
 `;
 
-const RESPONSIVE = `class SubWidget extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.template = "subwidget";
-    }
+const RESPONSIVE = `class Navbar extends owl.Component {
+    template="navbar";
 }
 
-class ResponsiveWidget extends owl.Component {
+class ControlPanel extends owl.Component {
+    template="controlpanel";
+    widgets = { MobileSearchView };
+}
+
+class FormView extends owl.Component {
+    template="formview";
+    widgets = { AdvancedWidget };
+}
+
+class AdvancedWidget extends owl.Component {
+    template="advancedwidget";
+}
+
+class Chatter extends owl.Component {
+    template="chatter";
+}
+
+class MobileSearchView extends owl.Component {
+    template="mobilesearchview";
+}
+
+
+class App extends owl.Component {
     constructor() {
         super(...arguments);
-        this.template = "responsivewidget";
-        this.widgets = { SubWidget };
+        this.template = "app";
+        this.widgets = { Navbar, ControlPanel, FormView, Chatter };
     }
 }
 
@@ -1058,50 +1078,119 @@ const env = {
     isMobile: isMobile()
 };
 
-const widget = new ResponsiveWidget(env);
-widget.mount(document.body);
+const app = new App(env);
+app.mount(document.body);
 
 window.addEventListener(
     "resize",
     owl.utils.debounce(function() {
         const _isMobile = isMobile();
         if (_isMobile !== env.isMobile) {
-            widget.updateEnv({
+            app.updateEnv({
                 isMobile: _isMobile
             });
         }
     }, 20)
-);
-`;
+);`;
 
 const RESPONSIVE_XML = `<templates>
-    <div t-name="responsivewidget">
-        <div class="info">
-            <span class="mobile" t-if="env.isMobile">Mobile</span>
-            <span class="desktop" t-else="1">Desktop</span>
-            mode
-        </div>
-        <t t-widget="SubWidget" t-if="!env.isMobile"/>
+    <div t-name="navbar" class="navbar">Navbar</div>
+
+    <div t-name="controlpanel" class="controlpanel">
+        <h2>controlpanel</h2>
+        <t t-if="env.isMobile" t-widget="MobileSearchView"/>
     </div>
-    <div t-name="subwidget" class="subwidget">
-        This widget is only instantiated in desktop mode.  It will be destroyed
-        and recreated if the mode changes from destop to mobile, and back to desktop
+
+    <div t-name="formview" class="formview">
+      <h2>formview</h2>
+        <t t-if="!env.isMobile" t-widget="AdvancedWidget"/>
+    </div>
+
+    <div t-name="chatter" class="chatter">
+      <h2>Chatter</h2>
+      <t t-foreach="100" t-as="item"><div>Message <t t-esc="item"/></div></t>
+    </div>
+
+    <div t-name="mobilesearchview">MOBILE searchview</div>
+
+    <div t-name="app" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+        <t t-widget="Navbar"/>
+        <t t-widget="ControlPanel"/>
+        <div class="content-wrapper" t-if="!env.isMobile">
+          <div class="content">
+            <t t-widget="FormView"/>
+            <t t-widget="Chatter"/>
+          </div>
+        </div>
+        <t t-else="1">
+          <t t-widget="FormView"/>
+          <t t-widget="Chatter"/>
+        </t>
+
+    </div>
+    <div t-name="advancedwidget">
+        This widget is only created in desktop mode.
+        <button>Button!</button>
     </div>
 </templates>
 `;
 
-const RESPONSIVE_CSS = `.info {
-    font-size: 30px;
+const RESPONSIVE_CSS = `body {
+    margin: 0;
 }
-.desktop {
-    color: green;
+
+.app {
+    height: 100%;
+    flex-direction: column;
 }
-.mobile {
-    color: blue;
+
+.app.desktop {
+    display: flex;
 }
-.subwidget {
-    margin: 30px;
-}`;
+.navbar {
+    flex: 0 0 30px;
+    height: 30px;
+    background-color: cadetblue;
+    color: white;
+    line-height: 30px;
+}
+
+.controlpanel {
+    flex: 0 0 100px;
+    height: 100px;
+    background-color: #dddddd;
+    padding: 8px;
+}
+
+.content-wrapper {
+    flex: 1 1 auto;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.formview {
+    overflow-y: auto;
+    flex: 1 1 60%;
+    min-height: 200px;
+    padding: 8px;
+}
+
+.chatter {
+    overflow-y: auto;
+    flex: 1 1 40%;
+    background-color: #eeeeee;
+    color: #333333;
+    padding: 8px;
+}
+`;
 
 const EMPTY = `class App extends owl.Component {
 }

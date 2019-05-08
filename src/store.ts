@@ -2,6 +2,21 @@ import { Component, Env } from "./component";
 import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
 
+/**
+ * Owl Store
+ *
+ * We have here:
+ * - a Store class
+ * - a connect function
+ *
+ * The Owl store is our answer to the problem of managing complex state across
+ * components. The main idea is that the store owns some state, allow external
+ * code to modify it through actions/mutations, and for each state changes,
+ * connected component will be notified, and updated if necessary.
+ *
+ * Note that this code is partly inspired by VueX and React/Redux
+ */
+
 //------------------------------------------------------------------------------
 // Store Definition
 //------------------------------------------------------------------------------

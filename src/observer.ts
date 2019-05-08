@@ -1,7 +1,26 @@
+/**
+ * Owl Observer
+ *
+ * This code contains the logic that allows Owl to observe and react to state
+ * changes.
+ *
+ * This is a Observer class that can observe any JS values.  The way it works
+ * can be summarized thusly:
+ * - primitive values are not observed at all
+ * - Objects are observed by replacing all their keys with getters/setters
+ *   (recursively)
+ * - Arrays are observed by replacing their prototype with a customized version,
+ *   which wrap some methods to allow the tracking of each state change.
+ *
+ * Note that this code is inspired by Vue.
+ */
+
 //------------------------------------------------------------------------------
-// Observer
+// Modified Array prototype
 //------------------------------------------------------------------------------
 
+// we define here a new modified Array prototype, which basically override all
+// Array methods that change some state to be able to track their changes
 const methodsToPatch = [
   "push",
   "pop",
@@ -11,7 +30,6 @@ const methodsToPatch = [
   "sort",
   "reverse"
 ];
-
 const ArrayProto = Array.prototype;
 const ModifiedArrayProto = Object.create(ArrayProto);
 
@@ -46,6 +64,9 @@ for (let method of methodsToPatch) {
   };
 }
 
+//------------------------------------------------------------------------------
+// Observer
+//------------------------------------------------------------------------------
 export class Observer {
   rev: number = 1;
   allowMutations: boolean = true;

@@ -1,10 +1,27 @@
 import { VNode, h } from "./vdom";
 import { parseXML } from "./utils";
 
+/**
+ * Owl QWeb Engine
+ *
+ * In this file, you will find a QWeb engine/template compiler.  It is the core
+ * of how Owl component works.
+ *
+ * Briefly, Owl QWeb compiles XML templates into functions that output a virtual
+ * DOM representation.
+ *
+ * We have here:
+ * - a CompilationContext class, which is an internal object that contains all
+ *   compilation specific information, while a template is being compiled.
+ * - a QWeb class: this is the code of the QWeb compiler.
+ *
+ * Note that this file does not contain the implementation of the QWeb
+ * directives (see qweb_directives.ts and qweb_extensions.ts).
+ */
+
 //------------------------------------------------------------------------------
 // Types
 //------------------------------------------------------------------------------
-
 export type EvalContext = { [key: string]: any };
 export type CompiledTemplate = (context: EvalContext, extra: any) => VNode;
 
@@ -86,7 +103,6 @@ export const UTILS = {
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
-
 export class Context {
   nextID: number = 1;
   code: string[] = [];

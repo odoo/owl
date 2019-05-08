@@ -3,6 +3,17 @@ import { Observer } from "./observer";
 import { QWeb, CompiledTemplate } from "./qweb_core";
 import { h, patch, VNode } from "./vdom";
 
+/**
+ * Owl Component System
+ *
+ * This file introduces a declarative and composable component system. It
+ * contains:
+ *
+ * - the Env interface (generic type for the environment)
+ * - the Meta interface (the owl specific metadata attached to a component)
+ * - the Component class
+ */
+
 //------------------------------------------------------------------------------
 // Types/helpers
 //------------------------------------------------------------------------------

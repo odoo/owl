@@ -1,3 +1,19 @@
+/**
+ * Owl Utils
+ *
+ * We have here a small collection of utility functions:
+ *
+ * - escape
+ * - memoize
+ * - debounce
+ * - patch
+ * - unpatch
+ * - loadTemplates
+ * - loadJS
+ * - whenReady
+ * - parseXML
+ */
+
 export function escape(str: string | number | undefined): string {
   if (str === undefined) {
     return "";

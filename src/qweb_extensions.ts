@@ -1,5 +1,17 @@
 import { QWeb, UTILS } from "./qweb_core";
 
+/**
+ * Owl QWeb Extensions
+ *
+ * This file contains the implementation of non standard QWeb directives, added
+ * by Owl and that will only work on Owl projects:
+ *
+ * - t-on
+ * - t-ref
+ * - t-transition
+ * - t-widget/t-props/t-keepalive
+ */
+
 //------------------------------------------------------------------------------
 // t-on
 //------------------------------------------------------------------------------

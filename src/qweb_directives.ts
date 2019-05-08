@@ -1,5 +1,20 @@
 import { Context, QWeb, UTILS } from "./qweb_core";
 
+/**
+ * Owl QWeb Directives
+ *
+ * This file contains the implementation of most standard QWeb directives:
+ * - t-esc
+ * - t-raw
+ * - t-set/t-value
+ * - t-if/t-elif/t-else
+ * - t-call
+ * - t-foreach/t-as
+ * - t-debug
+ * - t-log
+ */
+
+
 //------------------------------------------------------------------------------
 // t-esc and t-raw
 //------------------------------------------------------------------------------

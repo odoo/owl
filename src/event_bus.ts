@@ -3,7 +3,8 @@
  * - emit events
  * - add/remove listeners.
  *
- * This is a useful pattern of communication in some cases.
+ * This is a useful pattern of communication in many cases.  For OWL, each
+ * components and stores are event buses.
  */
 
 //------------------------------------------------------------------------------

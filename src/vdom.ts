@@ -1,3 +1,20 @@
+/**
+ * Owl VDOM
+ *
+ * This file contains an implementation of a virtual DOM, which is a system that
+ * can generate in-memory representations of a DOM tree, compare them, and
+ * eventually change a concrete DOM tree to match its representation, in an
+ * hopefully efficient way.
+ *
+ * Note that this code is a fork of Snabbdom, slightly tweaked/optimized for our
+ * needs (see https://github.com/snabbdom/snabbdom).
+ *
+ * The main exported values are:
+ * - interface VNode
+ * - h function (a helper function to generate a vnode)
+ * - patch function (to apply a vnode to an actual DOM node)
+ */
+
 
 // because those in TypeScript are too restrictive: https://github.com/Microsoft/TSJS-lib-generator/pull/237
 declare global {

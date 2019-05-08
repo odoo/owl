@@ -189,7 +189,7 @@ export function connect(mapStateToProps, options: any = {}) {
       constructor(parent, props?: any) {
         const env = parent instanceof Component ? parent.env : parent;
         const ownProps = Object.assign({}, props || {});
-        const storeProps = mapStateToProps(env.store.state, ownProps);
+        const storeProps = mapStateToProps(env.store.state, ownProps, env.store.getters);
         const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
         (<any>this.__owl__).ownProps = ownProps;
@@ -222,7 +222,7 @@ export function connect(mapStateToProps, options: any = {}) {
 
       _checkUpdate() {
         const ownProps = (<any>this.__owl__).ownProps;
-        const storeProps = mapStateToProps(this.env.store.state, ownProps);
+        const storeProps = mapStateToProps(this.env.store.state, ownProps, this.env.store.getters);
         const options: any = {
           currentStoreProps: (<any>this.__owl__).currentStoreProps
         };
@@ -249,7 +249,8 @@ export function connect(mapStateToProps, options: any = {}) {
         if ((<any>this.__owl__).ownProps !== nextProps) {
           (<any>this.__owl__).currentStoreProps = mapStateToProps(
             this.env.store.state,
-            nextProps
+            nextProps,
+            this.env.store.getters
           );
         }
         (<any>this.__owl__).ownProps = nextProps;

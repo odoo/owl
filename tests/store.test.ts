@@ -564,6 +564,59 @@ describe("connecting a component to store", () => {
     );
   });
 
+  test("connect receives store getters as third argument", async () => {
+    const state = {
+      importantID: 1,
+      todos: [
+        { id: 1, text: "jupiler" },
+        { id: 2, text: "bertinchamps" },
+      ],
+    };
+    const getters = {
+      importantTodoText(state) {
+        return state.todos.find(todo => todo.id === state.importantID).text;
+      },
+      text(state) {
+        return id => state.todos.find(todo => todo.id === id).text;
+      },
+    };
+    const store = new Store({ state, getters });
+
+    class TodoItem extends Component<any, any, any> {
+      inlineTemplate = `<div>
+        <span><t t-esc="props.activeTodoText"/></span>
+        <span><t t-esc="props.importantTodoText"/></span>
+      </div>`;
+    }
+    const ConnectedTodo = connect((state, props, getters) => {
+      const todo = state.todos.find(t => t.id === props.id);
+      return {
+        activeTodoText: getters.text(todo.id),
+        importantTodoText: getters.importantTodoText,
+      };
+    })(TodoItem);
+
+    class TodoList extends Component<any, any, any> {
+      inlineTemplate = `<div>
+            <t t-foreach="props.todos" t-as="todo">
+              <t t-widget="ConnectedTodo" t-props="todo"/>
+            </t>
+          </div>`;
+      widgets = { ConnectedTodo };
+    }
+
+    function mapStateToProps(state) {
+      return { todos: state.todos };
+    }
+    const ConnectedTodoList = connect(mapStateToProps)(TodoList);
+
+    (<any>env).store = store;
+    const app = new ConnectedTodoList(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>jupiler</span><span>jupiler</span></div><div><span>bertinchamps</span><span>jupiler</span></div></div>");
+  });
+
   test("connected component is updated when props are updated", async () => {
     class Beer extends Component<any, any, any> {
       inlineTemplate = `<span><t t-esc="props.name"/></span>`;

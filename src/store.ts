@@ -21,13 +21,15 @@ import { Observer } from "./observer";
 // Store Definition
 //------------------------------------------------------------------------------
 
-type Mutation = ({state, commit, set}, payload: any) => void;
-type Action = ({commit, state, dispatch, env}, payload: any) => void;
+type Mutation = ({state, commit, set, getters}, payload: any) => void;
+type Action = ({commit, state, dispatch, env, getters}, payload: any) => void;
+type Getter = (state) => any;
 
 interface StoreConfig {
   env?: Env;
   state?: any;
   actions?: {[name: string]: Action};
+  getters?: {[name: string]: Getter}
   mutations?: { [name: string]: Mutation };
 }
 
@@ -45,6 +47,7 @@ export class Store extends EventBus {
   env: any;
   observer: Observer;
   set: any;
+  getters: {[name: string]: Getter};
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -57,12 +60,22 @@ export class Store extends EventBus {
     this.observer.notifyCB = this.trigger.bind(this, "update");
     this.observer.allowMutations = false;
     this.observer.observe(this.state);
+    this.getters = {};
 
     if (this.debug) {
       this.history.push({ state: this.state });
     }
     this.set = this.observer.set.bind(this.observer);
+
+    for (let entry of Object.entries(config.getters || {})) {
+        const name: string = entry[0];
+        const func: (...any) => any = entry[1];
+        Object.defineProperty(this.getters, name, {
+          get: () => func(this.state),
+        });
+      }
   }
+
 
   dispatch(action: string, payload?: any): Promise<void> | void {
     if (!this.actions[action]) {
@@ -73,7 +86,8 @@ export class Store extends EventBus {
         commit: this.commit.bind(this),
         dispatch: this.dispatch.bind(this),
         env: this.env,
-        state: this.state
+        state: this.state,
+        getters: this.getters,
       },
       payload
     );
@@ -97,7 +111,8 @@ export class Store extends EventBus {
       {
         commit: this.commit.bind(this),
         state: this.state,
-        set: this.set
+        set: this.set,
+        getters: this.getters,
       },
       payload
     );

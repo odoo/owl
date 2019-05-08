@@ -169,6 +169,114 @@ describe("basic use", () => {
     expect(updateCounter).toBe(1);
     expect(store.state).toEqual({ bertinchamps: "brune", chouffe: "blonde" });
   });
+
+  test("can have getters from store", async () => {
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1,
+        },
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: 'aaron',
+        }
+      },
+    };
+    const getters = {
+      beerTasterName(state) {
+        return beerID => {
+          return state.tasters[state.beers[beerID].tasterID].name;
+        }
+      },
+      bestBeerName(state) {
+        return state.beers[1].name;
+      }
+    };
+    const store = new Store({ state, mutations: {}, actions: {}, getters });
+    expect(store.getters).toBeDefined();
+    expect((<any>store.getters).bestBeerName).toBe("bertinchamps");
+    expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
+  });
+
+  test("getters given to actions", async () => {
+    expect.assertions(3);
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1,
+        },
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: 'aaron',
+        }
+      },
+    };
+    const getters = {
+      beerTasterName(state) {
+        return beerID => {
+          return state.tasters[state.beers[beerID].tasterID].name;
+        }
+      },
+      bestBeerName(state) {
+        return state.beers[1].name;
+      }
+    };
+    const actions = {
+      action({ getters }) {
+        expect(getters).toBeDefined();
+        expect(getters.bestBeerName).toBe("bertinchamps");
+        expect(getters.beerTasterName(1)).toBe("aaron");
+      }
+    };
+    const store = new Store({ state, mutations: {}, actions, getters });
+    store.dispatch("action");
+  });
+
+  test("getters given to mutations", async () => {
+    expect.assertions(3);
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1,
+        },
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: 'aaron',
+        }
+      },
+    };
+    const getters = {
+      beerTasterName(state) {
+        return beerID => {
+          return state.tasters[state.beers[beerID].tasterID].name;
+        }
+      },
+      bestBeerName(state) {
+        return state.beers[1].name;
+      }
+    };
+    const mutations = {
+      mutation({ getters }) {
+        expect(getters).toBeDefined();
+        expect(getters.bestBeerName).toBe("bertinchamps");
+        expect(getters.beerTasterName(1)).toBe("aaron");
+      }
+    };
+    const store = new Store({ state, mutations, actions: {}, getters });
+    store.commit("mutation");
+  });
 });
 
 describe("advanced state properties", () => {

@@ -252,29 +252,33 @@ export class Component<
     if (!this.__owl__.isMounted) {
       return;
     }
-    const shouldCallPatchHooks: boolean = !patchQueue;
-    if (shouldCallPatchHooks) {
+    const shouldPatch: boolean = !patchQueue;
+    if (shouldPatch) {
       patchQueue = [];
     }
     const renderVDom = this._render(force, patchQueue);
     const renderId = this.__owl__.renderId;
-    const vnode = await renderVDom;
+    await renderVDom;
 
-    if (this.__owl__.isMounted && renderId === this.__owl__.renderId) {
+    if (
+      shouldPatch &&
+      this.__owl__.isMounted &&
+      renderId === this.__owl__.renderId
+    ) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
-      if (shouldCallPatchHooks) {
-        for (let i = 0; i < patchQueue!.length; i++) {
-          const c = patchQueue![i];
-          c.__owl__.willPatchVal = c.willPatch();
-        }
+      for (let i = 0; i < patchQueue!.length; i++) {
+        const patch = patchQueue![i];
+        patch.push(patch[0].willPatch());
       }
-      this._patch(vnode);
-      if (shouldCallPatchHooks) {
-        for (let i = patchQueue!.length - 1; i >= 0; i--) {
-          const c = patchQueue![i];
-          c.patched(c.__owl__.willPatchVal);
-        }
+      for (let i = 0; i < patchQueue!.length; i++) {
+        const patch = patchQueue![i];
+        patch[0]._patch(patch[1]);
+      }
+
+      for (let i = patchQueue!.length - 1; i >= 0; i--) {
+        const patch = patchQueue![i];
+        patch[0].patched(patch[2]);
       }
     }
   }
@@ -355,11 +359,8 @@ export class Component<
 
   _patch(vnode) {
     this.__owl__.renderPromise = null;
-    if (this.__owl__.vnode) {
-      this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-    } else {
-      this.__owl__.vnode = patch(document.createElement(vnode.sel!), vnode);
-    }
+    const target = this.__owl__.vnode || document.createElement(vnode.sel!);
+    this.__owl__.vnode = patch(target, vnode);
   }
   _prepare(): Promise<VNode> {
     this.__owl__.renderProps = this.props;
@@ -387,11 +388,12 @@ export class Component<
     force: boolean = false,
     patchQueue: any[] = []
   ): Promise<VNode> {
-    if (this.__owl__.isMounted) {
-      patchQueue.push(this);
-    }
     this.__owl__.renderId++;
     const promises: Promise<void>[] = [];
+    const patch: any[] = [this];
+    if (this.__owl__.isMounted) {
+      patchQueue.push(patch);
+    }
     if (this.__owl__.observer) {
       this.__owl__.observer.allowMutations = false;
     }
@@ -401,6 +403,7 @@ export class Component<
       forceUpdate: force,
       patchQueue
     });
+    patch.push(vnode);
     if (this.__owl__.observer) {
       this.__owl__.observer.allowMutations = true;
     }

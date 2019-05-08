@@ -1491,6 +1491,160 @@ describe("random stuff/miscellaneous", () => {
     await widget.mount(fixture);
     expect(env.qweb.templates.parent.fn.toString()).toMatchSnapshot();
   });
+
+  test("component semantics", async () => {
+    let steps: string[] = [];
+    let c: C;
+
+    class TestWidget extends Widget {
+      name: string = "test";
+      async willStart() {
+        steps.push(`${this.name}:willStart`);
+      }
+      _render(f, p) {
+        steps.push(`${this.name}:render`);
+        return super._render(f, p);
+      }
+      _patch(vnode) {
+        steps.push(`${this.name}:_patch`);
+        super._patch(vnode);
+      }
+      _mount(vnode, elm) {
+        steps.push(`${this.name}:_patch(from _mount)`);
+        return super._mount(vnode, elm);
+      }
+      mounted() {
+        steps.push(`${this.name}:mounted`);
+      }
+      async willUpdateProps() {
+        steps.push(`${this.name}:willUpdateProps`);
+      }
+      willPatch() {
+        steps.push(`${this.name}:willPatch`);
+      }
+      patched() {
+        steps.push(`${this.name}:patched`);
+      }
+      willUnmount() {
+        steps.push(`${this.name}:willUnmount`);
+      }
+      destroy() {
+        super.destroy();
+        steps.push(`${this.name}:destroy`);
+      }
+    }
+    class A extends TestWidget {
+      inlineTemplate = `<div>A<t t-widget="B"/><t t-widget="C"/></div>`;
+      widgets = { B, C };
+      name = "A";
+    }
+    class B extends TestWidget {
+      inlineTemplate = `<div>B</div>`;
+      name = "B";
+      constructor(parent, props) {
+        super(parent, props);
+        steps.push("B:constructor");
+      }
+    }
+    class C extends TestWidget {
+      inlineTemplate = `
+        <div>C<t t-widget="D"/>
+            <t t-if="state.flag" t-widget="E"/>
+            <t t-else="!state.flag" t-widget="F"/>
+        </div>`;
+      widgets = { D, E, F };
+      name = "C";
+      state = {flag: true};
+
+      constructor(parent, props) {
+        super(parent, props);
+        c = this;
+        steps.push("C:constructor");
+      }
+    }
+
+    class D extends TestWidget {
+      inlineTemplate = `<div>D</div>`;
+      name = "D";
+      constructor(parent, props) {
+        super(parent, props);
+        steps.push("D:constructor");
+      }
+    }
+    class E extends TestWidget {
+      inlineTemplate = `<div>E</div>`;
+      name = "E";
+      constructor(parent, props) {
+        super(parent, props);
+        steps.push("E:constructor");
+      }
+    }
+
+    class F extends TestWidget {
+      inlineTemplate = `<div>F</div>`;
+      name = "F";
+      constructor(parent, props) {
+        super(parent, props);
+        steps.push("F:constructor");
+      }
+    }
+
+    const a = new A(env);
+    await a.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      `<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`
+    );
+    expect(steps).toEqual([
+      "A:willStart",
+      "A:render",
+      "B:constructor",
+      "B:willStart",
+      "C:constructor",
+      "C:willStart",
+      "B:render",
+      "C:render",
+      "D:constructor",
+      "D:willStart",
+      "E:constructor",
+      "E:willStart",
+      "D:render",
+      "E:render",
+      "A:_patch",
+      "B:_patch(from _mount)",
+      "C:_patch(from _mount)",
+      "D:_patch(from _mount)",
+      "E:_patch(from _mount)",
+      "B:mounted",
+      "D:mounted",
+      "E:mounted",
+      "C:mounted",
+      "A:mounted",
+    ]);
+
+    // update
+    steps = [];
+    c!.state.flag = false;
+    await nextTick();
+    expect(steps).toEqual([
+      "C:render",
+      "D:willUpdateProps",
+      "F:constructor",
+      "F:willStart",
+      "D:render",
+      "F:render",
+      "C:willPatch",
+      "D:willPatch",
+      "C:_patch",
+      "E:willUnmount",
+      "E:destroy",
+      "E:destroy",  // maybe should look into this
+      "F:_patch(from _mount)",
+      "F:mounted",
+      "D:_patch",
+      "D:patched",
+      "C:patched"
+    ]);
+  });
 });
 
 describe("async rendering", () => {

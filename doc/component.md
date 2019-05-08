@@ -418,15 +418,16 @@ Here is what Owl will do:
      2. template `D` is rerendered
    - widget `F` is created:
      1. hook `willStart` is called on `E` (async)
-     2. template `F` is rerendered
+     2. template `F` is rendered
 
 3. `willPatch` hooks are called recursively on widgets `C`, `D` (not on `F`,
    because it is not mounted yet)
 
 4. widget `C` is patched, which will cause recursively:
 
-   1. patching of `D`,
    2. `willUnmount` hook on `E`, then destruction of `E`,
    3. (initial) patching of `F`, then hook `mounted` is called on `F`
 
-5. `patched` hooks are called on `D`, `C`
+5. patching of `D`,
+
+6. `patched` hooks are called on `D`, `C`

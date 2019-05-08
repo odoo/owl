@@ -169,6 +169,131 @@ describe("basic use", () => {
     expect(updateCounter).toBe(1);
     expect(store.state).toEqual({ bertinchamps: "brune", chouffe: "blonde" });
   });
+
+  test("can have getters from store", async () => {
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1,
+        },
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: 'aaron',
+        }
+      },
+    };
+    const getters = {
+      beerTasterName({ state }) {
+        return beerID => {
+          return state.tasters[state.beers[beerID].tasterID].name;
+        }
+      },
+      bestBeerName({ state }) {
+        return state.beers[1].name;
+      }
+    };
+    const store = new Store({ state, mutations: {}, actions: {}, getters });
+    expect(store.getters).toBeDefined();
+    expect((<any>store.getters).bestBeerName).toBe("bertinchamps");
+    expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
+  });
+
+  test("getters given to actions", async () => {
+    expect.assertions(3);
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1,
+        },
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: 'aaron',
+        }
+      },
+    };
+    const getters = {
+      beerTasterName({ state }) {
+        return beerID => {
+          return state.tasters[state.beers[beerID].tasterID].name;
+        }
+      },
+      bestBeerName({ state }) {
+        return state.beers[1].name;
+      }
+    };
+    const actions = {
+      action({ getters }) {
+        expect(getters).toBeDefined();
+        expect(getters.bestBeerName).toBe("bertinchamps");
+        expect(getters.beerTasterName(1)).toBe("aaron");
+      }
+    };
+    const store = new Store({ state, mutations: {}, actions, getters });
+    store.dispatch("action");
+  });
+
+  test("getters given to mutations", async () => {
+    expect.assertions(3);
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1,
+        },
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: 'aaron',
+        }
+      },
+    };
+    const getters = {
+      beerTasterName({ state }) {
+        return beerID => {
+          return state.tasters[state.beers[beerID].tasterID].name;
+        }
+      },
+      bestBeerName({ state }) {
+        return state.beers[1].name;
+      }
+    };
+    const mutations = {
+      mutation({ getters }) {
+        expect(getters).toBeDefined();
+        expect(getters.bestBeerName).toBe("bertinchamps");
+        expect(getters.beerTasterName(1)).toBe("aaron");
+      }
+    };
+    const store = new Store({ state, mutations, actions: {}, getters });
+    store.commit("mutation");
+  });
+
+  test("can use getters inside a getter", () => {
+    const getters = {
+      a({ getters }) {
+        return `${getters.b}${getters.c(1)}`;
+      },
+      b() {
+        return 'b';
+      },
+      c() {
+        return i => `c${i}`;
+      },
+    };
+    const store = new Store({ getters });
+
+    expect(store.getters.a).toBe('bc1');
+  });
 });
 
 describe("advanced state properties", () => {
@@ -454,6 +579,59 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe(
       "<div><span>jupiler</span><span>hoegaarden</span></div>"
     );
+  });
+
+  test("connect receives store getters as third argument", async () => {
+    const state = {
+      importantID: 1,
+      todos: [
+        { id: 1, text: "jupiler" },
+        { id: 2, text: "bertinchamps" },
+      ],
+    };
+    const getters = {
+      importantTodoText({ state }) {
+        return state.todos.find(todo => todo.id === state.importantID).text;
+      },
+      text({ state }) {
+        return id => state.todos.find(todo => todo.id === id).text;
+      },
+    };
+    const store = new Store({ state, getters });
+
+    class TodoItem extends Component<any, any, any> {
+      inlineTemplate = `<div>
+        <span><t t-esc="props.activeTodoText"/></span>
+        <span><t t-esc="props.importantTodoText"/></span>
+      </div>`;
+    }
+    const ConnectedTodo = connect((state, props, getters) => {
+      const todo = state.todos.find(t => t.id === props.id);
+      return {
+        activeTodoText: getters.text(todo.id),
+        importantTodoText: getters.importantTodoText,
+      };
+    })(TodoItem);
+
+    class TodoList extends Component<any, any, any> {
+      inlineTemplate = `<div>
+            <t t-foreach="props.todos" t-as="todo">
+              <t t-widget="ConnectedTodo" t-props="todo"/>
+            </t>
+          </div>`;
+      widgets = { ConnectedTodo };
+    }
+
+    function mapStateToProps(state) {
+      return { todos: state.todos };
+    }
+    const ConnectedTodoList = connect(mapStateToProps)(TodoList);
+
+    (<any>env).store = store;
+    const app = new ConnectedTodoList(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>jupiler</span><span>jupiler</span></div><div><span>bertinchamps</span><span>jupiler</span></div></div>");
   });
 
   test("connected component is updated when props are updated", async () => {

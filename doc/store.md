@@ -83,7 +83,7 @@ object, or modifying an array with the `arr[i] = newValue` syntax).  See the
 ### Mutations
 
 Mutations are the only way to modify the state.  Changing the state outside a
-mutation is not allowed (and should throw an error).  Mutations as synchronous.
+mutation is not allowed (and should throw an error).  Mutations are synchronous.
 
 ### Actions
 
@@ -93,7 +93,7 @@ in an action.
 
 ```js
 const actions = {
-    login({commit}) {
+    async login({commit}) {
         commit('setLoginState', 'pending');
         try {
             const loginInfo = await doSomeRPC('/login/', 'someinfo');
@@ -128,18 +128,20 @@ transform the data contained in the store.
 
 ```js
 const getters = {
-    getPost({state}) {
-        return function (id) {
-            const post = state.posts.find(p => p.id === id);
-            const author = state.authors.find(a => a.id = post.id);
-            return {
-                id,
-                author,
-                content: post.content
-            };
+    getPost({state}, id) {
+        const post = state.posts.find(p => p.id === id);
+        const author = state.authors.find(a => a.id = post.id);
+        return {
+            id,
+            author,
+            content: post.content
         };
     },
 };
+
+// somewhere else
+const post = store.getters.getPost(id);
+
 ```
 
 ### Connecting a component

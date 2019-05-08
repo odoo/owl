@@ -21,13 +21,15 @@ import { Observer } from "./observer";
 // Store Definition
 //------------------------------------------------------------------------------
 
-type Mutation = ({state, commit, set}, payload: any) => void;
-type Action = ({commit, state, dispatch, env}, payload: any) => void;
+type Mutation = ({ state, commit, set, getters }, payload: any) => void;
+type Action = ({ commit, state, dispatch, env, getters }, payload: any) => void;
+type Getter = ({ state, getters }, payload) => any;
 
 interface StoreConfig {
   env?: Env;
   state?: any;
-  actions?: {[name: string]: Action};
+  actions?: { [name: string]: Action };
+  getters?: { [name: string]: Getter };
   mutations?: { [name: string]: Mutation };
 }
 
@@ -45,6 +47,7 @@ export class Store extends EventBus {
   env: any;
   observer: Observer;
   set: any;
+  getters: { [name: string]: Getter };
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -57,11 +60,23 @@ export class Store extends EventBus {
     this.observer.notifyCB = this.trigger.bind(this, "update");
     this.observer.allowMutations = false;
     this.observer.observe(this.state);
+    this.getters = {};
 
     if (this.debug) {
       this.history.push({ state: this.state });
     }
     this.set = this.observer.set.bind(this.observer);
+
+    for (let entry of Object.entries(config.getters || {})) {
+      const name: string = entry[0];
+      const func: (...any) => any = entry[1];
+      Object.defineProperty(this.getters, name, {
+        get: func.bind(this, {
+          state: this.state,
+          getters: this.getters
+        })
+      });
+    }
   }
 
   dispatch(action: string, payload?: any): Promise<void> | void {
@@ -73,7 +88,8 @@ export class Store extends EventBus {
         commit: this.commit.bind(this),
         dispatch: this.dispatch.bind(this),
         env: this.env,
-        state: this.state
+        state: this.state,
+        getters: this.getters
       },
       payload
     );
@@ -97,7 +113,8 @@ export class Store extends EventBus {
       {
         commit: this.commit.bind(this),
         state: this.state,
-        set: this.set
+        set: this.set,
+        getters: this.getters
       },
       payload
     );
@@ -174,7 +191,11 @@ export function connect(mapStateToProps, options: any = {}) {
       constructor(parent, props?: any) {
         const env = parent instanceof Component ? parent.env : parent;
         const ownProps = Object.assign({}, props || {});
-        const storeProps = mapStateToProps(env.store.state, ownProps);
+        const storeProps = mapStateToProps(
+          env.store.state,
+          ownProps,
+          env.store.getters
+        );
         const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
         (<any>this.__owl__).ownProps = ownProps;
@@ -207,7 +228,11 @@ export function connect(mapStateToProps, options: any = {}) {
 
       _checkUpdate() {
         const ownProps = (<any>this.__owl__).ownProps;
-        const storeProps = mapStateToProps(this.env.store.state, ownProps);
+        const storeProps = mapStateToProps(
+          this.env.store.state,
+          ownProps,
+          this.env.store.getters
+        );
         const options: any = {
           currentStoreProps: (<any>this.__owl__).currentStoreProps
         };
@@ -234,7 +259,8 @@ export function connect(mapStateToProps, options: any = {}) {
         if ((<any>this.__owl__).ownProps !== nextProps) {
           (<any>this.__owl__).currentStoreProps = mapStateToProps(
             this.env.store.state,
-            nextProps
+            nextProps,
+            this.env.store.getters
           );
         }
         (<any>this.__owl__).ownProps = nextProps;

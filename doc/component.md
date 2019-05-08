@@ -9,6 +9,7 @@
   - [Properties](#properties)
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
+  - [Semantics](#semantics)
 
 ## Overview
 
@@ -67,9 +68,9 @@ change to it will cause a rerendering.
 
 ## Composition
 
-The example above shows a QWeb template with a `t-on-click` directive.  Widget
+The example above shows a QWeb template with a `t-on-click` directive. Widget
 templates are standard [QWeb](qweb.md) templates, but with an extra directive:
-`t-widget`.  With the `t-widget` directive, widget templates can declare sub
+`t-widget`. With the `t-widget` directive, widget templates can declare sub
 widgets:
 
 ```xml
@@ -91,7 +92,7 @@ In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
 after the span. See the [QWeb](qweb.md) documentation for more information on the
 `t-widget` directive.
 
-Note that the rendering context for the template is the widget itself.  This means
+Note that the rendering context for the template is the widget itself. This means
 that the template can access `state`, `props`, `env`, or any methods defined in the widget.
 
 **CSS and style:** there is some specific support to allow the parent to declare
@@ -106,16 +107,14 @@ root widget element.
 
 Warning: there is a small caveat with dynamic class attributes: since Owl needs
 to be able to add/remove proper classes whenever necessary, it needs to be aware
-of the possible classes.  Otherwise, it will not be able to make the difference
+of the possible classes. Otherwise, it will not be able to make the difference
 between a valid css class added by the component, or some custom code, and a
-class that need to be removed.  This is why we only support the explicit syntax
+class that need to be removed. This is why we only support the explicit syntax
 with a class object:
 
 ```js
-<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}"/>
-
+<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}" />
 ```
-
 
 ## Reference
 
@@ -196,15 +195,15 @@ A solid and robust component system needs useful hooks/methods to help
 developers write components. Here is a complete description of the lifecycle of
 a owl component:
 
-| Method                                           | Description                             |
-| ------------------------------------------------ | --------------------------------------- |
-| **[constructor](#constructor)**                  | constructor                             |
-| **[willStart](#willStart)**                      | async, before first rendering           |
-| **[mounted](#mounted)**                          | just after component is rendered and added to the DOM     |
-| **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update              |
-| **[willPatch](#willpatch)**              | just before the DOM is patched          |
-| **[patched](#patchedsnapshot)**                          | just after the DOM is patched           |
-| **[willUnmount](#willUnmount)**                  | just before removing component from DOM |
+| Method                                           | Description                                           |
+| ------------------------------------------------ | ----------------------------------------------------- |
+| **[constructor](#constructor)**                  | constructor                                           |
+| **[willStart](#willStart)**                      | async, before first rendering                         |
+| **[mounted](#mounted)**                          | just after component is rendered and added to the DOM |
+| **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update                            |
+| **[willPatch](#willpatch)**                      | just before the DOM is patched                        |
+| **[patched](#patchedsnapshot)**                  | just after the DOM is patched                         |
+| **[willUnmount](#willUnmount)**                  | just before removing component from DOM               |
 
 Notes:
 
@@ -212,7 +211,7 @@ Notes:
   then on children, and `[Xed]` are called in the reverse order: first children,
   then parent.
 - no hook method should ever be called manually. They are supposed to be
-called by the owl framework whenever it is required.
+  called by the owl framework whenever it is required.
 
 #### `constructor(parent, props)`
 
@@ -307,7 +306,7 @@ scrollbar.
 
 Note that modifying the state object is not allowed here. This method is called just
 before an actual DOM patch, and is only intended to be used to save some local
-DOM state.  Also, it will not be called if the widget is not in the DOM (this can
+DOM state. Also, it will not be called if the widget is not in the DOM (this can
 happen with widgets with `t-keepalive`).
 
 The return value of this method will be given as the first argument of the
@@ -320,7 +319,7 @@ likely via a change in its state/props or environment).
 
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
-component was patched.  Note that this hook will not be called if the widget is
+component was patched. Note that this hook will not be called if the widget is
 not in the DOM (this can happen with widgets with `t-keepalive`).
 
 The `snapshot` parameter is the result of the previous `willPatch` call.
@@ -345,3 +344,89 @@ the DOM. This is a good place to remove some listeners, for example.
 ```
 
 This is the opposite method of `mounted`.
+
+### Semantics
+
+We give here an informal description of the way components are created/updated
+in an application. Here, ordered lists describe actions that are executed
+sequentially, bullet lists describe actions that are executed in parallel.
+
+**Scenario 1: Initial Mounting** Imagine we want to render the following component tree:
+
+```
+        A
+       / \
+      B   C
+         / \
+        D   E
+```
+
+Here is what happen whenever we mount the root
+component (with some code like `app.mount(document.body)`).
+
+1. `willStart` is called on `A`
+
+2. when it is done, template `A` is rendered.
+
+   - widget `B` is created
+     1. `willStart` is called on `B`
+     2. template `B` is rendered
+   - widget `C` is created
+     1. `willStart` is called on `C`
+     2. template `C` is rendered
+        - widget `D` is created
+          1. `willStart` is called on `D`
+          2. template `D` is rendered
+        - widget `E` is created
+          1. `willStart` is called on `E`
+          2. template `E` is rendered
+
+3. widget `A` is patched into a detached DOM element. This will create the actual
+   widget `A` DOM structure. The patching process will cause recursively the
+   patching of the `B`, `C`, `D` and `E` DOM trees. (so the actual full DOM tree is created
+   in one pass)
+
+4. the widget `A` root element is actually appended to `document.body`
+
+5. The method `mounted` is called recursively on all widgets in the following
+   order: `B`, `D`, `E`, `C`, `A`.
+
+**Scenario 2: state change, rerendering**. Now, let's assume that the user clicked on some
+button in `C`, and this results in a state update, which is supposed to:
+
+- update `D`,
+- remove `E`,
+- add new widget `F`.
+
+So, the component tree should look like this:
+
+```
+        A
+       / \
+      B   C
+         / \
+        D   F
+```
+
+Here is what Owl will do:
+
+1. because of a state change, the method `render` is called on `C`
+2. template `C` is rendered again
+
+   - widget `D` is updated:
+     1. hook `willUpdateProps` is called on `D` (async)
+     2. template `D` is rerendered
+   - widget `F` is created:
+     1. hook `willStart` is called on `E` (async)
+     2. template `F` is rerendered
+
+3. `willPatch` hooks are called recursively on widgets `C`, `D` (not on `F`,
+   because it is not mounted yet)
+
+4. widget `C` is patched, which will cause recursively:
+
+   1. patching of `D`,
+   2. `willUnmount` hook on `E`, then destruction of `E`,
+   3. (initial) patching of `F`, then hook `mounted` is called on `F`
+
+5. `patched` hooks are called on `D`, `C`

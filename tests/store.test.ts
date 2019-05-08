@@ -187,12 +187,12 @@ describe("basic use", () => {
       },
     };
     const getters = {
-      beerTasterName(state) {
+      beerTasterName({ state }) {
         return beerID => {
           return state.tasters[state.beers[beerID].tasterID].name;
         }
       },
-      bestBeerName(state) {
+      bestBeerName({ state }) {
         return state.beers[1].name;
       }
     };
@@ -220,12 +220,12 @@ describe("basic use", () => {
       },
     };
     const getters = {
-      beerTasterName(state) {
+      beerTasterName({ state }) {
         return beerID => {
           return state.tasters[state.beers[beerID].tasterID].name;
         }
       },
-      bestBeerName(state) {
+      bestBeerName({ state }) {
         return state.beers[1].name;
       }
     };
@@ -258,12 +258,12 @@ describe("basic use", () => {
       },
     };
     const getters = {
-      beerTasterName(state) {
+      beerTasterName({ state }) {
         return beerID => {
           return state.tasters[state.beers[beerID].tasterID].name;
         }
       },
-      bestBeerName(state) {
+      bestBeerName({ state }) {
         return state.beers[1].name;
       }
     };
@@ -276,6 +276,23 @@ describe("basic use", () => {
     };
     const store = new Store({ state, mutations, actions: {}, getters });
     store.commit("mutation");
+  });
+
+  test("can use getters inside a getter", () => {
+    const getters = {
+      a({ getters }) {
+        return `${getters.b}${getters.c(1)}`;
+      },
+      b() {
+        return 'b';
+      },
+      c() {
+        return i => `c${i}`;
+      },
+    };
+    const store = new Store({ getters });
+
+    expect(store.getters.a).toBe('bc1');
   });
 });
 
@@ -573,10 +590,10 @@ describe("connecting a component to store", () => {
       ],
     };
     const getters = {
-      importantTodoText(state) {
+      importantTodoText({ state }) {
         return state.todos.find(todo => todo.id === state.importantID).text;
       },
-      text(state) {
+      text({ state }) {
         return id => state.todos.find(todo => todo.id === id).text;
       },
     };

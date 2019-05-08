@@ -23,7 +23,7 @@ import { Observer } from "./observer";
 
 type Mutation = ({state, commit, set, getters}, payload: any) => void;
 type Action = ({commit, state, dispatch, env, getters}, payload: any) => void;
-type Getter = (state) => any;
+type Getter = ({state, getters}) => any;
 
 interface StoreConfig {
   env?: Env;
@@ -71,7 +71,10 @@ export class Store extends EventBus {
         const name: string = entry[0];
         const func: (...any) => any = entry[1];
         Object.defineProperty(this.getters, name, {
-          get: () => func(this.state),
+          get: () => func({
+            state: this.state,
+            getters: this.getters,
+          }),
         });
       }
   }

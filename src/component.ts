@@ -349,7 +349,7 @@ export class Component<
     if (shouldUpdate) {
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
-      await this.render(false, patchQueue);
+      await this.render(forceUpdate, patchQueue);
     }
   }
 

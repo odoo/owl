@@ -351,7 +351,7 @@ We give here an informal description of the way components are created/updated
 in an application. Here, ordered lists describe actions that are executed
 sequentially, bullet lists describe actions that are executed in parallel.
 
-**Scenario 1: Initial Mounting** Imagine we want to render the following component tree:
+**Scenario 1: initial rendering** Imagine we want to render the following component tree:
 
 ```
         A
@@ -391,7 +391,7 @@ component (with some code like `app.mount(document.body)`).
 5. The method `mounted` is called recursively on all widgets in the following
    order: `B`, `D`, `E`, `C`, `A`.
 
-**Scenario 2: state change, rerendering**. Now, let's assume that the user clicked on some
+**Scenario 2: rerendering a component**. Now, let's assume that the user clicked on some
 button in `C`, and this results in a state update, which is supposed to:
 
 - update `D`,
@@ -428,6 +428,6 @@ Here is what Owl will do:
    2. `willUnmount` hook on `E`, then destruction of `E`,
    3. (initial) patching of `F`, then hook `mounted` is called on `F`
 
-5. patching of `D`,
+5. patching of `D`
 
 6. `patched` hooks are called on `D`, `C`

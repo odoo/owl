@@ -748,7 +748,6 @@ describe("foreach", () => {
     expect(console.warn).toHaveBeenCalledTimes(1);
     console.warn = consoleWarn;
   });
-
 });
 
 describe("misc", () => {
@@ -982,14 +981,17 @@ describe("t-ref", () => {
   });
 
   test("refs in a loop", () => {
-    qweb.addTemplate("test", `
+    qweb.addTemplate(
+      "test",
+      `
       <div>
         <t t-foreach="items" t-as="item">
           <div t-ref="item" t-key="item"><t t-esc="item"/></div>
         </t>
-      </div>`);
+      </div>`
+    );
     let refs: any = {};
-    renderToDOM(qweb, "test", { refs, items: [1,2,3] });
+    renderToDOM(qweb, "test", { refs, items: [1, 2, 3] });
     expect(Object.keys(refs)).toEqual(["1", "2", "3"]);
   });
 });

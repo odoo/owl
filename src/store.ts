@@ -47,7 +47,7 @@ export class Store extends EventBus {
   env: any;
   observer: Observer;
   set: any;
-  getters: { [name: string]: Getter };
+  getters: { [name: string]: (payload?) => any };
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -70,12 +70,9 @@ export class Store extends EventBus {
     for (let entry of Object.entries(config.getters || {})) {
       const name: string = entry[0];
       const func: (...any) => any = entry[1];
-      Object.defineProperty(this.getters, name, {
-        get: func.bind(this, {
-          state: this.state,
-          getters: this.getters
-        })
-      });
+      this.getters[name] = payload => {
+        return func({ state: this.state, getters: this.getters }, payload);
+      }
     }
   }
 

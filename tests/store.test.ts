@@ -187,10 +187,8 @@ describe("basic use", () => {
       },
     };
     const getters = {
-      beerTasterName({ state }) {
-        return beerID => {
-          return state.tasters[state.beers[beerID].tasterID].name;
-        }
+      beerTasterName({ state }, beerID) {
+        return state.tasters[state.beers[beerID].tasterID].name;
       },
       bestBeerName({ state }) {
         return state.beers[1].name;
@@ -198,7 +196,7 @@ describe("basic use", () => {
     };
     const store = new Store({ state, mutations: {}, actions: {}, getters });
     expect(store.getters).toBeDefined();
-    expect((<any>store.getters).bestBeerName).toBe("bertinchamps");
+    expect((<any>store.getters).bestBeerName()).toBe("bertinchamps");
     expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
   });
 
@@ -220,10 +218,8 @@ describe("basic use", () => {
       },
     };
     const getters = {
-      beerTasterName({ state }) {
-        return beerID => {
-          return state.tasters[state.beers[beerID].tasterID].name;
-        }
+      beerTasterName({ state }, beerID) {
+        return state.tasters[state.beers[beerID].tasterID].name;
       },
       bestBeerName({ state }) {
         return state.beers[1].name;
@@ -232,7 +228,7 @@ describe("basic use", () => {
     const actions = {
       action({ getters }) {
         expect(getters).toBeDefined();
-        expect(getters.bestBeerName).toBe("bertinchamps");
+        expect(getters.bestBeerName()).toBe("bertinchamps");
         expect(getters.beerTasterName(1)).toBe("aaron");
       }
     };
@@ -258,10 +254,8 @@ describe("basic use", () => {
       },
     };
     const getters = {
-      beerTasterName({ state }) {
-        return beerID => {
-          return state.tasters[state.beers[beerID].tasterID].name;
-        }
+      beerTasterName({ state }, beerID) {
+        return state.tasters[state.beers[beerID].tasterID].name;
       },
       bestBeerName({ state }) {
         return state.beers[1].name;
@@ -270,7 +264,7 @@ describe("basic use", () => {
     const mutations = {
       mutation({ getters }) {
         expect(getters).toBeDefined();
-        expect(getters.bestBeerName).toBe("bertinchamps");
+        expect(getters.bestBeerName()).toBe("bertinchamps");
         expect(getters.beerTasterName(1)).toBe("aaron");
       }
     };
@@ -281,18 +275,18 @@ describe("basic use", () => {
   test("can use getters inside a getter", () => {
     const getters = {
       a({ getters }) {
-        return `${getters.b}${getters.c(1)}`;
+        return `${getters.b()}${getters.c(1)}`;
       },
       b() {
         return 'b';
       },
-      c() {
-        return i => `c${i}`;
+      c({}, i) {
+        return `c${i}`;
       },
     };
     const store = new Store({ getters });
 
-    expect(store.getters.a).toBe('bc1');
+    expect(store.getters.a()).toBe('bc1');
   });
 });
 
@@ -593,8 +587,8 @@ describe("connecting a component to store", () => {
       importantTodoText({ state }) {
         return state.todos.find(todo => todo.id === state.importantID).text;
       },
-      text({ state }) {
-        return id => state.todos.find(todo => todo.id === id).text;
+      text({ state }, id) {
+        return state.todos.find(todo => todo.id === id).text;
       },
     };
     const store = new Store({ state, getters });
@@ -609,7 +603,7 @@ describe("connecting a component to store", () => {
       const todo = state.todos.find(t => t.id === props.id);
       return {
         activeTodoText: getters.text(todo.id),
-        importantTodoText: getters.importantTodoText,
+        importantTodoText: getters.importantTodoText(),
       };
     })(TodoItem);
 

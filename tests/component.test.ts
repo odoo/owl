@@ -5,7 +5,9 @@ import {
   makeTestEnv,
   nextMicroTick,
   nextTick,
-  normalize
+  normalize,
+  patchNextFrame,
+  unpatchNextFrame
 } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -19,6 +21,7 @@ import {
 
 let fixture: HTMLElement;
 let env: Env;
+let cssEl: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -2277,6 +2280,8 @@ describe("t-mounted directive", () => {
     const widget = new TestWidget(env);
     widget.f = jest.fn();
     await widget.mount(fixture);
+
+    patchNextFrame((cb) => cb());
     expect(widget.f).toHaveBeenCalledTimes(0);
 
     widget.state.flag = true;
@@ -2326,5 +2331,99 @@ describe("can deduce template from name", () => {
     const abc2 = new ABC(env2);
     await abc2.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Rochefort 10</span>");
+  });
+});
+
+describe("animations", () => {
+  beforeEach(() => {
+    cssEl = document.createElement("style");
+    let css = `
+      .chimay-enter-active, .chimay-leave-active {
+        transition-property: opacity;
+        transition-duration: 0.1s;
+      }
+      .chimay-enter, .chimay-leave-to {
+        opacity: 0;
+      }
+    `;
+    cssEl.textContent = css.trim();
+    document.head.appendChild(cssEl);
+  });
+
+  afterEach(() => {
+    document.head.removeChild(cssEl);
+    unpatchNextFrame();
+  });
+
+  test("t-transition on a conditional node", async () => {
+    expect.assertions(7);
+
+    env.qweb.addTemplate(
+      "TestWidget",
+      `<div><span t-if="!state.hide" t-transition="chimay">blue</span></div>`
+    );
+    class TestWidget extends Widget {
+      state = { hide: false };
+    }
+    const widget = new TestWidget(env);
+
+    // insert widget into the DOM
+    let def = makeDeferred();
+    var spanNode;
+    patchNextFrame(cb => {
+      expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
+      cb();
+      expect(spanNode.className).toBe("chimay-enter-active chimay-enter-to");
+      def.resolve();
+    });
+    await widget.mount(fixture);
+    spanNode = widget.el!.children[0];
+    expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
+    await def; // wait for the mocked repaint to be done
+    spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(spanNode.className).toBe("");
+
+    // remove span from the DOM
+    def = makeDeferred();
+    widget.state.hide = true;
+    patchNextFrame(cb => {
+      expect(spanNode.className).toBe("chimay-leave chimay-leave-active");
+      cb();
+      expect(spanNode.className).toBe("chimay-leave-active chimay-leave-to");
+      def.resolve();
+    });
+    await def; // wait for the mocked repaint to be done
+    spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(spanNode.className).toBe("");
+  });
+
+  test("t-transition combined with t-ref", async () => {
+    expect.assertions(5);
+
+    env.qweb.addTemplate(
+      "TestWidget",
+      `<div><span t-ref="'span'" t-transition="chimay">blue</span></div>`
+    );
+    class TestWidget extends Widget {
+      state = { hide: false };
+    }
+    const widget = new TestWidget(env);
+
+    // insert widget into the DOM
+    let def = makeDeferred();
+    var spanNode;
+    patchNextFrame(cb => {
+      expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
+      cb();
+      expect(spanNode.className).toBe("chimay-enter-active chimay-enter-to");
+      def.resolve();
+    });
+    await widget.mount(fixture);
+    spanNode = widget.el!.children[0];
+    expect(widget.refs.span).toBe(spanNode);
+    expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
+    await def; // wait for the mocked repaint to be done
+    spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(spanNode.className).toBe("");
   });
 });

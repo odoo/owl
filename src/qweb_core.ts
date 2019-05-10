@@ -96,7 +96,13 @@ const NODE_HOOKS_PARAMS = {
   remove: "(vn, rm)"
 };
 
-export const UTILS = {
+interface Utils {
+  h: typeof h;
+  objectToAttrString(obj: Object): string;
+  [key: string]: any;
+};
+
+export const UTILS:Utils = {
   h: h,
   objectToAttrString(obj: Object): string {
     let classes: string[] = [];

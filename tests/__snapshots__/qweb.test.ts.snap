@@ -1,15 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`animations t-transition, on a simple node 1`] = `
+exports[`animations t-transition with no delay/duration 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
-    p2.hook = {
+    var vn1 = h('span', p1, c1);
+    p1.hook = {
+      create: (_, n) => {
+        this.utils.transitionCreate(n.elm, 'jupiler');
+      },
+      insert: vn => {
+        this.utils.transitionInsert(vn.elm, 'jupiler');
+      },
+      remove: (vn, rm) => {
+        this.utils.transitionRemove(vn.elm, 'jupiler', rm);
+      },
+    };
+    c1.push({text: \`blue\`});
+    return vn1;
+}"
+`;
+
+exports[`animations t-transition, on a simple node (insert) 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('span', p1, c1);
+    p1.hook = {
       create: (_, n) => {
         this.utils.transitionCreate(n.elm, 'chimay');
       },
@@ -20,12 +39,10 @@ exports[`animations t-transition, on a simple node 1`] = `
         this.utils.transitionRemove(vn.elm, 'chimay', rm);
       },
     };
-    c2.push({text: \`blue\`});
+    c1.push({text: \`blue\`});
     return vn1;
 }"
 `;
-
-exports[`animations t-transition, on a simple node 2`] = `"<span class=\\"chimay-enter chimay-enter-active\\">blue</span>"`;
 
 exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(context,extra

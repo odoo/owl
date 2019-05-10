@@ -1,5 +1,5 @@
 import { Env } from "../src/component";
-import { QWeb } from "../src/qweb_core";
+import { QWeb, UTILS } from "../src/qweb_core";
 import "../src/qweb_directives";
 import "../src/qweb_extensions";
 
@@ -41,4 +41,15 @@ export function makeTestEnv(): Env {
   return {
     qweb: new QWeb()
   };
+}
+
+let nextFrame = UTILS.nextFrame;
+export function patchNextFrame(f: Function): void {
+  UTILS.nextFrame = (cb: () => void) => {
+    setTimeout(() => f(cb));
+  };
+}
+
+export function unpatchNextFrame(): void {
+  UTILS.nextFrame = nextFrame;
 }

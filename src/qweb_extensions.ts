@@ -90,16 +90,16 @@ QWeb.addDirective({
 //------------------------------------------------------------------------------
 // t-transition
 //------------------------------------------------------------------------------
-(<any>UTILS).nextFrame = function(cb: () => void) {
+UTILS.nextFrame = function(cb: () => void) {
   requestAnimationFrame(() => requestAnimationFrame(cb));
 };
 
-(<any>UTILS).transitionCreate = function(elm: HTMLElement, name: string) {
+UTILS.transitionCreate = function(elm: HTMLElement, name: string) {
   elm.classList.add(name + "-enter");
   elm.classList.add(name + "-enter-active");
 };
 
-(<any>UTILS).transitionInsert = function(elm: HTMLElement, name: string) {
+UTILS.transitionInsert = function(elm: HTMLElement, name: string) {
   const finalize = () => {
     elm.classList.remove(name + "-enter-active");
     elm.classList.remove(name + "-enter-to");
@@ -111,7 +111,7 @@ QWeb.addDirective({
   });
 };
 
-(<any>UTILS).transitionRemove = function(
+UTILS.transitionRemove = function(
   elm: HTMLElement,
   name: string,
   rm: () => void
@@ -120,7 +120,7 @@ QWeb.addDirective({
   elm.classList.add(name + "-leave-active");
   const finalize = () => {
     elm.classList.remove(name + "-leave-active");
-    elm.classList.remove(name + "-enter-to");
+    elm.classList.remove(name + "-leave-to");
     rm();
   };
   this.nextFrame(() => {

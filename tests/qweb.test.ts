@@ -1,6 +1,11 @@
 import { EvalContext, QWeb } from "../src/qweb_core";
 import { patch } from "../src/vdom";
-import { normalize } from "./helpers";
+import {
+  makeDeferred,
+  normalize,
+  patchNextFrame,
+  unpatchNextFrame
+} from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -10,6 +15,7 @@ import { normalize } from "./helpers";
 // - qweb: a new QWeb instance
 
 let qweb: QWeb;
+let cssEl: HTMLElement;
 
 beforeEach(() => {
   qweb = new QWeb();
@@ -1281,14 +1287,58 @@ describe("debugging", () => {
 });
 
 describe("animations", () => {
-  test("t-transition, on a simple node", async () => {
-    // this test does not test much, because it is not easy to test timing
-    // transitions... we should do a little more effort for these tests.
-    qweb.addTemplate(
-      "test",
-      `<div><span t-transition="chimay">blue</span></div>`
-    );
-    let dom: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
-    expect(dom.innerHTML).toMatchSnapshot();
+  beforeEach(() => {
+    cssEl = document.createElement("style");
+    let css = `
+      .chimay-enter-active, .chimay-leave-active {
+        transition-property: opacity;
+        transition-duration: 0.1s;
+      }
+      .chimay-enter, .chimay-leave-to {
+        opacity: 0;
+      }
+    `;
+    cssEl.textContent = css.trim();
+    document.head.appendChild(cssEl);
+  });
+
+  afterEach(() => {
+    document.head.removeChild(cssEl);
+    unpatchNextFrame();
+  });
+
+  test("t-transition, on a simple node (insert)", async () => {
+    expect.assertions(5);
+    qweb.addTemplate("test", `<span t-transition="chimay">blue</span>`);
+
+    let def = makeDeferred();
+    patchNextFrame(cb => {
+      expect(node.className).toBe("chimay-enter chimay-enter-active");
+      cb();
+      expect(node.className).toBe("chimay-enter-active chimay-enter-to");
+      def.resolve();
+    });
+
+    let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
+    expect(node.className).toBe("chimay-enter chimay-enter-active");
+    await def; // wait for the mocked repaint to be done
+    node.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(node.className).toBe("");
+  });
+
+  test("t-transition with no delay/duration", async () => {
+    expect.assertions(4);
+    qweb.addTemplate("test", `<span t-transition="jupiler">blue</span>`);
+
+    let def = makeDeferred();
+    patchNextFrame(cb => {
+      expect(node.className).toBe("jupiler-enter jupiler-enter-active");
+      cb();
+      expect(node.className).toBe("");
+      def.resolve();
+    });
+    let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
+    expect(node.className).toBe("jupiler-enter jupiler-enter-active");
+    await def;
   });
 });

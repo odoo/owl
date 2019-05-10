@@ -1554,7 +1554,7 @@ describe("random stuff/miscellaneous", () => {
         </div>`;
       widgets = { D, E, F };
       name = "C";
-      state = {flag: true};
+      state = { flag: true };
 
       constructor(parent, props) {
         super(parent, props);
@@ -1618,7 +1618,7 @@ describe("random stuff/miscellaneous", () => {
       "D:mounted",
       "E:mounted",
       "C:mounted",
-      "A:mounted",
+      "A:mounted"
     ]);
 
     // update
@@ -1637,7 +1637,7 @@ describe("random stuff/miscellaneous", () => {
       "C:_patch",
       "E:willUnmount",
       "E:destroy",
-      "E:destroy",  // maybe should look into this
+      "E:destroy", // maybe should look into this
       "F:_patch(from _mount)",
       "F:mounted",
       "D:_patch",

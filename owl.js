@@ -6,7 +6,8 @@
      * - emit events
      * - add/remove listeners.
      *
-     * This is a useful pattern of communication in some cases.
+     * This is a useful pattern of communication in many cases.  For OWL, each
+     * components and stores are event buses.
      */
     //------------------------------------------------------------------------------
     // EventBus
@@ -64,9 +65,27 @@
         }
     }
 
+    /**
+     * Owl Observer
+     *
+     * This code contains the logic that allows Owl to observe and react to state
+     * changes.
+     *
+     * This is a Observer class that can observe any JS values.  The way it works
+     * can be summarized thusly:
+     * - primitive values are not observed at all
+     * - Objects are observed by replacing all their keys with getters/setters
+     *   (recursively)
+     * - Arrays are observed by replacing their prototype with a customized version,
+     *   which wrap some methods to allow the tracking of each state change.
+     *
+     * Note that this code is inspired by Vue.
+     */
     //------------------------------------------------------------------------------
-    // Observer
+    // Modified Array prototype
     //------------------------------------------------------------------------------
+    // we define here a new modified Array prototype, which basically override all
+    // Array methods that change some state to be able to track their changes
     const methodsToPatch = [
         "push",
         "pop",
@@ -108,6 +127,9 @@
             return initialMethod.call(this, ...args);
         };
     }
+    //------------------------------------------------------------------------------
+    // Observer
+    //------------------------------------------------------------------------------
     class Observer {
         constructor() {
             this.rev = 1;
@@ -194,6 +216,22 @@
         }
     }
 
+    /**
+     * Owl VDOM
+     *
+     * This file contains an implementation of a virtual DOM, which is a system that
+     * can generate in-memory representations of a DOM tree, compare them, and
+     * eventually change a concrete DOM tree to match its representation, in an
+     * hopefully efficient way.
+     *
+     * Note that this code is a fork of Snabbdom, slightly tweaked/optimized for our
+     * needs (see https://github.com/snabbdom/snabbdom).
+     *
+     * The main exported values are:
+     * - interface VNode
+     * - h function (a helper function to generate a vnode)
+     * - patch function (to apply a vnode to an actual DOM node)
+     */
     function vnode(sel, data, children, text, elm) {
         let key = data === undefined ? undefined : data.key;
         return {
@@ -1009,28 +1047,29 @@
             if (!this.__owl__.isMounted) {
                 return;
             }
-            const shouldCallPatchHooks = !patchQueue;
-            if (shouldCallPatchHooks) {
+            const shouldPatch = !patchQueue;
+            if (shouldPatch) {
                 patchQueue = [];
             }
             const renderVDom = this._render(force, patchQueue);
             const renderId = this.__owl__.renderId;
-            const vnode = await renderVDom;
-            if (this.__owl__.isMounted && renderId === this.__owl__.renderId) {
+            await renderVDom;
+            if (shouldPatch &&
+                this.__owl__.isMounted &&
+                renderId === this.__owl__.renderId) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
-                if (shouldCallPatchHooks) {
-                    for (let i = 0; i < patchQueue.length; i++) {
-                        const c = patchQueue[i];
-                        c.__owl__.willPatchVal = c.willPatch();
-                    }
+                for (let i = 0; i < patchQueue.length; i++) {
+                    const patch = patchQueue[i];
+                    patch.push(patch[0].willPatch());
                 }
-                this._patch(vnode);
-                if (shouldCallPatchHooks) {
-                    for (let i = patchQueue.length - 1; i >= 0; i--) {
-                        const c = patchQueue[i];
-                        c.patched(c.__owl__.willPatchVal);
-                    }
+                for (let i = 0; i < patchQueue.length; i++) {
+                    const patch = patchQueue[i];
+                    patch[0]._patch(patch[1]);
+                }
+                for (let i = patchQueue.length - 1; i >= 0; i--) {
+                    const patch = patchQueue[i];
+                    patch[0].patched(patch[2]);
                 }
             }
         }
@@ -1094,17 +1133,13 @@
             if (shouldUpdate) {
                 await this.willUpdateProps(nextProps);
                 this.props = nextProps;
-                await this.render(false, patchQueue);
+                await this.render(forceUpdate, patchQueue);
             }
         }
         _patch(vnode) {
             this.__owl__.renderPromise = null;
-            if (this.__owl__.vnode) {
-                this.__owl__.vnode = patch(this.__owl__.vnode, vnode);
-            }
-            else {
-                this.__owl__.vnode = patch(document.createElement(vnode.sel), vnode);
-            }
+            const target = this.__owl__.vnode || document.createElement(vnode.sel);
+            this.__owl__.vnode = patch(target, vnode);
         }
         _prepare() {
             this.__owl__.renderProps = this.props;
@@ -1125,11 +1160,12 @@
             return this._render();
         }
         async _render(force = false, patchQueue = []) {
-            if (this.__owl__.isMounted) {
-                patchQueue.push(this);
-            }
             this.__owl__.renderId++;
             const promises = [];
+            const patch = [this];
+            if (this.__owl__.isMounted) {
+                patchQueue.push(patch);
+            }
             if (this.__owl__.observer) {
                 this.__owl__.observer.allowMutations = false;
             }
@@ -1139,6 +1175,7 @@
                 forceUpdate: force,
                 patchQueue
             });
+            patch.push(vnode);
             if (this.__owl__.observer) {
                 this.__owl__.observer.allowMutations = true;
             }
@@ -1179,6 +1216,21 @@
         }
     }
 
+    /**
+     * Owl Utils
+     *
+     * We have here a small collection of utility functions:
+     *
+     * - escape
+     * - memoize
+     * - debounce
+     * - patch
+     * - unpatch
+     * - loadTemplates
+     * - loadJS
+     * - whenReady
+     * - parseXML
+     */
     function escape(str) {
         if (str === undefined) {
             return "";
@@ -1888,6 +1940,19 @@
         }
     }
 
+    /**
+     * Owl QWeb Directives
+     *
+     * This file contains the implementation of most standard QWeb directives:
+     * - t-esc
+     * - t-raw
+     * - t-set/t-value
+     * - t-if/t-elif/t-else
+     * - t-call
+     * - t-foreach/t-as
+     * - t-debug
+     * - t-log
+     */
     //------------------------------------------------------------------------------
     // t-esc and t-raw
     //------------------------------------------------------------------------------
@@ -2152,6 +2217,17 @@
         }
     });
 
+    /**
+     * Owl QWeb Extensions
+     *
+     * This file contains the implementation of non standard QWeb directives, added
+     * by Owl and that will only work on Owl projects:
+     *
+     * - t-on
+     * - t-ref
+     * - t-transition
+     * - t-widget/t-props/t-keepalive
+     */
     //------------------------------------------------------------------------------
     // t-on
     //------------------------------------------------------------------------------
@@ -2259,9 +2335,9 @@
     QWeb.addDirective({
         name: "transition",
         priority: 96,
-        atNodeCreation({ ctx, value }) {
+        atNodeCreation({ ctx, value, nodeID }) {
             let name = value;
-            ctx.addLine(`p${ctx.parentNode}.hook = {
+            ctx.addLine(`p${nodeID}.hook = {
         create: (_, n) => {
           this.utils.transitionCreate(n.elm, '${name}');
         },
@@ -2324,8 +2400,7 @@
             ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
             // check if we can reuse current rendering promise
             ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
-            ctx.addIf(`w${widgetID}.__owl__.vnode`);
-            // ctx.addIf(`w${widgetID}.__owl__.isStarted`);
+            ctx.addIf(`w${widgetID}.__owl__.isStarted`);
             ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
             ctx.addElse();
             ctx.addLine(`isNew${widgetID} = true`);
@@ -2422,10 +2497,18 @@
             this.observer.notifyCB = this.trigger.bind(this, "update");
             this.observer.allowMutations = false;
             this.observer.observe(this.state);
+            this.getters = {};
             if (this.debug) {
                 this.history.push({ state: this.state });
             }
             this.set = this.observer.set.bind(this.observer);
+            for (let entry of Object.entries(config.getters || {})) {
+                const name = entry[0];
+                const func = entry[1];
+                this.getters[name] = payload => {
+                    return func({ state: this.state, getters: this.getters }, payload);
+                };
+            }
         }
         dispatch(action, payload) {
             if (!this.actions[action]) {
@@ -2435,7 +2518,8 @@
                 commit: this.commit.bind(this),
                 dispatch: this.dispatch.bind(this),
                 env: this.env,
-                state: this.state
+                state: this.state,
+                getters: this.getters
             }, payload);
             if (result instanceof Promise) {
                 return new Promise((resolve, reject) => {
@@ -2453,7 +2537,8 @@
             const res = this.mutations[type].call(null, {
                 commit: this.commit.bind(this),
                 state: this.state,
-                set: this.set
+                set: this.set,
+                getters: this.getters
             }, payload);
             if (this._commitLevel === 1) {
                 this.observer.allowMutations = false;
@@ -2515,7 +2600,7 @@
                 constructor(parent, props) {
                     const env = parent instanceof Component ? parent.env : parent;
                     const ownProps = Object.assign({}, props || {});
-                    const storeProps = mapStateToProps(env.store.state, ownProps);
+                    const storeProps = mapStateToProps(env.store.state, ownProps, env.store.getters);
                     const mergedProps = Object.assign({}, props || {}, storeProps);
                     super(parent, mergedProps);
                     this.__owl__.ownProps = ownProps;
@@ -2544,7 +2629,7 @@
                 }
                 _checkUpdate() {
                     const ownProps = this.__owl__.ownProps;
-                    const storeProps = mapStateToProps(this.env.store.state, ownProps);
+                    const storeProps = mapStateToProps(this.env.store.state, ownProps, this.env.store.getters);
                     const options = {
                         currentStoreProps: this.__owl__.currentStoreProps
                     };
@@ -2566,7 +2651,7 @@
                 }
                 _updateProps(nextProps, forceUpdate, patchQueue) {
                     if (this.__owl__.ownProps !== nextProps) {
-                        this.__owl__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps);
+                        this.__owl__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps, this.env.store.getters);
                     }
                     this.__owl__.ownProps = nextProps;
                     const mergedProps = Object.assign({}, nextProps, this.__owl__.currentStoreProps);
@@ -2576,6 +2661,12 @@
         };
     }
 
+    /**
+     * This file is the main file packaged by rollup (see rollup.config.js).  From
+     * this file, we export all public owl elements.
+     *
+     * Note that dynamic values, such as a date or a commit hash are added by rollup
+     */
     const utils = _utils;
 
     exports.utils = utils;
@@ -2586,9 +2677,9 @@
     exports.connect = connect;
     exports.Store = Store;
 
-    exports._version = '0.9.0';
-    exports._date = '2019-05-07T18:51:30.761Z';
-    exports._hash = 'edc7d2b';
+    exports._version = '0.10.0';
+    exports._date = '2019-05-10T10:19:55.109Z';
+    exports._hash = 'e04c5b1';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

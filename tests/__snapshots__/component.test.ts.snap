@@ -2,7 +2,7 @@
 
 exports[`class and style attributes with t-widget dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(context,extra
-) {
+/*\`\`*/) {
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -36,7 +36,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
 
 exports[`class and style attributes with t-widget t-att-class is properly added/removed on widget root el 1`] = `
 "function anonymous(context,extra
-) {
+/*\`\`*/) {
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -74,7 +74,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
 
 exports[`composition sub widgets with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
-) {
+/*\`\`*/) {
     let owner = context;
     context = Object.create(context);
     var h = this.utils.h;
@@ -122,7 +122,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
 
 exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
-) {
+/*\`\`*/) {
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -156,7 +156,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 
 exports[`random stuff/miscellaneous t-props should not be undefined (snapshotting) 1`] = `
 "function anonymous(context,extra
-) {
+/*\`\`*/) {
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};

@@ -2145,9 +2145,7 @@ describe("widget and observable state", () => {
     expect(fixture.innerHTML).toBe("<div>water</div>");
     widget.state.drink = "beer";
 
-    // 2 microtask ticks: one for observer, one for rendering
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div>beer</div>");
   });
 

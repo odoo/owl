@@ -147,9 +147,9 @@ function whenTransitionEnd(elm: HTMLElement, cb) {
 QWeb.addDirective({
   name: "transition",
   priority: 96,
-  atNodeCreation({ ctx, value }) {
+  atNodeCreation({ ctx, value, nodeID }) {
     let name = value;
-    ctx.addLine(`p${ctx.parentNode}.hook = {
+    ctx.addLine(`p${nodeID}.hook = {
         create: (_, n) => {
           this.utils.transitionCreate(n.elm, '${name}');
         },

@@ -3,14 +3,55 @@
  *
  * We have here a small collection of utility functions:
  *
+ * - whenReady
+ * - loadJS
+ * - loadTemplates
  * - escape
  * - debounce
  * - patch
  * - unpatch
- * - loadTemplates
- * - loadJS
- * - whenReady
  */
+
+export function whenReady(fn) {
+  if (document.readyState === "complete") {
+    fn();
+  } else {
+    document.addEventListener("DOMContentLoaded", fn, false);
+  }
+}
+
+const loadedScripts: { [key: string]: Promise<void> } = {};
+
+export function loadJS(url: string): Promise<void> {
+  if (url in loadedScripts) {
+    return loadedScripts[url];
+  }
+  const promise: Promise<void> = new Promise(function(resolve, reject) {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = url;
+    script.onload = function() {
+      resolve();
+    };
+    script.onerror = function() {
+      reject(`Error loading file '${url}'`);
+    };
+    const head = document.head || document.getElementsByTagName("head")[0];
+    head.appendChild(script);
+  });
+  loadedScripts[url] = promise;
+  return promise;
+}
+
+export async function loadTemplates(url: string): Promise<string> {
+  const result = await fetch(url);
+  if (!result.ok) {
+    throw new Error("Error while fetching xml templates");
+  }
+  let templates = await result.text();
+  templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+  return templates;
+}
 
 export function escape(str: string | number | undefined): string {
   if (str === undefined) {
@@ -109,45 +150,3 @@ export function unpatch(C: any, patchName: string) {
     }
   }
 }
-
-export async function loadTemplates(url: string): Promise<string> {
-  const result = await fetch(url);
-  if (!result.ok) {
-    throw new Error("Error while fetching xml templates");
-  }
-  let templates = await result.text();
-  templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-  return templates;
-}
-
-const loadedScripts: { [key: string]: Promise<void> } = {};
-
-export function loadJS(url: string): Promise<void> {
-  if (url in loadedScripts) {
-    return loadedScripts[url];
-  }
-  const promise: Promise<void> = new Promise(function(resolve, reject) {
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = url;
-    script.onload = function() {
-      resolve();
-    };
-    script.onerror = function() {
-      reject(`Error loading file '${url}'`);
-    };
-    const head = document.head || document.getElementsByTagName("head")[0];
-    head.appendChild(script);
-  });
-  loadedScripts[url] = promise;
-  return promise;
-}
-
-export function whenReady(fn) {
-  if (document.readyState === "complete") {
-    fn();
-  } else {
-    document.addEventListener("DOMContentLoaded", fn, false);
-  }
-}
-

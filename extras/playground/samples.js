@@ -490,11 +490,12 @@ class TodoItem extends owl.Component {
 
     async editTodo() {
         this.state.isEditing = true;
-        setTimeout(() => {
-            this.refs.input.value = "";
-            this.refs.input.focus();
-            this.refs.input.value = this.props.title;
-        });
+    }
+
+    focusInput() {
+        this.refs.input.value = "";
+        this.refs.input.focus();
+        this.refs.input.value = this.props.title;
     }
 
     handleKeyup(ev) {
@@ -648,7 +649,7 @@ const TODO_APP_STORE_XML = `<templates>
       </label>
       <button class="destroy" t-on-click="removeTodo"></button>
     </div>
-    <input class="edit" t-ref="'input'" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-on-blur="handleBlur"/>
+    <input class="edit" t-ref="'input'" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-mounted="focusInput" t-on-blur="handleBlur"/>
   </li>
 </templates>`;
 

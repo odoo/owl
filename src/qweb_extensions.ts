@@ -57,12 +57,10 @@ QWeb.addDirective({
 QWeb.addDirective({
   name: "ref",
   priority: 95,
-  atNodeCreation({ ctx, nodeID, value }) {
+  atNodeCreation({ ctx, nodeID, value, addNodeHook }) {
     const refKey = `ref${ctx.generateID()}`;
     ctx.addLine(`const ${refKey} = ${ctx.formatExpression(value)}`);
-    ctx.addLine(`p${nodeID}.hook = {
-            create: (_, n) => context.refs[${refKey}] = n.elm,
-        };`);
+    addNodeHook("create", `context.refs[${refKey}] = n.elm;`);
   }
 });
 
@@ -148,19 +146,16 @@ function whenTransitionEnd(elm: HTMLElement, cb) {
 QWeb.addDirective({
   name: "transition",
   priority: 96,
-  atNodeCreation({ ctx, value, nodeID }) {
+  atNodeCreation({ ctx, value, addNodeHook }) {
     let name = value;
-    ctx.addLine(`p${nodeID}.hook = {
-        create: (_, n) => {
-          this.utils.transitionCreate(n.elm, '${name}');
-        },
-        insert: vn => {
-          this.utils.transitionInsert(vn.elm, '${name}');
-        },
-        remove: (vn, rm) => {
-          this.utils.transitionRemove(vn.elm, '${name}', rm);
-        }
-      };`);
+    const hooks = {
+      create: `this.utils.transitionCreate(n.elm, '${name}');`,
+      insert: `this.utils.transitionInsert(vn.elm, '${name}');`,
+      remove: `this.utils.transitionRemove(vn.elm, '${name}', rm);`
+    };
+    for (let hookName in hooks) {
+      addNodeHook(hookName, hooks[hookName]);
+    }
   }
 });
 
@@ -333,7 +328,7 @@ QWeb.addDirective({
 QWeb.addDirective({
   name: "mounted",
   priority: 97,
-  atNodeCreation({ ctx, fullName, value, nodeID }) {
+  atNodeCreation({ ctx, fullName, value, nodeID, addNodeHook }) {
     ctx.rootContext.shouldDefineOwner = true;
     const eventName = fullName.slice(5);
     if (!eventName) {
@@ -359,8 +354,9 @@ QWeb.addDirective({
         `extra.mountedHandlers[${nodeID}] = extra.mountedHandlers[${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`
       );
     }
-    ctx.addLine(`p${nodeID}.hook = {
-        insert: (vn) => { if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); } },
-    };`);
+    addNodeHook(
+      "insert",
+      `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`
+    );
   }
 });

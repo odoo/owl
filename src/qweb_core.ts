@@ -31,12 +31,16 @@ interface Template {
 }
 
 interface CompilationInfo {
-  nodeID?: number;
   node: Element;
   qweb: QWeb;
   ctx: Context;
   fullName: string;
   value: string;
+}
+
+interface NodeCreationCompilationInfo extends CompilationInfo {
+  nodeID: number;
+  addNodeHook: Function;
 }
 
 export interface Directive {
@@ -46,7 +50,7 @@ export interface Directive {
   // if return true, then directive is fully applied and there is no need to
   // keep processing node. Otherwise, we keep going.
   atNodeEncounter?(info: CompilationInfo): boolean | void;
-  atNodeCreation?(info: CompilationInfo): void;
+  atNodeCreation?(info: NodeCreationCompilationInfo): void;
   finalize?(info: CompilationInfo): void;
 }
 
@@ -86,6 +90,12 @@ const DIRECTIVE_NAMES = {
 };
 
 const DIRECTIVES: Directive[] = [];
+
+const NODE_HOOKS_PARAMS = {
+  create: "(_, n)",
+  insert: "vn",
+  remove: "(vn, rm)"
+};
 
 export const UTILS = {
   h: h,
@@ -497,6 +507,11 @@ export class QWeb {
     if (node.nodeName !== "t") {
       let nodeID = this._compileGenericNode(node, ctx, withHandlers);
       ctx = ctx.withParent(nodeID);
+      let nodeHooks = {};
+      let addNodeHook = function(hook, handler) {
+        nodeHooks[hook] = nodeHooks[hook] || [];
+        nodeHooks[hook].push(handler);
+      };
 
       for (let { directive, value, fullName } of validDirectives) {
         if (directive.atNodeCreation) {
@@ -506,9 +521,22 @@ export class QWeb {
             ctx,
             fullName,
             value,
-            nodeID
+            nodeID,
+            addNodeHook
           });
         }
+      }
+
+      if (Object.keys(nodeHooks).length) {
+        ctx.addLine(`p${nodeID}.hook = {`);
+        for (let hook in nodeHooks) {
+          ctx.addLine(`  ${hook}: ${NODE_HOOKS_PARAMS[hook]} => {`);
+          for (let handler of nodeHooks[hook]) {
+            ctx.addLine(`    ${handler}`);
+          }
+          ctx.addLine(`  },`);
+        }
+        ctx.addLine(`};`);
       }
     }
     if (node.nodeName === "pre") {

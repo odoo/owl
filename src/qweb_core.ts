@@ -1,5 +1,4 @@
 import { VNode, h } from "./vdom";
-import { parseXML } from "./utils";
 
 /**
  * Owl QWeb Engine
@@ -109,6 +108,16 @@ export const UTILS = {
     return classes.join(" ");
   }
 };
+
+function parseXML(xml: string): Document {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xml, "text/xml");
+  if (doc.getElementsByTagName("parsererror").length) {
+    throw new Error("Invalid XML in template");
+  }
+  return doc;
+}
+
 
 //------------------------------------------------------------------------------
 // Compilation Context

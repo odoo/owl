@@ -1,6 +1,5 @@
 import {
   escape,
-  memoize,
   debounce,
   patch,
   unpatch
@@ -15,26 +14,6 @@ describe("escape", () => {
   test("special symbols", () => {
     const text = "<ok>";
     expect(escape(text)).toBe("&lt;ok&gt;");
-  });
-});
-
-describe("memoize", () => {
-  test("return correct value", () => {
-    const f = memoize((a, b) => a + b);
-    expect(f(1, 3)).toBe(4);
-  });
-
-  test("does not recompute if not needed", () => {
-    let nCalls = 0;
-    function origFunction(a: number, b: number): number {
-      nCalls++;
-      return a + b;
-    }
-    const memoized = memoize(origFunction);
-
-    expect(memoized(1, 3)).toBe(4);
-    expect(memoized(1, 3)).toBe(4);
-    expect(nCalls).toBe(1);
   });
 });
 

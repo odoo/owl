@@ -4,14 +4,12 @@
  * We have here a small collection of utility functions:
  *
  * - escape
- * - memoize
  * - debounce
  * - patch
  * - unpatch
  * - loadTemplates
  * - loadJS
  * - whenReady
- * - parseXML
  */
 
 export function escape(str: string | number | undefined): string {
@@ -27,26 +25,6 @@ export function escape(str: string | number | undefined): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&#x27;")
     .replace(/`/g, "&#x60;");
-}
-
-export type HashFn = (args: any[]) => string;
-
-export function memoize<R, T extends (...args: any[]) => R>(
-  f: T,
-  hash?: HashFn
-): T {
-  if (!hash) {
-    hash = args => args.map(a => String(a)).join(",");
-  }
-  let cache: { [key: string]: R } = {};
-  function memoizedFunction(...args: any[]) {
-    let hashValue = hash!(args);
-    if (!(hashValue in cache)) {
-      cache[hashValue] = f(...args);
-    }
-    return cache[hashValue];
-  }
-  return memoizedFunction as T;
 }
 
 /**
@@ -173,11 +151,3 @@ export function whenReady(fn) {
   }
 }
 
-export function parseXML(xml: string): Document {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(xml, "text/xml");
-  if (doc.getElementsByTagName("parsererror").length) {
-    throw new Error("Invalid XML in template");
-  }
-  return doc;
-}

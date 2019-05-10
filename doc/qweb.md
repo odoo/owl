@@ -19,6 +19,7 @@
     - [`t-ref` directive](#t-ref-directive)
     - [`t-key` directive](#t-key-directive)
     - [`t-transition` directive](#t-transition-directive)
+    - [`t-mounted` directive](#t-mounted-directive)
     - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
     - [White spaces](#white-spaces)
     - [Root nodes](#root-nodes)
@@ -351,6 +352,11 @@ For example, a simple fade in/out effect can be done with this:
 ```
 
 Note: more information on animations are available [here](doc/animations.md).
+
+### `t-mounted` directive
+
+The `t-mounted` directive allows to register a callback to execute when the node
+is inserted into the DOM.
 
 ### Debugging (`t-debug` and `t-log`)
 

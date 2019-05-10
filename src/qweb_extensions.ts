@@ -10,6 +10,7 @@ import { QWeb, UTILS } from "./qweb_core";
  * - t-ref
  * - t-transition
  * - t-widget/t-props/t-keepalive
+ * - t-mounted
  */
 
 //------------------------------------------------------------------------------
@@ -323,5 +324,43 @@ QWeb.addDirective({
     }
 
     return true;
+  }
+});
+
+//------------------------------------------------------------------------------
+// t-mounted
+//------------------------------------------------------------------------------
+QWeb.addDirective({
+  name: "mounted",
+  priority: 97,
+  atNodeCreation({ ctx, fullName, value, nodeID }) {
+    ctx.rootContext.shouldDefineOwner = true;
+    const eventName = fullName.slice(5);
+    if (!eventName) {
+      throw new Error("Missing event name with t-on directive");
+    }
+    let extraArgs;
+    let handler = value.replace(/\(.*\)/, function(args) {
+      extraArgs = args.slice(1, -1);
+      return "";
+    });
+    let error = `(function () {throw new Error('Missing handler \\'' + '${handler}' + \`\\' when evaluating template '${ctx.templateName.replace(
+      /`/g,
+      "'"
+    )}'\`)})()`;
+    if (extraArgs) {
+      ctx.addLine(
+        `extra.mountedHandlers[${nodeID}] = (context['${handler}'] || ${error}).bind(owner, ${ctx.formatExpression(
+          extraArgs
+        )});`
+      );
+    } else {
+      ctx.addLine(
+        `extra.mountedHandlers[${nodeID}] = extra.mountedHandlers[${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`
+      );
+    }
+    ctx.addLine(`p${nodeID}.hook = {
+        insert: (vn) => { if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); } },
+    };`);
   }
 });

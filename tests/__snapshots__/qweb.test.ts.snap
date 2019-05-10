@@ -10,16 +10,16 @@ exports[`animations t-transition, on a simple node 1`] = `
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
     p2.hook = {
-        create: (_, n) => {
-          this.utils.transitionCreate(n.elm, 'chimay');
-        },
-        insert: vn => {
-          this.utils.transitionInsert(vn.elm, 'chimay');
-        },
-        remove: (vn, rm) => {
-          this.utils.transitionRemove(vn.elm, 'chimay', rm);
-        }
-      };
+      create: (_, n) => {
+        this.utils.transitionCreate(n.elm, 'chimay');
+      },
+      insert: vn => {
+        this.utils.transitionInsert(vn.elm, 'chimay');
+      },
+      remove: (vn, rm) => {
+        this.utils.transitionRemove(vn.elm, 'chimay', rm);
+      },
+    };
     c2.push({text: \`blue\`});
     return vn1;
 }"
@@ -1356,8 +1356,10 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
     c1.push(vn2);
     const ref3 = 'myspan' + 3
     p2.hook = {
-            create: (_, n) => context.refs[ref3] = n.elm,
-        };
+      create: (_, n) => {
+        context.refs[ref3] = n.elm;
+      },
+    };
     return vn1;
 }"
 `;
@@ -1373,8 +1375,10 @@ exports[`t-ref can get a ref on a node 1`] = `
     c1.push(vn2);
     const ref3 = 'myspan'
     p2.hook = {
-            create: (_, n) => context.refs[ref3] = n.elm,
-        };
+      create: (_, n) => {
+        context.refs[ref3] = n.elm;
+      },
+    };
     return vn1;
 }"
 `;
@@ -1403,7 +1407,9 @@ exports[`t-ref refs in a loop 1`] = `
         c1.push(vn5);
         const ref6 = context['item']
         p5.hook = {
-            create: (_, n) => context.refs[ref6] = n.elm,
+          create: (_, n) => {
+            context.refs[ref6] = n.elm;
+          },
         };
         var _7 = context['item'];
         if (_7 || _7 === 0) {

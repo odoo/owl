@@ -2064,4 +2064,32 @@ describe("t-mounted directive", () => {
     await nextTick();
     expect(widget.f).toHaveBeenCalledTimes(1);
   });
+
+  test("combined with a t-ref", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><input t-ref="'input'" t-mounted="f"/></div>`;
+      f() {}
+    }
+    const widget = new TestWidget(env);
+    widget.f = jest.fn();
+    await widget.mount(fixture);
+    expect(widget.refs.input).toBeDefined();
+    expect(widget.f).toHaveBeenCalledTimes(1);
+  });
+
+  test("combined with a t-transition", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><span t-if="state.flag" t-mounted="f" t-transition="chimay">blue</span></div>`;
+      state = { flag: false };
+      f() {}
+    }
+    const widget = new TestWidget(env);
+    widget.f = jest.fn();
+    await widget.mount(fixture);
+    expect(widget.f).toHaveBeenCalledTimes(0);
+
+    widget.state.flag = true;
+    await nextTick();
+    expect(widget.f).toHaveBeenCalledTimes(1);
+  });
 });

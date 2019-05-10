@@ -1395,6 +1395,30 @@ describe("other directives with t-widget", () => {
     expect(normalize(fixture.innerHTML)).toBe("<div><span>hey</span></div>");
   });
 
+  test("t-elif works with t-widget", async () => {
+    class ParentWidget extends Widget {
+      inlineTemplate = `
+        <div>
+          <div t-if="state.flag">somediv</div>
+          <t t-elif="!state.flag" t-widget="child"/>
+        </div>`;
+      widgets = { child: Child };
+      state = { flag: true };
+    }
+    class Child extends Widget {
+      inlineTemplate = "<span>hey</span>";
+    }
+
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
+
+    widget.state.flag = false;
+    await nextTick();
+    expect(normalize(fixture.innerHTML)).toBe("<div><span>hey</span></div>");
+  });
+
   test("t-else with empty string works with t-widget", async () => {
     class ParentWidget extends Widget {
       inlineTemplate = `

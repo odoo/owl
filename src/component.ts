@@ -40,6 +40,7 @@ export interface Meta<T extends Env, Props> {
   boundHandlers: { [key: number]: any };
   observer?: Observer;
   render?: CompiledTemplate;
+  mountedHandlers: { [key: number]: Function };
 }
 
 //------------------------------------------------------------------------------
@@ -119,7 +120,8 @@ export class Component<
       renderId: 1,
       renderPromise: null,
       renderProps: props || null,
-      boundHandlers: {}
+      boundHandlers: {},
+      mountedHandlers: {}
     };
   }
 
@@ -226,6 +228,9 @@ export class Component<
       }
     }
     this.__owl__.isMounted = true;
+    for (let key in this.__owl__.mountedHandlers) {
+      this.__owl__.mountedHandlers[key]();
+    }
     this.mounted();
   }
 
@@ -400,6 +405,7 @@ export class Component<
     let vnode = this.__owl__.render!(this, {
       promises,
       handlers: this.__owl__.boundHandlers,
+      mountedHandlers: this.__owl__.mountedHandlers,
       forceUpdate: force,
       patchQueue
     });

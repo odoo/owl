@@ -2013,3 +2013,55 @@ describe("widget and observable state", () => {
     expect(fixture.innerHTML).toBe("<div>12</div>");
   });
 });
+
+describe("t-mounted directive", () => {
+  test("callback is not called when not in DOM", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><input t-mounted="f"/></div>`;
+      f() {}
+    }
+    const widget = new TestWidget(env);
+    widget.f = jest.fn();
+    await widget.mount(document.createElement("div"));
+    expect(widget.f).toHaveBeenCalledTimes(0);
+  });
+
+  test("callback is called when in DOM", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><input t-mounted="f"/></div>`;
+      f() {}
+    }
+    const widget = new TestWidget(env);
+    widget.f = jest.fn();
+    await widget.mount(fixture);
+    expect(widget.f).toHaveBeenCalledTimes(1);
+  });
+
+  test("callback with args is called when in DOM", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><input t-mounted="f(2)"/></div>`;
+      f() {}
+    }
+    const widget = new TestWidget(env);
+    widget.f = jest.fn();
+    await widget.mount(fixture);
+    expect(widget.f).toHaveBeenCalledTimes(1);
+    expect(widget.f).toHaveBeenCalledWith(2);
+  });
+
+  test("combined with a t-if", async () => {
+    class TestWidget extends Widget {
+      inlineTemplate = `<div><input t-if="state.flag" t-mounted="f"/></div>`;
+      state = { flag: false };
+      f() {}
+    }
+    const widget = new TestWidget(env);
+    widget.f = jest.fn();
+    await widget.mount(fixture);
+    expect(widget.f).toHaveBeenCalledTimes(0);
+
+    widget.state.flag = true;
+    await nextTick();
+    expect(widget.f).toHaveBeenCalledTimes(1);
+  });
+});

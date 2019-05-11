@@ -10,6 +10,7 @@
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
   - [Semantics](#semantics)
+- [Asynchronous rendering](#asynchronous-rendering)
 
 ## Overview
 
@@ -30,8 +31,8 @@ OWL components are the building blocks for user interface. They are designed to 
 
 OWL components are defined as a subclass of Component. The rendering is
 exclusively done by a [QWeb](qweb.md) template (either defined inline or preloaded in QWeb).
-The rendering is done by QWeb, which will generate a virtual dom representation
-of the widget, then patch the DOM to apply the changes in an efficient way.
+Rendering a component generates a virtual dom representation
+of the widget, which is then patched to the DOM, in order to apply the changes in an efficient way.
 
 OWL components observe their states, and rerender themselves whenever it is
 changed. This is done by an [observer](observer.md).
@@ -431,3 +432,28 @@ Here is what Owl will do:
 5. patching of `D`
 
 6. `patched` hooks are called on `D`, `C`
+
+## Asynchronous rendering
+
+Working with asynchronous code always adds a lot of complexity to a system. Whenever
+different parts of a system are active at the same time, one needs to think
+carefully about all possible interactions. Clearly, this is also true for Owl
+components.
+
+There are two different common problems with Owl asynchronous rendering model:
+
+- any widget can delay the rendering (initial and subsequent) of the whole
+  application
+- for a given widget, there are two independant situations that will trigger an
+  asynchronous rerendering: a change in the state, or a change in the props.
+  These changes may be done at different times, and Owl has no way of knowing
+  how to reconcile the resulting renderings.
+
+Here are a few tips on how to work with asynchronous widgets:
+
+1. minimize the use of asynchronous widgets!
+2. Maybe move the asynchronous logic in a store, which then triggers (mostly)
+   synchronous renderings
+3. Lazy loading external libraries is a good use case for async rendering. This
+   is mostly fine, because we can assume that it will only takes a fraction of a
+   second, and only once (see `owl.utils.loadJS`)

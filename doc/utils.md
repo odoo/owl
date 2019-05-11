@@ -1,4 +1,4 @@
-# 🦉 Utility functions 🦉
+# 🦉 Utils 🦉
 
 Owl export a few useful utility functions, to help with common issues. Those
 functions are all available in the `owl.utils` namespace.

@@ -8,7 +8,7 @@
 - [Store](store.md)
 - [Observer](observer.md)
 - [Virtual DOM](vdom.md)
-- [Utility functions](utils.md)
+- [Utils](utils.md)
 
 ## Miscellaneous
 - [Quick Start](quick_start.md)

@@ -43,6 +43,12 @@ export interface Meta<T extends Env, Props> {
   mountedHandlers: { [key: number]: Function };
 }
 
+// If a component does not define explicitely a template (or inlineTemplate)
+// key, it needs to find a template with its name (or a parent's).  This is
+// qweb dependant, so we need a place to store this information indexed by
+// qweb instances.
+const TEMPLATE_MAP: { [key: number]: { [name: string]: string } } = {};
+
 //------------------------------------------------------------------------------
 // Widget
 //------------------------------------------------------------------------------
@@ -54,8 +60,8 @@ export class Component<
   State extends {}
 > extends EventBus {
   readonly __owl__: Meta<Env, Props>;
-  template: string = "default";
-  inlineTemplate: string | null = null;
+  template?: string;
+  inlineTemplate?: string;
 
   get el(): HTMLElement | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
@@ -379,13 +385,48 @@ export class Component<
       return Promise.resolve(h("div"));
     }
     this.__owl__.isStarted = true;
-    if (this.inlineTemplate) {
-      this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
+
+    const qweb = this.env.qweb;
+    if (!this.template) {
+      if (this.inlineTemplate) {
+        this.env.qweb.addTemplate(
+          this.inlineTemplate,
+          this.inlineTemplate,
+          true
+        );
+
+        // we write on the proto, so any new component of this class will get
+        // automatically the template key properly setup.
+        (<any>this).__proto__.template = this.inlineTemplate;
+      } else {
+        let tmap = TEMPLATE_MAP[qweb.id];
+        if (!tmap) {
+          tmap = {};
+          TEMPLATE_MAP[qweb.id] = tmap;
+        }
+        let p = (<any>this).constructor;
+        let name: string = p.name;
+        let template = tmap[name];
+        if (template) {
+          this.template = template;
+        } else {
+          while (
+            (template = p.name) &&
+            !(template in qweb.templates) &&
+            p !== Component
+          ) {
+            p = p.__proto__;
+          }
+          if (p === Component) {
+            this.template = "default";
+          } else {
+            tmap[name] = template;
+            this.template = template;
+          }
+        }
+      }
     }
-    this.__owl__.render = this.env.qweb.render.bind(
-      this.env.qweb,
-      this.inlineTemplate || this.template
-    );
+    this.__owl__.render = qweb.render.bind(qweb, this.template);
     this._observeState();
     return this._render();
   }

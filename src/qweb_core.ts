@@ -118,12 +118,19 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
+let nextID = 1;
+
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
 export class QWeb {
   templates: { [name: string]: Template } = {};
   utils = UTILS;
+
+  // the id field is useful to be able to hash qweb instances.  The current
+  // use case is that component's templates are qweb dependant, and need to be
+  // able to map a qweb instance to a template name.
+  id = nextID++;
 
   constructor(data?: string) {
     if (data) {

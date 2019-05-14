@@ -2117,3 +2117,57 @@ describe("t-mounted directive", () => {
     expect(widget.f).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("can deduce template from name", () => {
+  test("can find template if name of component", async () => {
+    class ABC extends Widget {}
+    env.qweb.addTemplate("ABC", "<span>Orval</span>");
+    const abc = new ABC(env);
+    await abc.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Orval</span>");
+  });
+
+  test("can find template of parent component", async () => {
+    class ABC extends Widget {}
+    class DEF extends ABC {}
+    env.qweb.addTemplate("ABC", "<span>Orval</span>");
+    const def = new DEF(env);
+    await def.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Orval</span>");
+  });
+
+  test("can find template of parent component, defined by template key", async () => {
+    class ABC extends Widget {
+      template = "Achel";
+    }
+    class DEF extends ABC {}
+    env.qweb.addTemplate("Achel", "<span>Orval</span>");
+    const def = new DEF(env);
+    await def.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Orval</span>");
+  });
+
+  test("can find template of parent component, defined by inlinetemplate key", async () => {
+    class ABC extends Widget {
+      inlineTemplate = "<span>Orval</span>";
+    }
+    class DEF extends ABC {}
+    const def = new DEF(env);
+    await def.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Orval</span>");
+  });
+
+  test("templates are found in proper qweb instance", async () => {
+    const env2 = makeTestWEnv();
+    env.qweb.addTemplate("ABC", "<span>Rochefort 8</span>");
+    env2.qweb.addTemplate("ABC", "<span>Rochefort 10</span>");
+    class ABC extends Widget {}
+    const abc = new ABC(env);
+    await abc.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Rochefort 8</span>");
+    abc.destroy();
+    const abc2 = new ABC(env2);
+    await abc2.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Rochefort 10</span>");
+  });
+});

@@ -118,150 +118,6 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
-
-//------------------------------------------------------------------------------
-// Compilation Context
-//------------------------------------------------------------------------------
-export class Context {
-  nextID: number = 1;
-  code: string[] = [];
-  variables: { [key: string]: any } = {};
-  definedVariables: { [key: string]: string } = {};
-  escaping: boolean = false;
-  parentNode: number | null = null;
-  rootNode: number | null = null;
-  indentLevel: number = 0;
-  rootContext: Context;
-  caller: Element | undefined;
-  shouldDefineOwner: boolean = false;
-  shouldProtectContext: boolean = false;
-  inLoop: boolean = false;
-  inPreTag: boolean = false;
-  templateName: string;
-
-  constructor(name?: string) {
-    this.rootContext = this;
-    this.templateName = name || "noname";
-    this.addLine("var h = this.utils.h;");
-  }
-
-  generateID(): number {
-    const id = this.rootContext.nextID++;
-    return id;
-  }
-
-  withParent(node: number): Context {
-    if (this === this.rootContext && this.parentNode) {
-      throw new Error("A template should not have more than one root node");
-    }
-    if (!this.rootContext.rootNode) {
-      this.rootContext.rootNode = node;
-    }
-    return this.subContext("parentNode", node);
-  }
-
-  subContext(key: keyof Context, value: any): Context {
-    const newContext = Object.create(this);
-    newContext[key] = value;
-    return newContext;
-  }
-
-  indent() {
-    this.indentLevel++;
-  }
-
-  dedent() {
-    this.indentLevel--;
-  }
-
-  addLine(line: string) {
-    const prefix = new Array(this.indentLevel + 2).join("    ");
-    this.code.push(prefix + line);
-  }
-
-  addIf(condition: string) {
-    this.addLine(`if (${condition}) {`);
-    this.indent();
-  }
-
-  addElse() {
-    this.dedent();
-    this.addLine("} else {");
-    this.indent();
-  }
-
-  closeIf() {
-    this.dedent();
-    this.addLine("}");
-  }
-
-  getValue(val: any): any {
-    return val in this.variables ? this.getValue(this.variables[val]) : val;
-  }
-
-  formatExpression(e: string): string {
-    e = e.trim();
-    if (e[0] === "{" && e[e.length - 1] === "}") {
-      const innerExpr = e
-        .slice(1, -1)
-        .split(",")
-        .map(p => {
-          let [key, val] = p.trim().split(":");
-          if (key === "") {
-            return "";
-          }
-          if (!val) {
-            val = key;
-          }
-          return `${key}: ${this.formatExpression(val)}`;
-        })
-        .join(",");
-      return "{" + innerExpr + "}";
-    }
-
-    // Thanks CHM for this code...
-    const chars = e.split("");
-    let instring = "";
-    let invar = "";
-    let invarPos = 0;
-    let r = "";
-    chars.push(" ");
-    for (var i = 0, ilen = chars.length; i < ilen; i++) {
-      var c = chars[i];
-      if (instring.length) {
-        if (c === instring && chars[i - 1] !== "\\") {
-          instring = "";
-        }
-      } else if (c === '"' || c === "'") {
-        instring = c;
-      } else if (c.match(/[a-zA-Z_\$]/) && !invar.length) {
-        invar = c;
-        invarPos = i;
-        continue;
-      } else if (c.match(/\W/) && invar.length) {
-        // TODO: Should check for possible spaces before dot
-        if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          if (!(invar in this.definedVariables)) {
-            invar =
-              WORD_REPLACEMENT[invar] ||
-              (invar in this.variables &&
-                this.formatExpression(this.variables[invar])) ||
-              "context['" + invar + "']";
-          }
-        }
-        r += invar;
-        invar = "";
-      } else if (invar.length) {
-        invar += c;
-        continue;
-      }
-      r += c;
-    }
-    const result = r.slice(0, -1);
-    return result;
-  }
-}
-
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
@@ -726,5 +582,148 @@ export class QWeb {
         this._compileNode(child, ctx);
       }
     }
+  }
+}
+
+//------------------------------------------------------------------------------
+// Compilation Context
+//------------------------------------------------------------------------------
+export class Context {
+  nextID: number = 1;
+  code: string[] = [];
+  variables: { [key: string]: any } = {};
+  definedVariables: { [key: string]: string } = {};
+  escaping: boolean = false;
+  parentNode: number | null = null;
+  rootNode: number | null = null;
+  indentLevel: number = 0;
+  rootContext: Context;
+  caller: Element | undefined;
+  shouldDefineOwner: boolean = false;
+  shouldProtectContext: boolean = false;
+  inLoop: boolean = false;
+  inPreTag: boolean = false;
+  templateName: string;
+
+  constructor(name?: string) {
+    this.rootContext = this;
+    this.templateName = name || "noname";
+    this.addLine("var h = this.utils.h;");
+  }
+
+  generateID(): number {
+    const id = this.rootContext.nextID++;
+    return id;
+  }
+
+  withParent(node: number): Context {
+    if (this === this.rootContext && this.parentNode) {
+      throw new Error("A template should not have more than one root node");
+    }
+    if (!this.rootContext.rootNode) {
+      this.rootContext.rootNode = node;
+    }
+    return this.subContext("parentNode", node);
+  }
+
+  subContext(key: keyof Context, value: any): Context {
+    const newContext = Object.create(this);
+    newContext[key] = value;
+    return newContext;
+  }
+
+  indent() {
+    this.indentLevel++;
+  }
+
+  dedent() {
+    this.indentLevel--;
+  }
+
+  addLine(line: string) {
+    const prefix = new Array(this.indentLevel + 2).join("    ");
+    this.code.push(prefix + line);
+  }
+
+  addIf(condition: string) {
+    this.addLine(`if (${condition}) {`);
+    this.indent();
+  }
+
+  addElse() {
+    this.dedent();
+    this.addLine("} else {");
+    this.indent();
+  }
+
+  closeIf() {
+    this.dedent();
+    this.addLine("}");
+  }
+
+  getValue(val: any): any {
+    return val in this.variables ? this.getValue(this.variables[val]) : val;
+  }
+
+  formatExpression(e: string): string {
+    e = e.trim();
+    if (e[0] === "{" && e[e.length - 1] === "}") {
+      const innerExpr = e
+        .slice(1, -1)
+        .split(",")
+        .map(p => {
+          let [key, val] = p.trim().split(":");
+          if (key === "") {
+            return "";
+          }
+          if (!val) {
+            val = key;
+          }
+          return `${key}: ${this.formatExpression(val)}`;
+        })
+        .join(",");
+      return "{" + innerExpr + "}";
+    }
+
+    // Thanks CHM for this code...
+    const chars = e.split("");
+    let instring = "";
+    let invar = "";
+    let invarPos = 0;
+    let r = "";
+    chars.push(" ");
+    for (var i = 0, ilen = chars.length; i < ilen; i++) {
+      var c = chars[i];
+      if (instring.length) {
+        if (c === instring && chars[i - 1] !== "\\") {
+          instring = "";
+        }
+      } else if (c === '"' || c === "'") {
+        instring = c;
+      } else if (c.match(/[a-zA-Z_\$]/) && !invar.length) {
+        invar = c;
+        invarPos = i;
+        continue;
+      } else if (c.match(/\W/) && invar.length) {
+        // TODO: Should check for possible spaces before dot
+        if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
+          if (!(invar in this.definedVariables)) {
+            invar =
+              WORD_REPLACEMENT[invar] ||
+              (invar in this.variables &&
+                this.formatExpression(this.variables[invar])) ||
+              "context['" + invar + "']";
+          }
+        }
+        r += invar;
+        invar = "";
+      } else if (invar.length) {
+        invar += c;
+        continue;
+      }
+      r += c;
+    }
+    const result = r.slice(0, -1);
+    return result;
   }
 }

@@ -43,7 +43,6 @@ Let us have a look at a simple component:
 
 ```javascript
 class ClickCounter extends owl.Component {
-  template = "click-counter";
   state = { value: 0 };
 
   increment() {
@@ -53,7 +52,7 @@ class ClickCounter extends owl.Component {
 ```
 
 ```xml
-<button t-name="click-counter" t-on-click="increment">
+<button t-name="ClickCounter" t-on-click="increment">
   Click Me! [<t t-esc="state.value"/>]
 </button>
 ```
@@ -62,7 +61,8 @@ Note that this code is written in ESNext style, so it will only run on the
 latest browsers without a transpilation step.
 
 This example show how a component should be defined: it simply subclasses the
-Component class. It needs to define a template (`click-counter` here). Also,
+Component class. If no `template` key (or `inlineTemplate`), is defined, then
+Owl will use the component's name as template name. Here,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
@@ -75,7 +75,7 @@ templates are standard [QWeb](qweb.md) templates, but with an extra directive:
 widgets:
 
 ```xml
-<div t-name="parent">
+<div t-name="ParentWidget">
   <span>some text</span>
   <t t-widget="MyWidget" t-props="{info: 13}"/>
 </div>
@@ -83,7 +83,6 @@ widgets:
 
 ```js
 class ParentWidget extends owl.Component {
-    template = 'parent';
     widgets = { MyWidget: MyWidget};
     ...
 }
@@ -101,7 +100,7 @@ additional css classes or style for the sub widget: css declared in `class`, `st
 root widget element.
 
 ```xml
-<div t-name="parent">
+<div t-name="ParentWidget">
   <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" t-props="{info: 13}"/>
 </div>
 ```
@@ -124,6 +123,10 @@ It exists in the context of an environment (`env`), which is propagated from a
 parent to its children. The environment needs to have a QWeb instance, which
 will be used to render the component template.
 
+Be aware that the name of the component may be significant: if a component does
+not define a `template` or `inlineTemplate` key, then Owl will lookup in QWeb to
+find a template with the component name (or one of its ancestor).
+
 ### Properties
 
 - **`el`** (HTMLElement | null): reference to the DOM root node of the element. It is `null` when the
@@ -131,7 +134,7 @@ will be used to render the component template.
 
 - **`env`** (Object): the component environment, which contains a QWeb instance.
 
-- **`template`** (string): a string, which is the name of the QWeb template that will render
+- **`template`** (string, optional): if given, this is the name of the QWeb template that will render
   the component.
 
 - **`inlineTemplate`** (string, optional): a string that represents a xml template. If set,
@@ -236,7 +239,6 @@ implemented in most cases:
 
 ```javascript
 class ClickCounter extends owl.Component {
-  template = "click-counter";
   state = { value: 0 };
 
   ...

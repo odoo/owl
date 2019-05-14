@@ -64,7 +64,6 @@ while True:
 class TabbedEditor extends owl.Component {
   constructor() {
     super(...arguments);
-    this.template = "tabbed-editor";
     this.state = {
       currentTab: this.props.display.split("|")[0]
     };
@@ -142,7 +141,6 @@ class TabbedEditor extends owl.Component {
 class App extends owl.Component {
   constructor(...args) {
     super(...args);
-    this.template = "playground";
     this.version = owl._version;
     this.SAMPLES = SAMPLES;
     this.widgets = { TabbedEditor };

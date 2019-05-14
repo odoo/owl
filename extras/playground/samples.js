@@ -1,7 +1,6 @@
 const CLICK_COUNTER = `class ClickCounter extends owl.Component {
     constructor() {
         super(...arguments);
-        this.template = "clickcounter";
         this.state = { value: 0 };
     }
 
@@ -16,7 +15,7 @@ counter.mount(document.body);
 `;
 
 const CLICK_COUNTER_XML = `<templates>
-   <button t-name="clickcounter" t-on-click="increment">
+   <button t-name="ClickCounter" t-on-click="increment">
       Click Me! [<t t-esc="state.value"/>]
     </button>
 </templates>`;
@@ -29,7 +28,6 @@ const CLICK_COUNTER_CSS = `button {
 
 const CLICK_COUNTER_ESNEXT = `// This example will not work if your browser does not support ESNext class fields
 class ClickCounter extends owl.Component {
-    template = "clickcounter";
     state = { value: 0 };
 
     increment() {
@@ -45,7 +43,6 @@ counter.mount(document.body);
 const WIDGET_COMPOSITION = `class ClickCounter extends owl.Component {
     constructor(parent, props) {
         super(parent, props);
-        this.template = "clickcounter";
         this.state = { value: props.initialState || 0 };
     }
 
@@ -59,7 +56,6 @@ let nextId = 1;
 class App extends owl.Component {
     constructor() {
         super(...arguments);
-        this.template = "app";
         this.state = { counters: [] }
         this.widgets = { ClickCounter };
     }
@@ -75,11 +71,11 @@ app.mount(document.body);
 `;
 
 const WIDGET_COMPOSITION_XML = `<templates>
-   <button t-name="clickcounter" t-on-click="increment">
+   <button t-name="ClickCounter" t-on-click="increment">
       Click Me! [<t t-esc="state.value"/>]
     </button>
 
-  <div t-name="app">
+  <div t-name="App">
       <div><button t-on-click="addCounter">Add a counter</button></div>
       <div>
         <t t-foreach="state.counters" t-as="counter">
@@ -97,7 +93,6 @@ const WIDGET_COMPOSITION_CSS = `button {
 
 const ANIMATION = `// This example will not work if your browser does not support ESNext class fields
 class App extends owl.Component {
-    template = "app";
     state = {flag: 0};
 
     toggle() {
@@ -111,7 +106,7 @@ app.mount(document.body);
 `;
 
 const ANIMATION_XML = `<templates>
-  <div t-name="app">
+  <div t-name="App">
     <button t-on-click="toggle">
       Click Me!
     </button>
@@ -152,7 +147,6 @@ const ANIMATION_CSS = `button {
 const LIFECYCLE_DEMO = `class HookWidget extends owl.Component {
     constructor() {
         super(...arguments);
-        this.template = "demo.hookwidget";
         this.state = { n: 0 };
         console.log("constructor");
     }
@@ -183,7 +177,6 @@ class ParentWidget extends owl.Component {
     constructor() {
         super(...arguments);
         this.widgets = { HookWidget };
-        this.template = "demo.parentwidget";
         this.state = { n: 0, flag: true };
     }
     increment() {
@@ -200,14 +193,14 @@ widget.mount(document.body);
 `;
 
 const LIFECYCLE_DEMO_XML = `<templates>
-    <div t-name="demo.parentwidget">
+    <div t-name="ParentWidget">
         <button t-on-click="increment">Increment</button>
         <button t-on-click="toggleSubWidget">ToggleSubWidget</button>
         <div t-if="state.flag">
             <t t-widget="HookWidget" t-props="{n:state.n}"/>
         </div>
-    </div> 
-    <div t-name="demo.hookwidget" t-on-click="increment">Demo Sub Widget. Props: <t t-esc="props.n"/>. State: <t t-esc="state.n"/>. (click on me to update me)</div>
+    </div>
+    <div t-name="HookWidget" t-on-click="increment">Demo Sub Widget. Props: <t t-esc="props.n"/>. State: <t t-esc="state.n"/>. (click on me to update me)</div>
 </templates>`;
 
 const BENCHMARK_APP = `//------------------------------------------------------------------------------
@@ -241,7 +234,6 @@ for (let i = 1; i < 16000; i++) {
 class Counter extends owl.Component {
     constructor(parent, props) {
         super(parent, props);
-        this.template = "counter";
         this.state = { counter: props.initialState || 0 };
     }
 
@@ -256,7 +248,6 @@ class Counter extends owl.Component {
 class Message extends owl.Component {
     constructor() {
         super(...arguments);
-        this.template = "message";
         this.widgets = { Counter };
     }
 
@@ -273,7 +264,6 @@ class Message extends owl.Component {
 class App extends owl.Component {
     constructor() {
         super(...arguments);
-        this.template = "root";
         this.widgets = { Message };
         this.state = { messages: messages.slice(0, 10) };
     }
@@ -351,7 +341,7 @@ const BENCHMARK_APP_CSS = `.main {
 }`;
 
 const BENCHMARK_APP_XML = `<templates>
-  <div t-name="root" class="main">
+  <div t-name="App" class="main">
       <div class="left-thing">
           <div class="counter">
               <button t-on-click="increment(-1)">-</button>
@@ -374,14 +364,14 @@ const BENCHMARK_APP_XML = `<templates>
       </div>
   </div>
 
-  <div t-name="message" class="message">
+  <div t-name="Message" class="message">
     <span class="author"><t t-esc="props.author"/></span>
     <span class="msg"><t t-esc="props.msg"/></span>
     <button class="remove" t-on-click="removeMessage">Remove</button>
     <t t-widget="Counter" t-props="{initialState: props.id}"/>
   </div>
 
-  <div t-name="counter">
+  <div t-name="Counter">
     <button t-on-click="increment(-1)">-</button>
     <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
     <button t-on-click="increment(1)">+</button>
@@ -477,7 +467,6 @@ function makeStore() {
 // TodoItem
 //------------------------------------------------------------------------------
 class TodoItem extends owl.Component {
-    template = "todoitem";
     state = { isEditing: false };
 
     removeTodo() {
@@ -536,7 +525,6 @@ function mapStateToProps(state) {
 }
 
 class TodoApp extends owl.Component {
-    template = "todoapp";
     widgets = { TodoItem };
     state = { filter: "all" };
 
@@ -603,7 +591,7 @@ app.mount(document.body);
 `;
 
 const TODO_APP_STORE_XML = `<templates>
-  <section t-name="todoapp" class="todoapp">
+  <section t-name="TodoApp" class="todoapp">
     <header class="header">
       <h1>todos</h1>
       <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
@@ -641,7 +629,7 @@ const TODO_APP_STORE_XML = `<templates>
     </footer>
   </section>
 
-  <li t-name="todoitem" class="todo" t-att-class="{completed: props.completed, editing: state.isEditing}">
+  <li t-name="TodoItem" class="todo" t-att-class="{completed: props.completed, editing: state.isEditing}">
     <div class="view">
       <input class="toggle" type="checkbox" t-on-change="toggleTodo" t-att-checked="props.completed"/>
       <label t-on-dblclick="editTodo">
@@ -1035,39 +1023,25 @@ html .clear-completed:active {
 }
 `;
 
-const RESPONSIVE = `class Navbar extends owl.Component {
-    template="navbar";
-}
+const RESPONSIVE = `class Navbar extends owl.Component {}
 
 class ControlPanel extends owl.Component {
-    template="controlpanel";
     widgets = { MobileSearchView };
 }
 
 class FormView extends owl.Component {
-    template="formview";
     widgets = { AdvancedWidget };
 }
 
-class AdvancedWidget extends owl.Component {
-    template="advancedwidget";
-}
+class AdvancedWidget extends owl.Component {}
 
-class Chatter extends owl.Component {
-    template="chatter";
-}
+class Chatter extends owl.Component {}
 
-class MobileSearchView extends owl.Component {
-    template="mobilesearchview";
-}
+class MobileSearchView extends owl.Component {}
 
 
 class App extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.template = "app";
-        this.widgets = { Navbar, ControlPanel, FormView, Chatter };
-    }
+    widgets = { Navbar, ControlPanel, FormView, Chatter };
 }
 
 function isMobile() {
@@ -1082,39 +1056,39 @@ const env = {
 const app = new App(env);
 app.mount(document.body);
 
-window.addEventListener(
-    "resize",
-    owl.utils.debounce(function() {
-        const _isMobile = isMobile();
-        if (_isMobile !== env.isMobile) {
-            app.updateEnv({
-                isMobile: _isMobile
-            });
-        }
-    }, 20)
-);`;
+function updateEnv() {
+    const _isMobile = isMobile();
+    if (_isMobile !== env.isMobile) {
+        app.updateEnv({
+            isMobile: _isMobile
+        });
+    }
+}
+
+window.addEventListener("resize", owl.utils.debounce(updateEnv, 20));
+`;
 
 const RESPONSIVE_XML = `<templates>
-    <div t-name="navbar" class="navbar">Navbar</div>
+    <div t-name="Navbar" class="navbar">Navbar</div>
 
-    <div t-name="controlpanel" class="controlpanel">
+    <div t-name="ControlPanel" class="controlpanel">
         <h2>controlpanel</h2>
         <t t-if="env.isMobile" t-widget="MobileSearchView"/>
     </div>
 
-    <div t-name="formview" class="formview">
+    <div t-name="FormView" class="formview">
       <h2>formview</h2>
         <t t-if="!env.isMobile" t-widget="AdvancedWidget"/>
     </div>
 
-    <div t-name="chatter" class="chatter">
+    <div t-name="Chatter" class="chatter">
       <h2>Chatter</h2>
       <t t-foreach="100" t-as="item"><div>Message <t t-esc="item"/></div></t>
     </div>
 
-    <div t-name="mobilesearchview">MOBILE searchview</div>
+    <div t-name="MobileSearchView">MOBILE searchview</div>
 
-    <div t-name="app" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+    <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
         <t t-widget="Navbar"/>
         <t t-widget="ControlPanel"/>
         <div class="content-wrapper" t-if="!env.isMobile">
@@ -1129,7 +1103,7 @@ const RESPONSIVE_XML = `<templates>
         </t>
 
     </div>
-    <div t-name="advancedwidget">
+    <div t-name="AdvancedWidget">
         This widget is only created in desktop mode.
         <button>Button!</button>
     </div>

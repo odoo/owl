@@ -1,5 +1,5 @@
 <templates>
-  <div t-name="tabbed-editor" class="tabbed-editor" t-att-style="props.style">
+  <div t-name="TabbedEditor" class="tabbed-editor" t-att-style="props.style">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
       <a t-if="tabs.js" class="tab flash" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
       <a t-if="tabs.xml" class="tab flash" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
@@ -8,7 +8,7 @@
     <div class="code-editor" t-ref="'editor'"></div>
   </div>
 
-  <div t-name="playground" class="playground">
+  <div t-name="App" class="playground">
       <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
         <div class="menubar">
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>

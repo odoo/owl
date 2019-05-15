@@ -72,7 +72,7 @@ export class Store extends EventBus {
       const func: (...any) => any = entry[1];
       this.getters[name] = payload => {
         return func({ state: this.state, getters: this.getters }, payload);
-      }
+      };
     }
   }
 
@@ -154,6 +154,8 @@ interface EnvWithStore extends Env {
   store: Store;
 }
 
+let nextID = 1;
+
 export function connect(mapStateToProps, options: any = {}) {
   let hashFunction = options.hashFunction || null;
 
@@ -184,7 +186,7 @@ export function connect(mapStateToProps, options: any = {}) {
   return function<E extends EnvWithStore, P, S>(
     Comp: Constructor<Component<E, P, S>>
   ) {
-    return class extends Comp {
+    const Result = class extends Comp {
       constructor(parent, props?: any) {
         const env = parent instanceof Component ? parent.env : parent;
         const ownProps = Object.assign({}, props || {});
@@ -269,5 +271,13 @@ export function connect(mapStateToProps, options: any = {}) {
         return super._updateProps(mergedProps, forceUpdate, patchQueue);
       }
     };
+
+    // we assign here a unique name to the resulting anonymous class.
+    // this is necessary for Owl to be able to properly deduce templates.
+    // Otherwise, all connected components would have the same name, and then
+    // each component after the first will necessarily have the same template.
+    let name = `ConnectedComponent${nextID++}`;
+    Object.defineProperty(Result, "name", { value: name });
+    return Result;
   };
 }

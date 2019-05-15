@@ -43,7 +43,7 @@ export interface Meta<T extends Env, Props> {
   mountedHandlers: { [key: number]: Function };
 }
 
-// If a component does not define explicitely a template (or inlineTemplate)
+// If a component does not define explicitely a template
 // key, it needs to find a template with its name (or a parent's).  This is
 // qweb dependant, so we need a place to store this information indexed by
 // qweb instances.
@@ -61,7 +61,6 @@ export class Component<
 > extends EventBus {
   readonly __owl__: Meta<Env, Props>;
   template?: string;
-  inlineTemplate?: string;
 
   get el(): HTMLElement | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
@@ -388,41 +387,29 @@ export class Component<
 
     const qweb = this.env.qweb;
     if (!this.template) {
-      if (this.inlineTemplate) {
-        this.env.qweb.addTemplate(
-          this.inlineTemplate,
-          this.inlineTemplate,
-          true
-        );
-
-        // we write on the proto, so any new component of this class will get
-        // automatically the template key properly setup.
-        (<any>this).__proto__.template = this.inlineTemplate;
+      let tmap = TEMPLATE_MAP[qweb.id];
+      if (!tmap) {
+        tmap = {};
+        TEMPLATE_MAP[qweb.id] = tmap;
+      }
+      let p = (<any>this).constructor;
+      let name: string = p.name;
+      let template = tmap[name];
+      if (template) {
+        this.template = template;
       } else {
-        let tmap = TEMPLATE_MAP[qweb.id];
-        if (!tmap) {
-          tmap = {};
-          TEMPLATE_MAP[qweb.id] = tmap;
+        while (
+          (template = p.name) &&
+          !(template in qweb.templates) &&
+          p !== Component
+        ) {
+          p = p.__proto__;
         }
-        let p = (<any>this).constructor;
-        let name: string = p.name;
-        let template = tmap[name];
-        if (template) {
-          this.template = template;
+        if (p === Component) {
+          this.template = "default";
         } else {
-          while (
-            (template = p.name) &&
-            !(template in qweb.templates) &&
-            p !== Component
-          ) {
-            p = p.__proto__;
-          }
-          if (p === Component) {
-            this.template = "default";
-          } else {
-            tmap[name] = template;
-            this.template = template;
-          }
+          tmap[name] = template;
+          this.template = template;
         }
       }
     }

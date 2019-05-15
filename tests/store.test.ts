@@ -176,15 +176,15 @@ describe("basic use", () => {
         1: {
           id: 1,
           name: "bertinchamps",
-          tasterID: 1,
-        },
+          tasterID: 1
+        }
       },
       tasters: {
         1: {
           id: 1,
-          name: 'aaron',
+          name: "aaron"
         }
-      },
+      }
     };
     const getters = {
       beerTasterName({ state }, beerID) {
@@ -207,15 +207,15 @@ describe("basic use", () => {
         1: {
           id: 1,
           name: "bertinchamps",
-          tasterID: 1,
-        },
+          tasterID: 1
+        }
       },
       tasters: {
         1: {
           id: 1,
-          name: 'aaron',
+          name: "aaron"
         }
-      },
+      }
     };
     const getters = {
       beerTasterName({ state }, beerID) {
@@ -243,15 +243,15 @@ describe("basic use", () => {
         1: {
           id: 1,
           name: "bertinchamps",
-          tasterID: 1,
-        },
+          tasterID: 1
+        }
       },
       tasters: {
         1: {
           id: 1,
-          name: 'aaron',
+          name: "aaron"
         }
-      },
+      }
     };
     const getters = {
       beerTasterName({ state }, beerID) {
@@ -278,15 +278,15 @@ describe("basic use", () => {
         return `${getters.b()}${getters.c(1)}`;
       },
       b() {
-        return 'b';
+        return "b";
       },
       c({}, i) {
         return `c${i}`;
-      },
+      }
     };
     const store = new Store({ getters });
 
-    expect(store.getters.a()).toBe('bc1');
+    expect(store.getters.a()).toBe("bc1");
   });
 });
 
@@ -408,20 +408,21 @@ describe("connecting a component to store", () => {
     fixture.remove();
   });
 
-  class App extends Component<any, any, any> {
-    inlineTemplate = `
+  test("connecting a component works", async () => {
+    env.qweb.addTemplate(
+      "App",
+      `
             <div>
                 <t t-foreach="props.todos" t-as="todo" t-key="todo">
                     <t t-widget="Todo" t-props="todo"/>
                 </t>
-            </div>`;
-    widgets = { Todo };
-  }
-  class Todo extends Component<any, any, any> {
-    inlineTemplate = `<span><t t-esc="props.msg"/></span>`;
-  }
-
-  test("connecting a component works", async () => {
+            </div>`
+    );
+    env.qweb.addTemplate("Todo", `<span><t t-esc="props.msg"/></span>`);
+    class App extends Component<any, any, any> {
+      widgets = { Todo };
+    }
+    class Todo extends Component<any, any, any> {}
     const state = { todos: [] };
     const mutations = {
       addTodo({ state }, msg) {
@@ -456,14 +457,16 @@ describe("connecting a component to store", () => {
     }
     const store = new Store({ state, mutations });
 
-    class App extends Component<any, any, any> {
-      inlineTemplate = `
+    env.qweb.addTemplate(
+      "App",
+      `
             <div>
                 <span t-foreach="props.todos" t-as="todo" t-key="todo">
                   <t t-esc="todo.title"/>
                 </span>
-            </div>`;
-    }
+            </div>`
+    );
+    class App extends Component<any, any, any> {}
 
     const DeepTodoApp = connect(
       mapStateToProps,
@@ -493,8 +496,8 @@ describe("connecting a component to store", () => {
 
   test("connected child components with custom hooks", async () => {
     let steps: any = [];
+    env.qweb.addTemplate("Child", `<div/>`);
     class Child extends Component<any, any, any> {
-      inlineTemplate = `<div/>`;
       mounted() {
         steps.push("child:mounted");
       }
@@ -505,11 +508,14 @@ describe("connecting a component to store", () => {
 
     const ConnectedChild = connect(s => s)(Child);
 
-    class Parent extends Component<any, any, any> {
-      inlineTemplate = `
+    env.qweb.addTemplate(
+      "Parent",
+      `
           <div>
               <t t-if="state.child" t-widget="ConnectedChild"/>
-          </div>`;
+          </div>`
+    );
+    class Parent extends Component<any, any, any> {
       widgets = { ConnectedChild };
 
       constructor(env: Env) {
@@ -540,20 +546,22 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, mutations });
 
-    class TodoItem extends Component<any, any, any> {
-      inlineTemplate = `<span><t t-esc="props.text"/></span>`;
-    }
+    env.qweb.addTemplate("TodoItem", `<span><t t-esc="props.text"/></span>`);
+    class TodoItem extends Component<any, any, any> {}
     const ConnectedTodo = connect((state, props) => {
       const todo = state.todos.find(t => t.id === props.id);
       return todo;
     })(TodoItem);
 
-    class TodoList extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "TodoList",
+      `<div>
             <t t-foreach="props.todos" t-as="todo">
               <t t-widget="ConnectedTodo" t-props="todo"/>
             </t>
-          </div>`;
+          </div>`
+    );
+    class TodoList extends Component<any, any, any> {
       widgets = { ConnectedTodo };
     }
 
@@ -578,10 +586,7 @@ describe("connecting a component to store", () => {
   test("connect receives store getters as third argument", async () => {
     const state = {
       importantID: 1,
-      todos: [
-        { id: 1, text: "jupiler" },
-        { id: 2, text: "bertinchamps" },
-      ],
+      todos: [{ id: 1, text: "jupiler" }, { id: 2, text: "bertinchamps" }]
     };
     const getters = {
       importantTodoText({ state }) {
@@ -589,30 +594,35 @@ describe("connecting a component to store", () => {
       },
       text({ state }, id) {
         return state.todos.find(todo => todo.id === id).text;
-      },
+      }
     };
     const store = new Store({ state, getters });
 
-    class TodoItem extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "TodoItem",
+      `<div>
         <span><t t-esc="props.activeTodoText"/></span>
         <span><t t-esc="props.importantTodoText"/></span>
-      </div>`;
-    }
+      </div>`
+    );
+    class TodoItem extends Component<any, any, any> {}
     const ConnectedTodo = connect((state, props, getters) => {
       const todo = state.todos.find(t => t.id === props.id);
       return {
         activeTodoText: getters.text(todo.id),
-        importantTodoText: getters.importantTodoText(),
+        importantTodoText: getters.importantTodoText()
       };
     })(TodoItem);
 
-    class TodoList extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "TodoList",
+      `<div>
             <t t-foreach="props.todos" t-as="todo">
               <t t-widget="ConnectedTodo" t-props="todo"/>
             </t>
-          </div>`;
+          </div>`
+    );
+    class TodoList extends Component<any, any, any> {
       widgets = { ConnectedTodo };
     }
 
@@ -625,21 +635,25 @@ describe("connecting a component to store", () => {
     const app = new ConnectedTodoList(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div><span>jupiler</span><span>jupiler</span></div><div><span>bertinchamps</span><span>jupiler</span></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>jupiler</span><span>jupiler</span></div><div><span>bertinchamps</span><span>jupiler</span></div></div>"
+    );
   });
 
   test("connected component is updated when props are updated", async () => {
-    class Beer extends Component<any, any, any> {
-      inlineTemplate = `<span><t t-esc="props.name"/></span>`;
-    }
+    env.qweb.addTemplate("Beer", `<span><t t-esc="props.name"/></span>`);
+    class Beer extends Component<any, any, any> {}
     const ConnectedBeer = connect((state, props) => {
       return state.beers[props.id];
     })(Beer);
 
+    env.qweb.addTemplate(
+      "App",
+      `<div>
+            <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+        </div>`
+    );
     class App extends Component<any, any, any> {
-      inlineTemplate = `<div>
-              <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
-          </div>`;
       widgets = { ConnectedBeer };
       state = { beerId: 1 };
     }
@@ -658,12 +672,14 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component is updated when store is changed", async () => {
-    class App extends Component<any, any, any> {
-      inlineTemplate = `
+    env.qweb.addTemplate(
+      "App",
+      `
           <div>
               <span t-foreach="props.beers" t-as="beer" t-key="beer.name"><t t-esc="beer.name"/></span>
-          </div>`;
-    }
+          </div>`
+    );
+    class App extends Component<any, any, any> {}
 
     const mutations = {
       addBeer({ state }, name) {
@@ -692,13 +708,15 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component with undefined, null and string props", async () => {
-    class Beer extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "Beer",
+      `<div>
           <span>taster:<t t-esc="props.taster"/></span>
           <span t-if="props.selected">selected:<t t-esc="props.selected.name"/></span>
           <span t-if="props.consumed">consumed:<t t-esc="props.consumed.name"/></span>
-        </div>`;
-    }
+        </div>`
+    );
+    class Beer extends Component<any, any, any> {}
     const ConnectedBeer = connect((state, props) => {
       return {
         selected: state.beers[props.id],
@@ -707,10 +725,13 @@ describe("connecting a component to store", () => {
       };
     })(Beer);
 
-    class App extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "App",
+      `<div>
               <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
-          </div>`;
+          </div>`
+    );
+    class App extends Component<any, any, any> {
       widgets = { ConnectedBeer };
       state = { beerId: 0 };
     }
@@ -756,13 +777,15 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component deeply reactive with undefined, null and string props", async () => {
-    class Beer extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "Beer",
+      `<div>
           <span>taster:<t t-esc="props.taster"/></span>
           <span t-if="props.selected">selected:<t t-esc="props.selected.name"/></span>
           <span t-if="props.consumed">consumed:<t t-esc="props.consumed.name"/></span>
-        </div>`;
-    }
+        </div>`
+    );
+    class Beer extends Component<any, any, any> {}
     const ConnectedBeer = connect((state, props) => {
       return {
         selected: state.beers[props.id],
@@ -771,10 +794,13 @@ describe("connecting a component to store", () => {
       };
     })(Beer);
 
-    class App extends Component<any, any, any> {
-      inlineTemplate = `<div>
+    env.qweb.addTemplate(
+      "App",
+      `<div>
               <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
-          </div>`;
+          </div>`
+    );
+    class App extends Component<any, any, any> {
       widgets = { ConnectedBeer };
       state = { beerId: 0 };
     }
@@ -845,12 +871,16 @@ describe("connecting a component to store", () => {
 
   test("correct update order when parent/children are connected", async () => {
     const steps: string[] = [];
-    class Parent extends Component<any, any, any> {
-      inlineTemplate = `
+
+    env.qweb.addTemplate(
+      "Parent",
+      `
         <div>
             <t t-widget="Child" t-ref="'child'" t-props="{key: props.current}"/>
         </div>
-      `;
+      `
+    );
+    class Parent extends Component<any, any, any> {
       widgets = { Child: ConnectedChild };
     }
     const ConnectedParent = connect(function(s) {
@@ -858,9 +888,8 @@ describe("connecting a component to store", () => {
       return { current: s.current, isvisible: s.isvisible };
     })(Parent);
 
-    class Child extends Component<any, any, any> {
-      inlineTemplate = `<span><t t-esc="props.msg"/></span>`;
-    }
+    env.qweb.addTemplate("Child", `<span><t t-esc="props.msg"/></span>`);
+    class Child extends Component<any, any, any> {}
 
     const ConnectedChild = connect(function(s, props) {
       steps.push("child");
@@ -889,8 +918,8 @@ describe("connecting a component to store", () => {
 
   test("connected component willpatch/patch hooks are called on store updates", async () => {
     const steps: string[] = [];
+    env.qweb.addTemplate("App", `<div><t t-esc="props.msg"/></div>`);
     class App extends Component<any, any, any> {
-      inlineTemplate = `<div><t t-esc="props.msg"/></div>`;
       willPatch() {
         steps.push("willpatch");
       }

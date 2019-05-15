@@ -152,14 +152,7 @@ export class QWeb {
    * Add a template to the internal template map.  Note that it is not
    * immediately compiled.
    */
-  addTemplate(
-    name: string,
-    xmlString: string,
-    allowDuplicates: boolean = false
-  ) {
-    if (name in this.templates && allowDuplicates) {
-      return;
-    }
+  addTemplate(name: string, xmlString: string) {
     const doc = parseXML(xmlString);
     if (!doc.firstChild) {
       throw new Error("Invalid template (should not be empty)");

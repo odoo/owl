@@ -36,11 +36,6 @@ Here is a short example to illustrate interactive widgets:
 
 ```javascript
 class ClickCounter extends owl.Component {
-  inlineTemplate = `
-    <button t-on-click="increment">
-      Click Me! [<t t-esc="state.value"/>]
-    </button>`;
-
   state = { value: 0 };
 
   increment() {
@@ -48,7 +43,12 @@ class ClickCounter extends owl.Component {
   }
 }
 
-const qweb = new owl.QWeb();
+const TEMPLATES = `
+    <button t-name="ClickCounter" t-on-click="increment">
+        Click Me! [<t t-esc="state.value"/>]
+    </button>`;
+
+const qweb = new owl.QWeb(TEMPLATES);
 const counter = new ClickCounter({ qweb });
 counter.mount(document.body);
 ```

@@ -30,7 +30,7 @@ OWL components are the building blocks for user interface. They are designed to 
    and follow the QWeb specification. This is a requirement for Odoo.
 
 OWL components are defined as a subclass of Component. The rendering is
-exclusively done by a [QWeb](qweb.md) template (either defined inline or preloaded in QWeb).
+exclusively done by a [QWeb](qweb.md) template (which needs to be preloaded in QWeb).
 Rendering a component generates a virtual dom representation
 of the widget, which is then patched to the DOM, in order to apply the changes in an efficient way.
 
@@ -61,7 +61,7 @@ Note that this code is written in ESNext style, so it will only run on the
 latest browsers without a transpilation step.
 
 This example show how a component should be defined: it simply subclasses the
-Component class. If no `template` key (or `inlineTemplate`), is defined, then
+Component class. If no `template` key is defined, then
 Owl will use the component's name as template name. Here,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
@@ -112,7 +112,7 @@ between a valid css class added by the component, or some custom code, and a
 class that need to be removed. This is why we only support the explicit syntax
 with a class object:
 
-```js
+```xml
 <t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}" />
 ```
 
@@ -124,7 +124,7 @@ parent to its children. The environment needs to have a QWeb instance, which
 will be used to render the component template.
 
 Be aware that the name of the component may be significant: if a component does
-not define a `template` or `inlineTemplate` key, then Owl will lookup in QWeb to
+not define a `template` key, then Owl will lookup in QWeb to
 find a template with the component name (or one of its ancestor).
 
 ### Properties
@@ -136,9 +136,6 @@ find a template with the component name (or one of its ancestor).
 
 - **`template`** (string, optional): if given, this is the name of the QWeb template that will render
   the component.
-
-- **`inlineTemplate`** (string, optional): a string that represents a xml template. If set,
-  this will be loaded into QWeb and used instead of the `template` property.
 
 - **`state`** (Object): this is the location of the component's state, if there is
   any. After the willStart method, the `state` property is observed, and each

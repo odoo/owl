@@ -136,6 +136,7 @@ export class QWeb {
     if (data) {
       this.loadTemplates(data);
     }
+    this.addTemplate("default", "<div></div>");
   }
 
   static addDirective(directive: Directive) {

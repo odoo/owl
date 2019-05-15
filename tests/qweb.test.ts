@@ -1024,7 +1024,7 @@ describe("loading templates", () => {
   test("does not crash if string does not have templates", () => {
     const data = "";
     qweb.loadTemplates(data);
-    expect(qweb.templates).toEqual({});
+    expect(Object.keys(qweb.templates)).toEqual(["default"]);
   });
 });
 

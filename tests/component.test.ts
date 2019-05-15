@@ -29,7 +29,6 @@ beforeEach(() => {
   );
   env.qweb.addTemplate("widgetA", `<div>Hello<t t-widget="b"/></div>`);
   env.qweb.addTemplate("widgetB", `<div>world</div>`);
-  env.qweb.addTemplate("default", "<div/>");
 });
 
 afterEach(() => {

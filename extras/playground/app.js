@@ -174,7 +174,7 @@ class App extends owl.Component {
     var error = false;
     const sanitizedXML = this.state.xml.replace(/<!--[\s\S]*?-->/g, "");
     try {
-      qweb.loadTemplates(sanitizedXML);
+      qweb.addTemplates(sanitizedXML);
     } catch (e) {
       error = e;
     }

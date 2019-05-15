@@ -3,6 +3,7 @@
 ## Content
 
 - [Overview](#overview)
+- [QWeb Engine](#qweb-engine)
 - [QWeb Specification](#qweb-specification)
     - [Static html nodes](#static-html-nodes)
     - [`t-esc` directive](#t-esc-directive)
@@ -40,8 +41,54 @@ necessary for the component system. In addition, it has a few extra directives
 (see [OWL Specific Extensions](#owlspecificextensions))
 
 
+## QWeb Engine
+
+This section is about the javascript code that implements the `QWeb` specification.
+Owl exports a `QWeb` class in `owl.QWeb`.  To use it, it just needs to be
+instantiated:
+
+```js
+const qweb = new owl.QWeb();
+```
+
+It's API is quite simple:
+
+- **`constructor(data)`**: constructor. Takes an optional string to add initial
+  templates (see `addTemplates` for more information on format of the string).
+
+  ```js
+  const qweb = new owl.QWeb(TEMPLATES);
+  ```
+
+- **`addTemplate(name, xmlStr)`**: add a specific template.
+
+  ```js
+  qweb.addTemplate('mytemplate', '<div>hello</div>');
+  ```
+
+- **`addTemplates(xmlStr)`**: add a list of templates (identified by `t-name`
+  attribute).
+
+  ```js
+  const TEMPLATES = `
+    <templates>
+      <div t-name="App" class="main">main</div>
+      <div t-name="OtherWidget">other widget</div>
+    </templates>`;
+  qweb.addTemplates(TEMPLATES);
+  ```
+
+- **`render(name, context, extra)`**: renders a template.  This returns a `vnode`,
+  which is a virtual representation of the DOM (see [vdom doc](vdom.md)).
+
+  ```js
+  const vnode = qweb.render('App', widget);
+  ```
+
 ## QWeb Specification
 
+We define in this section the specification of how `QWeb` templates should be
+rendered.
 
 ### Static html nodes
 

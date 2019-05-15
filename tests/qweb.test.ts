@@ -100,7 +100,7 @@ describe("error handling", () => {
 
   test("loadTemplates throw if parser error", () => {
     expect(() => {
-      qweb.loadTemplates("<templates><abc>></templates>");
+      qweb.addTemplates("<templates><abc>></templates>");
     }).toThrow("Invalid XML in template");
   });
 
@@ -1016,14 +1016,14 @@ describe("loading templates", () => {
 
         <ul t-name="main"><t t-call="items"/></ul>
       </templates>`;
-    qweb.loadTemplates(data);
+    qweb.addTemplates(data);
     const result = renderToString(qweb, "main");
     expect(result).toBe("<ul><li>ok</li><li>foo</li></ul>");
   });
 
   test("does not crash if string does not have templates", () => {
     const data = "";
-    qweb.loadTemplates(data);
+    qweb.addTemplates(data);
     expect(Object.keys(qweb.templates)).toEqual(["default"]);
   });
 });

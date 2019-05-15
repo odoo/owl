@@ -134,7 +134,7 @@ export class QWeb {
 
   constructor(data?: string) {
     if (data) {
-      this.loadTemplates(data);
+      this.addTemplates(data);
     }
     this.addTemplate("default", "<div></div>");
   }
@@ -165,6 +165,23 @@ export class QWeb {
       throw new Error("Invalid template (should not be empty)");
     }
     this._addTemplate(name, <Element>doc.firstChild);
+  }
+
+  /**
+   * Load templates from a xml (as a string).  This will look up for the first
+   * <templates> tag, and will consider each child of this as a template, with
+   * the name given by the t-name attribute.
+   */
+  addTemplates(xmlstr: string) {
+    const doc = parseXML(xmlstr);
+    const templates = doc.getElementsByTagName("templates")[0];
+    if (!templates) {
+      return;
+    }
+    for (let elem of <any>templates.children) {
+      const name = elem.getAttribute("t-name");
+      this._addTemplate(name, elem);
+    }
   }
 
   _addTemplate(name: string, elem: Element) {
@@ -222,22 +239,6 @@ export class QWeb {
           "t-elif and t-else directives must be preceded by a t-if or t-elif directive"
         );
       }
-    }
-  }
-  /**
-   * Load templates from a xml (as a string).  This will look up for the first
-   * <templates> tag, and will consider each child of this as a template, with
-   * the name given by the t-name attribute.
-   */
-  loadTemplates(xmlstr: string) {
-    const doc = parseXML(xmlstr);
-    const templates = doc.getElementsByTagName("templates")[0];
-    if (!templates) {
-      return;
-    }
-    for (let elem of <any>templates.children) {
-      const name = elem.getAttribute("t-name");
-      this._addTemplate(name, elem);
     }
   }
   /**

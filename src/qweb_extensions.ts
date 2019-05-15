@@ -235,9 +235,11 @@ QWeb.addDirective({
       `def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
     );
     ctx.addElse();
-    ctx.addLine(
-      `w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`
-    );
+    ctx.addLine(`let W${widgetID} = context.widgets['${value}'];`);
+
+    // maybe only do this in dev mode...
+    ctx.addLine(`if (!W${widgetID}) {throw new Error(\`Cannot find the definition of widget "${value}"\`)}`);
+    ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
     ctx.addLine(
       `context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`
     );

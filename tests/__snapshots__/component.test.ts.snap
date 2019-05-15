@@ -31,7 +31,9 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
         if (w4) {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
-            w4 = new context.widgets['child'](owner, props4);
+            let W4 = context.widgets['child'];
+            if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
+            w4 = new W4(owner, props4);
             context.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4._prepare();
         }
@@ -78,7 +80,9 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
         if (w4) {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
-            w4 = new context.widgets['child'](owner, props4);
+            let W4 = context.widgets['child'];
+            if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
+            w4 = new W4(owner, props4);
             context.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4._prepare();
         }
@@ -143,7 +147,9 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             if (w7) {
                 def6 = w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
             } else {
-                w7 = new context.widgets['ChildWidget'](owner, props7);
+                let W7 = context.widgets['ChildWidget'];
+                if (!W7) {throw new Error(\`Cannot find the definition of widget \\"ChildWidget\\"\`)}
+                w7 = new W7(owner, props7);
                 context.__owl__.cmap[key8] = w7.__owl__.id;
                 def6 = w7._prepare();
             }
@@ -191,7 +197,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         if (w4) {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
-            w4 = new context.widgets['child'](owner, props4);
+            let W4 = context.widgets['child'];
+            if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
+            w4 = new W4(owner, props4);
             context.__owl__.cmap[key5] = w4.__owl__.id;
             def3 = w4._prepare();
         }
@@ -237,7 +245,9 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
         if (w4) {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         } else {
-            w4 = new context.widgets['child'](owner, props4);
+            let W4 = context.widgets['child'];
+            if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
+            w4 = new W4(owner, props4);
             context.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4._prepare();
         }

@@ -852,6 +852,25 @@ describe("composition", () => {
     expect(children(widget)[0].__owl__.parent).toBe(widget);
   });
 
+  test("throw a nice error if it cannot find widget", async () => {
+    expect.assertions(1);
+    env.qweb.addTemplate(
+      "Parent",
+      `<div><t t-widget="SomeMispelledWidget"/></div>`
+    );
+    class Parent extends Widget {
+      widgets = { SomeWidget: Widget };
+    }
+    const parent = new Parent(env);
+    try {
+      await parent.mount(fixture);
+    } catch (e) {
+      expect(e.message).toBe(
+        'Cannot find the definition of widget "SomeMispelledWidget"'
+      );
+    }
+  });
+
   test("t-refs on widget are widgets", async () => {
     env.qweb.addTemplate(
       "WidgetC",
@@ -1956,7 +1975,9 @@ describe("async rendering", () => {
 
     const app = new App(env);
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
+    );
   });
 
   test("properly behave when destroyed/unmounted while rendering ", async () => {

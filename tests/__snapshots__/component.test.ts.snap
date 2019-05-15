@@ -5,7 +5,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
 ) {
     let owner = context;
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
     let _2_index = c1.length;
@@ -52,7 +52,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
 ) {
     let owner = context;
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
     let _2_index = c1.length;
@@ -104,7 +104,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
     let owner = context;
     context = Object.create(context);
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = context['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
@@ -164,7 +164,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 ) {
     let owner = context;
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
     let key5 = 'somestring';
@@ -211,7 +211,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
 ) {
     let owner = context;
     var h = this.utils.h;
-    var c1 = [], p1 = {key:1};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
     let _2_index = c1.length;

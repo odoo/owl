@@ -1823,6 +1823,35 @@ describe("async rendering", () => {
     );
   });
 
+  test("widgets in a node in a t-foreach ", async () => {
+    class Child extends Widget {}
+
+    class App extends Widget {
+      widgets = { Child };
+
+      get items() {
+        return [1, 2];
+      }
+    }
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Child"><t t-esc="props.item"/></div>
+            <div t-name="App">
+                <ul>
+                    <t t-foreach="items" t-as="item">
+                        <li t-key="'li_'+item">
+                            <t t-widget="Child" t-props="{ item }"/>
+                        </li>
+                    </t>
+                </ul>
+            </div>
+        </templates>`);
+
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>");
+  });
+
   test("properly behave when destroyed/unmounted while rendering ", async () => {
     let def = Promise.resolve();
 

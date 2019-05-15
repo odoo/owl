@@ -563,7 +563,7 @@ export class QWeb {
       parts.push(`on:{}`);
     }
 
-    ctx.addLine(`var c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
+    ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
     for (let id of tattrs) {
       ctx.addIf(`_${id} instanceof Array`);
       ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);

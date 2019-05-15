@@ -126,12 +126,12 @@ describe("observer", () => {
     arr.push({ kriek: 5 });
     expect(observer.rev).toBe(2);
     expect(arr.__owl__.rev).toBe(2);
-    expect(arr[0].__owl__.rev).toBe(1);
+    expect(arr[0].__owl__.rev).toBe(2);
 
     arr[0].kriek = 6;
     expect(observer.rev).toBe(3);
     expect(arr.__owl__.rev).toBe(2);
-    expect(arr[0].__owl__.rev).toBe(2);
+    expect(arr[0].__owl__.rev).toBe(3);
   });
 
   test("properly observe arrays in object", () => {
@@ -180,12 +180,14 @@ describe("observer", () => {
     obj.a = { b: 2 };
     expect(observer.rev).toBe(2);
     expect(obj.__owl__.rev).toBe(2);
-    expect(obj.a.__owl__.rev).toBe(1);
+
+    // we start at 2 because it is the new observer rev number
+    expect(obj.a.__owl__.rev).toBe(2);
 
     obj.a.b = 3;
     expect(observer.rev).toBe(3);
     expect(obj.__owl__.rev).toBe(2);
-    expect(obj.a.__owl__.rev).toBe(2);
+    expect(obj.a.__owl__.rev).toBe(3);
   });
 
   test("deep observe misc changes", () => {

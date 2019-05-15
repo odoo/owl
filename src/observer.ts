@@ -39,6 +39,7 @@ for (let method of methodsToPatch) {
     if (!this.__observer__.allowMutations) {
       throw new Error(`Array cannot be changed here")`);
     }
+    this.__observer__.rev++;
     this.__observer__.notifyChange();
     this.__owl__.rev++;
     let parent = this;
@@ -74,7 +75,6 @@ export class Observer {
 
   notifyCB() {}
   notifyChange() {
-    this.rev++;
     this.dirty = true;
     Promise.resolve().then(() => {
       if (this.dirty) {
@@ -105,6 +105,7 @@ export class Observer {
   }
 
   set(target: any, key: number | string, value: any) {
+    this.rev++;
     this._addProp(target, key, value);
     target.__owl__.rev++;
     this.notifyChange();
@@ -112,7 +113,7 @@ export class Observer {
 
   _observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
     const keys = Object.keys(obj);
-    obj.__owl__ = { rev: 1, deepRev: 1, parent };
+    obj.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
     Object.defineProperty(obj, "__owl__", { enumerable: false });
     for (let key of keys) {
       this._addProp(obj, key, obj[key]);
@@ -120,7 +121,7 @@ export class Observer {
   }
 
   _observeArr(arr: Array<any>, parent?: any) {
-    (<any>arr).__owl__ = { rev: 1, deepRev: 1, parent };
+    (<any>arr).__owl__ = { rev: this.rev, deepRev: this.rev, parent };
     Object.defineProperty(arr, "__owl__", { enumerable: false });
     (<any>arr).__proto__ = Object.create(ModifiedArrayProto);
     (<any>arr).__proto__.__observer__ = this;
@@ -142,6 +143,7 @@ export class Observer {
       },
       set(newVal) {
         if (newVal !== value) {
+          self.rev++;
           if (!self.allowMutations) {
             throw new Error(
               `Observed state cannot be changed here! (key: "${key}", val: "${newVal}")`

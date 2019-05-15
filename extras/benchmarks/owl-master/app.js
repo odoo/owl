@@ -4,7 +4,6 @@ import { buildData, startMeasure, stopMeasure } from "../shared/utils.js";
 // Likes Counter Widget
 //------------------------------------------------------------------------------
 class Counter extends owl.Component {
-  template = "counter";
   state = { counter: 0 };
 
   increment() {
@@ -16,7 +15,6 @@ class Counter extends owl.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.Component {
-  template = "message";
   widgets = { Counter };
 
   shouldUpdate(nextProps) {
@@ -33,7 +31,6 @@ class Message extends owl.Component {
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  template = "root";
   widgets = { Message };
   state = { messages: [] };
 

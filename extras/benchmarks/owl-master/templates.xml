@@ -1,5 +1,5 @@
 <templates>
-  <div t-name="root" class="main">
+  <div t-name="App" class="main">
       <div class="left-thing">
           <div>Number of msg: <t t-esc="state.messages.length"/></div>
           <button t-on-click="addMessages(100)">Add 100 messages</button>
@@ -18,14 +18,14 @@
       </div>
   </div>
 
-  <div t-name="message" class="message">
+  <div t-name="Message" class="message">
     <span class="author"><t t-esc="props.author"/></span>
     <span class="msg"><t t-esc="props.msg"/></span>
     <button class="remove" t-on-click="removeMessage">Remove</button>
     <t t-widget="Counter"/>
   </div>
 
-  <div t-name="counter">
+  <div t-name="Counter">
     <button t-on-click="increment">Value: <t t-esc="state.counter"/></button>
   </div>
 

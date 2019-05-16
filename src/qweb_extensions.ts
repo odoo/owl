@@ -94,12 +94,9 @@ UTILS.nextFrame = function(cb: () => void) {
   requestAnimationFrame(() => requestAnimationFrame(cb));
 };
 
-UTILS.transitionCreate = function(elm: HTMLElement, name: string) {
+UTILS.transitionInsert = function(elm: HTMLElement, name: string) {
   elm.classList.add(name + "-enter");
   elm.classList.add(name + "-enter-active");
-};
-
-UTILS.transitionInsert = function(elm: HTMLElement, name: string) {
   const finalize = () => {
     elm.classList.remove(name + "-enter-active");
     elm.classList.remove(name + "-enter-to");
@@ -172,7 +169,6 @@ QWeb.addDirective({
   atNodeCreation({ value, addNodeHook }) {
     let name = value;
     const hooks = {
-      create: `this.utils.transitionCreate(n.elm, '${name}');`,
       insert: `this.utils.transitionInsert(vn.elm, '${name}');`,
       remove: `this.utils.transitionRemove(vn.elm, '${name}', rm);`
     };

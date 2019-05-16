@@ -7,9 +7,6 @@ exports[`animations t-transition with no delay/duration 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     p1.hook = {
-      create: (_, n) => {
-        this.utils.transitionCreate(n.elm, 'jupiler');
-      },
       insert: vn => {
         this.utils.transitionInsert(vn.elm, 'jupiler');
       },
@@ -29,9 +26,6 @@ exports[`animations t-transition, on a simple node (insert) 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     p1.hook = {
-      create: (_, n) => {
-        this.utils.transitionCreate(n.elm, 'chimay');
-      },
       insert: vn => {
         this.utils.transitionInsert(vn.elm, 'chimay');
       },

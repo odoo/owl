@@ -1,5 +1,8 @@
 import { SAMPLES } from "./samples.js";
 
+//------------------------------------------------------------------------------
+// Constants, helpers, utils
+//------------------------------------------------------------------------------
 let owlJS;
 
 async function owlSourceCode() {
@@ -58,6 +61,92 @@ while True:
         sys.exit(0)
 `;
 
+/**
+ * Make an iframe, with all the js, css and xml properly injected.
+ */
+function makeCodeIframe(js, css, xml, errorHandler) {
+  // check templates
+  var qweb = new owl.QWeb();
+  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "");
+
+  // will throw error if there is something wrong with xml
+  qweb.addTemplates(sanitizedXML);
+
+  // create iframe
+  const iframe = document.createElement("iframe");
+
+  iframe.onload = () => {
+    const doc = iframe.contentDocument;
+    // inject js
+    const owlScript = doc.createElement("script");
+    owlScript.type = "text/javascript";
+    owlScript.src = "../owl.js";
+    owlScript.addEventListener("load", () => {
+      const script = doc.createElement("script");
+      script.type = "text/javascript";
+      const content = `window.TEMPLATES = \`${sanitizedXML}\`\n${js}`;
+      script.innerHTML = content;
+      iframe.contentWindow.addEventListener("error", errorHandler);
+      iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);
+      setTimeout(function() {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.removeEventListener("error", errorHandler);
+          iframe.contentWindow.removeEventListener(
+            "unhandledrejection",
+            errorHandler
+          );
+        }
+      }, 200);
+      doc.body.appendChild(script);
+    });
+    doc.head.appendChild(owlScript);
+
+    // inject css
+    const style = document.createElement("style");
+    style.innerHTML = css;
+    doc.head.appendChild(style);
+  };
+  return iframe;
+}
+
+/**
+ * Make a zip file containing a functioning application
+ */
+async function makeApp(js, css, xml) {
+  await owl.utils.loadJS("libs/jszip.min.js");
+
+  const zip = new JSZip();
+  const processedJS = js
+    .split("\n")
+    .map(l => (l === "" ? "" : "  " + l))
+    .join("\n");
+
+  const JS = `async function startApp() {
+  // Loading templates
+  let TEMPLATES;
+  try {
+    TEMPLATES = await owl.utils.loadTemplates('app.xml');
+  } catch(e) {
+    document.write(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
+    return;
+  }
+
+  // Application code
+${processedJS}
+}
+
+// wait for DOM ready before starting
+owl.utils.whenReady(startApp);`;
+
+  zip.file("app.js", JS);
+  zip.file("app.css", css);
+  zip.file("app.py", APP_PY);
+  zip.file("app.xml", xml);
+  zip.file("index.html", DEFAULT_HTML);
+  zip.file("owl.js", owlSourceCode());
+  return zip.generateAsync({ type: "blob" });
+}
+
 //------------------------------------------------------------------------------
 // MAIN APP
 //------------------------------------------------------------------------------
@@ -94,68 +183,26 @@ class App extends owl.Component {
     }
   }
 
-  async runCode() {
+  runCode() {
     this.state.displayWelcome = false;
-    // check templates
-    var qweb = new owl.QWeb();
-    var error = false;
-    const sanitizedXML = this.state.xml.replace(/<!--[\s\S]*?-->/g, "");
+    let subiframe;
+    let error = false;
+    const errorHandler = e => this.displayError(e.message || e.reason.message);
     try {
-      qweb.addTemplates(sanitizedXML);
+      const { js, css, xml } = this.state;
+      subiframe = makeCodeIframe(js, css, xml, errorHandler);
     } catch (e) {
+      //probably problem with the templates
       error = e;
     }
-
     if (error) {
       this.displayError(error.message);
       return;
     } else {
       this.state.error = false;
     }
-
-    // create iframe
-    const iframe = document.createElement("iframe");
-
-    iframe.onload = () => {
-      const doc = iframe.contentDocument;
-      // inject js
-      const owlScript = doc.createElement("script");
-      owlScript.type = "text/javascript";
-      owlScript.src = "../owl.js";
-      owlScript.addEventListener("load", () => {
-        const script = doc.createElement("script");
-        script.type = "text/javascript";
-        const content = `window.TEMPLATES = \`${sanitizedXML}\`\n${
-          this.state.js
-        }`;
-        script.innerHTML = content;
-        const errorHandler = e =>
-          this.displayError(e.message || e.reason.message);
-        iframe.contentWindow.addEventListener("error", errorHandler);
-        iframe.contentWindow.addEventListener(
-          "unhandledrejection",
-          errorHandler
-        );
-        setTimeout(function() {
-          if (iframe.contentWindow) {
-            iframe.contentWindow.removeEventListener("error", errorHandler);
-            iframe.contentWindow.removeEventListener(
-              "unhandledrejection",
-              errorHandler
-            );
-          }
-        }, 200);
-        doc.body.appendChild(script);
-      });
-      doc.head.appendChild(owlScript);
-
-      // inject css
-      const style = document.createElement("style");
-      style.innerHTML = this.state.css;
-      doc.head.appendChild(style);
-    };
     this.refs.content.innerHTML = "";
-    this.refs.content.appendChild(iframe);
+    this.refs.content.appendChild(subiframe);
   }
 
   setSample(ev) {
@@ -212,40 +259,10 @@ class App extends owl.Component {
   }
 
   async downloadCode() {
+    const { js, css, xml } = this.state;
+    const content = await makeApp(js, css, xml);
     await owl.utils.loadJS("libs/FileSaver.min.js");
-    await owl.utils.loadJS("libs/jszip.min.js");
-
-    const zip = new JSZip();
-
-    const JS = `async function startApp() {
-  // Loading templates
-  let TEMPLATES;
-  try {
-    TEMPLATES = await owl.utils.loadTemplates('app.xml');
-  } catch(e) {
-    document.write(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
-    return;
-  }
-
-  // Application code
-${this.state.js
-  .split("\n")
-  .map(l => (l === "" ? "" : "  " + l))
-  .join("\n")}
-}
-
-// wait for DOM ready before starting
-owl.utils.whenReady(startApp);`;
-
-    zip.file("app.js", JS);
-    zip.file("app.css", this.state.css);
-    zip.file("app.py", APP_PY);
-    zip.file("app.xml", this.state.xml);
-    zip.file("index.html", DEFAULT_HTML);
-    zip.file("owl.js", owlSourceCode());
-    zip.generateAsync({ type: "blob" }).then(function(content) {
-      saveAs(content, "app.zip");
-    });
+    saveAs(content, "app.zip");
   }
 }
 
@@ -259,17 +276,26 @@ class TabbedEditor extends owl.Component {
       currentTab: props.js ? "js" : props.xml ? "xml" : "css"
     };
     this.setTab = owl.utils.debounce(this.setTab, 250, true);
+
+    this.sessions = {};
+    for (let tab of ["js", "xml", "css"]) {
+      if (props[tab]) {
+        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
+        this.sessions[tab].setOption("useWorker", false);
+        const tabSize = tab === "xml" ? 2 : 4;
+        this.sessions[tab].setOption("tabSize", tabSize);
+        this.sessions[tab].setUndoManager(new ace.UndoManager());
+      }
+    }
   }
 
   mounted() {
     this.editor = ace.edit(this.refs.editor);
 
-    // remove this for xml/css (?)
-    this.editor.session.setOption("useWorker", false);
     this.editor.setValue(this.props[this.state.currentTab], -1);
     this.editor.setFontSize("12px");
     this.editor.setTheme("ace/theme/monokai");
-    this.editor.session.setMode(MODES[this.state.currentTab]);
+    this.editor.setSession(this.sessions[this.state.currentTab]);
     const tabSize = this.state.currentTab === "xml" ? 2 : 4;
     this.editor.session.setOption("tabSize", tabSize);
     this.editor.on("blur", () => {
@@ -285,10 +311,9 @@ class TabbedEditor extends owl.Component {
   }
 
   patched() {
-    if (this.editor) {
-      window.dispatchEvent(new Event("resize"));
-      this.editor.setValue(this.props[this.state.currentTab], -1);
-    }
+    const session = this.sessions[this.state.currentTab];
+    session.setValue(this.props[this.state.currentTab], -1);
+    this.editor.setSession(session);
   }
 
   willUnmount() {
@@ -297,13 +322,12 @@ class TabbedEditor extends owl.Component {
   }
 
   setTab(tab) {
-    this.editor.setValue(this.props[tab], -1);
-
-    const mode = MODES[tab];
-    this.editor.session.setMode(mode);
-    const tabSize = tab === "xml" ? 2 : 4;
-    this.editor.session.setOption("tabSize", tabSize);
-    this.state.currentTab = tab;
+      if (this.state.currentTab !== tab) {
+        this.state.currentTab = tab;
+        const session = this.sessions[this.state.currentTab];
+        session.doc.setValue(this.props[tab], -1);
+        this.editor.setSession(session);
+      }
   }
 
   onMouseDown(ev) {

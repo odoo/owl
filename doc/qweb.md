@@ -5,25 +5,27 @@
 - [Overview](#overview)
 - [QWeb Engine](#qweb-engine)
 - [QWeb Specification](#qweb-specification)
-    - [Static html nodes](#static-html-nodes)
-    - [`t-esc` directive](#t-esc-directive)
-    - [`t-raw` directive](#t-raw-directive)
-    - [`t-set` directive](#t-set-directive)
-    - [`t-if` directive](#t-if-directive)
-    - [Expression evaluation](#expression-evaluation)
-    - [`t-att` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
-    - [`t-call` directive (sub templates)](#t-call-directive-sub-templates)
+
+  - [Static html nodes](#static-html-nodes)
+  - [`t-esc` directive](#t-esc-directive)
+  - [`t-raw` directive](#t-raw-directive)
+  - [`t-set` directive](#t-set-directive)
+  - [`t-if` directive](#t-if-directive)
+  - [Expression evaluation](#expression-evaluation)
+  - [`t-att` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
+  - [`t-call` directive (sub templates)](#t-call-directive-sub-templates)
 
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
-    - [`t-on` directive](#t-on-directive)
-    - [Component: `t-widget`, `t-props`](#component-t-widget-t-props)
-    - [`t-ref` directive](#t-ref-directive)
-    - [`t-key` directive](#t-key-directive)
-    - [`t-transition` directive](#t-transition-directive)
-    - [`t-mounted` directive](#t-mounted-directive)
-    - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
-    - [White spaces](#white-spaces)
-    - [Root nodes](#root-nodes)
+
+  - [`t-on` directive](#t-on-directive)
+  - [Component: `t-widget`, `t-props`](#component-t-widget-t-props)
+  - [`t-ref` directive](#t-ref-directive)
+  - [`t-key` directive](#t-key-directive)
+  - [`t-transition` directive](#t-transition-directive)
+  - [`t-mounted` directive](#t-mounted-directive)
+  - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
+  - [White spaces](#white-spaces)
+  - [Root nodes](#root-nodes)
 
 ## Overview
 
@@ -40,11 +42,10 @@ templates into functions that output a virtual DOM instead of a string. This is
 necessary for the component system. In addition, it has a few extra directives
 (see [OWL Specific Extensions](#owlspecificextensions))
 
-
 ## QWeb Engine
 
 This section is about the javascript code that implements the `QWeb` specification.
-Owl exports a `QWeb` class in `owl.QWeb`.  To use it, it just needs to be
+Owl exports a `QWeb` class in `owl.QWeb`. To use it, it just needs to be
 instantiated:
 
 ```js
@@ -63,7 +64,7 @@ It's API is quite simple:
 - **`addTemplate(name, xmlStr)`**: add a specific template.
 
   ```js
-  qweb.addTemplate('mytemplate', '<div>hello</div>');
+  qweb.addTemplate("mytemplate", "<div>hello</div>");
   ```
 
 - **`addTemplates(xmlStr)`**: add a list of templates (identified by `t-name`
@@ -78,11 +79,11 @@ It's API is quite simple:
   qweb.addTemplates(TEMPLATES);
   ```
 
-- **`render(name, context, extra)`**: renders a template.  This returns a `vnode`,
+- **`render(name, context, extra)`**: renders a template. This returns a `vnode`,
   which is a virtual representation of the DOM (see [vdom doc](vdom.md)).
 
   ```js
-  const vnode = qweb.render('App', widget);
+  const vnode = qweb.render("App", widget);
   ```
 
 ## QWeb Specification
@@ -244,7 +245,7 @@ compile time.
    | Word  | will be replaced by |
    | ----- | ------------------- |
    | `and` | `&&`                |
-   | `or`  | `\|\|`                |
+   | `or`  | `\|\|`              |
    | `gt`  | `>`                 |
    | `gte` | `>=`                |
    | `lt`  | `<`                 |
@@ -290,12 +291,12 @@ templates), using the `t-call` directive:
 </div>
 ```
 
-will be rendered as `<div><p>owl</p></div>`.  This example shows that the sub
-template is rendered with the execution context of the parent.  The sub template
+will be rendered as `<div><p>owl</p></div>`. This example shows that the sub
+template is rendered with the execution context of the parent. The sub template
 is actually inlined in the main template, but in a sub scope: variables defined
 in the sub template do not escape.
 
-Sometimes, one might want to pass information to the sub template.  In that case,
+Sometimes, one might want to pass information to the sub template. In that case,
 the content of the body of the `t-call` directive is available as a special
 magic variable `0`:
 
@@ -321,43 +322,141 @@ will result in :
 </div>
 ```
 
-
 ## JS/OWL Specific Extensions
 
 ### `t-on` directive
 
+In a component's template, it is useful to be able to register handlers on some
+elements to some specific events. This
+is what makes a template _alive_. There are two different use cases.
+
+1. Register an event handler on a DOM node
+
+   ```xml
+   <button t-on-click="someMethod">Do something</button>
+   ```
+
+   This will be roughly translated in javascript like this:
+
+   ```js
+   button.addEventListener("click", widget.someMethod.bind(widget));
+   ```
+
+   The suffix (`click` in this example) is simply the name of the actual DOM
+   event.
+
+2. Register an event handler on a component. This will not capture a DOM event,
+   but rather a _business_ event:
+
+   ```xml
+   <t t-widget="MyWidget" t-on-menuLoaded="someMethod"/>
+   ```
+
+   ```js
+   class MyWidget {
+       someWhere() {
+           const payload = ...;
+           this.trigger('menuLoaded', payload);
+       }
+   }
+   ```
+
+   Here, the parent widget will receive the payload in its `someMethod` handler,
+   whenever the event is triggered.
+
+The `t-on` directive also allows to prebind some arguments. For example,
+
+```xml
+<button t-on-click="someMethod(expr)">Do something</button>
+```
+
+Here, `expr` is a valid Owl expression, so it could be `true` or some variable
+from the rendering context.
+
 ### Component: `t-widget`, `t-props`
 
+The `t-widget` and the `t-props` directives are the key to a declarative component
+system. They allow a template to define where and how a sub widget is created
+and/or updated. For example:
+
+```xml
+<div t-name="ParentWidget">
+    <t t-widget="ChildWidget" t-props="{count: state.val}"/>
+</div>
+```
+
+```js
+class ParentWidget {
+  widgets = { ChildWidget };
+  state = { val: 4 };
+}
+```
+
+Whenever the template is rendered, it will automatically create the subwidget
+`ChildWidget` at the correct place. It needs to find the reference to the
+actual component class in the special `widgets` key.
+
+In this example, the child widget will receive the object `{count: 4}` in its
+constructor. This will be assigned to the `props` variable, which can be accessed
+on the widget (and also, in the template). Whenever the state is updated, then
+the subwidget will also be updated automatically.
+
 ### `t-ref` directive
+
+The `t-ref` directive helps a component keep reference to some inside part of it.
+Like the `t-on` directive, it can work either on a DOM node, or on a component:
+
+```xml
+<div>
+    <div t-ref="someDiv"/>
+    <t t-widget="SubWidget" t-ref="someWidget"/>
+</div>
+```
+
+In this example, the widget will be able to access the `div` and the component
+inside the special `refs` variable:
+
+```js
+this.refs.someDiv;
+this.refs.someWidget;
+```
+
+This is useful for various usecases: for example, integrating with an external
+library that needs to render itself inside an actual DOM node. Or for calling
+some method on a sub widget.
+
+Note: if used on a component, the reference will be set in the `refs`
+variable between `willPatch` and `patched`.
 
 ### `t-key` directive
 
 Even though Owl tries to be as declarative as possible, some DOM state is still
 locked inside the DOM: for example, the scrolling state, the current user selection,
 the focused element or the state of an input. This is why we use a virtual dom
-algorithm to keep the actual DOM node as much as possible.  However, this is
+algorithm to keep the actual DOM node as much as possible. However, this is
 sometimes not enough, and we need to help Owl decide if an element is actually
 the same, or is different. The `t-key` directive is used to give an identity to an element.
 
 There are three main use cases:
 
-- *elements in a list*:
+- _elements in a list_:
+
   ```xml
     <span t-foreach="todos" t-as="todo" t-key="todo.id">
         <t t-esc="todo.text"/>
     </span>
   ```
 
-- *`t-if`/`t-else`*
+- _`t-if`/`t-else`_
 
-- *animations*: give a different identity to a component.  Ex: thread id with
-animations on add/remove message.
+- _animations_: give a different identity to a component. Ex: thread id with
+  animations on add/remove message.
 
 ### `t-transition` directive
 
 To perform useful transition effects, whenever an element appears or disappears,
 it is necessary to add/remove some css style or class at some precise moment in
-the lifetime of a node.  Since this is not easy to do by hand, Owl `t-transition`
+the lifetime of a node. Since this is not easy to do by hand, Owl `t-transition`
 directive is there to help.
 
 Whenever a node has a `t-transition` directive, with a `name` value, the following
@@ -374,6 +473,7 @@ At node creation:
   ends.
 
 At node destruction:
+
 - the css classes `name-leave` and `name-leave-active` will be added before the
   node is removed to the DOM,
 - the css class `name-leave` will be removed on the next animation frame (so it
@@ -390,11 +490,13 @@ For example, a simple fade in/out effect can be done with this:
 ```
 
 ```css
-.fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to {
-    opacity: 0;
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 ```
 
@@ -402,8 +504,21 @@ Note: more information on animations are available [here](doc/animations.md).
 
 ### `t-mounted` directive
 
-The `t-mounted` directive allows to register a callback to execute when the node
+The `t-mounted` directive allows to register a callback to execute whenever the node
 is inserted into the DOM.
+
+```xml
+<div><input t-ref="someInput" t-mounted="focusMe"/></div>
+```
+
+```js
+class MyWidget extends owl.Component {
+    ...
+    focusMe() {
+        this.refs.someInput.focus();
+    }
+}
+```
 
 ### Debugging (`t-debug` and `t-log`)
 
@@ -415,7 +530,7 @@ The javascript QWeb implementation provides two useful debugging directives:
 <t t-if="a_test">
     <t t-debug="">
 </t>
-````
+```
 
 will stop execution if the browser dev tools are open.
 
@@ -428,7 +543,6 @@ will stop execution if the browser dev tools are open.
 
 will print 42 to the console
 
-
 ### White spaces
 
 White spaces in a templates are handled in a special way:
@@ -439,7 +553,7 @@ White spaces in a templates are handled in a special way:
 
 ### Root nodes
 
-For many reasons, Owl QWeb templates should have a single root node.  More
+For many reasons, Owl QWeb templates should have a single root node. More
 precisely, the result of a template rendering should have a single root node:
 
 ```xml
@@ -459,6 +573,6 @@ precisely, the result of a template rendering should have a single root node:
 Extra root nodes will actually be ignored (even though they will be rendered
 in memory).
 
-Note: this does not apply to subtemplates (see the `t-call` directive).  In that
+Note: this does not apply to subtemplates (see the `t-call` directive). In that
 case, they will be inlined in the main template, and can actually have many
 root nodes.

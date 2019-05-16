@@ -257,25 +257,25 @@ QWeb.addDirective({
       createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}}};`;
     }
 
-
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`
     );
     ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
-    ctx.addLine(`let sameProps${widgetID} = w${widgetID} && props${widgetID} === w${widgetID}.__owl__.renderProps`);
-    ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.isStarted && !sameProps${widgetID}`);
+    ctx.addIf(
+      `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.isStarted && props${widgetID} !== w${widgetID}.__owl__.renderProps`
+    );
     ctx.addLine(`w${widgetID}.destroy();`);
     ctx.addLine(`w${widgetID} = false`);
     ctx.closeIf();
 
-
-    ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
-    ctx.addIf(`isNew${widgetID}`);
+    ctx.addIf(`!w${widgetID}`);
     // new widget
     ctx.addLine(`let W${widgetID} = context.widgets['${value}'];`);
 
     // maybe only do this in dev mode...
-    ctx.addLine(`if (!W${widgetID}) {throw new Error(\`Cannot find the definition of widget "${value}"\`)}`);
+    ctx.addLine(
+      `if (!W${widgetID}) {throw new Error(\`Cannot find the definition of widget "${value}"\`)}`
+    );
     ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
     ctx.addLine(
       `context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`
@@ -285,29 +285,28 @@ QWeb.addDirective({
     }
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     ctx.addLine(
-      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}});c${
+      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}});c${
         ctx.parentNode
-      }[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`
+      }[_${dummyID}_index]=pvnode;w${widgetID}.__owl__.pvnode = pvnode;});`
     );
 
     ctx.addElse();
     // need to update widget
-    ctx.addIf(`w${widgetID}.__owl__.renderPromise && sameProps${widgetID}`);
-    ctx.addLine(`def${defID} = w${widgetID}.__owl__.renderPromise;`);
-    ctx.addElse();
     ctx.addLine(
       `def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
     );
-    ctx.closeIf()
+    let keepAliveCode = "";
+    if (keepAlive) {
+      keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${widgetID}.el,vn.elm);vn.elm=w${widgetID}.el;w${widgetID}.__mount();};`;
+    }
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${
         tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""
-      }${updateClassCode}let pvnode=h(w${widgetID}.__owl__.pvnode.sel, {key: ${templateID}});pvnode.elm=w${widgetID}.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}};c${
+      }${updateClassCode}let pvnode=w${widgetID}.__owl__.pvnode;${keepAliveCode}c${
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;});`
     );
-
-    ctx.closeIf()
+    ctx.closeIf();
 
     ctx.addLine(`extra.promises.push(def${defID});`);
 

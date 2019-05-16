@@ -459,8 +459,7 @@ export class Component<
   _mount(vnode: VNode, elm: HTMLElement): VNode {
     this.__owl__.vnode = patch(elm, vnode);
     if (
-      this.__owl__.parent &&
-      this.__owl__.parent.__owl__.isMounted &&
+      this.__owl__.parent!.__owl__.isMounted &&
       !this.__owl__.isMounted
     ) {
       this._callMounted();

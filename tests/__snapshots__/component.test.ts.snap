@@ -33,7 +33,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
         } else {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         }
-        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};w4.el.style=_5;let vnode;if (!w4.__owl__.vnode){vnode=w4.__owl__.pvnode} else { vnode=h(w4.__owl__.vnode.sel, {key: 4});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}}}c1[_2_index]=vnode;});
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};w4.el.style=_5;let pvnode=h(w4.__owl__.pvnode.sel, {key: 4});pvnode.elm=w4.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}};c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
     return vn1;
@@ -77,7 +77,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
         } else {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         }
-        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let cl=w4.el.classList;for (let k in _5) {if (_5[k]) {cl.add(k)} else {cl.remove(k)}}let vnode;if (!w4.__owl__.vnode){vnode=w4.__owl__.pvnode} else { vnode=h(w4.__owl__.vnode.sel, {key: 4});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}}}c1[_2_index]=vnode;});
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let cl=w4.el.classList;for (let k in _5) {if (_5[k]) {cl.add(k)} else {cl.remove(k)}}let pvnode=h(w4.__owl__.pvnode.sel, {key: 4});pvnode.elm=w4.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}};c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
     return vn1;
@@ -130,7 +130,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             } else {
                 def6 = w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
             }
-            def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let vnode;if (!w7.__owl__.vnode){vnode=w7.__owl__.pvnode} else { vnode=h(w7.__owl__.vnode.sel, {key: key8});vnode.elm=w7.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w7.el,a.elm);a.elm=w7.el;w7.__mount();},remove(){w7.destroy()}, destroy() {w7.destroy()}}}c1[_5_index]=vnode;});
+            def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=h(w7.__owl__.pvnode.sel, {key: key8});pvnode.elm=w7.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w7.el,a.elm);a.elm=w7.el;w7.__mount();},remove(){w7.destroy()}, destroy() {w7.destroy()}};c1[_5_index]=pvnode;});
         }
         extra.promises.push(def6);
     }
@@ -171,7 +171,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         } else {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         }
-        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let vnode;if (!w4.__owl__.vnode){vnode=w4.__owl__.pvnode} else { vnode=h(w4.__owl__.vnode.sel, {key: key5});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}}}c1[_2_index]=vnode;});
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=h(w4.__owl__.pvnode.sel, {key: key5});pvnode.elm=w4.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}};c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
     return vn1;
@@ -210,7 +210,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
         } else {
             def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         }
-        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let vnode;if (!w4.__owl__.vnode){vnode=w4.__owl__.pvnode} else { vnode=h(w4.__owl__.vnode.sel, {key: 4});vnode.elm=w4.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}}}c1[_2_index]=vnode;});
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=h(w4.__owl__.pvnode.sel, {key: 4});pvnode.elm=w4.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w4.el,a.elm);a.elm=w4.el;w4.__mount();},remove(){w4.destroy()}, destroy() {w4.destroy()}};c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
     return vn1;

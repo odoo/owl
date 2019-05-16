@@ -302,9 +302,9 @@ QWeb.addDirective({
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${
         tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""
-      }${updateClassCode}let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${
+      }${updateClassCode}let pvnode=h(w${widgetID}.__owl__.pvnode.sel, {key: ${templateID}});pvnode.elm=w${widgetID}.el;pvnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}};c${
         ctx.parentNode
-      }[_${dummyID}_index]=vnode;});`
+      }[_${dummyID}_index]=pvnode;});`
     );
 
     ctx.closeIf()

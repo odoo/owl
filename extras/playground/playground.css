@@ -115,6 +115,7 @@ body {
   width: 34px;
   text-align: center;
   border-bottom: 2px solid transparent;
+  text-transform: uppercase;
 }
 
 .tab.active {

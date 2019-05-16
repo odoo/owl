@@ -1,9 +1,11 @@
 <templates>
   <div t-name="TabbedEditor" class="tabbed-editor">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
-      <a t-if="props.js" class="tab flash" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
-      <a t-if="props.xml" class="tab flash" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
-      <a t-if="props.css" class="tab flash" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
+        <t t-foreach="['js', 'xml', 'css']" t-as="tab">
+            <a t-if="props[tab]" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="setTab(tab)">
+                <t t-esc="tab"/>
+            </a>
+        </t>
     </div>
     <div class="code-editor" t-ref="'editor'"></div>
   </div>

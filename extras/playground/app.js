@@ -78,6 +78,10 @@ class App extends owl.Component {
       leftPaneWidth: Math.ceil(window.innerWidth / 2),
       topPanelHeight: null
     };
+
+    this.toggleLayout = owl.utils.debounce(this.toggleLayout, 250, true);
+    this.runCode = owl.utils.debounce(this.runCode, 250, true);
+    this.downloadCode = owl.utils.debounce(this.downloadCode, 250, true);
   }
 
   displayError(error) {
@@ -254,6 +258,7 @@ class TabbedEditor extends owl.Component {
     this.state = {
       currentTab: props.js ? "js" : props.xml ? "xml" : "css"
     };
+    this.setTab = owl.utils.debounce(this.setTab, 250, true);
   }
 
   mounted() {

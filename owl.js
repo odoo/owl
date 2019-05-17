@@ -103,6 +103,7 @@
             if (!this.__observer__.allowMutations) {
                 throw new Error(`Array cannot be changed here")`);
             }
+            this.__observer__.rev++;
             this.__observer__.notifyChange();
             this.__owl__.rev++;
             let parent = this;
@@ -138,7 +139,6 @@
         }
         notifyCB() { }
         notifyChange() {
-            this.rev++;
             this.dirty = true;
             Promise.resolve().then(() => {
                 if (this.dirty) {
@@ -168,20 +168,21 @@
             }
         }
         set(target, key, value) {
+            this.rev++;
             this._addProp(target, key, value);
             target.__owl__.rev++;
             this.notifyChange();
         }
         _observeObj(obj, parent) {
             const keys = Object.keys(obj);
-            obj.__owl__ = { rev: 1, deepRev: 1, parent };
+            obj.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
             Object.defineProperty(obj, "__owl__", { enumerable: false });
             for (let key of keys) {
                 this._addProp(obj, key, obj[key]);
             }
         }
         _observeArr(arr, parent) {
-            arr.__owl__ = { rev: 1, deepRev: 1, parent };
+            arr.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
             Object.defineProperty(arr, "__owl__", { enumerable: false });
             arr.__proto__ = Object.create(ModifiedArrayProto);
             arr.__proto__.__observer__ = this;
@@ -198,6 +199,7 @@
                 },
                 set(newVal) {
                     if (newVal !== value) {
+                        self.rev++;
                         if (!self.allowMutations) {
                             throw new Error(`Observed state cannot be changed here! (key: "${key}", val: "${newVal}")`);
                         }
@@ -865,6 +867,11 @@
     };
     const patch = init([eventListenersModule, attrsModule, propsModule]);
 
+    // If a component does not define explicitely a template
+    // key, it needs to find a template with its name (or a parent's).  This is
+    // qweb dependant, so we need a place to store this information indexed by
+    // qweb instances.
+    const TEMPLATE_MAP = {};
     //------------------------------------------------------------------------------
     // Widget
     //------------------------------------------------------------------------------
@@ -894,8 +901,6 @@
          */
         constructor(parent, props) {
             super();
-            this.template = "default";
-            this.inlineTemplate = null;
             this.refs = {};
             // is this a good idea?
             //   Pro: if props is empty, we can create easily a widget
@@ -915,7 +920,6 @@
             this.__owl__ = {
                 id: id,
                 vnode: null,
-                isStarted: false,
                 isMounted: false,
                 isDestroyed: false,
                 parent: p,
@@ -924,7 +928,8 @@
                 renderId: 1,
                 renderPromise: null,
                 renderProps: props || null,
-                boundHandlers: {}
+                boundHandlers: {},
+                mountedHandlers: {}
             };
         }
         get el() {
@@ -1024,6 +1029,9 @@
                 }
             }
             this.__owl__.isMounted = true;
+            for (let key in this.__owl__.mountedHandlers) {
+                this.__owl__.mountedHandlers[key]();
+            }
             this.mounted();
         }
         _callWillUnmount() {
@@ -1151,11 +1159,35 @@
             if (this.__owl__.isDestroyed) {
                 return Promise.resolve(h("div"));
             }
-            this.__owl__.isStarted = true;
-            if (this.inlineTemplate) {
-                this.env.qweb.addTemplate(this.inlineTemplate, this.inlineTemplate, true);
+            const qweb = this.env.qweb;
+            if (!this.template) {
+                let tmap = TEMPLATE_MAP[qweb.id];
+                if (!tmap) {
+                    tmap = {};
+                    TEMPLATE_MAP[qweb.id] = tmap;
+                }
+                let p = this.constructor;
+                let name = p.name;
+                let template = tmap[name];
+                if (template) {
+                    this.template = template;
+                }
+                else {
+                    while ((template = p.name) &&
+                        !(template in qweb.templates) &&
+                        p !== Component) {
+                        p = p.__proto__;
+                    }
+                    if (p === Component) {
+                        this.template = "default";
+                    }
+                    else {
+                        tmap[name] = template;
+                        this.template = template;
+                    }
+                }
             }
-            this.__owl__.render = this.env.qweb.render.bind(this.env.qweb, this.inlineTemplate || this.template);
+            this.__owl__.render = qweb.render.bind(qweb, this.template);
             this._observeState();
             return this._render();
         }
@@ -1172,6 +1204,7 @@
             let vnode = this.__owl__.render(this, {
                 promises,
                 handlers: this.__owl__.boundHandlers,
+                mountedHandlers: this.__owl__.mountedHandlers,
                 forceUpdate: force,
                 patchQueue
             });
@@ -1194,8 +1227,7 @@
          */
         _mount(vnode, elm) {
             this.__owl__.vnode = patch(elm, vnode);
-            if (this.__owl__.parent &&
-                this.__owl__.parent.__owl__.isMounted &&
+            if (this.__owl__.parent.__owl__.isMounted &&
                 !this.__owl__.isMounted) {
                 this._callMounted();
             }
@@ -1215,181 +1247,6 @@
             }
         }
     }
-
-    /**
-     * Owl Utils
-     *
-     * We have here a small collection of utility functions:
-     *
-     * - escape
-     * - memoize
-     * - debounce
-     * - patch
-     * - unpatch
-     * - loadTemplates
-     * - loadJS
-     * - whenReady
-     * - parseXML
-     */
-    function escape(str) {
-        if (str === undefined) {
-            return "";
-        }
-        if (typeof str === "number") {
-            return String(str);
-        }
-        return str
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&#x27;")
-            .replace(/`/g, "&#x60;");
-    }
-    function memoize(f, hash) {
-        if (!hash) {
-            hash = args => args.map(a => String(a)).join(",");
-        }
-        let cache = {};
-        function memoizedFunction(...args) {
-            let hashValue = hash(args);
-            if (!(hashValue in cache)) {
-                cache[hashValue] = f(...args);
-            }
-            return cache[hashValue];
-        }
-        return memoizedFunction;
-    }
-    /**
-     * Returns a function, that, as long as it continues to be invoked, will not
-     * be triggered. The function will be called after it stops being called for
-     * N milliseconds. If `immediate` is passed, trigger the function on the
-     * leading edge, instead of the trailing.
-     *
-     * Inspired by https://davidwalsh.name/javascript-debounce-function
-     */
-    function debounce(func, wait, immediate) {
-        let timeout;
-        return function () {
-            const context = this;
-            const args = arguments;
-            function later() {
-                timeout = null;
-                if (!immediate) {
-                    func.apply(context, args);
-                }
-            }
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) {
-                func.apply(context, args);
-            }
-        };
-    }
-    function patch$1(C, patchName, patch) {
-        const proto = C.prototype;
-        if (!proto.__patches) {
-            proto.__patches = {
-                origMethods: {},
-                patches: {},
-                current: []
-            };
-        }
-        if (proto.__patches.patches[patchName]) {
-            throw new Error(`Patch [${patchName}] already exists`);
-        }
-        proto.__patches.patches[patchName] = patch;
-        applyPatch(proto, patch);
-        proto.__patches.current.push(patchName);
-        function applyPatch(proto, patch) {
-            Object.keys(patch).forEach(function (methodName) {
-                const method = patch[methodName];
-                if (typeof method === "function") {
-                    const original = proto[methodName];
-                    if (!(methodName in proto.__patches.origMethods)) {
-                        proto.__patches.origMethods[methodName] = original;
-                    }
-                    proto[methodName] = function (...args) {
-                        this._super = original;
-                        return method.call(this, ...args);
-                    };
-                }
-            });
-        }
-    }
-    function unpatch(C, patchName) {
-        const proto = C.prototype;
-        const patchInfo = proto.__patches;
-        delete proto.__patches;
-        // reset to original
-        for (let k in patchInfo.origMethods) {
-            proto[k] = patchInfo.origMethods[k];
-        }
-        // apply other patches
-        for (let name of patchInfo.current) {
-            if (name !== patchName) {
-                patch$1(C, name, patchInfo.patches[name]);
-            }
-        }
-    }
-    async function loadTemplates(url) {
-        const result = await fetch(url);
-        if (!result.ok) {
-            throw new Error("Error while fetching xml templates");
-        }
-        let templates = await result.text();
-        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-        return templates;
-    }
-    const loadedScripts = {};
-    function loadJS(url) {
-        if (url in loadedScripts) {
-            return loadedScripts[url];
-        }
-        const promise = new Promise(function (resolve, reject) {
-            const script = document.createElement("script");
-            script.type = "text/javascript";
-            script.src = url;
-            script.onload = function () {
-                resolve();
-            };
-            script.onerror = function () {
-                reject(`Error loading file '${url}'`);
-            };
-            const head = document.head || document.getElementsByTagName("head")[0];
-            head.appendChild(script);
-        });
-        loadedScripts[url] = promise;
-        return promise;
-    }
-    function whenReady(fn) {
-        if (document.readyState === "complete") {
-            fn();
-        }
-        else {
-            document.addEventListener("DOMContentLoaded", fn, false);
-        }
-    }
-    function parseXML(xml) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(xml, "text/xml");
-        if (doc.getElementsByTagName("parsererror").length) {
-            throw new Error("Invalid XML in template");
-        }
-        return doc;
-    }
-
-    var _utils = /*#__PURE__*/Object.freeze({
-        escape: escape,
-        memoize: memoize,
-        debounce: debounce,
-        patch: patch$1,
-        unpatch: unpatch,
-        loadTemplates: loadTemplates,
-        loadJS: loadJS,
-        whenReady: whenReady,
-        parseXML: parseXML
-    });
 
     //------------------------------------------------------------------------------
     // Const/global stuff/helpers
@@ -1420,6 +1277,11 @@
         key: 1
     };
     const DIRECTIVES = [];
+    const NODE_HOOKS_PARAMS = {
+        create: "(_, n)",
+        insert: "vn",
+        remove: "(vn, rm)"
+    };
     const UTILS = {
         h: h,
         objectToAttrString(obj) {
@@ -1432,6 +1294,416 @@
             return classes.join(" ");
         }
     };
+    function parseXML(xml) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xml, "text/xml");
+        if (doc.getElementsByTagName("parsererror").length) {
+            throw new Error("Invalid XML in template");
+        }
+        return doc;
+    }
+    let nextID = 1;
+    //------------------------------------------------------------------------------
+    // QWeb rendering engine
+    //------------------------------------------------------------------------------
+    class QWeb {
+        constructor(data) {
+            this.templates = {};
+            this.utils = UTILS;
+            // the id field is useful to be able to hash qweb instances.  The current
+            // use case is that component's templates are qweb dependant, and need to be
+            // able to map a qweb instance to a template name.
+            this.id = nextID++;
+            if (data) {
+                this.addTemplates(data);
+            }
+            this.addTemplate("default", "<div></div>");
+        }
+        static addDirective(directive) {
+            DIRECTIVES.push(directive);
+            DIRECTIVE_NAMES[directive.name] = 1;
+            DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
+            if (directive.extraNames) {
+                directive.extraNames.forEach(n => (DIRECTIVE_NAMES[n] = 1));
+            }
+        }
+        /**
+         * Add a template to the internal template map.  Note that it is not
+         * immediately compiled.
+         */
+        addTemplate(name, xmlString) {
+            const doc = parseXML(xmlString);
+            if (!doc.firstChild) {
+                throw new Error("Invalid template (should not be empty)");
+            }
+            this._addTemplate(name, doc.firstChild);
+        }
+        /**
+         * Load templates from a xml (as a string).  This will look up for the first
+         * <templates> tag, and will consider each child of this as a template, with
+         * the name given by the t-name attribute.
+         */
+        addTemplates(xmlstr) {
+            const doc = parseXML(xmlstr);
+            const templates = doc.getElementsByTagName("templates")[0];
+            if (!templates) {
+                return;
+            }
+            for (let elem of templates.children) {
+                const name = elem.getAttribute("t-name");
+                this._addTemplate(name, elem);
+            }
+        }
+        _addTemplate(name, elem) {
+            if (name in this.templates) {
+                throw new Error(`Template ${name} already defined`);
+            }
+            this._processTemplate(elem);
+            const template = {
+                elem,
+                fn: (context, extra) => {
+                    const compiledFunction = this._compile(name, elem);
+                    template.fn = compiledFunction;
+                    return compiledFunction.call(this, context, extra);
+                }
+            };
+            this.templates[name] = template;
+        }
+        _processTemplate(elem) {
+            let tbranch = elem.querySelectorAll("[t-elif], [t-else]");
+            for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
+                let node = tbranch[i];
+                let prevElem = node.previousElementSibling;
+                let pattr = function (name) {
+                    return prevElem.getAttribute(name);
+                };
+                let nattr = function (name) {
+                    return +!!node.getAttribute(name);
+                };
+                if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
+                    if (pattr("t-foreach")) {
+                        throw new Error("t-if cannot stay at the same level as t-foreach when using t-elif or t-else");
+                    }
+                    if (["t-if", "t-elif", "t-else"].map(nattr).reduce(function (a, b) {
+                        return a + b;
+                    }) > 1) {
+                        throw new Error("Only one conditional branching directive is allowed per node");
+                    }
+                    // All text nodes between branch nodes are removed
+                    let textNode;
+                    while ((textNode = node.previousSibling) !== prevElem) {
+                        if (textNode.nodeValue.trim().length) {
+                            throw new Error("text is not allowed between branching directives");
+                        }
+                        textNode.remove();
+                    }
+                }
+                else {
+                    throw new Error("t-elif and t-else directives must be preceded by a t-if or t-elif directive");
+                }
+            }
+        }
+        /**
+         * Render a template
+         *
+         * @param {string} name the template should already have been added
+         */
+        render(name, context = {}, extra = null) {
+            const template = this.templates[name];
+            if (!template) {
+                throw new Error(`Template ${name} does not exist`);
+            }
+            return template.fn.call(this, context, extra);
+        }
+        _compile(name, elem) {
+            const isDebug = elem.attributes.hasOwnProperty("t-debug");
+            const ctx = new Context(name);
+            this._compileNode(elem, ctx);
+            if (ctx.shouldProtectContext) {
+                ctx.code.unshift("    context = Object.create(context);");
+            }
+            if (ctx.shouldDefineOwner) {
+                // this is necessary to prevent some directives (t-forach for ex) to
+                // pollute the rendering context by adding some keys in it.
+                ctx.code.unshift("    let owner = context;");
+            }
+            if (!ctx.rootNode) {
+                throw new Error("A template should have one root node");
+            }
+            ctx.addLine(`return vn${ctx.rootNode};`);
+            let template;
+            try {
+                template = new Function("context", "extra", ctx.code.join("\n"));
+            }
+            catch (e) {
+                throw new Error(`Invalid generated code while compiling template '${ctx.templateName.replace(/`/g, "'")}': ${e.message}`);
+            }
+            if (isDebug) {
+                console.log(`Template: ${this.templates[name].elem.outerHTML}\nCompiled code:\n` +
+                    template.toString());
+            }
+            return template;
+        }
+        /**
+         * Generate code from an xml node
+         *
+         */
+        _compileNode(node, ctx) {
+            if (!(node instanceof Element)) {
+                // this is a text node, there are no directive to apply
+                let text = node.textContent;
+                if (!ctx.inPreTag) {
+                    if (lineBreakRE.test(text) && !text.trim()) {
+                        return;
+                    }
+                    text = text.replace(whitespaceRE, " ");
+                }
+                if (ctx.parentNode) {
+                    ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
+                }
+                else {
+                    // this is an unusual situation: this text node is the result of the
+                    // template rendering.
+                    let nodeID = ctx.generateID();
+                    ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
+                    ctx.rootContext.rootNode = nodeID;
+                    ctx.rootContext.parentNode = nodeID;
+                }
+                return;
+            }
+            const attributes = node.attributes;
+            const validDirectives = [];
+            let withHandlers = false;
+            // maybe this is not optimal: we iterate on all attributes here, and again
+            // just after for each directive.
+            for (let i = 0; i < attributes.length; i++) {
+                let attrName = attributes[i].name;
+                if (attrName.startsWith("t-")) {
+                    let dName = attrName.slice(2).split("-")[0];
+                    if (!(dName in DIRECTIVE_NAMES)) {
+                        throw new Error(`Unknown QWeb directive: '${attrName}'`);
+                    }
+                }
+            }
+            for (let directive of DIRECTIVES) {
+                let fullName;
+                let value;
+                for (let i = 0; i < attributes.length; i++) {
+                    const name = attributes[i].name;
+                    if (name === "t-" + directive.name ||
+                        name.startsWith("t-" + directive.name + "-")) {
+                        fullName = name;
+                        value = attributes[i].textContent;
+                        validDirectives.push({ directive, value, fullName });
+                        if (directive.name === "on") {
+                            withHandlers = true;
+                        }
+                    }
+                }
+            }
+            for (let { directive, value, fullName } of validDirectives) {
+                if (directive.atNodeEncounter) {
+                    const isDone = directive.atNodeEncounter({
+                        node,
+                        qweb: this,
+                        ctx,
+                        fullName,
+                        value
+                    });
+                    if (isDone) {
+                        return;
+                    }
+                }
+            }
+            if (node.nodeName !== "t") {
+                let nodeID = this._compileGenericNode(node, ctx, withHandlers);
+                ctx = ctx.withParent(nodeID);
+                let nodeHooks = {};
+                let addNodeHook = function (hook, handler) {
+                    nodeHooks[hook] = nodeHooks[hook] || [];
+                    nodeHooks[hook].push(handler);
+                };
+                for (let { directive, value, fullName } of validDirectives) {
+                    if (directive.atNodeCreation) {
+                        directive.atNodeCreation({
+                            node,
+                            qweb: this,
+                            ctx,
+                            fullName,
+                            value,
+                            nodeID,
+                            addNodeHook
+                        });
+                    }
+                }
+                if (Object.keys(nodeHooks).length) {
+                    ctx.addLine(`p${nodeID}.hook = {`);
+                    for (let hook in nodeHooks) {
+                        ctx.addLine(`  ${hook}: ${NODE_HOOKS_PARAMS[hook]} => {`);
+                        for (let handler of nodeHooks[hook]) {
+                            ctx.addLine(`    ${handler}`);
+                        }
+                        ctx.addLine(`  },`);
+                    }
+                    ctx.addLine(`};`);
+                }
+            }
+            if (node.nodeName === "pre") {
+                ctx = ctx.subContext("inPreTag", true);
+            }
+            this._compileChildren(node, ctx);
+            for (let { directive, value, fullName } of validDirectives) {
+                if (directive.finalize) {
+                    directive.finalize({ node, qweb: this, ctx, fullName, value });
+                }
+            }
+        }
+        _compileGenericNode(node, ctx, withHandlers = true) {
+            // nodeType 1 is generic tag
+            if (node.nodeType !== 1) {
+                throw new Error("unsupported node type");
+            }
+            const attributes = node.attributes;
+            const attrs = [];
+            const props = [];
+            const tattrs = [];
+            function handleBooleanProps(key, val) {
+                let isProp = false;
+                if (node.nodeName === "input" && key === "checked") {
+                    let type = node.getAttribute("type");
+                    if (type === "checkbox" || type === "radio") {
+                        isProp = true;
+                    }
+                }
+                if (node.nodeName === "option" && key === "selected") {
+                    isProp = true;
+                }
+                if (key === "disabled" && DISABLED_TAGS.indexOf(node.nodeName) > -1) {
+                    isProp = true;
+                }
+                if ((key === "readonly" && node.nodeName === "input") ||
+                    node.nodeName === "textarea") {
+                    isProp = true;
+                }
+                if (isProp) {
+                    props.push(`${key}: _${val}`);
+                }
+            }
+            function formatter(expr) {
+                return "${" + ctx.formatExpression(expr) + "}";
+            }
+            for (let i = 0; i < attributes.length; i++) {
+                let name = attributes[i].name;
+                const value = attributes[i].textContent;
+                // regular attributes
+                if (!name.startsWith("t-") &&
+                    !node.getAttribute("t-attf-" + name)) {
+                    const attID = ctx.generateID();
+                    ctx.addLine(`var _${attID} = '${value}';`);
+                    if (!name.match(/^[a-zA-Z]+$/)) {
+                        // attribute contains 'non letters' => we want to quote it
+                        name = '"' + name + '"';
+                    }
+                    attrs.push(`${name}: _${attID}`);
+                    handleBooleanProps(name, attID);
+                }
+                // dynamic attributes
+                if (name.startsWith("t-att-")) {
+                    let attName = name.slice(6);
+                    let formattedValue = ctx.formatExpression(ctx.getValue(value));
+                    if (formattedValue[0] === "{" &&
+                        formattedValue[formattedValue.length - 1] === "}") {
+                        formattedValue = `this.utils.objectToAttrString(${formattedValue})`;
+                    }
+                    const attID = ctx.generateID();
+                    if (!attName.match(/^[a-zA-Z]+$/)) {
+                        // attribute contains 'non letters' => we want to quote it
+                        attName = '"' + attName + '"';
+                    }
+                    // we need to combine dynamic with non dynamic attributes:
+                    // class="a" t-att-class="'yop'" should be rendered as class="a yop"
+                    const attValue = node.getAttribute(attName);
+                    if (attValue) {
+                        const attValueID = ctx.generateID();
+                        ctx.addLine(`var _${attValueID} = ${formattedValue};`);
+                        formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
+                        const attrIndex = attrs.findIndex(att => att.startsWith(attName + ":"));
+                        attrs.splice(attrIndex, 1);
+                    }
+                    ctx.addLine(`var _${attID} = ${formattedValue};`);
+                    attrs.push(`${attName}: _${attID}`);
+                    handleBooleanProps(attName, attID);
+                }
+                if (name.startsWith("t-attf-")) {
+                    let attName = name.slice(7);
+                    if (!attName.match(/^[a-zA-Z]+$/)) {
+                        // attribute contains 'non letters' => we want to quote it
+                        attName = '"' + attName + '"';
+                    }
+                    const formattedExpr = value
+                        .replace(/\{\{.*?\}\}/g, s => formatter(s.slice(2, -2)))
+                        .replace(/\#\{.*?\}/g, s => formatter(s.slice(2, -1)));
+                    const attID = ctx.generateID();
+                    let staticVal = node.getAttribute(attName);
+                    if (staticVal) {
+                        ctx.addLine(`var _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`);
+                    }
+                    else {
+                        ctx.addLine(`var _${attID} = \`${formattedExpr}\`;`);
+                    }
+                    attrs.push(`${attName}: _${attID}`);
+                }
+                // t-att= attributes
+                if (name === "t-att") {
+                    let id = ctx.generateID();
+                    ctx.addLine(`var _${id} = ${ctx.formatExpression(value)};`);
+                    tattrs.push(id);
+                }
+            }
+            let nodeID = ctx.generateID();
+            let nodeKey = node.getAttribute("t-key");
+            if (nodeKey) {
+                nodeKey = ctx.formatExpression(nodeKey);
+            }
+            else {
+                nodeKey = nodeID;
+            }
+            const parts = [`key:${nodeKey}`];
+            if (attrs.length + tattrs.length > 0) {
+                parts.push(`attrs:{${attrs.join(",")}}`);
+            }
+            if (props.length > 0) {
+                parts.push(`props:{${props.join(",")}}`);
+            }
+            if (withHandlers) {
+                parts.push(`on:{}`);
+            }
+            ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
+            for (let id of tattrs) {
+                ctx.addIf(`_${id} instanceof Array`);
+                ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
+                ctx.addElse();
+                ctx.addLine(`for (let key in _${id}) {`);
+                ctx.indent();
+                ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key];`);
+                ctx.dedent();
+                ctx.addLine(`}`);
+                ctx.closeIf();
+            }
+            ctx.addLine(`var vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
+            if (ctx.parentNode) {
+                ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
+            }
+            return nodeID;
+        }
+        _compileChildren(node, ctx) {
+            if (node.childNodes.length > 0) {
+                for (let child of Array.from(node.childNodes)) {
+                    this._compileNode(child, ctx);
+                }
+            }
+        }
+    }
     //------------------------------------------------------------------------------
     // Compilation Context
     //------------------------------------------------------------------------------
@@ -1560,383 +1832,6 @@
             }
             const result = r.slice(0, -1);
             return result;
-        }
-    }
-    //------------------------------------------------------------------------------
-    // QWeb rendering engine
-    //------------------------------------------------------------------------------
-    class QWeb {
-        constructor(data) {
-            this.templates = {};
-            this.utils = UTILS;
-            if (data) {
-                this.loadTemplates(data);
-            }
-        }
-        static addDirective(directive) {
-            DIRECTIVES.push(directive);
-            DIRECTIVE_NAMES[directive.name] = 1;
-            DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
-            if (directive.extraNames) {
-                directive.extraNames.forEach(n => (DIRECTIVE_NAMES[n] = 1));
-            }
-        }
-        /**
-         * Add a template to the internal template map.  Note that it is not
-         * immediately compiled.
-         */
-        addTemplate(name, xmlString, allowDuplicates = false) {
-            if (name in this.templates && allowDuplicates) {
-                return;
-            }
-            const doc = parseXML(xmlString);
-            if (!doc.firstChild) {
-                throw new Error("Invalid template (should not be empty)");
-            }
-            this._addTemplate(name, doc.firstChild);
-        }
-        _addTemplate(name, elem) {
-            if (name in this.templates) {
-                throw new Error(`Template ${name} already defined`);
-            }
-            this._processTemplate(elem);
-            const template = {
-                elem,
-                fn: (context, extra) => {
-                    const compiledFunction = this._compile(name, elem);
-                    template.fn = compiledFunction;
-                    return compiledFunction.call(this, context, extra);
-                }
-            };
-            this.templates[name] = template;
-        }
-        _processTemplate(elem) {
-            let tbranch = elem.querySelectorAll("[t-elif], [t-else]");
-            for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
-                let node = tbranch[i];
-                let prevElem = node.previousElementSibling;
-                let pattr = function (name) {
-                    return prevElem.getAttribute(name);
-                };
-                let nattr = function (name) {
-                    return +!!node.getAttribute(name);
-                };
-                if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
-                    if (pattr("t-foreach")) {
-                        throw new Error("t-if cannot stay at the same level as t-foreach when using t-elif or t-else");
-                    }
-                    if (["t-if", "t-elif", "t-else"].map(nattr).reduce(function (a, b) {
-                        return a + b;
-                    }) > 1) {
-                        throw new Error("Only one conditional branching directive is allowed per node");
-                    }
-                    // All text nodes between branch nodes are removed
-                    let textNode;
-                    while ((textNode = node.previousSibling) !== prevElem) {
-                        if (textNode.nodeValue.trim().length) {
-                            throw new Error("text is not allowed between branching directives");
-                        }
-                        textNode.remove();
-                    }
-                }
-                else {
-                    throw new Error("t-elif and t-else directives must be preceded by a t-if or t-elif directive");
-                }
-            }
-        }
-        /**
-         * Load templates from a xml (as a string).  This will look up for the first
-         * <templates> tag, and will consider each child of this as a template, with
-         * the name given by the t-name attribute.
-         */
-        loadTemplates(xmlstr) {
-            const doc = parseXML(xmlstr);
-            const templates = doc.getElementsByTagName("templates")[0];
-            if (!templates) {
-                return;
-            }
-            for (let elem of templates.children) {
-                const name = elem.getAttribute("t-name");
-                this._addTemplate(name, elem);
-            }
-        }
-        /**
-         * Render a template
-         *
-         * @param {string} name the template should already have been added
-         */
-        render(name, context = {}, extra = null) {
-            const template = this.templates[name];
-            if (!template) {
-                throw new Error(`Template ${name} does not exist`);
-            }
-            return template.fn.call(this, context, extra);
-        }
-        _compile(name, elem) {
-            const isDebug = elem.attributes.hasOwnProperty("t-debug");
-            const ctx = new Context(name);
-            this._compileNode(elem, ctx);
-            if (ctx.shouldProtectContext) {
-                ctx.code.unshift("    context = Object.create(context);");
-            }
-            if (ctx.shouldDefineOwner) {
-                // this is necessary to prevent some directives (t-forach for ex) to
-                // pollute the rendering context by adding some keys in it.
-                ctx.code.unshift("    let owner = context;");
-            }
-            if (!ctx.rootNode) {
-                throw new Error("A template should have one root node");
-            }
-            ctx.addLine(`return vn${ctx.rootNode};`);
-            let template;
-            try {
-                template = new Function("context", "extra", ctx.code.join("\n"));
-            }
-            catch (e) {
-                throw new Error(`Invalid generated code while compiling template '${ctx.templateName.replace(/`/g, "'")}': ${e.message}`);
-            }
-            if (isDebug) {
-                console.log(`Template: ${this.templates[name].elem.outerHTML}\nCompiled code:\n` +
-                    template.toString());
-            }
-            return template;
-        }
-        /**
-         * Generate code from an xml node
-         *
-         */
-        _compileNode(node, ctx) {
-            if (!(node instanceof Element)) {
-                // this is a text node, there are no directive to apply
-                let text = node.textContent;
-                if (!ctx.inPreTag) {
-                    if (lineBreakRE.test(text) && !text.trim()) {
-                        return;
-                    }
-                    text = text.replace(whitespaceRE, " ");
-                }
-                if (ctx.parentNode) {
-                    ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
-                }
-                else {
-                    // this is an unusual situation: this text node is the result of the
-                    // template rendering.
-                    let nodeID = ctx.generateID();
-                    ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
-                    ctx.rootContext.rootNode = nodeID;
-                    ctx.rootContext.parentNode = nodeID;
-                }
-                return;
-            }
-            const attributes = node.attributes;
-            const validDirectives = [];
-            let withHandlers = false;
-            // maybe this is not optimal: we iterate on all attributes here, and again
-            // just after for each directive.
-            for (let i = 0; i < attributes.length; i++) {
-                let attrName = attributes[i].name;
-                if (attrName.startsWith("t-")) {
-                    let dName = attrName.slice(2).split("-")[0];
-                    if (!(dName in DIRECTIVE_NAMES)) {
-                        throw new Error(`Unknown QWeb directive: '${attrName}'`);
-                    }
-                }
-            }
-            for (let directive of DIRECTIVES) {
-                let fullName;
-                let value;
-                for (let i = 0; i < attributes.length; i++) {
-                    const name = attributes[i].name;
-                    if (name === "t-" + directive.name ||
-                        name.startsWith("t-" + directive.name + "-")) {
-                        fullName = name;
-                        value = attributes[i].textContent;
-                        validDirectives.push({ directive, value, fullName });
-                        if (directive.name === "on") {
-                            withHandlers = true;
-                        }
-                    }
-                }
-            }
-            for (let { directive, value, fullName } of validDirectives) {
-                if (directive.atNodeEncounter) {
-                    const isDone = directive.atNodeEncounter({
-                        node,
-                        qweb: this,
-                        ctx,
-                        fullName,
-                        value
-                    });
-                    if (isDone) {
-                        return;
-                    }
-                }
-            }
-            if (node.nodeName !== "t") {
-                let nodeID = this._compileGenericNode(node, ctx, withHandlers);
-                ctx = ctx.withParent(nodeID);
-                for (let { directive, value, fullName } of validDirectives) {
-                    if (directive.atNodeCreation) {
-                        directive.atNodeCreation({
-                            node,
-                            qweb: this,
-                            ctx,
-                            fullName,
-                            value,
-                            nodeID
-                        });
-                    }
-                }
-            }
-            if (node.nodeName === "pre") {
-                ctx = ctx.subContext("inPreTag", true);
-            }
-            this._compileChildren(node, ctx);
-            for (let { directive, value, fullName } of validDirectives) {
-                if (directive.finalize) {
-                    directive.finalize({ node, qweb: this, ctx, fullName, value });
-                }
-            }
-        }
-        _compileGenericNode(node, ctx, withHandlers = true) {
-            // nodeType 1 is generic tag
-            if (node.nodeType !== 1) {
-                throw new Error("unsupported node type");
-            }
-            const attributes = node.attributes;
-            const attrs = [];
-            const props = [];
-            const tattrs = [];
-            function handleBooleanProps(key, val) {
-                let isProp = false;
-                if (node.nodeName === "input" && key === "checked") {
-                    let type = node.getAttribute("type");
-                    if (type === "checkbox" || type === "radio") {
-                        isProp = true;
-                    }
-                }
-                if (node.nodeName === "option" && key === "selected") {
-                    isProp = true;
-                }
-                if (key === "disabled" && DISABLED_TAGS.indexOf(node.nodeName) > -1) {
-                    isProp = true;
-                }
-                if ((key === "readonly" && node.nodeName === "input") ||
-                    node.nodeName === "textarea") {
-                    isProp = true;
-                }
-                if (isProp) {
-                    props.push(`${key}: _${val}`);
-                }
-            }
-            for (let i = 0; i < attributes.length; i++) {
-                let name = attributes[i].name;
-                const value = attributes[i].textContent;
-                // regular attributes
-                if (!name.startsWith("t-") &&
-                    !node.getAttribute("t-attf-" + name)) {
-                    const attID = ctx.generateID();
-                    ctx.addLine(`var _${attID} = '${value}';`);
-                    if (!name.match(/^[a-zA-Z]+$/)) {
-                        // attribute contains 'non letters' => we want to quote it
-                        name = '"' + name + '"';
-                    }
-                    attrs.push(`${name}: _${attID}`);
-                    handleBooleanProps(name, attID);
-                }
-                // dynamic attributes
-                if (name.startsWith("t-att-")) {
-                    let attName = name.slice(6);
-                    let formattedValue = ctx.formatExpression(ctx.getValue(value));
-                    if (formattedValue[0] === "{" &&
-                        formattedValue[formattedValue.length - 1] === "}") {
-                        formattedValue = `this.utils.objectToAttrString(${formattedValue})`;
-                    }
-                    const attID = ctx.generateID();
-                    if (!attName.match(/^[a-zA-Z]+$/)) {
-                        // attribute contains 'non letters' => we want to quote it
-                        attName = '"' + attName + '"';
-                    }
-                    // we need to combine dynamic with non dynamic attributes:
-                    // class="a" t-att-class="'yop'" should be rendered as class="a yop"
-                    const attValue = node.getAttribute(attName);
-                    if (attValue) {
-                        const attValueID = ctx.generateID();
-                        ctx.addLine(`var _${attValueID} = ${formattedValue};`);
-                        formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
-                        const attrIndex = attrs.findIndex(att => att.startsWith(attName + ":"));
-                        attrs.splice(attrIndex, 1);
-                    }
-                    ctx.addLine(`var _${attID} = ${formattedValue};`);
-                    attrs.push(`${attName}: _${attID}`);
-                    handleBooleanProps(attName, attID);
-                }
-                if (name.startsWith("t-attf-")) {
-                    let attName = name.slice(7);
-                    if (!attName.match(/^[a-zA-Z]+$/)) {
-                        // attribute contains 'non letters' => we want to quote it
-                        attName = '"' + attName + '"';
-                    }
-                    const formattedExpr = value.replace(/\{\{.*?\}\}/g, s => "${" + ctx.formatExpression(s.slice(2, -2)) + "}");
-                    const attID = ctx.generateID();
-                    let staticVal = node.getAttribute(attName);
-                    if (staticVal) {
-                        ctx.addLine(`var _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`);
-                    }
-                    else {
-                        ctx.addLine(`var _${attID} = \`${formattedExpr}\`;`);
-                    }
-                    attrs.push(`${attName}: _${attID}`);
-                }
-                // t-att= attributes
-                if (name === "t-att") {
-                    let id = ctx.generateID();
-                    ctx.addLine(`var _${id} = ${ctx.formatExpression(value)};`);
-                    tattrs.push(id);
-                }
-            }
-            let nodeID = ctx.generateID();
-            let nodeKey = node.getAttribute("t-key");
-            if (nodeKey) {
-                nodeKey = ctx.formatExpression(nodeKey);
-            }
-            else {
-                nodeKey = nodeID;
-            }
-            const parts = [`key:${nodeKey}`];
-            if (attrs.length + tattrs.length > 0) {
-                parts.push(`attrs:{${attrs.join(",")}}`);
-            }
-            if (props.length > 0) {
-                parts.push(`props:{${props.join(",")}}`);
-            }
-            if (withHandlers) {
-                parts.push(`on:{}`);
-            }
-            ctx.addLine(`var c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
-            for (let id of tattrs) {
-                ctx.addIf(`_${id} instanceof Array`);
-                ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
-                ctx.addElse();
-                ctx.addLine(`for (let key in _${id}) {`);
-                ctx.indent();
-                ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key];`);
-                ctx.dedent();
-                ctx.addLine(`}`);
-                ctx.closeIf();
-            }
-            ctx.addLine(`var vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
-            if (ctx.parentNode) {
-                ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
-            }
-            return nodeID;
-        }
-        _compileChildren(node, ctx) {
-            if (node.childNodes.length > 0) {
-                for (let child of Array.from(node.childNodes)) {
-                    this._compileNode(child, ctx);
-                }
-            }
         }
     }
 
@@ -2227,6 +2122,7 @@
      * - t-ref
      * - t-transition
      * - t-widget/t-props/t-keepalive
+     * - t-mounted
      */
     //------------------------------------------------------------------------------
     // t-on
@@ -2261,12 +2157,10 @@
     QWeb.addDirective({
         name: "ref",
         priority: 95,
-        atNodeCreation({ ctx, nodeID, value }) {
+        atNodeCreation({ ctx, nodeID, value, addNodeHook }) {
             const refKey = `ref${ctx.generateID()}`;
             ctx.addLine(`const ${refKey} = ${ctx.formatExpression(value)}`);
-            ctx.addLine(`p${nodeID}.hook = {
-            create: (_, n) => context.refs[${refKey}] = n.elm,
-        };`);
+            addNodeHook("create", `context.refs[${refKey}] = n.elm;`);
         }
     });
     //------------------------------------------------------------------------------
@@ -2335,24 +2229,163 @@
     QWeb.addDirective({
         name: "transition",
         priority: 96,
-        atNodeCreation({ ctx, value, nodeID }) {
+        atNodeCreation({ ctx, value, addNodeHook }) {
             let name = value;
-            ctx.addLine(`p${nodeID}.hook = {
-        create: (_, n) => {
-          this.utils.transitionCreate(n.elm, '${name}');
-        },
-        insert: vn => {
-          this.utils.transitionInsert(vn.elm, '${name}');
-        },
-        remove: (vn, rm) => {
-          this.utils.transitionRemove(vn.elm, '${name}', rm);
-        }
-      };`);
+            const hooks = {
+                create: `this.utils.transitionCreate(n.elm, '${name}');`,
+                insert: `this.utils.transitionInsert(vn.elm, '${name}');`,
+                remove: `this.utils.transitionRemove(vn.elm, '${name}', rm);`
+            };
+            for (let hookName in hooks) {
+                addNodeHook(hookName, hooks[hookName]);
+            }
         }
     });
     //------------------------------------------------------------------------------
     // t-widget
     //------------------------------------------------------------------------------
+    /**
+     * The t-widget directive is certainly a complicated and hard to maintain piece
+     * of code.  To help you, fellow developer, if you have to maintain it, I offer
+     * you this advice: Good luck...
+     *
+     * Since it is not 'direct' code, but rather code that generates other code, it
+     * is not easy to understand.  To help you, here  is a detailed and commented
+     * explanation of the code generated by the t-widget directive for the following
+     * situation:
+     * ```xml
+     *   <t t-widget="child" t-key="'somestring'" t-props="{flag:state.flag}"/>
+     * ```
+     *
+     * ```js
+     * // this is the virtual node representing the parent div
+     * let c1 = [], p1 = { key: 1 };
+     * var vn1 = h("div", p1, c1);
+     *
+     * // t-widget directive: we start by evaluating the expression given by t-key:
+     * let key5 = "somestring";
+     *
+     * // We keep the index of the position of the widget in the closure.  We push
+     * // null to reserve the slot, and will replace it later by the widget vnode,
+     * // when it will be ready (do not forget that preparing/rendering a widget is
+     * // asynchronous)
+     * let _2_index = c1.length;
+     * c1.push(null);
+     *
+     * // def3 is the deferred that will contain later either the new widget
+     * // creation, or the props update...
+     * let def3;
+     *
+     * // this is kind of tricky: we need here to find if the widget was already
+     * // created by a previous rendering.  This is done by checking the internal
+     * // `cmap` (children map) of the parent widget: it maps keys to widget ids,
+     * // and, then, if there is an id, we look into the children list to get the
+     * // instance
+     * let w4 =
+     *   key5 in context.__owl__.cmap
+     *   ? context.__owl__.children[context.__owl__.cmap[key5]]
+     *   : false;
+     *
+     * // we evaluate here the props given to the component. It is done here to be
+     * // able to easily reference it later, and also, it might be an expensive
+     * // computation, so it is certainly better to do it only once
+     * let props4 = { flag: context["state"].flag };
+     *
+     * // If we have a widget, currently rendering, but not ready yet, and which was
+     * // rendered with different props, we do not want to wait for it to be ready,
+     * // then update it. We simply destroy it, and start anew.
+     * if (
+     *   w4 &&
+     *   w4.__owl__.renderPromise &&
+     *   !w4.__owl__.isStarted &&
+     *   props4 !== w4.__owl__.renderProps
+     * ) {
+     *   w4.destroy();
+     *   w4 = false;
+     * }
+     *
+     * if (!w4) {
+     *   // in this situation, we need to create a new widget.  First step is
+     *   // to get a reference to the class, then create an instance with
+     *   // current context as parent, and the props.
+     *   let W4 = context.widgets["child"];
+     *   if (!W4) {
+     *     throw new Error("Cannot find the definition of widget 'child'");
+     *   }
+     *   w4 = new W4(owner, props4);
+     *
+     *   // Whenever we rerender the parent widget, we need to be sure that we
+     *   // are able to find the widget instance. To do that, we register it to
+     *   // the parent cmap (children map).  Note that the 'template' key is
+     *   // used here, since this is what identify the widget from the template
+     *   // perspective.
+     *   context.__owl__.cmap[key5] = w4.__owl__.id;
+     *
+     *   // _prepare is called, to basically call willStart, then render the
+     *   // widget
+     *   def3 = w4._prepare();
+     *
+     *   def3 = def3.then(vnode => {
+     *     // we create here a virtual node for the parent (NOT the widget). This
+     *     // means that the vdom of the parent will be stopped here, and from
+     *     // the parent's perspective, it simply is a vnode with no children.
+     *     // However, it shares the same dom element with the component root
+     *     // vnode.
+     *     let pvnode = h(vnode.sel, { key: key5 });
+     *
+     *     // we add hooks to the parent vnode so we can interact with the new
+     *     // widget at the proper time
+     *     pvnode.data.hook = {
+     *       insert(vn) {
+     *         // the _mount method will patch the widget vdom into the elm vn.elm,
+     *         // then call the mounted hooks. However, suprisingly, the snabbdom
+     *         // patch method actually replace the elm by a new elm, so we need
+     *         // to synchronise the pvnode elm with the resulting elm
+     *         let nvn = w4._mount(vnode, vn.elm);
+     *         pvnode.elm = nvn.elm;
+     *       },
+     *       remove() {
+     *         // apparently, in some cases, it is necessary to call the destroy
+     *         // method here
+     *         w4.destroy();
+     *       },
+     *       destroy() {
+     *         // and here...
+     *         w4.destroy();
+     *       }
+     *     };
+     *     // the pvnode is inserted at the correct position in the div's children
+     *     c1[_2_index] = pvnode;
+     *
+     *     // we keep here a reference to the parent vnode (representing the
+     *     // widget, so we can reuse it later whenever we update the widget
+     *     w4.__owl__.pvnode = pvnode;
+     *   });
+     * } else {
+     *   // this is the 'update' path of the directive.
+     *   // the call to _updateProps is the actual widget update
+     *   def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+     *   def3 = def3.then(() => {
+     *     // if widget was destroyed in the meantime, we do nothing (so, this
+     *     // means that the parent's element children list will have a null in
+     *     // the widget's position, which will cause the pvnode to be removed
+     *     // when it is patched.
+     *     if (w4.__owl__.isDestroyed) {
+     *       return;
+     *     }
+     *     // like above, we register the pvnode to the children list, so it
+     *     // will not be patched out of the dom.
+     *     let pvnode = w4.__owl__.pvnode;
+     *     c1[_2_index] = pvnode;
+     *   });
+     * }
+     *
+     * // we register the deferred here so the parent can coordinate its patch operation
+     * // with all the children.
+     * extra.promises.push(def3);
+     * return vn1;
+     * ```
+     */
     QWeb.addDirective({
         name: "widget",
         extraNames: ["props", "keepalive"],
@@ -2395,35 +2428,6 @@
                 : ctx.inLoop
                     ? `String(-${widgetID} - i)`
                     : String(widgetID);
-            ctx.addLine(`let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
-            ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
-            ctx.addLine(`let isNew${widgetID} = !w${widgetID};`);
-            // check if we can reuse current rendering promise
-            ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise`);
-            ctx.addIf(`w${widgetID}.__owl__.isStarted`);
-            ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
-            ctx.addElse();
-            ctx.addLine(`isNew${widgetID} = true`);
-            ctx.addIf(`props${widgetID} === w${widgetID}.__owl__.renderProps`);
-            ctx.addLine(`def${defID} = w${widgetID}.__owl__.renderPromise;`);
-            ctx.addElse();
-            ctx.addLine(`w${widgetID}.destroy();`);
-            ctx.addLine(`w${widgetID} = false`);
-            ctx.closeIf();
-            ctx.closeIf();
-            ctx.closeIf();
-            ctx.addIf(`!def${defID}`);
-            ctx.addIf(`w${widgetID}`);
-            ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
-            ctx.addElse();
-            ctx.addLine(`w${widgetID} = new context.widgets['${value}'](owner, props${widgetID});`);
-            ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
-            for (let [event, method] of events) {
-                ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
-            }
-            ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
-            ctx.closeIf();
-            ctx.closeIf();
             let ref = node.getAttribute("t-ref");
             let refExpr = "";
             let refKey = "";
@@ -2470,16 +2474,67 @@
                 const styleCode = styleExpr ? `vn.elm.style = ${styleExpr}` : "";
                 createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}}};`;
             }
-            ctx.addIf(`isNew${widgetID}`);
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;pvnode.data.hook = {insert(vn){let nvn=w${widgetID}._mount(vnode, vn.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}; w${widgetID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
+            ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
+            ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode && props${widgetID} !== w${widgetID}.__owl__.renderProps`);
+            ctx.addLine(`w${widgetID}.destroy();`);
+            ctx.addLine(`w${widgetID} = false`);
+            ctx.closeIf();
+            ctx.addIf(`!w${widgetID}`);
+            // new widget
+            ctx.addLine(`let W${widgetID} = context.widgets['${value}'];`);
+            // maybe only do this in dev mode...
+            ctx.addLine(`if (!W${widgetID}) {throw new Error(\`Cannot find the definition of widget "${value}"\`)}`);
+            ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
+            ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
+            for (let [event, method] of events) {
+                ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
+            }
+            ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn){let nvn=w${widgetID}._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}},remove(){${finalizeWidgetCode}},destroy(){${finalizeWidgetCode}}}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;w${widgetID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""}${updateClassCode}let vnode;if (!w${widgetID}.__owl__.vnode){vnode=w${widgetID}.__owl__.pvnode} else { vnode=h(w${widgetID}.__owl__.vnode.sel, {key: ${templateID}});vnode.elm=w${widgetID}.el;vnode.data.hook = {insert(a){a.elm.parentNode.replaceChild(w${widgetID}.el,a.elm);a.elm=w${widgetID}.el;w${widgetID}.__mount();},remove(){${finalizeWidgetCode}}, destroy() {${finalizeWidgetCode}}}}c${ctx.parentNode}[_${dummyID}_index]=vnode;});`);
+            // need to update widget
+            ctx.addLine(`def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
+            let keepAliveCode = "";
+            if (keepAlive) {
+                keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${widgetID}.el,vn.elm);vn.elm=w${widgetID}.el;w${widgetID}.__mount();};`;
+            }
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""}${updateClassCode}let pvnode=w${widgetID}.__owl__.pvnode;${keepAliveCode}c${ctx.parentNode}[_${dummyID}_index]=pvnode;});`);
             ctx.closeIf();
             ctx.addLine(`extra.promises.push(def${defID});`);
-            if (node.hasAttribute("t-if") || node.hasAttribute("t-else")) {
+            if (node.hasAttribute("t-if") ||
+                node.hasAttribute("t-else") ||
+                node.hasAttribute("t-elif")) {
                 ctx.closeIf();
             }
             return true;
+        }
+    });
+    //------------------------------------------------------------------------------
+    // t-mounted
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
+        name: "mounted",
+        priority: 97,
+        atNodeCreation({ ctx, fullName, value, nodeID, addNodeHook }) {
+            ctx.rootContext.shouldDefineOwner = true;
+            const eventName = fullName.slice(5);
+            if (!eventName) {
+                throw new Error("Missing event name with t-on directive");
+            }
+            let extraArgs;
+            let handler = value.replace(/\(.*\)/, function (args) {
+                extraArgs = args.slice(1, -1);
+                return "";
+            });
+            let error = `(function () {throw new Error('Missing handler \\'' + '${handler}' + \`\\' when evaluating template '${ctx.templateName.replace(/`/g, "'")}'\`)})()`;
+            if (extraArgs) {
+                ctx.addLine(`extra.mountedHandlers[${nodeID}] = (context['${handler}'] || ${error}).bind(owner, ${ctx.formatExpression(extraArgs)});`);
+            }
+            else {
+                ctx.addLine(`extra.mountedHandlers[${nodeID}] = extra.mountedHandlers[${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`);
+            }
+            addNodeHook("insert", `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`);
         }
     });
 
@@ -2569,6 +2624,7 @@
         }
         return 0;
     }
+    let nextID$1 = 1;
     function connect(mapStateToProps, options = {}) {
         let hashFunction = options.hashFunction || null;
         if (!hashFunction) {
@@ -2596,7 +2652,7 @@
             };
         }
         return function (Comp) {
-            return class extends Comp {
+            const Result = class extends Comp {
                 constructor(parent, props) {
                     const env = parent instanceof Component ? parent.env : parent;
                     const ownProps = Object.assign({}, props || {});
@@ -2658,8 +2714,114 @@
                     return super._updateProps(mergedProps, forceUpdate, patchQueue);
                 }
             };
+            // we assign here a unique name to the resulting anonymous class.
+            // this is necessary for Owl to be able to properly deduce templates.
+            // Otherwise, all connected components would have the same name, and then
+            // each component after the first will necessarily have the same template.
+            let name = `ConnectedComponent${nextID$1++}`;
+            Object.defineProperty(Result, "name", { value: name });
+            return Result;
         };
     }
+
+    /**
+     * Owl Utils
+     *
+     * We have here a small collection of utility functions:
+     *
+     * - whenReady
+     * - loadJS
+     * - loadTemplates
+     * - escape
+     * - debounce
+     */
+    function whenReady(fn) {
+        if (document.readyState === "complete") {
+            fn();
+        }
+        else {
+            document.addEventListener("DOMContentLoaded", fn, false);
+        }
+    }
+    const loadedScripts = {};
+    function loadJS(url) {
+        if (url in loadedScripts) {
+            return loadedScripts[url];
+        }
+        const promise = new Promise(function (resolve, reject) {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            script.onload = function () {
+                resolve();
+            };
+            script.onerror = function () {
+                reject(`Error loading file '${url}'`);
+            };
+            const head = document.head || document.getElementsByTagName("head")[0];
+            head.appendChild(script);
+        });
+        loadedScripts[url] = promise;
+        return promise;
+    }
+    async function loadTemplates(url) {
+        const result = await fetch(url);
+        if (!result.ok) {
+            throw new Error("Error while fetching xml templates");
+        }
+        let templates = await result.text();
+        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+        return templates;
+    }
+    function escape(str) {
+        if (str === undefined) {
+            return "";
+        }
+        if (typeof str === "number") {
+            return String(str);
+        }
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&#x27;")
+            .replace(/`/g, "&#x60;");
+    }
+    /**
+     * Returns a function, that, as long as it continues to be invoked, will not
+     * be triggered. The function will be called after it stops being called for
+     * N milliseconds. If `immediate` is passed, trigger the function on the
+     * leading edge, instead of the trailing.
+     *
+     * Inspired by https://davidwalsh.name/javascript-debounce-function
+     */
+    function debounce(func, wait, immediate) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            function later() {
+                timeout = null;
+                if (!immediate) {
+                    func.apply(context, args);
+                }
+            }
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(context, args);
+            }
+        };
+    }
+
+    var _utils = /*#__PURE__*/Object.freeze({
+        whenReady: whenReady,
+        loadJS: loadJS,
+        loadTemplates: loadTemplates,
+        escape: escape,
+        debounce: debounce
+    });
 
     /**
      * This file is the main file packaged by rollup (see rollup.config.js).  From
@@ -2677,9 +2839,9 @@
     exports.connect = connect;
     exports.Store = Store;
 
-    exports._version = '0.10.0';
-    exports._date = '2019-05-10T10:19:55.109Z';
-    exports._hash = 'e04c5b1';
+    exports._version = '0.11.0';
+    exports._date = '2019-05-17T21:35:18.307Z';
+    exports._hash = '6719650';
     exports._url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

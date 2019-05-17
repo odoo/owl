@@ -1,14 +1,16 @@
 <templates>
-  <div t-name="tabbed-editor" class="tabbed-editor" t-att-style="props.style">
+  <div t-name="TabbedEditor" class="tabbed-editor">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
-      <a t-if="tabs.js" class="tab flash" t-att-class="{active: state.currentTab==='js'}" t-on-click="setTab('js')">JS</a>
-      <a t-if="tabs.xml" class="tab flash" t-att-class="{active: state.currentTab==='xml'}" t-on-click="setTab('xml')">XML</a>
-      <a t-if="tabs.css" class="tab flash" t-att-class="{active: state.currentTab==='css'}" t-on-click="setTab('css')">CSS</a>
+        <t t-foreach="['js', 'xml', 'css']" t-as="tab">
+            <a t-ref="tab" t-if="props[tab]" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="setTab(tab)">
+                <t t-esc="tab"/>
+            </a>
+        </t>
     </div>
     <div class="code-editor" t-ref="'editor'"></div>
   </div>
 
-  <div t-name="playground" class="playground">
+  <div t-name="App" class="playground">
       <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
         <div class="menubar">
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
@@ -20,13 +22,19 @@
           <a class="btn flash" t-on-click="downloadCode" title="Download a Zip with this Code"><i class="fas fa-download"></i></a>
           <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
         </div>
-        <t t-if="!state.splitLayout">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
+        <t t-if="state.splitLayout">
+          <t t-widget="TabbedEditor"
+             t-props="{js:state.js, css:false, xml: false}"
+             t-on-updateCode="updateCode"
+             t-att-style="topEditorStyle"/>
+          <div class="separator horizontal"/>
+          <t t-widget="TabbedEditor" t-keepalive="1"
+             t-props="{js:false, css:state.css, xml: state.xml, resizeable: true}"
+             t-on-updateCode="updateCode"
+             t-on-updatePanelHeight="updatePanelHeight"/>
         </t>
         <t t-else="1">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js', style:topEditorStyle}" t-on-updateCode="updateCode"/>
-          <div class="separator horizontal"/>
-          <t t-widget="TabbedEditor" t-keepalive="1" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'xml|css', resizeable: true}" t-on-updateCode="updateCode" t-on-updatePanelHeight="updatePanelHeight"/>
+          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>

@@ -22,7 +22,7 @@ body {
   display: grid;
   height: 100%;
   width: 100%;
-  grid-template-columns: auto 6px 100%;
+  grid-template-columns: auto 8px 100%;
 }
 
 /* LEFT BAR ****************************************/
@@ -115,6 +115,7 @@ body {
   width: 34px;
   text-align: center;
   border-bottom: 2px solid transparent;
+  text-transform: uppercase;
 }
 
 .tab.active {

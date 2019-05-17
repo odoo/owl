@@ -2,7 +2,7 @@ import { Component, Env } from "../src/component";
 import {
   makeDeferred,
   makeTestFixture,
-  makeTestWEnv,
+  makeTestEnv,
   nextMicroTick,
   nextTick,
   normalize
@@ -22,7 +22,7 @@ let env: Env;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  env = makeTestWEnv();
+  env = makeTestEnv();
   env.qweb.addTemplate(
     "Counter",
     `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`
@@ -2315,7 +2315,7 @@ describe("can deduce template from name", () => {
   });
 
   test("templates are found in proper qweb instance", async () => {
-    const env2 = makeTestWEnv();
+    const env2 = makeTestEnv();
     env.qweb.addTemplate("ABC", "<span>Rochefort 8</span>");
     env2.qweb.addTemplate("ABC", "<span>Rochefort 10</span>");
     class ABC extends Widget {}

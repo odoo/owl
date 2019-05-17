@@ -2,7 +2,7 @@ import { Component, Env } from "../src/component";
 import { connect, Store } from "../src/store";
 import {
   makeTestFixture,
-  makeTestWEnv,
+  makeTestEnv,
   nextMicroTick,
   nextTick
 } from "./helpers";
@@ -401,7 +401,7 @@ describe("connecting a component to store", () => {
 
   beforeEach(() => {
     fixture = makeTestFixture();
-    env = makeTestWEnv();
+    env = makeTestEnv();
   });
 
   afterEach(() => {

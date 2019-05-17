@@ -37,7 +37,7 @@ export function makeDeferred(): Deferred {
   return <Deferred>def;
 }
 
-export function makeTestWEnv(): Env {
+export function makeTestEnv(): Env {
   return {
     qweb: new QWeb()
   };

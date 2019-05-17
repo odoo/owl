@@ -457,6 +457,9 @@ export class QWeb {
         props.push(`${key}: _${val}`);
       }
     }
+    function formatter(expr) {
+      return "${" + ctx.formatExpression(expr) + "}";
+    }
 
     for (let i = 0; i < attributes.length; i++) {
       let name = attributes[i].name;
@@ -515,10 +518,9 @@ export class QWeb {
           // attribute contains 'non letters' => we want to quote it
           attName = '"' + attName + '"';
         }
-        const formattedExpr = value!.replace(
-          /\{\{.*?\}\}/g,
-          s => "${" + ctx.formatExpression(s.slice(2, -2)) + "}"
-        );
+        const formattedExpr = value!
+          .replace(/\{\{.*?\}\}/g, s => formatter(s.slice(2, -2)))
+          .replace(/\#\{.*?\}/g, s => formatter(s.slice(2, -1)));
         const attID = ctx.generateID();
         let staticVal = (<Element>node).getAttribute(attName);
         if (staticVal) {

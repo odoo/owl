@@ -12,7 +12,8 @@
   - [`t-set` directive](#t-set-directive)
   - [`t-if` directive](#t-if-directive)
   - [Expression evaluation](#expression-evaluation)
-  - [`t-att` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
+  - [Dynamic attributes (`t-att` and `t-attf` directives)](#dynamic-attributes-t-att-and-t-attf-directives)
+  - [`t-attf` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
   - [`t-call` directive (sub templates)](#t-call-directive-sub-templates)
 
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
@@ -257,7 +258,7 @@ compile time.
    <div><p t-if="10 + 2 gt 5">ok</p></div>
    ```
 
-### `t-att` directive (dynamic attributes)
+### Dynamic attributes (`t-att` and `t-attf` directives)
 
 One can use the `t-att-` directive to add dynamic attributes. Its main use is to
 evaluate an expression (at rendering time) and bind an attribute to its result:
@@ -265,13 +266,28 @@ evaluate an expression (at rendering time) and bind an attribute to its result:
 For example, if we have `id` set to 32 in the rendering context,
 
 ```xml
-<div t-att-data-action-id="id"/>  <!-- result: <div data-action-id="32"></div> -->
+<div t-att-data-action-id="id"/> <!-- result: <div data-action-id="32"></div> -->
 ```
 
 If an expression evaluates to a falsy value, it will not be set at all:
 
 ```xml
 <div t-att-foo="false"/>  <!-- result: <div></div> -->
+```
+
+There is another way to format a string attribute: the `t-attf-` directive. With
+it, you get string interpolation:
+
+```xml
+<div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>
+<!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
+```
+
+For historical reason, there is an alternate form of string interpolation:
+
+```xml
+<div t-attf-foo="a #{value1} is #{value2} of #{value3} ]"/>
+<!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
 
 ### `t-call` directive (sub templates)

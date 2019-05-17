@@ -511,6 +511,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="42"></div>`);
   });
 
+  test("format expression, other format", () => {
+    qweb.addTemplate("test", `<div t-attf-foo="#{value + 37}"/>`);
+    const result = renderToString(qweb, "test", { value: 5 });
+    expect(result).toBe(`<div foo="42"></div>`);
+  });
+
   test("format multiple", () => {
     qweb.addTemplate(
       "test",

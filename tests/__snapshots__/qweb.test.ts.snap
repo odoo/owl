@@ -93,6 +93,17 @@ exports[`attributes format expression 1`] = `
 }"
 `;
 
+exports[`attributes format expression, other format 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var _1 = \`\${context['value'] + 37}\`;
+    let c2 = [], p2 = {key:2,attrs:{foo: _1}};
+    var vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
 exports[`attributes format literal 1`] = `
 "function anonymous(context,extra
 ) {

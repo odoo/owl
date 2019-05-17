@@ -825,17 +825,14 @@ describe("destroy method", () => {
     expect(fixture.innerHTML).toBe("");
     const widget = new DelayedWidget(env);
     widget.mount(fixture);
-    expect(widget.__owl__.isStarted).toBe(false);
     expect(widget.__owl__.isMounted).toBe(false);
     expect(widget.__owl__.isDestroyed).toBe(false);
     widget.destroy();
     expect(widget.__owl__.isMounted).toBe(false);
-    expect(widget.__owl__.isStarted).toBe(false);
     expect(widget.__owl__.isDestroyed).toBe(true);
     def.resolve();
     await nextTick();
 
-    expect(widget.__owl__.isStarted).toBe(false);
     expect(widget.__owl__.isMounted).toBe(false);
     expect(widget.__owl__.isDestroyed).toBe(true);
     expect(widget.__owl__.vnode).toBe(undefined);
@@ -1800,13 +1797,11 @@ describe("async rendering", () => {
     w.mount(fixture);
     expect(w.__owl__.isDestroyed).toBe(false);
     expect(w.__owl__.isMounted).toBe(false);
-    expect(w.__owl__.isStarted).toBe(false);
     w.destroy();
     def.resolve();
     await nextTick();
     expect(w.__owl__.isDestroyed).toBe(true);
     expect(w.__owl__.isMounted).toBe(false);
-    expect(w.__owl__.isStarted).toBe(false);
   });
 
   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {

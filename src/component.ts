@@ -25,7 +25,6 @@ export interface Env {
 export interface Meta<T extends Env, Props> {
   readonly id: number;
   vnode: VNode | null;
-  isStarted: boolean;
   isMounted: boolean;
   isDestroyed: boolean;
   parent: Component<T, any, any> | null;
@@ -116,7 +115,6 @@ export class Component<
     this.__owl__ = {
       id: id,
       vnode: null,
-      isStarted: false,
       isMounted: false,
       isDestroyed: false,
       parent: p,
@@ -383,8 +381,6 @@ export class Component<
     if (this.__owl__.isDestroyed) {
       return Promise.resolve(h("div"));
     }
-    this.__owl__.isStarted = true;
-
     const qweb = this.env.qweb;
     if (!this.template) {
       let tmap = TEMPLATE_MAP[qweb.id];

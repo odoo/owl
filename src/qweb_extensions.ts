@@ -406,7 +406,7 @@ QWeb.addDirective({
     );
     ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
     ctx.addIf(
-      `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.isStarted && props${widgetID} !== w${widgetID}.__owl__.renderProps`
+      `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode && props${widgetID} !== w${widgetID}.__owl__.renderProps`
     );
     ctx.addLine(`w${widgetID}.destroy();`);
     ctx.addLine(`w${widgetID} = false`);

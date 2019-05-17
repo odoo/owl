@@ -14,7 +14,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
     const _5 = context['state'].style;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.isStarted && props4 !== w4.__owl__.renderProps) {
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode && props4 !== w4.__owl__.renderProps) {
         w4.destroy();
         w4 = false
     }
@@ -48,7 +48,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
     const _5 = {a: context['state'].a,b: context['state'].b};
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.isStarted && props4 !== w4.__owl__.renderProps) {
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode && props4 !== w4.__owl__.renderProps) {
         w4.destroy();
         w4 = false
     }
@@ -99,7 +99,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         let def6;
         let w7 = key8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key8]] : false;
         let props7 = {};
-        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.isStarted && props7 !== w7.__owl__.renderProps) {
+        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode && props7 !== w7.__owl__.renderProps) {
             w7.destroy();
             w7 = false
         }
@@ -134,7 +134,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let def3;
     let w4 = key5 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key5]] : false;
     let props4 = {flag: context['state'].flag};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.isStarted && props4 !== w4.__owl__.renderProps) {
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode && props4 !== w4.__owl__.renderProps) {
         w4.destroy();
         w4 = false
     }
@@ -167,7 +167,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.isStarted && props4 !== w4.__owl__.renderProps) {
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode && props4 !== w4.__owl__.renderProps) {
         w4.destroy();
         w4 = false
     }

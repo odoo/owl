@@ -5,16 +5,14 @@
   "main": "src/index.ts",
   "scripts": {
     "build:js": "tsc --target esnext --module es6 --outDir dist/owl src/*",
-    "build:js:es5": "tsc --target es5 --module es6 --outDir dist/owl src/*",
     "build:bundle": "rollup -c",
     "build": "npm run build:js && npm run build:bundle",
-    "build:es5": "npm run build:js:es5 && npm run build:bundle",
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
-    "dev": "npm-run-all --parallel \"build:* -- --watch\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "preextras": "npm run build",
-    "extras": "python extras/server.py"
+    "extras:serve": "python extras/server.py",
+    "extras": "npm run build && npm run extras:serve",
+    "extras:watch": "npm-run-all  --parallel extras:serve \"build:* -- --watch\""
   },
   "repository": {
     "type": "git",

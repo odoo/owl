@@ -7,7 +7,7 @@ To help work/improve/learn with OWL, we have here:
 
 Both of them can be accessed by using a static http server.  A simple python
 server is available in `server.py`.  There is also a npm script to start it:
-`npm run extras`.
+`npm run extras` (and its version with a watcher: `npm run extras:watch`).
 
 ## Benchmarks
 

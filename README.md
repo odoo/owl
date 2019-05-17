@@ -64,14 +64,15 @@ If you want to use a simple `<script>` tag, the last release can be downloaded h
 
 Some npm scripts are available:
 
-| Command              | Description                                                                     |
-| -------------------- | ------------------------------------------------------------------------------- |
-| `npm install`        | install every dependency required for this project                              |
-| `npm run build`      | build a bundle of _owl_ in the _/dist/_ folder                                  |
-| `npm run minify`     | minify the prebuilt owl.js file                                                 |
-| `npm run test`       | run all tests                                                                   |
-| `npm run test:watch` | run all tests, and keep a watcher                                               |
-| `npm run extras`     | build extras applications, start a static server (see [here](extras/readme.md)) |
+| Command                | Description                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| `npm install`          | install every dependency required for this project                              |
+| `npm run build`        | build a bundle of _owl_ in the _/dist/_ folder                                  |
+| `npm run minify`       | minify the prebuilt owl.js file                                                 |
+| `npm run test`         | run all tests                                                                   |
+| `npm run test:watch`   | run all tests, and keep a watcher                                               |
+| `npm run extras`       | build extras applications, start a static server (see [here](extras/readme.md)) |
+| `npm run extras:watch` | same as `extras`, but with a watcher to rebuild owl                             |
 
 ## Documentation
 

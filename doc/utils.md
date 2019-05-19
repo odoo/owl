@@ -10,7 +10,6 @@ functions are all available in the `owl.utils` namespace.
 - [`loadTemplates`](#loadtemplates)
 - [`escape`](#escape)
 - [`debounce`](#debounce)
-- [`patch` and `unpatch`](#patchandunpatch)
 
 ## `whenReady`
 
@@ -33,7 +32,6 @@ owl.utils.whenReady(function () {
 
 ## `debounce`
 
-## `patch` and `unpatch`
 
 
 

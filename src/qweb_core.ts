@@ -269,6 +269,9 @@ export class QWeb {
       // pollute the rendering context by adding some keys in it.
       ctx.code.unshift("    let owner = context;");
     }
+    if (ctx.shouldDefineUtils) {
+      ctx.code.unshift("    let utils = this.utils;");
+    }
 
     if (!ctx.rootNode) {
       throw new Error("A template should have one root node");
@@ -613,6 +616,7 @@ export class Context {
   rootContext: Context;
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
+  shouldDefineUtils: boolean = false;
   shouldProtectContext: boolean = false;
   inLoop: boolean = false;
   inPreTag: boolean = false;

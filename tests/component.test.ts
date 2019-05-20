@@ -1778,7 +1778,6 @@ describe("random stuff/miscellaneous", () => {
       "C:_patch",
       "E:willUnmount",
       "E:destroy",
-      "E:destroy", // maybe should look into this
       "F:_patch(from _mount)",
       "F:mounted",
       "D:_patch",
@@ -2281,7 +2280,7 @@ describe("t-mounted directive", () => {
     widget.f = jest.fn();
     await widget.mount(fixture);
 
-    patchNextFrame((cb) => cb());
+    patchNextFrame(cb => cb());
     expect(widget.f).toHaveBeenCalledTimes(0);
 
     widget.state.flag = true;
@@ -2425,5 +2424,101 @@ describe("animations", () => {
     await def; // wait for the mocked repaint to be done
     spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
     expect(spanNode.className).toBe("");
+  });
+
+  test("t-transition combined with t-widget", async () => {
+    expect.assertions(5);
+
+    env.qweb.addTemplate(
+      "Parent",
+      `<div><t t-widget="Child" t-transition="chimay"/></div>`
+    );
+    env.qweb.addTemplate("Child", `<span>blue</span>`);
+    class Parent extends Widget {
+      widgets = { Child: Child };
+    }
+    class Child extends Widget {}
+    const widget = new Parent(env);
+
+    let def = makeDeferred();
+    var spanNode;
+    patchNextFrame(cb => {
+      expect(fixture.innerHTML).toBe(
+        '<div><span class="chimay-enter chimay-enter-active">blue</span></div>'
+      );
+      cb(performance.now());
+      expect(fixture.innerHTML).toBe(
+        '<div><span class="chimay-enter-active chimay-enter-to">blue</span></div>'
+      );
+      def.resolve();
+    });
+    await widget.mount(fixture);
+    spanNode = widget.el!.children[0];
+
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="chimay-enter chimay-enter-active">blue</span></div>'
+    );
+
+    await def; // wait for the mocked repaint to be done
+    spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(fixture.innerHTML).toBe('<div><span class="">blue</span></div>');
+  });
+
+  test("t-transition combined with t-widget and t-if", async () => {
+    expect.assertions(8);
+
+    env.qweb.addTemplate(
+      "Parent",
+      `<div><t t-if="state.display" t-widget="Child" t-transition="chimay"/></div>`
+    );
+    env.qweb.addTemplate("Child", `<span>blue</span>`);
+    class Parent extends Widget {
+      widgets = { Child: Child };
+      state = { display: true };
+    }
+    class Child extends Widget {}
+    const widget = new Parent(env);
+
+    let def = makeDeferred();
+    var spanNode;
+    patchNextFrame(cb => {
+      expect(fixture.innerHTML).toBe(
+        '<div><span class="chimay-enter chimay-enter-active">blue</span></div>'
+      );
+      cb(performance.now());
+      expect(fixture.innerHTML).toBe(
+        '<div><span class="chimay-enter-active chimay-enter-to">blue</span></div>'
+      );
+      def.resolve();
+    });
+    await widget.mount(fixture);
+    spanNode = widget.el!.children[0];
+
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="chimay-enter chimay-enter-active">blue</span></div>'
+    );
+
+    await def; // wait for the mocked repaint to be done
+    spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(fixture.innerHTML).toBe('<div><span class="">blue</span></div>');
+
+    // remove span from the DOM
+    def = makeDeferred();
+    widget.state.display = false;
+    patchNextFrame(cb => {
+      expect(fixture.innerHTML).toBe(
+        '<div><span class="chimay-leave chimay-leave-active">blue</span></div>'
+      );
+      cb(performance.now());
+      expect(fixture.innerHTML).toBe(
+        '<div><span class="chimay-leave-active chimay-leave-to">blue</span></div>'
+      );
+      def.resolve();
+    });
+    await def; // wait for the mocked repaint to be done
+    spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
+    expect(fixture.innerHTML).toBe("<div></div>");
   });
 });

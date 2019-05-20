@@ -497,10 +497,10 @@ directive is there to help.
 Whenever a node has a `t-transition` directive, with a `name` value, the following
 will happen:
 
-At node creation:
+At node insertion:
 
-- the css classes `name-enter` and `name-enter-active` will be added before the
-  node is added to the DOM,
+- the css classes `name-enter` and `name-enter-active` will be added directly
+  when the node is inserted into the DOM,
 - on the next animation frame: the css class `name-enter` will be removed and the
   class `name-enter-to` will be added (so they can be used to trigger css
   transition effects),
@@ -534,6 +534,8 @@ For example, a simple fade in/out effect can be done with this:
   opacity: 0;
 }
 ```
+
+The `t-transition` directive can be combined with `t-widget`.
 
 Note: more information on animations are available [here](doc/animations.md).
 

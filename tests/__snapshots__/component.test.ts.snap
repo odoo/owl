@@ -1,8 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`animations t-transition combined with t-widget 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    //WIDGET
+    let _2_index = c1.length;
+    c1.push(null);
+    let def3;
+    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let props4 = {};
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode && props4 !== w4.__owl__.renderProps) {
+        w4.destroy();
+        w4 = false
+    }
+    if (!w4) {
+        let W4 = context.widgets['Child'];
+        if (!W4) {throw new Error(\`Cannot find the definition of widget \\"Child\\"\`)}
+        w4 = new W4(owner, props4);
+        context.__owl__.cmap[4] = w4.__owl__.id;
+        def3 = w4._prepare();
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn.elm, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+          w4.destroy();
+        };
+        utils.transitionRemove(vn.elm, 'chimay', finalize);}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+    } else {
+        def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+    }
+    extra.promises.push(def3);
+    return vn1;
+}"
+`;
+
+exports[`animations t-transition combined with t-widget and t-if 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['state'].display) {
+        //WIDGET
+        let _2_index = c1.length;
+        c1.push(null);
+        let def3;
+        let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+        let props4 = {};
+        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode && props4 !== w4.__owl__.renderProps) {
+            w4.destroy();
+            w4 = false
+        }
+        if (!w4) {
+            let W4 = context.widgets['Child'];
+            if (!W4) {throw new Error(\`Cannot find the definition of widget \\"Child\\"\`)}
+            w4 = new W4(owner, props4);
+            context.__owl__.cmap[4] = w4.__owl__.id;
+            def3 = w4._prepare();
+            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn.elm, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+          w4.destroy();
+        };
+        utils.transitionRemove(vn.elm, 'chimay', finalize);}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        } else {
+            def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+            def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+        }
+        extra.promises.push(def3);
+    }
+    return vn1;
+}"
+`;
+
 exports[`class and style attributes with t-widget dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
+    let utils = this.utils;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -24,7 +101,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.style = _5}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn){let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove(){w4.destroy()},destroy(){w4.destroy()}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.style = _5}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};w4.el.style=_5;let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -37,6 +114,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
 exports[`class and style attributes with t-widget t-att-class is properly added/removed on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
+    let utils = this.utils;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -62,7 +140,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
               if (_5[k]) {
                   vn.elm.classList.add(k);
               }
-          }}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn){let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove(){w4.destroy()},destroy(){w4.destroy()}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+          }}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let cl=w4.el.classList;for (let k in _5) {if (_5[k]) {cl.add(k)} else {cl.remove(k)}}let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -75,6 +153,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
 exports[`composition sub widgets with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
+    let utils = this.utils;
     let owner = context;
     context = Object.create(context);
     var h = this.utils.h;
@@ -109,7 +188,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             w7 = new W7(owner, props7);
             context.__owl__.cmap[key8] = w7.__owl__.id;
             def6 = w7._prepare();
-            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn){let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove(){w7.destroy()},destroy(){w7.destroy()}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
             def6 = w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
@@ -123,6 +202,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
 exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {
+    let utils = this.utils;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -144,7 +224,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         w4 = new W4(owner, props4);
         context.__owl__.cmap[key5] = w4.__owl__.id;
         def3 = w4._prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5, hook: {insert(vn){let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove(){w4.destroy()},destroy(){w4.destroy()}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -157,6 +237,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 exports[`random stuff/miscellaneous t-props should not be undefined (snapshotting) 1`] = `
 "function anonymous(context,extra
 ) {
+    let utils = this.utils;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -177,7 +258,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn){let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove(){w4.destroy()},destroy(){w4.destroy()}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});

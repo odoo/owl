@@ -17,5 +17,7 @@ export { QWeb } from "./qweb_core";
 export { connect, Store } from "./store";
 import * as _utils from "./utils";
 
+export const __info__ = {}
+
 
 export const utils = _utils;

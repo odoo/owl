@@ -127,6 +127,9 @@ export class QWeb {
   templates: { [name: string]: Template } = {};
   utils = UTILS;
 
+  // dev mode enables better error messages or more costly validations
+  static dev: boolean = false;
+
   // the id field is useful to be able to hash qweb instances.  The current
   // use case is that component's templates are qweb dependant, and need to be
   // able to map a qweb instance to a template name.

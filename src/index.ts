@@ -12,12 +12,26 @@ export { Observer } from "./observer";
 // themselves in QWeb, otherwise these files will not even be loaded.
 import "./qweb_directives";
 import "./qweb_extensions";
-export { QWeb } from "./qweb_core";
+import { QWeb } from "./qweb_core";
+export { QWeb };
 
 export { connect, Store } from "./store";
 import * as _utils from "./utils";
 
-export const __info__ = {}
+export const __info__ = {};
 
-
+Object.defineProperty(__info__, "mode", {
+  get() {
+    return QWeb.dev ? "dev" : "prod";
+  },
+  set(mode: string) {
+    QWeb.dev = mode === "dev";
+    if (QWeb.dev) {
+      const url = `https://github.com/odoo/owl/blob/master/doc/tooling.md#development-mode`;
+      console.warn(
+        `Owl is running in dev mode.  This is not suitable for production use. See ${url} for more information.`
+      );
+    }
+  }
+});
 export const utils = _utils;

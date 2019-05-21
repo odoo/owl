@@ -1,10 +1,9 @@
-import { EvalContext, QWeb } from "../src/qweb_core";
-import { patch } from "../src/vdom";
+import { QWeb } from "../src/qweb_core";
 import {
-  makeDeferred,
   normalize,
-  patchNextFrame,
-  unpatchNextFrame
+  renderToDOM,
+  renderToString,
+  trim
 } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -15,44 +14,10 @@ import {
 // - qweb: a new QWeb instance
 
 let qweb: QWeb;
-let cssEl: HTMLElement;
 
 beforeEach(() => {
   qweb = new QWeb();
 });
-
-function trim(str: string): string {
-  return str.replace(/\s/g, "");
-}
-
-function renderToDOM(
-  qweb: QWeb,
-  template: string,
-  context: EvalContext = {},
-  extra?: any
-): HTMLElement | Text {
-  const vnode = qweb.render(template, context, extra);
-
-  // we snapshot here the compiled code. This is useful to prevent unwanted code
-  // change.
-  expect(qweb.templates[template].fn.toString()).toMatchSnapshot();
-
-  if (vnode.sel === undefined) {
-    return document.createTextNode(vnode.text!);
-  }
-  const node = document.createElement(vnode.sel!);
-  const result = patch(node, vnode);
-  return result.elm as HTMLElement;
-}
-
-function renderToString(
-  qweb: QWeb,
-  t: string,
-  context: EvalContext = {}
-): string {
-  const node = renderToDOM(qweb, t, context);
-  return node instanceof Text ? node.textContent! : node.outerHTML;
-}
 
 //------------------------------------------------------------------------------
 // Tests
@@ -1283,62 +1248,5 @@ describe("debugging", () => {
 
     expect(console.log).toHaveBeenCalledWith(45);
     console.log = consoleLog;
-  });
-});
-
-describe("animations", () => {
-  beforeEach(() => {
-    cssEl = document.createElement("style");
-    let css = `
-      .chimay-enter-active, .chimay-leave-active {
-        transition-property: opacity;
-        transition-duration: 0.1s;
-      }
-      .chimay-enter, .chimay-leave-to {
-        opacity: 0;
-      }
-    `;
-    cssEl.textContent = css.trim();
-    document.head.appendChild(cssEl);
-  });
-
-  afterEach(() => {
-    document.head.removeChild(cssEl);
-    unpatchNextFrame();
-  });
-
-  test("t-transition, on a simple node (insert)", async () => {
-    expect.assertions(5);
-    qweb.addTemplate("test", `<span t-transition="chimay">blue</span>`);
-
-    let def = makeDeferred();
-    patchNextFrame(cb => {
-      expect(node.className).toBe("chimay-enter chimay-enter-active");
-      cb();
-      expect(node.className).toBe("chimay-enter-active chimay-enter-to");
-      def.resolve();
-    });
-
-    let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
-    expect(node.className).toBe("chimay-enter chimay-enter-active");
-    await def; // wait for the mocked repaint to be done
-    node.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(node.className).toBe("");
-  });
-
-  test("t-transition with no delay/duration", async () => {
-    expect.assertions(4);
-    qweb.addTemplate("test", `<span t-transition="jupiler">blue</span>`);
-
-    let def = makeDeferred();
-    patchNextFrame(cb => {
-      expect(node.className).toBe("jupiler-enter jupiler-enter-active");
-      cb();
-      expect(node.className).toBe("");
-      def.resolve();
-    });
-    let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
-    expect(node.className).toBe("jupiler-enter jupiler-enter-active");
-    await def;
   });
 });

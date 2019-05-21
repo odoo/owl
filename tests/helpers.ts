@@ -1,5 +1,6 @@
 import { Env } from "../src/component";
-import { QWeb, UTILS } from "../src/qweb_core";
+import { EvalContext, QWeb, UTILS } from "../src/qweb_core";
+import { patch } from "../src/vdom";
 import "../src/qweb_directives";
 import "../src/qweb_extensions";
 
@@ -43,13 +44,50 @@ export function makeTestEnv(): Env {
   };
 }
 
+export function trim(str: string): string {
+  return str.replace(/\s/g, "");
+}
+
+export function renderToDOM(
+  qweb: QWeb,
+  template: string,
+  context: EvalContext = {},
+  extra?: any
+): HTMLElement | Text {
+  const vnode = qweb.render(template, context, extra);
+
+  // we snapshot here the compiled code. This is useful to prevent unwanted code
+  // change.
+  expect(qweb.templates[template].fn.toString()).toMatchSnapshot();
+
+  if (vnode.sel === undefined) {
+    return document.createTextNode(vnode.text!);
+  }
+  const node = document.createElement(vnode.sel!);
+  const result = patch(node, vnode);
+  return result.elm as HTMLElement;
+}
+
+export function renderToString(
+  qweb: QWeb,
+  t: string,
+  context: EvalContext = {}
+): string {
+  const node = renderToDOM(qweb, t, context);
+  return node instanceof Text ? node.textContent! : node.outerHTML;
+}
+
+// hereafter, we define two helpers to patch/unpatch the nextFrame utils. This
+// is useful for animations tests, as we hook before repaints to trigger
+// animations (thanks to requestAnimationFrame). Patching nextFrame allows to
+// simulate calls to this hook. One must not forget to unpatch afterwards.
 let nextFrame = UTILS.nextFrame;
-export function patchNextFrame(f: Function): void {
+export function patchNextFrame(f: Function) {
   UTILS.nextFrame = (cb: () => void) => {
     setTimeout(() => f(cb));
   };
 }
 
-export function unpatchNextFrame(): void {
+export function unpatchNextFrame() {
   UTILS.nextFrame = nextFrame;
 }

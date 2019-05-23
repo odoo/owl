@@ -87,6 +87,21 @@ It's API is quite simple:
   const vnode = qweb.render("App", widget);
   ```
 
+- **`register(name, Component)`**: static function to register an OWL Component
+  to QWeb's global registry. Globally registered Components can be used in
+  templates (see the `t-widget` directive). This is useful for commonly used
+  components accross the application.
+
+  ```js
+  class Dialog extends owl.Component { ... }
+  QWeb.register("Dialog", Dialog);
+
+  ...
+
+  class ParentWidget extends owl.Component { ... }
+  qweb.addTemplate("ParentWidget", "<div><t t-widget='Dialog'/></div>");
+  ```
+
 ## QWeb Specification
 
 We define in this section the specification of how `QWeb` templates should be
@@ -429,7 +444,9 @@ class ParentWidget {
 
 Whenever the template is rendered, it will automatically create the subwidget
 `ChildWidget` at the correct place. It needs to find the reference to the
-actual component class in the special `widgets` key.
+actual component class in the special `widgets` key, or the class registered in
+QWeb's global registry (see `register` function of QWeb). It first looks inside
+the local `widgets` key, then fallbacks on the global registry.
 
 In this example, the child widget will receive the object `{count: 4}` in its
 constructor. This will be assigned to the `props` variable, which can be accessed

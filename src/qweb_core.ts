@@ -132,6 +132,7 @@ let nextID = 1;
 export class QWeb {
   templates: { [name: string]: Template } = {};
   utils = UTILS;
+  static widgets = Object.create(null);
 
   // dev mode enables better error messages or more costly validations
   static dev: boolean = false;
@@ -155,6 +156,13 @@ export class QWeb {
     if (directive.extraNames) {
       directive.extraNames.forEach(n => (DIRECTIVE_NAMES[n] = 1));
     }
+  }
+
+  static register(name: string, Component: any) {
+    if (QWeb.widgets[name]) {
+      throw new Error(`Component '${name}' has already been registered`);
+    }
+    QWeb.widgets[name] = Component;
   }
 
   /**
@@ -268,6 +276,9 @@ export class QWeb {
       // this is necessary to prevent some directives (t-forach for ex) to
       // pollute the rendering context by adding some keys in it.
       ctx.code.unshift("    let owner = context;");
+    }
+    if (ctx.shouldDefineQWeb) {
+      ctx.code.unshift("    let QWeb = this.constructor;");
     }
     if (ctx.shouldDefineUtils) {
       ctx.code.unshift("    let utils = this.utils;");
@@ -616,6 +627,7 @@ export class Context {
   rootContext: Context;
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
+  shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
   shouldProtectContext: boolean = false;
   inLoop: boolean = false;

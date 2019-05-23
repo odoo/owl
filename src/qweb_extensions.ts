@@ -343,6 +343,7 @@ QWeb.addDirective({
   atNodeEncounter({ ctx, value, node }): boolean {
     ctx.addLine("//WIDGET");
     ctx.rootContext.shouldDefineOwner = true;
+    ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineUtils = true;
     let props = node.getAttribute("t-props");
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
@@ -458,7 +459,9 @@ QWeb.addDirective({
 
     ctx.addIf(`!w${widgetID}`);
     // new widget
-    ctx.addLine(`let W${widgetID} = context.widgets['${value}'];`);
+    ctx.addLine(
+      `let W${widgetID} = context.widgets && context.widgets['${value}'] || QWeb.widgets['${value}'];`
+    );
 
     // maybe only do this in dev mode...
     ctx.addLine(

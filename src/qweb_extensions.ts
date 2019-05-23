@@ -80,7 +80,7 @@ QWeb.addDirective({
 QWeb.addDirective({
   name: "ref",
   priority: 95,
-  atNodeCreation({ ctx, nodeID, value, addNodeHook }) {
+  atNodeCreation({ ctx, value, addNodeHook }) {
     const refKey = `ref${ctx.generateID()}`;
     ctx.addLine(`const ${refKey} = ${ctx.formatExpression(value)}`);
     addNodeHook("create", `context.refs[${refKey}] = n.elm;`);
@@ -169,7 +169,7 @@ function whenTransitionEnd(elm: HTMLElement, cb) {
 QWeb.addDirective({
   name: "transition",
   priority: 96,
-  atNodeCreation({ ctx, value, addNodeHook }) {
+  atNodeCreation({ value, addNodeHook }) {
     let name = value;
     const hooks = {
       create: `this.utils.transitionCreate(n.elm, '${name}');`,

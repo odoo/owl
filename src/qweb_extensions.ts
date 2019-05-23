@@ -16,33 +16,56 @@ import { QWeb, UTILS } from "./qweb_core";
 //------------------------------------------------------------------------------
 // t-on
 //------------------------------------------------------------------------------
+// these are pieces of code that will be injected into the event handler if
+// modifiers are specified
+const MODS_CODE = {
+  prevent: "e.preventDefault();",
+  self: "if (e.target !== this.elm) {return}",
+  stop: "e.stopPropagation();"
+};
+
 QWeb.addDirective({
   name: "on",
   priority: 90,
   atNodeCreation({ ctx, fullName, value, nodeID }) {
     ctx.rootContext.shouldDefineOwner = true;
-    const eventName = fullName.slice(5);
+    const [eventName, ...mods] = fullName.slice(5).split(".");
     if (!eventName) {
       throw new Error("Missing event name with t-on directive");
     }
     let extraArgs;
-    let handler = value.replace(/\(.*\)/, function(args) {
+    let handlerName = value.replace(/\(.*\)/, function(args) {
       extraArgs = args.slice(1, -1);
       return "";
     });
-    let error = `(function () {throw new Error('Missing handler \\'' + '${handler}' + \`\\' when evaluating template '${ctx.templateName.replace(
-      /`/g,
-      "'"
-    )}'\`)})()`;
+    ctx.addIf(`!context['${handlerName}']`);
+    ctx.addLine(
+      `throw new Error('Missing handler \\'' + '${handlerName}' + \`\\' when evaluating template '${ctx.templateName.replace(
+        /`/g,
+        "'"
+      )}'\`)`
+    );
+    ctx.closeIf();
+    let params = extraArgs
+      ? `owner, ${ctx.formatExpression(extraArgs)}`
+      : "owner";
+    let handler;
+    if (mods.length > 0) {
+      handler = `function (e) {`;
+      handler += mods
+        .map(function(mod) {
+          return MODS_CODE[mod];
+        })
+        .join("");
+      handler += `context['${handlerName}'].call(${params}, e);}`;
+    } else {
+      handler = `context['${handlerName}'].bind(${params})`;
+    }
     if (extraArgs) {
-      ctx.addLine(
-        `p${nodeID}.on['${eventName}'] = (context['${handler}'] || ${error}).bind(owner, ${ctx.formatExpression(
-          extraArgs
-        )});`
-      );
+      ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
     } else {
       ctx.addLine(
-        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`
+        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
       );
       ctx.addLine(
         `p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`

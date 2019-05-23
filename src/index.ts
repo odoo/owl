@@ -29,8 +29,10 @@ Object.defineProperty(__info__, "mode", {
     if (QWeb.dev) {
       const url = `https://github.com/odoo/owl/blob/master/doc/tooling.md#development-mode`;
       console.warn(
-        `Owl is running in dev mode.  This is not suitable for production use. See ${url} for more information.`
+        `Owl is running in 'dev' mode.  This is not suitable for production use. See ${url} for more information.`
       );
+    } else {
+        console.log(`Owl is now running in 'prod' mode.`)
     }
   }
 });

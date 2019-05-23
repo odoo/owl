@@ -4,6 +4,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
+    let QWeb = this.constructor;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -20,7 +21,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
         w4 = false
     }
     if (!w4) {
-        let W4 = context.widgets['child'];
+        let W4 = context.widgets && context.widgets['child'] || QWeb.widgets['child'];
         if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
@@ -39,6 +40,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
+    let QWeb = this.constructor;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -55,7 +57,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
         w4 = false
     }
     if (!w4) {
-        let W4 = context.widgets['child'];
+        let W4 = context.widgets && context.widgets['child'] || QWeb.widgets['child'];
         if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
@@ -78,6 +80,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
+    let QWeb = this.constructor;
     let owner = context;
     context = Object.create(context);
     var h = this.utils.h;
@@ -107,7 +110,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             w7 = false
         }
         if (!w7) {
-            let W7 = context.widgets['ChildWidget'];
+            let W7 = context.widgets && context.widgets['ChildWidget'] || QWeb.widgets['ChildWidget'];
             if (!W7) {throw new Error(\`Cannot find the definition of widget \\"ChildWidget\\"\`)}
             w7 = new W7(owner, props7);
             context.__owl__.cmap[key8] = w7.__owl__.id;
@@ -127,6 +130,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
+    let QWeb = this.constructor;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -143,7 +147,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         w4 = false
     }
     if (!w4) {
-        let W4 = context.widgets['child'];
+        let W4 = context.widgets && context.widgets['child'] || QWeb.widgets['child'];
         if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[key5] = w4.__owl__.id;
@@ -162,6 +166,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
+    let QWeb = this.constructor;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -177,7 +182,7 @@ exports[`random stuff/miscellaneous t-props should not be undefined (snapshottin
         w4 = false
     }
     if (!w4) {
-        let W4 = context.widgets['child'];
+        let W4 = context.widgets && context.widgets['child'] || QWeb.widgets['child'];
         if (!W4) {throw new Error(\`Cannot find the definition of widget \\"child\\"\`)}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;

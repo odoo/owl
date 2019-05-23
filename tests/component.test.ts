@@ -1,4 +1,5 @@
 import { Component, Env } from "../src/component";
+import { QWeb } from "../src/qweb_core";
 import {
   makeDeferred,
   makeTestFixture,
@@ -847,6 +848,30 @@ describe("composition", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
     expect(children(widget)[0].__owl__.parent).toBe(widget);
+  });
+
+  test("can use widgets from the global registry", async () => {
+    QWeb.register("WidgetB", WidgetB);
+    env.qweb.addTemplate("ParentWidget", `<div><t t-widget="WidgetB"/></div>`);
+    class ParentWidget extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
+    delete QWeb.widgets['WidgetB'];
+  });
+
+  test("don't fallback to global registry if widget defined locally", async () => {
+    QWeb.register("WidgetB", WidgetB); // should not use this widget
+    env.qweb.addTemplate("ParentWidget", `<div><t t-widget="WidgetB"/></div>`);
+    env.qweb.addTemplate("AnotherWidgetB", `<span>Belgium</span>`);
+    class AnotherWidgetB extends Widget {}
+    class ParentWidget extends Widget {
+      widgets = { WidgetB: AnotherWidgetB };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>Belgium</span></div>");
+    delete QWeb.widgets['WidgetB'];
   });
 
   test("throw a nice error if it cannot find widget", async () => {

@@ -361,6 +361,25 @@ is what makes a template _alive_. There are two different use cases.
    The suffix (`click` in this example) is simply the name of the actual DOM
    event.
 
+   In order to remove the DOM event details from the event handlers (like calls
+   to `event.preventDefault`) and let them focus on data logic, _modifiers_ can
+   be specified as suffixes of the `t-on` directive.
+
+   | Modifier   | Description                                                       |
+   | ---------- | ----------------------------------------------------------------- |
+   | `.stop`    | calls `event.stopPropagation()` before calling the method         |
+   | `.prevent` | calls `event.preventDefault()` before calling the method          |
+   | `.self`    | calls the method only if the `event.target` is the element itself |
+
+   ```xml
+   <button t-on-click.stop="someMethod">Do something</button>
+   ```
+
+   Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
+   the order may matter. For instance `t-on-click.prevent.self` will prevent all
+   clicks while `t-on-click.self.prevent` will only prevent clicks on the
+   element itself.
+
 2. Register an event handler on a component. This will not capture a DOM event,
    but rather a _business_ event:
 

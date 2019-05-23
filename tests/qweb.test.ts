@@ -969,6 +969,118 @@ describe("t-on", () => {
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     (<HTMLElement>node).click();
   });
+
+  test("t-on with prevent and/or stop modifiers", async () => {
+    expect.assertions(7);
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <button t-on-click.prevent="onClickPrevented">Button 1</button>
+        <button t-on-click.stop="onClickStopped">Button 2</button>
+        <button t-on-click.prevent.stop="onClickPreventedAndStopped">Button 3</button>
+      </div>`
+    );
+    let owner = {
+      onClickPrevented(e) {
+        expect(e.defaultPrevented).toBe(true);
+        expect(e.cancelBubble).toBe(false);
+      },
+      onClickStopped(e) {
+        expect(e.defaultPrevented).toBe(false);
+        expect(e.cancelBubble).toBe(true);
+      },
+      onClickPreventedAndStopped(e) {
+        expect(e.defaultPrevented).toBe(true);
+        expect(e.cancelBubble).toBe(true);
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+
+    const buttons = (<HTMLElement>node).getElementsByTagName("button");
+    buttons[0].click();
+    buttons[1].click();
+    buttons[2].click();
+  });
+
+  test("t-on with self modifier", async () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <button t-on-click="onClick"><span>Button</span></button>
+        <button t-on-click.self="onClickSelf"><span>Button</span></button>
+      </div>`
+    );
+    let steps: string[] = [];
+    let owner = {
+      onClick(e) {
+        steps.push("onClick");
+      },
+      onClickSelf(e) {
+        steps.push("onClickSelf");
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+
+    const buttons = (<HTMLElement>node).getElementsByTagName("button");
+    const spans = (<HTMLElement>node).getElementsByTagName("span");
+    spans[0].click();
+    spans[1].click();
+    buttons[0].click();
+    buttons[1].click();
+
+    expect(steps).toEqual(["onClick", "onClick", "onClickSelf"]);
+  });
+
+  test("t-on with self and prevent modifiers (order matters)", async () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <button t-on-click.self.prevent="onClick"><span>Button</span></button>
+      </div>`
+    );
+    let steps: boolean[] = [];
+    let owner = {
+      onClick() {}
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    (<HTMLElement>node).addEventListener("click", function(e) {
+      steps.push(e.defaultPrevented);
+    });
+
+    const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+    const span = (<HTMLElement>node).getElementsByTagName("span")[0];
+    span.click();
+    button.click();
+
+    expect(steps).toEqual([false, true]);
+  });
+
+  test("t-on with prevent and self modifiers (order matters)", async () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <button t-on-click.prevent.self="onClick"><span>Button</span></button>
+      </div>`
+    );
+    let steps: boolean[] = [];
+    let owner = {
+      onClick() {}
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    (<HTMLElement>node).addEventListener("click", function(e) {
+      steps.push(e.defaultPrevented);
+    });
+
+    const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+    const span = (<HTMLElement>node).getElementsByTagName("span")[0];
+    span.click();
+    button.click();
+
+    expect(steps).toEqual([true, true]);
+  });
 });
 
 describe("t-ref", () => {

@@ -554,7 +554,11 @@ For example, a simple fade in/out effect can be done with this:
 
 The `t-transition` directive can be combined with `t-widget`.
 
-Note: more information on animations are available [here](doc/animations.md).
+Notes:
+
+- more information on animations are available [here](animations.md).
+- the value for `t-transition` must be a single class name. Owl does not support
+  more than one transition on a single node.
 
 ### `t-mounted` directive
 

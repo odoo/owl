@@ -36,4 +36,4 @@ keyboard) the button.
 A more complex situation occurs when we want to transition an element in or out
 of the page.  For example, we may want a fade-in and fade-out effect.
 
-The `t-transition` directive is here to help us (see [QWeb documentation](doc/qweb.md#t-transition-directive)).
+The `t-transition` directive is here to help us (see [QWeb documentation](qweb.md#t-transition-directive)).

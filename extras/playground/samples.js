@@ -40,31 +40,34 @@ const counter = new ClickCounter({ qweb });
 counter.mount(document.body);
 `;
 
-const WIDGET_COMPOSITION = `class ClickCounter extends owl.Component {
-    constructor(parent, props) {
-        super(parent, props);
-        this.state = { value: props.initialState || 0 };
-    }
+const WIDGET_COMPOSITION = `// This example will not work if your browser does not support ESNext class fields
+
+class ClickCounter extends owl.Component {
+    state = { value: 0 };
 
     increment() {
         this.state.value++;
     }
 }
 
-let nextId = 1;
-
-class App extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.state = { counters: [] }
-        this.widgets = { ClickCounter };
-    }
-
-    addCounter() {
-        this.state.counters.push(nextId++);
+class InputWidget extends owl.Component {
+    state = {text: ""};
+    
+    updateVal(event) {
+        let value = event.target.value;
+        if (this.props.reverse) {
+            value = value.split("").reverse().join("");
+        }
+        this.state.text = value
     }
 }
 
+// Main root widget
+class App extends owl.Component {
+    widgets = {ClickCounter, InputWidget};
+}
+
+// Application setup
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
 app.mount(document.body);
@@ -75,29 +78,49 @@ const WIDGET_COMPOSITION_XML = `<templates>
       Click Me! [<t t-esc="state.value"/>]
     </button>
 
+   <div t-name="InputWidget">
+     <input t-on-input="updateVal" placeholder="type here some text..."/>
+     <span><t t-esc="state.text"/></span>
+    </div>
+
   <div t-name="App">
-      <div><button t-on-click="addCounter">Add a counter</button></div>
-      <div>
-        <t t-foreach="state.counters" t-as="counter">
-          <t t-widget="ClickCounter" t-key="counter" t-props="{initialState: counter}"/>
-        </t>
-      </div>
+      <t t-widget="ClickCounter"/>
+      <t t-widget="InputWidget" t-props="{reverse: true}"/>
   </div>
 </templates>`;
 
-const WIDGET_COMPOSITION_CSS = `button {
-    color: darkred;
-    font-size: 30px;
+const WIDGET_COMPOSITION_CSS = `button, input {
+    font-size: 20px;
     width: 220px;
+    margin: 5px;
 }`;
 
 const ANIMATION = `// This example will not work if your browser does not support ESNext class fields
+class ClickCounter extends owl.Component {
+    state = { value: 0 };
+
+    increment() {
+        this.state.value++;
+    }
+}
+
 class App extends owl.Component {
-    state = {flag: 0};
+    state = {flag: false, widgetFlag: false, numbers: []};
+    widgets = {ClickCounter};
 
     toggle() {
         this.state.flag = !this.state.flag;
     }
+
+    toggleWidget() {
+        this.state.widgetFlag = !this.state.widgetFlag;
+    }
+
+    addNumber() {
+        const n = this.state.numbers.length + 1;
+        this.state.numbers.push(n);
+    }
+
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
@@ -106,33 +129,82 @@ app.mount(document.body);
 `;
 
 const ANIMATION_XML = `<templates>
-  <div t-name="App">
-    <button t-on-click="toggle">
-      Click Me!
+   <button t-name="ClickCounter" t-on-click="increment" class="clickcounter">
+      Click Me! [<t t-esc="state.value"/>]
     </button>
-    <div>
-      <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+
+    <div t-name="App">
+
+    <h2>Transition on DOM element</h2>
+
+    <div class="demo">
+      <button t-on-click="toggle">Toggle square</button>
+      <div>
+        <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+      </div>
     </div>
+
+    <h2>Transition on sub widgets</h2>
+
+    <div class="demo">
+      <button t-on-click="toggleWidget">
+       Toggle widget
+      </button>
+      <div>
+        <t t-widget="ClickCounter" t-if="state.widgetFlag" t-transition="fade"/>
+      </div>
+    </div>
+
+    <h2>Transition on lists</h2>
+    <p>Transitions can also be applied on lists</p>
+    <div class="demo">
+      <button t-on-click="addNumber">Add a number</button>
+      <div>
+        <t t-foreach="state.numbers" t-as="n">
+          <span t-transition="fade" class="numberspan"><t t-esc="n"/></span>
+        </t>
+      </div>
+    </div>
+
+    <h2>Simple CSS animation</h2>
+    <p>Remember, normal CSS still apply: for example, a simple flash animation with pure css </p>
+    <div><a class="btn flash">Click</a></div>
   </div>
 </templates>
 `;
 
 const ANIMATION_CSS = `button {
-    width: 100px;
-    height: 30px;
-    font-size: 20px;
+    font-size: 18px;
+    height: 35px;
 }
+.btn {
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    background-color: #dddddd;
+}
+
+
+.flash {
+    background-position: center;
+    transition: background 0.5s;
+}
+
+.flash:active {
+  background-color: gray;
+  transition: background 0s;
+}
+
 
 .square {
     background-color: red;
     width: 100px;
-    height: 100px;
+    height: 70px;
     color: white;
-    margin: 20px;
+    margin: 0 20px;
     font-size: 24px;
-    line-height: 100px;
+    line-height: 70px;
     text-align: center;
-    line-height: 100px;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -140,6 +212,24 @@ const ANIMATION_CSS = `button {
 }
 .fade-enter, .fade-leave-to {
     opacity: 0;
+}
+
+.demo {
+    display: flex;
+    height: 80px;
+}
+
+.clickcounter {
+    margin-left: 20px;
+    height: 50px;
+    background-color: blue;
+    color: white;
+}
+
+.numberspan {
+    border: 1px solid green;
+    margin: 5px;
+    padding: 5px;
 }
 `;
 

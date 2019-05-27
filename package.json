@@ -34,16 +34,13 @@
     "rollup": "^1.6.0",
     "rollup-plugin-typescript2": "^0.20.1",
     "sass": "^1.16.1",
-    "snabbdom-to-html": "^5.1.1",
     "source-map-support": "^0.5.10",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.2",
-    "uglify-es": "^3.3.9"
+    "uglify-es": "^3.3.9",
+    "jest-environment-jsdom": "^24.7.1"
   },
-  "dependencies": {
-    "jest-environment-jsdom": "^24.7.1",
-    "snabbdom": "^0.7.3"
-  },
+  "dependencies": {},
   "jest": {
     "roots": [
       "<rootDir>/src",

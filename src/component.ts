@@ -68,6 +68,11 @@ export class Component<
   env: T;
   state?: State;
   props: Props;
+
+  // type of props is not easily representable in typescript...
+  static props?: any;
+  static defaultProps?: any;
+
   refs: {
     [key: string]: Component<T, any, any> | HTMLElement | undefined;
   } = {};
@@ -98,6 +103,13 @@ export class Component<
   constructor(parent: Component<T, any, any> | T, props?: Props) {
     super();
 
+    const defaultProps = (<any>this.constructor).defaultProps;
+    if (defaultProps) {
+      props = this._applyDefaultProps(props, defaultProps);
+    }
+    if (QWeb.dev) {
+      this._validateProps(props || {});
+    }
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a widget
     //   Con: this is not really safe
@@ -359,6 +371,13 @@ export class Component<
   ): Promise<void> {
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
+      const defaultProps = (<any>this.constructor).defaultProps;
+      if (defaultProps) {
+        nextProps = this._applyDefaultProps(nextProps, defaultProps);
+      }
+      if (QWeb.dev) {
+        this._validateProps(nextProps);
+      }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
       await this.render(forceUpdate, patchQueue);
@@ -454,16 +473,16 @@ export class Component<
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
     this.__owl__.vnode = patch(elm, vnode);
-    if (
-      this.__owl__.parent!.__owl__.isMounted &&
-      !this.__owl__.isMounted
-    ) {
+    if (this.__owl__.parent!.__owl__.isMounted && !this.__owl__.isMounted) {
       this._callMounted();
     }
     return this.__owl__.vnode;
   }
 
-  __mount() {
+  /**
+   * Only called by qweb t-widget directive (when t-keepalive is set)
+   */
+  _remount() {
     if (!this.__owl__.isMounted) {
       this.__owl__.isMounted = true;
       this.mounted();
@@ -477,4 +496,103 @@ export class Component<
       this.__owl__.observer.notifyCB = this.render.bind(this);
     }
   }
+
+  /**
+   * Apply default props (only top level).
+   *
+   * Note that this method does not modify in place the props, it returns a new
+   * prop object
+   */
+  _applyDefaultProps(props: Object | undefined, defaultProps: Object): Props {
+    props = props ? Object.create(props) : {};
+    for (let propName in defaultProps) {
+      if (props![propName] === undefined) {
+        props![propName] = defaultProps[propName];
+      }
+    }
+    return <Props>props;
+  }
+
+  /**
+   * Validate the component props (or next props) against the (static) props
+   * description.  This is potentially an expensive operation: it may needs to
+   * visit recursively the props and all the children to check if they are valid.
+   * This is why it is only done in 'dev' mode.
+   */
+  _validateProps(props: Object) {
+    const propsDef = (<any>this.constructor).props;
+    if (propsDef instanceof Array) {
+      // list of strings (prop names)
+      for (let i = 0, l = propsDef.length; i < l; i++) {
+        if (!(propsDef[i] in props)) {
+          throw new Error(
+            `Missing props '${propsDef[i]}' (widget '${this.constructor.name}')`
+          );
+        }
+      }
+    } else if (propsDef) {
+      // propsDef is an object now
+      for (let propName in propsDef) {
+        if (!(propName in props)) {
+          if (propsDef[propName] && !propsDef[propName].optional) {
+            throw new Error(
+              `Missing props '${propName}' (widget '${this.constructor.name}')`
+            );
+          } else {
+            break;
+          }
+        }
+        let isValid = isValidProp(props[propName], propsDef[propName]);
+        if (!isValid) {
+          throw new Error(
+            `Props '${propName}' of invalid type in widget '${
+              this.constructor.name
+            }'`
+          );
+        }
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+// Prop validation helper
+//------------------------------------------------------------------------------
+
+/**
+ * Check if an invidual prop value matches its (static) prop definition
+ */
+function isValidProp(prop, propDef): boolean {
+  if (typeof propDef === "function") {
+    // Check if a value is constructed by some Constructor.  Note that there is a
+    // slight abuse of language: we want to consider primitive values as well.
+    //
+    // So, even though 1 is not an instance of Number, we want to consider that
+    // it is valid.
+    if (typeof prop === "object") {
+      return prop instanceof propDef;
+    }
+    return typeof prop === propDef.name.toLowerCase();
+  } else if (propDef instanceof Array) {
+    // If this code is executed, this means that we want to check if a prop
+    // matches at least one of its descriptor.
+    let result = false;
+    for (let i = 0; i < propDef.length; i++) {
+      result = result || isValidProp(prop, propDef[i]);
+    }
+    return result;
+  }
+  // propsDef is an object
+  let result = isValidProp(prop, propDef.type);
+  if (propDef.type === Array) {
+    for (let i = 0; i < prop.length; i++) {
+      result = result && isValidProp(prop[i], propDef.element);
+    }
+  }
+  if (propDef.type === Object) {
+    for (let key in propDef.shape) {
+      result = result && isValidProp(prop[key], propDef.shape[key]);
+    }
+  }
+  return result;
 }

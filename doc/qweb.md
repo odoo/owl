@@ -294,14 +294,14 @@ There is another way to format a string attribute: the `t-attf-` directive. With
 it, you get string interpolation:
 
 ```xml
-<div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>
+<div t-attf-foo="a #{value1} is #{value2} of #{value3} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
 
 For historical reason, there is an alternate form of string interpolation:
 
 ```xml
-<div t-attf-foo="a #{value1} is #{value2} of #{value3} ]"/>
+<div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
 
@@ -479,6 +479,24 @@ some method on a sub widget.
 
 Note: if used on a component, the reference will be set in the `refs`
 variable between `willPatch` and `patched`.
+
+The `t-ref` directive also accepts dynamic values with string interpolation
+(like the `t-attf-` directive). For example, if we have `id` set to 44 in the
+rendering context,
+
+```xml
+<div t-ref="widget_#{id}"/>
+```
+
+```js
+this.refs.widget_44;
+```
+
+Similarly to `t-attf-`, there is an alternate form of string interpolation:
+
+```xml
+<div t-ref="widget_{{id}}"/>
+```
 
 ### `t-key` directive
 

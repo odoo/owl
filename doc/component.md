@@ -7,9 +7,11 @@
 - [Composition](#composition)
 - [Reference](#reference)
   - [Properties](#properties)
+  - [Static Properties](#static-properties)
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
   - [Semantics](#semantics)
+  - [Props Validation](#props-validation)
 - [Asynchronous rendering](#asynchronous-rendering)
 
 ## Overview
@@ -144,10 +146,21 @@ find a template with the component name (or one of its ancestor).
 - **`props`** (Object): this is an object given (in the constructor) by the parent
   to configure the component. It can be dynamically changed later by the parent,
   in some case. Note that `props` are owned by the parent, not by the component.
-  As such, it should not ever be modified by the component.
+  As such, it should not ever be modified by the component!!
 
 - **`refs`** (Object): the `refs` object contains all references to sub DOM nodes
   or sub widgets defined by a `t-ref` directive in the component's template.
+
+### Static Properties
+
+- **`props`** (Object, optional): if given, this is an object that describes the
+  type and shape of the (actual) props given to the component. If Owl mode is
+  `dev`, this will be used to validate the props each time the component is
+  created/updated. See [Props Validation](#props-validation) for more information.
+- **`defaultProps`** (Object, optional): if given, this object define default
+  values for (top-level) props. Whenever `props` are given to the object, they
+  will be altered to add default value (if missing). Note that it does not
+  change the initial object, a new object will be created instead.
 
 ### Methods
 
@@ -431,6 +444,93 @@ Here is what Owl will do:
 5. patching of `D`
 
 6. `patched` hooks are called on `D`, `C`
+
+### Props Validation
+
+As an application becomes complex, it may be quite unsafe to define props in an informal way. This leads to two issues:
+
+- hard to tell how a component should be used, by looking at its code.
+- unsafe, it is easy to send wrong props into a component, either by refactoring a component, or one of its parent.
+
+A props type system would solve both issues, by describing the types and shapes
+of the props. Here is how it works in Owl:
+
+- `props` key is a static key (so, different from `this.props` in a component instance)
+- it is optional: it is ok for a component to not define a `props` key.
+- props are validated whenever a component is created/updated
+- props are only validated in `dev` mode (see [tooling page](tooling.md#development-mode))
+- if a key does not match the description, an error is thrown
+- it only validates keys defined in (static) `props`. Additional keys in (component) `props` are not validated.
+
+For example:
+
+```js
+class ComponentA extends owl.Component {
+    static props = ['id', 'url'];
+
+    ...
+}
+
+class ComponentB extends owl.Component {
+  static props = {
+    count: {type: Number},
+    messages: {
+      type: Array,
+      element: {type: Object, shape: {id: Boolean, text: 'string' }
+    },
+   date: Date,
+   combinedVal: [Number, Boolean]
+  };
+
+  ...
+}
+```
+
+- it is an object or a list of strings
+- a list of strings is a simplified props definition, which only lists the name
+  of the props.
+- all props are by default required, unless they are defined with `optional: true`
+  (in that case, validation is only done if there is a value)
+- valid types are: `Number, String, Boolean, Object, Array, Date, Function`, and all
+  constructor functions (so, if you have a `Person` class, it can be used as a type)
+- arrays are homogeneous (all elements have the same type/shape)
+
+For each key, a `prop` definition is either a constructor, a list of constructors, or an object:
+
+- a constructor: this should describe the type, for example: `id: Number` describe
+  the props `id` as a number
+- a list of constructors. In that case, this means that we allow more than one
+  type. For example, `id: [Number, String]` means that `id` can be either a string
+  or a number.
+- an object. This makes it possible to have more expressive definition. The following sub keys are then allowed:
+  - `type`: the main type of the prop being validated
+  - `element`: if the type was `Array`, then the `element` key describes the type of each element in the array. It is optional (not set means that we only validate the array, not its elements),
+  - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. It is optional (not set means that we only validate the object, not its elements)
+
+Examples:
+
+```js
+  // only the existence of those 3 keys is documented
+  static props = ['message', 'id', 'date'];
+```
+
+```js
+  static props = {
+    messageIds: {type: Array, element: Number},  // list of number
+    otherArr: {type: Array},   // just array. no validation is made on sub elements
+    otherArr2: Array,   // same as otherArr
+    someObj: {type: Object},  // just an object, no internal validation
+    someObj2: {
+      type: Object,
+      shape: {
+        id: Number,
+        name: {type: String, optional: true},
+        url: String
+      ]},    // object, with keys id (number), name (string, optional) and url (string)
+    someFlag: Boolean,     // a boolean, mandatory (even if `false`)
+    someVal: [Boolean, Date]   // either a boolean or a date
+  };
+```
 
 ## Asynchronous rendering
 

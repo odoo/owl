@@ -20,8 +20,9 @@ exports[`animations t-transition combined with t-widget 1`] = `
         w4 = false
     }
     if (!w4) {
-        let W4 = context.widgets && context.widgets['Child'] || QWeb.widgets['Child'];
-        if (!W4) {throw new Error(\`Cannot find the definition of widget \\"Child\\"\`)}
+        let widgetKey4 = \`Child\`;
+        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
+        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -59,8 +60,9 @@ exports[`animations t-transition combined with t-widget and t-if 1`] = `
             w4 = false
         }
         if (!w4) {
-            let W4 = context.widgets && context.widgets['Child'] || QWeb.widgets['Child'];
-            if (!W4) {throw new Error(\`Cannot find the definition of widget \\"Child\\"\`)}
+            let widgetKey4 = \`Child\`;
+            let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
+            if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
             w4 = new W4(owner, props4);
             context.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4._prepare();

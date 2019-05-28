@@ -82,7 +82,7 @@ QWeb.addDirective({
   priority: 95,
   atNodeCreation({ ctx, value, addNodeHook }) {
     const refKey = `ref${ctx.generateID()}`;
-    ctx.addLine(`const ${refKey} = ${ctx.formatExpression(value)}`);
+    ctx.addLine(`const ${refKey} = ${ctx.interpolate(value)};`);
     addNodeHook("create", `context.refs[${refKey}] = n.elm;`);
   }
 });
@@ -391,7 +391,7 @@ QWeb.addDirective({
     let refKey: string = "";
     if (ref) {
       refKey = `ref${ctx.generateID()}`;
-      ctx.addLine(`const ${refKey} = ${ctx.formatExpression(ref)}`);
+      ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
       refExpr = `context.refs[${refKey}] = w${widgetID};`;
     }
     let transitionsInsertCode = "";

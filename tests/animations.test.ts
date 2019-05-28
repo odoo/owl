@@ -145,7 +145,7 @@ describe("animations", () => {
 
     env.qweb.addTemplate(
       "TestWidget",
-      `<div><span t-ref="'span'" t-transition="chimay">blue</span></div>`
+      `<div><span t-ref="span" t-transition="chimay">blue</span></div>`
     );
     class TestWidget extends Widget {
       state = { hide: false };

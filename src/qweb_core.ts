@@ -483,9 +483,6 @@ export class QWeb {
         props.push(`${key}: _${val}`);
       }
     }
-    function formatter(expr) {
-      return "${" + ctx.formatExpression(expr) + "}";
-    }
 
     for (let i = 0; i < attributes.length; i++) {
       let name = attributes[i].name;
@@ -544,17 +541,13 @@ export class QWeb {
           // attribute contains 'non letters' => we want to quote it
           attName = '"' + attName + '"';
         }
-        const formattedExpr = value!
-          .replace(/\{\{.*?\}\}/g, s => formatter(s.slice(2, -2)))
-          .replace(/\#\{.*?\}/g, s => formatter(s.slice(2, -1)));
+        const formattedExpr = ctx.interpolate(value);
         const attID = ctx.generateID();
         let staticVal = (<Element>node).getAttribute(attName);
         if (staticVal) {
-          ctx.addLine(
-            `var _${attID} = '${staticVal} ' + \`${formattedExpr}\`;`
-          );
+          ctx.addLine(`var _${attID} = '${staticVal} ' + ${formattedExpr};`);
         } else {
-          ctx.addLine(`var _${attID} = \`${formattedExpr}\`;`);
+          ctx.addLine(`var _${attID} = ${formattedExpr};`);
         }
         attrs.push(`${attName}: _${attID}`);
       }
@@ -757,5 +750,29 @@ export class Context {
     }
     const result = r.slice(0, -1);
     return result;
+  }
+
+  /**
+   * Perform string interpolation on the given string. Note that if the whole
+   * string is an expression, it simply returns it (formatted).
+   * For instance:
+   *   'Hello {{x}}!' -> `Hello ${x}`
+   *   '{{x}}' -> x
+   */
+  interpolate(s: string): string {
+    let matches = s.match(/\{\{.*?\}\}/g);
+    if (matches && matches[0].length === s.length) {
+      return this.formatExpression(s.slice(2, -2));
+    }
+    matches = s.match(/\#\{.*?\}/g);
+    if (matches && matches[0].length === s.length) {
+      return this.formatExpression(s.slice(2, -1));
+    }
+
+    let formatter = expr => "${" + this.formatExpression(expr) + "}";
+    let r = s
+      .replace(/\{\{.*?\}\}/g, s => formatter(s.slice(2, -2)))
+      .replace(/\#\{.*?\}/g, s => formatter(s.slice(2, -1)));
+    return "`" + r + "`";
   }
 }

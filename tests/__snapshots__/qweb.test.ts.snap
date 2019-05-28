@@ -59,7 +59,7 @@ exports[`attributes format expression 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = \`\${context['value'] + 37}\`;
+    var _1 = context['value'] + 37;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -70,7 +70,7 @@ exports[`attributes format expression, other format 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = \`\${context['value'] + 37}\`;
+    var _1 = context['value'] + 37;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -1494,7 +1494,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
-    const ref3 = 'myspan' + 3
+    const ref3 = \`myspan\${context['id']}\`;
     p2.hook = {
       create: (_, n) => {
         context.refs[ref3] = n.elm;
@@ -1513,7 +1513,7 @@ exports[`t-ref can get a ref on a node 1`] = `
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
-    const ref3 = 'myspan'
+    const ref3 = \`myspan\`;
     p2.hook = {
       create: (_, n) => {
         context.refs[ref3] = n.elm;
@@ -1546,7 +1546,7 @@ exports[`t-ref refs in a loop 1`] = `
         let c5 = [], p5 = {key:context['item']};
         var vn5 = h('div', p5, c5);
         c1.push(vn5);
-        const ref6 = context['item']
+        const ref6 = context['item'];
         p5.hook = {
           create: (_, n) => {
             context.refs[ref6] = n.elm;

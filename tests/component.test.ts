@@ -896,7 +896,7 @@ describe("composition", () => {
   test("t-refs on widget are widgets", async () => {
     env.qweb.addTemplate(
       "WidgetC",
-      `<div>Hello<t t-ref="'mywidgetb'" t-widget="b"/></div>`
+      `<div>Hello<t t-ref="mywidgetb" t-widget="b"/></div>`
     );
     class WidgetC extends Widget {
       widgets = { b: WidgetB };
@@ -912,7 +912,7 @@ describe("composition", () => {
       "ParentWidget",
       `
         <div>
-          <t t-foreach="state.list" t-as="elem" t-ref="'child'" t-key="elem" t-widget="Widget"/>
+          <t t-foreach="state.list" t-as="elem" t-ref="child" t-key="elem" t-widget="Widget"/>
         </div>`
     );
     class ParentWidget extends Widget {
@@ -938,8 +938,8 @@ describe("composition", () => {
       "ParentWidget",
       `
         <div>
-          <t t-if="state.child1" t-ref="'child1'" t-widget="Widget"/>
-          <t t-if="state.child2" t-ref="'child2'" t-widget="Widget"/>
+          <t t-if="state.child1" t-ref="child1" t-widget="Widget"/>
+          <t t-if="state.child2" t-ref="child2" t-widget="Widget"/>
         </div>`
     );
     class ParentWidget extends Widget {
@@ -1004,7 +1004,7 @@ describe("composition", () => {
       "ParentWidget",
       `<div>
         <t t-foreach="state.items" t-as="item">
-          <t t-widget="Child" t-ref="item" t-key="item"/>
+          <t t-widget="Child" t-ref="{{item}}" t-key="item"/>
         </t>
       </div>`
     );
@@ -2277,7 +2277,7 @@ describe("t-mounted directive", () => {
   test("combined with a t-ref", async () => {
     env.qweb.addTemplate(
       "TestWidget",
-      `<div><input t-ref="'input'" t-mounted="f"/></div>`
+      `<div><input t-ref="input" t-mounted="f"/></div>`
     );
     class TestWidget extends Widget {
       f() {}

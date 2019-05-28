@@ -876,7 +876,7 @@ describe("connecting a component to store", () => {
       "Parent",
       `
         <div>
-            <t t-widget="Child" t-ref="'child'" t-props="{key: props.current}"/>
+            <t t-widget="Child" t-props="{key: props.current}"/>
         </div>
       `
     );

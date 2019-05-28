@@ -1,10 +1,5 @@
 import { QWeb } from "../src/qweb_core";
-import {
-  normalize,
-  renderToDOM,
-  renderToString,
-  trim
-} from "./helpers";
+import { normalize, renderToDOM, renderToString, trim } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -1056,16 +1051,16 @@ describe("t-on", () => {
 
 describe("t-ref", () => {
   test("can get a ref on a node", () => {
-    qweb.addTemplate("test", `<div><span t-ref="'myspan'"/></div>`);
+    qweb.addTemplate("test", `<div><span t-ref="myspan"/></div>`);
     let refs: any = {};
     renderToDOM(qweb, "test", { refs });
     expect(refs.myspan.tagName).toBe("SPAN");
   });
 
   test("can get a dynamic ref on a node", () => {
-    qweb.addTemplate("test", `<div><span t-ref="'myspan' + 3"/></div>`);
+    qweb.addTemplate("test", `<div><span t-ref="myspan{{id}}"/></div>`);
     let refs: any = {};
-    renderToDOM(qweb, "test", { refs });
+    renderToDOM(qweb, "test", { refs, id: 3 });
     expect(refs.myspan3.tagName).toBe("SPAN");
   });
 
@@ -1075,7 +1070,7 @@ describe("t-ref", () => {
       `
       <div>
         <t t-foreach="items" t-as="item">
-          <div t-ref="item" t-key="item"><t t-esc="item"/></div>
+          <div t-ref="{{item}}" t-key="item"><t t-esc="item"/></div>
         </t>
       </div>`
     );

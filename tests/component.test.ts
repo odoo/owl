@@ -857,7 +857,7 @@ describe("composition", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
-    delete QWeb.widgets['WidgetB'];
+    delete QWeb.widgets["WidgetB"];
   });
 
   test("don't fallback to global registry if widget defined locally", async () => {
@@ -871,7 +871,7 @@ describe("composition", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Belgium</span></div>");
-    delete QWeb.widgets['WidgetB'];
+    delete QWeb.widgets["WidgetB"];
   });
 
   test("throw a nice error if it cannot find widget", async () => {
@@ -1253,6 +1253,36 @@ describe("composition", () => {
       </div>
     `)
     );
+  });
+
+  test("t-widget with dynamic value", async () => {
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div><t t-widget="{{state.widget}}"/></div>`
+    );
+    class ParentWidget extends Widget {
+      widgets = { WidgetB };
+      state = { widget: "WidgetB" };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-widget with dynamic value 2", async () => {
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div><t t-widget="Widget{{state.widget}}"/></div>`
+    );
+    class ParentWidget extends Widget {
+      widgets = { WidgetB };
+      state = { widget: "B" };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
   });
 });
 

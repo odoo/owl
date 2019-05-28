@@ -459,13 +459,14 @@ QWeb.addDirective({
 
     ctx.addIf(`!w${widgetID}`);
     // new widget
+    ctx.addLine(`let widgetKey${widgetID} = ${ctx.interpolate(value)};`);
     ctx.addLine(
-      `let W${widgetID} = context.widgets && context.widgets['${value}'] || QWeb.widgets['${value}'];`
+      `let W${widgetID} = context.widgets && context.widgets[widgetKey${widgetID}] || QWeb.widgets[widgetKey${widgetID}];`
     );
 
     // maybe only do this in dev mode...
     ctx.addLine(
-      `if (!W${widgetID}) {throw new Error(\`Cannot find the definition of widget "${value}"\`)}`
+      `if (!W${widgetID}) {throw new Error('Cannot find the definition of widget "' + widgetKey${widgetID} + '"')}`
     );
     ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
     ctx.addLine(

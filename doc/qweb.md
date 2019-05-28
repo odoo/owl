@@ -13,7 +13,6 @@
   - [`t-if` directive](#t-if-directive)
   - [Expression evaluation](#expression-evaluation)
   - [Dynamic attributes (`t-att` and `t-attf` directives)](#dynamic-attributes-t-att-and-t-attf-directives)
-  - [`t-attf` directive (dynamic attributes)](#t-att-directive-dynamic-attributes)
   - [`t-call` directive (sub templates)](#t-call-directive-sub-templates)
 
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
@@ -453,6 +452,30 @@ constructor. This will be assigned to the `props` variable, which can be accesse
 on the widget (and also, in the template). Whenever the state is updated, then
 the subwidget will also be updated automatically.
 
+The `t-widget` directive also accepts dynamic values with string interpolation
+(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) directive):
+
+```xml
+<div t-name="ParentWidget">
+    <t t-widget="ChildWidget#{id}"/>
+</div>
+```
+
+```js
+class ParentWidget {
+  widgets = { ChildWidget1, ChildWidget2 };
+  state = { id: 1 };
+}
+```
+
+Similarly to `t-attf-`, there is an alternate form of string interpolation:
+
+```xml
+<div t-name="ParentWidget">
+    <t t-widget="ChildWidget{{id}}"/>
+</div>
+```
+
 ### `t-ref` directive
 
 The `t-ref` directive helps a component keep reference to some inside part of it.
@@ -481,8 +504,9 @@ Note: if used on a component, the reference will be set in the `refs`
 variable between `willPatch` and `patched`.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
-(like the `t-attf-` directive). For example, if we have `id` set to 44 in the
-rendering context,
+(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) and
+[`t-widget-`](#component-t-widget-t-props) directives). For example, if we have
+`id` set to 44 in the rendering context,
 
 ```xml
 <div t-ref="widget_#{id}"/>
@@ -492,7 +516,8 @@ rendering context,
 this.refs.widget_44;
 ```
 
-Similarly to `t-attf-`, there is an alternate form of string interpolation:
+Similarly to `t-attf-` and `t-widget`, there is an alternate form of string
+interpolation:
 
 ```xml
 <div t-ref="widget_{{id}}"/>

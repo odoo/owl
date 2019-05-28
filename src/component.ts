@@ -235,24 +235,27 @@ export class Component<
   }
 
   _callMounted() {
-    const children = this.__owl__.children;
+    const __owl__ = this.__owl__;
+    const children = __owl__.children;
     for (let id in children) {
       const comp = children[id];
       if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
         comp._callMounted();
       }
     }
-    this.__owl__.isMounted = true;
-    for (let key in this.__owl__.mountedHandlers) {
-      this.__owl__.mountedHandlers[key]();
+    __owl__.isMounted = true;
+    const handlers = __owl__.mountedHandlers;
+    for (let key in handlers) {
+      handlers[key]();
     }
     this.mounted();
   }
 
   _callWillUnmount() {
     this.willUnmount();
-    this.__owl__.isMounted = false;
-    const children = this.__owl__.children;
+    const __owl__ = this.__owl__;
+    __owl__.isMounted = false;
+    const children = __owl__.children;
     for (let id in children) {
       const comp = children[id];
       if (comp.__owl__.isMounted) {
@@ -269,7 +272,8 @@ export class Component<
   }
 
   async render(force: boolean = false, patchQueue?: any[]): Promise<void> {
-    if (!this.__owl__.isMounted) {
+    const __owl__ = this.__owl__;
+    if (!__owl__.isMounted) {
       return;
     }
     const shouldPatch: boolean = !patchQueue;
@@ -277,26 +281,23 @@ export class Component<
       patchQueue = [];
     }
     const renderVDom = this._render(force, patchQueue);
-    const renderId = this.__owl__.renderId;
+    const renderId = __owl__.renderId;
     await renderVDom;
 
-    if (
-      shouldPatch &&
-      this.__owl__.isMounted &&
-      renderId === this.__owl__.renderId
-    ) {
+    if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
-      for (let i = 0; i < patchQueue!.length; i++) {
+      const patchLen = patchQueue!.length;
+      for (let i = 0; i < patchLen; i++) {
         const patch = patchQueue![i];
         patch.push(patch[0].willPatch());
       }
-      for (let i = 0; i < patchQueue!.length; i++) {
+      for (let i = 0; i < patchLen; i++) {
         const patch = patchQueue![i];
         patch[0]._patch(patch[1]);
       }
 
-      for (let i = patchQueue!.length - 1; i >= 0; i--) {
+      for (let i = patchLen - 1; i >= 0; i--) {
         const patch = patchQueue![i];
         patch[0].patched(patch[2]);
       }
@@ -304,9 +305,10 @@ export class Component<
   }
 
   destroy() {
-    if (!this.__owl__.isDestroyed) {
+    const __owl__ = this.__owl__;
+    if (!__owl__.isDestroyed) {
       const el = this.el;
-      this._destroy(this.__owl__.parent);
+      this._destroy(__owl__.parent);
       if (el) {
         el.remove();
       }
@@ -314,23 +316,24 @@ export class Component<
   }
 
   _destroy(parent) {
-    const isMounted = this.__owl__.isMounted;
+    const __owl__ = this.__owl__;
+    const isMounted = __owl__.isMounted;
     if (isMounted) {
       this.willUnmount();
-      this.__owl__.isMounted = false;
+      __owl__.isMounted = false;
     }
-    const children = Object.values(this.__owl__.children);
-    for (let child of children) {
-      child._destroy(this);
+    const children = __owl__.children;
+    for (let key in children) {
+      children[key]._destroy(this);
     }
     if (parent) {
-      let id = this.__owl__.id;
+      let id = __owl__.id;
       delete parent.__owl__.children[id];
-      this.__owl__.parent = null;
+      __owl__.parent = null;
     }
     this.clear();
-    this.__owl__.isDestroyed = true;
-    delete this.__owl__.vnode;
+    __owl__.isDestroyed = true;
+    delete __owl__.vnode;
   }
 
   shouldUpdate(nextProps: Props): boolean {
@@ -347,11 +350,12 @@ export class Component<
    * mode or not.
    */
   async updateEnv(nextEnv: Partial<T>): Promise<void> {
-    if (this.__owl__.parent && this.__owl__.parent.env === this.env) {
+    const __owl__ = this.__owl__;
+    if (__owl__.parent && __owl__.parent.env === this.env) {
       this.env = Object.create(this.env);
     }
     Object.assign(this.env, nextEnv);
-    if (this.__owl__.isMounted) {
+    if (__owl__.isMounted) {
       await this.render(true);
     }
   }
@@ -385,19 +389,22 @@ export class Component<
   }
 
   _patch(vnode) {
-    this.__owl__.renderPromise = null;
-    const target = this.__owl__.vnode || document.createElement(vnode.sel!);
-    this.__owl__.vnode = patch(target, vnode);
+    const __owl__ = this.__owl__;
+    __owl__.renderPromise = null;
+    const target = __owl__.vnode || document.createElement(vnode.sel!);
+    __owl__.vnode = patch(target, vnode);
   }
   _prepare(): Promise<VNode> {
-    this.__owl__.renderProps = this.props;
-    this.__owl__.renderPromise = this._prepareAndRender();
-    return this.__owl__.renderPromise;
+    const __owl__ = this.__owl__;
+    __owl__.renderProps = this.props;
+    __owl__.renderPromise = this._prepareAndRender();
+    return __owl__.renderPromise;
   }
 
   async _prepareAndRender(): Promise<VNode> {
     await this.willStart();
-    if (this.__owl__.isDestroyed) {
+      const __owl__ = this.__owl__;
+    if (__owl__.isDestroyed) {
       return Promise.resolve(h("div"));
     }
     const qweb = this.env.qweb;
@@ -428,7 +435,7 @@ export class Component<
         }
       }
     }
-    this.__owl__.render = qweb.render.bind(qweb, this.template);
+    __owl__.render = qweb.render.bind(qweb, this.template);
     this._observeState();
     return this._render();
   }
@@ -436,25 +443,26 @@ export class Component<
     force: boolean = false,
     patchQueue: any[] = []
   ): Promise<VNode> {
-    this.__owl__.renderId++;
+      const __owl__ = this.__owl__;
+    __owl__.renderId++;
     const promises: Promise<void>[] = [];
     const patch: any[] = [this];
-    if (this.__owl__.isMounted) {
+    if (__owl__.isMounted) {
       patchQueue.push(patch);
     }
-    if (this.__owl__.observer) {
-      this.__owl__.observer.allowMutations = false;
+    if (__owl__.observer) {
+      __owl__.observer.allowMutations = false;
     }
-    let vnode = this.__owl__.render!(this, {
+    let vnode = __owl__.render!(this, {
       promises,
-      handlers: this.__owl__.boundHandlers,
-      mountedHandlers: this.__owl__.mountedHandlers,
+      handlers: __owl__.boundHandlers,
+      mountedHandlers: __owl__.mountedHandlers,
       forceUpdate: force,
       patchQueue
     });
     patch.push(vnode);
-    if (this.__owl__.observer) {
-      this.__owl__.observer.allowMutations = true;
+    if (__owl__.observer) {
+      __owl__.observer.allowMutations = true;
     }
 
     // this part is critical for the patching process to be done correctly. The
@@ -462,38 +470,41 @@ export class Component<
     // will update its own vnode representation without the knowledge of the
     // parent widget.  With this, we make sure that the parent widget will be
     // able to patch itself properly after
-    vnode.key = this.__owl__.id;
-    this.__owl__.renderProps = this.props;
-    this.__owl__.renderPromise = Promise.all(promises).then(() => vnode);
-    return this.__owl__.renderPromise;
+    vnode.key = __owl__.id;
+    __owl__.renderProps = this.props;
+    __owl__.renderPromise = Promise.all(promises).then(() => vnode);
+    return __owl__.renderPromise;
   }
 
   /**
    * Only called by qweb t-widget directive
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
-    this.__owl__.vnode = patch(elm, vnode);
-    if (this.__owl__.parent!.__owl__.isMounted && !this.__owl__.isMounted) {
+      const __owl__ = this.__owl__;
+    __owl__.vnode = patch(elm, vnode);
+    if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this._callMounted();
     }
-    return this.__owl__.vnode;
+    return __owl__.vnode;
   }
 
   /**
    * Only called by qweb t-widget directive (when t-keepalive is set)
    */
   _remount() {
-    if (!this.__owl__.isMounted) {
-      this.__owl__.isMounted = true;
+      const __owl__ = this.__owl__;
+    if (!__owl__.isMounted) {
+      __owl__.isMounted = true;
       this.mounted();
     }
   }
 
   _observeState() {
     if (this.state) {
-      this.__owl__.observer = new Observer();
-      this.__owl__.observer.observe(this.state);
-      this.__owl__.observer.notifyCB = this.render.bind(this);
+      const __owl__ = this.__owl__;
+      __owl__.observer = new Observer();
+      __owl__.observer.observe(this.state);
+      __owl__.observer.notifyCB = this.render.bind(this);
     }
   }
 
@@ -577,7 +588,7 @@ function isValidProp(prop, propDef): boolean {
     // If this code is executed, this means that we want to check if a prop
     // matches at least one of its descriptor.
     let result = false;
-    for (let i = 0; i < propDef.length; i++) {
+    for (let i = 0, iLen = propDef.length; i < iLen; i++) {
       result = result || isValidProp(prop, propDef[i]);
     }
     return result;
@@ -585,13 +596,14 @@ function isValidProp(prop, propDef): boolean {
   // propsDef is an object
   let result = isValidProp(prop, propDef.type);
   if (propDef.type === Array) {
-    for (let i = 0; i < prop.length; i++) {
+    for (let i = 0, iLen = prop.length; i < iLen; i++) {
       result = result && isValidProp(prop[i], propDef.element);
     }
   }
   if (propDef.type === Object) {
-    for (let key in propDef.shape) {
-      result = result && isValidProp(prop[key], propDef.shape[key]);
+    const shape = propDef.shape;
+    for (let key in shape) {
+      result = result && isValidProp(prop[key], shape[key]);
     }
   }
   return result;

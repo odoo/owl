@@ -64,7 +64,8 @@ export class EventBus {
    */
   trigger(eventType: string, ...args: any[]) {
     const subs = this.subscriptions[eventType] || [];
-    for (let sub of subs) {
+    for (let i = 0, iLen = subs.length; i < iLen; i++) {
+      const sub = subs[i];
       sub.callback.call(sub.owner, ...args);
     }
   }

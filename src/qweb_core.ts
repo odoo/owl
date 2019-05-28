@@ -100,9 +100,9 @@ interface Utils {
   h: typeof h;
   objectToAttrString(obj: Object): string;
   [key: string]: any;
-};
+}
 
-export const UTILS:Utils = {
+export const UTILS: Utils = {
   h: h,
   objectToAttrString(obj: Object): string {
     let classes: string[] = [];
@@ -361,17 +361,20 @@ export class QWeb {
       }
     }
 
-    for (let directive of DIRECTIVES) {
+    const DIR_N = DIRECTIVES.length;
+    const ATTR_N = attributes.length;
+    for (let i = 0; i < DIR_N; i++) {
+      let directive = DIRECTIVES[i];
       let fullName;
       let value;
-      for (let i = 0; i < attributes.length; i++) {
-        const name = attributes[i].name;
+      for (let j = 0; j < ATTR_N; j++) {
+        const name = attributes[j].name;
         if (
           name === "t-" + directive.name ||
           name.startsWith("t-" + directive.name + "-")
         ) {
           fullName = name;
-          value = attributes[i].textContent;
+          value = attributes[j].textContent;
           validDirectives.push({ directive, value, fullName });
           if (directive.name === "on") {
             withHandlers = true;
@@ -721,8 +724,8 @@ export class Context {
     let invarPos = 0;
     let r = "";
     chars.push(" ");
-    for (var i = 0, ilen = chars.length; i < ilen; i++) {
-      var c = chars[i];
+    for (let i = 0, ilen = chars.length; i < ilen; i++) {
+      let c = chars[i];
       if (instring.length) {
         if (c === instring && chars[i - 1] !== "\\") {
           instring = "";

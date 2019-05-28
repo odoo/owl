@@ -90,10 +90,11 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.number_first = i === 0;
-        context.number_last = i === _3.length - 1;
+        context.number_last = i === _length3 - 1;
         context.number_parity = i % 2 === 0 ? 'even' : 'odd';
         context.number_index = i;
         context.number = _3[i];

@@ -15,12 +15,15 @@
  * - patch function (to apply a vnode to an actual DOM node)
  */
 
-
 // because those in TypeScript are too restrictive: https://github.com/Microsoft/TSJS-lib-generator/pull/237
 declare global {
   interface Element {
     setAttribute(name: string, value: string | number | boolean): void;
-    setAttributeNS(namespaceURI: string, qualifiedName: string, value: string | number | boolean): void;
+    setAttributeNS(
+      namespaceURI: string,
+      qualifiedName: string,
+      value: string | number | boolean
+    ): void;
   }
 }
 
@@ -162,6 +165,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
 
   function createElm(vnode: VNode, insertedVnodeQueue: VNodeQueue): Node {
     let i: any,
+      iLen: number,
       data = vnode.data;
     if (data !== undefined) {
       if (isDef((i = data.hook)) && isDef((i = i.init))) {
@@ -193,9 +197,10 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       if (hash < dot) elm.setAttribute("id", sel.slice(hash + 1, dot));
       if (dotIdx > 0)
         elm.setAttribute("class", sel.slice(dot + 1).replace(/\./g, " "));
-      for (i = 0; i < cbs.create.length; ++i) cbs.create[i](emptyNode, vnode);
+      for (i = 0, iLen = cbs.create.length; i < iLen; ++i)
+        cbs.create[i](emptyNode, vnode);
       if (array(children)) {
-        for (i = 0; i < children.length; ++i) {
+        for (i = 0, iLen = children.length; i < iLen; ++i) {
           const ch = children[i];
           if (ch != null) {
             api.appendChild(elm, createElm(ch as VNode, insertedVnodeQueue));
@@ -233,13 +238,16 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
 
   function invokeDestroyHook(vnode: VNode) {
     let i: any,
+      iLen: number,
       j: number,
+      jLen: number,
       data = vnode.data;
     if (data !== undefined) {
       if (isDef((i = data.hook)) && isDef((i = i.destroy))) i(vnode);
-      for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode);
+      for (i = 0, iLen = cbs.destroy.length; i < iLen; ++i)
+        cbs.destroy[i](vnode);
       if (vnode.children !== undefined) {
-        for (j = 0; j < vnode.children.length; ++j) {
+        for (j = 0, jLen = vnode.children.length; j < jLen; ++j) {
           i = vnode.children[j];
           if (i != null && typeof i !== "string") {
             invokeDestroyHook(i);
@@ -257,6 +265,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
   ): void {
     for (; startIdx <= endIdx; ++startIdx) {
       let i: any,
+        iLen: number,
         listeners: number,
         rm: () => void,
         ch = vnodes[startIdx];
@@ -265,7 +274,8 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
           invokeDestroyHook(ch);
           listeners = cbs.remove.length + 1;
           rm = createRmCb(ch.elm as Node, listeners);
-          for (i = 0; i < cbs.remove.length; ++i) cbs.remove[i](ch, rm);
+          for (i = 0, iLen = cbs.remove.length; i < iLen; ++i)
+            cbs.remove[i](ch, rm);
           if (
             isDef((i = ch.data)) &&
             isDef((i = i.hook)) &&
@@ -395,7 +405,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
     vnode: VNode,
     insertedVnodeQueue: VNodeQueue
   ) {
-    let i: any, hook: any;
+    let i: any, iLen: number, hook: any;
     if (
       isDef((i = vnode.data)) &&
       isDef((hook = i.hook)) &&
@@ -408,7 +418,8 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
     let ch = vnode.children;
     if (oldVnode === vnode) return;
     if (vnode.data !== undefined) {
-      for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode);
+      for (i = 0, iLen = cbs.update.length; i < iLen; ++i)
+        cbs.update[i](oldVnode, vnode);
       i = vnode.data.hook;
       if (isDef(i) && isDef((i = i.update))) i(oldVnode, vnode);
     }
@@ -458,9 +469,9 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
   }
 
   return function patch(oldVnode: VNode | Element, vnode: VNode): VNode {
-    let i: number, elm: Node, parent: Node;
+    let i: number, iLen: number, elm: Node, parent: Node;
     const insertedVnodeQueue: VNodeQueue = [];
-    for (i = 0; i < cbs.pre.length; ++i) cbs.pre[i]();
+    for (i = 0, iLen = cbs.pre.length; i < iLen; ++i) cbs.pre[i]();
 
     if (!isVnode(oldVnode)) {
       oldVnode = emptyNodeAt(oldVnode);
@@ -480,12 +491,12 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       }
     }
 
-    for (i = 0; i < insertedVnodeQueue.length; ++i) {
+    for (i = 0, iLen = insertedVnodeQueue.length; i < iLen; ++i) {
       (((insertedVnodeQueue[i].data as VNodeData).hook as Hooks).insert as any)(
         insertedVnodeQueue[i]
       );
     }
-    for (i = 0; i < cbs.post.length; ++i) cbs.post[i]();
+    for (i = 0, iLen = cbs.post.length; i < iLen; ++i) cbs.post[i]();
     return vnode;
   };
 }
@@ -647,7 +658,7 @@ function addNS(
 ): void {
   data.ns = "http://www.w3.org/2000/svg";
   if (sel !== "foreignObject" && children !== undefined) {
-    for (let i = 0; i < children.length; ++i) {
+    for (let i = 0, iLen = children.length; i < iLen; ++i) {
       let childData = children[i].data;
       if (childData !== undefined) {
         addNS(
@@ -668,7 +679,8 @@ export function h(sel: any, b?: any, c?: any): VNode {
   var data: VNodeData = {},
     children: any,
     text: any,
-    i: number;
+    i: number,
+    iLen: number;
   if (c !== undefined) {
     data = b;
     if (array(c)) {
@@ -690,7 +702,7 @@ export function h(sel: any, b?: any, c?: any): VNode {
     }
   }
   if (children !== undefined) {
-    for (i = 0; i < children.length; ++i) {
+    for (i = 0, iLen = children.length; i < iLen; ++i) {
       if (primitive(children[i]))
         children[i] = vnode(
           undefined,
@@ -788,7 +800,7 @@ function invokeHandler(handler: any, vnode?: VNode, event?: Event): void {
       }
     } else {
       // call multiple handlers
-      for (var i = 0; i < handler.length; i++) {
+      for (let i = 0, iLen = handler.length; i < iLen; i++) {
         invokeHandler(handler[i], vnode, event);
       }
     }

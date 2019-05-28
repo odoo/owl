@@ -30,10 +30,13 @@ const methodsToPatch = [
   "sort",
   "reverse"
 ];
+const methodLen = methodsToPatch.length;
+
 const ArrayProto = Array.prototype;
 const ModifiedArrayProto = Object.create(ArrayProto);
 
-for (let method of methodsToPatch) {
+for (let i = 0; i < methodLen; i++) {
+  const method = methodsToPatch[i];
   const initialMethod = ArrayProto[method];
   ModifiedArrayProto[method] = function(...args) {
     if (!this.__observer__.allowMutations) {
@@ -57,8 +60,8 @@ for (let method of methodsToPatch) {
         break;
     }
     if (inserted) {
-      for (let elem of inserted) {
-        this.__observer__.observe(elem, this);
+      for (let i = 0, iLen = inserted.length; i < iLen; i++) {
+        this.__observer__.observe(inserted[i], this);
       }
     }
     return initialMethod.call(this, ...args);
@@ -112,10 +115,9 @@ export class Observer {
   }
 
   _observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
-    const keys = Object.keys(obj);
     obj.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
     Object.defineProperty(obj, "__owl__", { enumerable: false });
-    for (let key of keys) {
+    for (let key in obj) {
       this._addProp(obj, key, obj[key]);
     }
   }
@@ -125,7 +127,7 @@ export class Observer {
     Object.defineProperty(arr, "__owl__", { enumerable: false });
     (<any>arr).__proto__ = Object.create(ModifiedArrayProto);
     (<any>arr).__proto__.__observer__ = this;
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0, iLen = arr.length; i < iLen; i++) {
       this.observe(arr[i], arr);
     }
   }

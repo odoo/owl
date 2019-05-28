@@ -308,10 +308,11 @@ exports[`foreach does not pollute the rendering context 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -336,10 +337,11 @@ exports[`foreach iterate on items (on a element node) 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -367,10 +369,11 @@ exports[`foreach iterate on items 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -407,10 +410,11 @@ exports[`foreach iterate, dict param 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -452,10 +456,11 @@ exports[`foreach iterate, integer param 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -492,10 +497,11 @@ exports[`foreach iterate, position 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.elem_first = i === 0;
-        context.elem_last = i === _3.length - 1;
+        context.elem_last = i === _length3 - 1;
         context.elem_parity = i % 2 === 0 ? 'even' : 'odd';
         context.elem_index = i;
         context.elem = _3[i];
@@ -529,10 +535,11 @@ exports[`foreach warn if no key in some case 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -589,10 +596,11 @@ exports[`misc global 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.value_first = i === 0;
-        context.value_last = i === _3.length - 1;
+        context.value_last = i === _length3 - 1;
         context.value_parity = i % 2 === 0 ? 'even' : 'odd';
         context.value_index = i;
         context.value = _3[i];
@@ -1098,10 +1106,11 @@ exports[`t-key t-key directive in a list 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.beer_first = i === 0;
-        context.beer_last = i === _3.length - 1;
+        context.beer_last = i === _length3 - 1;
         context.beer_parity = i % 2 === 0 ? 'even' : 'odd';
         context.beer_index = i;
         context.beer = _3[i];
@@ -1197,10 +1206,11 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.action_first = i === 0;
-        context.action_last = i === _3.length - 1;
+        context.action_last = i === _length3 - 1;
         context.action_parity = i % 2 === 0 ? 'even' : 'odd';
         context.action_index = i;
         context.action = _3[i];
@@ -1524,10 +1534,11 @@ exports[`t-ref refs in a loop 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _2 === 'number') { _2 = Array.from(Array(_2).keys())}
     var _3 = _2 instanceof Array ? _2 : Object.keys(_2);
+    var _length3 = _3.length;
     var _4 = _2 instanceof Array ? _2 : Object.values(_2);
-    for (let i = 0; i < _3.length; i++) {
+    for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
-        context.item_last = i === _3.length - 1;
+        context.item_last = i === _length3 - 1;
         context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
@@ -1682,10 +1693,11 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
     if (typeof _3 === 'number') { _3 = Array.from(Array(_3).keys())}
     var _4 = _3 instanceof Array ? _3 : Object.keys(_3);
+    var _length4 = _4.length;
     var _5 = _3 instanceof Array ? _3 : Object.values(_3);
-    for (let i = 0; i < _4.length; i++) {
+    for (let i = 0; i < _length4; i++) {
         context.elem_first = i === 0;
-        context.elem_last = i === _4.length - 1;
+        context.elem_last = i === _length4 - 1;
         context.elem_parity = i % 2 === 0 ? 'even' : 'odd';
         context.elem_index = i;
         context.elem = _4[i];

@@ -250,14 +250,15 @@ QWeb.addDirective({
     ctx.addLine(
       `var _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`
     );
+    ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
     let valuesID = ctx.generateID();
     ctx.addLine(
       `var _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`
     );
-    ctx.addLine(`for (let i = 0; i < _${keysID}.length; i++) {`);
+    ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
     ctx.indent();
     ctx.addLine(`context.${name}_first = i === 0;`);
-    ctx.addLine(`context.${name}_last = i === _${keysID}.length - 1;`);
+    ctx.addLine(`context.${name}_last = i === _length${keysID} - 1;`);
     ctx.addLine(`context.${name}_parity = i % 2 === 0 ? 'even' : 'odd';`);
     ctx.addLine(`context.${name}_index = i;`);
     ctx.addLine(`context.${name} = _${keysID}[i];`);

@@ -150,7 +150,7 @@ exports[`composition t-widget with dynamic value 1`] = `
         w4 = false
     }
     if (!w4) {
-        let widgetKey4 = context['state'].widget;
+        let widgetKey4 = (context['state'].widget);
         let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
         if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
         w4 = new W4(owner, props4);

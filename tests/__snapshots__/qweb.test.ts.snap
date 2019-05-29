@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`attributes class and t-attf-class with ternary operation 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var _1 = 'hello ' + (context['value'] ? 'world' : '');
+    let c2 = [], p2 = {key:2,attrs:{class: _1}};
+    var vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
 exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(context,extra
 ) {
@@ -59,7 +70,7 @@ exports[`attributes format expression 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = context['value'] + 37;
+    var _1 = (context['value'] + 37);
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -70,7 +81,7 @@ exports[`attributes format expression, other format 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = context['value'] + 37;
+    var _1 = (context['value'] + 37);
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -1546,7 +1557,7 @@ exports[`t-ref refs in a loop 1`] = `
         let c5 = [], p5 = {key:context['item']};
         var vn5 = h('div', p5, c5);
         c1.push(vn5);
-        const ref6 = context['item'];
+        const ref6 = (context['item']);
         p5.hook = {
           create: (_, n) => {
             context.refs[ref6] = n.elm;

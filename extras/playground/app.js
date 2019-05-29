@@ -314,6 +314,7 @@ class TabbedEditor extends owl.Component {
     const session = this.sessions[this.state.currentTab];
     session.setValue(this.props[this.state.currentTab], -1);
     this.editor.setSession(session);
+    this.editor.resize();
   }
 
   willUnmount() {
@@ -322,12 +323,12 @@ class TabbedEditor extends owl.Component {
   }
 
   setTab(tab) {
-      if (this.state.currentTab !== tab) {
-        this.state.currentTab = tab;
-        const session = this.sessions[this.state.currentTab];
-        session.doc.setValue(this.props[tab], -1);
-        this.editor.setSession(session);
-      }
+    if (this.state.currentTab !== tab) {
+      this.state.currentTab = tab;
+      const session = this.sessions[this.state.currentTab];
+      session.doc.setValue(this.props[tab], -1);
+      this.editor.setSession(session);
+    }
   }
 
   onMouseDown(ev) {

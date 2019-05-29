@@ -1,0 +1,23 @@
+body {
+    font-family: sans-serif;
+}
+
+.title, .section, .footnote {
+    width: 768px;
+    margin: auto;
+}
+
+.title div {
+    color: #333333;
+    font-style: italic;
+}
+.section {
+    background-color: #d5d5d5;
+    padding: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.links a {
+    margin: 10px 5px;
+}

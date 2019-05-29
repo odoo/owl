@@ -18,10 +18,24 @@ import { h, patch, VNode } from "./vdom";
 // Types/helpers
 //------------------------------------------------------------------------------
 
+/**
+ * An Env (environment) is an object that will be (mostly) shared between all
+ * components of an Owl application.  It is the location which should contain
+ * the qweb instance necessary to render all components.
+ *
+ * Note that it is totally fine to extend the environment with application
+ * specific keys/objects/whatever.  For example, a key `isMobile` (to declare
+ * if we are in "mobile" mode), or a shared bus could be useful.
+ */
 export interface Env {
   qweb: QWeb;
 }
 
+/**
+ * This is mostly an internal detail of implementation. The Meta interface is
+ * useful to typecheck and describe the internal keys used by Owl to manage the
+ * component tree.
+ */
 export interface Meta<T extends Env, Props> {
   readonly id: number;
   vnode: VNode | null;
@@ -61,6 +75,10 @@ export class Component<
   readonly __owl__: Meta<Env, Props>;
   template?: string;
 
+  /**
+   * The `el` is the root element of the widget.  Note that it could be null:
+   * this is the case if the widget is not mounted yet, or is destroyed.
+   */
   get el(): HTMLElement | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
   }
@@ -220,10 +238,16 @@ export class Component<
   // Public
   //--------------------------------------------------------------------------
 
+  /**
+   * Mount the component to a target element.
+   *
+   * This should only be done if the component was created manually. Components
+   * created declaratively in templates are managed by the Owl system.
+   */
   async mount(target: HTMLElement): Promise<void> {
     const vnode = await this._prepare();
     if (this.__owl__.isDestroyed) {
-      // widget was destroyed before we get here...
+      // component was destroyed before we get here...
       return;
     }
     this._patch(vnode);
@@ -231,36 +255,6 @@ export class Component<
 
     if (document.body.contains(target)) {
       this._callMounted();
-    }
-  }
-
-  _callMounted() {
-    const __owl__ = this.__owl__;
-    const children = __owl__.children;
-    for (let id in children) {
-      const comp = children[id];
-      if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
-        comp._callMounted();
-      }
-    }
-    __owl__.isMounted = true;
-    const handlers = __owl__.mountedHandlers;
-    for (let key in handlers) {
-      handlers[key]();
-    }
-    this.mounted();
-  }
-
-  _callWillUnmount() {
-    this.willUnmount();
-    const __owl__ = this.__owl__;
-    __owl__.isMounted = false;
-    const children = __owl__.children;
-    for (let id in children) {
-      const comp = children[id];
-      if (comp.__owl__.isMounted) {
-        comp._callWillUnmount();
-      }
     }
   }
 
@@ -304,6 +298,15 @@ export class Component<
     }
   }
 
+  /**
+   * Destroy the component.  This operation is quite complex:
+   *  - it recursively destroy all children
+   *  - call the willUnmount hooks if necessary
+   *  - remove the dom node from the dom
+   *
+   * This should only be called manually if you created the widget.  Most widgets
+   * will be automatically destroyed.
+   */
   destroy() {
     const __owl__ = this.__owl__;
     if (!__owl__.isDestroyed) {
@@ -315,27 +318,11 @@ export class Component<
     }
   }
 
-  _destroy(parent) {
-    const __owl__ = this.__owl__;
-    const isMounted = __owl__.isMounted;
-    if (isMounted) {
-      this.willUnmount();
-      __owl__.isMounted = false;
-    }
-    const children = __owl__.children;
-    for (let key in children) {
-      children[key]._destroy(this);
-    }
-    if (parent) {
-      let id = __owl__.id;
-      delete parent.__owl__.children[id];
-      __owl__.parent = null;
-    }
-    this.clear();
-    __owl__.isDestroyed = true;
-    delete __owl__.vnode;
-  }
-
+  /**
+   * This method is called by the component system whenever its props are
+   * updated. If it returns true, then the component will be rendered.
+   * Otherwise, it will skip the rendering (also, its props will not be updated)
+   */
   shouldUpdate(nextProps: Props): boolean {
     return true;
   }
@@ -360,6 +347,10 @@ export class Component<
     }
   }
 
+  /**
+   * Sets a key (from the state) to a specific value.  This is mostly useful to
+   * work around the limitation in observed value with new keys.
+   */
   set(target: any, key: string | number, value: any) {
     this.__owl__.observer!.set(target, key, value);
   }
@@ -367,6 +358,57 @@ export class Component<
   //--------------------------------------------------------------------------
   // Private
   //--------------------------------------------------------------------------
+
+  _destroy(parent: Component<any, any, any> | null) {
+    const __owl__ = this.__owl__;
+    const isMounted = __owl__.isMounted;
+    if (isMounted) {
+      this.willUnmount();
+      __owl__.isMounted = false;
+    }
+    const children = __owl__.children;
+    for (let key in children) {
+      children[key]._destroy(this);
+    }
+    if (parent) {
+      let id = __owl__.id;
+      delete parent.__owl__.children[id];
+      __owl__.parent = null;
+    }
+    this.clear();
+    __owl__.isDestroyed = true;
+    delete __owl__.vnode;
+  }
+
+  _callMounted() {
+    const __owl__ = this.__owl__;
+    const children = __owl__.children;
+    for (let id in children) {
+      const comp = children[id];
+      if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
+        comp._callMounted();
+      }
+    }
+    __owl__.isMounted = true;
+    const handlers = __owl__.mountedHandlers;
+    for (let key in handlers) {
+      handlers[key]();
+    }
+    this.mounted();
+  }
+
+  _callWillUnmount() {
+    this.willUnmount();
+    const __owl__ = this.__owl__;
+    __owl__.isMounted = false;
+    const children = __owl__.children;
+    for (let id in children) {
+      const comp = children[id];
+      if (comp.__owl__.isMounted) {
+        comp._callWillUnmount();
+      }
+    }
+  }
 
   async _updateProps(
     nextProps: Props,
@@ -403,7 +445,7 @@ export class Component<
 
   async _prepareAndRender(): Promise<VNode> {
     await this.willStart();
-      const __owl__ = this.__owl__;
+    const __owl__ = this.__owl__;
     if (__owl__.isDestroyed) {
       return Promise.resolve(h("div"));
     }
@@ -439,11 +481,12 @@ export class Component<
     this._observeState();
     return this._render();
   }
+
   async _render(
     force: boolean = false,
     patchQueue: any[] = []
   ): Promise<VNode> {
-      const __owl__ = this.__owl__;
+    const __owl__ = this.__owl__;
     __owl__.renderId++;
     const promises: Promise<void>[] = [];
     const patch: any[] = [this];
@@ -480,7 +523,7 @@ export class Component<
    * Only called by qweb t-widget directive
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
-      const __owl__ = this.__owl__;
+    const __owl__ = this.__owl__;
     __owl__.vnode = patch(elm, vnode);
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this._callMounted();
@@ -492,7 +535,7 @@ export class Component<
    * Only called by qweb t-widget directive (when t-keepalive is set)
    */
   _remount() {
-      const __owl__ = this.__owl__;
+    const __owl__ = this.__owl__;
     if (!__owl__.isMounted) {
       __owl__.isMounted = true;
       this.mounted();

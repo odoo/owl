@@ -40,31 +40,34 @@ const counter = new ClickCounter({ qweb });
 counter.mount(document.body);
 `;
 
-const WIDGET_COMPOSITION = `class ClickCounter extends owl.Component {
-    constructor(parent, props) {
-        super(parent, props);
-        this.state = { value: props.initialState || 0 };
-    }
+const WIDGET_COMPOSITION = `// This example will not work if your browser does not support ESNext class fields
+
+class ClickCounter extends owl.Component {
+    state = { value: 0 };
 
     increment() {
         this.state.value++;
     }
 }
 
-let nextId = 1;
-
-class App extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.state = { counters: [] }
-        this.widgets = { ClickCounter };
-    }
-
-    addCounter() {
-        this.state.counters.push(nextId++);
+class InputWidget extends owl.Component {
+    state = {text: ""};
+    
+    updateVal(event) {
+        let value = event.target.value;
+        if (this.props.reverse) {
+            value = value.split("").reverse().join("");
+        }
+        this.state.text = value
     }
 }
 
+// Main root widget
+class App extends owl.Component {
+    widgets = {ClickCounter, InputWidget};
+}
+
+// Application setup
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
 app.mount(document.body);
@@ -75,29 +78,49 @@ const WIDGET_COMPOSITION_XML = `<templates>
       Click Me! [<t t-esc="state.value"/>]
     </button>
 
+   <div t-name="InputWidget">
+     <input t-on-input="updateVal" placeholder="type here some text..."/>
+     <span><t t-esc="state.text"/></span>
+    </div>
+
   <div t-name="App">
-      <div><button t-on-click="addCounter">Add a counter</button></div>
-      <div>
-        <t t-foreach="state.counters" t-as="counter">
-          <t t-widget="ClickCounter" t-key="counter" t-props="{initialState: counter}"/>
-        </t>
-      </div>
+      <t t-widget="ClickCounter"/>
+      <t t-widget="InputWidget" t-props="{reverse: true}"/>
   </div>
 </templates>`;
 
-const WIDGET_COMPOSITION_CSS = `button {
-    color: darkred;
-    font-size: 30px;
+const WIDGET_COMPOSITION_CSS = `button, input {
+    font-size: 20px;
     width: 220px;
+    margin: 5px;
 }`;
 
 const ANIMATION = `// This example will not work if your browser does not support ESNext class fields
+class ClickCounter extends owl.Component {
+    state = { value: 0 };
+
+    increment() {
+        this.state.value++;
+    }
+}
+
 class App extends owl.Component {
-    state = {flag: 0};
+    state = {flag: false, widgetFlag: false, numbers: []};
+    widgets = {ClickCounter};
 
     toggle() {
         this.state.flag = !this.state.flag;
     }
+
+    toggleWidget() {
+        this.state.widgetFlag = !this.state.widgetFlag;
+    }
+
+    addNumber() {
+        const n = this.state.numbers.length + 1;
+        this.state.numbers.push(n);
+    }
+
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
@@ -106,33 +129,82 @@ app.mount(document.body);
 `;
 
 const ANIMATION_XML = `<templates>
-  <div t-name="App">
-    <button t-on-click="toggle">
-      Click Me!
+   <button t-name="ClickCounter" t-on-click="increment" class="clickcounter">
+      Click Me! [<t t-esc="state.value"/>]
     </button>
-    <div>
-      <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+
+    <div t-name="App">
+
+    <h2>Transition on DOM element</h2>
+
+    <div class="demo">
+      <button t-on-click="toggle">Toggle square</button>
+      <div>
+        <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+      </div>
     </div>
+
+    <h2>Transition on sub widgets</h2>
+
+    <div class="demo">
+      <button t-on-click="toggleWidget">
+       Toggle widget
+      </button>
+      <div>
+        <t t-widget="ClickCounter" t-if="state.widgetFlag" t-transition="fade"/>
+      </div>
+    </div>
+
+    <h2>Transition on lists</h2>
+    <p>Transitions can also be applied on lists</p>
+    <div class="demo">
+      <button t-on-click="addNumber">Add a number</button>
+      <div>
+        <t t-foreach="state.numbers" t-as="n">
+          <span t-transition="fade" class="numberspan"><t t-esc="n"/></span>
+        </t>
+      </div>
+    </div>
+
+    <h2>Simple CSS animation</h2>
+    <p>Remember, normal CSS still apply: for example, a simple flash animation with pure css </p>
+    <div><a class="btn flash">Click</a></div>
   </div>
 </templates>
 `;
 
 const ANIMATION_CSS = `button {
-    width: 100px;
-    height: 30px;
-    font-size: 20px;
+    font-size: 18px;
+    height: 35px;
 }
+.btn {
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    background-color: #dddddd;
+}
+
+
+.flash {
+    background-position: center;
+    transition: background 0.5s;
+}
+
+.flash:active {
+  background-color: gray;
+  transition: background 0s;
+}
+
 
 .square {
     background-color: red;
     width: 100px;
-    height: 100px;
+    height: 70px;
     color: white;
-    margin: 20px;
+    margin: 0 20px;
     font-size: 24px;
-    line-height: 100px;
+    line-height: 70px;
     text-align: center;
-    line-height: 100px;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -140,6 +212,24 @@ const ANIMATION_CSS = `button {
 }
 .fade-enter, .fade-leave-to {
     opacity: 0;
+}
+
+.demo {
+    display: flex;
+    height: 80px;
+}
+
+.clickcounter {
+    margin-left: 20px;
+    height: 50px;
+    background-color: blue;
+    color: white;
+}
+
+.numberspan {
+    border: 1px solid green;
+    margin: 5px;
+    padding: 5px;
 }
 `;
 
@@ -201,182 +291,6 @@ const LIFECYCLE_DEMO_XML = `<templates>
         </div>
     </div>
     <div t-name="HookWidget" t-on-click="increment">Demo Sub Widget. Props: <t t-esc="props.n"/>. State: <t t-esc="state.n"/>. (click on me to update me)</div>
-</templates>`;
-
-const BENCHMARK_APP = `//------------------------------------------------------------------------------
-// Generating demo data
-//------------------------------------------------------------------------------
-const messages = [];
-const authors = ["Aaron", "David", "Vincent"];
-const content = [
-    "Lorem ipsum dolor sit amet",
-    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem",
-    "Excepteur sint occaecat cupidatat non proident"
-];
-
-function chooseRandomly(array) {
-    const index = Math.floor(Math.random() * array.length);
-    return array[index];
-}
-
-for (let i = 1; i < 16000; i++) {
-    messages.push({
-        id: i,
-        author: chooseRandomly(authors),
-        msg: \`\${i}: \${chooseRandomly(content)}\`,
-        likes: 0
-    });
-}
-
-//------------------------------------------------------------------------------
-// Counter Widget
-//------------------------------------------------------------------------------
-class Counter extends owl.Component {
-    constructor(parent, props) {
-        super(parent, props);
-        this.state = { counter: props.initialState || 0 };
-    }
-
-    increment(delta) {
-        this.state.counter += delta;
-    }
-}
-
-//------------------------------------------------------------------------------
-// Message Widget
-//------------------------------------------------------------------------------
-class Message extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.widgets = { Counter };
-    }
-
-    removeMessage() {
-        this.trigger("remove_message", {
-            id: this.props.id
-        });
-    }
-}
-
-//------------------------------------------------------------------------------
-// Root Widget
-//------------------------------------------------------------------------------
-class App extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.widgets = { Message };
-        this.state = { messages: messages.slice(0, 10) };
-    }
-
-    setMessageCount(n) {
-        this.state.messages = messages.slice(0, n);
-    }
-
-    removeMessage(data) {
-        const index = messages.findIndex(m => m.id === data.id);
-        this.state.messages.splice(index, 1);
-    }
-
-    increment(delta) {
-        const n = this.state.messages.length + delta;
-        this.setMessageCount(n);
-    }
-}
-
-//------------------------------------------------------------------------------
-// Application initialization
-//------------------------------------------------------------------------------
-const env = {
-    qweb: new owl.QWeb(TEMPLATES)
-};
-
-const app = new App(env);
-app.mount(document.body);
-`;
-
-const BENCHMARK_APP_CSS = `.main {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-
-  display: grid;
-  grid-template-columns: 220px 1fr;
-}
-
-.left-thing {
-  background-color: gray;
-  padding: 20px;
-}
-
-.left-thing button {
-  width: 100%;
-}
-
-.left-thing .counter span {
-  color: white;
-}
-
-.left-thing .counter button {
-  width: 40px;
-}
-
-.right-thing {
-  padding: 20px;
-  overflow: auto;
-}
-
-/* Message widget */
-.message .author {
-  font-weight: bold;
-}
-
-.message {
-  width: 400px;
-  background-color: lightblue;
-  margin: 10px 5px;
-  border-radius: 5px;
-  padding: 5px;
-}`;
-
-const BENCHMARK_APP_XML = `<templates>
-  <div t-name="App" class="main">
-      <div class="left-thing">
-          <div class="counter">
-              <button t-on-click="increment(-1)">-</button>
-              <span style="font-weight:bold">Value: <t t-esc="state.messages.length"/></span>
-              <button t-on-click="increment(1)">+</button>
-          </div>
-          <button t-on-click="setMessageCount(10)">10 messages</button>
-          <button t-on-click="setMessageCount(20)">20 messages</button>
-          <button t-on-click="setMessageCount(500)">500 messages</button>
-          <button t-on-click="setMessageCount(1000)">1000 messages</button>
-          <button t-on-click="setMessageCount(5000)">5000 messages</button>
-          <button t-on-click="setMessageCount(15000)">15000 messages</button>
-      </div>
-      <div class="right-thing">
-          <div class="content">
-              <t t-foreach="state.messages" t-as="message">
-                  <t t-widget="Message" t-att-key="message.id" t-props="message" t-on-remove_message="removeMessage"/>
-              </t>
-          </div>
-      </div>
-  </div>
-
-  <div t-name="Message" class="message">
-    <span class="author"><t t-esc="props.author"/></span>
-    <span class="msg"><t t-esc="props.msg"/></span>
-    <button class="remove" t-on-click="removeMessage">Remove</button>
-    <t t-widget="Counter" t-props="{initialState: props.id}"/>
-  </div>
-
-  <div t-name="Counter">
-    <button t-on-click="increment(-1)">-</button>
-    <span style="font-weight:bold">Value: <t t-esc="state.counter"/></span>
-    <button t-on-click="increment(1)">+</button>
-  </div>
-
 </templates>`;
 
 const TODO_APP_STORE = `const ENTER_KEY = 13;
@@ -637,7 +551,7 @@ const TODO_APP_STORE_XML = `<templates>
       </label>
       <button class="destroy" t-on-click="removeTodo"></button>
     </div>
-    <input class="edit" t-ref="'input'" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-mounted="focusInput" t-on-blur="handleBlur"/>
+    <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-mounted="focusInput" t-on-blur="handleBlur"/>
   </li>
 </templates>`;
 
@@ -1204,12 +1118,6 @@ export const SAMPLES = [
     description: "Lifecycle demo",
     code: LIFECYCLE_DEMO,
     xml: LIFECYCLE_DEMO_XML
-  },
-  {
-    description: "Benchmark application",
-    code: BENCHMARK_APP,
-    css: BENCHMARK_APP_CSS,
-    xml: BENCHMARK_APP_XML
   },
   {
     description: "Todo List App (with store)",

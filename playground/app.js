@@ -84,7 +84,7 @@ function makeCodeIframe(js, css, xml, errorHandler) {
     owlScript.addEventListener("load", () => {
       const script = doc.createElement("script");
       script.type = "text/javascript";
-      const content = `window.TEMPLATES = \`${sanitizedXML}\`\n${js}`;
+      const content = `owl.__info__.mode = 'dev';\nwindow.TEMPLATES = \`${sanitizedXML}\`\n${js}`;
       script.innerHTML = content;
       iframe.contentWindow.addEventListener("error", errorHandler);
       iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);
@@ -153,7 +153,7 @@ owl.utils.whenReady(startApp);`;
 class App extends owl.Component {
   constructor(...args) {
     super(...args);
-    this.version = owl._version;
+    this.version = owl.__info__.version;
     this.SAMPLES = SAMPLES;
     this.widgets = { TabbedEditor };
 
@@ -349,7 +349,7 @@ class TabbedEditor extends owl.Component {
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
-document.title = `${document.title} (v${owl._version})`;
+document.title = `${document.title} (v${owl.__info__.version})`;
 document.addEventListener("DOMContentLoaded", async function() {
   const templates = await owl.utils.loadTemplates("templates.xml");
   const qweb = new owl.QWeb(templates);

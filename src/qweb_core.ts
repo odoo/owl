@@ -754,19 +754,20 @@ export class Context {
 
   /**
    * Perform string interpolation on the given string. Note that if the whole
-   * string is an expression, it simply returns it (formatted).
+   * string is an expression, it simply returns it (formatted and enclosed in
+   * parentheses).
    * For instance:
    *   'Hello {{x}}!' -> `Hello ${x}`
-   *   '{{x}}' -> x
+   *   '{{x ? 'a': 'b'}}' -> (x ? 'a' : 'b')
    */
   interpolate(s: string): string {
     let matches = s.match(/\{\{.*?\}\}/g);
     if (matches && matches[0].length === s.length) {
-      return this.formatExpression(s.slice(2, -2));
+      return `(${this.formatExpression(s.slice(2, -2))})`;
     }
     matches = s.match(/\#\{.*?\}/g);
     if (matches && matches[0].length === s.length) {
-      return this.formatExpression(s.slice(2, -1));
+      return `(${this.formatExpression(s.slice(2, -1))})`;
     }
 
     let formatter = expr => "${" + this.formatExpression(expr) + "}";

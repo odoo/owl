@@ -522,6 +522,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
+  test("class and t-attf-class with ternary operation", () => {
+    qweb.addTemplate("test", `<div class="hello" t-attf-class="#{value ? 'world' : ''}"/>`);
+    const result = renderToString(qweb, "test", { value: true });
+    expect(result).toBe(`<div class="hello world"></div>`);
+  });
+
   test("t-att-class with object", () => {
     qweb.addTemplate(
       "test",

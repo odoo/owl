@@ -1450,28 +1450,30 @@ describe("class and style attributes with t-widget", () => {
 
 describe("other directives with t-widget", () => {
   test("t-on works as expected", async () => {
-    let n = 0;
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-widget="child" t-on-customevent="someMethod"/></div>`
-    );
+    expect.assertions(4);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget"><t t-widget="child" t-on-custom-event="someMethod"/></div>
+      </templates>
+    `);
     class ParentWidget extends Widget {
       widgets = { child: Child };
-      someMethod(arg) {
-        expect(arg).toBe(43);
-        n++;
+      n = 0;
+      someMethod(ev) {
+        expect(ev.detail).toBe(43);
+        this.n++;
       }
     }
     class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
-    expect(n).toBe(0);
-    child.trigger("customevent", 43);
-    expect(n).toBe(1);
+    expect(widget.n).toBe(0);
+    child.trigger("custom-event", 43);
+    expect(widget.n).toBe(1);
     child.destroy();
-    child.trigger("customevent", 43);
-    expect(n).toBe(1);
+    child.trigger("custom-event", 43);
+    expect(widget.n).toBe(1);
   });
 
   test("t-if works with t-widget", async () => {

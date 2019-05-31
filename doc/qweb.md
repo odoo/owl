@@ -357,61 +357,81 @@ will result in :
 ### `t-on` directive
 
 In a component's template, it is useful to be able to register handlers on some
-elements to some specific events. This
-is what makes a template _alive_. There are two different use cases.
+elements to some specific events. This is what makes a template _alive_. There
+are four different use cases.
 
-1. Register an event handler on a DOM node
+1. Register an event handler on a DOM node (_pure_ DOM event)
+2. Register an event handler on a component (_pure_ DOM event)
+3. Register an event handler on a DOM node (_business_ DOM event)
+4. Register an event handler on a component (_business_ DOM event)
 
-   ```xml
-   <button t-on-click="someMethod">Do something</button>
-   ```
 
-   This will be roughly translated in javascript like this:
+A _pure_ DOM event is directly triggered by a user interaction (e.g. a `click`).
 
-   ```js
-   button.addEventListener("click", widget.someMethod.bind(widget));
-   ```
+```xml
+<button t-on-click="someMethod">Do something</button>
+```
 
-   The suffix (`click` in this example) is simply the name of the actual DOM
-   event.
+This will be roughly translated in javascript like this:
 
-   In order to remove the DOM event details from the event handlers (like calls
-   to `event.preventDefault`) and let them focus on data logic, _modifiers_ can
-   be specified as additional suffixes of the `t-on` directive.
+```js
+button.addEventListener("click", widget.someMethod.bind(widget));
+```
 
-   | Modifier   | Description                                                       |
-   | ---------- | ----------------------------------------------------------------- |
-   | `.stop`    | calls `event.stopPropagation()` before calling the method         |
-   | `.prevent` | calls `event.preventDefault()` before calling the method          |
-   | `.self`    | calls the method only if the `event.target` is the element itself |
+The suffix (`click` in this example) is simply the name of the actual DOM
+event.
 
-   ```xml
-   <button t-on-click.stop="someMethod">Do something</button>
-   ```
 
-   Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
-   the order may matter. For instance `t-on-click.prevent.self` will prevent all
-   clicks while `t-on-click.self.prevent` will only prevent clicks on the
-   element itself.
+A _business_ DOM event is triggered by a call to `trigger` on a component.
 
-2. Register an event handler on a component. This will not capture a DOM event,
-   but rather a _business_ event:
+```xml
+<t t-widget="MyWidget" t-on-menu-loaded="someMethod"/>
+```
 
-   ```xml
-   <t t-widget="MyWidget" t-on-menuLoaded="someMethod"/>
-   ```
+```js
+ class MyWidget {
+     someWhere() {
+         const payload = ...;
+         this.trigger('menu-loaded', payload);
+     }
+ }
+ ```
+The call to `trigger` generates a [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
+of type `menu-loaded` and dispatches it on the component's DOM element
+(`this.el`). The event bubbles and is cancelable. The parent widget listening
+to event `menu-loaded` will receive the payload in its `someMethod` handler
+(in the `detail` property of the event), whenever the event is triggered.
 
-   ```js
-   class MyWidget {
-       someWhere() {
-           const payload = ...;
-           this.trigger('menuLoaded', payload);
-       }
-   }
-   ```
+```js
+ class ParentWidget {
+     someMethod(ev) {
+         const payload = ev.detail;
+         ...
+     }
+ }
+ ```
 
-   Here, the parent widget will receive the payload in its `someMethod` handler,
-   whenever the event is triggered.
+By convention, we use KebabCase for the name of _business_ events.
+
+
+In order to remove the DOM event details from the event handlers (like calls to
+`event.preventDefault`) and let them focus on data logic, _modifiers_ can be
+specified as additional suffixes of the `t-on` directive.
+
+| Modifier   | Description                                                       |
+| ---------- | ----------------------------------------------------------------- |
+| `.stop`    | calls `event.stopPropagation()` before calling the method         |
+| `.prevent` | calls `event.preventDefault()` before calling the method          |
+| `.self`    | calls the method only if the `event.target` is the element itself |
+
+```xml
+<button t-on-click.stop="someMethod">Do something</button>
+```
+
+Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
+the order may matter. For instance `t-on-click.prevent.self` will prevent all
+clicks while `t-on-click.self.prevent` will only prevent clicks on the element
+itself.
 
 The `t-on` directive also allows to prebind some arguments. For example,
 

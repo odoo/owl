@@ -1,4 +1,3 @@
-import { EventBus } from "./event_bus";
 import { Observer } from "./observer";
 import { QWeb, CompiledTemplate } from "./qweb_core";
 import { h, patch, VNode } from "./vdom";
@@ -67,11 +66,7 @@ const TEMPLATE_MAP: { [key: number]: { [name: string]: string } } = {};
 //------------------------------------------------------------------------------
 let nextId = 1;
 
-export class Component<
-  T extends Env,
-  Props extends {},
-  State extends {}
-> extends EventBus {
+export class Component<T extends Env, Props extends {}, State extends {}> {
   readonly __owl__: Meta<Env, Props>;
   template?: string;
 
@@ -119,8 +114,6 @@ export class Component<
    * the t-widget directive in a template)
    */
   constructor(parent: Component<T, any, any> | T, props?: Props) {
-    super();
-
     const defaultProps = (<any>this.constructor).defaultProps;
     if (defaultProps) {
       props = this._applyDefaultProps(props, defaultProps);
@@ -355,6 +348,23 @@ export class Component<
     this.__owl__.observer!.set(target, key, value);
   }
 
+  /**
+   * Emit a custom event of type 'eventType' with the given 'payload' on the
+   * component's el, if it exists. However, note that the event will only bubble
+   * up to the parent DOM nodes. Thus, it must be called between mounted() and
+   * willUnmount().
+   */
+  trigger(eventType: string, payload?: any) {
+    if (this.el) {
+      const ev = new CustomEvent(eventType, {
+        bubbles: true,
+        cancelable: true,
+        detail: payload
+      });
+      this.el.dispatchEvent(ev);
+    }
+  }
+
   //--------------------------------------------------------------------------
   // Private
   //--------------------------------------------------------------------------
@@ -375,7 +385,6 @@ export class Component<
       delete parent.__owl__.children[id];
       __owl__.parent = null;
     }
-    this.clear();
     __owl__.isDestroyed = true;
     delete __owl__.vnode;
   }

@@ -242,20 +242,20 @@ class App extends owl.Component {
     });
   }
   updateCode(ev) {
-    this.state[ev.type] = ev.value;
+    this.state[ev.detail.type] = ev.detail.value;
   }
   toggleLayout() {
     this.state.splitLayout = !this.state.splitLayout;
   }
   updatePanelHeight(ev) {
-    if (!ev.delta) {
+    if (!ev.detail.delta) {
       return;
     }
     let height = this.state.topPanelHeight;
     if (!height) {
       height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
     }
-    this.state.topPanelHeight = height + ev.delta;
+    this.state.topPanelHeight = height + ev.detail.delta;
   }
 
   async downloadCode() {

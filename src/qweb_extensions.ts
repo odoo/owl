@@ -437,7 +437,7 @@ QWeb.addDirective({
       tattStyle = attVar;
     }
     let updateClassCode = "";
-    if (classAttr || tattClass || styleAttr || tattStyle) {
+    if (classAttr || tattClass || styleAttr || tattStyle || events.length) {
       let classCode = "";
       if (classAttr) {
         classCode =
@@ -456,9 +456,14 @@ QWeb.addDirective({
           }`;
         updateClassCode = `let cl=w${widgetID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
       }
+      let eventsCode = events
+        .map(function([eventName, handler]) {
+          return `vn.elm.addEventListener('${eventName}', owner['${handler}'].bind(owner));`;
+        })
+        .join("");
       const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);
-      const styleCode = styleExpr ? `vn.elm.style = ${styleExpr}` : "";
-      createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}}};`;
+      const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
+      createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}${eventsCode}}};`;
     }
 
     ctx.addLine(
@@ -493,9 +498,6 @@ QWeb.addDirective({
     ctx.addLine(
       `context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`
     );
-    for (let [event, method] of events) {
-      ctx.addLine(`w${widgetID}.on('${event}', owner, owner['${method}'])`);
-    }
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     // FIXME: click to re-add widget during remove transition -> leak

@@ -85,6 +85,10 @@ describe("error handling", () => {
   });
 
   test("error when compiled code is invalid", () => {
+    const consoleWarn = console.warn;
+    const consoleGroupCollapsed = console.groupCollapsed;
+    console.warn = jest.fn();
+    console.groupCollapsed = jest.fn();
     qweb.addTemplate(
       "templatename",
       `<div t-att-hey="}/^function invalid{{>'"></div>`
@@ -92,6 +96,9 @@ describe("error handling", () => {
     expect(() => qweb.render("templatename")).toThrow(
       "Invalid generated code while compiling template 'templatename': Unexpected token }"
     );
+    expect(console.warn).toBeCalledTimes(1);
+    console.warn = consoleWarn;
+    console.groupCollapsed = consoleGroupCollapsed;
   });
 
   test("error when unknown directive", () => {

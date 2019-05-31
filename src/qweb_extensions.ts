@@ -213,7 +213,7 @@ QWeb.addDirective({
  * let _2_index = c1.length;
  * c1.push(null);
  *
- * // def3 is the deferred that will contain later either the new widget
+ * // def3 is the promise that will contain later either the new widget
  * // creation, or the props update...
  * let def3;
  *
@@ -249,13 +249,12 @@ QWeb.addDirective({
  *   // in this situation, we need to create a new widget.  First step is
  *   // to get a reference to the class, then create an instance with
  *   // current context as parent, and the props.
- *   let W4 = context.widgets["child"];
+ *   let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
+
  *   if (!W4) {
  *     throw new Error("Cannot find the definition of widget 'child'");
  *   }
  *   w4 = new W4(owner, props4);
- *
- *   let utils = this.utils;
  *
  *   // Whenever we rerender the parent widget, we need to be sure that we
  *   // are able to find the widget instance. To do that, we register it to

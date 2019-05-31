@@ -600,8 +600,8 @@ The `t-transition` directive can be combined with `t-widget`.
 Notes:
 
 - more information on animations are available [here](animations.md).
-- the value for `t-transition` must be a single class name. Owl does not support
-  more than one transition on a single node.
+- Owl does not support more than one transition on a single node, so the
+ `t-transition` expression must be a single value (i.e. no space allowed)
 
 ### `t-mounted` directive
 

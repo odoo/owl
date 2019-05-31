@@ -12,7 +12,7 @@
       <div class="right-thing">
           <div class="content">
               <t t-foreach="state.messages" t-as="message">
-                  <t t-widget="Message" t-key="message.id" t-props="message" t-on-remove_message="removeMessage"/>
+                  <t t-widget="Message" t-key="message.id" message="message" t-on-remove_message="removeMessage"/>
               </t>
           </div>
       </div>

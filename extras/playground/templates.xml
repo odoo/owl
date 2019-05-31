@@ -24,17 +24,24 @@
         </div>
         <t t-if="state.splitLayout">
           <t t-widget="TabbedEditor"
-             t-props="{js:state.js, css:false, xml: false}"
+             js="state.js"
+             css="false"
+             xml="false"
              t-on-updateCode="updateCode"
              t-att-style="topEditorStyle"/>
           <div class="separator horizontal"/>
           <t t-widget="TabbedEditor" t-keepalive="1"
-             t-props="{js:false, css:state.css, xml: state.xml, resizeable: true}"
+             js="false" css="state.css" xml="state.xml" resizeable="true"
              t-on-updateCode="updateCode"
              t-on-updatePanelHeight="updatePanelHeight"/>
         </t>
         <t t-else="1">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
+          <t t-widget="TabbedEditor"
+          js="state.js"
+          css="state.css"
+          xml="state.xml"
+          display="'js|xml|css'"
+          t-on-updateCode="updateCode"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>

@@ -1,5 +1,6 @@
 /node_modules
 /dist
+
 npm-debug.log
 
 # misc
@@ -14,7 +15,11 @@ yarn-debug.log*
 yarn-error.log*
 
 package-lock.json
+
+#ide's
 .vscode
+.idea
+
 node_modules
 
 # Extras temp file

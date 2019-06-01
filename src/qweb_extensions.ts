@@ -199,6 +199,10 @@ QWeb.addDirective({
  * ```
  *
  * ```js
+ * // we assign utils on top of the function because it will be useful for
+ * // each widgets
+ * let utils = this.utils;
+ *
  * // this is the virtual node representing the parent div
  * let c1 = [], p1 = { key: 1 };
  * var vn1 = h("div", p1, c1);
@@ -232,17 +236,19 @@ QWeb.addDirective({
  * // computation, so it is certainly better to do it only once
  * let props4 = { flag: context["state"].flag };
  *
- * // If we have a widget, currently rendering, but not ready yet, and which was
- * // rendered with different props, we do not want to wait for it to be ready,
- * // then update it. We simply destroy it, and start anew.
- * if (
- *   w4 &&
- *   w4.__owl__.renderPromise &&
- *   !w4.__owl__.isStarted &&
- *   props4 !== w4.__owl__.renderProps
- * ) {
- *   w4.destroy();
- *   w4 = false;
+ * // If we have a widget, currently rendering, but not ready yet, we do not want
+ * // to wait for it to be ready if we can avoid it
+ * if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+ *   // we check if the props are the same.  In that case, we can simply reuse
+ *   // the previous rendering and skip all useless work
+ *   if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+ *     def3 = w4.__owl__.renderPromise;
+ *   } else {
+ *     // if the props are not the same, we destroy the widget and starts anew.
+ *     // this will be faster than waiting for its rendering, then updating it
+ *     w4.destroy();
+ *     w4 = false;
+ *   }
  * }
  *
  * if (!w4) {
@@ -312,7 +318,9 @@ QWeb.addDirective({
  * } else {
  *   // this is the 'update' path of the directive.
  *   // the call to _updateProps is the actual widget update
- *   def3 = w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+ *   // Note that we only update the props if we cannot reuse the previous
+ *   // rendering work (in the case it was rendered with the same props)
+ *   def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
  *   def3 = def3.then(() => {
  *     // if widget was destroyed in the meantime, we do nothing (so, this
  *     // means that the parent's element children list will have a null in
@@ -450,10 +458,16 @@ QWeb.addDirective({
     );
     ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
     ctx.addIf(
-      `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode && props${widgetID} !== w${widgetID}.__owl__.renderProps`
+      `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode`
     );
+    ctx.addIf(
+      `utils.shallowEqual(props${widgetID}, w${widgetID}.__owl__.renderProps)`
+    );
+    ctx.addLine(`def${defID} = w${widgetID}.__owl__.renderPromise;`);
+    ctx.addElse();
     ctx.addLine(`w${widgetID}.destroy();`);
-    ctx.addLine(`w${widgetID} = false`);
+    ctx.addLine(`w${widgetID} = false;`);
+    ctx.closeIf();
     ctx.closeIf();
 
     ctx.addIf(`!w${widgetID}`);
@@ -486,7 +500,7 @@ QWeb.addDirective({
     ctx.addElse();
     // need to update widget
     ctx.addLine(
-      `def${defID} = w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
+      `def${defID} = def${defID} || w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
     );
     let keepAliveCode = "";
     if (keepAlive) {

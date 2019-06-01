@@ -99,6 +99,7 @@ const NODE_HOOKS_PARAMS = {
 interface Utils {
   h: typeof h;
   objectToAttrString(obj: Object): string;
+  shallowEqual(p1: Object, p2: Object): boolean;
   [key: string]: any;
 }
 
@@ -112,6 +113,14 @@ export const UTILS: Utils = {
       }
     }
     return classes.join(" ");
+  },
+  shallowEqual(p1, p2) {
+    for (let k in p1) {
+      if (p1[k] !== p2[k]) {
+        return false;
+      }
+    }
+    return true;
   }
 };
 

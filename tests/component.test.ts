@@ -2084,6 +2084,51 @@ describe("async rendering", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
   });
+
+  test("reuse widget if possible, in some async situation", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <span t-name="ChildA">a<t t-esc="props.val"/></span>
+            <span t-name="ChildB">b<t t-esc="props.val"/></span>
+            <span t-name="Parent">
+                <t t-if="state.flag">
+                    <t t-widget="ChildA" t-props="{val:state.valA}"/>
+                    <t t-widget="ChildB" t-props="{val:state.valB}"/>
+                </t>
+            </span>
+        </templates>
+    `);
+
+    let destroyCount = 0;
+    class ChildA extends Widget {
+        destroy() {
+            destroyCount++;
+            super.destroy();
+        }
+    }
+    class ChildB extends Widget {
+        willStart(): any {
+            return new Promise(function () {});
+        }
+    }
+    class Parent extends Widget {
+      widgets = { ChildA, ChildB };
+      state = { valA: 1, valB: 2, flag: false };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(destroyCount).toBe(0);
+
+    parent.state.flag = true;
+    await nextTick();
+    expect(destroyCount).toBe(0);
+
+    parent.state.valB = 3;
+    await nextTick();
+    expect(destroyCount).toBe(0);
+  });
+
 });
 
 describe("updating environment", () => {

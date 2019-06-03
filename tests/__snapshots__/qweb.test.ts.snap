@@ -1173,7 +1173,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
 }"
 `;
 
-exports[`t-on can bind handlers with empty object (with non empty inner string 1`] = `
+exports[`t-on can bind handlers with empty object (with non empty inner string) 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;

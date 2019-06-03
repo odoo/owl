@@ -183,7 +183,7 @@ QWeb.addDirective({
 //------------------------------------------------------------------------------
 
 const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
-  self: "if (e.target !== vn.elm) {return}",
+  self: "if (e.target !== vn.elm) {return}"
 });
 
 /**
@@ -359,7 +359,7 @@ QWeb.addDirective({
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
 
     // t-on- events and t-transition
-    const events: [string, string[], string][] = [];
+    const events: [string, string[], string, string][] = [];
     let transition: string = "";
     const attributes = (<Element>node).attributes;
     const props: { [key: string]: string } = {};
@@ -368,7 +368,12 @@ QWeb.addDirective({
       const value = attributes[i].textContent!;
       if (name.startsWith("t-on-")) {
         const [eventName, ...mods] = name.slice(5).split(".");
-        events.push([eventName, mods, value]);
+        let extraArgs;
+        let handlerName = value.replace(/\(.*\)/, function(args) {
+          extraArgs = args.slice(1, -1);
+          return "";
+        });
+        events.push([eventName, mods, handlerName, extraArgs]);
       } else if (name === "t-transition") {
         transition = value;
       } else if (!name.startsWith("t-")) {
@@ -462,7 +467,10 @@ QWeb.addDirective({
         updateClassCode = `let cl=w${widgetID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
       }
       let eventsCode = events
-        .map(function([eventName, mods, handlerName]) {
+        .map(function([eventName, mods, handlerName, extraArgs]) {
+          let params = extraArgs
+            ? `owner, ${ctx.formatExpression(extraArgs)}`
+            : "owner";
           let handler;
           if (mods.length > 0) {
             handler = `function (e) {`;
@@ -471,9 +479,9 @@ QWeb.addDirective({
                 return T_WIDGET_MODS_CODE[mod];
               })
               .join("");
-            handler += `owner['${handlerName}'].call(owner, e);}`;
+            handler += `owner['${handlerName}'].call(${params}, e);}`;
           } else {
-            handler = `owner['${handlerName}'].bind(owner)`;
+            handler = `owner['${handlerName}'].bind(${params})`;
           }
           return `vn.elm.addEventListener('${eventName}', ${handler});`;
         })

@@ -10,7 +10,7 @@
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
     "test": "jest",
     "test:watch": "jest --watch",
-    "extras:serve": "python extras/server.py",
+    "extras:serve": "python3 extras/server.py || python extras/server.py",
     "extras": "npm run build && npm run extras:serve",
     "extras:watch": "npm-run-all  --parallel extras:serve \"build:* -- --watch\""
   },

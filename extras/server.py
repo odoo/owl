@@ -1,10 +1,8 @@
-import sys
-import thread
-import webbrowser
-import time
+#!/usr/bin/env python3
 
-import BaseHTTPServer
-import SimpleHTTPServer
+import threading
+import time
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 HOST = '127.0.0.1'
 PORT = 8000
@@ -15,27 +13,34 @@ URL = 'http://{0}:{1}/extras'.format(HOST, PORT)
 # in dist/.  This is useful for the benchmarks and playground applications.
 # With this, we can simply copy the playground folder as is in the gh-page when
 # we want to update the playground.
-class OWLHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class OWLHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/extras/owl.js':
             self.path = '/dist/owl.js'
-        return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        return SimpleHTTPRequestHandler.do_GET(self)
+
+    def end_headers(self):
+        self.disable_cache_headers()
+        SimpleHTTPRequestHandler.end_headers(self)
+
+    def disable_cache_headers(self):
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
 
 
-def start_server():
-    httpd = BaseHTTPServer.HTTPServer((HOST, PORT), OWLHandler)
-    httpd.serve_forever()
-
+OWLHandler.extensions_map['.js'] = 'application/javascript'
 
 if __name__ == "__main__":
     print("Owl Extras")
     print("----------")
     print("Server running on: {}".format(URL))
-    thread.start_new_thread(start_server, ())
-    webbrowser.open_new(URL)
+    httpd = HTTPServer((HOST, PORT), OWLHandler)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
 
     while True:
         try:
             time.sleep(1)
         except KeyboardInterrupt:
-            sys.exit(0)
+            httpd.server_close()
+            quit(0)

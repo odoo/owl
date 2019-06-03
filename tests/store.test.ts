@@ -414,7 +414,7 @@ describe("connecting a component to store", () => {
       `
             <div>
                 <t t-foreach="props.todos" t-as="todo" t-key="todo">
-                    <t t-widget="Todo" t-props="todo"/>
+                    <t t-widget="Todo" msg="todo.msg"/>
                 </t>
             </div>`
     );
@@ -557,7 +557,7 @@ describe("connecting a component to store", () => {
       "TodoList",
       `<div>
             <t t-foreach="props.todos" t-as="todo">
-              <t t-widget="ConnectedTodo" t-props="todo"/>
+              <t t-widget="ConnectedTodo" id="todo.id"/>
             </t>
           </div>`
     );
@@ -618,7 +618,7 @@ describe("connecting a component to store", () => {
       "TodoList",
       `<div>
             <t t-foreach="props.todos" t-as="todo">
-              <t t-widget="ConnectedTodo" t-props="todo"/>
+              <t t-widget="ConnectedTodo" id="todo.id"/>
             </t>
           </div>`
     );
@@ -650,7 +650,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplate(
       "App",
       `<div>
-            <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+            <t t-widget="ConnectedBeer" id="state.beerId"/>
         </div>`
     );
     class App extends Component<any, any, any> {
@@ -728,7 +728,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplate(
       "App",
       `<div>
-              <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+              <t t-widget="ConnectedBeer" id="state.beerId"/>
           </div>`
     );
     class App extends Component<any, any, any> {
@@ -797,7 +797,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplate(
       "App",
       `<div>
-              <t t-widget="ConnectedBeer" t-props="{id: state.beerId}"/>
+              <t t-widget="ConnectedBeer" id="state.beerId"/>
           </div>`
     );
     class App extends Component<any, any, any> {
@@ -876,7 +876,7 @@ describe("connecting a component to store", () => {
       "Parent",
       `
         <div>
-            <t t-widget="Child" t-props="{key: props.current}"/>
+            <t t-widget="Child" key="props.current"/>
         </div>
       `
     );

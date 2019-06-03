@@ -352,19 +352,25 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineOwner = true;
     ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineUtils = true;
-    let props = node.getAttribute("t-props");
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
 
     // t-on- events and t-transition
     const events: [string, string][] = [];
     let transition: string = "";
     const attributes = (<Element>node).attributes;
+    const props: { [key: string]: string } = {};
     for (let i = 0; i < attributes.length; i++) {
       const name = attributes[i].name;
+      const value = attributes[i].textContent!;
       if (name.startsWith("t-on-")) {
-        events.push([name.slice(5), attributes[i].textContent!]);
+        events.push([name.slice(5), value]);
       } else if (name === "t-transition") {
-        transition = attributes[i].textContent!;
+        transition = value;
+      } else if (!name.startsWith("t-")) {
+        if (name !== "class" && name !== "style") {
+          // this is a prop!
+          props[name] = ctx.formatExpression(value);
+        }
       }
     }
 
@@ -372,9 +378,11 @@ QWeb.addDirective({
     if (key) {
       key = ctx.formatExpression(key);
     }
-    if (props) {
-      props = ctx.formatExpression(props);
-    }
+
+    // computing the props string representing the props object
+    let propStr = Object.keys(props)
+      .map(k => k + ":" + props[k])
+      .join(",");
     let dummyID = ctx.generateID();
     let defID = ctx.generateID();
     let widgetID = ctx.generateID();
@@ -456,7 +464,7 @@ QWeb.addDirective({
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`
     );
-    ctx.addLine(`let props${widgetID} = ${props || "{}"};`);
+    ctx.addLine(`let props${widgetID} = {${propStr}};`);
     ctx.addIf(
       `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode`
     );

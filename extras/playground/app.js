@@ -39,26 +39,32 @@ const DEFAULT_HTML = `<!DOCTYPE html>
 </html>
 `;
 
-const APP_PY = `import sys
-import thread
-import webbrowser
+const APP_PY = `#!/usr/bin/env python3
+
+import threading
 import time
 
-import BaseHTTPServer, SimpleHTTPServer
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 def start_server():
-    httpd = BaseHTTPServer.HTTPServer(('127.0.0.1', 3600), SimpleHTTPServer.SimpleHTTPRequestHandler)
+    SimpleHTTPRequestHandler.extensions_map['.js'] = 'application/javascript'
+    httpd = HTTPServer(('0.0.0.0', 3600), SimpleHTTPRequestHandler)
     httpd.serve_forever()
 
-thread.start_new_thread(start_server,())
 url = 'http://127.0.0.1:3600'
-webbrowser.open_new(url)
 
-while True:
-    try:
-        time.sleep(1)
-    except KeyboardInterrupt:
-        sys.exit(0)
+if __name__ == "__main__":
+    print("Owl Application")
+    print("---------------")
+    print("Server running on: {}".format(url))
+    threading.Thread(target=start_server, daemon=True).start()
+
+    while True:
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            httpd.server_close()
+            quit(0)
 `;
 
 /**

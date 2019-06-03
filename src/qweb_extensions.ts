@@ -9,7 +9,7 @@ import { QWeb, UTILS } from "./qweb_core";
  * - t-on
  * - t-ref
  * - t-transition
- * - t-widget/t-props/t-keepalive
+ * - t-widget/t-keepalive
  * - t-mounted
  */
 
@@ -194,7 +194,7 @@ QWeb.addDirective({
  * ```xml
  *   <t t-widget="child"
  *      t-key="'somestring'"
- *      t-props="{flag:state.flag}"
+ *      flag="state.flag"
  *      t-transition="fade"/>
  * ```
  *

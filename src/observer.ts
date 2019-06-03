@@ -108,9 +108,15 @@ export class Observer {
   }
 
   set(target: any, key: number | string, value: any) {
-    this.rev++;
-    this._addProp(target, key, value);
-    target.__owl__.rev++;
+    let alreadyDefined =
+      key in target &&
+      Object.getOwnPropertyDescriptor(target, key)!.configurable === false;
+    if (alreadyDefined) {
+      target[key] = value;
+    } else {
+      this._addProp(target, key, value);
+      this._updateRevNumber(target);
+    }
     this.notifyChange();
   }
 
@@ -145,23 +151,26 @@ export class Observer {
       },
       set(newVal) {
         if (newVal !== value) {
-          self.rev++;
           if (!self.allowMutations) {
             throw new Error(
               `Observed state cannot be changed here! (key: "${key}", val: "${newVal}")`
             );
           }
+          self._updateRevNumber(obj);
           value = newVal;
           self.observe(newVal, obj);
-          obj.__owl__.rev!++;
-          let parent = obj;
-          do {
-            parent.__owl__.deepRev++;
-          } while ((parent = parent.__owl__.parent) && parent !== obj);
           self.notifyChange();
         }
       }
     });
     this.observe(value, obj);
+  }
+  _updateRevNumber(target: any) {
+    this.rev++;
+    target.__owl__.rev!++;
+    let parent = target;
+    do {
+      parent.__owl__.deepRev++;
+    } while ((parent = parent.__owl__.parent) && parent !== target);
   }
 }

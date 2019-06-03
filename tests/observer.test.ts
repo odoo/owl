@@ -230,6 +230,26 @@ describe("observer", () => {
     expect(obj2.__owl__.rev).toBe(3);
   });
 
+  test("can set a property more than once", () => {
+    const observer = new Observer();
+    const obj: any = {};
+
+    observer.observe(obj);
+    expect(obj.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
+    expect(obj.__owl__.deepRev).toBe(1);
+
+    observer.set(obj, "aku", "always finds annoying problems");
+    expect(observer.rev).toBe(2);
+    expect(obj.__owl__.rev).toBe(2);
+    expect(obj.__owl__.deepRev).toBe(2);
+
+    observer.set(obj, "aku", "always finds good problems");
+    expect(observer.rev).toBe(3);
+    expect(obj.__owl__.rev).toBe(3);
+    expect(obj.__owl__.deepRev).toBe(3);
+  });
+
   test("properly handle swapping elements", () => {
     const observer = new Observer();
     const obj: any = { a: { arr: [] }, b: 1 };

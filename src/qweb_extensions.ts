@@ -182,6 +182,10 @@ QWeb.addDirective({
 // t-widget
 //------------------------------------------------------------------------------
 
+const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
+  self: "if (e.target !== vn.elm) {return}",
+});
+
 /**
  * The t-widget directive is certainly a complicated and hard to maintain piece
  * of code.  To help you, fellow developer, if you have to maintain it, I offer
@@ -355,7 +359,7 @@ QWeb.addDirective({
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
 
     // t-on- events and t-transition
-    const events: [string, string][] = [];
+    const events: [string, string[], string][] = [];
     let transition: string = "";
     const attributes = (<Element>node).attributes;
     const props: { [key: string]: string } = {};
@@ -363,7 +367,8 @@ QWeb.addDirective({
       const name = attributes[i].name;
       const value = attributes[i].textContent!;
       if (name.startsWith("t-on-")) {
-        events.push([name.slice(5), value]);
+        const [eventName, ...mods] = name.slice(5).split(".");
+        events.push([eventName, mods, value]);
       } else if (name === "t-transition") {
         transition = value;
       } else if (!name.startsWith("t-")) {
@@ -457,8 +462,20 @@ QWeb.addDirective({
         updateClassCode = `let cl=w${widgetID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
       }
       let eventsCode = events
-        .map(function([eventName, handler]) {
-          return `vn.elm.addEventListener('${eventName}', owner['${handler}'].bind(owner));`;
+        .map(function([eventName, mods, handlerName]) {
+          let handler;
+          if (mods.length > 0) {
+            handler = `function (e) {`;
+            handler += mods
+              .map(function(mod) {
+                return T_WIDGET_MODS_CODE[mod];
+              })
+              .join("");
+            handler += `owner['${handlerName}'].call(owner, e);}`;
+          } else {
+            handler = `owner['${handlerName}'].bind(owner)`;
+          }
+          return `vn.elm.addEventListener('${eventName}', ${handler});`;
         })
         .join("");
       const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);

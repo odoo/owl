@@ -1476,6 +1476,145 @@ describe("other directives with t-widget", () => {
     expect(widget.n).toBe(1);
   });
 
+  test("t-on with stop and/or prevent modifiers", async () => {
+    expect.assertions(7);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <t t-widget="child"
+           t-on-ev-1.stop="onEv1"
+           t-on-ev-2.prevent="onEv2"
+           t-on-ev-3.stop.prevent="onEv3"/>
+        </div>
+      </templates>
+    `);
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv1(ev) {
+        expect(ev.defaultPrevented).toBe(false);
+        expect(ev.cancelBubble).toBe(true);
+      }
+      onEv2(ev) {
+        expect(ev.defaultPrevented).toBe(true);
+        expect(ev.cancelBubble).toBe(false);
+      }
+      onEv3(ev) {
+        expect(ev.defaultPrevented).toBe(true);
+        expect(ev.cancelBubble).toBe(true);
+      }
+    }
+    class Child extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    const child = children(widget)[0];
+    child.trigger("ev-1");
+    child.trigger("ev-2");
+    child.trigger("ev-3");
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on with self modifier", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <t t-widget="child" t-on-ev-1="onEv1" t-on-ev-2.self="onEv2"/>
+        </div>
+        <div t-name="Child"><t t-widget="child"/></div>
+      </templates>
+    `);
+    const steps: string[] = [];
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv1(ev) {
+        steps.push("onEv1");
+      }
+      onEv2(ev) {
+        steps.push("onEv2");
+      }
+    }
+    class Child extends Widget {
+      widgets = { child: GrandChild };
+    }
+    class GrandChild extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    const child = children(widget)[0];
+    const grandChild = children(child)[0];
+    child.trigger("ev-1");
+    child.trigger("ev-2");
+    expect(steps).toEqual(["onEv1", "onEv2"]);
+    grandChild.trigger("ev-1");
+    grandChild.trigger("ev-2");
+    expect(steps).toEqual(["onEv1", "onEv2", "onEv1"]);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on with self and prevent modifiers (order matters)", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <t t-widget="child" t-on-ev.self.prevent="onEv"/>
+        </div>
+        <div t-name="Child"><t t-widget="child"/></div>
+      </templates>
+    `);
+    const steps: boolean[] = [];
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv() {}
+    }
+    class Child extends Widget {
+      widgets = { child: GrandChild };
+    }
+    class GrandChild extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    (<HTMLElement>fixture).addEventListener("ev", function(e) {
+      steps.push(e.defaultPrevented);
+    });
+
+    const child = children(widget)[0];
+    const grandChild = children(child)[0];
+    child.trigger("ev");
+    grandChild.trigger("ev");
+    expect(steps).toEqual([true, false]);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on with prevent and self modifiers (order matters)", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <t t-widget="child" t-on-ev.prevent.self="onEv"/>
+        </div>
+        <div t-name="Child"><t t-widget="child"/></div>
+      </templates>
+    `);
+    const steps: boolean[] = [];
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv() {}
+    }
+    class Child extends Widget {
+      widgets = { child: GrandChild };
+    }
+    class GrandChild extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    (<HTMLElement>fixture).addEventListener("ev", function(e) {
+      steps.push(e.defaultPrevented);
+    });
+
+    const child = children(widget)[0];
+    const grandChild = children(child)[0];
+    child.trigger("ev");
+    grandChild.trigger("ev");
+    expect(steps).toEqual([true, true]);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
   test("t-if works with t-widget", async () => {
     env.qweb.addTemplate(
       "ParentWidget",
@@ -2065,15 +2204,15 @@ describe("async rendering", () => {
 
     let destroyCount = 0;
     class ChildA extends Widget {
-        destroy() {
-            destroyCount++;
-            super.destroy();
-        }
+      destroy() {
+        destroyCount++;
+        super.destroy();
+      }
     }
     class ChildB extends Widget {
-        willStart(): any {
-            return new Promise(function () {});
-        }
+      willStart(): any {
+        return new Promise(function() {});
+      }
     }
     class Parent extends Widget {
       widgets = { ChildA, ChildB };
@@ -2092,7 +2231,6 @@ describe("async rendering", () => {
     await nextTick();
     expect(destroyCount).toBe(0);
   });
-
 });
 
 describe("updating environment", () => {

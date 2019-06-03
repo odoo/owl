@@ -1476,6 +1476,94 @@ describe("other directives with t-widget", () => {
     expect(widget.n).toBe(1);
   });
 
+  test("t-on with handler bound to argument", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget"><t t-widget="child" t-on-ev="onEv(3)"/></div>
+      </templates>
+    `);
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv(n, ev) {
+        expect(n).toBe(3);
+        expect(ev.detail).toBe(43);
+      }
+    }
+    class Child extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    let child = children(widget)[0];
+    child.trigger("ev", 43);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on with handler bound to object", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget"><t t-widget="child" t-on-ev="onEv({val: 3})"/></div>
+      </templates>
+    `);
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv(o, ev) {
+        expect(o).toEqual({ val: 3 });
+        expect(ev.detail).toBe(43);
+      }
+    }
+    class Child extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    let child = children(widget)[0];
+    child.trigger("ev", 43);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on with handler bound to empty object", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget"><t t-widget="child" t-on-ev="onEv({})"/></div>
+      </templates>
+    `);
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv(o, ev) {
+        expect(o).toEqual({});
+        expect(ev.detail).toBe(43);
+      }
+    }
+    class Child extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    let child = children(widget)[0];
+    child.trigger("ev", 43);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on with handler bound to empty object (with non empty inner string)", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget"><t t-widget="child" t-on-ev="onEv({  })"/></div>
+      </templates>
+    `);
+    class ParentWidget extends Widget {
+      widgets = { child: Child };
+      onEv(o, ev) {
+        expect(o).toEqual({});
+        expect(ev.detail).toBe(43);
+      }
+    }
+    class Child extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    let child = children(widget)[0];
+    child.trigger("ev", 43);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
   test("t-on with stop and/or prevent modifiers", async () => {
     expect.assertions(7);
     env.qweb.addTemplates(`

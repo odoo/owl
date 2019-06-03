@@ -896,7 +896,7 @@ describe("t-on", () => {
     (<HTMLElement>node).click();
   });
 
-  test("can bind handlers with empty object (with non empty inner string", () => {
+  test("can bind handlers with empty object (with non empty inner string)", () => {
     expect.assertions(2);
     qweb.addTemplate(
       "test",

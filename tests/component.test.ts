@@ -2054,8 +2054,8 @@ describe("async rendering", () => {
             <span t-name="ChildB">b<t t-esc="props.val"/></span>
             <span t-name="Parent">
                 <t t-if="state.flag">
-                    <t t-widget="ChildA" t-props="{val:state.valA}"/>
-                    <t t-widget="ChildB" t-props="{val:state.valB}"/>
+                    <t t-widget="ChildA" val="state.valA"/>
+                    <t t-widget="ChildB" val="state.valB"/>
                 </t>
             </span>
         </templates>

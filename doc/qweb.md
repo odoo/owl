@@ -18,7 +18,7 @@
 - [JS/OWL Specific Extensions](#jsowl-specific-extensions)
 
   - [`t-on` directive](#t-on-directive)
-  - [Component: `t-widget`, `t-props`](#component-t-widget-t-props)
+  - [Component: `t-widget`](#component-t-widget)
   - [`t-ref` directive](#t-ref-directive)
   - [`t-key` directive](#t-key-directive)
   - [`t-transition` directive](#t-transition-directive)
@@ -422,15 +422,15 @@ The `t-on` directive also allows to prebind some arguments. For example,
 Here, `expr` is a valid Owl expression, so it could be `true` or some variable
 from the rendering context.
 
-### Component: `t-widget`, `t-props`
+### Component: `t-widget`
 
-The `t-widget` and the `t-props` directives are the key to a declarative component
-system. They allow a template to define where and how a sub widget is created
+The `t-widget` directive is the key to a declarative component
+system. It allows a template to define where and how a sub widget is created
 and/or updated. For example:
 
 ```xml
 <div t-name="ParentWidget">
-    <t t-widget="ChildWidget" t-props="{count: state.val}"/>
+    <t t-widget="ChildWidget" count="state.val"/>
 </div>
 ```
 
@@ -447,10 +447,13 @@ actual component class in the special `widgets` key, or the class registered in
 QWeb's global registry (see `register` function of QWeb). It first looks inside
 the local `widgets` key, then fallbacks on the global registry.
 
-In this example, the child widget will receive the object `{count: 4}` in its
+*Props*: In this example, the child widget will receive the object `{count: 4}` in its
 constructor. This will be assigned to the `props` variable, which can be accessed
 on the widget (and also, in the template). Whenever the state is updated, then
 the subwidget will also be updated automatically.
+
+Note that there are some restrictions on prop names: `class`, `style` and any
+string which starts with `t-` are not allowed.
 
 The `t-widget` directive also accepts dynamic values with string interpolation
 (like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) directive):
@@ -505,7 +508,7 @@ variable between `willPatch` and `patched`.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
 (like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) and
-[`t-widget-`](#component-t-widget-t-props) directives). For example, if we have
+[`t-widget-`](#component-t-widget) directives). For example, if we have
 `id` set to 44 in the rendering context,
 
 ```xml

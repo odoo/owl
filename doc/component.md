@@ -79,7 +79,7 @@ widgets:
 ```xml
 <div t-name="ParentWidget">
   <span>some text</span>
-  <t t-widget="MyWidget" t-props="{info: 13}"/>
+  <t t-widget="MyWidget" info="13"/>
 </div>
 ```
 
@@ -91,8 +91,11 @@ class ParentWidget extends owl.Component {
 ```
 
 In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
-after the span. See the [QWeb](qweb.md) documentation for more information on the
-`t-widget` directive.
+after the span. The `info` key will be added to the subwidget's props. Each
+props is a string which represents a javascript (QWeb) expression, so it is
+dynamic. If it is necessary to give a string, this can be done by quoting it:
+`someString="'somevalue'"`. See the
+[QWeb](qweb.md) documentation for more information on the `t-widget` directive.
 
 Note that the rendering context for the template is the widget itself. This means
 that the template can access `state`, `props`, `env`, or any methods defined in the widget.
@@ -103,7 +106,7 @@ root widget element.
 
 ```xml
 <div t-name="ParentWidget">
-  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" t-props="{info: 13}"/>
+  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" info="13"/>
 </div>
 ```
 

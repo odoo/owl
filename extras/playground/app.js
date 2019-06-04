@@ -287,10 +287,11 @@ class TabbedEditor extends owl.Component {
         this.sessions[tab].setUndoManager(new ace.UndoManager());
       }
     }
+    this.editor = null;
   }
 
   mounted() {
-    this.editor = ace.edit(this.refs.editor);
+    this.editor = this.editor || ace.edit(this.refs.editor);
 
     this.editor.setValue(this.props[this.state.currentTab], -1);
     this.editor.setFontSize("12px");
@@ -315,11 +316,6 @@ class TabbedEditor extends owl.Component {
     session.setValue(this.props[this.state.currentTab], -1);
     this.editor.setSession(session);
     this.editor.resize();
-  }
-
-  willUnmount() {
-    this.editor.destroy();
-    delete this.editor;
   }
 
   setTab(tab) {

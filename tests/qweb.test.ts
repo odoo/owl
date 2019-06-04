@@ -84,23 +84,6 @@ describe("error handling", () => {
     ).toThrow("Missing event name with t-on directive");
   });
 
-  test("error when compiled code is invalid", () => {
-    const consoleWarn = console.warn;
-    const consoleGroupCollapsed = console.groupCollapsed;
-    console.warn = jest.fn();
-    console.groupCollapsed = jest.fn();
-    qweb.addTemplate(
-      "templatename",
-      `<div t-att-hey="}/^function invalid{{>'"></div>`
-    );
-    expect(() => qweb.render("templatename")).toThrow(
-      "Invalid generated code while compiling template 'templatename': Unexpected token }"
-    );
-    expect(console.warn).toBeCalledTimes(1);
-    console.warn = consoleWarn;
-    console.groupCollapsed = consoleGroupCollapsed;
-  });
-
   test("error when unknown directive", () => {
     qweb.addTemplate(
       "templatename",
@@ -530,7 +513,10 @@ describe("attributes", () => {
   });
 
   test("class and t-attf-class with ternary operation", () => {
-    qweb.addTemplate("test", `<div class="hello" t-attf-class="{{value ? 'world' : ''}}"/>`);
+    qweb.addTemplate(
+      "test",
+      `<div class="hello" t-attf-class="{{value ? 'world' : ''}}"/>`
+    );
     const result = renderToString(qweb, "test", { value: true });
     expect(result).toBe(`<div class="hello world"></div>`);
   });

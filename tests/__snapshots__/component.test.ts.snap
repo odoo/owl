@@ -54,7 +54,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
     let _2_index = c1.length;
     c1.push(null);
     let def3;
-    const _5 = {a: context['state'].a,b: context['state'].b};
+    const _5 = {a:context['state'].a,b:context['state'].b};
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
@@ -373,7 +373,7 @@ exports[`other directives with t-widget t-on with handler bound to object 1`] = 
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {val: 3}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {val:3}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});

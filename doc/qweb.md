@@ -175,9 +175,15 @@ root nodes.
 
 ### Expression evaluation
 
-It is useful to explain the various rules that applies on QWeb expressions. These
-expressions are strings that will be converted to a javascript expression at
-compile time.
+QWeb expressions are strings that will be processed at compile time. Each variable in
+the javascript expression will be replaced by a lookup in the context (so, the
+widget).  For example, `a + b.c(d)` will be converted into:
+
+```js
+context['a'] + context['b'].c(context['d'])
+```
+
+It is useful to explain the various rules that applies on these expressions:
 
 1. it should be a simple expression which returns a value. It cannot be a statement.
 
@@ -191,10 +197,10 @@ compile time.
    <div><p t-if="console.log(1)">NOT valid</p></div>
    ```
 
-2. it can use anything in the rendering context:
+2. it can use anything in the rendering context (typically, the component):
 
    ```xml
-   <p t-if="user.birthday == today()">Happy bithday!</p>
+   <p t-if="user.birthday === today()">Happy bithday!</p>
    ```
 
    is valid, and will read the `user` object from the context, and call the

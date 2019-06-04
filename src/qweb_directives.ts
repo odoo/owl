@@ -1,4 +1,5 @@
-import { Context, QWeb, UTILS, QWebExprVar } from "./qweb_core";
+import { Context, QWeb, UTILS } from "./qweb_core";
+import { QWebExprVar } from "./qweb_expressions";
 
 /**
  * Owl QWeb Directives

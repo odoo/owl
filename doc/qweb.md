@@ -3,44 +3,76 @@
 ## Content
 
 - [Overview](#overview)
+- [Directives](#directives)
 - [QWeb Engine](#qweb-engine)
-- [QWeb Specification](#qweb-specification)
-
-  - [Static html nodes](#static-html-nodes)
-  - [`t-esc` directive](#t-esc-directive)
-  - [`t-raw` directive](#t-raw-directive)
-  - [`t-set` directive](#t-set-directive)
-  - [`t-if` directive](#t-if-directive)
-  - [Expression evaluation](#expression-evaluation)
-  - [Dynamic attributes (`t-att` and `t-attf` directives)](#dynamic-attributes-t-att-and-t-attf-directives)
-  - [`t-call` directive (sub templates)](#t-call-directive-sub-templates)
-
-- [JS/OWL Specific Extensions](#jsowl-specific-extensions)
-
-  - [`t-on` directive](#t-on-directive)
-  - [Component: `t-widget`](#component-t-widget)
-  - [`t-ref` directive](#t-ref-directive)
-  - [`t-key` directive](#t-key-directive)
-  - [`t-transition` directive](#t-transition-directive)
-  - [`t-mounted` directive](#t-mounted-directive)
-  - [Debugging (`t-debug` and `t-log`)](#debugging-t-debug-and-t-log)
+- [Reference](#qweb-specification)
   - [White spaces](#white-spaces)
   - [Root nodes](#root-nodes)
+  - [Expression evaluation](#expression-evaluation)
+  - [Static html nodes](#static-html-nodes)
+  - [Outputting data](#outputting-data)
+  - [Setting Variables](#setting-variables)
+  - [Conditionals](#conditionals)
+  - [Dynamic attributes](#dynamic-attributes)
+  - [Loops](#loops)
+  - [Rendering Sub Templates](#rendering-sub-templates)
+  - [Debugging](#debugging)
 
 ## Overview
 
 [QWeb](https://www.odoo.com/documentation/12.0/reference/qweb.html) is the primary templating engine used by Odoo. It is based on the XML format, and used
-mostly to generate html. In OWL, QWeb templates are compiled into functions that
-generate a virtual dom representation of the html.
+mostly to generate HTML. In OWL, QWeb templates are compiled into functions that
+generate a virtual dom representation of the HTML.
 
 Template directives are specified as XML attributes prefixed with `t-`, for instance `t-if` for conditionals, with elements and other attributes being rendered directly.
 
 To avoid element rendering, a placeholder element `<t>` is also available, which executes its directive but doesn’t generate any output in and of itself.
 
-The QWeb implementation in the OWL project is slightly different. It compiles
-templates into functions that output a virtual DOM instead of a string. This is
-necessary for the component system. In addition, it has a few extra directives
-(see [OWL Specific Extensions](#owlspecificextensions))
+```xml
+<div>
+    <span t-if="somecondition">Some string</span>
+    <ul t-else="1">
+        <li t-foreach="messages" t-as="message">
+            <t t-esc="message">
+        </li>
+    </ul>
+</div>
+```
+
+The QWeb class in the OWL project is an implementation of that specification
+with a few interesting points:
+
+- it compiles templates into functions that output a virtual DOM instead of a
+  string. This is necessary for the component system.
+- it has a few extra directives: `t-widget`, `t-on`, ...
+
+## Directives
+
+We present here a list of all standard QWeb directives:
+
+| Name                           | Description                                                  |
+| ------------------------------ | ------------------------------------------------------------ |
+| `t-esc`                        | [Outputting safely a value](#outputting-data)                |
+| `t-raw`                        | [Outputting value, without escaping](#outputting-data)       |
+| `t-set`, `t-value`             | [Setting variables](#setting-variables)                      |
+| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                     |
+| `t-foreach`, `t-as`            | [Loops](#loops)                                              |
+| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                    |
+| `t-call`                       | [Rendering sub templates](#rendering-sub-templates)          |
+| `t-debug`, `t-log`             | [Debugging](#debugging)                                      |
+| `t-name`                       | [Defining a template (not really a directive)](#qweb-engine) |
+
+The component system in Owl requires additional directives, to express various
+needs. Here is a list of all Owl specific directives:
+
+| Name                      | Description                                                                             |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| `t-widget`, `t-keepalive` | [Defining a sub component](component.md#composition)                                    |
+| `t-ref`                   | [Setting a reference to a dom node or a sub component](component.md#keeping-references) |
+| `t-key`                   | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive)     |
+| `t-on-*`                  | [Event handling](component.md#event-handling)                                           |
+| `t-transition`            | [Defining an animation](animations.md#css-transitions)                                  |
+| `t-mounted`               | [Callback when a node or component is mounted](#component.md#t-mounted-directive)       |
 
 ## QWeb Engine
 
@@ -101,12 +133,92 @@ It's API is quite simple:
   qweb.addTemplate("ParentWidget", "<div><t t-widget='Dialog'/></div>");
   ```
 
-## QWeb Specification
+## Reference
 
 We define in this section the specification of how `QWeb` templates should be
-rendered.
+rendered. Note that we only document here the standard QWeb specification. Owl
+specific extensions are documented in various other parts of the documentation.
 
-### Static html nodes
+### White spaces
+
+White spaces in a templates are handled in a special way:
+
+- consecutive whitespaces are always condensed to a single whitespace
+- if a whitespace-only text node contains a linebreak, it is ignored
+- the previous rules do not apply if we are in a `<pre>` tag
+
+### Root nodes
+
+For many reasons, Owl QWeb templates should have a single root node. More
+precisely, the result of a template rendering should have a single root node:
+
+```xml
+<!–– not ok: two root nodes ––>
+<t>
+    <div>foo</div>
+    <div>bar</div>
+</t>
+
+<!–– ok: result has one single root node ––>
+<t>
+    <div t-if="someCondition">foo</div>
+    <span t-else="1">bar</span>
+</t>
+```
+
+Extra root nodes will actually be ignored (even though they will be rendered
+in memory).
+
+Note: this does not apply to subtemplates (see the `t-call` directive). In that
+case, they will be inlined in the main template, and can actually have many
+root nodes.
+
+### Expression evaluation
+
+It is useful to explain the various rules that applies on QWeb expressions. These
+expressions are strings that will be converted to a javascript expression at
+compile time.
+
+1. it should be a simple expression which returns a value. It cannot be a statement.
+
+   ```xml
+   <div><p t-if="1 + 2 === 3">ok</p></div>
+   ```
+
+   is valid, but the following is not valid:
+
+   ```xml
+   <div><p t-if="console.log(1)">NOT valid</p></div>
+   ```
+
+2. it can use anything in the rendering context:
+
+   ```xml
+   <p t-if="user.birthday == today()">Happy bithday!</p>
+   ```
+
+   is valid, and will read the `user` object from the context, and call the
+   `today` function.
+
+3. it can use a few special operators to avoid using symbols such as `<`, `>`,
+   `&` or `|`. This is useful to make sure that we still write valid XML.
+
+   | Word  | will be replaced by |
+   | ----- | ------------------- |
+   | `and` | `&&`                |
+   | `or`  | `\|\|`              |
+   | `gt`  | `>`                 |
+   | `gte` | `>=`                |
+   | `lt`  | `<`                 |
+   | `lte` | `<=`                |
+
+   So, one can write this:
+
+   ```xml
+   <div><p t-if="10 + 2 gt 5">ok</p></div>
+   ```
+
+### Static Html Nodes
 
 Normal, regular html nodes are rendered into themselves:
 
@@ -114,7 +226,7 @@ Normal, regular html nodes are rendered into themselves:
   <div>hello</div> <!–– rendered as itself ––>
 ```
 
-### `t-esc` directive
+### Outputting Data
 
 The `t-esc` directive is necessary whenever you want to add a dynamic text
 expression in a template. The text is escaped to avoid security issues.
@@ -129,14 +241,12 @@ rendered with the value `value` set to `42` in the rendering context yields:
 <p>42</p>
 ```
 
-### `t-raw` directive
-
 The `t-raw` directive is almost the same as `t-esc`, but without the escaping.
 This is mostly useful to inject a raw html string somewhere. Obviously, this
 is unsafe to do in general, and should only be used for strings known to be safe.
 
 ```xml
-<p><t t-esc="value"/></p>
+<p><t t-raw="value"/></p>
 ```
 
 rendered with the value `value` set to `<span>foo</span>` in the rendering context yields:
@@ -145,7 +255,7 @@ rendered with the value `value` set to `<span>foo</span>` in the rendering conte
 <p><span>foo</span></p>
 ```
 
-### `t-set` directive
+### Setting Variables
 
 QWeb allows creating variables from within the template, to memoize a computation (to use it multiple times), give a piece of data a clearer name, ...
 
@@ -177,7 +287,7 @@ This is done via the `t-set` directive, which takes the name of the variable to 
 The `t-set` directive acts like a regular variable in most programming language.
 It is lexically scoped (inner nodes are sub scopes), can be shadowed, ...
 
-### `t-if` directive
+### Conditionals
 
 The `t-if` directive is useful to conditionally render something. It evaluates
 the expression given as attribute value, and then acts accordingly.
@@ -227,52 +337,7 @@ Extra conditional branching directives `t-elif` and `t-else` are also available:
 </div>
 ```
 
-### Expression evaluation
-
-It is useful to explain the various rules that applies on QWeb expressions. These
-expressions are strings that will be converted to a javascript expression at
-compile time.
-
-1. it should be a simple expression which returns a value. It cannot be a statement.
-
-   ```xml
-   <div><p t-if="1 + 2 === 3">ok</p></div>
-   ```
-
-   is valid, but the following is not valid:
-
-   ```xml
-   <div><p t-if="console.log(1)">NOT valid</p></div>
-   ```
-
-2. it can use anything in the rendering context:
-
-   ```xml
-   <p t-if="user.birthday == today()">Happy bithday!</p>
-   ```
-
-   is valid, and will read the `user` object from the context, and call the
-   `today` function.
-
-3. it can use a few special operators to avoid using symbols such as `<`, `>`,
-   `&` or `|`. This is useful to make sure that we still write valid XML.
-
-   | Word  | will be replaced by |
-   | ----- | ------------------- |
-   | `and` | `&&`                |
-   | `or`  | `\|\|`              |
-   | `gt`  | `>`                 |
-   | `gte` | `>=`                |
-   | `lt`  | `<`                 |
-   | `lte` | `<=`                |
-
-   So, one can write this:
-
-   ```xml
-   <div><p t-if="10 + 2 gt 5">ok</p></div>
-   ```
-
-### Dynamic attributes (`t-att` and `t-attf` directives)
+### Dynamic attributes
 
 One can use the `t-att-` directive to add dynamic attributes. Its main use is to
 evaluate an expression (at rendering time) and bind an attribute to its result:
@@ -304,7 +369,75 @@ For historical reason, there is an alternate form of string interpolation:
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
 
-### `t-call` directive (sub templates)
+### Loops
+
+QWeb has an iteration directive `t-foreach` which take an expression returning the
+collection to iterate on, and a second parameter `t-as` providing the name to use
+for the current item of the iteration:
+
+```xml
+<t t-foreach="[1, 2, 3]" t-as="i">
+    <p><t t-esc="i"/></p>
+</t>
+```
+
+will be rendered as:
+
+```xml
+<p>1</p>
+<p>2</p>
+<p>3</p>
+```
+
+Like conditions, `t-foreach` applies to the element bearing the directive’s attribute, and
+
+```xml
+<p t-foreach="[1, 2, 3]" t-as="i">
+    <t t-esc="i"/>
+</p>
+```
+
+is equivalent to the previous example.
+
+`t-foreach` can iterate on an array (the current item will be the current value),
+an object (the current item will be the current key) or an integer (equivalent
+to iterating on an array between 0 inclusive and the provided integer exclusive).
+
+In addition to the name passed via t-as, `t-foreach` provides a few other
+variables for various data points (note: `$as` will be replaced by the name
+passed to `t-as`):
+
+- `$as_value`: the current iteration value, identical to `$as` for lists and
+  integers, but for objects, it provides the value (where `$as` provides the key)
+- `$as_index`: the current iteration index (the first item of the iteration has index 0)
+- `$as_first`: whether the current item is the first of the iteration
+  (equivalent to `$as_index == 0`)
+- `$as_last`: whether the current item is the last of the iteration
+  (equivalent to `$as_index + 1 == $as_size`), requires the iteratee’s size be
+  available
+- `$as_parity` (deprecated): either "even" or "odd", the parity of the current
+  iteration round
+
+These extra variables provided and all new variables created into the `t-foreach`
+are only available in the scope of the `t-foreach`. If the variable exists outside
+the context of the `t-foreach`, the value is copied at the end of the foreach
+into the global context.
+
+```xml
+<t t-set="existing_variable" t-value="False"/>
+<!-- existing_variable now False -->
+
+<p t-foreach="[1, 2, 3]" t-as="i">
+    <t t-set="existing_variable" t-value="True"/>
+    <t t-set="new_variable" t-value="True"/>
+    <!-- existing_variable and new_variable now True -->
+</p>
+
+<!-- existing_variable always True -->
+<!-- new_variable undefined -->
+```
+
+### Rendering Sub Templates
 
 QWeb templates can be used for top level rendering, but they can also be used
 from within another template (to avoid duplication or give names to parts of
@@ -352,299 +485,7 @@ will result in :
 </div>
 ```
 
-## JS/OWL Specific Extensions
-
-### `t-on` directive
-
-In a component's template, it is useful to be able to register handlers on some
-elements to some specific events. This is what makes a template _alive_. There
-are four different use cases.
-
-1. Register an event handler on a DOM node (_pure_ DOM event)
-2. Register an event handler on a component (_pure_ DOM event)
-3. Register an event handler on a DOM node (_business_ DOM event)
-4. Register an event handler on a component (_business_ DOM event)
-
-
-A _pure_ DOM event is directly triggered by a user interaction (e.g. a `click`).
-
-```xml
-<button t-on-click="someMethod">Do something</button>
-```
-
-This will be roughly translated in javascript like this:
-
-```js
-button.addEventListener("click", widget.someMethod.bind(widget));
-```
-
-The suffix (`click` in this example) is simply the name of the actual DOM
-event.
-
-
-A _business_ DOM event is triggered by a call to `trigger` on a component.
-
-```xml
-<t t-widget="MyWidget" t-on-menu-loaded="someMethod"/>
-```
-
-```js
- class MyWidget {
-     someWhere() {
-         const payload = ...;
-         this.trigger('menu-loaded', payload);
-     }
- }
- ```
-The call to `trigger` generates a [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
-of type `menu-loaded` and dispatches it on the component's DOM element
-(`this.el`). The event bubbles and is cancelable. The parent widget listening
-to event `menu-loaded` will receive the payload in its `someMethod` handler
-(in the `detail` property of the event), whenever the event is triggered.
-
-```js
- class ParentWidget {
-     someMethod(ev) {
-         const payload = ev.detail;
-         ...
-     }
- }
- ```
-
-By convention, we use KebabCase for the name of _business_ events.
-
-
-In order to remove the DOM event details from the event handlers (like calls to
-`event.preventDefault`) and let them focus on data logic, _modifiers_ can be
-specified as additional suffixes of the `t-on` directive.
-
-| Modifier   | Description                                                       |
-| ---------- | ----------------------------------------------------------------- |
-| `.stop`    | calls `event.stopPropagation()` before calling the method         |
-| `.prevent` | calls `event.preventDefault()` before calling the method          |
-| `.self`    | calls the method only if the `event.target` is the element itself |
-
-```xml
-<button t-on-click.stop="someMethod">Do something</button>
-```
-
-Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
-the order may matter. For instance `t-on-click.prevent.self` will prevent all
-clicks while `t-on-click.self.prevent` will only prevent clicks on the element
-itself.
-
-The `t-on` directive also allows to prebind some arguments. For example,
-
-```xml
-<button t-on-click="someMethod(expr)">Do something</button>
-```
-
-Here, `expr` is a valid Owl expression, so it could be `true` or some variable
-from the rendering context.
-
-### Component: `t-widget`
-
-The `t-widget` directive is the key to a declarative component
-system. It allows a template to define where and how a sub widget is created
-and/or updated. For example:
-
-```xml
-<div t-name="ParentWidget">
-    <t t-widget="ChildWidget" count="state.val"/>
-</div>
-```
-
-```js
-class ParentWidget {
-  widgets = { ChildWidget };
-  state = { val: 4 };
-}
-```
-
-Whenever the template is rendered, it will automatically create the subwidget
-`ChildWidget` at the correct place. It needs to find the reference to the
-actual component class in the special `widgets` key, or the class registered in
-QWeb's global registry (see `register` function of QWeb). It first looks inside
-the local `widgets` key, then fallbacks on the global registry.
-
-*Props*: In this example, the child widget will receive the object `{count: 4}` in its
-constructor. This will be assigned to the `props` variable, which can be accessed
-on the widget (and also, in the template). Whenever the state is updated, then
-the subwidget will also be updated automatically.
-
-Note that there are some restrictions on prop names: `class`, `style` and any
-string which starts with `t-` are not allowed.
-
-The `t-widget` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) directive):
-
-```xml
-<div t-name="ParentWidget">
-    <t t-widget="ChildWidget#{id}"/>
-</div>
-```
-
-```js
-class ParentWidget {
-  widgets = { ChildWidget1, ChildWidget2 };
-  state = { id: 1 };
-}
-```
-
-Similarly to `t-attf-`, there is an alternate form of string interpolation:
-
-```xml
-<div t-name="ParentWidget">
-    <t t-widget="ChildWidget{{id}}"/>
-</div>
-```
-
-### `t-ref` directive
-
-The `t-ref` directive helps a component keep reference to some inside part of it.
-Like the `t-on` directive, it can work either on a DOM node, or on a component:
-
-```xml
-<div>
-    <div t-ref="someDiv"/>
-    <t t-widget="SubWidget" t-ref="someWidget"/>
-</div>
-```
-
-In this example, the widget will be able to access the `div` and the component
-inside the special `refs` variable:
-
-```js
-this.refs.someDiv;
-this.refs.someWidget;
-```
-
-This is useful for various usecases: for example, integrating with an external
-library that needs to render itself inside an actual DOM node. Or for calling
-some method on a sub widget.
-
-Note: if used on a component, the reference will be set in the `refs`
-variable between `willPatch` and `patched`.
-
-The `t-ref` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) and
-[`t-widget-`](#component-t-widget) directives). For example, if we have
-`id` set to 44 in the rendering context,
-
-```xml
-<div t-ref="widget_#{id}"/>
-```
-
-```js
-this.refs.widget_44;
-```
-
-Similarly to `t-attf-` and `t-widget`, there is an alternate form of string
-interpolation:
-
-```xml
-<div t-ref="widget_{{id}}"/>
-```
-
-### `t-key` directive
-
-Even though Owl tries to be as declarative as possible, some DOM state is still
-locked inside the DOM: for example, the scrolling state, the current user selection,
-the focused element or the state of an input. This is why we use a virtual dom
-algorithm to keep the actual DOM node as much as possible. However, this is
-sometimes not enough, and we need to help Owl decide if an element is actually
-the same, or is different. The `t-key` directive is used to give an identity to an element.
-
-There are three main use cases:
-
-- _elements in a list_:
-
-  ```xml
-    <span t-foreach="todos" t-as="todo" t-key="todo.id">
-        <t t-esc="todo.text"/>
-    </span>
-  ```
-
-- _`t-if`/`t-else`_
-
-- _animations_: give a different identity to a component. Ex: thread id with
-  animations on add/remove message.
-
-### `t-transition` directive
-
-To perform useful transition effects, whenever an element appears or disappears,
-it is necessary to add/remove some css style or class at some precise moment in
-the lifetime of a node. Since this is not easy to do by hand, Owl `t-transition`
-directive is there to help.
-
-Whenever a node has a `t-transition` directive, with a `name` value, the following
-will happen:
-
-At node insertion:
-
-- the css classes `name-enter` and `name-enter-active` will be added directly
-  when the node is inserted into the DOM,
-- on the next animation frame: the css class `name-enter` will be removed and the
-  class `name-enter-to` will be added (so they can be used to trigger css
-  transition effects),
-- the css class `name-enter-active` will be removed whenever a css transition
-  ends.
-
-At node destruction:
-
-- the css classes `name-leave` and `name-leave-active` will be added before the
-  node is removed to the DOM,
-- the css class `name-leave` will be removed on the next animation frame (so it
-  can be used to trigger css transition effects),
-- the css class `name-leave-active` will be removed whenever a css transition
-  ends. Only then will the element be removed from the DOM.
-
-For example, a simple fade in/out effect can be done with this:
-
-```xml
-<div>
-    <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
-</div>
-```
-
-```css
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-```
-
-The `t-transition` directive can be combined with `t-widget`.
-
-Notes:
-
-- more information on animations are available [here](animations.md).
-- Owl does not support more than one transition on a single node, so the
- `t-transition` expression must be a single value (i.e. no space allowed)
-
-### `t-mounted` directive
-
-The `t-mounted` directive allows to register a callback to execute whenever the node
-is inserted into the DOM.
-
-```xml
-<div><input t-ref="someInput" t-mounted="focusMe"/></div>
-```
-
-```js
-class MyWidget extends owl.Component {
-    ...
-    focusMe() {
-        this.refs.someInput.focus();
-    }
-}
-```
-
-### Debugging (`t-debug` and `t-log`)
+### Debugging
 
 The javascript QWeb implementation provides two useful debugging directives:
 
@@ -666,37 +507,3 @@ will stop execution if the browser dev tools are open.
 ```
 
 will print 42 to the console
-
-### White spaces
-
-White spaces in a templates are handled in a special way:
-
-- consecutive whitespaces are always condensed to a single whitespace
-- if a whitespace-only text node contains a linebreak, it is ignored
-- the previous rules do not apply if we are in a `<pre>` tag
-
-### Root nodes
-
-For many reasons, Owl QWeb templates should have a single root node. More
-precisely, the result of a template rendering should have a single root node:
-
-```xml
-<!–– not ok: two root nodes ––>
-<t>
-    <div>foo</div>
-    <div>bar</div>
-</t>
-
-<!–– ok: result has one single root node ––>
-<t>
-    <div t-if="someCondition">foo</div>
-    <span t-else="1">bar</span>
-</t>
-```
-
-Extra root nodes will actually be ignored (even though they will be rendered
-in memory).
-
-Note: this does not apply to subtemplates (see the `t-call` directive). In that
-case, they will be inlined in the main template, and can actually have many
-root nodes.

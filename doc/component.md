@@ -4,15 +4,18 @@
 
 - [Overview](#overview)
 - [Example](#example)
-- [Composition](#composition)
 - [Reference](#reference)
   - [Properties](#properties)
   - [Static Properties](#static-properties)
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
-  - [Semantics](#semantics)
+  - [Composition](#composition)
+  - [Event Handling](#event-handling)
+  - [`t-key` directive](#t-key-directive)
+  - [`t-mounted` directive](#t-mounted-directive)
   - [Props Validation](#props-validation)
-- [Asynchronous rendering](#asynchronous-rendering)
+  - [Keeping References](#keeping-references])
+  - [Asynchronous rendering](#asynchronous-rendering)
 
 ## Overview
 
@@ -68,58 +71,6 @@ Owl will use the component's name as template name. Here,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
-
-## Composition
-
-The example above shows a QWeb template with a `t-on-click` directive. Widget
-templates are standard [QWeb](qweb.md) templates, but with an extra directive:
-`t-widget`. With the `t-widget` directive, widget templates can declare sub
-widgets:
-
-```xml
-<div t-name="ParentWidget">
-  <span>some text</span>
-  <t t-widget="MyWidget" info="13"/>
-</div>
-```
-
-```js
-class ParentWidget extends owl.Component {
-    widgets = { MyWidget: MyWidget};
-    ...
-}
-```
-
-In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
-after the span. The `info` key will be added to the subwidget's props. Each
-props is a string which represents a javascript (QWeb) expression, so it is
-dynamic. If it is necessary to give a string, this can be done by quoting it:
-`someString="'somevalue'"`. See the
-[QWeb](qweb.md) documentation for more information on the `t-widget` directive.
-
-Note that the rendering context for the template is the widget itself. This means
-that the template can access `state`, `props`, `env`, or any methods defined in the widget.
-
-**CSS and style:** there is some specific support to allow the parent to declare
-additional css classes or style for the sub widget: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
-root widget element.
-
-```xml
-<div t-name="ParentWidget">
-  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" info="13"/>
-</div>
-```
-
-Warning: there is a small caveat with dynamic class attributes: since Owl needs
-to be able to add/remove proper classes whenever necessary, it needs to be aware
-of the possible classes. Otherwise, it will not be able to make the difference
-between a valid css class added by the component, or some custom code, and a
-class that need to be removed. This is why we only support the explicit syntax
-with a class object:
-
-```xml
-<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}" />
-```
 
 ## Reference
 
@@ -361,6 +312,241 @@ the DOM. This is a good place to remove some listeners, for example.
 
 This is the opposite method of `mounted`.
 
+## Composition
+
+The example above shows a QWeb template with a `t-on-click` directive. Widget
+templates are standard [QWeb](qweb.md) templates, but with an extra directive:
+`t-widget`. With the `t-widget` directive, widget templates can declare sub
+widgets:
+
+```xml
+<div t-name="ParentWidget">
+  <span>some text</span>
+  <t t-widget="MyWidget" info="13"/>
+</div>
+```
+
+```js
+class ParentWidget extends owl.Component {
+    widgets = { MyWidget: MyWidget};
+    ...
+}
+```
+
+In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
+after the span. The `info` key will be added to the subwidget's props. Each
+props is a string which represents a javascript (QWeb) expression, so it is
+dynamic. If it is necessary to give a string, this can be done by quoting it:
+`someString="'somevalue'"`. See the
+[QWeb](qweb.md) documentation for more information on the `t-widget` directive.
+
+Note that the rendering context for the template is the widget itself. This means
+that the template can access `state`, `props`, `env`, or any methods defined in the widget.
+
+The `t-widget` directive is the key to a declarative component
+system. It allows a template to define where and how a sub widget is created
+and/or updated. For example:
+
+```xml
+<div t-name="ParentWidget">
+    <t t-widget="ChildWidget" count="state.val"/>
+</div>
+```
+
+```js
+class ParentWidget {
+  widgets = { ChildWidget };
+  state = { val: 4 };
+}
+```
+
+Whenever the template is rendered, it will automatically create the subwidget
+`ChildWidget` at the correct place. It needs to find the reference to the
+actual component class in the special `widgets` key, or the class registered in
+QWeb's global registry (see `register` function of QWeb). It first looks inside
+the local `widgets` key, then fallbacks on the global registry.
+
+_Props_: In this example, the child widget will receive the object `{count: 4}` in its
+constructor. This will be assigned to the `props` variable, which can be accessed
+on the widget (and also, in the template). Whenever the state is updated, then
+the subwidget will also be updated automatically.
+
+Note that there are some restrictions on prop names: `class`, `style` and any
+string which starts with `t-` are not allowed.
+
+The `t-widget` directive also accepts dynamic values with string interpolation
+(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) directive):
+
+```xml
+<div t-name="ParentWidget">
+    <t t-widget="ChildWidget#{id}"/>
+</div>
+```
+
+```js
+class ParentWidget {
+  widgets = { ChildWidget1, ChildWidget2 };
+  state = { id: 1 };
+}
+```
+
+Similarly to `t-attf-`, there is an alternate form of string interpolation:
+
+```xml
+<div t-name="ParentWidget">
+    <t t-widget="ChildWidget{{id}}"/>
+</div>
+```
+
+**CSS and style:** there is some specific support to allow the parent to declare
+additional css classes or style for the sub widget: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
+root widget element.
+
+```xml
+<div t-name="ParentWidget">
+  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" info="13"/>
+</div>
+```
+
+Warning: there is a small caveat with dynamic class attributes: since Owl needs
+to be able to add/remove proper classes whenever necessary, it needs to be aware
+of the possible classes. Otherwise, it will not be able to make the difference
+between a valid css class added by the component, or some custom code, and a
+class that need to be removed. This is why we only support the explicit syntax
+with a class object:
+
+```xml
+<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}" />
+```
+
+### Event handling
+
+In a component's template, it is useful to be able to register handlers on some
+elements to some specific events. This is what makes a template _alive_. There
+are four different use cases.
+
+1. Register an event handler on a DOM node (_pure_ DOM event)
+2. Register an event handler on a component (_pure_ DOM event)
+3. Register an event handler on a DOM node (_business_ DOM event)
+4. Register an event handler on a component (_business_ DOM event)
+
+A _pure_ DOM event is directly triggered by a user interaction (e.g. a `click`).
+
+```xml
+<button t-on-click="someMethod">Do something</button>
+```
+
+This will be roughly translated in javascript like this:
+
+```js
+button.addEventListener("click", widget.someMethod.bind(widget));
+```
+
+The suffix (`click` in this example) is simply the name of the actual DOM
+event.
+
+A _business_ DOM event is triggered by a call to `trigger` on a component.
+
+```xml
+<t t-widget="MyWidget" t-on-menu-loaded="someMethod"/>
+```
+
+```js
+ class MyWidget {
+     someWhere() {
+         const payload = ...;
+         this.trigger('menu-loaded', payload);
+     }
+ }
+```
+
+The call to `trigger` generates a [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
+of type `menu-loaded` and dispatches it on the component's DOM element
+(`this.el`). The event bubbles and is cancelable. The parent widget listening
+to event `menu-loaded` will receive the payload in its `someMethod` handler
+(in the `detail` property of the event), whenever the event is triggered.
+
+```js
+ class ParentWidget {
+     someMethod(ev) {
+         const payload = ev.detail;
+         ...
+     }
+ }
+```
+
+By convention, we use KebabCase for the name of _business_ events.
+
+In order to remove the DOM event details from the event handlers (like calls to
+`event.preventDefault`) and let them focus on data logic, _modifiers_ can be
+specified as additional suffixes of the `t-on` directive.
+
+| Modifier   | Description                                                       |
+| ---------- | ----------------------------------------------------------------- |
+| `.stop`    | calls `event.stopPropagation()` before calling the method         |
+| `.prevent` | calls `event.preventDefault()` before calling the method          |
+| `.self`    | calls the method only if the `event.target` is the element itself |
+
+```xml
+<button t-on-click.stop="someMethod">Do something</button>
+```
+
+Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
+the order may matter. For instance `t-on-click.prevent.self` will prevent all
+clicks while `t-on-click.self.prevent` will only prevent clicks on the element
+itself.
+
+The `t-on` directive also allows to prebind some arguments. For example,
+
+```xml
+<button t-on-click="someMethod(expr)">Do something</button>
+```
+
+Here, `expr` is a valid Owl expression, so it could be `true` or some variable
+from the rendering context.
+
+### `t-key` directive
+
+Even though Owl tries to be as declarative as possible, some DOM state is still
+locked inside the DOM: for example, the scrolling state, the current user selection,
+the focused element or the state of an input. This is why we use a virtual dom
+algorithm to keep the actual DOM node as much as possible. However, this is
+sometimes not enough, and we need to help Owl decide if an element is actually
+the same, or is different. The `t-key` directive is used to give an identity to an element.
+
+There are three main use cases:
+
+- _elements in a list_:
+
+  ```xml
+    <span t-foreach="todos" t-as="todo" t-key="todo.id">
+        <t t-esc="todo.text"/>
+    </span>
+  ```
+
+- _`t-if`/`t-else`_
+
+- _animations_: give a different identity to a component. Ex: thread id with
+  animations on add/remove message.
+
+### `t-mounted` directive
+
+The `t-mounted` directive allows to register a callback to execute whenever the node
+is inserted into the DOM.
+
+```xml
+<div><input t-ref="someInput" t-mounted="focusMe"/></div>
+```
+
+```js
+class MyWidget extends owl.Component {
+    ...
+    focusMe() {
+        this.refs.someInput.focus();
+    }
+}
+```
+
 ### Semantics
 
 We give here an informal description of the way components are created/updated
@@ -535,7 +721,54 @@ Examples:
   };
 ```
 
-## Asynchronous rendering
+### Keeping references
+
+The `t-ref` directive helps a component keep reference to some inside part of it.
+Like the `t-on` directive, it can work either on a DOM node, or on a component:
+
+```xml
+<div>
+    <div t-ref="someDiv"/>
+    <t t-widget="SubWidget" t-ref="someWidget"/>
+</div>
+```
+
+In this example, the widget will be able to access the `div` and the component
+inside the special `refs` variable:
+
+```js
+this.refs.someDiv;
+this.refs.someWidget;
+```
+
+This is useful for various usecases: for example, integrating with an external
+library that needs to render itself inside an actual DOM node. Or for calling
+some method on a sub widget.
+
+Note: if used on a component, the reference will be set in the `refs`
+variable between `willPatch` and `patched`.
+
+The `t-ref` directive also accepts dynamic values with string interpolation
+(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) and
+[`t-widget-`](#component-t-widget) directives). For example, if we have
+`id` set to 44 in the rendering context,
+
+```xml
+<div t-ref="widget_#{id}"/>
+```
+
+```js
+this.refs.widget_44;
+```
+
+Similarly to `t-attf-` and `t-widget`, there is an alternate form of string
+interpolation:
+
+```xml
+<div t-ref="widget_{{id}}"/>
+```
+
+### Asynchronous rendering
 
 Working with asynchronous code always adds a lot of complexity to a system. Whenever
 different parts of a system are active at the same time, one needs to think

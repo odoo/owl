@@ -28,6 +28,9 @@ def start_server():
 
 
 if __name__ == "__main__":
+    print("Owl Extras")
+    print("----------")
+    print("Server running on: {}".format(URL))
     thread.start_new_thread(start_server, ())
     webbrowser.open_new(URL)
 

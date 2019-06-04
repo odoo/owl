@@ -1,4 +1,4 @@
-import { Context, QWeb, UTILS } from "./qweb_core";
+import { Context, QWeb, UTILS, QWebExprVar } from "./qweb_core";
 
 /**
  * Owl QWeb Directives
@@ -13,7 +13,6 @@ import { Context, QWeb, UTILS } from "./qweb_core";
  * - t-debug
  * - t-log
  */
-
 
 //------------------------------------------------------------------------------
 // t-esc and t-raw
@@ -30,42 +29,43 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
     return;
   }
 
-  if (typeof value === "string") {
-    let exprID = value;
-    if (!(value in ctx.definedVariables)) {
-      exprID = `_${ctx.generateID()}`;
-      ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
-    }
-    ctx.addIf(`${exprID} || ${exprID} === 0`);
-    if (!ctx.parentNode) {
-      throw new Error("Should not have a text node without a parent");
-    }
-    if (ctx.escaping) {
-      ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
-    } else {
-      let fragID = ctx.generateID();
-      ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
-      let tempNodeID = ctx.generateID();
-      ctx.addLine(`var p${tempNodeID} = {hook: {`);
-      ctx.addLine(
-        `  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`
-      );
-      ctx.addLine(`}};`);
-      ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
-      ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
-    }
-    if (node.childNodes.length) {
-      ctx.addElse();
-      qweb._compileChildren(node, ctx);
-    }
-    ctx.closeIf();
-    return;
-  }
-  if (value instanceof NodeList) {
-    for (let node of Array.from(value)) {
+  if (value.xml instanceof NodeList) {
+    for (let node of Array.from(value.xml)) {
       qweb._compileNode(<ChildNode>node, ctx);
     }
+    return;
   }
+  let exprID: string;
+  if (typeof value === "string") {
+    exprID = `_${ctx.generateID()}`;
+    ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
+  } else {
+    exprID = value.id;
+  }
+  ctx.addIf(`${exprID} || ${exprID} === 0`);
+  if (!ctx.parentNode) {
+    throw new Error("Should not have a text node without a parent");
+  }
+  if (ctx.escaping) {
+    ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+  } else {
+    let fragID = ctx.generateID();
+    ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
+    let tempNodeID = ctx.generateID();
+    ctx.addLine(`var p${tempNodeID} = {hook: {`);
+    ctx.addLine(
+      `  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`
+    );
+    ctx.addLine(`}};`);
+    ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
+    ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
+  }
+  if (node.childNodes.length) {
+    ctx.addElse();
+    qweb._compileChildren(node, ctx);
+  }
+
+  ctx.closeIf();
 }
 
 QWeb.addDirective({
@@ -109,15 +109,21 @@ QWeb.addDirective({
     if (value) {
       const formattedValue = ctx.formatExpression(value);
       if (ctx.variables.hasOwnProperty(variable)) {
-        ctx.addLine(`${ctx.variables[variable]} = ${formattedValue}`);
+        ctx.addLine(
+          `${(<QWebExprVar>ctx.variables[variable]).id} = ${formattedValue}`
+        );
       } else {
         const varName = `_${ctx.generateID()}`;
         ctx.addLine(`var ${varName} = ${formattedValue};`);
-        ctx.definedVariables[varName] = formattedValue;
-        ctx.variables[variable] = varName;
+        ctx.variables[variable] = {
+          id: varName,
+          expr: formattedValue
+        };
       }
     } else {
-      ctx.variables[variable] = node.childNodes;
+      ctx.variables[variable] = {
+        xml: node.childNodes
+      };
     }
     return true;
   }
@@ -189,30 +195,27 @@ QWeb.addDirective({
     tempCtx.nextID = ctx.rootContext.nextID;
     qweb._compileNode(nodeCopy, tempCtx);
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
-    var definedVariables = Object.assign(
-      {},
-      ctx.definedVariables,
-      tempCtx.definedVariables
-    );
     ctx.rootContext.nextID = tempCtx.nextID;
 
     // open new scope, if necessary
-    const hasNewVariables = Object.keys(definedVariables).length > 0;
+    const hasNewVariables = Object.keys(tempCtx.variables).length > 0;
     if (hasNewVariables) {
       ctx.addLine("{");
       ctx.indent();
-    }
-
-    // add new variables, if any
-    for (let key in definedVariables) {
-      ctx.addLine(`let ${key} = ${definedVariables[key]}`);
+      // add new variables, if any
+      for (let key in tempCtx.variables) {
+        const v = tempCtx.variables[key];
+        if ((<QWebExprVar>v).expr) {
+          ctx.addLine(`let ${(<QWebExprVar>v).id} = ${(<QWebExprVar>v).expr};`);
+        }
+        // todo: handle XML variables...
+      }
     }
 
     // compile sub template
     const subCtx = ctx
       .subContext("caller", nodeCopy)
-      .subContext("variables", Object.create(vars))
-      .subContext("definedVariables", Object.create(definedVariables));
+      .subContext("variables", Object.create(vars));
 
     qweb._compileNode(nodeTemplate.elem, subCtx);
 

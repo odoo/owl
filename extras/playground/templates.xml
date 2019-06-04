@@ -11,7 +11,9 @@
   </div>
 
   <div t-name="App" class="playground">
-      <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
+      <div class="left-bar" t-att-class="{split: state.splitLayout}"
+           t-att-style="leftPaneStyle"
+           t-on-updateCode="updateCode">
         <div class="menubar">
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
           <select t-on-change="setSample">
@@ -26,7 +28,6 @@
             js="state.js"
             css="!state.splitLayout and state.css"
             xml="!state.splitLayout and state.js"
-            t-on-updateCode="updateCode"
             t-att-style="topEditorStyle"/>
         <t t-if="state.splitLayout">
           <div class="separator horizontal"/>
@@ -35,7 +36,6 @@
              css="state.css"
              xml="state.xml"
              resizeable="true"
-             t-on-updateCode="updateCode"
              t-on-updatePanelHeight="updatePanelHeight"/>
         </t>
       </div>

@@ -4,7 +4,7 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = 'hello ' + (context['value'] ? 'world' : '');
+    var _1 = 'hello ' + (context['value']?'world':'');
     let c2 = [], p2 = {key:2,attrs:{class: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -70,7 +70,7 @@ exports[`attributes format expression 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = (context['value'] + 37);
+    var _1 = (context['value']+37);
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -81,7 +81,7 @@ exports[`attributes format expression, other format 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = (context['value'] + 37);
+    var _1 = (context['value']+37);
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
     return vn2;
@@ -127,7 +127,7 @@ exports[`attributes from object variables set previously 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = {a: 'b'};
+    var _2 = {a:'b'};
     var _3 = _2.a;
     let c4 = [], p4 = {key:4,attrs:{class: _3}};
     var vn4 = h('span', p4, c4);
@@ -223,7 +223,7 @@ exports[`attributes t-att-class with object 1`] = `
 ) {
     var h = this.utils.h;
     var _1 = 'static';
-    var _3 = this.utils.objectToAttrString({a: context['b'],c: context['d'],e: context['f']});
+    var _3 = this.utils.objectToAttrString({a:context['b'],c:context['d'],e:context['f']});
     var _2 = 'static' + (_3 ? ' ' + _3 : '');
     let c4 = [], p4 = {key:4,attrs:{class: _2}};
     var vn4 = h('div', p4, c4);
@@ -246,7 +246,7 @@ exports[`attributes tuple literal 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = ['foo', 'bar'];
+    var _1 = ['foo','bar'];
     let c2 = [], p2 = {key:2,attrs:{}};
     if (_1 instanceof Array) {
         p2.attrs[_1[0]] = _1[1];
@@ -303,7 +303,7 @@ exports[`debugging t-log 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 42;
-    console.log(_2 + 3)
+    console.log(_2+3)
     return vn1;
 }"
 `;
@@ -345,7 +345,7 @@ exports[`foreach iterate on items (on a element node) 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = [1, 2];
+    var _2 = [1,2];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
@@ -378,7 +378,7 @@ exports[`foreach iterate on items 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = [3, 2, 1];
+    var _2 = [3,2,1];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
@@ -501,7 +501,7 @@ exports[`foreach warn if no key in some case 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = [1, 2];
+    var _2 = [1,2];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
@@ -910,13 +910,13 @@ exports[`t-if boolean value condition elif 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    if (context['color'] == 'black') {
+    if (context['color']=='black') {
         c1.push({text: \`black pearl\`});
     }
-    else if (context['color'] == 'yellow') {
+    else if (context['color']=='yellow') {
         c1.push({text: \`yellow submarine\`});
     }
-    else if (context['color'] == 'red') {
+    else if (context['color']=='red') {
         c1.push({text: \`red is dead\`});
     }
     else {
@@ -1019,28 +1019,28 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    if (context['cond1'] && context['cond2']) {
+    if (context['cond1']&&context['cond2']) {
         c1.push({text: \`and\`});
     }
-    if (context['cond1'] && context['cond3']) {
+    if (context['cond1']&&context['cond3']) {
         c1.push({text: \`nope\`});
     }
-    if (context['cond1'] || context['cond3']) {
+    if (context['cond1']||context['cond3']) {
         c1.push({text: \`or\`});
     }
-    if (context['cond3'] || context['cond4']) {
+    if (context['cond3']||context['cond4']) {
         c1.push({text: \`nope\`});
     }
-    if (context['m'] > 3) {
+    if (context['m']>3) {
         c1.push({text: \`mgt\`});
     }
-    if (context['n'] > 3) {
+    if (context['n']>3) {
         c1.push({text: \`ngt\`});
     }
-    if (context['m'] < 3) {
+    if (context['m']<3) {
         c1.push({text: \`mlt\`});
     }
-    if (context['n'] < 3) {
+    if (context['n']<3) {
         c1.push({text: \`nlt\`});
     }
     return vn1;
@@ -1209,7 +1209,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
     if (!context['add']) {
         throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)
     }
-    p1.on['click'] = context['add'].bind(owner, {val: 5});
+    p1.on['click'] = context['add'].bind(owner, {val:5});
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -1536,7 +1536,7 @@ exports[`t-set evaluate value expression 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = 1 + 2;
+    var _2 = 1+2;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1550,7 +1550,7 @@ exports[`t-set evaluate value expression, part 2 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['somevariable'] + 2;
+    var _2 = context['somevariable']+2;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1626,7 +1626,7 @@ exports[`t-set t-set and t-if 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = context['value'];
-    if (_2 === 'ok') {
+    if (_2==='ok') {
         c1.push({text: \`grimbergen\`});
     }
     return vn1;
@@ -1639,7 +1639,7 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['value'] + ' artois';
+    var _2 = context['value']+' artois';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }

@@ -1,4 +1,5 @@
 import { VNode, h } from "./vdom";
+import { QWebVar, compileExpr } from "./qweb_expressions";
 
 /**
  * Owl QWeb Engine
@@ -56,18 +57,6 @@ export interface Directive {
 //------------------------------------------------------------------------------
 // Const/global stuff/helpers
 //------------------------------------------------------------------------------
-const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
-  ","
-);
-
-const WORD_REPLACEMENT = {
-  and: "&&",
-  or: "||",
-  gt: ">",
-  gte: ">=",
-  lt: "<",
-  lte: "<="
-};
 
 const DISABLED_TAGS = [
   "input",
@@ -624,16 +613,6 @@ export class QWeb {
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
-export interface QWebExprVar {
-  id: string;
-  expr: string;
-}
-
-export interface QWebXMLVar {
-  xml: NodeList;
-}
-
-export type QWebVar = QWebExprVar | QWebXMLVar;
 
 export class Context {
   nextID: number = 1;
@@ -713,63 +692,14 @@ export class Context {
     return val in this.variables ? this.getValue(this.variables[val]) : val;
   }
 
-  formatExpression(e: string): string {
-    e = e.trim();
-    if (e[0] === "{" && e[e.length - 1] === "}") {
-      const innerExpr = e
-        .slice(1, -1)
-        .split(",")
-        .map(p => {
-          let [key, val] = p.trim().split(":");
-          if (key === "") {
-            return "";
-          }
-          if (!val) {
-            val = key;
-          }
-          return `${key}: ${this.formatExpression(val)}`;
-        })
-        .join(",");
-      return "{" + innerExpr + "}";
-    }
-
-    // Thanks CHM for this code...
-    const chars = e.split("");
-    let instring = "";
-    let invar = "";
-    let invarPos = 0;
-    let r = "";
-    chars.push(" ");
-    for (let i = 0, ilen = chars.length; i < ilen; i++) {
-      let c = chars[i];
-      if (instring.length) {
-        if (c === instring && chars[i - 1] !== "\\") {
-          instring = "";
-        }
-      } else if (c === '"' || c === "'") {
-        instring = c;
-      } else if (c.match(/[a-zA-Z_\$]/) && !invar.length) {
-        invar = c;
-        invarPos = i;
-        continue;
-      } else if (c.match(/\W/) && invar.length) {
-        // TODO: Should check for possible spaces before dot
-        if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          invar =
-            WORD_REPLACEMENT[invar] ||
-            (this.variables[invar] && (<any>this.variables[invar]).id) ||
-            "context['" + invar + "']";
-        }
-        r += invar;
-        invar = "";
-      } else if (invar.length) {
-        invar += c;
-        continue;
-      }
-      r += c;
-    }
-    const result = r.slice(0, -1);
-    return result;
+  /**
+   * Prepare an expression for being consumed at render time.  Its main job
+   * is to
+   * - replace unknown variables by a lookup in the context
+   * - replace already defined variables by their internal name
+   */
+  formatExpression(expr: string): string {
+    return compileExpr(expr, this.variables);
   }
 
   /**

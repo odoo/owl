@@ -518,7 +518,8 @@ export class QWeb {
       // dynamic attributes
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
-        let formattedValue = ctx.formatExpression(ctx.getValue(value!));
+        const v = ctx.getValue(value);
+        let formattedValue = v.id || ctx.formatExpression(v);
         if (
           formattedValue[0] === "{" &&
           formattedValue[formattedValue.length - 1] === "}"
@@ -623,11 +624,21 @@ export class QWeb {
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
+export interface QWebExprVar {
+  id: string;
+  expr: string;
+}
+
+export interface QWebXMLVar {
+  xml: NodeList;
+}
+
+export type QWebVar = QWebExprVar | QWebXMLVar;
+
 export class Context {
   nextID: number = 1;
   code: string[] = [];
-  variables: { [key: string]: any } = {};
-  definedVariables: { [key: string]: string } = {};
+  variables: { [key: string]: QWebVar } = {};
   escaping: boolean = false;
   parentNode: number | null = null;
   rootNode: number | null = null;
@@ -744,13 +755,10 @@ export class Context {
       } else if (c.match(/\W/) && invar.length) {
         // TODO: Should check for possible spaces before dot
         if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-          if (!(invar in this.definedVariables)) {
-            invar =
-              WORD_REPLACEMENT[invar] ||
-              (invar in this.variables &&
-                this.formatExpression(this.variables[invar])) ||
-              "context['" + invar + "']";
-          }
+          invar =
+            WORD_REPLACEMENT[invar] ||
+            (this.variables[invar] && (<any>this.variables[invar]).id) ||
+            "context['" + invar + "']";
         }
         r += invar;
         invar = "";

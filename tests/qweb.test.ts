@@ -184,7 +184,7 @@ describe("t-set", () => {
   test("t-set and t-if", () => {
     qweb.addTemplate(
       "test",
-      `<div >
+      `<div>
         <t t-set="v" t-value="value"/>
         <t t-if="v === 'ok'">grimbergen</t>
         </div>`

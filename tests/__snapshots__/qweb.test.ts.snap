@@ -585,13 +585,13 @@ exports[`misc global 1`] = `
             c5.push({text: _6});
         }
         {
-            let _11 = 'bbb'
+            let _11 = 'bbb';
             var _13 = 'agüero';
             let c14 = [], p14 = {key:14,attrs:{\\"falló\\": _13},on:{}};
             var vn14 = h('Año', p14, c14);
             c1.push(vn14);
             {
-                let _15 = 'aaa'
+                let _15 = 'aaa';
                 let c16 = [], p16 = {key:16,on:{}};
                 var vn16 = h('span', p16, c16);
                 c14.push(vn16);
@@ -611,16 +611,13 @@ exports[`misc global 1`] = `
                 c17.push({text: \`foo default\`});
             }
             var _19 = 'bbb';
-            {
-                let _19 = 'bbb'
-                let c20 = [], p20 = {key:20,on:{}};
-                var vn20 = h('span', p20, c20);
-                c14.push(vn20);
-                if (_19 || _19 === 0) {
-                    c20.push({text: _19});
-                } else {
-                    c20.push({text: \`foo default\`});
-                }
+            let c20 = [], p20 = {key:20,on:{}};
+            var vn20 = h('span', p20, c20);
+            c14.push(vn20);
+            if (_19 || _19 === 0) {
+                c20.push({text: _19});
+            } else {
+                c20.push({text: \`foo default\`});
             }
         }
     }
@@ -756,11 +753,8 @@ exports[`t-call (template calling inherit context 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 1;
-    {
-        let _2 = 1
-        if (_2 || _2 === 0) {
-            c1.push({text: _2});
-        }
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -773,7 +767,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     {
-        let _2 = 42
+        let _2 = 42;
         c1.push({text: \`ok\`});
     }
     var _3 = context['foo'];
@@ -800,7 +794,7 @@ exports[`t-call (template calling with unused setbody 1`] = `
 ) {
     var h = this.utils.h;
     {
-        let _1 = 3
+        let _1 = 3;
         let c2 = [], p2 = {key:2};
         var vn2 = h('div', p2, c2);
         c2.push({text: \`ok\`});
@@ -827,7 +821,7 @@ exports[`t-call (template calling with used set body 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     {
-        let _2 = 'ok'
+        let _2 = 'ok';
         if (_2 || _2 === 0) {
             c1.push({text: _2});
         }

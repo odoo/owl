@@ -82,6 +82,9 @@ The complete documentation can be found [here](doc/readme.md). The most importan
 - [Component](doc/component.md)
 - [QWeb](doc/qweb.md)
 
+Found an issue in the documentation? A broken link? Some outdated information?
+Submit a PR!
+
 ## License
 
 OWL is [GPL licensed](./LICENSE).

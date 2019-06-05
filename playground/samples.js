@@ -85,7 +85,7 @@ const WIDGET_COMPOSITION_XML = `<templates>
 
   <div t-name="App">
       <t t-widget="ClickCounter"/>
-      <t t-widget="InputWidget" t-props="{reverse: true}"/>
+      <t t-widget="InputWidget" reverse="true"/>
   </div>
 </templates>`;
 
@@ -287,7 +287,7 @@ const LIFECYCLE_DEMO_XML = `<templates>
         <button t-on-click="increment">Increment</button>
         <button t-on-click="toggleSubWidget">ToggleSubWidget</button>
         <div t-if="state.flag">
-            <t t-widget="HookWidget" t-props="{n:state.n}"/>
+            <t t-widget="HookWidget" n="state.n"/>
         </div>
     </div>
     <div t-name="HookWidget" t-on-click="increment">Demo Sub Widget. Props: <t t-esc="props.n"/>. State: <t t-esc="state.n"/>. (click on me to update me)</div>
@@ -515,7 +515,7 @@ const TODO_APP_STORE_XML = `<templates>
       <label for="toggle-all"></label>
       <ul class="todo-list">
         <t t-foreach="visibleTodos" t-as="todo">
-          <t t-widget="TodoItem" t-key="todo.id" t-props="todo"/>
+          <t t-widget="TodoItem" t-key="todo.id" id="todo.id" completed="todo.completed" title="todo.title"/>
         </t>
       </ul>
     </section>

@@ -185,4 +185,6 @@ body {
   font-size: 30px;
   color: darkred;
   text-align: center;
+  padding-left: 30px;
+  padding-right: 30px;
 }

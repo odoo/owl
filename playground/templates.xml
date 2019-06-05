@@ -11,7 +11,9 @@
   </div>
 
   <div t-name="App" class="playground">
-      <div class="left-bar" t-att-style="leftPaneStyle" t-att-class="{split: state.splitLayout}">
+      <div class="left-bar" t-att-class="{split: state.splitLayout}"
+           t-att-style="leftPaneStyle"
+           t-on-updateCode="updateCode">
         <div class="menubar">
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
           <select t-on-change="setSample">
@@ -22,19 +24,19 @@
           <a class="btn flash" t-on-click="downloadCode" title="Download a Zip with this Code"><i class="fas fa-download"></i></a>
           <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
         </div>
+        <t t-widget="TabbedEditor"
+            js="state.js"
+            css="!state.splitLayout and state.css"
+            xml="!state.splitLayout and state.js"
+            t-att-style="topEditorStyle"/>
         <t t-if="state.splitLayout">
-          <t t-widget="TabbedEditor"
-             t-props="{js:state.js, css:false, xml: false}"
-             t-on-updateCode="updateCode"
-             t-att-style="topEditorStyle"/>
           <div class="separator horizontal"/>
           <t t-widget="TabbedEditor" t-keepalive="1"
-             t-props="{js:false, css:state.css, xml: state.xml, resizeable: true}"
-             t-on-updateCode="updateCode"
+             js="false"
+             css="state.css"
+             xml="state.xml"
+             resizeable="true"
              t-on-updatePanelHeight="updatePanelHeight"/>
-        </t>
-        <t t-else="1">
-          <t t-widget="TabbedEditor" t-props="{js:state.js, css:state.css, xml: state.xml, display: 'js|xml|css'}" t-on-updateCode="updateCode"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>

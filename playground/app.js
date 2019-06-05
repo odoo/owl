@@ -39,26 +39,32 @@ const DEFAULT_HTML = `<!DOCTYPE html>
 </html>
 `;
 
-const APP_PY = `import sys
-import thread
-import webbrowser
+const APP_PY = `#!/usr/bin/env python3
+
+import threading
 import time
 
-import BaseHTTPServer, SimpleHTTPServer
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 def start_server():
-    httpd = BaseHTTPServer.HTTPServer(('127.0.0.1', 3600), SimpleHTTPServer.SimpleHTTPRequestHandler)
+    SimpleHTTPRequestHandler.extensions_map['.js'] = 'application/javascript'
+    httpd = HTTPServer(('0.0.0.0', 3600), SimpleHTTPRequestHandler)
     httpd.serve_forever()
 
-thread.start_new_thread(start_server,())
 url = 'http://127.0.0.1:3600'
-webbrowser.open_new(url)
 
-while True:
-    try:
-        time.sleep(1)
-    except KeyboardInterrupt:
-        sys.exit(0)
+if __name__ == "__main__":
+    print("Owl Application")
+    print("---------------")
+    print("Server running on: {}".format(url))
+    threading.Thread(target=start_server, daemon=True).start()
+
+    while True:
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            httpd.server_close()
+            quit(0)
 `;
 
 /**
@@ -242,20 +248,20 @@ class App extends owl.Component {
     });
   }
   updateCode(ev) {
-    this.state[ev.type] = ev.value;
+    this.state[ev.detail.type] = ev.detail.value;
   }
   toggleLayout() {
     this.state.splitLayout = !this.state.splitLayout;
   }
   updatePanelHeight(ev) {
-    if (!ev.delta) {
+    if (!ev.detail.delta) {
       return;
     }
     let height = this.state.topPanelHeight;
     if (!height) {
       height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
     }
-    this.state.topPanelHeight = height + ev.delta;
+    this.state.topPanelHeight = height + ev.detail.delta;
   }
 
   async downloadCode() {
@@ -287,10 +293,11 @@ class TabbedEditor extends owl.Component {
         this.sessions[tab].setUndoManager(new ace.UndoManager());
       }
     }
+    this.editor = null;
   }
 
   mounted() {
-    this.editor = ace.edit(this.refs.editor);
+    this.editor = this.editor || ace.edit(this.refs.editor);
 
     this.editor.setValue(this.props[this.state.currentTab], -1);
     this.editor.setFontSize("12px");
@@ -314,20 +321,16 @@ class TabbedEditor extends owl.Component {
     const session = this.sessions[this.state.currentTab];
     session.setValue(this.props[this.state.currentTab], -1);
     this.editor.setSession(session);
-  }
-
-  willUnmount() {
-    this.editor.destroy();
-    delete this.editor;
+    this.editor.resize();
   }
 
   setTab(tab) {
-      if (this.state.currentTab !== tab) {
-        this.state.currentTab = tab;
-        const session = this.sessions[this.state.currentTab];
-        session.doc.setValue(this.props[tab], -1);
-        this.editor.setSession(session);
-      }
+    if (this.state.currentTab !== tab) {
+      this.state.currentTab = tab;
+      const session = this.sessions[this.state.currentTab];
+      session.doc.setValue(this.props[tab], -1);
+      this.editor.setSession(session);
+    }
   }
 
   onMouseDown(ev) {

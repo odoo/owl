@@ -1151,8 +1151,7 @@ describe("composition", () => {
           <t t-if="state.ok"><t t-widget="ChildWidget" t-ref="child" t-keepalive="1"/></t>
         </div>
         <span t-name="ChildWidget">Hello</span>
-      </templates>`
-    );
+      </templates>`);
     class ParentWidget extends Widget {
       state = { ok: true };
       widgets = { ChildWidget };
@@ -1162,19 +1161,19 @@ describe("composition", () => {
     await widget.mount(fixture);
     let child = children(widget)[0];
 
-    expect(fixture.innerHTML).toBe('<div><span>Hello</span></div>');
+    expect(fixture.innerHTML).toBe("<div><span>Hello</span></div>");
     expect(widget.refs.child).toEqual(child);
 
     widget.state.ok = false;
     await nextTick();
 
-    expect(fixture.innerHTML).toBe('<div></div>');
+    expect(fixture.innerHTML).toBe("<div></div>");
     expect(widget.refs.child).toEqual(child);
 
     widget.state.ok = true;
     await nextTick();
 
-    expect(fixture.innerHTML).toBe('<div><span>Hello</span></div>');
+    expect(fixture.innerHTML).toBe("<div><span>Hello</span></div>");
     expect(widget.refs.child).toEqual(child);
   });
 
@@ -2498,24 +2497,6 @@ describe("widget and observable state", () => {
         'Observed state cannot be changed here! (key: "coffee", val: "2")'
       );
     }
-  });
-
-  test("widget can add observed keys to its state", async () => {
-    env.qweb.addTemplate(
-      "TestWidget",
-      `<div><t t-esc="state.a"/><t t-esc="state.b"/></div>`
-    );
-    class TestWidget extends Widget {
-      state: any = { a: 1 };
-    }
-    const widget = new TestWidget(env);
-    await widget.mount(fixture);
-
-    expect(fixture.innerHTML).toBe("<div>1</div>");
-
-    widget.set(widget.state, "b", 2);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div>12</div>");
   });
 });
 

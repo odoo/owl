@@ -341,14 +341,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * Sets a key (from the state) to a specific value.  This is mostly useful to
-   * work around the limitation in observed value with new keys.
-   */
-  set(target: any, key: string | number, value: any) {
-    this.__owl__.observer!.set(target, key, value);
-  }
-
-  /**
    * Emit a custom event of type 'eventType' with the given 'payload' on the
    * component's el, if it exists. However, note that the event will only bubble
    * up to the parent DOM nodes. Thus, it must be called between mounted() and

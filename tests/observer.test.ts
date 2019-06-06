@@ -134,6 +134,57 @@ describe("observer", () => {
     expect(arr[0].__owl__.rev).toBe(3);
   });
 
+  test("set new property on observed object", async () => {
+    const observer = new Observer();
+    observer.notifyCB = jest.fn();
+    const state: any = { a: 1 };
+    observer.observe(state);
+    expect(state.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
+    expect(observer.notifyCB).toBeCalledTimes(0);
+
+    Observer.set(state, "b", 8);
+    await nextMicroTick();
+    expect(state.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
+    expect(observer.notifyCB).toBeCalledTimes(1);
+    expect(state.b).toBe(8);
+  });
+
+  test("delete property from observed object", async () => {
+    const observer = new Observer();
+    observer.notifyCB = jest.fn();
+    const state: any = { a: 1, b: 8 };
+    observer.observe(state);
+    expect(state.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
+    expect(observer.notifyCB).toBeCalledTimes(0);
+
+    Observer.delete(state, "b");
+    await nextMicroTick();
+    expect(state.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
+    expect(observer.notifyCB).toBeCalledTimes(1);
+    expect(state).toEqual({ a: 1 });
+  });
+
+  test("set element in observed array", async () => {
+    const observer = new Observer();
+    observer.notifyCB = jest.fn();
+    const state: any = ["a"];
+    observer.observe(state);
+    expect(state.__owl__.rev).toBe(1);
+    expect(observer.rev).toBe(1);
+    expect(observer.notifyCB).toBeCalledTimes(0);
+
+    Observer.set(state, 1, "b");
+    await nextMicroTick();
+    expect(state.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
+    expect(observer.notifyCB).toBeCalledTimes(1);
+    expect(state).toEqual(["a", "b"]);
+  });
+
   test("properly observe arrays in object", () => {
     const observer = new Observer();
     const state: any = { arr: [] };

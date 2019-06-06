@@ -21,7 +21,7 @@ import { Observer } from "./observer";
 // Store Definition
 //------------------------------------------------------------------------------
 
-type Mutation = ({ state, commit, set, getters }, payload: any) => void;
+type Mutation = ({ state, commit, getters }, payload: any) => void;
 type Action = ({ commit, state, dispatch, env, getters }, payload: any) => void;
 type Getter = ({ state, getters }, payload) => any;
 
@@ -46,7 +46,6 @@ export class Store extends EventBus {
   debug: boolean;
   env: any;
   observer: Observer;
-  set: any;
   getters: { [name: string]: (payload?) => any };
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
@@ -65,7 +64,6 @@ export class Store extends EventBus {
     if (this.debug) {
       this.history.push({ state: this.state });
     }
-    this.set = this.observer.set.bind(this.observer);
 
     for (let entry of Object.entries(config.getters || {})) {
       const name: string = entry[0];
@@ -110,7 +108,6 @@ export class Store extends EventBus {
       {
         commit: this.commit.bind(this),
         state: this.state,
-        set: this.set,
         getters: this.getters
       },
       payload

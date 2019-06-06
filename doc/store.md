@@ -28,7 +28,7 @@ Note: Owl's store is inspired by React Redux and VueX.
 
 ## Example
 
-Here is what a simple store look like:
+Here is what a simple store looks like:
 
 ```js
 const actions = {
@@ -68,7 +68,7 @@ state is changed.  Note that these events are triggered only after a microtask
 tick, so only one event will be triggered for any number of state changes in a
 call stack.
 
-Also, it is important to mention that the state is observed (with a `owl.Observer`),
+Also, it is important to mention that the state is observed (with an `owl.Observer`),
 which is the reason why it is able to know if it was changed.  This implies that
 state changes need to be done carefully in some cases (adding a new key to an
 object, or modifying an array with the `arr[i] = newValue` syntax).  See the
@@ -146,4 +146,58 @@ const post = store.getters.getPost(id);
 
 ### Connecting a component
 
-Todo
+By default, an Owl `Component` is not connected to any store. The `connect`
+function is there to create sub Components that are connected versions of
+Components.
+
+```javascript
+const actions = {
+    increment({commit}) {
+        commit('increment', 1);
+    }
+};
+const mutations = {
+    increment({state}, val) {
+        state.counter += val;
+    }
+};
+const state = {
+    counter: 0,
+};
+const store = new owl.Store({state, actions, mutations});
+
+class Counter extends owl.Component {
+    increment() {
+        this.env.store.dispatch('increment');
+    }
+}
+function mapStoreToProps(state) {
+    return {
+        value: state.counter
+    };
+}
+const ConnectedCounter = owl.connect(mapStoreToProps)(Counter);
+
+const counter = new ConnectedCounter({ store, qweb });
+```
+```xml
+<button t-name="Counter" t-on-click="increment">
+  Click Me! [<t t-esc="props.value"/>]
+</button>
+```
+
+The arguments of `connect` are:
+  - `Counter`: an owl `Component` to connect
+  - `mapStoreToProps`: a function that extracts the `props` of the Component
+    from the `state` of the `Store` and returns them as a dict
+  - `options`: dictionary of optional parameters that may contain
+    - `getStore`: a function that takes the `env` in arguments and returns an
+      instance of `Store` to connect to (if not given, connects to `env.store`)
+    - `hashFunction`: the function to use to detect changes in the state (if not
+       given, generates a function that uses revision numbers, incremented at
+       each state change)
+    - `deep`: [only useful if no hashFunction is given] if false, only watch
+      for top level state changes (true by default)
+
+The `connect` function returns a function that takes a `Component` as argument
+and returns a sub Class of this `Component` that is connected to the `store`

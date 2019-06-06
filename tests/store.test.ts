@@ -152,24 +152,6 @@ describe("basic use", () => {
     store.dispatch("someaction");
   });
 
-  test("set function is given to mutations", async () => {
-    let updateCounter = 0;
-    const state = { bertinchamps: "brune" };
-    const mutations = {
-      addInfo({ state, set }) {
-        set(state, "chouffe", "blonde");
-      }
-    };
-    const store = new Store({ state, mutations, actions: {} });
-    store.on("update", null, () => updateCounter++);
-
-    expect(updateCounter).toBe(0);
-    store.commit("addInfo");
-    await nextMicroTick();
-    expect(updateCounter).toBe(1);
-    expect(store.state).toEqual({ bertinchamps: "brune", chouffe: "blonde" });
-  });
-
   test("can have getters from store", async () => {
     const state = {
       beers: {

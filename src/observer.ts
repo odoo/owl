@@ -76,6 +76,24 @@ export class Observer {
   allowMutations: boolean = true;
   dirty: boolean = false;
 
+  static set(target: any, key: number | string, value: any) {
+    if (!target.__owl__) {
+      throw Error(
+        "`Observer.set()` can only be called with observed Objects or Arrays"
+      );
+    }
+    target.__owl__.observer.set(target, key, value);
+  }
+
+  static delete(target: any, key: number | string) {
+    if (!target.__owl__) {
+      throw Error(
+        "`Observer.delete()` can only be called with observed Objects"
+      );
+    }
+    target.__owl__.observer.delete(target, key);
+  }
+
   notifyCB() {}
   notifyChange() {
     this.dirty = true;
@@ -120,8 +138,19 @@ export class Observer {
     this.notifyChange();
   }
 
+  delete(target: any, key: number | string) {
+    delete target[key];
+    this._updateRevNumber(target);
+    this.notifyChange();
+  }
+
   _observeObj<T extends { __owl__?: any }>(obj: T, parent?: any) {
-    obj.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
+    obj.__owl__ = {
+      rev: this.rev,
+      deepRev: this.rev,
+      parent,
+      observer: this
+    };
     Object.defineProperty(obj, "__owl__", { enumerable: false });
     for (let key in obj) {
       this._addProp(obj, key, obj[key]);
@@ -129,7 +158,12 @@ export class Observer {
   }
 
   _observeArr(arr: Array<any>, parent?: any) {
-    (<any>arr).__owl__ = { rev: this.rev, deepRev: this.rev, parent };
+    (<any>arr).__owl__ = {
+      rev: this.rev,
+      deepRev: this.rev,
+      parent,
+      observer: this
+    };
     Object.defineProperty(arr, "__owl__", { enumerable: false });
     (<any>arr).__proto__ = Object.create(ModifiedArrayProto);
     (<any>arr).__proto__.__observer__ = this;
@@ -145,6 +179,7 @@ export class Observer {
   ) {
     var self = this;
     Object.defineProperty(obj, key, {
+      configurable: true,
       enumerable: true,
       get() {
         return value;

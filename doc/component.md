@@ -146,11 +146,6 @@ find a template with the component name (or one of its ancestor).
   if we have a `isMobile` key in the environment, to decide if we want a mobile
   interface or a destkop one.
 
-- **`set(target, key, value)`**. This method is necessary in some cases when we
-  need to modify the state of the component in a way that is not visible to the
-  observer (see [observer's technical limitations](observer.md#technical-limitations)).
-  For example, if we need to add a key to the state.
-
 - **`destroy()`**. As its name suggests, this method will remove the component,
   and perform all necessary cleanup, such as unmounting the component, its children,
   removing the parent/children relationship. This method should almost never be

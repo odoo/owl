@@ -20,35 +20,31 @@ obj.a.b = 2;
 ## Technical Limitations
 
 Since the observer uses getters and setters, it is actually unable to react to
-changes in two situations:
+changes in three situations:
 
-- adding a key to an object:
+- adding a key to an object
+- deleting a key from an object
+- modifying an array by setting a new value at a given index
+
+In those situations, we need a way to tell the observer that something happened.
+This can be done by using the `set` and `delete` (only for objects) static
+methods of the `Observer`.
 
   ```javascript
   const observer = new owl.Observer();
   const obj = { a: 1 };
   observer.observe(obj);
-  obj.b = 2; // will do nothing
+  obj.b = 2; // won't notify the change
+  owl.Observer.set(obj, "b", 2); // will notify the change
+
+  delete obj.b; // won't notify the change
+  owl.Observer.delete(obj, "b"); // will notify the change
   ```
-
-  In that case, we need a way to tell the observer that something happened.
-  This can be done by using the `set` method:
-
-  ```javascript
-  observer.set(obj, "b", 2);
-  ```
-
-- modifying an array by setting a new value at a given index:
 
   ```javascript
   const observer = new owl.Observer();
-  const obj = { todos: [{ id: 1, text: "todo" }] };
-  observer.observe(obj);
-  obj[0] = { id: 2, text: "othertodo" }; // will do nothing, and obj[0] is not observed
-  ```
-
-  In that case, the solution is the same, we can simply use the `set` method:
-
-  ```javascript
-  observer.set(obj, 0, { id: 2, text: "othertodo" });
+  const arr = ["a"];
+  observer.observe(arr);
+  arr[0] = "b"; // won't notify the change
+  owl.Observer.set(arr, 0, "b"); // will notify the change
   ```

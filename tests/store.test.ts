@@ -476,6 +476,50 @@ describe("connecting a component to store", () => {
     expect(shallowFix.innerHTML).toMatchSnapshot();
   });
 
+  test("connecting a component to a local store", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="App">
+          <t t-foreach="props.todos" t-as="todo" t-key="todo">
+            <t t-widget="Todo" msg="todo.msg"/>
+          </t>
+        </div>
+        <span t-name="Todo"><t t-esc="props.msg"/></span>
+      </templates>
+      `);
+    class App extends Component<any, any, any> {
+      widgets = { Todo };
+    }
+    class Todo extends Component<any, any, any> {}
+
+    (<any>env).store = new Store({});
+    const store = new Store({
+      state: { todos: [] },
+      mutations: {
+        addTodo({ state }, msg) {
+          state.todos.push({ msg });
+        }
+      }
+    });
+    function mapStateToProps(s) {
+      return { todos: s.todos };
+    }
+    const TodoApp = connect(
+      mapStateToProps,
+      {
+        getStore: () => store
+      }
+    )(App);
+    const app = new TodoApp(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toMatchSnapshot();
+
+    (<any>app.__owl__).store.commit("addTodo", "hello");
+    await nextTick();
+    expect(fixture.innerHTML).toMatchSnapshot();
+  });
+
   test("connected child components with custom hooks", async () => {
     let steps: any = [];
     env.qweb.addTemplate("Child", `<div/>`);

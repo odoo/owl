@@ -384,11 +384,11 @@ class TodoItem extends owl.Component {
     state = { isEditing: false };
 
     removeTodo() {
-        this.env.store.dispatch("removeTodo", this.props.id);
+        this.env.dispatch("removeTodo", this.props.id);
     }
 
     toggleTodo() {
-        this.env.store.dispatch("toggleTodo", this.props.id);
+        this.env.dispatch("toggleTodo", this.props.id);
     }
 
     async editTodo() {
@@ -420,7 +420,7 @@ class TodoItem extends owl.Component {
         if (!value) {
             this.removeTodo(this.props.id);
         } else {
-            this.env.store.dispatch("editTodo", {
+            this.env.dispatch("editTodo", {
                 id: this.props.id,
                 title: value
             });
@@ -470,18 +470,18 @@ class TodoApp extends owl.Component {
         if (ev.keyCode === ENTER_KEY) {
             const title = ev.target.value;
             if (title.trim()) {
-                this.env.store.dispatch("addTodo", title);
+                this.env.dispatch("addTodo", title);
             }
             ev.target.value = "";
         }
     }
 
     clearCompleted() {
-        this.env.store.dispatch("clearCompleted");
+        this.env.dispatch("clearCompleted");
     }
 
     toggleAll() {
-        this.env.store.dispatch("toggleAll", !this.allChecked);
+        this.env.dispatch("toggleAll", !this.allChecked);
     }
 
     setFilter(filter) {
@@ -498,7 +498,8 @@ const store = makeStore();
 const qweb = new owl.QWeb(TEMPLATES);
 const env = {
     qweb,
-    store
+    store,
+    dispatch: store.dispatch.bind(store),
 };
 const app = new ConnectedTodoApp(env);
 app.mount(document.body);

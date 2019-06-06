@@ -155,6 +155,7 @@ let nextID = 1;
 
 export function connect(mapStateToProps, options: any = {}) {
   let hashFunction = options.hashFunction || null;
+  const getStore = options.getStore || (env => env.store);
 
   if (!hashFunction) {
     let deep = "deep" in options ? options.deep : true;
@@ -186,19 +187,21 @@ export function connect(mapStateToProps, options: any = {}) {
     const Result = class extends Comp {
       constructor(parent, props?: any) {
         const env = parent instanceof Component ? parent.env : parent;
+        const store = getStore(env);
         const ownProps = Object.assign({}, props || {});
         const storeProps = mapStateToProps(
-          env.store.state,
+          store.state,
           ownProps,
-          env.store.getters
+          store.getters
         );
         const mergedProps = Object.assign({}, props || {}, storeProps);
         super(parent, mergedProps);
         (<any>this.__owl__).ownProps = ownProps;
         (<any>this.__owl__).currentStoreProps = storeProps;
+        (<any>this.__owl__).store = store;
         (<any>this.__owl__).storeHash = hashFunction(
           {
-            state: env.store.state,
+            state: store.state,
             storeProps: storeProps,
             revNumber,
             deepRevNumber
@@ -214,27 +217,27 @@ export function connect(mapStateToProps, options: any = {}) {
        * if we use the mounted hook, this will be done in the reverse order.
        */
       _callMounted() {
-        this.env.store.on("update", this, this._checkUpdate);
+        (<any>this.__owl__).store.on("update", this, this._checkUpdate);
         super._callMounted();
       }
       willUnmount() {
-        this.env.store.off("update", this);
+        (<any>this.__owl__).store.off("update", this);
         super.willUnmount();
       }
 
       _checkUpdate() {
         const ownProps = (<any>this.__owl__).ownProps;
         const storeProps = mapStateToProps(
-          this.env.store.state,
+          (<any>this.__owl__).store.state,
           ownProps,
-          this.env.store.getters
+          (<any>this.__owl__).store.getters
         );
         const options: any = {
           currentStoreProps: (<any>this.__owl__).currentStoreProps
         };
         const storeHash = hashFunction(
           {
-            state: this.env.store.state,
+            state: (<any>this.__owl__).store.state,
             storeProps: storeProps,
             revNumber,
             deepRevNumber
@@ -254,9 +257,9 @@ export function connect(mapStateToProps, options: any = {}) {
       _updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
         if ((<any>this.__owl__).ownProps !== nextProps) {
           (<any>this.__owl__).currentStoreProps = mapStateToProps(
-            this.env.store.state,
+            (<any>this.__owl__).store.state,
             nextProps,
-            this.env.store.getters
+            (<any>this.__owl__).store.getters
           );
         }
         (<any>this.__owl__).ownProps = nextProps;

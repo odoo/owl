@@ -1144,6 +1144,40 @@ describe("composition", () => {
     expect(input2.value).toBe("test");
   });
 
+  test("sub widget with t-ref and t-keepalive", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <t t-if="state.ok"><t t-widget="ChildWidget" t-ref="child" t-keepalive="1"/></t>
+        </div>
+        <span t-name="ChildWidget">Hello</span>
+      </templates>`
+    );
+    class ParentWidget extends Widget {
+      state = { ok: true };
+      widgets = { ChildWidget };
+    }
+    class ChildWidget extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    let child = children(widget)[0];
+
+    expect(fixture.innerHTML).toBe('<div><span>Hello</span></div>');
+    expect(widget.refs.child).toEqual(child);
+
+    widget.state.ok = false;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe('<div></div>');
+    expect(widget.refs.child).toEqual(child);
+
+    widget.state.ok = true;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe('<div><span>Hello</span></div>');
+    expect(widget.refs.child).toEqual(child);
+  });
+
   test("sub widgets rendered in a loop", async () => {
     env.qweb.addTemplate("ChildWidget", `<span><t t-esc="props.n"/></span>`);
     class ChildWidget extends Widget {}

@@ -426,8 +426,8 @@ QWeb.addDirective({
     let finalizeWidgetCode = `w${widgetID}.${
       keepAlive ? "unmount" : "destroy"
     }();`;
-    if (ref) {
-      finalizeWidgetCode += `delete context.refs[${refKey}];`; // FIXME: shouldn't we keep ref if keepAlive is true?
+    if (ref && !keepAlive) {
+      finalizeWidgetCode += `delete context.refs[${refKey}];`;
     }
     if (transition) {
       finalizeWidgetCode = `let finalize = () => {

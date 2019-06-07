@@ -14,7 +14,7 @@
   - [`t-key` directive](#t-key-directive)
   - [`t-mounted` directive](#t-mounted-directive)
   - [Props Validation](#props-validation)
-  - [Keeping References](#keeping-references])
+  - [Keeping References](#keeping-references)
   - [Asynchronous rendering](#asynchronous-rendering)
 
 ## Overview
@@ -160,13 +160,13 @@ a owl component:
 
 | Method                                           | Description                                           |
 | ------------------------------------------------ | ----------------------------------------------------- |
-| **[constructor](#constructor)**                  | constructor                                           |
-| **[willStart](#willStart)**                      | async, before first rendering                         |
+| **[constructor](#constructorparent-props)**      | constructor                                           |
+| **[willStart](#willstart)**                      | async, before first rendering                         |
 | **[mounted](#mounted)**                          | just after component is rendered and added to the DOM |
 | **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update                            |
 | **[willPatch](#willpatch)**                      | just before the DOM is patched                        |
 | **[patched](#patchedsnapshot)**                  | just after the DOM is patched                         |
-| **[willUnmount](#willUnmount)**                  | just before removing component from DOM               |
+| **[willUnmount](#willunmount)**                  | just before removing component from DOM               |
 
 Notes:
 
@@ -370,7 +370,7 @@ Note that there are some restrictions on prop names: `class`, `style` and any
 string which starts with `t-` are not allowed.
 
 The `t-widget` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) directive):
+(like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
 
 ```xml
 <div t-name="ParentWidget">
@@ -736,8 +736,8 @@ Note: if used on a component, the reference will be set in the `refs`
 variable between `willPatch` and `patched`.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](#dynamic-attributes-t-att-and-t-attf-directives) and
-[`t-widget-`](#component-t-widget) directives). For example, if we have
+(like the [`t-attf-`](qweb.md#dynamic-attributes) and
+`t-widget` directives). For example, if we have
 `id` set to 44 in the rendering context,
 
 ```xml

@@ -7,6 +7,7 @@
 - [QWeb](qweb.md)
 - [Store](store.md)
 - [Observer](observer.md)
+- [Event Bus](event_bus.md)
 - [Virtual DOM](vdom.md)
 - [Utils](utils.md)
 

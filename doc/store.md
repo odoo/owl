@@ -63,7 +63,7 @@ store.dispatch('addTodo', 'fix all bugs');
 
 ## Reference
 
-The store is a simple `owl.EventBus` that triggers `update` events whenever its
+The store is a simple [`owl.EventBus`](event_bus.md) that triggers `update` events whenever its
 state is changed.  Note that these events are triggered only after a microtask
 tick, so only one event will be triggered for any number of state changes in a
 call stack.

@@ -379,7 +379,7 @@ The `t-widget` directive also accepts dynamic values with string interpolation
 
 ```xml
 <div t-name="ParentWidget">
-    <t t-widget="ChildWidget#{id}"/>
+    <t t-widget="ChildWidget{{id}}"/>
 </div>
 ```
 
@@ -388,14 +388,6 @@ class ParentWidget {
   widgets = { ChildWidget1, ChildWidget2 };
   state = { id: 1 };
 }
-```
-
-Similarly to `t-attf-`, there is an alternate form of string interpolation:
-
-```xml
-<div t-name="ParentWidget">
-    <t t-widget="ChildWidget{{id}}"/>
-</div>
 ```
 
 **CSS and style:** there is some specific support to allow the parent to declare
@@ -754,18 +746,11 @@ The `t-ref` directive also accepts dynamic values with string interpolation
 `id` set to 44 in the rendering context,
 
 ```xml
-<div t-ref="widget_#{id}"/>
+<div t-ref="widget_{{id}}"/>
 ```
 
 ```js
 this.refs.widget_44;
-```
-
-Similarly to `t-attf-` and `t-widget`, there is an alternate form of string
-interpolation:
-
-```xml
-<div t-ref="widget_{{id}}"/>
 ```
 
 ### Asynchronous rendering

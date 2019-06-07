@@ -358,13 +358,6 @@ There is another way to format a string attribute: the `t-attf-` directive. With
 it, you get string interpolation:
 
 ```xml
-<div t-attf-foo="a #{value1} is #{value2} of #{value3} ]"/>
-<!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
-```
-
-For historical reason, there is an alternate form of string interpolation:
-
-```xml
 <div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```

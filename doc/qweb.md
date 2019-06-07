@@ -415,8 +415,6 @@ passed to `t-as`):
 - `$as_last`: whether the current item is the last of the iteration
   (equivalent to `$as_index + 1 == $as_size`), requires the iteratee’s size be
   available
-- `$as_parity` (deprecated): either "even" or "odd", the parity of the current
-  iteration round
 
 These extra variables provided and all new variables created into the `t-foreach`
 are only available in the scope of the `t-foreach`. If the variable exists outside

@@ -658,12 +658,12 @@ describe("foreach", () => {
       `
       <div>
         <t t-foreach="5" t-as="elem">
-          -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-esc="elem_parity"/>)
+          -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-esc="elem_index"/>)
         </t>
       </div>`
     );
     const result = trim(renderToString(qweb, "test"));
-    const expected = `<div>-first(even)-(odd)-(even)-(odd)-last(even)</div>`;
+    const expected = `<div>-first(0)-(1)-(2)-(3)-last(4)</div>`;
     expect(result).toBe(expected);
   });
 
@@ -685,14 +685,14 @@ describe("foreach", () => {
       `
       <div>
         <t t-foreach="value" t-as="item">
-          [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/> - <t t-esc="item_parity"/>]
+          [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
         </t>
       </div>`
     );
     const result = trim(
       renderToString(qweb, "test", { value: { a: 1, b: 2, c: 3 } })
     );
-    const expected = `<div>[0:a1-even][1:b2-odd][2:c3-even]</div>`;
+    const expected = `<div>[0:a1][1:b2][2:c3]</div>`;
     expect(result).toBe(expected);
   });
 

@@ -5,7 +5,7 @@
 - [Overview](#overview)
 - [Directives](#directives)
 - [QWeb Engine](#qweb-engine)
-- [Reference](#qweb-specification)
+- [Reference](#reference)
   - [White spaces](#white-spaces)
   - [Root nodes](#root-nodes)
   - [Expression evaluation](#expression-evaluation)
@@ -72,7 +72,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-key`                   | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive)     |
 | `t-on-*`                  | [Event handling](component.md#event-handling)                                           |
 | `t-transition`            | [Defining an animation](animations.md#css-transitions)                                  |
-| `t-mounted`               | [Callback when a node or component is mounted](#component.md#t-mounted-directive)       |
+| `t-mounted`               | [Callback when a node or component is mounted](component.md#t-mounted-directive)        |
 
 ## QWeb Engine
 

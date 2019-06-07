@@ -392,9 +392,8 @@ Like conditions, `t-foreach` applies to the element bearing the directive’s at
 
 is equivalent to the previous example.
 
-`t-foreach` can iterate on an array (the current item will be the current value),
-an object (the current item will be the current key) or an integer (equivalent
-to iterating on an array between 0 inclusive and the provided integer exclusive).
+`t-foreach` can iterate on an array (the current item will be the current value)
+or an object (the current item will be the current key).
 
 In addition to the name passed via t-as, `t-foreach` provides a few other
 variables for various data points (note: `$as` will be replaced by the name
@@ -418,7 +417,7 @@ into the global context.
 <t t-set="existing_variable" t-value="False"/>
 <!-- existing_variable now False -->
 
-<p t-foreach="[1, 2, 3]" t-as="i">
+<p t-foreach="Array(3)" t-as="i">
     <t t-set="existing_variable" t-value="True"/>
     <t t-set="new_variable" t-value="True"/>
     <!-- existing_variable and new_variable now True -->

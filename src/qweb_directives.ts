@@ -243,18 +243,14 @@ QWeb.addDirective({
     ctx.addLine(
       `if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`
     );
-    ctx.addLine(
-      `if (typeof _${arrayID} === 'number') { _${arrayID} = Array.from(Array(_${arrayID}).keys())}`
-    );
     let keysID = ctx.generateID();
-    ctx.addLine(
-      `var _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`
-    );
-    ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
     let valuesID = ctx.generateID();
-    ctx.addLine(
-      `var _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`
-    );
+    ctx.addLine(`var _${keysID} = _${valuesID} = _${arrayID};`);
+    ctx.addIf(`!(_${arrayID} instanceof Array)`);
+    ctx.addLine(`_${keysID} = Object.keys(_${arrayID});`);
+    ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
+    ctx.closeIf();
+    ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
     ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
     ctx.indent();
     ctx.addLine(`context.${name}_first = i === 0;`);

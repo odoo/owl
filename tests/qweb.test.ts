@@ -657,25 +657,13 @@ describe("foreach", () => {
       "test",
       `
       <div>
-        <t t-foreach="5" t-as="elem">
+        <t t-foreach="Array(5)" t-as="elem">
           -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-esc="elem_index"/>)
         </t>
       </div>`
     );
     const result = trim(renderToString(qweb, "test"));
     const expected = `<div>-first(0)-(1)-(2)-(3)-last(4)</div>`;
-    expect(result).toBe(expected);
-  });
-
-  test("iterate, integer param", () => {
-    qweb.addTemplate(
-      "test",
-      `<div><t t-foreach="3" t-as="item">
-        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
-      </t></div>`
-    );
-    const result = trim(renderToString(qweb, "test"));
-    const expected = `<div>[0:00][1:11][2:22]</div>`;
     expect(result).toBe(expected);
   });
 

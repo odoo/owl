@@ -777,15 +777,11 @@ export class Context {
     if (matches && matches[0].length === s.length) {
       return `(${this.formatExpression(s.slice(2, -2))})`;
     }
-    matches = s.match(/\#\{.*?\}/g);
-    if (matches && matches[0].length === s.length) {
-      return `(${this.formatExpression(s.slice(2, -1))})`;
-    }
 
-    let formatter = expr => "${" + this.formatExpression(expr) + "}";
-    let r = s
-      .replace(/\{\{.*?\}\}/g, s => formatter(s.slice(2, -2)))
-      .replace(/\#\{.*?\}/g, s => formatter(s.slice(2, -1)));
+    let r = s.replace(
+      /\{\{.*?\}\}/g,
+      s => "${" + this.formatExpression(s.slice(2, -2)) + "}"
+    );
     return "`" + r + "`";
   }
 }

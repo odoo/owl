@@ -105,7 +105,6 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.number_first = i === 0;
         context.number_last = i === _length3 - 1;
-        context.number_parity = i % 2 === 0 ? 'even' : 'odd';
         context.number_index = i;
         context.number = _3[i];
         context.number_value = _4[i];

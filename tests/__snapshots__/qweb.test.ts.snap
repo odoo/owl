@@ -324,7 +324,6 @@ exports[`foreach does not pollute the rendering context 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -353,7 +352,6 @@ exports[`foreach iterate on items (on a element node) 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -385,7 +383,6 @@ exports[`foreach iterate on items 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -426,7 +423,6 @@ exports[`foreach iterate, dict param 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -444,11 +440,6 @@ exports[`foreach iterate, dict param 1`] = `
         var _7 = context['item_value'];
         if (_7 || _7 === 0) {
             c1.push({text: _7});
-        }
-        c1.push({text: \` - \`});
-        var _8 = context['item_parity'];
-        if (_8 || _8 === 0) {
-            c1.push({text: _8});
         }
         c1.push({text: \`] \`});
     }
@@ -472,7 +463,6 @@ exports[`foreach iterate, integer param 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -513,7 +503,6 @@ exports[`foreach iterate, position 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.elem_first = i === 0;
         context.elem_last = i === _length3 - 1;
-        context.elem_parity = i % 2 === 0 ? 'even' : 'odd';
         context.elem_index = i;
         context.elem = _3[i];
         context.elem_value = _4[i];
@@ -525,7 +514,7 @@ exports[`foreach iterate, position 1`] = `
             c1.push({text: \` last\`});
         }
         c1.push({text: \` (\`});
-        var _5 = context['elem_parity'];
+        var _5 = context['elem_index'];
         if (_5 || _5 === 0) {
             c1.push({text: _5});
         }
@@ -551,7 +540,6 @@ exports[`foreach warn if no key in some case 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -612,7 +600,6 @@ exports[`misc global 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.value_first = i === 0;
         context.value_last = i === _length3 - 1;
-        context.value_parity = i % 2 === 0 ? 'even' : 'odd';
         context.value_index = i;
         context.value = _3[i];
         context.value_value = _4[i];
@@ -1122,7 +1109,6 @@ exports[`t-key t-key directive in a list 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.beer_first = i === 0;
         context.beer_last = i === _length3 - 1;
-        context.beer_parity = i % 2 === 0 ? 'even' : 'odd';
         context.beer_index = i;
         context.beer = _3[i];
         context.beer_value = _4[i];
@@ -1222,7 +1208,6 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.action_first = i === 0;
         context.action_last = i === _length3 - 1;
-        context.action_parity = i % 2 === 0 ? 'even' : 'odd';
         context.action_index = i;
         context.action = _3[i];
         context.action_value = _4[i];
@@ -1550,7 +1535,6 @@ exports[`t-ref refs in a loop 1`] = `
     for (let i = 0; i < _length3; i++) {
         context.item_first = i === 0;
         context.item_last = i === _length3 - 1;
-        context.item_parity = i % 2 === 0 ? 'even' : 'odd';
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
@@ -1709,7 +1693,6 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     for (let i = 0; i < _length4; i++) {
         context.elem_first = i === 0;
         context.elem_last = i === _length4 - 1;
-        context.elem_parity = i % 2 === 0 ? 'even' : 'odd';
         context.elem_index = i;
         context.elem = _4[i];
         context.elem_value = _5[i];

@@ -259,7 +259,6 @@ QWeb.addDirective({
     ctx.indent();
     ctx.addLine(`context.${name}_first = i === 0;`);
     ctx.addLine(`context.${name}_last = i === _length${keysID} - 1;`);
-    ctx.addLine(`context.${name}_parity = i % 2 === 0 ? 'even' : 'odd';`);
     ctx.addLine(`context.${name}_index = i;`);
     ctx.addLine(`context.${name} = _${keysID}[i];`);
     ctx.addLine(`context.${name}_value = _${valuesID}[i];`);

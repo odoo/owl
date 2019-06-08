@@ -75,6 +75,18 @@
             this.allowMutations = true;
             this.dirty = false;
         }
+        static set(target, key, value) {
+            if (!target.__owl__) {
+                throw Error("`Observer.set()` can only be called with observed Objects or Arrays");
+            }
+            target.__owl__.observer.set(target, key, value);
+        }
+        static delete(target, key) {
+            if (!target.__owl__) {
+                throw Error("`Observer.delete()` can only be called with observed Objects");
+            }
+            target.__owl__.observer.delete(target, key);
+        }
         notifyCB() { }
         notifyChange() {
             this.dirty = true;
@@ -117,15 +129,30 @@
             }
             this.notifyChange();
         }
+        delete(target, key) {
+            delete target[key];
+            this._updateRevNumber(target);
+            this.notifyChange();
+        }
         _observeObj(obj, parent) {
-            obj.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
+            obj.__owl__ = {
+                rev: this.rev,
+                deepRev: this.rev,
+                parent,
+                observer: this
+            };
             Object.defineProperty(obj, "__owl__", { enumerable: false });
             for (let key in obj) {
                 this._addProp(obj, key, obj[key]);
             }
         }
         _observeArr(arr, parent) {
-            arr.__owl__ = { rev: this.rev, deepRev: this.rev, parent };
+            arr.__owl__ = {
+                rev: this.rev,
+                deepRev: this.rev,
+                parent,
+                observer: this
+            };
             Object.defineProperty(arr, "__owl__", { enumerable: false });
             arr.__proto__ = Object.create(ModifiedArrayProto);
             arr.__proto__.__observer__ = this;
@@ -136,6 +163,7 @@
         _addProp(obj, key, value) {
             var self = this;
             Object.defineProperty(obj, key, {
+                configurable: true,
                 enumerable: true,
                 get() {
                     return value;
@@ -813,8 +841,30 @@
     };
     const patch = init([eventListenersModule, attrsModule, propsModule]);
 
+    /**
+     * Owl QWeb Expression Parser
+     *
+     * Owl needs in various contexts to be able to understand the structure of a
+     * string representing a javascript expression.  The usual goal is to be able
+     * to rewrite some variables.  For example, if a template has
+     *
+     *  ```xml
+     *  <t t-if="computeSomething({val: state.val})">...</t>
+     * ```
+     *
+     * this needs to be translated in something like this:
+     *
+     * ```js
+     *   if (context["computeSomething"]({val: context["state"].val})) { ... }
+     * ```
+     *
+     * This file contains the implementation of an extremely naive tokenizer/parser
+     * and evaluator for javascript expressions.  The supported grammar is basically
+     * only expressive enough to understand the shape of objects, of arrays, and
+     * various operators.
+     */
     //------------------------------------------------------------------------------
-    // Const/global stuff/helpers
+    // Misc types, constants and helpers
     //------------------------------------------------------------------------------
     const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(",");
     const WORD_REPLACEMENT = {
@@ -825,6 +875,194 @@
         lt: "<",
         lte: "<="
     };
+    const STATIC_TOKEN_MAP = {
+        "{": "LEFT_BRACE",
+        "}": "RIGHT_BRACE",
+        "[": "LEFT_BRACKET",
+        "]": "RIGHT_BRACKET",
+        ":": "COLON",
+        ",": "COMMA",
+        "(": "LEFT_PAREN",
+        ")": "RIGHT_PAREN"
+    };
+    const OPERATORS = [".", "===", "==", "+", "!", "||", "&&", ">", "?", "-", "*"];
+    let tokenizeString = function (expr) {
+        let s = expr[0];
+        let start = s;
+        if (s !== "'" && s !== '"') {
+            return false;
+        }
+        let i = 1;
+        let cur;
+        while (expr[i] && expr[i] !== start) {
+            cur = expr[i];
+            s += cur;
+            if (cur === "\\") {
+                i++;
+                cur = expr[i];
+                if (!cur) {
+                    throw new Error("Invalid expression");
+                }
+                s += cur;
+            }
+            i++;
+        }
+        if (expr[i] !== start) {
+            throw new Error("Invalid expression");
+        }
+        s += start;
+        return { type: "VALUE", value: s };
+    };
+    let tokenizeNumber = function (expr) {
+        let s = expr[0];
+        if (s && s.match(/[0-9]/)) {
+            let i = 1;
+            while (expr[i] && expr[i].match(/[0-9]|\./)) {
+                s += expr[i];
+                i++;
+            }
+            return { type: "VALUE", value: s };
+        }
+        else {
+            return false;
+        }
+    };
+    let tokenizeSymbol = function (expr) {
+        let s = expr[0];
+        if (s && s.match(/[a-zA-Z_\$]/)) {
+            let i = 1;
+            while (expr[i] && expr[i].match(/\w/)) {
+                s += expr[i];
+                i++;
+            }
+            if (s in WORD_REPLACEMENT) {
+                return { type: "OPERATOR", value: WORD_REPLACEMENT[s], size: s.length };
+            }
+            return { type: "SYMBOL", value: s };
+        }
+        else {
+            return false;
+        }
+    };
+    const tokenizeStatic = function (expr) {
+        const char = expr[0];
+        if (char && char in STATIC_TOKEN_MAP) {
+            return { type: STATIC_TOKEN_MAP[char], value: char };
+        }
+        return false;
+    };
+    const tokenizeOperator = function (expr) {
+        for (let op of OPERATORS) {
+            if (expr.startsWith(op)) {
+                return { type: "OPERATOR", value: op };
+            }
+        }
+        return false;
+    };
+    const TOKENIZERS = [
+        tokenizeString,
+        tokenizeNumber,
+        tokenizeSymbol,
+        tokenizeStatic,
+        tokenizeOperator
+    ];
+    /**
+     * Convert a javascript expression (as a string) into a list of tokens. For
+     * example: `tokenize("1 + b")` will return:
+     * ```js
+     *  [
+     *   {type: "VALUE", value: "1"},
+     *   {type: "OPERATOR", value: "+"},
+     *   {type: "SYMBOL", value: "b"}
+     * ]
+     * ```
+     */
+    function tokenize(expr) {
+        const result = [];
+        let token = true;
+        while (token) {
+            expr = expr.trim();
+            if (expr) {
+                for (let tokenizer of TOKENIZERS) {
+                    token = tokenizer(expr);
+                    if (token) {
+                        result.push(token);
+                        expr = expr.slice(token.size || token.value.length);
+                        break;
+                    }
+                }
+            }
+            else {
+                token = false;
+            }
+        }
+        if (expr.length) {
+            throw new Error("Tokenizer error...");
+        }
+        return result;
+    }
+    //------------------------------------------------------------------------------
+    // Expression "evaluator"
+    //------------------------------------------------------------------------------
+    /**
+     * This is the main function exported by this file. This is the code that will
+     * process an expression (given as a string) and returns another expression with
+     * proper lookups in the context.
+     *
+     * Usually, this kind of code would be very simple to do if we had an AST (so,
+     * if we had a javascript parser), since then, we would only need to find the
+     * variables and replace them.  However, a parser is more complicated, and there
+     * are no standard builtin parser API.
+     *
+     * Since this method is applied to simple javasript expressions, and the work to
+     * be done is actually quite simple, we actually can get away with not using a
+     * parser, which helps with the code size.
+     *
+     * Here is the heuristic used by this method to determine if a token is a
+     * variable:
+     * - by default, all symbols are considered a variable
+     * - unless the previous token is a dot (in that case, this is a property: `a.b`)
+     * - or if the previous token is a left brace or a comma, and the next token is
+     *   a colon (in that case, this is an object key: `{a: b}`)
+     */
+    function compileExpr(expr, vars) {
+        const tokens = tokenize(expr);
+        let result = "";
+        for (let i = 0; i < tokens.length; i++) {
+            let token = tokens[i];
+            if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
+                // we need to find if it is a variable
+                let isVar = true;
+                let prevToken = tokens[i - 1];
+                if (prevToken) {
+                    if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
+                        isVar = false;
+                    }
+                    else if (prevToken.type === "LEFT_BRACE" ||
+                        prevToken.type === "COMMA") {
+                        let nextToken = tokens[i + 1];
+                        if (nextToken && nextToken.type === "COLON") {
+                            isVar = false;
+                        }
+                    }
+                }
+                if (isVar) {
+                    if (token.value in vars && "id" in vars[token.value]) {
+                        token.value = vars[token.value].id;
+                    }
+                    else {
+                        token.value = `context['${token.value}']`;
+                    }
+                }
+            }
+            result += token.value;
+        }
+        return result;
+    }
+
+    //------------------------------------------------------------------------------
+    // Const/global stuff/helpers
+    //------------------------------------------------------------------------------
     const DISABLED_TAGS = [
         "input",
         "textarea",
@@ -1199,7 +1437,8 @@
                 // dynamic attributes
                 if (name.startsWith("t-att-")) {
                     let attName = name.slice(6);
-                    let formattedValue = ctx.formatExpression(ctx.getValue(value));
+                    const v = ctx.getValue(value);
+                    let formattedValue = v.id || ctx.formatExpression(v);
                     if (formattedValue[0] === "{" &&
                         formattedValue[formattedValue.length - 1] === "}") {
                         formattedValue = `this.utils.objectToAttrString(${formattedValue})`;
@@ -1302,7 +1541,6 @@
             this.nextID = 1;
             this.code = [];
             this.variables = {};
-            this.definedVariables = {};
             this.escaping = false;
             this.parentNode = null;
             this.rootNode = null;
@@ -1361,69 +1599,14 @@
         getValue(val) {
             return val in this.variables ? this.getValue(this.variables[val]) : val;
         }
-        formatExpression(e) {
-            e = e.trim();
-            if (e[0] === "{" && e[e.length - 1] === "}") {
-                const innerExpr = e
-                    .slice(1, -1)
-                    .split(",")
-                    .map(p => {
-                    let [key, val] = p.trim().split(":");
-                    if (key === "") {
-                        return "";
-                    }
-                    if (!val) {
-                        val = key;
-                    }
-                    return `${key}: ${this.formatExpression(val)}`;
-                })
-                    .join(",");
-                return "{" + innerExpr + "}";
-            }
-            // Thanks CHM for this code...
-            const chars = e.split("");
-            let instring = "";
-            let invar = "";
-            let invarPos = 0;
-            let r = "";
-            chars.push(" ");
-            for (let i = 0, ilen = chars.length; i < ilen; i++) {
-                let c = chars[i];
-                if (instring.length) {
-                    if (c === instring && chars[i - 1] !== "\\") {
-                        instring = "";
-                    }
-                }
-                else if (c === '"' || c === "'") {
-                    instring = c;
-                }
-                else if (c.match(/[a-zA-Z_\$]/) && !invar.length) {
-                    invar = c;
-                    invarPos = i;
-                    continue;
-                }
-                else if (c.match(/\W/) && invar.length) {
-                    // TODO: Should check for possible spaces before dot
-                    if (chars[invarPos - 1] !== "." && RESERVED_WORDS.indexOf(invar) < 0) {
-                        if (!(invar in this.definedVariables)) {
-                            invar =
-                                WORD_REPLACEMENT[invar] ||
-                                    (invar in this.variables &&
-                                        this.formatExpression(this.variables[invar])) ||
-                                    "context['" + invar + "']";
-                        }
-                    }
-                    r += invar;
-                    invar = "";
-                }
-                else if (invar.length) {
-                    invar += c;
-                    continue;
-                }
-                r += c;
-            }
-            const result = r.slice(0, -1);
-            return result;
+        /**
+         * Prepare an expression for being consumed at render time.  Its main job
+         * is to
+         * - replace unknown variables by a lookup in the context
+         * - replace already defined variables by their internal name
+         */
+        formatExpression(expr) {
+            return compileExpr(expr, this.variables);
         }
         /**
          * Perform string interpolation on the given string. Note that if the whole
@@ -1438,14 +1621,7 @@
             if (matches && matches[0].length === s.length) {
                 return `(${this.formatExpression(s.slice(2, -2))})`;
             }
-            matches = s.match(/\#\{.*?\}/g);
-            if (matches && matches[0].length === s.length) {
-                return `(${this.formatExpression(s.slice(2, -1))})`;
-            }
-            let formatter = expr => "${" + this.formatExpression(expr) + "}";
-            let r = s
-                .replace(/\{\{.*?\}\}/g, s => formatter(s.slice(2, -2)))
-                .replace(/\#\{.*?\}/g, s => formatter(s.slice(2, -1)));
+            let r = s.replace(/\{\{.*?\}\}/g, s => "${" + this.formatExpression(s.slice(2, -2)) + "}");
             return "`" + r + "`";
         }
     }
@@ -1700,13 +1876,6 @@
             if (__owl__.isMounted) {
                 await this.render(true);
             }
-        }
-        /**
-         * Sets a key (from the state) to a specific value.  This is mostly useful to
-         * work around the limitation in observed value with new keys.
-         */
-        set(target, key, value) {
-            this.__owl__.observer.set(target, key, value);
         }
         /**
          * Emit a custom event of type 'eventType' with the given 'payload' on the
@@ -2084,41 +2253,42 @@
             qweb._compileNode(ctx.caller, ctx);
             return;
         }
-        if (typeof value === "string") {
-            let exprID = value;
-            if (!(value in ctx.definedVariables)) {
-                exprID = `_${ctx.generateID()}`;
-                ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
-            }
-            ctx.addIf(`${exprID} || ${exprID} === 0`);
-            if (!ctx.parentNode) {
-                throw new Error("Should not have a text node without a parent");
-            }
-            if (ctx.escaping) {
-                ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
-            }
-            else {
-                let fragID = ctx.generateID();
-                ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
-                let tempNodeID = ctx.generateID();
-                ctx.addLine(`var p${tempNodeID} = {hook: {`);
-                ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
-                ctx.addLine(`}};`);
-                ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
-                ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
-            }
-            if (node.childNodes.length) {
-                ctx.addElse();
-                qweb._compileChildren(node, ctx);
-            }
-            ctx.closeIf();
-            return;
-        }
-        if (value instanceof NodeList) {
-            for (let node of Array.from(value)) {
+        if (value.xml instanceof NodeList) {
+            for (let node of Array.from(value.xml)) {
                 qweb._compileNode(node, ctx);
             }
+            return;
         }
+        let exprID;
+        if (typeof value === "string") {
+            exprID = `_${ctx.generateID()}`;
+            ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
+        }
+        else {
+            exprID = value.id;
+        }
+        ctx.addIf(`${exprID} || ${exprID} === 0`);
+        if (!ctx.parentNode) {
+            throw new Error("Should not have a text node without a parent");
+        }
+        if (ctx.escaping) {
+            ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+        }
+        else {
+            let fragID = ctx.generateID();
+            ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
+            let tempNodeID = ctx.generateID();
+            ctx.addLine(`var p${tempNodeID} = {hook: {`);
+            ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
+            ctx.addLine(`}};`);
+            ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
+            ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
+        }
+        if (node.childNodes.length) {
+            ctx.addElse();
+            qweb._compileChildren(node, ctx);
+        }
+        ctx.closeIf();
     }
     QWeb.addDirective({
         name: "esc",
@@ -2159,17 +2329,21 @@
             if (value) {
                 const formattedValue = ctx.formatExpression(value);
                 if (ctx.variables.hasOwnProperty(variable)) {
-                    ctx.addLine(`${ctx.variables[variable]} = ${formattedValue}`);
+                    ctx.addLine(`${ctx.variables[variable].id} = ${formattedValue}`);
                 }
                 else {
                     const varName = `_${ctx.generateID()}`;
                     ctx.addLine(`var ${varName} = ${formattedValue};`);
-                    ctx.definedVariables[varName] = formattedValue;
-                    ctx.variables[variable] = varName;
+                    ctx.variables[variable] = {
+                        id: varName,
+                        expr: formattedValue
+                    };
                 }
             }
             else {
-                ctx.variables[variable] = node.childNodes;
+                ctx.variables[variable] = {
+                    xml: node.childNodes
+                };
             }
             return true;
         }
@@ -2236,23 +2410,25 @@
             tempCtx.nextID = ctx.rootContext.nextID;
             qweb._compileNode(nodeCopy, tempCtx);
             const vars = Object.assign({}, ctx.variables, tempCtx.variables);
-            var definedVariables = Object.assign({}, ctx.definedVariables, tempCtx.definedVariables);
             ctx.rootContext.nextID = tempCtx.nextID;
             // open new scope, if necessary
-            const hasNewVariables = Object.keys(definedVariables).length > 0;
+            const hasNewVariables = Object.keys(tempCtx.variables).length > 0;
             if (hasNewVariables) {
                 ctx.addLine("{");
                 ctx.indent();
-            }
-            // add new variables, if any
-            for (let key in definedVariables) {
-                ctx.addLine(`let ${key} = ${definedVariables[key]}`);
+                // add new variables, if any
+                for (let key in tempCtx.variables) {
+                    const v = tempCtx.variables[key];
+                    if (v.expr) {
+                        ctx.addLine(`let ${v.id} = ${v.expr};`);
+                    }
+                    // todo: handle XML variables...
+                }
             }
             // compile sub template
             const subCtx = ctx
                 .subContext("caller", nodeCopy)
-                .subContext("variables", Object.create(vars))
-                .subContext("definedVariables", Object.create(definedVariables));
+                .subContext("variables", Object.create(vars));
             qweb._compileNode(nodeTemplate.elem, subCtx);
             // close new scope
             if (hasNewVariables) {
@@ -2277,17 +2453,18 @@
             let arrayID = ctx.generateID();
             ctx.addLine(`var _${arrayID} = ${ctx.formatExpression(elems)};`);
             ctx.addLine(`if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`);
-            ctx.addLine(`if (typeof _${arrayID} === 'number') { _${arrayID} = Array.from(Array(_${arrayID}).keys())}`);
             let keysID = ctx.generateID();
-            ctx.addLine(`var _${keysID} = _${arrayID} instanceof Array ? _${arrayID} : Object.keys(_${arrayID});`);
-            ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
             let valuesID = ctx.generateID();
-            ctx.addLine(`var _${valuesID} = _${arrayID} instanceof Array ? _${arrayID} : Object.values(_${arrayID});`);
+            ctx.addLine(`var _${keysID} = _${valuesID} = _${arrayID};`);
+            ctx.addIf(`!(_${arrayID} instanceof Array)`);
+            ctx.addLine(`_${keysID} = Object.keys(_${arrayID});`);
+            ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
+            ctx.closeIf();
+            ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
             ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
             ctx.indent();
             ctx.addLine(`context.${name}_first = i === 0;`);
             ctx.addLine(`context.${name}_last = i === _length${keysID} - 1;`);
-            ctx.addLine(`context.${name}_parity = i % 2 === 0 ? 'even' : 'odd';`);
             ctx.addLine(`context.${name}_index = i;`);
             ctx.addLine(`context.${name} = _${keysID}[i];`);
             ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
@@ -2728,8 +2905,8 @@
                 transitionsInsertCode = `utils.transitionInsert(vn.elm, '${transition}');`;
             }
             let finalizeWidgetCode = `w${widgetID}.${keepAlive ? "unmount" : "destroy"}();`;
-            if (ref) {
-                finalizeWidgetCode += `delete context.refs[${refKey}];`; // FIXME: shouldn't we keep ref if keepAlive is true?
+            if (ref && !keepAlive) {
+                finalizeWidgetCode += `delete context.refs[${refKey}];`;
             }
             if (transition) {
                 finalizeWidgetCode = `let finalize = () => {
@@ -2878,7 +3055,6 @@
             if (this.debug) {
                 this.history.push({ state: this.state });
             }
-            this.set = this.observer.set.bind(this.observer);
             for (let entry of Object.entries(config.getters || {})) {
                 const name = entry[0];
                 const func = entry[1];
@@ -2914,7 +3090,6 @@
             const res = this.mutations[type].call(null, {
                 commit: this.commit.bind(this),
                 state: this.state,
-                set: this.set,
                 getters: this.getters
             }, payload);
             if (this._commitLevel === 1) {
@@ -3058,7 +3233,7 @@
      * - debounce
      */
     function whenReady(fn) {
-        if (document.readyState === "complete") {
+        if (document.readyState !== "loading") {
             fn();
         }
         else {
@@ -3179,8 +3354,8 @@
     exports.utils = utils;
 
     exports.__info__.version = '0.13.0';
-    exports.__info__.date = '2019-06-05T08:48:29.138Z';
-    exports.__info__.hash = '7d3c374';
+    exports.__info__.date = '2019-06-08T14:30:19.424Z';
+    exports.__info__.hash = '2a19aeb';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

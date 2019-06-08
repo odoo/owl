@@ -352,11 +352,15 @@ class TabbedEditor extends owl.Component {
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
-document.title = `${document.title} (v${owl.__info__.version})`;
-document.addEventListener("DOMContentLoaded", async function() {
+async function start() {
+  document.title = `${document.title} (v${owl.__info__.version})`;
   const templates = await owl.utils.loadTemplates("templates.xml");
   const qweb = new owl.QWeb(templates);
   const env = { qweb };
-  const app = new App(env);
-  app.mount(document.body);
-});
+  owl.utils.whenReady(() => {
+    const app = new App(env);
+    app.mount(document.body);
+  });
+}
+
+start();

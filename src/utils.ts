@@ -11,7 +11,7 @@
  */
 
 export function whenReady(fn) {
-  if (document.readyState === "complete") {
+  if (document.readyState !== "loading") {
     fn();
   } else {
     document.addEventListener("DOMContentLoaded", fn, false);

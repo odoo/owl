@@ -9,10 +9,18 @@ import * as fs from "fs";
 const LINK_REGEXP = /\[([^\[]+)\]\(([^\)]+)\)/g;
 const HEADING_REGEXP = /\n(#+\s*)(.*)/g;
 
+// files to be checked
+function getFiles(): string[] {
+  const DOCFILES = fs.readdirSync("doc").map(f => `doc/${f}`);
+  const MAINREADME = "README.md";
+  return DOCFILES.concat(MAINREADME);
+}
+
 test("All markdown links work", () => {
   let linkNumber = 0;
   let invalidLinkNumber = 0;
-  const data = readDocData();
+  const files = getFiles();
+  const data = readDocData(files);
   for (let file of data) {
     for (let link of file.links) {
       // DEBUG: uncomment next line
@@ -50,17 +58,20 @@ function isLinkValid(
   files: FileData[]
 ): boolean {
   const parts = link.link.split("#");
+  const currentParts = current.name.split("/");
+  const path = currentParts.length > 1 ? currentParts[0] + '/' : "";
+  const fullName =  path + parts[0];
   if (parts.length === 1) {
     // no # in url
     if (parts[0].endsWith(".md")) {
       // it is a local md file
-      if (!files.find(f => f.name === parts[0])) {
+      if (!files.find(f => f.name === fullName)) {
         return false;
       }
     }
   } else {
     const file =
-      parts[0] === "" ? current : files.find(f => f.name === parts[0]);
+      parts[0] === "" ? current : files.find(f => f.name === fullName);
     if (!file) {
       return false;
     }
@@ -88,17 +99,16 @@ function slugify(str) {
     .replace(/-+$/, ""); // Trim - from end of text
 }
 
-function readDocData(): FileData[] {
+function readDocData(files: string[]): FileData[] {
   const result: FileData[] = [];
-  const FILES = fs.readdirSync("doc");
 
-  for (let file of FILES) {
+  for (let file of files) {
     const fileData: FileData = {
       name: file,
       links: [],
       sections: []
     };
-    const content = fs.readFileSync(`doc/${file}`, { encoding: "utf8" });
+    const content = fs.readFileSync(file, { encoding: "utf8" });
     let m;
     // get links info
     do {

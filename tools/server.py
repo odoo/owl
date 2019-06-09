@@ -6,7 +6,7 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 HOST = '127.0.0.1'
 PORT = 8000
-URL = 'http://{0}:{1}/extras'.format(HOST, PORT)
+URL = 'http://{0}:{1}/tools'.format(HOST, PORT)
 
 
 # We define our own handler here to remap owl.js GET requests to the Owl build
@@ -15,7 +15,7 @@ URL = 'http://{0}:{1}/extras'.format(HOST, PORT)
 # we want to update the playground.
 class OWLHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/extras/owl.js':
+        if self.path == '/tools/owl.js':
             self.path = '/dist/owl.js'
         return SimpleHTTPRequestHandler.do_GET(self)
 

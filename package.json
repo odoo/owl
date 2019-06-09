@@ -10,10 +10,10 @@
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
     "test": "jest",
     "test:watch": "jest --watch",
-    "extras:serve": "python3 extras/server.py || python extras/server.py",
-    "extras": "npm run build && npm run extras:serve",
-    "preextras:watch": "npm run build",
-    "extras:watch": "npm-run-all  --parallel extras:serve \"build:* -- --watch\""
+    "tools:serve": "python3 tools/server.py || python tools/server.py",
+    "tools": "npm run build && npm run tools:serve",
+    "pretools:watch": "npm run build",
+    "tools:watch": "npm-run-all  --parallel tools:serve \"build:* -- --watch\""
   },
   "repository": {
     "type": "git",

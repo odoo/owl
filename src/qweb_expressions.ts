@@ -82,7 +82,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ")": "RIGHT_PAREN"
 };
 
-const OPERATORS = [".", "===", "==", "+", "!", "||", "&&", ">", "?", "-", "*"];
+const OPERATORS = ".,===,==,+,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(',');
 
 type Tokenizer = (expr: string) => Token | false;
 
@@ -201,7 +201,7 @@ export function tokenize(expr: string): Token[] {
     }
   }
   if (expr.length) {
-    throw new Error("Tokenizer error...");
+    throw new Error(`Tokenizer error: could not tokenize "${expr}"`);
   }
   return result;
 }

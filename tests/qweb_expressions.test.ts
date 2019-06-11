@@ -39,6 +39,15 @@ describe("tokenizer", () => {
     ]);
   });
 
+  test("various operators", () => {
+    expect(tokenize(">= <= < >")).toEqual([
+      { type: "OPERATOR", value: ">=" },
+      { type: "OPERATOR", value: "<=" },
+      { type: "OPERATOR", value: "<" },
+      { type: "OPERATOR", value: ">" },
+    ]);
+  });
+
   test("strings", () => {
     expect(() => tokenize("'")).toThrow("Invalid expression");
     expect(() => tokenize("'\\")).toThrow("Invalid expression");

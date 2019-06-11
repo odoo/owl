@@ -11,11 +11,13 @@
  */
 
 export function whenReady(fn) {
-  if (document.readyState !== "loading") {
-    fn();
-  } else {
-    document.addEventListener("DOMContentLoaded", fn, false);
-  }
+  return new Promise(function(resolve) {
+    if (document.readyState !== "loading") {
+      resolve();
+    } else {
+      document.addEventListener("DOMContentLoaded", resolve, false);
+    }
+  }).then(fn || function () {});
 }
 
 const loadedScripts: { [key: string]: Promise<void> } = {};

@@ -13,14 +13,23 @@ functions are all available in the `owl.utils` namespace.
 
 ## `whenReady`
 
-The function `whenReady` is useful to register some code that need to be executed
-as soon as the document (page) is ready:
+The function `whenReady` returns a `Promise` resolved when the DOM is ready (if
+not ready yet, resolved directly otherwise). If called with a callback as
+argument, it executes it as soon as the DOM ready (or directly).
+
+```js
+Promise.all([loadTemplates(), owl.utils.whenReady()]).then(function ([templates]) {
+    const qweb = new owl.QWeb(templates);
+    const app = new App({ qweb });
+    app.mount(document.body);
+});
+```
 
 ```js
 owl.utils.whenReady(function() {
-  const qweb = new owl.QWeb();
-  const app = new App({ qweb });
-  app.mount(document.body);
+    const qweb = new owl.QWeb();
+    const app = new App({ qweb });
+    app.mount(document.body);
 });
 ```
 

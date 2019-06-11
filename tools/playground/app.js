@@ -127,22 +127,22 @@ async function makeApp(js, css, xml) {
     .map(l => (l === "" ? "" : "  " + l))
     .join("\n");
 
-  const JS = `async function startApp() {
-  // Loading templates
-  let TEMPLATES;
+  const JS = `
+async function loadTemplates() {
   try {
-    TEMPLATES = await owl.utils.loadTemplates('app.xml');
+    return owl.utils.loadTemplates('app.xml');
   } catch(e) {
-    document.write(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
-    return;
+    console.error(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
   }
+}
 
+function start([TEMPLATES]) {
   // Application code
 ${processedJS}
 }
 
-// wait for DOM ready before starting
-owl.utils.whenReady(startApp);`;
+Promise.all([loadTemplates(), owl.utils.whenReady()]).then(start);
+`;
 
   zip.file("app.js", JS);
   zip.file("app.css", css);
@@ -354,13 +354,13 @@ class TabbedEditor extends owl.Component {
 //------------------------------------------------------------------------------
 async function start() {
   document.title = `${document.title} (v${owl.__info__.version})`;
-  const templates = await owl.utils.loadTemplates("templates.xml");
+  const [templates] = await Promise.all([
+    owl.utils.loadTemplates("templates.xml"),
+    owl.utils.whenReady()
+  ]);
   const qweb = new owl.QWeb(templates);
-  const env = { qweb };
-  owl.utils.whenReady(() => {
-    const app = new App(env);
-    app.mount(document.body);
-  });
+  const app = new App({ qweb });
+  app.mount(document.body);
 }
 
 start();

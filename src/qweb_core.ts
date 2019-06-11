@@ -140,6 +140,11 @@ export class QWeb {
   // able to map a qweb instance to a template name.
   id = nextID++;
 
+  // slots contains sub templates defined with t-set inside t-widget nodes, and
+  // are meant to be used by the t-slot directive.
+  slots = {};
+  nextSlotId = 1;
+
   constructor(data?: string) {
     if (data) {
       this.addTemplates(data);

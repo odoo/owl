@@ -15,6 +15,7 @@
   - [`t-mounted` directive](#t-mounted-directive)
   - [Props Validation](#props-validation)
   - [Keeping References](#keeping-references)
+  - [Slots](#slots)
   - [Asynchronous rendering](#asynchronous-rendering)
 
 ## Overview
@@ -746,6 +747,66 @@ The `t-ref` directive also accepts dynamic values with string interpolation
 
 ```js
 this.refs.widget_44;
+```
+
+### Slots
+
+To make generic components, it is useful to be able for a parent widget to *inject*
+some sub template, but still be the owner.  For example, a generic dialog widget
+will need to render some content, some footer, but with the parent as the
+rendering context.
+
+This is what *slots* are for.
+
+```xml
+<div t-name="Dialog" class="modal">
+  <div class="modal-title"><t t-esc="props.title"/></div>
+  <div class="modal-content">
+    <t t-slot="content"/>
+  </div>
+  <div class="modal-footer">
+    <t t-slot="footer"/>
+  </div>
+</div>
+```
+
+Slots are defined by the caller, with the `t-set` directive:
+
+```xml
+<div t-name="SomeWidget">
+  <div>some widget</div>
+  <t t-widget="Dialog" title="Some Dialog">
+    <t t-set="content">
+      <div>hey</div>
+    </t>
+    <t t-set="footer">
+      <button t-on-click="doSomething">ok</button>
+    </t>
+  </t>
+</div>
+```
+
+In this example, the widget `Dialog` will render the slots `content` and `footer`
+with its parent as rendering context.  This means that clicking on the button
+will execute the `doSomething` method on the parent, not on the dialog.
+
+Warning! Slots have a technical constraint: the result of the slot rendering
+should have exactly one root node.  So,
+
+```xml
+<t t-set="content">
+  <div>A</div>
+  <div>B</div>
+</t>
+```
+
+is not allowed. A workaround could be to wrap the content in a div:
+
+```xml
+<div t-set="content">
+  <div>A</div>
+  <div>B</div>
+</div>
 ```
 
 ### Asynchronous rendering

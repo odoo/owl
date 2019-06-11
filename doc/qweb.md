@@ -73,6 +73,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-on-*`                  | [Event handling](component.md#event-handling)                                           |
 | `t-transition`            | [Defining an animation](animations.md#css-transitions)                                  |
 | `t-mounted`               | [Callback when a node or component is mounted](component.md#t-mounted-directive)        |
+| `t-slot`                  | [Rendering a slot](component.md#slots)                                                  |
 
 ## QWeb Engine
 
@@ -177,10 +178,10 @@ root nodes.
 
 QWeb expressions are strings that will be processed at compile time. Each variable in
 the javascript expression will be replaced by a lookup in the context (so, the
-widget).  For example, `a + b.c(d)` will be converted into:
+widget). For example, `a + b.c(d)` will be converted into:
 
 ```js
-context['a'] + context['b'].c(context['d'])
+context["a"] + context["b"].c(context["d"]);
 ```
 
 It is useful to explain the various rules that applies on these expressions:

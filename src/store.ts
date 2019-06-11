@@ -150,10 +150,20 @@ type Constructor<T> = new (...args: any[]) => T;
 interface EnvWithStore extends Env {
   store: Store;
 }
+type HashFunction = (a: any, b: any) => number;
+interface StoreOptions {
+  getStore?(Env): Store;
+  hashFunction?: HashFunction;
+  deep?: boolean;
+}
 
 let nextID = 1;
 
-export function connect(mapStateToProps, options: any = {}) {
+export function connect<E extends EnvWithStore, P, S>(
+  Comp: Constructor<Component<E, P, S>>,
+  mapStoreToProps,
+  options: StoreOptions = <StoreOptions>{}
+) {
   let hashFunction = options.hashFunction || null;
   const getStore = options.getStore || (env => env.store);
 
@@ -181,103 +191,95 @@ export function connect(mapStateToProps, options: any = {}) {
     };
   }
 
-  return function<E extends EnvWithStore, P, S>(
-    Comp: Constructor<Component<E, P, S>>
-  ) {
-    const Result = class extends Comp {
-      constructor(parent, props?: any) {
-        const env = parent instanceof Component ? parent.env : parent;
-        const store = getStore(env);
-        const ownProps = Object.assign({}, props || {});
-        const storeProps = mapStateToProps(
-          store.state,
-          ownProps,
-          store.getters
-        );
-        const mergedProps = Object.assign({}, props || {}, storeProps);
-        super(parent, mergedProps);
-        (<any>this.__owl__).ownProps = ownProps;
-        (<any>this.__owl__).currentStoreProps = storeProps;
-        (<any>this.__owl__).store = store;
-        (<any>this.__owl__).storeHash = hashFunction(
-          {
-            state: store.state,
-            storeProps: storeProps,
-            revNumber,
-            deepRevNumber
-          },
-          {
-            currentStoreProps: storeProps
-          }
-        );
-      }
-      /**
-       * We do not use the mounted hook here for a subtle reason: we want the
-       * updates to be called for the parents before the children.  However,
-       * if we use the mounted hook, this will be done in the reverse order.
-       */
-      _callMounted() {
-        (<any>this.__owl__).store.on("update", this, this._checkUpdate);
-        super._callMounted();
-      }
-      willUnmount() {
-        (<any>this.__owl__).store.off("update", this);
-        super.willUnmount();
-      }
+  const Result = class extends Comp {
+    constructor(parent, props?: any) {
+      const env = parent instanceof Component ? parent.env : parent;
+      const store = getStore(env);
+      const ownProps = Object.assign({}, props || {});
+      const storeProps = mapStoreToProps(store.state, ownProps, store.getters);
+      const mergedProps = Object.assign({}, props || {}, storeProps);
+      super(parent, mergedProps);
+      (<any>this.__owl__).ownProps = ownProps;
+      (<any>this.__owl__).currentStoreProps = storeProps;
+      (<any>this.__owl__).store = store;
+      (<any>this.__owl__).storeHash = (<HashFunction>hashFunction)(
+        {
+          state: store.state,
+          storeProps: storeProps,
+          revNumber,
+          deepRevNumber
+        },
+        {
+          currentStoreProps: storeProps
+        }
+      );
+    }
+    /**
+     * We do not use the mounted hook here for a subtle reason: we want the
+     * updates to be called for the parents before the children.  However,
+     * if we use the mounted hook, this will be done in the reverse order.
+     */
+    _callMounted() {
+      (<any>this.__owl__).store.on("update", this, this._checkUpdate);
+      super._callMounted();
+    }
+    willUnmount() {
+      (<any>this.__owl__).store.off("update", this);
+      super.willUnmount();
+    }
 
-      _checkUpdate() {
-        const ownProps = (<any>this.__owl__).ownProps;
-        const storeProps = mapStateToProps(
+    _checkUpdate() {
+      const ownProps = (<any>this.__owl__).ownProps;
+      const storeProps = mapStoreToProps(
+        (<any>this.__owl__).store.state,
+        ownProps,
+        (<any>this.__owl__).store.getters
+      );
+      const options: any = {
+        currentStoreProps: (<any>this.__owl__).currentStoreProps
+      };
+      const storeHash = (<HashFunction>hashFunction)(
+        {
+          state: (<any>this.__owl__).store.state,
+          storeProps: storeProps,
+          revNumber,
+          deepRevNumber
+        },
+        options
+      );
+      let didChange = options.didChange;
+      if (storeHash !== (<any>this.__owl__).storeHash) {
+        didChange = true;
+        (<any>this.__owl__).storeHash = storeHash;
+      }
+      if (didChange) {
+        (<any>this.__owl__).currentStoreProps = storeProps;
+        this._updateProps(ownProps, false);
+      }
+    }
+    _updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
+      if ((<any>this.__owl__).ownProps !== nextProps) {
+        (<any>this.__owl__).currentStoreProps = mapStoreToProps(
           (<any>this.__owl__).store.state,
-          ownProps,
+          nextProps,
           (<any>this.__owl__).store.getters
         );
-        const options: any = {
-          currentStoreProps: (<any>this.__owl__).currentStoreProps
-        };
-        const storeHash = hashFunction(
-          {
-            state: (<any>this.__owl__).store.state,
-            storeProps: storeProps,
-            revNumber,
-            deepRevNumber
-          },
-          options
-        );
-        let didChange = options.didChange;
-        if (storeHash !== (<any>this.__owl__).storeHash) {
-          didChange = true;
-          (<any>this.__owl__).storeHash = storeHash;
-        }
-        if (didChange) {
-          (<any>this.__owl__).currentStoreProps = storeProps;
-          this._updateProps(ownProps, false);
-        }
       }
-      _updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
-        if ((<any>this.__owl__).ownProps !== nextProps) {
-          (<any>this.__owl__).currentStoreProps = mapStateToProps(
-            (<any>this.__owl__).store.state,
-            nextProps,
-            (<any>this.__owl__).store.getters
-          );
-        }
-        (<any>this.__owl__).ownProps = nextProps;
-        const mergedProps = Object.assign(
-          {},
-          nextProps,
-          (<any>this.__owl__).currentStoreProps
-        );
-        return super._updateProps(mergedProps, forceUpdate, patchQueue);
-      }
-    };
-
-    // we assign here a unique name to the resulting anonymous class.
-    // this is necessary for Owl to be able to properly deduce templates.
-    // Otherwise, all connected components would have the same name, and then
-    // each component after the first will necessarily have the same template.
-    let name = `ConnectedComponent${nextID++}`;
-    Object.defineProperty(Result, "name", { value: name });
-    return Result;
+      (<any>this.__owl__).ownProps = nextProps;
+      const mergedProps = Object.assign(
+        {},
+        nextProps,
+        (<any>this.__owl__).currentStoreProps
+      );
+      return super._updateProps(mergedProps, forceUpdate, patchQueue);
+    }
   };
+
+  // we assign here a unique name to the resulting anonymous class.
+  // this is necessary for Owl to be able to properly deduce templates.
+  // Otherwise, all connected components would have the same name, and then
+  // each component after the first will necessarily have the same template.
+  let name = `ConnectedComponent${nextID++}`;
+  Object.defineProperty(Result, "name", { value: name });
+  return Result;
 }

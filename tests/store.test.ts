@@ -411,10 +411,13 @@ describe("connecting a component to store", () => {
         state.todos.push({ msg });
       }
     };
-    function mapStateToProps(s) {
+    function mapStoreToProps(s) {
       return { todos: s.todos };
     }
-    const TodoApp = connect(mapStateToProps)(App);
+    const TodoApp = connect(
+      App,
+      mapStoreToProps
+    );
     const store = new Store({ state, mutations });
     (<any>env).store = store;
     const app = new TodoApp(env);
@@ -434,7 +437,7 @@ describe("connecting a component to store", () => {
         state.todos[0].title = title;
       }
     };
-    function mapStateToProps(s) {
+    function mapStoreToProps(s) {
       return { todos: s.todos };
     }
     const store = new Store({ state, mutations });
@@ -451,13 +454,15 @@ describe("connecting a component to store", () => {
     class App extends Component<any, any, any> {}
 
     const DeepTodoApp = connect(
-      mapStateToProps,
+      App,
+      mapStoreToProps,
       { deep: true }
-    )(App);
+    );
     const ShallowTodoApp = connect(
-      mapStateToProps,
+      App,
+      mapStoreToProps,
       { deep: false }
-    )(App);
+    );
     (<any>env).store = store;
     const deepTodoApp = new DeepTodoApp(env);
     const shallowTodoApp = new ShallowTodoApp(env);
@@ -501,15 +506,16 @@ describe("connecting a component to store", () => {
         }
       }
     });
-    function mapStateToProps(s) {
+    function mapStoreToProps(s) {
       return { todos: s.todos };
     }
     const TodoApp = connect(
-      mapStateToProps,
+      App,
+      mapStoreToProps,
       {
         getStore: () => store
       }
-    )(App);
+    );
     const app = new TodoApp(env);
 
     await app.mount(fixture);
@@ -532,7 +538,10 @@ describe("connecting a component to store", () => {
       }
     }
 
-    const ConnectedChild = connect(s => s)(Child);
+    const ConnectedChild = connect(
+      Child,
+      s => s
+    );
 
     env.qweb.addTemplate(
       "Parent",
@@ -574,10 +583,13 @@ describe("connecting a component to store", () => {
 
     env.qweb.addTemplate("TodoItem", `<span><t t-esc="props.text"/></span>`);
     class TodoItem extends Component<any, any, any> {}
-    const ConnectedTodo = connect((state, props) => {
-      const todo = state.todos.find(t => t.id === props.id);
-      return todo;
-    })(TodoItem);
+    const ConnectedTodo = connect(
+      TodoItem,
+      (state, props) => {
+        const todo = state.todos.find(t => t.id === props.id);
+        return todo;
+      }
+    );
 
     env.qweb.addTemplate(
       "TodoList",
@@ -591,10 +603,13 @@ describe("connecting a component to store", () => {
       widgets = { ConnectedTodo };
     }
 
-    function mapStateToProps(state) {
+    function mapStoreToProps(state) {
       return { todos: state.todos };
     }
-    const ConnectedTodoList = connect(mapStateToProps)(TodoList);
+    const ConnectedTodoList = connect(
+      TodoList,
+      mapStoreToProps
+    );
 
     (<any>env).store = store;
     const app = new ConnectedTodoList(env);
@@ -632,13 +647,16 @@ describe("connecting a component to store", () => {
       </div>`
     );
     class TodoItem extends Component<any, any, any> {}
-    const ConnectedTodo = connect((state, props, getters) => {
-      const todo = state.todos.find(t => t.id === props.id);
-      return {
-        activeTodoText: getters.text(todo.id),
-        importantTodoText: getters.importantTodoText()
-      };
-    })(TodoItem);
+    const ConnectedTodo = connect(
+      TodoItem,
+      (state, props, getters) => {
+        const todo = state.todos.find(t => t.id === props.id);
+        return {
+          activeTodoText: getters.text(todo.id),
+          importantTodoText: getters.importantTodoText()
+        };
+      }
+    );
 
     env.qweb.addTemplate(
       "TodoList",
@@ -652,10 +670,13 @@ describe("connecting a component to store", () => {
       widgets = { ConnectedTodo };
     }
 
-    function mapStateToProps(state) {
+    function mapStoreToProps(state) {
       return { todos: state.todos };
     }
-    const ConnectedTodoList = connect(mapStateToProps)(TodoList);
+    const ConnectedTodoList = connect(
+      TodoList,
+      mapStoreToProps
+    );
 
     (<any>env).store = store;
     const app = new ConnectedTodoList(env);
@@ -669,9 +690,12 @@ describe("connecting a component to store", () => {
   test("connected component is updated when props are updated", async () => {
     env.qweb.addTemplate("Beer", `<span><t t-esc="props.name"/></span>`);
     class Beer extends Component<any, any, any> {}
-    const ConnectedBeer = connect((state, props) => {
-      return state.beers[props.id];
-    })(Beer);
+    const ConnectedBeer = connect(
+      Beer,
+      (state, props) => {
+        return state.beers[props.id];
+      }
+    );
 
     env.qweb.addTemplate(
       "App",
@@ -717,10 +741,13 @@ describe("connecting a component to store", () => {
     const store = new Store({ state, mutations });
     (<any>env).store = store;
 
-    function mapStateToProps(state) {
+    function mapStoreToProps(state) {
       return { beers: state.beers, otherKey: 1 };
     }
-    const ConnectedApp = connect(mapStateToProps)(App);
+    const ConnectedApp = connect(
+      App,
+      mapStoreToProps
+    );
     const app = new ConnectedApp(env);
 
     await app.mount(fixture);
@@ -743,13 +770,16 @@ describe("connecting a component to store", () => {
         </div>`
     );
     class Beer extends Component<any, any, any> {}
-    const ConnectedBeer = connect((state, props) => {
-      return {
-        selected: state.beers[props.id],
-        consumed: state.beers[state.consumedID] || null,
-        taster: state.taster
-      };
-    })(Beer);
+    const ConnectedBeer = connect(
+      Beer,
+      (state, props) => {
+        return {
+          selected: state.beers[props.id],
+          consumed: state.beers[state.consumedID] || null,
+          taster: state.taster
+        };
+      }
+    );
 
     env.qweb.addTemplate(
       "App",
@@ -812,13 +842,16 @@ describe("connecting a component to store", () => {
         </div>`
     );
     class Beer extends Component<any, any, any> {}
-    const ConnectedBeer = connect((state, props) => {
-      return {
-        selected: state.beers[props.id],
-        consumed: state.beers[state.consumedID] || null,
-        taster: state.taster
-      };
-    })(Beer);
+    const ConnectedBeer = connect(
+      Beer,
+      (state, props) => {
+        return {
+          selected: state.beers[props.id],
+          consumed: state.beers[state.consumedID] || null,
+          taster: state.taster
+        };
+      }
+    );
 
     env.qweb.addTemplate(
       "App",
@@ -909,18 +942,24 @@ describe("connecting a component to store", () => {
     class Parent extends Component<any, any, any> {
       widgets = { Child: ConnectedChild };
     }
-    const ConnectedParent = connect(function(s) {
-      steps.push("parent");
-      return { current: s.current, isvisible: s.isvisible };
-    })(Parent);
+    const ConnectedParent = connect(
+      Parent,
+      function(s) {
+        steps.push("parent");
+        return { current: s.current, isvisible: s.isvisible };
+      }
+    );
 
     env.qweb.addTemplate("Child", `<span><t t-esc="props.msg"/></span>`);
     class Child extends Component<any, any, any> {}
 
-    const ConnectedChild = connect(function(s, props) {
-      steps.push("child");
-      return { msg: s.msg[props.key] };
-    })(Child);
+    const ConnectedChild = connect(
+      Child,
+      function(s, props) {
+        steps.push("child");
+        return { msg: s.msg[props.key] };
+      }
+    );
 
     const state = { current: "a", msg: { a: "a", b: "b" } };
     const mutations = {
@@ -953,9 +992,12 @@ describe("connecting a component to store", () => {
         steps.push("patched");
       }
     }
-    const ConnectedApp = connect(function(s) {
-      return { msg: s.msg };
-    })(App);
+    const ConnectedApp = connect(
+      App,
+      function(s) {
+        return { msg: s.msg };
+      }
+    );
 
     const state = { msg: "a" };
     const mutations = {

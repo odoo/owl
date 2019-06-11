@@ -176,7 +176,7 @@ function mapStoreToProps(state) {
         value: state.counter
     };
 }
-const ConnectedCounter = owl.connect(mapStoreToProps)(Counter);
+const ConnectedCounter = owl.connect(Counter, mapStoreToProps);
 
 const counter = new ConnectedCounter({ store, qweb });
 ```
@@ -199,5 +199,5 @@ The arguments of `connect` are:
     - `deep`: [only useful if no hashFunction is given] if false, only watch
       for top level state changes (true by default)
 
-The `connect` function returns a function that takes a `Component` as argument
-and returns a sub Class of this `Component` that is connected to the `store`
+The `connect` function returns a sub class of the given `Component` which is
+connected to the `store`.

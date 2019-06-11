@@ -3,16 +3,20 @@
 
 ## Reference
 
+- [Animations](animations.md)
 - [Component](component.md)
+- [Event Bus](event_bus.md)
+- [Observer](observer.md)
 - [QWeb](qweb.md)
 - [Store](store.md)
-- [Observer](observer.md)
-- [Event Bus](event_bus.md)
-- [Virtual DOM](vdom.md)
 - [Utils](utils.md)
+- [Virtual DOM](vdom.md)
+
+## Learning resources
+
+- [Quick Start](quick_start.md)
 
 ## Miscellaneous
-- [Quick Start](quick_start.md)
-- [Animations](animations.md)
-- [Tooling](tooling.md)
+
 - [Comparison with React/Vue](comparison.md)
+- [Tooling](tooling.md)

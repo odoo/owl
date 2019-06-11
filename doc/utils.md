@@ -5,11 +5,11 @@ functions are all available in the `owl.utils` namespace.
 
 ## Content
 
-- [`whenReady`](#whenready)
-- [`loadJS`](#loadjs)
-- [`loadTemplates`](#loadtemplates)
-- [`escape`](#escape)
-- [`debounce`](#debounce)
+- [`whenReady`](#whenready): executing code when DOM is ready
+- [`loadJS`](#loadjs): loading script files
+- [`loadTemplates`](#loadtemplates): loading xml files
+- [`escape`](#escape): sanitizing strings
+- [`debounce`](#debounce): limiting rate of function calls
 
 ## `whenReady`
 
@@ -17,23 +17,40 @@ The function `whenReady` is useful to register some code that need to be execute
 as soon as the document (page) is ready:
 
 ```js
-owl.utils.whenReady(function () {
-    const qweb = new owl.QWeb();
-    const app = new App({ qweb });
-    app.mount(document.body);
+owl.utils.whenReady(function() {
+  const qweb = new owl.QWeb();
+  const app = new App({ qweb });
+  app.mount(document.body);
 });
 ```
 
+
 ## `loadJS`
+
+`loadJS` takes a url (string) for a javascript resource, and loads it. It returns
+a promise, so the caller can properly react when it is ready.  Also, it is smart:
+it maintains a list of urls previously loaded (or currently being loaded), and
+prevent doing twice the work.
+
+```js
+class MyComponent extends owl.Component {
+    willStart() {
+        return owl.utils.loadJS('/static/libs/someLib.js');
+    }
+}
+```
 
 ## `loadTemplates`
 
+```js
+async function makeEnv() {
+    const templates = await owl.utils.loadTemplates('templates.xml');
+    const qweb = new owl.QWeb(templates);
+    return { qweb };
+}
+```
+
 ## `escape`
 
+
 ## `debounce`
-
-
-
-
-
-

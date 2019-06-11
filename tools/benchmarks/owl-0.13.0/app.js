@@ -1,10 +1,14 @@
-import { buildData, startMeasure, stopMeasure } from "../shared/utils.js";
+import {
+  buildData,
+  startMeasure,
+  stopMeasure,
+  formatNumber
+} from "../shared/utils.js";
 
 //------------------------------------------------------------------------------
 // Likes Counter Widget
 //------------------------------------------------------------------------------
 class Counter extends owl.Component {
-  template = "counter";
   state = { counter: 0 };
 
   increment() {
@@ -16,15 +20,14 @@ class Counter extends owl.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.Component {
-  template = "message";
   widgets = { Counter };
 
   shouldUpdate(nextProps) {
     return nextProps.message !== this.props.message;
   }
   removeMessage() {
-    this.trigger("remove_message", {
-      id: this.props.id
+    this.trigger("remove-message", {
+      id: this.props.message.id
     });
   }
 }
@@ -33,39 +36,122 @@ class Message extends owl.Component {
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  template = "root";
   widgets = { Message };
-  state = { messages: [] };
+  state = { messages: [], multipleFlag: false, clearAfterFlag: false };
+
+  mounted() {
+    this.log(
+      `Benchmarking Owl v${owl.__info__.version} (build date: ${
+        owl.__info__.date
+      })`
+    );
+  }
+
+  benchmark(message, fn, callback) {
+    if (this.state.multipleFlag) {
+      const N = 20;
+      let n = N;
+      let total = 0;
+      let cb = info => {
+        let finalize = () => {
+          n--;
+          total += info.delta;
+          if (n === 0) {
+            const avg = total / N;
+            this.log(`Average: ${formatNumber(avg)}ms`, true);
+            if (callback) {
+              callback();
+            }
+          } else {
+            this._benchmark(message, fn, cb);
+          }
+        };
+
+        if (this.state.clearAfterFlag) {
+          this._benchmark(
+            "clear",
+            () => {
+              this.state.messages = [];
+            },
+            finalize,
+            false
+          );
+        } else {
+          finalize();
+        }
+      };
+      this._benchmark(message, fn, cb);
+    } else {
+      this._benchmark(message, fn, callback);
+    }
+  }
+
+  _benchmark(message, fn, cb, log = true) {
+    setTimeout(() => {
+      startMeasure(message);
+      fn();
+      stopMeasure(info => {
+        if (log) {
+          this.log(info.msg);
+        }
+        if (cb) {
+          cb(info);
+        }
+      });
+    }, 10);
+  }
 
   addMessages(n) {
-    startMeasure("add " + n);
-    const newMessages = buildData(n);
-    this.state.messages.push.apply(this.state.messages, newMessages);
-    stopMeasure();
+    this.benchmark("add " + n, () => {
+      const newMessages = buildData(n);
+      this.state.messages.push.apply(this.state.messages, newMessages);
+    });
   }
 
   clear() {
-    startMeasure("clear");
-    this.state.messages = [];
-    stopMeasure();
+    this._benchmark("clear", () => {
+      this.state.messages = [];
+    });
   }
 
   updateSomeMessages() {
-    startMeasure("update every 10th");
-    const messages = this.state.messages;
-    for (let i = 0; i < this.state.messages.length; i += 10) {
-      const msg = Object.assign({}, messages[i]);
-      msg.author += "!!!";
-      this.set(messages, i, msg);
-    }
-    stopMeasure();
+    this.benchmark("update every 10th", () => {
+      const messages = this.state.messages;
+      for (let i = 0; i < this.state.messages.length; i += 10) {
+        const msg = Object.assign({}, messages[i]);
+        msg.author += "!!!";
+        this.set(messages, i, msg);
+      }
+    });
   }
 
-  removeMessage(data) {
-    startMeasure("remove message");
-    const index = this.state.messages.findIndex(m => m.id === data.id);
-    this.state.messages.splice(index, 1);
-    stopMeasure();
+  removeMessage(event) {
+    this.benchmark("remove message", () => {
+      const index = this.state.messages.findIndex(m => m.id === event.detail.id);
+      this.state.messages.splice(index, 1);
+    });
+  }
+
+  log(str, isBold) {
+    const div = document.createElement("div");
+    if (isBold) {
+      div.classList.add("bold");
+    }
+    div.textContent = `> ${str}`;
+    this.refs.log.appendChild(div);
+    this.refs.log.scrollTop = this.refs.log.scrollHeight;
+  }
+
+  clearLog() {
+    this.refs.log.innerHTML = "";
+  }
+
+  toggleMultiple() {
+    this.state.multipleFlag = !this.state.multipleFlag;
+  }
+
+  toggleClear() {
+    this.state.clearAfterFlag = !this.state.clearAfterFlag;
   }
 }
 

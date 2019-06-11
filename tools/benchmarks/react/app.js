@@ -1,4 +1,9 @@
-import { buildData, startMeasure, stopMeasure } from "../shared/utils.js";
+import {
+  buildData,
+  startMeasure,
+  stopMeasure,
+  formatNumber
+} from "../shared/utils.js";
 
 //------------------------------------------------------------------------------
 // Counter Widget
@@ -86,9 +91,33 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: []
+      messages: [],
+      multipleFlag: false,
+      clearAfterFlag: false
     };
     this.removeMessage = this.removeMessage.bind(this);
+    this.toggleMultipleFlag = this.toggleMultipleFlag.bind(this);
+    this.toggleClearAfterFlag = this.toggleClearAfterFlag.bind(this);
+  }
+
+  componentDidMount() {
+    this.log(`Benchmarking React v${React.version}`);
+  }
+  log(str, isBold) {
+    const div = document.createElement("div");
+    if (isBold) {
+      div.classList.add("bold");
+    }
+    div.textContent = `> ${str}`;
+    this.refs.logref.appendChild(div);
+    this.refs.logref.scrollTop = this.refs.logref.scrollHeight;
+  }
+
+  toggleMultipleFlag() {
+    this.setState({ multipleFlag: !this.state.multipleFlag });
+  }
+  toggleClearAfterFlag() {
+    this.setState({ clearAfterFlag: !this.state.clearAfterFlag });
   }
 
   render() {
@@ -109,53 +138,98 @@ class Main extends React.Component {
         {
           className: "left-thing"
         },
+        React.createElement("div", { className: "title" }, "Actions"),
         React.createElement(
           "div",
-          null,
-          "Number of msg: ",
+          { className: "panel" },
+          React.createElement(
+            "button",
+            {
+              onClick: _ => this.addMessages(100)
+            },
+            "Add 100 messages"
+          ),
+          React.createElement(
+            "button",
+            {
+              onClick: _ => this.addMessages(1000)
+            },
+            "Add 1k messages"
+          ),
+          React.createElement(
+            "button",
+            {
+              onClick: _ => this.addMessages(10000)
+            },
+            "Add 10k messages"
+          ),
+          React.createElement(
+            "button",
+            {
+              onClick: _ => this.addMessages(30000)
+            },
+            "Add 30k messages"
+          ),
+          React.createElement(
+            "button",
+            {
+              onClick: _ => this.updateSomeMessages()
+            },
+            "Update every 10th message"
+          ),
+          React.createElement(
+            "button",
+            {
+              onClick: _ => this.clear()
+            },
+            "Clear"
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: "flags" },
+          React.createElement(
+            "div",
+            null,
+            React.createElement("input", {
+              type: "checkbox",
+              id: "multipleFlag",
+              value: this.state.multipleFlag,
+              onChange: this.toggleMultipleFlag
+            }),
+            React.createElement("label", { for: "multipleFlag" }, " Do it 20x")
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement("input", {
+              type: "checkbox",
+              id: "clearFlag",
+              value: this.state.clearAfterFlag,
+              onChange: this.toggleClearAfterFlag
+            }),
+            React.createElement("label", { for: "clearFlag" }, " Clear after")
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: "info" },
+          "Number of messages: ",
           this.state.messages.length
         ),
         React.createElement(
-          "button",
-          {
-            onClick: _ => this.addMessages(100)
-          },
-          "Add 100 messages"
+          "div",
+          { className: "title" },
+          "Log ",
+          React.createElement("span", { className: "clear-log" }, "(clear)")
         ),
         React.createElement(
-          "button",
-          {
-            onClick: _ => this.addMessages(1000)
-          },
-          "Add 1000 messages"
-        ),
-        React.createElement(
-          "button",
-          {
-            onClick: _ => this.addMessages(10000)
-          },
-          "Add 10000 messages"
-        ),
-        React.createElement(
-          "button",
-          {
-            onClick: _ => this.addMessages(50000)
-          },
-          "Add 50000 messages"
-        ),
-        React.createElement(
-          "button",
-          {
-            onClick: _ => this.updateSomeMessages()
-          },
-          "Update every 10th messags"
-        ),
-        React.createElement(
-          "button",
-          {
-            onClick: _ => this.clear()
-          },
-          "Clear"
+          "div",
+          { className: "log" },
+          React.createElement("div", {
+            className: "log-content",
+            ref: "logref"
+          })
         )
       ),
       React.createElement(
@@ -175,30 +249,30 @@ class Main extends React.Component {
   }
 
   addMessages(n) {
-    startMeasure("add " + n);
-    const newMessages = this.state.messages.concat(buildData(n));
-    this.setState({
-      messages: newMessages
+    this.benchmark("add " + n, () => {
+      const newMessages = this.state.messages.concat(buildData(n));
+      this.setState({
+        messages: newMessages
+      });
     });
-    stopMeasure();
   }
 
   clear() {
-    startMeasure("clear");
-    this.setState({
-      messages: []
+    this._benchmark("clear", () => {
+      this.setState({
+        messages: []
+      });
     });
-    stopMeasure();
   }
 
   updateSomeMessages() {
-    startMeasure("update every 10th");
-    const messages = this.state.messages;
-    for (let i = 0; i < messages.length; i += 10) {
-      messages[i].author += "!!!";
-    }
-    this.forceUpdate();
-    stopMeasure();
+    this.benchmark("update every 10th", () => {
+      const messages = this.state.messages;
+      for (let i = 0; i < messages.length; i += 10) {
+        messages[i].author += "!!!";
+      }
+      this.forceUpdate();
+    });
   }
 
   removeMessage(id) {
@@ -211,11 +285,61 @@ class Main extends React.Component {
     });
     stopMeasure();
   }
+
+  benchmark(message, fn, callback) {
+    if (this.state.multipleFlag) {
+      const N = 20;
+      let n = N;
+      let total = 0;
+      let cb = info => {
+        let finalize = () => {
+          n--;
+          total += info.delta;
+          if (n === 0) {
+            const avg = total / N;
+            this.log(`Average: ${formatNumber(avg)}ms`, true);
+            if (callback) {
+              callback();
+            }
+          } else {
+            this._benchmark(message, fn, cb);
+          }
+        };
+        if (this.state.clearAfterFlag) {
+          this._benchmark(
+            "clear",
+            () => {
+              this.setState({ messages: [] });
+            },
+            finalize,
+            false
+          );
+        } else {
+          finalize();
+        }
+      };
+      this._benchmark(message, fn, cb);
+    } else {
+      this._benchmark(message, fn, callback);
+    }
+  }
+
+  _benchmark(message, fn, cb, log = true) {
+    setTimeout(() => {
+      startMeasure(message);
+      fn();
+      stopMeasure(info => {
+        if (log) {
+          this.log(info.msg);
+        }
+        if (cb) {
+          cb(info);
+        }
+      });
+    }, 10);
+  }
 } //-----------------------------
 // INIT
 //-----------------------------
 
-ReactDOM.render(
-  React.createElement(Main, null),
-  document.getElementById("main")
-);
+ReactDOM.render(React.createElement(Main, null), document.body);

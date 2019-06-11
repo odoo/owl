@@ -1,26 +1,91 @@
-.main {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+html,
+body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
 
+body {
+    margin: 0;
+}
+.main {
+  height: 100%;
+
+  font-size: 14px;
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 640px 1fr;
 }
 
 .left-thing {
   background-color: gray;
-  padding: 20px;
   color: white;
+  display: flex;
+  flex-direction: column;
 }
 
-.left-thing button {
-  width: 100%;
+.left-thing hr {
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+.title {
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  flex: 0 0 auto;
+}
+
+.panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+}
+
+.panel button {
+  flex: 0 0 32%;
+  height: 32px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.info {
+  padding: 10px;
+  flex: 0 0 auto;
+}
+
+.flags {
+    padding: 10px;
+}
+.log {
+    flex: 1 1 auto;
+    position: relative;
+}
+
+.log-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.clear-log {
+    font-size: 14px;
+    color: #eeeeee;
+    cursor: pointer;
 }
 
 .right-thing {
-  padding: 20px;
   overflow: auto;
 }
 

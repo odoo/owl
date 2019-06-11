@@ -1,4 +1,5 @@
 import { QWeb, UTILS } from "./qweb_core";
+import { VNode } from "./vdom";
 
 /**
  * Owl QWeb Extensions
@@ -95,7 +96,17 @@ UTILS.nextFrame = function(cb: () => void) {
   requestAnimationFrame(() => requestAnimationFrame(cb));
 };
 
-UTILS.transitionInsert = function(elm: HTMLElement, name: string) {
+UTILS.transitionInsert = function(vn: VNode, name: string) {
+  const elm = <HTMLElement>vn.elm;
+  // remove potential duplicated vnode that is currently being removed, to
+  // prevent from having twice the same node in the DOM during an animation
+  const dup =
+    elm.parentElement &&
+    elm.parentElement!.querySelector(`*[data-owl-key='${vn.key}']`);
+  if (dup) {
+    dup.remove();
+  }
+
   elm.classList.add(name + "-enter");
   elm.classList.add(name + "-enter-active");
   const finalize = () => {
@@ -109,11 +120,10 @@ UTILS.transitionInsert = function(elm: HTMLElement, name: string) {
   });
 };
 
-UTILS.transitionRemove = function(
-  elm: HTMLElement,
-  name: string,
-  rm: () => void
-) {
+UTILS.transitionRemove = function(vn: VNode, name: string, rm: () => void) {
+  const elm = <HTMLElement>vn.elm;
+  elm.setAttribute("data-owl-key", vn.key!);
+
   elm.classList.add(name + "-leave");
   elm.classList.add(name + "-leave-active");
   const finalize = () => {
@@ -170,8 +180,8 @@ QWeb.addDirective({
   atNodeCreation({ value, addNodeHook }) {
     let name = value;
     const hooks = {
-      insert: `this.utils.transitionInsert(vn.elm, '${name}');`,
-      remove: `this.utils.transitionRemove(vn.elm, '${name}', rm);`
+      insert: `this.utils.transitionInsert(vn, '${name}');`,
+      remove: `this.utils.transitionRemove(vn, '${name}', rm);`
     };
     for (let hookName in hooks) {
       addNodeHook(hookName, hooks[hookName]);
@@ -297,7 +307,7 @@ const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
  *         let nvn = w4._mount(vnode, vn.elm);
  *         pvnode.elm = nvn.elm;
  *         // what follows is only present if there are animations on the widget
- *         utils.transitionInsert(vn.elm, "fade");
+ *         utils.transitionInsert(vn, "fade");
  *       },
  *       remove() {
  *         // override with empty function to prevent from removing the node
@@ -310,7 +320,7 @@ const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
  *         let finalize = () => {
  *           w4.destroy();
  *         };
- *         utils.transitionRemove(vn.elm, "fade", finalize);
+ *         utils.transitionRemove(vn, "fade", finalize);
  *       }
  *     };
  *     // the pvnode is inserted at the correct position in the div's children
@@ -422,7 +432,7 @@ QWeb.addDirective({
     }
     let transitionsInsertCode = "";
     if (transition) {
-      transitionsInsertCode = `utils.transitionInsert(vn.elm, '${transition}');`;
+      transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
     }
     let finalizeWidgetCode = `w${widgetID}.${
       keepAlive ? "unmount" : "destroy"
@@ -434,7 +444,7 @@ QWeb.addDirective({
       finalizeWidgetCode = `let finalize = () => {
           ${finalizeWidgetCode}
         };
-        utils.transitionRemove(vn.elm, '${transition}', finalize);`;
+        utils.transitionRemove(vn, '${transition}', finalize);`;
     }
 
     let createHook = "";

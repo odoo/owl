@@ -187,7 +187,7 @@ const ANIMATION_CSS = `button {
 
 .flash {
     background-position: center;
-    transition: background 0.5s;
+    transition: background .6s;
 }
 
 .flash:active {
@@ -208,7 +208,7 @@ const ANIMATION_CSS = `button {
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+    transition: opacity .6s;
 }
 .fade-enter, .fade-leave-to {
     opacity: 0;

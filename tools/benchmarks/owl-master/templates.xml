@@ -19,8 +19,8 @@
   </div>
 
   <div t-name="Message" class="message">
-    <span class="author"><t t-esc="props.author"/></span>
-    <span class="msg"><t t-esc="props.msg"/></span>
+    <span class="author"><t t-esc="props.message.author"/></span>
+    <span class="msg"><t t-esc="props.message.msg"/></span>
     <button class="remove" t-on-click="removeMessage">Remove</button>
     <t t-widget="Counter"/>
   </div>

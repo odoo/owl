@@ -32,8 +32,8 @@ class OWLHandler(SimpleHTTPRequestHandler):
 OWLHandler.extensions_map['.js'] = 'application/javascript'
 
 if __name__ == "__main__":
-    print("Owl Extras")
-    print("----------")
+    print("Owl Tools")
+    print("---------")
     print("Server running on: {}".format(URL))
     httpd = HTTPServer((HOST, PORT), OWLHandler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()

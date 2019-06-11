@@ -49,11 +49,12 @@ class App extends owl.Component {
 
   updateSomeMessages() {
     startMeasure("update every 10th");
+    const setState = owl.Observer.set;
     const messages = this.state.messages;
     for (let i = 0; i < this.state.messages.length; i += 10) {
       const msg = Object.assign({}, messages[i]);
       msg.author += '!!!';
-      this.set(messages, i, msg);
+      setState(messages, i, msg);
     }
     stopMeasure();
   }

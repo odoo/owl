@@ -432,7 +432,7 @@ class TodoItem extends owl.Component {
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
-function mapStateToProps(state) {
+function mapStoreToProps(state) {
     return {
         todos: state.todos
     };
@@ -489,7 +489,7 @@ class TodoApp extends owl.Component {
     }
 }
 
-const ConnectedTodoApp = owl.connect(mapStateToProps)(TodoApp);
+const ConnectedTodoApp = owl.connect(TodoApp, mapStoreToProps);
 
 //------------------------------------------------------------------------------
 // App Initialization

@@ -11,6 +11,7 @@ import { QWeb, UTILS } from "./qweb_core";
  * - t-transition
  * - t-widget/t-keepalive
  * - t-mounted
+ * - t-slot
  */
 
 //------------------------------------------------------------------------------
@@ -351,7 +352,7 @@ QWeb.addDirective({
   name: "widget",
   extraNames: ["props", "keepalive"],
   priority: 100,
-  atNodeEncounter({ ctx, value, node }): boolean {
+  atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.addLine("//WIDGET");
     ctx.rootContext.shouldDefineOwner = true;
     ctx.rootContext.shouldDefineQWeb = true;
@@ -523,6 +524,21 @@ QWeb.addDirective({
     ctx.addLine(
       `context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`
     );
+
+    // SLOTS
+    const slotNodes = node.querySelectorAll("[t-set]");
+    if (slotNodes.length) {
+      const slotId = qweb.nextSlotId++;
+      for (let i = 0, length = slotNodes.length; i < length; i++) {
+        const slotNode = slotNodes[i];
+        const key = slotNode.getAttribute("t-set")!;
+        slotNode.removeAttribute("t-set");
+        const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
+        qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
+      }
+      ctx.addLine(`w${widgetID}.__owl__.slotId = ${slotId};`);
+    }
+
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     // FIXME: click to re-add widget during remove transition -> leak
@@ -600,5 +616,23 @@ QWeb.addDirective({
       "insert",
       `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`
     );
+  }
+});
+
+//------------------------------------------------------------------------------
+// t-slot
+//------------------------------------------------------------------------------
+QWeb.addDirective({
+  name: "slot",
+  priority: 80,
+  atNodeEncounter({ ctx, value }): boolean {
+    const slotKey = ctx.generateID();
+    ctx.addLine(
+      `const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`
+    );
+    ctx.addLine(
+      `c${ctx.parentNode}.push(slot${slotKey}(context.__owl__.parent, extra));`
+    );
+    return true;
   }
 });

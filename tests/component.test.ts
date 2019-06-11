@@ -2613,3 +2613,104 @@ describe("can deduce template from name", () => {
     expect(fixture.innerHTML).toBe("<span>Rochefort 10</span>");
   });
 });
+
+describe("t-slot directive", () => {
+  test("can define and call slots", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <t t-widget="Dialog">
+                <t t-set="header"><span>header</span></t>
+                <t t-set="footer"><span>footer</span></t>
+             </t>
+          </div>
+          <div t-name="Dialog">
+            <div><t t-slot="header"/></div>
+            <div><t t-slot="footer"/></div>
+          </div>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      widgets = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
+    );
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Dialog.fn.toString()).toMatchSnapshot();
+  });
+
+  test("slots are rendered with proper context", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+            <span class="counter"><t t-esc="state.val"/></span>
+            <t t-widget="Dialog">
+              <t t-set="footer"><button t-on-click="doSomething">do something</button></t>
+            </t>
+          </div>
+          <span t-name="Dialog"><t t-slot="footer"/></span>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      widgets = { Dialog };
+      state = { val: 0 };
+      doSomething() {
+        this.state.val++;
+      }
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">0</span><span><button>do something</button></span></div>'
+    );
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">1</span><span><button>do something</button></span></div>'
+    );
+  });
+
+  test("refs are properly bound in slots", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+            <span class="counter"><t t-esc="state.val"/></span>
+            <t t-widget="Dialog">
+              <t t-set="footer"><button t-ref="myButton" t-on-click="doSomething">do something</button></t>
+            </t>
+          </div>
+          <span t-name="Dialog"><t t-slot="footer"/></span>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      widgets = { Dialog };
+      state = { val: 0 };
+      doSomething() {
+        this.state.val++;
+      }
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">0</span><span><button>do something</button></span></div>'
+    );
+
+    (<any>parent.refs.myButton).click();
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">1</span><span><button>do something</button></span></div>'
+    );
+  });
+});

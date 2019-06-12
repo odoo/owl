@@ -24,6 +24,16 @@ describe("static templates", () => {
     expect(renderToString(qweb, "test")).toBe("hello vdom");
   });
 
+  test("simple dynamic value", () => {
+    qweb.addTemplate("test", "<t><t t-esc=\"text\"/></t>");
+    expect(renderToString(qweb, "test", {text: "hello vdom"})).toBe("hello vdom");
+  });
+
+  test("simple string, with some dynamic value", () => {
+    qweb.addTemplate("test", "<t>hello <t t-esc=\"text\"/></t>");
+    expect(renderToString(qweb, "test", {text: "vdom"})).toBe("hello vdom");
+  });
+
   test("empty div", () => {
     qweb.addTemplate("test", "<div></div>");
     expect(renderToString(qweb, "test")).toBe("<div></div>");

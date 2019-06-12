@@ -726,11 +726,36 @@ exports[`static templates empty div 1`] = `
 }"
 `;
 
+exports[`static templates simple dynamic value 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var _1 = context['text'];
+    if (_1 || _1 === 0) {
+        var vn2 = {text: _1};
+    }
+    return vn2;
+}"
+`;
+
 exports[`static templates simple string 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
     var vn1 = {text: \`hello vdom\`};
+    return vn1;
+}"
+`;
+
+exports[`static templates simple string, with some dynamic value 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var vn1 = {text: \`hello \`};
+    var _2 = context['text'];
+    if (_2 || _2 === 0) {
+        vn1.text += _2;
+    }
     return vn1;
 }"
 `;

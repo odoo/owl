@@ -44,11 +44,17 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
     exprID = value.id;
   }
   ctx.addIf(`${exprID} || ${exprID} === 0`);
-  if (!ctx.parentNode) {
-    throw new Error("Should not have a text node without a parent");
-  }
   if (ctx.escaping) {
-    ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+    if (ctx.parentTextNode) {
+      ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
+    } else if (ctx.parentNode) {
+      ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+    } else {
+      let nodeID = ctx.generateID();
+      ctx.rootContext.rootNode = nodeID;
+      ctx.rootContext.parentTextNode = nodeID;
+      ctx.addLine(`var vn${nodeID} = {text: ${exprID}};`);
+    }
   } else {
     let fragID = ctx.generateID();
     ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);

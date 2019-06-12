@@ -329,13 +329,15 @@ export class QWeb {
       }
       if (ctx.parentNode) {
         ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
+      } else if (ctx.parentTextNode) {
+        ctx.addLine(`vn${ctx.parentTextNode}.text += \`${text}\`;`);
       } else {
         // this is an unusual situation: this text node is the result of the
         // template rendering.
         let nodeID = ctx.generateID();
         ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
         ctx.rootContext.rootNode = nodeID;
-        ctx.rootContext.parentNode = nodeID;
+        ctx.rootContext.parentTextNode = nodeID;
       }
       return;
     }
@@ -620,6 +622,7 @@ export class Context {
   variables: { [key: string]: QWebVar } = {};
   escaping: boolean = false;
   parentNode: number | null = null;
+  parentTextNode: number | null = null;
   rootNode: number | null = null;
   indentLevel: number = 0;
   rootContext: Context;
@@ -644,7 +647,7 @@ export class Context {
   }
 
   withParent(node: number): Context {
-    if (this === this.rootContext && this.parentNode) {
+    if (this === this.rootContext && (this.parentNode || this.parentTextNode)) {
       throw new Error("A template should not have more than one root node");
     }
     if (!this.rootContext.rootNode) {

@@ -4,7 +4,6 @@
     "preserveConstEnums": true,
     "noImplicitThis": true,
     "removeComments": false,
-    "inlineSourceMap": true,
     "declaration": true,
     "target": "es5",
     "outDir": "dist",

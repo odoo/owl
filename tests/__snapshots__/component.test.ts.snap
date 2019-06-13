@@ -827,6 +827,153 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 }"
 `;
 
+exports[`t-model directive .lazy modifier 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('input', p2, c2);
+    c1.push(vn2);
+    p2.props = {value: context.state['text']};
+    extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context.state['text'] = ev.target.value});
+    p2.on['change'] = extra.handlers['change' + 2];
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    var _4 = context['state'].text;
+    if (_4 || _4 === 0) {
+        c3.push({text: _4});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-model directive basic use, on an input 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('input', p2, c2);
+    c1.push(vn2);
+    p2.props = {value: context.state['text']};
+    extra.handlers['input' + 2] = extra.handlers['input' + 2] || ((ev) => {context.state['text'] = ev.target.value});
+    p2.on['input'] = extra.handlers['input' + 2];
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    var _4 = context['state'].text;
+    if (_4 || _4 === 0) {
+        c3.push({text: _4});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-model directive on a select 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('select', p2, c2);
+    c1.push(vn2);
+    p2.props = {value: context.state['color']};
+    extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context.state['color'] = ev.target.value});
+    p2.on['change'] = extra.handlers['change' + 2];
+    var _3 = '';
+    let c4 = [], p4 = {key:4,attrs:{value: _3}};
+    var vn4 = h('option', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Please select one\`});
+    var _5 = 'red';
+    let c6 = [], p6 = {key:6,attrs:{value: _5}};
+    var vn6 = h('option', p6, c6);
+    c2.push(vn6);
+    c6.push({text: \`Red\`});
+    var _7 = 'blue';
+    let c8 = [], p8 = {key:8,attrs:{value: _7}};
+    var vn8 = h('option', p8, c8);
+    c2.push(vn8);
+    c8.push({text: \`Blue\`});
+    let c9 = [], p9 = {key:9};
+    var vn9 = h('span', p9, c9);
+    c1.push(vn9);
+    c9.push({text: \`Choice: \`});
+    var _10 = context['state'].color;
+    if (_10 || _10 === 0) {
+        c9.push({text: _10});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-model directive on an input type=radio 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 'radio';
+    var _3 = 'one';
+    var _4 = 'One';
+    let c5 = [], p5 = {key:5,attrs:{type: _2,id: _3,value: _4},on:{}};
+    var vn5 = h('input', p5, c5);
+    c1.push(vn5);
+    p5.props = {checked:context.state['choice'] === 'One'};
+    extra.handlers['click' + 5] = extra.handlers['click' + 5] || ((ev) => {context.state['choice'] = ev.target.value});
+    p5.on['click'] = extra.handlers['click' + 5];
+    var _6 = 'radio';
+    var _7 = 'two';
+    var _8 = 'Two';
+    let c9 = [], p9 = {key:9,attrs:{type: _6,id: _7,value: _8},on:{}};
+    var vn9 = h('input', p9, c9);
+    c1.push(vn9);
+    p9.props = {checked:context.state['choice'] === 'Two'};
+    extra.handlers['click' + 9] = extra.handlers['click' + 9] || ((ev) => {context.state['choice'] = ev.target.value});
+    p9.on['click'] = extra.handlers['click' + 9];
+    let c10 = [], p10 = {key:10};
+    var vn10 = h('span', p10, c10);
+    c1.push(vn10);
+    c10.push({text: \`Choice: \`});
+    var _11 = context['state'].choice;
+    if (_11 || _11 === 0) {
+        c10.push({text: _11});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-model directive on an input, type=checkbox 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 'checkbox';
+    let c3 = [], p3 = {key:3,attrs:{type: _2},on:{}};
+    var vn3 = h('input', p3, c3);
+    c1.push(vn3);
+    p3.props = {checked: context.state['flag']};
+    extra.handlers['input' + 3] = extra.handlers['input' + 3] || ((ev) => {context.state['flag'] = ev.target.checked});
+    p3.on['input'] = extra.handlers['input' + 3];
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('span', p4, c4);
+    c1.push(vn4);
+    if (context['state'].flag) {
+        c4.push({text: \`yes\`});
+    }
+    else {
+        c4.push({text: \`no\`});
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-slot directive can define and call slots 1`] = `
 "function anonymous(context,extra
 ) {

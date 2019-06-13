@@ -6,7 +6,8 @@ import {
   makeTestEnv,
   nextMicroTick,
   nextTick,
-  normalize
+  normalize,
+  editInput
 } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -2900,5 +2901,237 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
+  });
+});
+
+describe("t-model directive", () => {
+  test("basic use, on an input", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input t-model="text"/>
+            <span><t t-esc="state.text"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { text: "" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "test");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+  });
+
+  test("on an input, type=checkbox", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input type="checkbox" t-model="flag"/>
+            <span>
+                <t t-if="state.flag">yes</t>
+                <t t-else="1">no</t>
+            </span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { flag: false };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="checkbox"><span>no</span></div>'
+    );
+
+    let input = fixture.querySelector("input")!;
+    input.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="checkbox"><span>yes</span></div>'
+    );
+    expect(comp.state.flag).toBe(true);
+    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+
+    input.click();
+    await nextTick();
+    expect(comp.state.flag).toBe(false);
+  });
+
+  test("on an textarea", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <textarea t-model="text"/>
+            <span><t t-esc="state.text"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { text: "" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><textarea></textarea><span></span></div>"
+    );
+
+    const textarea = fixture.querySelector("textarea")!;
+    await editInput(textarea, "test");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe(
+      "<div><textarea></textarea><span>test</span></div>"
+    );
+  });
+
+  test("on an input type=radio", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input type="radio" id="one" value="One" t-model="choice"/>
+            <input type="radio" id="two" value="Two" t-model="choice"/>
+            <span>Choice: <t t-esc="state.choice"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { choice: "" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: </span></div>'
+    );
+
+    const firstInput = fixture.querySelector("input")!;
+    firstInput.click();
+    await nextTick();
+    expect(comp.state.choice).toBe("One");
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: One</span></div>'
+    );
+
+    const secondInput = fixture.querySelectorAll("input")[1];
+    secondInput.click();
+    await nextTick();
+    expect(comp.state.choice).toBe("Two");
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: Two</span></div>'
+    );
+    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+  });
+
+  test("on a select", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <select t-model="color">
+                <option value="">Please select one</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+            </select>
+            <span>Choice: <t t-esc="state.color"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { color: "" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><select><option value="">Please select one</option><option value="red">Red</option><option value="blue">Blue</option></select><span>Choice: </span></div>'
+    );
+
+    const select = fixture.querySelector("select")!;
+    select.value = "red";
+    select.dispatchEvent(new Event("change"));
+    await nextTick();
+
+    expect(comp.state.color).toBe("red");
+    expect(fixture.innerHTML).toBe(
+      '<div><select><option value="">Please select one</option><option value="red">Red</option><option value="blue">Blue</option></select><span>Choice: red</span></div>'
+    );
+
+    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+  });
+
+  test(".lazy modifier", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input t-model.lazy="text"/>
+            <span><t t-esc="state.text"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { text: "" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    input.value = "test";
+    input.dispatchEvent(new Event("input"));
+    await nextTick();
+    expect(comp.state.text).toBe("");
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+    input.dispatchEvent(new Event("change"));
+    await nextTick();
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+  });
+
+  test(".trim modifier", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input t-model.trim="text"/>
+            <span><t t-esc="state.text"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { text: "" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, " test ");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+  });
+
+  test(".number modifier", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input t-model.number="number"/>
+            <span><t t-esc="state.number"/></span>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { number: 0 };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><input><span>0</span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "13");
+    expect(comp.state.number).toBe(13);
+    expect(fixture.innerHTML).toBe("<div><input><span>13</span></div>");
+
+    await editInput(input, "invalid");
+    expect(comp.state.number).toBe("invalid");
+    expect(fixture.innerHTML).toBe("<div><input><span>invalid</span></div>");
   });
 });

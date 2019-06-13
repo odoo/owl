@@ -18,6 +18,7 @@
   - [Props Validation](#props-validation)
   - [Keeping References](#keeping-references)
   - [Slots](#slots)
+  - [Form input bindings](#form-input-bindings)
   - [Asynchronous rendering](#asynchronous-rendering)
 
 ## Overview
@@ -753,12 +754,12 @@ this.refs.widget_44;
 
 ### Slots
 
-To make generic components, it is useful to be able for a parent widget to *inject*
-some sub template, but still be the owner.  For example, a generic dialog widget
+To make generic components, it is useful to be able for a parent widget to _inject_
+some sub template, but still be the owner. For example, a generic dialog widget
 will need to render some content, some footer, but with the parent as the
 rendering context.
 
-This is what *slots* are for.
+This is what _slots_ are for.
 
 ```xml
 <div t-name="Dialog" class="modal">
@@ -789,11 +790,11 @@ Slots are defined by the caller, with the `t-set` directive:
 ```
 
 In this example, the widget `Dialog` will render the slots `content` and `footer`
-with its parent as rendering context.  This means that clicking on the button
+with its parent as rendering context. This means that clicking on the button
 will execute the `doSomething` method on the parent, not on the dialog.
 
 Warning! Slots have a technical constraint: the result of the slot rendering
-should have exactly one root node.  So,
+should have exactly one root node. So,
 
 ```xml
 <t t-set="content">
@@ -810,6 +811,98 @@ is not allowed. A workaround could be to wrap the content in a div:
   <div>B</div>
 </div>
 ```
+
+### Form Input Bindings
+
+It is very common to need to be able to read the value out of an html `input` (or
+`textarea`, or `select`) in order to use it (note: it does not need to be in a
+form!). A possible way to do this is to do it by hand:
+
+```js
+class Form extends owl.Component {
+  state = { text: "" };
+
+  _updateInputValue(event) {
+    this.state.text = event.target.value;
+  }
+}
+```
+
+```xml
+<div>
+  <input t-on-input="_updateInputValue"/>
+  <span t-esc="state.text"/>
+</div>
+```
+
+This works. However, this requires a little bit of _plumbing_ code. Also, the
+plumbing code is slightly different if you need to interact with a checkbox,
+or with radio buttons, or with select tags.
+
+To help with this situation, Owl has a builtin directive `t-model`: its value
+is the (top-level) name in the state object. With the `t-model` directive, we
+can write a shorter code, equivalent to the previous example:
+
+```js
+class Form extends owl.Component {
+  state = { text: "" };
+}
+```
+
+```xml
+<div>
+  <input t-model="text"/>
+  <span t-esc="state.text"/>
+</div>
+```
+
+The `t-model` directive works with `<input>`, `<input type="checkbox">`,
+`<input type="radio">`, `<textarea>` and `<select>`:
+
+```xml
+<div>
+    <div>Text in an input: <input t-model="someVal"/></div>
+    <div>Textarea: <textarea t-model="otherVal"/></div>
+    <div>Boolean value: <input type="checkbox" t-model="someFlag"/></div>
+    <div>Selection:
+        <select t-model="color">
+            <option value="">Select a color</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+        </select>
+    </div>
+    <div>
+        Selection with radio buttons:
+        <span>
+            <input type="radio" name="color" id="red" value="red" t-model="color"/>
+            <label for="red">Red</label>
+        </span>
+        <span>
+            <input type="radio" name="color" id="blue" value="blue" t-model="color"/>
+            <label for="blue">Blue</label>
+        </span>
+    </div>
+</div>
+```
+
+Like event handling, the `t-model` directive accepts some modifiers:
+
+| Modifier  | Description                                                          |
+| --------- | -------------------------------------------------------------------- |
+| `.lazy`   | update the value on the `change` event (default is on `input` event) |
+| `.number` | tries to parse the value to a number (using `parseFloat`)            |
+| `.trim`   | trim the resulting value                                             |
+
+For example:
+
+```xml
+<input t-model.lazy="someVal"/>
+```
+
+These modifiers can be combined. For instance, `t-model.lazy.number` will only
+update a number whenever the change is done.
+
+Note: the online playground has an example to show how it works.
 
 ### Asynchronous rendering
 

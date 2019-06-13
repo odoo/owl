@@ -210,14 +210,7 @@
      */
     function vnode(sel, data, children, text, elm) {
         let key = data === undefined ? undefined : data.key;
-        return {
-            sel: sel,
-            data: data,
-            children: children,
-            text: text,
-            elm: elm,
-            key: key
-        };
+        return { sel, data, children, text, elm, key };
     }
     //------------------------------------------------------------------------------
     // snabbdom.ts
@@ -885,7 +878,7 @@
         "(": "LEFT_PAREN",
         ")": "RIGHT_PAREN"
     };
-    const OPERATORS = [".", "===", "==", "+", "!", "||", "&&", ">", "?", "-", "*"];
+    const OPERATORS = ".,===,==,+,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(',');
     let tokenizeString = function (expr) {
         let s = expr[0];
         let start = s;
@@ -997,7 +990,7 @@
             }
         }
         if (expr.length) {
-            throw new Error("Tokenizer error...");
+            throw new Error(`Tokenizer error: could not tokenize "${expr}"`);
         }
         return result;
     }
@@ -1125,6 +1118,10 @@
             // use case is that component's templates are qweb dependant, and need to be
             // able to map a qweb instance to a template name.
             this.id = nextID++;
+            // slots contains sub templates defined with t-set inside t-widget nodes, and
+            // are meant to be used by the t-slot directive.
+            this.slots = {};
+            this.nextSlotId = 1;
             if (data) {
                 this.addTemplates(data);
             }
@@ -1288,13 +1285,16 @@
                 if (ctx.parentNode) {
                     ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
                 }
+                else if (ctx.parentTextNode) {
+                    ctx.addLine(`vn${ctx.parentTextNode}.text += \`${text}\`;`);
+                }
                 else {
                     // this is an unusual situation: this text node is the result of the
                     // template rendering.
                     let nodeID = ctx.generateID();
                     ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
                     ctx.rootContext.rootNode = nodeID;
-                    ctx.rootContext.parentNode = nodeID;
+                    ctx.rootContext.parentTextNode = nodeID;
                 }
                 return;
             }
@@ -1543,6 +1543,7 @@
             this.variables = {};
             this.escaping = false;
             this.parentNode = null;
+            this.parentTextNode = null;
             this.rootNode = null;
             this.indentLevel = 0;
             this.shouldDefineOwner = false;
@@ -1560,7 +1561,7 @@
             return id;
         }
         withParent(node) {
-            if (this === this.rootContext && this.parentNode) {
+            if (this === this.rootContext && (this.parentNode || this.parentTextNode)) {
                 throw new Error("A template should not have more than one root node");
             }
             if (!this.rootContext.rootNode) {
@@ -2268,11 +2269,19 @@
             exprID = value.id;
         }
         ctx.addIf(`${exprID} || ${exprID} === 0`);
-        if (!ctx.parentNode) {
-            throw new Error("Should not have a text node without a parent");
-        }
         if (ctx.escaping) {
-            ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+            if (ctx.parentTextNode) {
+                ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
+            }
+            else if (ctx.parentNode) {
+                ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+            }
+            else {
+                let nodeID = ctx.generateID();
+                ctx.rootContext.rootNode = nodeID;
+                ctx.rootContext.parentTextNode = nodeID;
+                ctx.addLine(`var vn${nodeID} = {text: ${exprID}};`);
+            }
         }
         else {
             let fragID = ctx.generateID();
@@ -2524,6 +2533,7 @@
      * - t-transition
      * - t-widget/t-keepalive
      * - t-mounted
+     * - t-slot
      */
     //------------------------------------------------------------------------------
     // t-on
@@ -2595,7 +2605,15 @@
     UTILS.nextFrame = function (cb) {
         requestAnimationFrame(() => requestAnimationFrame(cb));
     };
-    UTILS.transitionInsert = function (elm, name) {
+    UTILS.transitionInsert = function (vn, name) {
+        const elm = vn.elm;
+        // remove potential duplicated vnode that is currently being removed, to
+        // prevent from having twice the same node in the DOM during an animation
+        const dup = elm.parentElement &&
+            elm.parentElement.querySelector(`*[data-owl-key='${vn.key}']`);
+        if (dup) {
+            dup.remove();
+        }
         elm.classList.add(name + "-enter");
         elm.classList.add(name + "-enter-active");
         const finalize = () => {
@@ -2608,7 +2626,9 @@
             whenTransitionEnd(elm, finalize);
         });
     };
-    UTILS.transitionRemove = function (elm, name, rm) {
+    UTILS.transitionRemove = function (vn, name, rm) {
+        const elm = vn.elm;
+        elm.setAttribute("data-owl-key", vn.key);
         elm.classList.add(name + "-leave");
         elm.classList.add(name + "-leave-active");
         const finalize = () => {
@@ -2656,8 +2676,8 @@
         atNodeCreation({ value, addNodeHook }) {
             let name = value;
             const hooks = {
-                insert: `this.utils.transitionInsert(vn.elm, '${name}');`,
-                remove: `this.utils.transitionRemove(vn.elm, '${name}', rm);`
+                insert: `this.utils.transitionInsert(vn, '${name}');`,
+                remove: `this.utils.transitionRemove(vn, '${name}', rm);`
             };
             for (let hookName in hooks) {
                 addNodeHook(hookName, hooks[hookName]);
@@ -2780,7 +2800,7 @@
      *         let nvn = w4._mount(vnode, vn.elm);
      *         pvnode.elm = nvn.elm;
      *         // what follows is only present if there are animations on the widget
-     *         utils.transitionInsert(vn.elm, "fade");
+     *         utils.transitionInsert(vn, "fade");
      *       },
      *       remove() {
      *         // override with empty function to prevent from removing the node
@@ -2793,7 +2813,7 @@
      *         let finalize = () => {
      *           w4.destroy();
      *         };
-     *         utils.transitionRemove(vn.elm, "fade", finalize);
+     *         utils.transitionRemove(vn, "fade", finalize);
      *       }
      *     };
      *     // the pvnode is inserted at the correct position in the div's children
@@ -2834,7 +2854,7 @@
         name: "widget",
         extraNames: ["props", "keepalive"],
         priority: 100,
-        atNodeEncounter({ ctx, value, node }) {
+        atNodeEncounter({ ctx, value, node, qweb }) {
             ctx.addLine("//WIDGET");
             ctx.rootContext.shouldDefineOwner = true;
             ctx.rootContext.shouldDefineQWeb = true;
@@ -2902,7 +2922,7 @@
             }
             let transitionsInsertCode = "";
             if (transition) {
-                transitionsInsertCode = `utils.transitionInsert(vn.elm, '${transition}');`;
+                transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
             }
             let finalizeWidgetCode = `w${widgetID}.${keepAlive ? "unmount" : "destroy"}();`;
             if (ref && !keepAlive) {
@@ -2912,7 +2932,7 @@
                 finalizeWidgetCode = `let finalize = () => {
           ${finalizeWidgetCode}
         };
-        utils.transitionRemove(vn.elm, '${transition}', finalize);`;
+        utils.transitionRemove(vn, '${transition}', finalize);`;
             }
             let createHook = "";
             let classAttr = node.getAttribute("class");
@@ -2987,6 +3007,19 @@
             ctx.addLine(`if (!W${widgetID}) {throw new Error('Cannot find the definition of widget "' + widgetKey${widgetID} + '"')}`);
             ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
             ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
+            // SLOTS
+            const slotNodes = node.querySelectorAll("[t-set]");
+            if (slotNodes.length) {
+                const slotId = qweb.nextSlotId++;
+                for (let i = 0, length = slotNodes.length; i < length; i++) {
+                    const slotNode = slotNodes[i];
+                    const key = slotNode.getAttribute("t-set");
+                    slotNode.removeAttribute("t-set");
+                    const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
+                    qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
+                }
+                ctx.addLine(`w${widgetID}.__owl__.slotId = ${slotId};`);
+            }
             ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
             // FIXME: click to re-add widget during remove transition -> leak
@@ -3034,6 +3067,19 @@
                 ctx.addLine(`extra.mountedHandlers[${nodeID}] = extra.mountedHandlers[${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`);
             }
             addNodeHook("insert", `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`);
+        }
+    });
+    //------------------------------------------------------------------------------
+    // t-slot
+    //------------------------------------------------------------------------------
+    QWeb.addDirective({
+        name: "slot",
+        priority: 80,
+        atNodeEncounter({ ctx, value }) {
+            const slotKey = ctx.generateID();
+            ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
+            ctx.addLine(`c${ctx.parentNode}.push(slot${slotKey}(context.__owl__.parent, extra));`);
+            return true;
         }
     });
 
@@ -3122,8 +3168,9 @@
         return 0;
     }
     let nextID$1 = 1;
-    function connect(mapStateToProps, options = {}) {
+    function connect(Comp, mapStoreToProps, options = {}) {
         let hashFunction = options.hashFunction || null;
+        const getStore = options.getStore || (env => env.store);
         if (!hashFunction) {
             let deep = "deep" in options ? options.deep : true;
             let defaultRevFunction = deep ? deepRevNumber : revNumber;
@@ -3148,77 +3195,77 @@
                 return hash;
             };
         }
-        return function (Comp) {
-            const Result = class extends Comp {
-                constructor(parent, props) {
-                    const env = parent instanceof Component ? parent.env : parent;
-                    const ownProps = Object.assign({}, props || {});
-                    const storeProps = mapStateToProps(env.store.state, ownProps, env.store.getters);
-                    const mergedProps = Object.assign({}, props || {}, storeProps);
-                    super(parent, mergedProps);
-                    this.__owl__.ownProps = ownProps;
+        const Result = class extends Comp {
+            constructor(parent, props) {
+                const env = parent instanceof Component ? parent.env : parent;
+                const store = getStore(env);
+                const ownProps = Object.assign({}, props || {});
+                const storeProps = mapStoreToProps(store.state, ownProps, store.getters);
+                const mergedProps = Object.assign({}, props || {}, storeProps);
+                super(parent, mergedProps);
+                this.__owl__.ownProps = ownProps;
+                this.__owl__.currentStoreProps = storeProps;
+                this.__owl__.store = store;
+                this.__owl__.storeHash = hashFunction({
+                    state: store.state,
+                    storeProps: storeProps,
+                    revNumber,
+                    deepRevNumber
+                }, {
+                    currentStoreProps: storeProps
+                });
+            }
+            /**
+             * We do not use the mounted hook here for a subtle reason: we want the
+             * updates to be called for the parents before the children.  However,
+             * if we use the mounted hook, this will be done in the reverse order.
+             */
+            _callMounted() {
+                this.__owl__.store.on("update", this, this._checkUpdate);
+                super._callMounted();
+            }
+            willUnmount() {
+                this.__owl__.store.off("update", this);
+                super.willUnmount();
+            }
+            _checkUpdate() {
+                const ownProps = this.__owl__.ownProps;
+                const storeProps = mapStoreToProps(this.__owl__.store.state, ownProps, this.__owl__.store.getters);
+                const options = {
+                    currentStoreProps: this.__owl__.currentStoreProps
+                };
+                const storeHash = hashFunction({
+                    state: this.__owl__.store.state,
+                    storeProps: storeProps,
+                    revNumber,
+                    deepRevNumber
+                }, options);
+                let didChange = options.didChange;
+                if (storeHash !== this.__owl__.storeHash) {
+                    didChange = true;
+                    this.__owl__.storeHash = storeHash;
+                }
+                if (didChange) {
                     this.__owl__.currentStoreProps = storeProps;
-                    this.__owl__.storeHash = hashFunction({
-                        state: env.store.state,
-                        storeProps: storeProps,
-                        revNumber,
-                        deepRevNumber
-                    }, {
-                        currentStoreProps: storeProps
-                    });
+                    this._updateProps(ownProps, false);
                 }
-                /**
-                 * We do not use the mounted hook here for a subtle reason: we want the
-                 * updates to be called for the parents before the children.  However,
-                 * if we use the mounted hook, this will be done in the reverse order.
-                 */
-                _callMounted() {
-                    this.env.store.on("update", this, this._checkUpdate);
-                    super._callMounted();
+            }
+            _updateProps(nextProps, forceUpdate, patchQueue) {
+                if (this.__owl__.ownProps !== nextProps) {
+                    this.__owl__.currentStoreProps = mapStoreToProps(this.__owl__.store.state, nextProps, this.__owl__.store.getters);
                 }
-                willUnmount() {
-                    this.env.store.off("update", this);
-                    super.willUnmount();
-                }
-                _checkUpdate() {
-                    const ownProps = this.__owl__.ownProps;
-                    const storeProps = mapStateToProps(this.env.store.state, ownProps, this.env.store.getters);
-                    const options = {
-                        currentStoreProps: this.__owl__.currentStoreProps
-                    };
-                    const storeHash = hashFunction({
-                        state: this.env.store.state,
-                        storeProps: storeProps,
-                        revNumber,
-                        deepRevNumber
-                    }, options);
-                    let didChange = options.didChange;
-                    if (storeHash !== this.__owl__.storeHash) {
-                        didChange = true;
-                        this.__owl__.storeHash = storeHash;
-                    }
-                    if (didChange) {
-                        this.__owl__.currentStoreProps = storeProps;
-                        this._updateProps(ownProps, false);
-                    }
-                }
-                _updateProps(nextProps, forceUpdate, patchQueue) {
-                    if (this.__owl__.ownProps !== nextProps) {
-                        this.__owl__.currentStoreProps = mapStateToProps(this.env.store.state, nextProps, this.env.store.getters);
-                    }
-                    this.__owl__.ownProps = nextProps;
-                    const mergedProps = Object.assign({}, nextProps, this.__owl__.currentStoreProps);
-                    return super._updateProps(mergedProps, forceUpdate, patchQueue);
-                }
-            };
-            // we assign here a unique name to the resulting anonymous class.
-            // this is necessary for Owl to be able to properly deduce templates.
-            // Otherwise, all connected components would have the same name, and then
-            // each component after the first will necessarily have the same template.
-            let name = `ConnectedComponent${nextID$1++}`;
-            Object.defineProperty(Result, "name", { value: name });
-            return Result;
+                this.__owl__.ownProps = nextProps;
+                const mergedProps = Object.assign({}, nextProps, this.__owl__.currentStoreProps);
+                return super._updateProps(mergedProps, forceUpdate, patchQueue);
+            }
         };
+        // we assign here a unique name to the resulting anonymous class.
+        // this is necessary for Owl to be able to properly deduce templates.
+        // Otherwise, all connected components would have the same name, and then
+        // each component after the first will necessarily have the same template.
+        let name = `ConnectedComponent${nextID$1++}`;
+        Object.defineProperty(Result, "name", { value: name });
+        return Result;
     }
 
     /**
@@ -3233,12 +3280,14 @@
      * - debounce
      */
     function whenReady(fn) {
-        if (document.readyState !== "loading") {
-            fn();
-        }
-        else {
-            document.addEventListener("DOMContentLoaded", fn, false);
-        }
+        return new Promise(function (resolve) {
+            if (document.readyState !== "loading") {
+                resolve();
+            }
+            else {
+                document.addEventListener("DOMContentLoaded", resolve, false);
+            }
+        }).then(fn || function () { });
     }
     const loadedScripts = {};
     function loadJS(url) {
@@ -3353,9 +3402,9 @@
     exports.connect = connect;
     exports.utils = utils;
 
-    exports.__info__.version = '0.13.0';
-    exports.__info__.date = '2019-06-08T14:30:19.424Z';
-    exports.__info__.hash = '2a19aeb';
+    exports.__info__.version = '0.14.0';
+    exports.__info__.date = '2019-06-13T10:11:15.338Z';
+    exports.__info__.hash = '2701a7d';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

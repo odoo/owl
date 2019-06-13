@@ -187,7 +187,7 @@ const ANIMATION_CSS = `button {
 
 .flash {
     background-position: center;
-    transition: background 0.5s;
+    transition: background .6s;
 }
 
 .flash:active {
@@ -208,7 +208,7 @@ const ANIMATION_CSS = `button {
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+    transition: opacity .6s;
 }
 .fade-enter, .fade-leave-to {
     opacity: 0;
@@ -232,7 +232,6 @@ const ANIMATION_CSS = `button {
     padding: 5px;
 }
 `;
-
 
 const LIFECYCLE_DEMO = `class HookWidget extends owl.Component {
     constructor() {
@@ -384,11 +383,11 @@ class TodoItem extends owl.Component {
     state = { isEditing: false };
 
     removeTodo() {
-        this.env.store.dispatch("removeTodo", this.props.id);
+        this.env.dispatch("removeTodo", this.props.id);
     }
 
     toggleTodo() {
-        this.env.store.dispatch("toggleTodo", this.props.id);
+        this.env.dispatch("toggleTodo", this.props.id);
     }
 
     async editTodo() {
@@ -420,7 +419,7 @@ class TodoItem extends owl.Component {
         if (!value) {
             this.removeTodo(this.props.id);
         } else {
-            this.env.store.dispatch("editTodo", {
+            this.env.dispatch("editTodo", {
                 id: this.props.id,
                 title: value
             });
@@ -432,7 +431,7 @@ class TodoItem extends owl.Component {
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
-function mapStateToProps(state) {
+function mapStoreToProps(state) {
     return {
         todos: state.todos
     };
@@ -470,18 +469,18 @@ class TodoApp extends owl.Component {
         if (ev.keyCode === ENTER_KEY) {
             const title = ev.target.value;
             if (title.trim()) {
-                this.env.store.dispatch("addTodo", title);
+                this.env.dispatch("addTodo", title);
             }
             ev.target.value = "";
         }
     }
 
     clearCompleted() {
-        this.env.store.dispatch("clearCompleted");
+        this.env.dispatch("clearCompleted");
     }
 
     toggleAll() {
-        this.env.store.dispatch("toggleAll", !this.allChecked);
+        this.env.dispatch("toggleAll", !this.allChecked);
     }
 
     setFilter(filter) {
@@ -489,7 +488,7 @@ class TodoApp extends owl.Component {
     }
 }
 
-const ConnectedTodoApp = owl.connect(mapStateToProps)(TodoApp);
+const ConnectedTodoApp = owl.connect(TodoApp, mapStoreToProps);
 
 //------------------------------------------------------------------------------
 // App Initialization
@@ -498,7 +497,8 @@ const store = makeStore();
 const qweb = new owl.QWeb(TEMPLATES);
 const env = {
     qweb,
-    store
+    store,
+    dispatch: store.dispatch.bind(store),
 };
 const app = new ConnectedTodoApp(env);
 app.mount(document.body);
@@ -1081,6 +1081,121 @@ const RESPONSIVE_CSS = `body {
 }
 `;
 
+const SLOTS = `// This example will not work if your browser does not support ESNext class fields
+
+// We show here how slots can be used to create generic components. In this
+// example, the Card component is basically only a container, and is created
+// by giving it slots, inside the t-widget directive.
+
+class Card extends owl.Component {
+    state = { fullDisplay: true };
+
+    toggleDisplay() {
+        this.state.fullDisplay = !this.state.fullDisplay;
+    }
+}
+
+class Counter extends owl.Component {
+    state = {val: 1};
+
+    inc() {
+        this.state.val++;
+    }
+}
+
+// Main root widget
+class App extends owl.Component {
+    widgets = {Card, Counter};
+    state = {a: 1, b: 3};
+
+    inc(key, delta) {
+        this.state[key] += delta;
+    }
+}
+
+// Application setup
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({ qweb });
+app.mount(document.body);`;
+
+const SLOTS_XML = `<templates>
+  <div t-name="Card" class="card" t-att-class="state.fullDisplay ? 'full' : 'small'">
+    <div class="card-title">
+      <t t-esc="props.title"/><button t-on-click="toggleDisplay">Toggle</button>
+    </div>
+    <t t-if="state.fullDisplay">
+      <div class="card-content" >
+        <t t-slot="content"/>
+      </div>
+      <div class="card-footer">
+        <t t-slot="footer"/>
+      </div>
+    </t>
+  </div>
+
+  <div t-name="Counter">
+    <t t-esc="state.val"/><button t-on-click="inc">Inc</button>
+  </div>
+
+  <div t-name="App" class="main">
+    <t t-widget="Card" title="'Title card A'">
+      <t t-set="content">Content of card 1...  [<t t-esc="state.a"/>]</t>
+      <t t-set="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
+    </t>
+    <t t-widget="Card"  title="'Title card B'">
+      <div t-set="content">
+        <div>Card 2... [<t t-esc="state.b"/>]</div>
+        <t t-widget="Counter"/>
+      </div>
+      <t t-set="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
+    </t>
+  </div>
+</templates>`;
+
+const SLOTS_CSS = `.main {
+    display: flex;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: #eeeeee;
+    width: 200px;
+    height: 100px;
+    margin: 10px;
+    border: 1px solid gray;
+}
+
+.card.full {
+    height: 100px;
+}
+
+.card.small {
+    height: 25px;
+}
+
+.card-title {
+    flex: 0 0 25px;
+    font-weight: bold;
+    background-color: darkcyan;
+    color: white;
+    padding: 2px;
+}
+
+.card-title button {
+    float: right;
+}
+
+.card-content {
+    flex: 1 1 auto;
+    padding: 5px;
+    border-top: 1px solid white;
+}
+
+.card-footer {
+    border-top: 1px solid white;
+}`;
+
 const EMPTY = `class App extends owl.Component {
 }
 
@@ -1112,7 +1227,7 @@ export const SAMPLES = [
     description: "Animations",
     code: ANIMATION,
     xml: ANIMATION_XML,
-    css: ANIMATION_CSS,
+    css: ANIMATION_CSS
   },
   {
     description: "Lifecycle demo",
@@ -1130,6 +1245,12 @@ export const SAMPLES = [
     code: RESPONSIVE,
     css: RESPONSIVE_CSS,
     xml: RESPONSIVE_XML
+  },
+  {
+    description: "Slots",
+    code: SLOTS,
+    xml: SLOTS_XML,
+    css: SLOTS_CSS
   },
   {
     description: "Empty",

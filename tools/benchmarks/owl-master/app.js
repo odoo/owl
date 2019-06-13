@@ -128,7 +128,9 @@ class App extends owl.Component {
 
   removeMessage(event) {
     this.benchmark("remove message", () => {
-      const index = this.state.messages.findIndex(m => m.id === event.detail.id);
+      const index = this.state.messages.findIndex(
+        m => m.id === event.detail.id
+      );
       this.state.messages.splice(index, 1);
     });
   }
@@ -145,14 +147,6 @@ class App extends owl.Component {
 
   clearLog() {
     this.refs.log.innerHTML = "";
-  }
-
-  toggleMultiple() {
-    this.state.multipleFlag = !this.state.multipleFlag;
-  }
-
-  toggleClear() {
-    this.state.clearAfterFlag = !this.state.clearAfterFlag;
   }
 }
 

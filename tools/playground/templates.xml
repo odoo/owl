@@ -2,7 +2,7 @@
   <div t-name="TabbedEditor" class="tabbed-editor">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
         <t t-foreach="['js', 'xml', 'css']" t-as="tab">
-            <a t-ref="{{tab}}" t-if="props[tab]" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="setTab(tab)">
+            <a t-ref="{{tab}}" t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="setTab(tab)">
                 <t t-esc="tab"/>
             </a>
         </t>

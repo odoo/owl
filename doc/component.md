@@ -13,6 +13,7 @@
   - [Event Handling](#event-handling)
   - [`t-key` directive](#t-key-directive)
   - [`t-mounted` directive](#t-mounted-directive)
+  - [Semantics](#semantics)
   - [Props Validation](#props-validation)
   - [Keeping References](#keeping-references)
   - [Slots](#slots)

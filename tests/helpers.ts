@@ -91,3 +91,13 @@ export function patchNextFrame(f: Function) {
 export function unpatchNextFrame() {
   UTILS.nextFrame = nextFrame;
 }
+
+export async function editInput(
+  input: HTMLInputElement | HTMLTextAreaElement,
+  value: string
+) {
+  input.value = value;
+  input.dispatchEvent(new Event("input"));
+  input.dispatchEvent(new Event("change"));
+  return nextTick();
+}

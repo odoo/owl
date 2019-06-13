@@ -362,7 +362,7 @@ export class QWeb {
     for (let i = 0; i < attributes.length; i++) {
       let attrName = attributes[i].name;
       if (attrName.startsWith("t-")) {
-        let dName = attrName.slice(2).split("-")[0];
+        let dName = attrName.slice(2).split(/-|\./)[0];
         if (!(dName in DIRECTIVE_NAMES)) {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
@@ -379,12 +379,13 @@ export class QWeb {
         const name = attributes[j].name;
         if (
           name === "t-" + directive.name ||
-          name.startsWith("t-" + directive.name + "-")
+          name.startsWith("t-" + directive.name + "-") ||
+          name.startsWith("t-" + directive.name + ".")
         ) {
           fullName = name;
           value = attributes[j].textContent;
           validDirectives.push({ directive, value, fullName });
-          if (directive.name === "on") {
+          if (directive.name === "on" || directive.name === 'model') {
             withHandlers = true;
           }
         }

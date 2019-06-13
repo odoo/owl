@@ -74,6 +74,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-transition`                       | [Defining an animation](animations.md#css-transitions)                                  |
 | `t-mounted`                          | [Callback when a node or component is mounted](component.md#t-mounted-directive)        |
 | `t-slot`                             | [Rendering a slot](component.md#slots)                                                  |
+| `t-model`                            | [Form input bindings](component.md#form-input-bindings)                                 |
 
 ## QWeb Engine
 

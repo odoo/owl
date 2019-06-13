@@ -613,7 +613,7 @@ exports[`t-slot directive can define and call slots 1`] = `
         if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        w4.__owl__.slotsId = 1;
+        w4.__owl__.slotId = 1;
         def3 = w4._prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -634,12 +634,12 @@ exports[`t-slot directive can define and call slots 2`] = `
     let c2 = [], p2 = {key:2};
     var vn2 = h('div', p2, c2);
     c1.push(vn2);
-    const slot3 = this.slots[context.__owl__.slotsId + '_' + 'header'];
+    const slot3 = this.slots[context.__owl__.slotId + '_' + 'header'];
     c2.push(slot3(context.__owl__.parent, extra));
     let c4 = [], p4 = {key:4};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
-    const slot5 = this.slots[context.__owl__.slotsId + '_' + 'footer'];
+    const slot5 = this.slots[context.__owl__.slotId + '_' + 'footer'];
     c4.push(slot5(context.__owl__.parent, extra));
     return vn1;
 }"

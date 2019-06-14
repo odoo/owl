@@ -1,5 +1,248 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`async rendering delayed t-widget with t-async directive 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['updateApp']) {
+        throw new Error('Missing handler \\\\'' + 'updateApp' + \`\\\\' when evaluating template 'Parent'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    c2.push({text: \`Update App State\`});
+    var _3 = 'children';
+    let c4 = [], p4 = {key:4,attrs:{class: _3}};
+    var vn4 = h('div', p4, c4);
+    c1.push(vn4);
+    //WIDGET
+    let def6;
+    let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
+    let _5_index = c4.length;
+    c4.push(null);
+    let props7 = {val:context['state'].val};
+    if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
+        if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
+            def6 = w7.__owl__.renderPromise;
+        } else {
+            w7.destroy();
+            w7 = false;
+        }
+    }
+    if (!w7) {
+        let widgetKey7 = \`Child\`;
+        let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
+        if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+        w7 = new W7(owner, props7);
+        context.__owl__.cmap[7] = w7.__owl__.id;
+        def6 = w7._prepare();
+        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+    } else {
+        def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+        def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
+    }
+    extra.promises.push(def6);
+    //WIDGET
+    let def9;
+    let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
+    let _8_index = c4.length;
+    const patchQueue10 = [];
+    c4.push(w10 && w10.__owl__.pvnode || null);
+    let props10 = {val:context['state'].val};
+    if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
+        if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
+            def9 = w10.__owl__.renderPromise;
+        } else {
+            w10.destroy();
+            w10 = false;
+        }
+    }
+    if (!w10) {
+        let widgetKey10 = \`AsyncChild\`;
+        let W10 = context.widgets && context.widgets[widgetKey10] || QWeb.widgets[widgetKey10];
+        if (!W10) {throw new Error('Cannot find the definition of widget \\"' + widgetKey10 + '\\"')}
+        w10 = new W10(owner, props10);
+        context.__owl__.cmap[10] = w10.__owl__.id;
+        def9 = w10._prepare();
+        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+    } else {
+        def9 = def9 || w10._updateProps(props10, extra.forceUpdate, patchQueue10);
+        def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
+    }
+    def9.then(w10._applyPatchQueue.bind(w10, patchQueue10));
+    return vn1;
+}"
+`;
+
+exports[`async rendering fast t-widget with t-async directive 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['updateApp']) {
+        throw new Error('Missing handler \\\\'' + 'updateApp' + \`\\\\' when evaluating template 'Parent'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    c2.push({text: \`Update App State\`});
+    var _3 = 'children';
+    let c4 = [], p4 = {key:4,attrs:{class: _3}};
+    var vn4 = h('div', p4, c4);
+    c1.push(vn4);
+    //WIDGET
+    let def6;
+    let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
+    let _5_index = c4.length;
+    const patchQueue7 = [];
+    c4.push(w7 && w7.__owl__.pvnode || null);
+    let props7 = {val:context['state'].val};
+    if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
+        if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
+            def6 = w7.__owl__.renderPromise;
+        } else {
+            w7.destroy();
+            w7 = false;
+        }
+    }
+    if (!w7) {
+        let widgetKey7 = \`Child\`;
+        let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
+        if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+        w7 = new W7(owner, props7);
+        context.__owl__.cmap[7] = w7.__owl__.id;
+        def6 = w7._prepare();
+        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+    } else {
+        def6 = def6 || w7._updateProps(props7, extra.forceUpdate, patchQueue7);
+        def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
+    }
+    def6.then(w7._applyPatchQueue.bind(w7, patchQueue7));
+    //WIDGET
+    let def9;
+    let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
+    let _8_index = c4.length;
+    c4.push(null);
+    let props10 = {val:context['state'].val};
+    if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
+        if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
+            def9 = w10.__owl__.renderPromise;
+        } else {
+            w10.destroy();
+            w10 = false;
+        }
+    }
+    if (!w10) {
+        let widgetKey10 = \`AsyncChild\`;
+        let W10 = context.widgets && context.widgets[widgetKey10] || QWeb.widgets[widgetKey10];
+        if (!W10) {throw new Error('Cannot find the definition of widget \\"' + widgetKey10 + '\\"')}
+        w10 = new W10(owner, props10);
+        context.__owl__.cmap[10] = w10.__owl__.id;
+        def9 = w10._prepare();
+        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+    } else {
+        def9 = def9 || w10._updateProps(props10, extra.forceUpdate, extra.patchQueue);
+        def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
+    }
+    extra.promises.push(def9);
+    return vn1;
+}"
+`;
+
+exports[`async rendering t-widget with t-async directive: mixed re-renderings 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['updateApp']) {
+        throw new Error('Missing handler \\\\'' + 'updateApp' + \`\\\\' when evaluating template 'Parent'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    c2.push({text: \`Update App State\`});
+    var _3 = 'children';
+    let c4 = [], p4 = {key:4,attrs:{class: _3}};
+    var vn4 = h('div', p4, c4);
+    c1.push(vn4);
+    //WIDGET
+    let def6;
+    let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
+    let _5_index = c4.length;
+    c4.push(null);
+    let props7 = {val:context['state'].val};
+    if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
+        if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
+            def6 = w7.__owl__.renderPromise;
+        } else {
+            w7.destroy();
+            w7 = false;
+        }
+    }
+    if (!w7) {
+        let widgetKey7 = \`Child\`;
+        let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
+        if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+        w7 = new W7(owner, props7);
+        context.__owl__.cmap[7] = w7.__owl__.id;
+        def6 = w7._prepare();
+        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+    } else {
+        def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+        def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
+    }
+    extra.promises.push(def6);
+    //WIDGET
+    let def9;
+    let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
+    let _8_index = c4.length;
+    const patchQueue10 = [];
+    c4.push(w10 && w10.__owl__.pvnode || null);
+    let props10 = {val:context['state'].val};
+    if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
+        if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
+            def9 = w10.__owl__.renderPromise;
+        } else {
+            w10.destroy();
+            w10 = false;
+        }
+    }
+    if (!w10) {
+        let widgetKey10 = \`AsyncChild\`;
+        let W10 = context.widgets && context.widgets[widgetKey10] || QWeb.widgets[widgetKey10];
+        if (!W10) {throw new Error('Cannot find the definition of widget \\"' + widgetKey10 + '\\"')}
+        w10 = new W10(owner, props10);
+        context.__owl__.cmap[10] = w10.__owl__.id;
+        def9 = w10._prepare();
+        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+    } else {
+        def9 = def9 || w10._updateProps(props10, extra.forceUpdate, patchQueue10);
+        def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
+    }
+    def9.then(w10._applyPatchQueue.bind(w10, patchQueue10));
+    return vn1;
+}"
+`;
+
 exports[`class and style attributes with t-widget dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
@@ -10,11 +253,11 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     const _5 = context['state'].style;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -51,11 +294,11 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     const _5 = {a:context['state'].a,b:context['state'].b};
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -112,10 +355,10 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         context.number_value = _4[i];
         //WIDGET
         let key8 = context['number'];
-        let _5_index = c1.length;
-        c1.push(null);
         let def6;
         let w7 = key8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key8]] : false;
+        let _5_index = c1.length;
+        c1.push(null);
         let props7 = {};
         if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
             if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
@@ -153,10 +396,10 @@ exports[`composition t-widget with dynamic value 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -193,10 +436,10 @@ exports[`composition t-widget with dynamic value 2 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -233,10 +476,10 @@ exports[`other directives with t-widget t-on with handler bound to argument 1`] 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -273,10 +516,10 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -313,10 +556,10 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -353,10 +596,10 @@ exports[`other directives with t-widget t-on with handler bound to object 1`] = 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -393,10 +636,10 @@ exports[`other directives with t-widget t-on with prevent and self modifiers (or
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -433,10 +676,10 @@ exports[`other directives with t-widget t-on with self and prevent modifiers (or
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -473,10 +716,10 @@ exports[`other directives with t-widget t-on with self modifier 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -513,10 +756,10 @@ exports[`other directives with t-widget t-on with stop and/or prevent modifiers 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -554,10 +797,10 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     var vn1 = h('div', p1, c1);
     //WIDGET
     let key5 = 'somestring';
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = key5 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key5]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {flag:context['state'].flag};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -594,10 +837,10 @@ exports[`t-slot directive can define and call slots 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {

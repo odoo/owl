@@ -1196,6 +1196,94 @@ const SLOTS_CSS = `.main {
     border-top: 1px solid white;
 }`;
 
+const ASYNC_COMPONENTS = `// This example will not work if your browser does not support ESNext class fields
+
+// In this example, we have 2 sub widgets, one of them being async. However, we don't want renderings
+// of the sync sub widget to be delayed because of the async one. We use the 't-async' directive for
+// this purpose.
+
+class App extends owl.Component {
+    widgets = {AsyncChild, NotificationManager};
+    state = { value: 0 };
+
+    increment() {
+        this.state.value++;
+        this.refs.notificationManager.notify("Value will be set to " + this.state.value);
+    }
+}
+
+class AsyncChild extends owl.Component {
+    willUpdateProps() {
+        // simulate a widget that needs to perform async stuff (e.g. an RPC)
+        // with the updated props before re-rendering itself
+        return new Promise(function (resolve) {
+            setTimeout(resolve, 1000);
+        });
+    }
+}
+
+class NotificationManager extends owl.Component {
+    state = { notifs: [] };
+
+    notify(notif) {
+        this.state.notifs.push(notif);
+        setTimeout(() => {
+            var index = this.state.notifs.indexOf(notif);
+            this.state.notifs.splice(index, 1);
+        }, 3000);
+    }
+}
+
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({ qweb });
+app.mount(document.body);`;
+
+const ASYNC_COMPONENTS_XML = `<templates>
+  <div t-name="App" class="app">
+    <button t-on-click="increment">Increment</button>
+    <t t-widget="AsyncChild" t-async="1" value="state.value"/>
+    <t t-widget="NotificationManager" t-ref="notificationManager"/>
+  </div>
+
+  <div class="value" t-name="AsyncChild">
+    Current value: <t t-esc="props.value"/>
+  </div>
+
+  <div class="notification_manager" t-name="NotificationManager">
+    <t t-foreach="state.notifs" t-as="notif">
+      <div class="notification"><t t-esc="notif"/></div>
+    </t>
+  </div>
+</templates>`;
+
+const ASYNC_COMPONENTS_CSS = `.app {
+    width: 70%;
+}
+
+button {
+    color: darkred;
+    font-size: 30px;
+    width: 220px;
+}
+
+.value {
+    font-size: 26px;
+    padding: 20px;
+}
+
+.notification_manager {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.notification {
+    width: 150px;
+    margin: 4px 8px;
+    padding: 16px;
+    border: 1px solid: black;
+    background-color: lightgray;
+}`;
+
 const EMPTY = `class App extends owl.Component {
 }
 
@@ -1251,6 +1339,12 @@ export const SAMPLES = [
     code: SLOTS,
     xml: SLOTS_XML,
     css: SLOTS_CSS
+  },
+  {
+    description: "Asynchronous components",
+    code: ASYNC_COMPONENTS,
+    xml: ASYNC_COMPONENTS_XML,
+    css: ASYNC_COMPONENTS_CSS
   },
   {
     description: "Empty",

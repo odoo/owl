@@ -2352,6 +2352,194 @@ describe("async rendering", () => {
     await nextTick();
     expect(destroyCount).toBe(0);
   });
+
+  test("delayed t-widget with t-async directive", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="Parent">
+          <button t-on-click="updateApp">Update App State</button>
+          <div class="children">
+            <t t-widget="Child" val="state.val"/>
+            <t t-widget="AsyncChild" t-async="1" val="state.val"/>
+          </div>
+        </div>
+        <span t-name="Child"><t t-esc="props.val"/></span>
+      </templates>
+    `);
+
+    let def;
+    class Parent extends Widget {
+      widgets = { Child, AsyncChild };
+      state = { val: 0 };
+
+      updateApp() {
+        this.state.val++;
+      }
+    }
+    class Child extends Widget {}
+    class AsyncChild extends Child {
+      willUpdateProps() {
+        return def;
+      }
+    }
+
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>0</span><span>0</span>"
+    );
+
+    // click on button to increment Parent counter
+    def = makeDeferred();
+    fixture.querySelector("button")!.click();
+    await nextTick();
+
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1</span><span>0</span>"
+    );
+
+    def.resolve();
+    await nextTick();
+
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1</span><span>1</span>"
+    );
+  });
+
+  test("fast t-widget with t-async directive", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="Parent">
+          <button t-on-click="updateApp">Update App State</button>
+          <div class="children">
+            <t t-widget="Child" t-async="1" val="state.val"/>
+            <t t-widget="AsyncChild" val="state.val"/>
+          </div>
+        </div>
+        <span t-name="Child"><t t-esc="props.val"/></span>
+      </templates>
+    `);
+
+    let def;
+    class Parent extends Widget {
+      widgets = { Child, AsyncChild };
+      state = { val: 0 };
+
+      updateApp() {
+        this.state.val++;
+      }
+    }
+    class Child extends Widget {}
+    class AsyncChild extends Child {
+      willUpdateProps() {
+        return def;
+      }
+    }
+
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>0</span><span>0</span>"
+    );
+
+    // click on button to increment Parent counter
+    def = makeDeferred();
+    fixture.querySelector("button")!.click();
+    await nextTick();
+
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1</span><span>0</span>"
+    );
+
+    def.resolve();
+    await nextTick();
+
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1</span><span>1</span>"
+    );
+  });
+
+  test("t-widget with t-async directive: mixed re-renderings", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="Parent">
+          <button t-on-click="updateApp">Update App State</button>
+          <div class="children">
+            <t t-widget="Child" val="state.val"/>
+            <t t-widget="AsyncChild" t-async="1" val="state.val"/>
+          </div>
+        </div>
+        <span t-name="Child" t-on-click="increment">
+          <t t-esc="state.val"/>/<t t-esc="props.val"/>
+        </span>
+      </templates>
+    `);
+
+    let def;
+    class Parent extends Widget {
+      widgets = { Child, AsyncChild };
+      state = { val: 0 };
+
+      updateApp() {
+        this.state.val++;
+      }
+    }
+    class Child extends Widget {
+      state = { val: 0 };
+
+      increment() {
+        this.state.val++;
+      }
+    }
+    class AsyncChild extends Child {
+      willUpdateProps() {
+        return def;
+      }
+    }
+
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>0/0</span><span>0/0</span>"
+    );
+
+    // click on button to increment Parent counter
+    def = makeDeferred();
+    fixture.querySelector("button")!.click();
+    await nextTick();
+
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>0/1</span><span>0/0</span>"
+    );
+
+    // click on each Child to increment their local counter
+    const children = parent.el!.querySelectorAll("span");
+    children[0]!.click();
+    await nextTick();
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1/1</span><span>0/0</span>"
+    );
+
+    children[1]!.click();
+    await nextTick();
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1/1</span><span>1/0</span>"
+    );
+
+    // finalize first re-rendering (coming from the props update)
+    def.resolve();
+    await nextTick();
+
+    expect(fixture.querySelector(".children")!.innerHTML).toBe(
+      "<span>1/1</span><span>1/1</span>"
+    );
+  });
 });
 
 describe("updating environment", () => {

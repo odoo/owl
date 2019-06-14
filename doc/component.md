@@ -10,15 +10,14 @@
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
   - [Composition](#composition)
-  - [Asynchronous Rendering](#asynchronous-rendering)
   - [Event Handling](#event-handling)
+  - [Form Input Bindings](#form-input-bindings)
   - [`t-key` Directive](#t-key-directive)
   - [`t-mounted` Directive](#t-mounted-directive)
   - [Semantics](#semantics)
   - [Props Validation](#props-validation)
   - [References](#references)
   - [Slots](#slots)
-  - [Form Input Bindings](#form-input-bindings)
   - [Asynchronous Rendering](#asynchronous-rendering)
 
 ## Overview
@@ -496,6 +495,98 @@ The `t-on` directive also allows to prebind some arguments. For example,
 Here, `expr` is a valid Owl expression, so it could be `true` or some variable
 from the rendering context.
 
+### Form Input Bindings
+
+It is very common to need to be able to read the value out of an html `input` (or
+`textarea`, or `select`) in order to use it (note: it does not need to be in a
+form!). A possible way to do this is to do it by hand:
+
+```js
+class Form extends owl.Component {
+  state = { text: "" };
+
+  _updateInputValue(event) {
+    this.state.text = event.target.value;
+  }
+}
+```
+
+```xml
+<div>
+  <input t-on-input="_updateInputValue"/>
+  <span t-esc="state.text"/>
+</div>
+```
+
+This works. However, this requires a little bit of _plumbing_ code. Also, the
+plumbing code is slightly different if you need to interact with a checkbox,
+or with radio buttons, or with select tags.
+
+To help with this situation, Owl has a builtin directive `t-model`: its value
+is the (top-level) name in the state object. With the `t-model` directive, we
+can write a shorter code, equivalent to the previous example:
+
+```js
+class Form extends owl.Component {
+  state = { text: "" };
+}
+```
+
+```xml
+<div>
+  <input t-model="text"/>
+  <span t-esc="state.text"/>
+</div>
+```
+
+The `t-model` directive works with `<input>`, `<input type="checkbox">`,
+`<input type="radio">`, `<textarea>` and `<select>`:
+
+```xml
+<div>
+    <div>Text in an input: <input t-model="someVal"/></div>
+    <div>Textarea: <textarea t-model="otherVal"/></div>
+    <div>Boolean value: <input type="checkbox" t-model="someFlag"/></div>
+    <div>Selection:
+        <select t-model="color">
+            <option value="">Select a color</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+        </select>
+    </div>
+    <div>
+        Selection with radio buttons:
+        <span>
+            <input type="radio" name="color" id="red" value="red" t-model="color"/>
+            <label for="red">Red</label>
+        </span>
+        <span>
+            <input type="radio" name="color" id="blue" value="blue" t-model="color"/>
+            <label for="blue">Blue</label>
+        </span>
+    </div>
+</div>
+```
+
+Like event handling, the `t-model` directive accepts some modifiers:
+
+| Modifier  | Description                                                          |
+| --------- | -------------------------------------------------------------------- |
+| `.lazy`   | update the value on the `change` event (default is on `input` event) |
+| `.number` | tries to parse the value to a number (using `parseFloat`)            |
+| `.trim`   | trim the resulting value                                             |
+
+For example:
+
+```xml
+<input t-model.lazy="someVal"/>
+```
+
+These modifiers can be combined. For instance, `t-model.lazy.number` will only
+update a number whenever the change is done.
+
+Note: the online playground has an example to show how it works.
+
 ### `t-key` Directive
 
 Even though Owl tries to be as declarative as possible, some DOM state is still
@@ -811,98 +902,6 @@ is not allowed. A workaround could be to wrap the content in a div:
   <div>B</div>
 </div>
 ```
-
-### Form Input Bindings
-
-It is very common to need to be able to read the value out of an html `input` (or
-`textarea`, or `select`) in order to use it (note: it does not need to be in a
-form!). A possible way to do this is to do it by hand:
-
-```js
-class Form extends owl.Component {
-  state = { text: "" };
-
-  _updateInputValue(event) {
-    this.state.text = event.target.value;
-  }
-}
-```
-
-```xml
-<div>
-  <input t-on-input="_updateInputValue"/>
-  <span t-esc="state.text"/>
-</div>
-```
-
-This works. However, this requires a little bit of _plumbing_ code. Also, the
-plumbing code is slightly different if you need to interact with a checkbox,
-or with radio buttons, or with select tags.
-
-To help with this situation, Owl has a builtin directive `t-model`: its value
-is the (top-level) name in the state object. With the `t-model` directive, we
-can write a shorter code, equivalent to the previous example:
-
-```js
-class Form extends owl.Component {
-  state = { text: "" };
-}
-```
-
-```xml
-<div>
-  <input t-model="text"/>
-  <span t-esc="state.text"/>
-</div>
-```
-
-The `t-model` directive works with `<input>`, `<input type="checkbox">`,
-`<input type="radio">`, `<textarea>` and `<select>`:
-
-```xml
-<div>
-    <div>Text in an input: <input t-model="someVal"/></div>
-    <div>Textarea: <textarea t-model="otherVal"/></div>
-    <div>Boolean value: <input type="checkbox" t-model="someFlag"/></div>
-    <div>Selection:
-        <select t-model="color">
-            <option value="">Select a color</option>
-            <option value="red">Red</option>
-            <option value="blue">Blue</option>
-        </select>
-    </div>
-    <div>
-        Selection with radio buttons:
-        <span>
-            <input type="radio" name="color" id="red" value="red" t-model="color"/>
-            <label for="red">Red</label>
-        </span>
-        <span>
-            <input type="radio" name="color" id="blue" value="blue" t-model="color"/>
-            <label for="blue">Blue</label>
-        </span>
-    </div>
-</div>
-```
-
-Like event handling, the `t-model` directive accepts some modifiers:
-
-| Modifier  | Description                                                          |
-| --------- | -------------------------------------------------------------------- |
-| `.lazy`   | update the value on the `change` event (default is on `input` event) |
-| `.number` | tries to parse the value to a number (using `parseFloat`)            |
-| `.trim`   | trim the resulting value                                             |
-
-For example:
-
-```xml
-<input t-model.lazy="someVal"/>
-```
-
-These modifiers can be combined. For instance, `t-model.lazy.number` will only
-update a number whenever the change is done.
-
-Note: the online playground has an example to show how it works.
 
 ### Asynchronous Rendering
 

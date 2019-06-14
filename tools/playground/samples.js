@@ -1198,9 +1198,9 @@ const SLOTS_CSS = `.main {
 
 const ASYNC_COMPONENTS = `// This example will not work if your browser does not support ESNext class fields
 
-// In this example, we have 2 sub widgets, one of them being async. However, we don't want renderings
-// of the sync sub widget to be delayed because of the async one. We use the 't-async' directive for
-// this purpose.
+// In this example, we have 2 sub widgets, one of them being async. However, we
+// don't want renderings of the sync sub widget to be delayed because of the
+// async one. We use the 't-asyncroot' directive for this purpose.
 
 class App extends owl.Component {
     widgets = {AsyncChild, NotificationManager};
@@ -1241,7 +1241,7 @@ app.mount(document.body);`;
 const ASYNC_COMPONENTS_XML = `<templates>
   <div t-name="App" class="app">
     <button t-on-click="increment">Increment</button>
-    <t t-widget="AsyncChild" t-async="1" value="state.value"/>
+    <t t-widget="AsyncChild" t-asyncroot="1" value="state.value"/>
     <t t-widget="NotificationManager" t-ref="notificationManager"/>
   </div>
 

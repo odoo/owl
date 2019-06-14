@@ -2354,14 +2354,14 @@ describe("async rendering", () => {
     expect(destroyCount).toBe(0);
   });
 
-  test("delayed t-widget with t-async directive", async () => {
+  test("delayed t-widget with t-asyncroot directive", async () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="Parent">
           <button t-on-click="updateApp">Update App State</button>
           <div class="children">
             <t t-widget="Child" val="state.val"/>
-            <t t-widget="AsyncChild" t-async="1" val="state.val"/>
+            <t t-widget="AsyncChild" t-asyncroot="1" val="state.val"/>
           </div>
         </div>
         <span t-name="Child"><t t-esc="props.val"/></span>
@@ -2409,13 +2409,13 @@ describe("async rendering", () => {
     );
   });
 
-  test("fast t-widget with t-async directive", async () => {
+  test("fast t-widget with t-asyncroot directive", async () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="Parent">
           <button t-on-click="updateApp">Update App State</button>
           <div class="children">
-            <t t-widget="Child" t-async="1" val="state.val"/>
+            <t t-widget="Child" t-asyncroot="1" val="state.val"/>
             <t t-widget="AsyncChild" val="state.val"/>
           </div>
         </div>
@@ -2464,14 +2464,14 @@ describe("async rendering", () => {
     );
   });
 
-  test("t-widget with t-async directive: mixed re-renderings", async () => {
+  test("t-widget with t-asyncroot directive: mixed re-renderings", async () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="Parent">
           <button t-on-click="updateApp">Update App State</button>
           <div class="children">
             <t t-widget="Child" val="state.val"/>
-            <t t-widget="AsyncChild" t-async="1" val="state.val"/>
+            <t t-widget="AsyncChild" t-asyncroot="1" val="state.val"/>
           </div>
         </div>
         <span t-name="Child" t-on-click="increment">

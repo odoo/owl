@@ -928,7 +928,7 @@ Here are a few tips on how to work with asynchronous widgets:
 3. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
    second, and only once (see `owl.utils.loadJS`)
-4. For all the other cases, the `t-async` directive (to use alongside
+4. For all the other cases, the `t-asyncroot` directive (to use alongside
    `t-widget`) is there to help you. When this directive is met, a new rendering
    sub tree is created, such that the rendering of that component (and its
    children) is not tied to the rendering of the rest of the interface. It can
@@ -941,6 +941,6 @@ Here are a few tips on how to work with asynchronous widgets:
    ```xml
    <div t-name="ParentWidget">
      <t t-widget="SyncChild"/>
-     <t t-widget="AsyncChild" t-async="1"/>
+     <t t-widget="AsyncChild" t-asyncroot="1"/>
    </div>
    ```

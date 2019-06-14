@@ -65,16 +65,16 @@ We present here a list of all standard QWeb directives:
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                                 | Description                                                                         |
-| ------------------------------------ | ----------------------------------------------------------------------------------- |
-| `t-widget`, `t-keepalive`, `t-async` | [Defining a sub component](component.md#composition)                                |
-| `t-ref`                              | [Setting a reference to a dom node or a sub component](component.md#references)     |
-| `t-key`                              | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
-| `t-on-*`                             | [Event handling](component.md#event-handling)                                       |
-| `t-transition`                       | [Defining an animation](animations.md#css-transitions)                              |
-| `t-mounted`                          | [Callback when a node or component is mounted](component.md#t-mounted-directive)    |
-| `t-slot`                             | [Rendering a slot](component.md#slots)                                              |
-| `t-model`                            | [Form input bindings](component.md#form-input-bindings)                             |
+| Name                                         | Description                                                                         |
+| -------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `t-widget`, `t-keepalive`, `t-asyncroot` | [Defining a sub component](component.md#composition)                                |
+| `t-ref`                                      | [Setting a reference to a dom node or a sub component](component.md#references)     |
+| `t-key`                                      | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
+| `t-on-*`                                     | [Event handling](component.md#event-handling)                                       |
+| `t-transition`                               | [Defining an animation](animations.md#css-transitions)                              |
+| `t-mounted`                                  | [Callback when a node or component is mounted](component.md#t-mounted-directive)    |
+| `t-slot`                                     | [Rendering a slot](component.md#slots)                                              |
+| `t-model`                                    | [Form input bindings](component.md#form-input-bindings)                             |
 
 ## QWeb Engine
 

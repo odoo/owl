@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`async rendering delayed t-widget with t-async directive 1`] = `
+exports[`async rendering delayed t-widget with t-asyncroot directive 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -81,7 +81,7 @@ exports[`async rendering delayed t-widget with t-async directive 1`] = `
 }"
 `;
 
-exports[`async rendering fast t-widget with t-async directive 1`] = `
+exports[`async rendering fast t-widget with t-asyncroot directive 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -162,7 +162,7 @@ exports[`async rendering fast t-widget with t-async directive 1`] = `
 }"
 `;
 
-exports[`async rendering t-widget with t-async directive: mixed re-renderings 1`] = `
+exports[`async rendering t-widget with t-asyncroot directive: mixed re-renderings 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;

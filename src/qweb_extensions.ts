@@ -361,7 +361,7 @@ const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
 
 QWeb.addDirective({
   name: "widget",
-  extraNames: ["props", "keepalive", "async"],
+  extraNames: ["props", "keepalive", "asyncroot"],
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.addLine("//WIDGET");
@@ -369,7 +369,7 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineUtils = true;
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
-    let async = node.getAttribute("t-async") ? true : false;
+    let async = node.getAttribute("t-asyncroot") ? true : false;
 
     // t-on- events and t-transition
     const events: [string, string[], string, string][] = [];

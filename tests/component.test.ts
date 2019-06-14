@@ -25,6 +25,7 @@ let env: Env;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
+  env.qweb.addTemplate("Widget", "<div></div>");
   env.qweb.addTemplate(
     "Counter",
     `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`
@@ -81,6 +82,19 @@ describe("basic widget properties", () => {
     const widget = new Widget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
+  });
+
+  test("crashes if it cannot find a template", async () => {
+    expect.assertions(1);
+    class SomeWidget extends Component<any, any, any> {}
+    const widget = new SomeWidget(env);
+    try {
+      await widget.mount(fixture);
+    } catch (e) {
+      expect(e.message).toBe(
+        'Could not find template for component "SomeWidget"'
+      );
+    }
   });
 
   test("can be clicked on and updated", async () => {

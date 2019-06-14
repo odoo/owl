@@ -458,7 +458,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
           p = p.__proto__;
         }
         if (p === Component) {
-          this.template = "default";
+          throw new Error(
+            `Could not find template for component "${this.constructor.name}"`
+          );
         } else {
           tmap[name] = template;
           this.template = template;

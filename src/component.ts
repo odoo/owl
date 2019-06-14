@@ -274,20 +274,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
-      const patchLen = patchQueue!.length;
-      for (let i = 0; i < patchLen; i++) {
-        const patch = patchQueue![i];
-        patch.push(patch[0].willPatch());
-      }
-      for (let i = 0; i < patchLen; i++) {
-        const patch = patchQueue![i];
-        patch[0]._patch(patch[1]);
-      }
-
-      for (let i = patchLen - 1; i >= 0; i--) {
-        const patch = patchQueue![i];
-        patch[0].patched(patch[2]);
-      }
+      this._applyPatchQueue(<any[]>patchQueue);
     }
   }
 
@@ -566,6 +553,29 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
     }
     return <Props>props;
+  }
+
+  /**
+   * Apply the given patch queue. A patch is a pair [c, vn], where c is a
+   * Component instance and vn a VNode.
+   *   1) Call 'willPatch' on the component of each patch
+   *   2) Call '_patch' on the component of each patch
+   *   3) Call 'patched' on the component of each patch, in inverse order
+   */
+  _applyPatchQueue(patchQueue: any[]) {
+    const patchLen = patchQueue.length;
+    for (let i = 0; i < patchLen; i++) {
+      const patch = patchQueue[i];
+      patch.push(patch[0].willPatch());
+    }
+    for (let i = 0; i < patchLen; i++) {
+      const patch = patchQueue[i];
+      patch[0]._patch(patch[1]);
+    }
+    for (let i = patchLen - 1; i >= 0; i--) {
+      const patch = patchQueue[i];
+      patch[0].patched(patch[2]);
+    }
   }
 
   /**

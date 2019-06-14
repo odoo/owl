@@ -225,13 +225,6 @@ const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
  * // t-widget directive: we start by evaluating the expression given by t-key:
  * let key5 = "somestring";
  *
- * // We keep the index of the position of the widget in the closure.  We push
- * // null to reserve the slot, and will replace it later by the widget vnode,
- * // when it will be ready (do not forget that preparing/rendering a widget is
- * // asynchronous)
- * let _2_index = c1.length;
- * c1.push(null);
- *
  * // def3 is the promise that will contain later either the new widget
  * // creation, or the props update...
  * let def3;
@@ -245,6 +238,13 @@ const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
  *   key5 in context.__owl__.cmap
  *   ? context.__owl__.children[context.__owl__.cmap[key5]]
  *   : false;
+ *
+ * // We keep the index of the position of the widget in the closure.  We push
+ * // null to reserve the slot, and will replace it later by the widget vnode,
+ * // when it will be ready (do not forget that preparing/rendering a widget is
+ * // asynchronous)
+ * let _2_index = c1.length;
+ * c1.push(null);
  *
  * // we evaluate here the props given to the component. It is done here to be
  * // able to easily reference it later, and also, it might be an expensive
@@ -360,7 +360,7 @@ const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
 
 QWeb.addDirective({
   name: "widget",
-  extraNames: ["props", "keepalive"],
+  extraNames: ["props", "keepalive", "async"],
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.addLine("//WIDGET");
@@ -368,6 +368,7 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineUtils = true;
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
+    let async = node.getAttribute("t-async") ? true : false;
 
     // t-on- events and t-transition
     const events: [string, string[], string, string][] = [];
@@ -413,8 +414,6 @@ QWeb.addDirective({
       // want to evaluate it only once)
       ctx.addLine(`let key${keyID} = ${key};`);
     }
-    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
-    ctx.addLine(`c${ctx.parentNode}.push(null);`);
     ctx.addLine(`let def${defID};`);
     let templateID = key
       ? `key${keyID}`
@@ -505,6 +504,13 @@ QWeb.addDirective({
     ctx.addLine(
       `let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`
     );
+    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+    if (async) {
+      ctx.addLine(`const patchQueue${widgetID} = [];`);
+      ctx.addLine(`c${ctx.parentNode}.push(w${widgetID} && w${widgetID}.__owl__.pvnode || null);`);
+    } else {
+      ctx.addLine(`c${ctx.parentNode}.push(null);`);
+    }
     ctx.addLine(`let props${widgetID} = {${propStr}};`);
     ctx.addIf(
       `w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode`
@@ -551,7 +557,6 @@ QWeb.addDirective({
 
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
-    // FIXME: click to re-add widget during remove transition -> leak
     ctx.addLine(
       `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${widgetID}._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeWidgetCode}}}});c${
         ctx.parentNode
@@ -560,8 +565,9 @@ QWeb.addDirective({
 
     ctx.addElse();
     // need to update widget
+    const patchQueueCode = async ? `patchQueue${widgetID}` : "extra.patchQueue";
     ctx.addLine(
-      `def${defID} = def${defID} || w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`
+      `def${defID} = def${defID} || w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, ${patchQueueCode});`
     );
     let keepAliveCode = "";
     if (keepAlive) {
@@ -576,7 +582,13 @@ QWeb.addDirective({
     );
     ctx.closeIf();
 
-    ctx.addLine(`extra.promises.push(def${defID});`);
+    if (async) {
+      ctx.addLine(
+        `def${defID}.then(w${widgetID}._applyPatchQueue.bind(w${widgetID}, patchQueue${widgetID}));`
+      );
+    } else {
+      ctx.addLine(`extra.promises.push(def${defID});`);
+    }
 
     if (
       node.hasAttribute("t-if") ||

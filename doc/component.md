@@ -10,6 +10,7 @@
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
   - [Composition](#composition)
+  - [Asynchronous rendering](#asynchronous-rendering)
   - [Event Handling](#event-handling)
   - [`t-key` directive](#t-key-directive)
   - [`t-mounted` directive](#t-mounted-directive)
@@ -309,7 +310,7 @@ the DOM. This is a good place to remove some listeners, for example.
 
 This is the opposite method of `mounted`.
 
-## Composition
+### Composition
 
 The example above shows a QWeb template with a `t-on-click` directive. Widget
 templates are standard [QWeb](qweb.md) templates, but with an extra directive:
@@ -828,9 +829,25 @@ There are two different common problems with Owl asynchronous rendering model:
 
 Here are a few tips on how to work with asynchronous widgets:
 
-1. minimize the use of asynchronous widgets!
+1. Minimize the use of asynchronous widgets!
 2. Maybe move the asynchronous logic in a store, which then triggers (mostly)
    synchronous renderings
 3. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
    second, and only once (see `owl.utils.loadJS`)
+4. For all the other cases, the `t-async` directive (to use alongside
+   `t-widget`) is there to help you. When this directive is met, a new rendering
+   sub tree is created, such that the rendering of that component (and its
+   children) is not tied to the rendering of the rest of the interface. It can
+   be used on an asynchronous component, to prevent it from delaying the
+   rendering of the whole interface, or on a synchronous one, such that its
+   rendering isn't delayed by other (asynchronous) components. Note that this
+   directive has no effect on the first rendering, but only on subsequent ones
+   (triggered by state or props changes).
+
+   ```xml
+   <div t-name="ParentWidget">
+     <t t-widget="SyncChild"/>
+     <t t-widget="AsyncChild" t-async="1"/>
+   </div>
+   ```

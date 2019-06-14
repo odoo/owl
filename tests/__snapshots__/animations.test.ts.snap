@@ -10,10 +10,10 @@ exports[`animations t-transition combined with t-widget 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //WIDGET
-    let _2_index = c1.length;
-    c1.push(null);
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
     let props4 = {};
     if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
         if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
@@ -54,10 +54,10 @@ exports[`animations t-transition combined with t-widget and t-if 1`] = `
     var vn1 = h('div', p1, c1);
     if (context['state'].display) {
         //WIDGET
-        let _2_index = c1.length;
-        c1.push(null);
         let def3;
         let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+        let _2_index = c1.length;
+        c1.push(null);
         let props4 = {};
         if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
             if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {

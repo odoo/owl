@@ -47,6 +47,7 @@ export class Store extends EventBus {
   env: any;
   observer: Observer;
   getters: { [name: string]: (payload?) => any };
+  _gettersCache: { [name: string]: {} };
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -56,19 +57,31 @@ export class Store extends EventBus {
     this.mutations = config.mutations;
     this.env = config.env;
     this.observer = new Observer();
-    this.observer.notifyCB = this.trigger.bind(this, "update");
+    this.observer.notifyCB = () => {
+      this._gettersCache = {};
+      this.trigger("update");
+    };
     this.observer.allowMutations = false;
     this.observer.observe(this.state);
     this.getters = {};
+    this._gettersCache = {};
 
     if (this.debug) {
       this.history.push({ state: this.state });
     }
 
+    const cTypes = ["undefined", "number", "string"];
     for (let entry of Object.entries(config.getters || {})) {
       const name: string = entry[0];
       const func: (...any) => any = entry[1];
       this.getters[name] = payload => {
+        if (this._commitLevel === 0 && cTypes.indexOf(typeof payload) >= 0) {
+          this._gettersCache[name] = this._gettersCache[name] || {};
+          this._gettersCache[name][payload] =
+            this._gettersCache[name][payload] ||
+            func({ state: this.state, getters: this.getters }, payload);
+          return this._gettersCache[name][payload];
+        }
         return func({ state: this.state, getters: this.getters }, payload);
       };
     }

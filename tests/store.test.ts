@@ -182,6 +182,145 @@ describe("basic use", () => {
     expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
   });
 
+  test("getters are memoized", async () => {
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1
+        }
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: "aaron"
+        }
+      }
+    };
+    let n = 0;
+    const getters = {
+      beerTasterName({ state }, beerID) {
+        n++;
+        return state.tasters[state.beers[beerID].tasterID].name;
+      },
+      bestBeerName({ state }) {
+        n++;
+        return state.beers[1].name;
+      },
+    };
+    const store = new Store({ state, mutations: {}, actions: {}, getters });
+    expect((<any>store.getters).bestBeerName()).toBe("bertinchamps");
+    expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
+    expect(n).toBe(2);
+    expect((<any>store.getters).bestBeerName()).toBe("bertinchamps");
+    expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
+    expect(n).toBe(2);
+  });
+
+  test("getters taking Array as argument aren't memoized", async () => {
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1
+        }
+      },
+    };
+    let n = 0;
+    const getters = {
+      getBeerNames({ state }, beerIDs) {
+        n++;
+        return beerIDs.map(beerID => {
+          return state.beers[beerID].name;
+        });
+      }
+    };
+    const store = new Store({ state, mutations: {}, actions: {}, getters });
+    expect((<any>store.getters).getBeerNames([1])).toEqual(["bertinchamps"]);
+    expect(n).toBe(1);
+    expect((<any>store.getters).getBeerNames([1])).toEqual(["bertinchamps"]);
+    expect(n).toBe(2);
+  });
+
+  test("getters cache is nuked on store changes", async () => {
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps",
+          tasterID: 1
+        }
+      },
+      tasters: {
+        1: {
+          id: 1,
+          name: "aaron"
+        },
+        2: {
+          id: 2,
+          name: "gery"
+        }
+      }
+    };
+    const mutations = {
+      changeTaster({ state }, {beerID, tasterID}) {
+        state.beers[beerID].tasterID = tasterID;
+      }
+    };
+    let n = 0;
+    const getters = {
+      beerTasterName({ state }, beerID) {
+        n++;
+        return state.tasters[state.beers[beerID].tasterID].name;
+      },
+    };
+    const store = new Store({ state, mutations: mutations, actions: {}, getters });
+    expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
+    expect(n).toBe(1);
+    expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
+    expect(n).toBe(1);
+
+    store.commit('changeTaster', {beerID: 1, tasterID: 2});
+    await nextTick();
+
+    expect((<any>store.getters).beerTasterName(1)).toBe("gery");
+    expect(n).toBe(2);
+  });
+
+  test("getters cache is disabled during a mutation", async () => {
+    const state = {
+      beers: {
+        1: {
+          id: 1,
+          name: "bertinchamps"
+        },
+      }
+    };
+    const mutations = {
+      renameBeer({ state, getters }, beerID) {
+        expect(getters.beerName(beerID)).toBe('bertinchamps');
+        state.beers[1].name = 'chouffe';
+        expect(getters.beerName(beerID)).toBe('chouffe');
+      }
+    };
+    let n = 0;
+    const getters = {
+      beerName({ state }, beerID) {
+        n++;
+        return state.beers[beerID].name;
+      },
+    };
+    const store = new Store({ state, mutations: mutations, actions: {}, getters });
+
+    store.commit('renameBeer', 1);
+    expect((<any>store.getters).beerName(1)).toBe('chouffe');
+    await nextTick();
+
+    expect(n).toBe(3);
+  });
+
   test("getters given to actions", async () => {
     expect.assertions(3);
     const state = {

@@ -142,6 +142,12 @@ const getters = {
 const post = store.getters.getPost(id);
 ```
 
+Getters take *at most* one argument.
+
+
+Note that getters are cached if they don't take any argument, or their argument
+is a string or a number.
+
 ### Connecting a Component
 
 By default, an Owl `Component` is not connected to any store. The `connect`

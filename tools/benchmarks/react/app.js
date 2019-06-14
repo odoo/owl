@@ -217,6 +217,7 @@ class Main extends React.Component {
           "Number of messages: ",
           this.state.messages.length
         ),
+        React.createElement("hr"),
         React.createElement(
           "div",
           { className: "title" },

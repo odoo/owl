@@ -7,6 +7,8 @@ In this page, we try to highlight some of these differences. Obviously, some
 effort was done to be fair. However, if you disagree with some of the points
 discussed, feel free to open an issue/submit a PR to correct this text.
 
+## Content
+
 - [Size](#size)
 - [Tooling/Build Step](#toolingbuild-step)
 - [Templating](#templating)
@@ -14,7 +16,7 @@ discussed, feel free to open an issue/submit a PR to correct this text.
 - [Reactiveness](#reactiveness)
 - [State Management](#state-management)
 
-### Size
+## Size
 
 OWL is intended to be small and to work at a slightly lower level of abstraction
 than React and Vue. Also, jQuery is not the same kind of framework, but it is interesting to compare.
@@ -26,7 +28,7 @@ than React and Vue. Also, jQuery is not the same kind of framework, but it is in
 | React + ReactDOM + Redux |                 | 40kb                     |
 | jQuery                   | 86kb            | 30kb                     |
 
-### Tooling/Build step
+## Tooling/Build step
 
 OWL is designed to be easy to use in a standalone way. For various reasons,
 Odoo does not want to rely on standard web tools (such as webpack), and OWL can
@@ -84,7 +86,7 @@ This has the advantage of having the full power of Javascript, but is less
 structured than a template language. Note that the tooling is quite impressive:
 there is a syntax highlighter for jsx here on github!
 
-### Asynchronous rendering
+## Asynchronous Rendering
 
 This is actually a big difference between OWL and React/Vue: components in OWL
 are totally asynchronous. They have two asynchronous hooks in their lifecycle:
@@ -115,7 +117,7 @@ extremely powerful as well, as demonstrated by the Odoo Web Client.
 Lazy loading static libraries can obviously be done with React/Vue, but it is
 more convoluted.
 
-### Reactiveness
+## Reactiveness
 
 React has a simple model: whenever the state changes, it is
 replaced with a new state (via the setState method). Then, the DOM is patched.
@@ -129,7 +131,7 @@ Owl is closer to vue: it also tracks magically the state properties, but it does
 only increment a counter whenever it changes (and a _deep_ counter for each of
 its parents). This assumes that the state is actually a tree.
 
-### State Management
+## State Management
 
 Managing the state of an application is a tricky issue. Many solutions have
 been proposed these last few years. It also depends on the kind of application we
@@ -190,5 +192,5 @@ keeps track of who get data, and retrigger a render when it was changed.
 
 Owl store is a little bit like a mix of redux and vuex: it has mutations and
 actions, like VueX, it keeps track of the state changes, but it does not notify
-a component when the state changes.  Instead, components need to connect to the
+a component when the state changes. Instead, components need to connect to the
 store like in redux, with a function that will listen to the relevant state.

@@ -6,14 +6,14 @@
 - [Directives](#directives)
 - [QWeb Engine](#qweb-engine)
 - [Reference](#reference)
-  - [White spaces](#white-spaces)
-  - [Root nodes](#root-nodes)
-  - [Expression evaluation](#expression-evaluation)
-  - [Static html nodes](#static-html-nodes)
-  - [Outputting data](#outputting-data)
+  - [White Spaces](#white-spaces)
+  - [Root Nodes](#root-nodes)
+  - [Expression Evaluation](#expression-evaluation)
+  - [Static html Nodes](#static-html-nodes)
+  - [Outputting Data](#outputting-data)
   - [Setting Variables](#setting-variables)
   - [Conditionals](#conditionals)
-  - [Dynamic attributes](#dynamic-attributes)
+  - [Dynamic Attributes](#dynamic-attributes)
   - [Loops](#loops)
   - [Rendering Sub Templates](#rendering-sub-templates)
   - [Debugging](#debugging)
@@ -65,16 +65,16 @@ We present here a list of all standard QWeb directives:
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                                 | Description                                                                             |
-| ------------------------------------ | --------------------------------------------------------------------------------------- |
-| `t-widget`, `t-keepalive`, `t-async` | [Defining a sub component](component.md#composition)                                    |
-| `t-ref`                              | [Setting a reference to a dom node or a sub component](component.md#keeping-references) |
-| `t-key`                              | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive)     |
-| `t-on-*`                             | [Event handling](component.md#event-handling)                                           |
-| `t-transition`                       | [Defining an animation](animations.md#css-transitions)                                  |
-| `t-mounted`                          | [Callback when a node or component is mounted](component.md#t-mounted-directive)        |
-| `t-slot`                             | [Rendering a slot](component.md#slots)                                                  |
-| `t-model`                            | [Form input bindings](component.md#form-input-bindings)                                 |
+| Name                                 | Description                                                                         |
+| ------------------------------------ | ----------------------------------------------------------------------------------- |
+| `t-widget`, `t-keepalive`, `t-async` | [Defining a sub component](component.md#composition)                                |
+| `t-ref`                              | [Setting a reference to a dom node or a sub component](component.md#references)     |
+| `t-key`                              | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
+| `t-on-*`                             | [Event handling](component.md#event-handling)                                       |
+| `t-transition`                       | [Defining an animation](animations.md#css-transitions)                              |
+| `t-mounted`                          | [Callback when a node or component is mounted](component.md#t-mounted-directive)    |
+| `t-slot`                             | [Rendering a slot](component.md#slots)                                              |
+| `t-model`                            | [Form input bindings](component.md#form-input-bindings)                             |
 
 ## QWeb Engine
 
@@ -141,7 +141,7 @@ We define in this section the specification of how `QWeb` templates should be
 rendered. Note that we only document here the standard QWeb specification. Owl
 specific extensions are documented in various other parts of the documentation.
 
-### White spaces
+### White Spaces
 
 White spaces in a templates are handled in a special way:
 
@@ -149,7 +149,7 @@ White spaces in a templates are handled in a special way:
 - if a whitespace-only text node contains a linebreak, it is ignored
 - the previous rules do not apply if we are in a `<pre>` tag
 
-### Root nodes
+### Root Nodes
 
 For many reasons, Owl QWeb templates should have a single root node. More
 precisely, the result of a template rendering should have a single root node:
@@ -175,7 +175,7 @@ Note: this does not apply to subtemplates (see the `t-call` directive). In that
 case, they will be inlined in the main template, and can actually have many
 root nodes.
 
-### Expression evaluation
+### Expression Evaluation
 
 QWeb expressions are strings that will be processed at compile time. Each variable in
 the javascript expression will be replaced by a lookup in the context (so, the
@@ -345,7 +345,7 @@ Extra conditional branching directives `t-elif` and `t-else` are also available:
 </div>
 ```
 
-### Dynamic attributes
+### Dynamic Attributes
 
 One can use the `t-att-` directive to add dynamic attributes. Its main use is to
 evaluate an expression (at rendering time) and bind an attribute to its result:

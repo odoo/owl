@@ -9,7 +9,7 @@
   - [Mutations](#mutations)
   - [Actions](#actions)
   - [Getters](#getters)
-  - [Connecting a component](#connecting-a-component)
+  - [Connecting a Component](#connecting-a-component)
 
 ## Overview
 
@@ -32,46 +32,45 @@ Here is what a simple store looks like:
 
 ```js
 const actions = {
-    addTodo({commit}, message) {
-        commit('addTodo', message);
-    }
+  addTodo({ commit }, message) {
+    commit("addTodo", message);
+  }
 };
 
 const mutations = {
-    addTodo({state}, message) {
-        const todo = {
-            id: state.nextId++,
-            message,
-            isCompleted: false,
-        };
-        state.todos.push(todo);
-    },
+  addTodo({ state }, message) {
+    const todo = {
+      id: state.nextId++,
+      message,
+      isCompleted: false
+    };
+    state.todos.push(todo);
+  }
 };
 
 const state = {
-    todos: [],
-    nextId: 1,
+  todos: [],
+  nextId: 1
 };
 
-const store = new owl.Store({state, actions, mutations});
-store.on('update', () => console.log(store.state));
+const store = new owl.Store({ state, actions, mutations });
+store.on("update", () => console.log(store.state));
 
 // updating the state
-store.dispatch('addTodo', 'fix all bugs');
+store.dispatch("addTodo", "fix all bugs");
 ```
-
 
 ## Reference
 
 The store is a simple [`owl.EventBus`](event_bus.md) that triggers `update` events whenever its
-state is changed.  Note that these events are triggered only after a microtask
+state is changed. Note that these events are triggered only after a microtask
 tick, so only one event will be triggered for any number of state changes in a
 call stack.
 
 Also, it is important to mention that the state is observed (with an `owl.Observer`),
-which is the reason why it is able to know if it was changed.  This implies that
+which is the reason why it is able to know if it was changed. This implies that
 state changes need to be done carefully in some cases (adding a new key to an
-object, or modifying an array with the `arr[i] = newValue` syntax).  See the
+object, or modifying an array with the `arr[i] = newValue` syntax). See the
 [Observer](observer.md)'s documentation for more details.
 
 ### Public API
@@ -82,26 +81,26 @@ object, or modifying an array with the `arr[i] = newValue` syntax).  See the
 
 ### Mutations
 
-Mutations are the only way to modify the state.  Changing the state outside a
-mutation is not allowed (and should throw an error).  Mutations are synchronous.
+Mutations are the only way to modify the state. Changing the state outside a
+mutation is not allowed (and should throw an error). Mutations are synchronous.
 
 ### Actions
 
-Actions are used to coordinate state changes.  It is also useful whenever some
-asynchronous logic is necessary.  For example, fetching data should be done
+Actions are used to coordinate state changes. It is also useful whenever some
+asynchronous logic is necessary. For example, fetching data should be done
 in an action.
 
 ```js
 const actions = {
-    async login({commit}) {
-        commit('setLoginState', 'pending');
-        try {
-            const loginInfo = await doSomeRPC('/login/', 'someinfo');
-            commit('setLoginState', loginInfo);
-        } catch {
-            commit('setLoginState', 'error');
-        }
+  async login({ commit }) {
+    commit("setLoginState", "pending");
+    try {
+      const loginInfo = await doSomeRPC("/login/", "someinfo");
+      commit("setLoginState", loginInfo);
+    } catch {
+      commit("setLoginState", "error");
     }
+  }
 };
 ```
 
@@ -128,23 +127,22 @@ transform the data contained in the store.
 
 ```js
 const getters = {
-    getPost({state}, id) {
-        const post = state.posts.find(p => p.id === id);
-        const author = state.authors.find(a => a.id = post.id);
-        return {
-            id,
-            author,
-            content: post.content
-        };
-    },
+  getPost({ state }, id) {
+    const post = state.posts.find(p => p.id === id);
+    const author = state.authors.find(a => (a.id = post.id));
+    return {
+      id,
+      author,
+      content: post.content
+    };
+  }
 };
 
 // somewhere else
 const post = store.getters.getPost(id);
-
 ```
 
-### Connecting a component
+### Connecting a Component
 
 By default, an Owl `Component` is not connected to any store. The `connect`
 function is there to create sub Components that are connected versions of
@@ -152,34 +150,35 @@ Components.
 
 ```javascript
 const actions = {
-    increment({commit}) {
-        commit('increment', 1);
-    }
+  increment({ commit }) {
+    commit("increment", 1);
+  }
 };
 const mutations = {
-    increment({state}, val) {
-        state.counter += val;
-    }
+  increment({ state }, val) {
+    state.counter += val;
+  }
 };
 const state = {
-    counter: 0,
+  counter: 0
 };
-const store = new owl.Store({state, actions, mutations});
+const store = new owl.Store({ state, actions, mutations });
 
 class Counter extends owl.Component {
-    increment() {
-        this.env.store.dispatch('increment');
-    }
+  increment() {
+    this.env.store.dispatch("increment");
+  }
 }
 function mapStoreToProps(state) {
-    return {
-        value: state.counter
-    };
+  return {
+    value: state.counter
+  };
 }
 const ConnectedCounter = owl.connect(Counter, mapStoreToProps);
 
 const counter = new ConnectedCounter({ store, qweb });
 ```
+
 ```xml
 <button t-name="Counter" t-on-click="increment">
   Click Me! [<t t-esc="props.value"/>]
@@ -187,17 +186,18 @@ const counter = new ConnectedCounter({ store, qweb });
 ```
 
 The arguments of `connect` are:
-  - `Counter`: an owl `Component` to connect
-  - `mapStoreToProps`: a function that extracts the `props` of the Component
-    from the `state` of the `Store` and returns them as a dict
-  - `options`: dictionary of optional parameters that may contain
-    - `getStore`: a function that takes the `env` in arguments and returns an
-      instance of `Store` to connect to (if not given, connects to `env.store`)
-    - `hashFunction`: the function to use to detect changes in the state (if not
-       given, generates a function that uses revision numbers, incremented at
-       each state change)
-    - `deep`: [only useful if no hashFunction is given] if false, only watch
-      for top level state changes (true by default)
+
+- `Counter`: an owl `Component` to connect
+- `mapStoreToProps`: a function that extracts the `props` of the Component
+  from the `state` of the `Store` and returns them as a dict
+- `options`: dictionary of optional parameters that may contain
+  - `getStore`: a function that takes the `env` in arguments and returns an
+    instance of `Store` to connect to (if not given, connects to `env.store`)
+  - `hashFunction`: the function to use to detect changes in the state (if not
+    given, generates a function that uses revision numbers, incremented at
+    each state change)
+  - `deep`: [only useful if no hashFunction is given] if false, only watch
+    for top level state changes (true by default)
 
 The `connect` function returns a sub class of the given `Component` which is
 connected to the `store`.

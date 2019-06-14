@@ -1,6 +1,6 @@
 # 🦉 Quick Start 🦉
 
-## Static server
+## Static Server
 
 Let us assume that we have a static server running somewhere. We could then
 simply add an html page with a few extra files.

@@ -30,21 +30,21 @@ In those situations, we need a way to tell the observer that something happened.
 This can be done by using the `set` and `delete` (only for objects) static
 methods of the `Observer`.
 
-  ```javascript
-  const observer = new owl.Observer();
-  const obj = { a: 1 };
-  observer.observe(obj);
-  obj.b = 2; // won't notify the change
-  owl.Observer.set(obj, "b", 2); // will notify the change
+```javascript
+const observer = new owl.Observer();
+const obj = { a: 1 };
+observer.observe(obj);
+obj.b = 2; // won't notify the change
+owl.Observer.set(obj, "b", 2); // will notify the change
 
-  delete obj.b; // won't notify the change
-  owl.Observer.delete(obj, "b"); // will notify the change
-  ```
+delete obj.b; // won't notify the change
+owl.Observer.delete(obj, "b"); // will notify the change
+```
 
-  ```javascript
-  const observer = new owl.Observer();
-  const arr = ["a"];
-  observer.observe(arr);
-  arr[0] = "b"; // won't notify the change
-  owl.Observer.set(arr, 0, "b"); // will notify the change
-  ```
+```javascript
+const observer = new owl.Observer();
+const arr = ["a"];
+observer.observe(arr);
+arr[0] = "b"; // won't notify the change
+owl.Observer.set(arr, 0, "b"); // will notify the change
+```

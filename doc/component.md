@@ -10,16 +10,16 @@
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
   - [Composition](#composition)
-  - [Asynchronous rendering](#asynchronous-rendering)
+  - [Asynchronous Rendering](#asynchronous-rendering)
   - [Event Handling](#event-handling)
-  - [`t-key` directive](#t-key-directive)
-  - [`t-mounted` directive](#t-mounted-directive)
+  - [`t-key` Directive](#t-key-directive)
+  - [`t-mounted` Directive](#t-mounted-directive)
   - [Semantics](#semantics)
   - [Props Validation](#props-validation)
-  - [Keeping References](#keeping-references)
+  - [References](#references)
   - [Slots](#slots)
-  - [Form input bindings](#form-input-bindings)
-  - [Asynchronous rendering](#asynchronous-rendering)
+  - [Form Input Bindings](#form-input-bindings)
+  - [Asynchronous Rendering](#asynchronous-rendering)
 
 ## Overview
 
@@ -410,7 +410,7 @@ with a class object:
 <t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}" />
 ```
 
-### Event handling
+### Event Handling
 
 In a component's template, it is useful to be able to register handlers on some
 elements to some specific events. This is what makes a template _alive_. There
@@ -496,7 +496,7 @@ The `t-on` directive also allows to prebind some arguments. For example,
 Here, `expr` is a valid Owl expression, so it could be `true` or some variable
 from the rendering context.
 
-### `t-key` directive
+### `t-key` Directive
 
 Even though Owl tries to be as declarative as possible, some DOM state is still
 locked inside the DOM: for example, the scrolling state, the current user selection,
@@ -520,7 +520,7 @@ There are three main use cases:
 - _animations_: give a different identity to a component. Ex: thread id with
   animations on add/remove message.
 
-### `t-mounted` directive
+### `t-mounted` Directive
 
 The `t-mounted` directive allows to register a callback to execute whenever the node
 is inserted into the DOM.
@@ -712,7 +712,7 @@ Examples:
   };
 ```
 
-### Keeping references
+### References
 
 The `t-ref` directive helps a component keep reference to some inside part of it.
 Like the `t-on` directive, it can work either on a DOM node, or on a component:
@@ -904,7 +904,7 @@ update a number whenever the change is done.
 
 Note: the online playground has an example to show how it works.
 
-### Asynchronous rendering
+### Asynchronous Rendering
 
 Working with asynchronous code always adds a lot of complexity to a system. Whenever
 different parts of a system are active at the same time, one needs to think

@@ -18,34 +18,35 @@ not ready yet, resolved directly otherwise). If called with a callback as
 argument, it executes it as soon as the DOM ready (or directly).
 
 ```js
-Promise.all([loadTemplates(), owl.utils.whenReady()]).then(function ([templates]) {
-    const qweb = new owl.QWeb(templates);
-    const app = new App({ qweb });
-    app.mount(document.body);
+Promise.all([loadTemplates(), owl.utils.whenReady()]).then(function([
+  templates
+]) {
+  const qweb = new owl.QWeb(templates);
+  const app = new App({ qweb });
+  app.mount(document.body);
 });
 ```
 
 ```js
 owl.utils.whenReady(function() {
-    const qweb = new owl.QWeb();
-    const app = new App({ qweb });
-    app.mount(document.body);
+  const qweb = new owl.QWeb();
+  const app = new App({ qweb });
+  app.mount(document.body);
 });
 ```
-
 
 ## `loadJS`
 
 `loadJS` takes a url (string) for a javascript resource, and loads it. It returns
-a promise, so the caller can properly react when it is ready.  Also, it is smart:
+a promise, so the caller can properly react when it is ready. Also, it is smart:
 it maintains a list of urls previously loaded (or currently being loaded), and
 prevent doing twice the work.
 
 ```js
 class MyComponent extends owl.Component {
-    willStart() {
-        return owl.utils.loadJS('/static/libs/someLib.js');
-    }
+  willStart() {
+    return owl.utils.loadJS("/static/libs/someLib.js");
+  }
 }
 ```
 
@@ -53,13 +54,12 @@ class MyComponent extends owl.Component {
 
 ```js
 async function makeEnv() {
-    const templates = await owl.utils.loadTemplates('templates.xml');
-    const qweb = new owl.QWeb(templates);
-    return { qweb };
+  const templates = await owl.utils.loadTemplates("templates.xml");
+  const qweb = new owl.QWeb(templates);
+  return { qweb };
 }
 ```
 
 ## `escape`
-
 
 ## `debounce`

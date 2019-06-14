@@ -1,6 +1,5 @@
 # 🦉 OWL Documentation 🦉
 
-
 ## Reference
 
 - [Animations](animations.md)
@@ -12,7 +11,7 @@
 - [Utils](utils.md)
 - [Virtual DOM](vdom.md)
 
-## Learning resources
+## Learning Resources
 
 - [Quick Start](quick_start.md)
 

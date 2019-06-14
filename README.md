@@ -10,7 +10,7 @@ other Odoo related projects. OWL's main feature is a _declarative component syst
 
 **Try it online!** An online playground is available at [https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground) to let you experiment with the OWL framework.
 
-## OWL's design principles
+## OWL's Design Principles
 
 OWL is designed to be used in highly dynamic applications where changing
 requirements are common, code needs to be maintained by large teams.
@@ -30,7 +30,7 @@ Owl is not designed to be fast or small (even though it is quite good on those
 two topics). If you are interested in a comparison with React or Vue, you will
 find some more information [here](doc/comparison.md).
 
-# Example
+## Example
 
 Here is a short example to illustrate interactive widgets:
 
@@ -64,15 +64,15 @@ If you want to use a simple `<script>` tag, the last release can be downloaded h
 
 Some npm scripts are available:
 
-| Command                | Description                                                                     |
-| ---------------------- | ------------------------------------------------------------------------------- |
-| `npm install`          | install every dependency required for this project                              |
-| `npm run build`        | build a bundle of _owl_ in the _/dist/_ folder                                  |
-| `npm run minify`       | minify the prebuilt owl.js file                                                 |
-| `npm run test`         | run all tests                                                                   |
-| `npm run test:watch`   | run all tests, and keep a watcher                                               |
+| Command               | Description                                                                  |
+| --------------------- | ---------------------------------------------------------------------------- |
+| `npm install`         | install every dependency required for this project                           |
+| `npm run build`       | build a bundle of _owl_ in the _/dist/_ folder                               |
+| `npm run minify`      | minify the prebuilt owl.js file                                              |
+| `npm run test`        | run all tests                                                                |
+| `npm run test:watch`  | run all tests, and keep a watcher                                            |
 | `npm run tools`       | build tools applications, start a static server (see [here](doc/tooling.md)) |
-| `npm run tools:watch` | same as `tools`, but with a watcher to rebuild owl                             |
+| `npm run tools:watch` | same as `tools`, but with a watcher to rebuild owl                           |
 
 ## Documentation
 

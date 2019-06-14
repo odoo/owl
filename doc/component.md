@@ -4,6 +4,7 @@
 
 - [Overview](#overview)
 - [Example](#example)
+- [Root Widget And Environment](#root-widget-and-environment)
 - [Reference](#reference)
   - [Properties](#properties)
   - [Static Properties](#static-properties)
@@ -74,6 +75,30 @@ Owl will use the component's name as template name. Here,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
+
+## Root Widget And Environment
+
+Most of the time, Owl widget will be created automatically by the `t-widget`
+directive in a template. There is however an obvious exception: the root widget
+of an Owl application has to be created manually:
+
+```js
+class App extends owl.Component { ... }
+
+const qweb = new owl.QWeb(TEMPLATES);
+const env = { qweb: qweb };
+const app = new App(env);
+app.mount(document.body);
+```
+
+The root widget needs an environment. In Owl, an environment is an object with
+a `qweb` key, which has to be a [QWeb](qweb.md) instance. This qweb instance will
+be used to render everything.
+
+The environment will be given to each child, unchanged, in the `env` property.
+This can be very useful to share common information/methods. For example, all
+rpcs can be made through a `rpc` method in the environment. This makes it very
+easy to test a component.
 
 ## Reference
 

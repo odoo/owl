@@ -1,102 +1,46 @@
-const CLICK_COUNTER = `class ClickCounter extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.state = { value: 0 };
-    }
+const COMPONENTS = `// In this example, we show how components can be defined and created.
 
-    increment() {
-        this.state.value++;
-    }
-}
-
-const qweb = new owl.QWeb(TEMPLATES);
-const counter = new ClickCounter({ qweb });
-counter.mount(document.body);
-`;
-
-const CLICK_COUNTER_XML = `<templates>
-   <button t-name="ClickCounter" t-on-click="increment">
-      Click Me! [<t t-esc="state.value"/>]
-    </button>
-</templates>`;
-
-const CLICK_COUNTER_CSS = `button {
-    color: darkred;
-    font-size: 30px;
-    width: 220px;
-}`;
-
-const CLICK_COUNTER_ESNEXT = `// This example will not work if your browser does not support ESNext class fields
-class ClickCounter extends owl.Component {
+class Counter extends owl.Component {
     state = { value: 0 };
 
     increment() {
         this.state.value++;
-    }
-}
-
-const qweb = new owl.QWeb(TEMPLATES);
-const counter = new ClickCounter({ qweb });
-counter.mount(document.body);
-`;
-
-const WIDGET_COMPOSITION = `// This example will not work if your browser does not support ESNext class fields
-
-class ClickCounter extends owl.Component {
-    state = { value: 0 };
-
-    increment() {
-        this.state.value++;
-    }
-}
-
-class InputWidget extends owl.Component {
-    state = {text: ""};
-    
-    updateVal(event) {
-        let value = event.target.value;
-        if (this.props.reverse) {
-            value = value.split("").reverse().join("");
-        }
-        this.state.text = value
     }
 }
 
 // Main root widget
 class App extends owl.Component {
-    widgets = {ClickCounter, InputWidget};
+    widgets = { Counter };
 }
 
 // Application setup
+// Note that the xml templates are injected into the global TEMPLATES variable.
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
 app.mount(document.body);
 `;
 
-const WIDGET_COMPOSITION_XML = `<templates>
-   <button t-name="ClickCounter" t-on-click="increment">
-      Click Me! [<t t-esc="state.value"/>]
-    </button>
-
-   <div t-name="InputWidget">
-     <input t-on-input="updateVal" placeholder="type here some text..."/>
-     <span><t t-esc="state.text"/></span>
-    </div>
+const COMPONENTS_XML = `<templates>
+  <button t-name="Counter" t-on-click="increment">
+    Click Me! [<t t-esc="state.value"/>]
+  </button>
 
   <div t-name="App">
-      <t t-widget="ClickCounter"/>
-      <t t-widget="InputWidget" reverse="true"/>
+    <t t-widget="Counter"/>
+    <t t-widget="Counter"/>
   </div>
 </templates>`;
 
-const WIDGET_COMPOSITION_CSS = `button, input {
+const COMPONENTS_CSS = `button {
     font-size: 20px;
     width: 220px;
     margin: 5px;
 }`;
 
-const ANIMATION = `// This example will not work if your browser does not support ESNext class fields
-class ClickCounter extends owl.Component {
+const ANIMATION = `// The goal of this component is to see how the t-transition directive can be
+// used to generate simple transition effects.
+
+class Counter extends owl.Component {
     state = { value: 0 };
 
     increment() {
@@ -105,15 +49,11 @@ class ClickCounter extends owl.Component {
 }
 
 class App extends owl.Component {
-    state = {flag: false, widgetFlag: false, numbers: []};
-    widgets = {ClickCounter};
+    state = { flag: false, widgetFlag: false, numbers: [] };
+    widgets = { Counter };
 
-    toggle() {
-        this.state.flag = !this.state.flag;
-    }
-
-    toggleWidget() {
-        this.state.widgetFlag = !this.state.widgetFlag;
+    toggle(key) {
+        this.state[key] = !this.state[key];
     }
 
     addNumber() {
@@ -129,46 +69,44 @@ app.mount(document.body);
 `;
 
 const ANIMATION_XML = `<templates>
-   <button t-name="ClickCounter" t-on-click="increment" class="clickcounter">
+   <button t-name="Counter" t-on-click="increment" class="clickcounter">
       Click Me! [<t t-esc="state.value"/>]
     </button>
 
     <div t-name="App">
+      <h2>Transition on DOM element</h2>
 
-    <h2>Transition on DOM element</h2>
-
-    <div class="demo">
-      <button t-on-click="toggle">Toggle square</button>
-      <div>
-        <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+      <div class="demo">
+        <button t-on-click="toggle('flag')">Toggle square</button>
+        <div>
+          <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+        </div>
       </div>
-    </div>
 
-    <h2>Transition on sub widgets</h2>
+      <h2>Transition on sub widgets</h2>
 
-    <div class="demo">
-      <button t-on-click="toggleWidget">
-       Toggle widget
-      </button>
-      <div>
-        <t t-widget="ClickCounter" t-if="state.widgetFlag" t-transition="fade"/>
+      <div class="demo">
+        <button t-on-click="toggle('widgetFlag')">Toggle widget</button>
+        <div>
+          <t t-widget="Counter" t-if="state.widgetFlag" t-transition="fade"/>
+        </div>
       </div>
-    </div>
 
-    <h2>Transition on lists</h2>
-    <p>Transitions can also be applied on lists</p>
-    <div class="demo">
-      <button t-on-click="addNumber">Add a number</button>
-      <div>
-        <t t-foreach="state.numbers" t-as="n">
-          <span t-transition="fade" class="numberspan"><t t-esc="n"/></span>
-        </t>
+      <h2>Transition on lists</h2>
+      <p>Transitions can also be applied on lists</p>
+      <div class="demo">
+        <button t-on-click="addNumber">Add a number</button>
+        <div>
+          <t t-foreach="state.numbers" t-as="n">
+            <span t-transition="fade" class="numberspan"><t t-esc="n"/></span>
+          </t>
+        </div>
       </div>
-    </div>
 
-    <h2>Simple CSS animation</h2>
-    <p>Remember, normal CSS still apply: for example, a simple flash animation with pure css </p>
-    <div><a class="btn flash">Click</a></div>
+      <h2>Simple CSS animation</h2>
+      <p>Remember, normal CSS still apply: for example, a simple flash animation with pure css </p>
+      <div><a class="btn flash">Click</a>
+    </div>
   </div>
 </templates>
 `;
@@ -177,13 +115,13 @@ const ANIMATION_CSS = `button {
     font-size: 18px;
     height: 35px;
 }
+
 .btn {
     cursor: pointer;
     padding: 5px;
     margin: 5px;
     background-color: #dddddd;
 }
-
 
 .flash {
     background-position: center;
@@ -194,7 +132,6 @@ const ANIMATION_CSS = `button {
   background-color: gray;
   transition: background 0s;
 }
-
 
 .square {
     background-color: red;
@@ -210,6 +147,7 @@ const ANIMATION_CSS = `button {
 .fade-enter-active, .fade-leave-active {
     transition: opacity .6s;
 }
+
 .fade-enter, .fade-leave-to {
     opacity: 0;
 }
@@ -233,7 +171,14 @@ const ANIMATION_CSS = `button {
 }
 `;
 
-const LIFECYCLE_DEMO = `class HookWidget extends owl.Component {
+const LIFECYCLE_DEMO = `// This example shows all the possible lifecycle hooks
+//
+// The root widget controls a sub widget (DemoWidget). It logs all its lifecycle
+// methods in the console.  Try modifying its state by clicking on it, or by
+// clicking on the two main buttons, and look into the console to see what
+// happens.
+
+class DemoWidget extends owl.Component {
     constructor() {
         super(...arguments);
         this.state = { n: 0 };
@@ -262,37 +207,60 @@ const LIFECYCLE_DEMO = `class HookWidget extends owl.Component {
     }
 }
 
-class ParentWidget extends owl.Component {
-    constructor() {
-        super(...arguments);
-        this.widgets = { HookWidget };
-        this.state = { n: 0, flag: true };
-    }
+class App extends owl.Component {
+    widgets = { DemoWidget };
+    state = { n: 0, flag: true };
+
     increment() {
         this.state.n++;
     }
+
     toggleSubWidget() {
         this.state.flag = !this.state.flag;
     }
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
-const widget = new ParentWidget({ qweb });
-widget.mount(document.body);
+const app = new App({ qweb });
+app.mount(document.body);
 `;
 
 const LIFECYCLE_DEMO_XML = `<templates>
-    <div t-name="ParentWidget">
-        <button t-on-click="increment">Increment</button>
-        <button t-on-click="toggleSubWidget">ToggleSubWidget</button>
-        <div t-if="state.flag">
-            <t t-widget="HookWidget" n="state.n"/>
-        </div>
+  <div t-name="DemoWidget" t-on-click="increment" class="demo">
+    <div>Demo Sub Widget</div>
+    <div>(click on me to update me)</div>
+    <div>Props: <t t-esc="props.n"/>, State: <t t-esc="state.n"/>. </div>
+  </div>
+
+  <div t-name="App">
+    <button t-on-click="increment">Increment Parent State</button>
+    <button t-on-click="toggleSubWidget">Toggle SubWidget</button>
+    <div t-if="state.flag">
+      <t t-widget="DemoWidget" n="state.n"/>
     </div>
-    <div t-name="HookWidget" t-on-click="increment">Demo Sub Widget. Props: <t t-esc="props.n"/>. State: <t t-esc="state.n"/>. (click on me to update me)</div>
+  </div>
 </templates>`;
 
-const TODO_APP_STORE = `const ENTER_KEY = 13;
+const LIFECYCLE_CSS = `button {
+    font-size: 18px;
+    margin: 5px;
+}
+
+.demo {
+    margin: 10px;
+    padding: 10px;
+    background-color: #dddddd;
+    width: 250px;
+}`;
+
+const TODO_APP_STORE = `// This example is an implementation of the TodoList application, from the
+// www.todomvc.com project.  This is a non trivial application with some
+// interesting user interactions. It uses the local storage for persistence.
+//
+// In this implementation, we use the owl Store class to manage the state.  It
+// is very similar to the VueX store.
+
+const ENTER_KEY = 13;
 const ESC_KEY = 27;
 const LOCALSTORAGE_KEY = "todos-odoo";
 
@@ -937,7 +905,20 @@ html .clear-completed:active {
 }
 `;
 
-const RESPONSIVE = `class Navbar extends owl.Component {}
+const RESPONSIVE = `// In this example, we show how we can modify keys in the global environment to
+// make a responsive application.
+//
+// The main idea is to have a "isMobile" key in the environment, then listen
+// to resize events and update the env if needed.  Then, the whole interface
+// will be updated, creating and destroying widgets as needed.
+//
+// To see this in action, try resizing the window.  The application will switch
+// to mobile mode whenever it has less than 768px.
+
+//------------------------------------------------------------------------------
+// Components
+//------------------------------------------------------------------------------
+class Navbar extends owl.Component {}
 
 class ControlPanel extends owl.Component {
     widgets = { MobileSearchView };
@@ -958,6 +939,9 @@ class App extends owl.Component {
     widgets = { Navbar, ControlPanel, FormView, Chatter };
 }
 
+//------------------------------------------------------------------------------
+// Application Startup
+//------------------------------------------------------------------------------
 function isMobile() {
     return window.innerWidth <= 768;
 }
@@ -966,6 +950,7 @@ const env = {
     qweb: new owl.QWeb(TEMPLATES),
     isMobile: isMobile()
 };
+
 
 const app = new App(env);
 app.mount(document.body);
@@ -983,44 +968,44 @@ window.addEventListener("resize", owl.utils.debounce(updateEnv, 20));
 `;
 
 const RESPONSIVE_XML = `<templates>
-    <div t-name="Navbar" class="navbar">Navbar</div>
+  <div t-name="Navbar" class="navbar">Navbar</div>
 
-    <div t-name="ControlPanel" class="controlpanel">
-        <h2>controlpanel</h2>
-        <t t-if="env.isMobile" t-widget="MobileSearchView"/>
+  <div t-name="ControlPanel" class="controlpanel">
+    <h2>Control Panel</h2>
+    <t t-if="env.isMobile" t-widget="MobileSearchView"/>
+  </div>
+
+  <div t-name="FormView" class="formview">
+    <h2>Form View</h2>
+    <t t-if="!env.isMobile" t-widget="AdvancedWidget"/>
+  </div>
+
+  <div t-name="Chatter" class="chatter">
+    <h2>Chatter</h2>
+    <t t-foreach="100" t-as="item"><div>Message <t t-esc="item"/></div></t>
+  </div>
+
+  <div t-name="MobileSearchView">Mobile searchview</div>
+
+  <div t-name="AdvancedWidget">
+    This widget is only created in desktop mode.
+    <button>Button!</button>
+  </div>
+
+  <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+    <t t-widget="Navbar"/>
+    <t t-widget="ControlPanel"/>
+    <div class="content-wrapper" t-if="!env.isMobile">
+      <div class="content">
+        <t t-widget="FormView"/>
+        <t t-widget="Chatter"/>
+      </div>
     </div>
-
-    <div t-name="FormView" class="formview">
-      <h2>formview</h2>
-        <t t-if="!env.isMobile" t-widget="AdvancedWidget"/>
-    </div>
-
-    <div t-name="Chatter" class="chatter">
-      <h2>Chatter</h2>
-      <t t-foreach="100" t-as="item"><div>Message <t t-esc="item"/></div></t>
-    </div>
-
-    <div t-name="MobileSearchView">MOBILE searchview</div>
-
-    <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
-        <t t-widget="Navbar"/>
-        <t t-widget="ControlPanel"/>
-        <div class="content-wrapper" t-if="!env.isMobile">
-          <div class="content">
-            <t t-widget="FormView"/>
-            <t t-widget="Chatter"/>
-          </div>
-        </div>
-        <t t-else="1">
-          <t t-widget="FormView"/>
-          <t t-widget="Chatter"/>
-        </t>
-
-    </div>
-    <div t-name="AdvancedWidget">
-        This widget is only created in desktop mode.
-        <button>Button!</button>
-    </div>
+    <t t-else="1">
+      <t t-widget="FormView"/>
+      <t t-widget="Chatter"/>
+    </t>
+  </div>
 </templates>
 `;
 
@@ -1036,6 +1021,7 @@ const RESPONSIVE_CSS = `body {
 .app.desktop {
     display: flex;
 }
+
 .navbar {
     flex: 0 0 30px;
     height: 30px;
@@ -1081,17 +1067,19 @@ const RESPONSIVE_CSS = `body {
 }
 `;
 
-const SLOTS = `// This example will not work if your browser does not support ESNext class fields
-
-// We show here how slots can be used to create generic components. In this
-// example, the Card component is basically only a container, and is created
-// by giving it slots, inside the t-widget directive.
+const SLOTS = `// We show here how slots can be used to create generic components.
+// In this example, the Card component is basically only a container. It is not
+// aware of its content. It just knows where it should be (with t-slot).
+// The parent widget define the content with t-set.
+//
+// Note that the t-on-click event, defined in the App template, is executed in
+// the context of the App component, even though it is inside the Card component
 
 class Card extends owl.Component {
-    state = { fullDisplay: true };
+    state = { showContent: true };
 
     toggleDisplay() {
-        this.state.fullDisplay = !this.state.fullDisplay;
+        this.state.showContent = !this.state.showContent;
     }
 }
 
@@ -1119,11 +1107,11 @@ const app = new App({ qweb });
 app.mount(document.body);`;
 
 const SLOTS_XML = `<templates>
-  <div t-name="Card" class="card" t-att-class="state.fullDisplay ? 'full' : 'small'">
+  <div t-name="Card" class="card" t-att-class="state.showContent ? 'full' : 'small'">
     <div class="card-title">
       <t t-esc="props.title"/><button t-on-click="toggleDisplay">Toggle</button>
     </div>
-    <t t-if="state.fullDisplay">
+    <t t-if="state.showContent">
       <div class="card-content" >
         <t t-slot="content"/>
       </div>
@@ -1198,34 +1186,18 @@ const SLOTS_CSS = `.main {
 
 const ASYNC_COMPONENTS = `// This example will not work if your browser does not support ESNext class fields
 
-// In this example, we have 2 sub widgets, one of them being async. However, we
-// don't want renderings of the sync sub widget to be delayed because of the
-// async one. We use the 't-asyncroot' directive for this purpose.
+// In this example, we have 2 sub widgets, one of them being async (slow).
+// However, we don't want renderings of the other sub widget to be delayed
+// because of the slow widget. We use the 't-asyncroot' directive for this
+// purpose. Try removing it to see the difference.
 
 class App extends owl.Component {
-    widgets = {AsyncChild, NotificationManager};
-    state = { value: 0 };
+    widgets = {SlowWidget, NotificationList};
+    state = { value: 0, notifs: [] };
 
     increment() {
         this.state.value++;
-        this.refs.notificationManager.notify("Value will be set to " + this.state.value);
-    }
-}
-
-class AsyncChild extends owl.Component {
-    willUpdateProps() {
-        // simulate a widget that needs to perform async stuff (e.g. an RPC)
-        // with the updated props before re-rendering itself
-        return new Promise(function (resolve) {
-            setTimeout(resolve, 1000);
-        });
-    }
-}
-
-class NotificationManager extends owl.Component {
-    state = { notifs: [] };
-
-    notify(notif) {
+        const notif = "Value will be set to " + this.state.value;
         this.state.notifs.push(notif);
         setTimeout(() => {
             var index = this.state.notifs.indexOf(notif);
@@ -1234,23 +1206,34 @@ class NotificationManager extends owl.Component {
     }
 }
 
+class SlowWidget extends owl.Component {
+    willUpdateProps() {
+        // simulate a widget that needs to perform async stuff (e.g. an RPC)
+        // with the updated props before re-rendering itself
+        return new Promise(resolve => setTimeout(resolve, 1500));
+    }
+}
+
+class NotificationList extends owl.Component {}
+
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
-app.mount(document.body);`;
+app.mount(document.body);
+`;
 
 const ASYNC_COMPONENTS_XML = `<templates>
   <div t-name="App" class="app">
     <button t-on-click="increment">Increment</button>
-    <t t-widget="AsyncChild" t-asyncroot="1" value="state.value"/>
-    <t t-widget="NotificationManager" t-ref="notificationManager"/>
+    <t t-widget="SlowWidget" value="state.value"/>
+    <t t-widget="NotificationList" t-asyncroot="1" notifications="state.notifs"/>
   </div>
 
-  <div class="value" t-name="AsyncChild">
+  <div t-name="SlowWidget" class="value" >
     Current value: <t t-esc="props.value"/>
   </div>
 
-  <div class="notification_manager" t-name="NotificationManager">
-    <t t-foreach="state.notifs" t-as="notif">
+  <div t-name="NotificationList" class="notification-list">
+    <t t-foreach="props.notifications" t-as="notif">
       <div class="notification"><t t-esc="notif"/></div>
     </t>
   </div>
@@ -1271,11 +1254,12 @@ button {
     padding: 20px;
 }
 
-.notification_manager {
+.notification-list {
     position: absolute;
     top: 0;
     right: 0;
 }
+
 .notification {
     width: 150px;
     margin: 4px 8px;
@@ -1284,15 +1268,12 @@ button {
     background-color: lightgray;
 }`;
 
-const EMPTY = `class App extends owl.Component {
-}
+const FORM = `// This example illustrate how the t-model directive can be used to synchronize
+// data between html inputs (and select/textareas) and the state of a component.
+// Note that there are two controls with t-model="color": they are totally
+// synchronized.
 
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({qweb});
-app.mount(document.body);
-`;
-
-const FORM = `class Form extends owl.Component {
+class Form extends owl.Component {
     state = {
         text: "",
         othertext: "",
@@ -1302,73 +1283,62 @@ const FORM = `class Form extends owl.Component {
     };
 }
 
+// Application setup
 const qweb = new owl.QWeb(TEMPLATES);
 const form = new Form({ qweb });
 form.mount(document.body);
 `;
 
 const FORM_XML = `<templates>
-   <div t-name="Form">
-        <h1>Form</h1>
-        <div>
-          Text (immediate): <input t-model="text"/>
-        </div>
-        <div>
-          Other text (lazy): <input t-model.lazy="othertext"/>
-        </div>
-        <div>
-          Number: <input  t-model.number="number"/>
-        </div>
-        <div>
-          Boolean: <input  type="checkbox" t-model="bool"/>
-        </div>
-        <div>
-          Color, with a select: <select  t-model="color">
-            <option value="">Select a color</option>
-            <option value="red">Red</option>
-            <option value="blue">Blue</option>
-          </select>
-        </div>
-        <div>
-          Color, with radio buttons:
-            <span><input type="radio" name="color" id="red" value="red" t-model="color"/><label for="red">Red</label></span>
-            <span><input type="radio" name="color" id="blue" value="blue" t-model="color"/><label for="blue">Blue</label></span>
-        </div>
-
-        <hr/>
-        <h1>State</h1>
-        <div>Text: <t t-esc="state.text"/></div>
-        <div>Other Text: <t t-esc="state.othertext"/></div>
-        <div>Number: <t t-esc="state.number"/></div>
-        <div>Boolean: <t t-if="state.bool">True</t><t t-else="1">False</t></div>
-        <div>Color: <t t-esc="state.color"/></div>
+  <div t-name="Form">
+    <h1>Form</h1>
+    <div>
+      Text (immediate): <input t-model="text"/>
     </div>
+    <div>
+      Other text (lazy): <input t-model.lazy="othertext"/>
+    </div>
+    <div>
+      Number: <input  t-model.number="number"/>
+    </div>
+    <div>
+      Boolean: <input  type="checkbox" t-model="bool"/>
+    </div>
+    <div>
+      Color, with a select:
+      <select  t-model="color">
+        <option value="">Select a color</option>
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+      </select>
+    </div>
+    <div>
+      Color, with radio buttons:
+        <span><input type="radio" name="color" id="red" value="red" t-model="color"/><label for="red">Red</label></span>
+        <span><input type="radio" name="color" id="blue" value="blue" t-model="color"/><label for="blue">Blue</label></span>
+    </div>
+    <hr/>
+    <h1>State</h1>
+    <div>Text: <t t-esc="state.text"/></div>
+    <div>Other Text: <t t-esc="state.othertext"/></div>
+    <div>Number: <t t-esc="state.number"/></div>
+    <div>Boolean: <t t-if="state.bool">True</t><t t-else="1">False</t></div>
+    <div>Color: <t t-esc="state.color"/></div>
+  </div>
 </templates>
 `;
 
 export const SAMPLES = [
   {
-    description: "Click Counter",
-    code: CLICK_COUNTER,
-    xml: CLICK_COUNTER_XML,
-    css: CLICK_COUNTER_CSS
+    description: "Components",
+    code: COMPONENTS,
+    xml: COMPONENTS_XML,
+    css: COMPONENTS_CSS
   },
   {
-    description: "Click Counter (ESNext)",
-    code: CLICK_COUNTER_ESNEXT,
-    xml: CLICK_COUNTER_XML,
-    css: CLICK_COUNTER_CSS
-  },
-  {
-    description: "Form input bindings",
+    description: "Form Input Bindings",
     code: FORM,
-    xml: FORM_XML,
-  },
-  {
-    description: "Widget Composition",
-    code: WIDGET_COMPOSITION,
-    xml: WIDGET_COMPOSITION_XML,
-    css: WIDGET_COMPOSITION_CSS
+    xml: FORM_XML
   },
   {
     description: "Animations",
@@ -1379,7 +1349,8 @@ export const SAMPLES = [
   {
     description: "Lifecycle demo",
     code: LIFECYCLE_DEMO,
-    xml: LIFECYCLE_DEMO_XML
+    xml: LIFECYCLE_DEMO_XML,
+    css: LIFECYCLE_CSS,
   },
   {
     description: "Todo List App (with store)",
@@ -1394,7 +1365,7 @@ export const SAMPLES = [
     xml: RESPONSIVE_XML
   },
   {
-    description: "Slots",
+    description: "Slots And Generic Components",
     code: SLOTS,
     xml: SLOTS_XML,
     css: SLOTS_CSS
@@ -1404,9 +1375,5 @@ export const SAMPLES = [
     code: ASYNC_COMPONENTS,
     xml: ASYNC_COMPONENTS_XML,
     css: ASYNC_COMPONENTS_CSS
-  },
-  {
-    description: "Empty",
-    code: EMPTY
   }
 ];

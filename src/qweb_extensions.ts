@@ -508,7 +508,11 @@ QWeb.addDirective({
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     if (async) {
       ctx.addLine(`const patchQueue${widgetID} = [];`);
-      ctx.addLine(`c${ctx.parentNode}.push(w${widgetID} && w${widgetID}.__owl__.pvnode || null);`);
+      ctx.addLine(
+        `c${
+          ctx.parentNode
+        }.push(w${widgetID} && w${widgetID}.__owl__.pvnode || null);`
+      );
     } else {
       ctx.addLine(`c${ctx.parentNode}.push(null);`);
     }
@@ -543,17 +547,26 @@ QWeb.addDirective({
     );
 
     // SLOTS
-    const slotNodes = node.querySelectorAll("[t-set]");
-    if (slotNodes.length) {
+    if (node.childElementCount) {
+      const clone = <Element>node.cloneNode(true);
+      const slotNodes = clone.querySelectorAll("[t-set]");
       const slotId = qweb.nextSlotId++;
-      for (let i = 0, length = slotNodes.length; i < length; i++) {
-        const slotNode = slotNodes[i];
-        const key = slotNode.getAttribute("t-set")!;
-        slotNode.removeAttribute("t-set");
-        const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
-        qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
-      }
       ctx.addLine(`w${widgetID}.__owl__.slotId = ${slotId};`);
+      if (slotNodes.length) {
+        for (let i = 0, length = slotNodes.length; i < length; i++) {
+          const slotNode = slotNodes[i];
+          slotNode.parentElement!.removeChild(slotNode);
+          const key = slotNode.getAttribute("t-set")!;
+          slotNode.removeAttribute("t-set");
+          const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
+          qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
+        }
+      }
+      if (clone.childElementCount) {
+        const content = clone.children[0];
+        const slotFn = qweb._compile(`slot_default_template`, content);
+        qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
+      }
     }
 
     ctx.addLine(`def${defID} = w${widgetID}._prepare();`);

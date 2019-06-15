@@ -3148,4 +3148,27 @@ describe("t-model directive", () => {
     expect(comp.state.number).toBe("invalid");
     expect(fixture.innerHTML).toBe("<div><input><span>invalid</span></div>");
   });
+
+  test("content is the default slot", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <t t-widget="Dialog">
+                <span>sts rocks</span>
+             </t>
+          </div>
+          <div t-name="Dialog"><t t-slot="default"/></div>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      widgets = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>sts rocks</span></div></div>"
+    );
+  });
 });

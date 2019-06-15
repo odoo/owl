@@ -34,8 +34,16 @@ find some more information [here](doc/comparison.md).
 
 Here is a short example to illustrate interactive widgets:
 
+```xml
+<templates>
+  <button t-name="Counter" t-on-click="increment">
+    Click Me! [<t t-esc="state.value"/>]
+  </button>
+</templates>
+```
+
 ```javascript
-class ClickCounter extends owl.Component {
+class Counter extends owl.Component {
   state = { value: 0 };
 
   increment() {
@@ -43,17 +51,14 @@ class ClickCounter extends owl.Component {
   }
 }
 
-const TEMPLATES = `
-    <button t-name="ClickCounter" t-on-click="increment">
-        Click Me! [<t t-esc="state.value"/>]
-    </button>`;
-
 const qweb = new owl.QWeb(TEMPLATES);
-const counter = new ClickCounter({ qweb });
+const counter = new Counter({ qweb });
 counter.mount(document.body);
 ```
 
-More interesting examples can be found on the [playground](https://odoo.github.io/owl/playground) application.
+Note that we assume here that the xml templates are available in the `TEMPLATES`
+string. More interesting examples can be found on the
+[playground](https://odoo.github.io/owl/playground) application.
 
 ## Installing/Building
 

@@ -928,6 +928,21 @@ is not allowed. A workaround could be to wrap the content in a div:
 </div>
 ```
 
+Default slot: the first element inside the widget which is not a named slot will
+be considered the `default` slot. For example:
+
+```xml
+<div t-name="Parent">
+  <t t-widget="Child">
+    <span>some content</span>
+  </t>
+</div>
+
+<div t-name="Child">
+  <t t-slot="default"/>
+</div>
+```
+
 ### Asynchronous Rendering
 
 Working with asynchronous code always adds a lot of complexity to a system. Whenever

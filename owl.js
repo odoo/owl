@@ -1125,7 +1125,6 @@
             if (data) {
                 this.addTemplates(data);
             }
-            this.addTemplate("default", "<div></div>");
         }
         static addDirective(directive) {
             DIRECTIVES.push(directive);
@@ -1306,7 +1305,7 @@
             for (let i = 0; i < attributes.length; i++) {
                 let attrName = attributes[i].name;
                 if (attrName.startsWith("t-")) {
-                    let dName = attrName.slice(2).split("-")[0];
+                    let dName = attrName.slice(2).split(/-|\./)[0];
                     if (!(dName in DIRECTIVE_NAMES)) {
                         throw new Error(`Unknown QWeb directive: '${attrName}'`);
                     }
@@ -1321,11 +1320,12 @@
                 for (let j = 0; j < ATTR_N; j++) {
                     const name = attributes[j].name;
                     if (name === "t-" + directive.name ||
-                        name.startsWith("t-" + directive.name + "-")) {
+                        name.startsWith("t-" + directive.name + "-") ||
+                        name.startsWith("t-" + directive.name + ".")) {
                         fullName = name;
                         value = attributes[j].textContent;
                         validDirectives.push({ directive, value, fullName });
-                        if (directive.name === "on") {
+                        if (directive.name === "on" || directive.name === 'model') {
                             withHandlers = true;
                         }
                     }
@@ -1817,19 +1817,7 @@
             if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
-                const patchLen = patchQueue.length;
-                for (let i = 0; i < patchLen; i++) {
-                    const patch = patchQueue[i];
-                    patch.push(patch[0].willPatch());
-                }
-                for (let i = 0; i < patchLen; i++) {
-                    const patch = patchQueue[i];
-                    patch[0]._patch(patch[1]);
-                }
-                for (let i = patchLen - 1; i >= 0; i--) {
-                    const patch = patchQueue[i];
-                    patch[0].patched(patch[2]);
-                }
+                this._applyPatchQueue(patchQueue);
             }
         }
         /**
@@ -1997,7 +1985,7 @@
                         p = p.__proto__;
                     }
                     if (p === Component) {
-                        this.template = "default";
+                        throw new Error(`Could not find template for component "${this.constructor.name}"`);
                     }
                     else {
                         tmap[name] = template;
@@ -2084,6 +2072,28 @@
                 }
             }
             return props;
+        }
+        /**
+         * Apply the given patch queue. A patch is a pair [c, vn], where c is a
+         * Component instance and vn a VNode.
+         *   1) Call 'willPatch' on the component of each patch
+         *   2) Call '_patch' on the component of each patch
+         *   3) Call 'patched' on the component of each patch, in inverse order
+         */
+        _applyPatchQueue(patchQueue) {
+            const patchLen = patchQueue.length;
+            for (let i = 0; i < patchLen; i++) {
+                const patch = patchQueue[i];
+                patch.push(patch[0].willPatch());
+            }
+            for (let i = 0; i < patchLen; i++) {
+                const patch = patchQueue[i];
+                patch[0]._patch(patch[1]);
+            }
+            for (let i = patchLen - 1; i >= 0; i--) {
+                const patch = patchQueue[i];
+                patch[0].patched(patch[2]);
+            }
         }
         /**
          * Validate the component props (or next props) against the (static) props
@@ -2534,6 +2544,7 @@
      * - t-widget/t-keepalive
      * - t-mounted
      * - t-slot
+     * - t-model
      */
     //------------------------------------------------------------------------------
     // t-on
@@ -2718,13 +2729,6 @@
      * // t-widget directive: we start by evaluating the expression given by t-key:
      * let key5 = "somestring";
      *
-     * // We keep the index of the position of the widget in the closure.  We push
-     * // null to reserve the slot, and will replace it later by the widget vnode,
-     * // when it will be ready (do not forget that preparing/rendering a widget is
-     * // asynchronous)
-     * let _2_index = c1.length;
-     * c1.push(null);
-     *
      * // def3 is the promise that will contain later either the new widget
      * // creation, or the props update...
      * let def3;
@@ -2738,6 +2742,13 @@
      *   key5 in context.__owl__.cmap
      *   ? context.__owl__.children[context.__owl__.cmap[key5]]
      *   : false;
+     *
+     * // We keep the index of the position of the widget in the closure.  We push
+     * // null to reserve the slot, and will replace it later by the widget vnode,
+     * // when it will be ready (do not forget that preparing/rendering a widget is
+     * // asynchronous)
+     * let _2_index = c1.length;
+     * c1.push(null);
      *
      * // we evaluate here the props given to the component. It is done here to be
      * // able to easily reference it later, and also, it might be an expensive
@@ -2852,7 +2863,7 @@
      */
     QWeb.addDirective({
         name: "widget",
-        extraNames: ["props", "keepalive"],
+        extraNames: ["props", "keepalive", "asyncroot"],
         priority: 100,
         atNodeEncounter({ ctx, value, node, qweb }) {
             ctx.addLine("//WIDGET");
@@ -2860,6 +2871,7 @@
             ctx.rootContext.shouldDefineQWeb = true;
             ctx.rootContext.shouldDefineUtils = true;
             let keepAlive = node.getAttribute("t-keepalive") ? true : false;
+            let async = node.getAttribute("t-asyncroot") ? true : false;
             // t-on- events and t-transition
             const events = [];
             let transition = "";
@@ -2904,8 +2916,6 @@
                 // want to evaluate it only once)
                 ctx.addLine(`let key${keyID} = ${key};`);
             }
-            ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
-            ctx.addLine(`c${ctx.parentNode}.push(null);`);
             ctx.addLine(`let def${defID};`);
             let templateID = key
                 ? `key${keyID}`
@@ -2990,6 +3000,14 @@
                 createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}${eventsCode}}};`;
             }
             ctx.addLine(`let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
+            ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+            if (async) {
+                ctx.addLine(`const patchQueue${widgetID} = [];`);
+                ctx.addLine(`c${ctx.parentNode}.push(w${widgetID} && w${widgetID}.__owl__.pvnode || null);`);
+            }
+            else {
+                ctx.addLine(`c${ctx.parentNode}.push(null);`);
+            }
             ctx.addLine(`let props${widgetID} = {${propStr}};`);
             ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode`);
             ctx.addIf(`utils.shallowEqual(props${widgetID}, w${widgetID}.__owl__.renderProps)`);
@@ -3008,32 +3026,46 @@
             ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
             ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
             // SLOTS
-            const slotNodes = node.querySelectorAll("[t-set]");
-            if (slotNodes.length) {
+            if (node.childElementCount) {
+                const clone = node.cloneNode(true);
+                const slotNodes = clone.querySelectorAll("[t-set]");
                 const slotId = qweb.nextSlotId++;
-                for (let i = 0, length = slotNodes.length; i < length; i++) {
-                    const slotNode = slotNodes[i];
-                    const key = slotNode.getAttribute("t-set");
-                    slotNode.removeAttribute("t-set");
-                    const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
-                    qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
-                }
                 ctx.addLine(`w${widgetID}.__owl__.slotId = ${slotId};`);
+                if (slotNodes.length) {
+                    for (let i = 0, length = slotNodes.length; i < length; i++) {
+                        const slotNode = slotNodes[i];
+                        slotNode.parentElement.removeChild(slotNode);
+                        const key = slotNode.getAttribute("t-set");
+                        slotNode.removeAttribute("t-set");
+                        const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
+                        qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
+                    }
+                }
+                if (clone.childElementCount) {
+                    const content = clone.children[0];
+                    const slotFn = qweb._compile(`slot_default_template`, content);
+                    qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
+                }
             }
             ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
-            // FIXME: click to re-add widget during remove transition -> leak
             ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${widgetID}._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeWidgetCode}}}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;w${widgetID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             // need to update widget
-            ctx.addLine(`def${defID} = def${defID} || w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, extra.patchQueue);`);
+            const patchQueueCode = async ? `patchQueue${widgetID}` : "extra.patchQueue";
+            ctx.addLine(`def${defID} = def${defID} || w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, ${patchQueueCode});`);
             let keepAliveCode = "";
             if (keepAlive) {
                 keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${widgetID}.el,vn.elm);vn.elm=w${widgetID}.el;w${widgetID}._remount();};`;
             }
             ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""}${updateClassCode}let pvnode=w${widgetID}.__owl__.pvnode;${keepAliveCode}c${ctx.parentNode}[_${dummyID}_index]=pvnode;});`);
             ctx.closeIf();
-            ctx.addLine(`extra.promises.push(def${defID});`);
+            if (async) {
+                ctx.addLine(`def${defID}.then(w${widgetID}._applyPatchQueue.bind(w${widgetID}, patchQueue${widgetID}));`);
+            }
+            else {
+                ctx.addLine(`extra.promises.push(def${defID});`);
+            }
             if (node.hasAttribute("t-if") ||
                 node.hasAttribute("t-else") ||
                 node.hasAttribute("t-elif")) {
@@ -3082,6 +3114,49 @@
             return true;
         }
     });
+    //------------------------------------------------------------------------------
+    // t-model
+    //------------------------------------------------------------------------------
+    UTILS.toNumber = function (val) {
+        const n = parseFloat(val);
+        return isNaN(n) ? val : n;
+    };
+    QWeb.addDirective({
+        name: "model",
+        priority: 42,
+        atNodeCreation({ ctx, nodeID, value, node, fullName }) {
+            const type = node.getAttribute("type");
+            let handler;
+            let event = fullName.includes(".lazy") ? "change" : "input";
+            if (node.tagName === "select") {
+                ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
+                event = "change";
+                handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
+            }
+            else if (type === "checkbox") {
+                ctx.addLine(`p${nodeID}.props = {checked: context.state['${value}']};`);
+                handler = `(ev) => {context.state['${value}'] = ev.target.checked}`;
+            }
+            else if (type === "radio") {
+                const nodeValue = node.getAttribute("value");
+                ctx.addLine(`p${nodeID}.props = {checked:context.state['${value}'] === '${nodeValue}'};`);
+                handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
+                event = "click";
+            }
+            else {
+                ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
+                const trimCode = fullName.includes(".trim") ? ".trim()" : "";
+                let valueCode = `ev.target.value${trimCode}`;
+                if (fullName.includes(".number")) {
+                    ctx.rootContext.shouldDefineUtils = true;
+                    valueCode = `utils.toNumber(${valueCode})`;
+                }
+                handler = `(ev) => {context.state['${value}'] = ${valueCode}}`;
+            }
+            ctx.addLine(`extra.handlers['${event}' + ${nodeID}] = extra.handlers['${event}' + ${nodeID}] || (${handler});`);
+            ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers['${event}' + ${nodeID}];`);
+        }
+    });
 
     class Store extends EventBus {
         constructor(config, options = {}) {
@@ -3094,17 +3169,29 @@
             this.mutations = config.mutations;
             this.env = config.env;
             this.observer = new Observer();
-            this.observer.notifyCB = this.trigger.bind(this, "update");
+            this.observer.notifyCB = () => {
+                this._gettersCache = {};
+                this.trigger("update");
+            };
             this.observer.allowMutations = false;
             this.observer.observe(this.state);
             this.getters = {};
+            this._gettersCache = {};
             if (this.debug) {
                 this.history.push({ state: this.state });
             }
+            const cTypes = ["undefined", "number", "string"];
             for (let entry of Object.entries(config.getters || {})) {
                 const name = entry[0];
                 const func = entry[1];
                 this.getters[name] = payload => {
+                    if (this._commitLevel === 0 && cTypes.indexOf(typeof payload) >= 0) {
+                        this._gettersCache[name] = this._gettersCache[name] || {};
+                        this._gettersCache[name][payload] =
+                            this._gettersCache[name][payload] ||
+                                func({ state: this.state, getters: this.getters }, payload);
+                        return this._gettersCache[name][payload];
+                    }
                     return func({ state: this.state, getters: this.getters }, payload);
                 };
             }
@@ -3402,9 +3489,9 @@
     exports.connect = connect;
     exports.utils = utils;
 
-    exports.__info__.version = '0.14.0';
-    exports.__info__.date = '2019-06-13T10:11:15.338Z';
-    exports.__info__.hash = '2701a7d';
+    exports.__info__.version = '0.15.0';
+    exports.__info__.date = '2019-06-17T13:59:39.059Z';
+    exports.__info__.hash = '609c108';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

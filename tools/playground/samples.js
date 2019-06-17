@@ -930,7 +930,9 @@ class FormView extends owl.Component {
 
 class AdvancedWidget extends owl.Component {}
 
-class Chatter extends owl.Component {}
+class Chatter extends owl.Component {
+    messages = Array.from(Array(100).keys());
+}
 
 class MobileSearchView extends owl.Component {}
 
@@ -982,7 +984,7 @@ const RESPONSIVE_XML = `<templates>
 
   <div t-name="Chatter" class="chatter">
     <h2>Chatter</h2>
-    <t t-foreach="100" t-as="item"><div>Message <t t-esc="item"/></div></t>
+    <t t-foreach="messages" t-as="item"><div>Message <t t-esc="item"/></div></t>
   </div>
 
   <div t-name="MobileSearchView">Mobile searchview</div>

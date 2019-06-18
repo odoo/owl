@@ -132,7 +132,7 @@ It's API is quite simple:
   ...
 
   class ParentWidget extends owl.Component { ... }
-  qweb.addTemplate("ParentWidget", "<div><t t-widget='Dialog'/></div>");
+  qweb.addTemplate("ParentWidget", "<div><Dialog/></div>");
   ```
 
 ## Reference

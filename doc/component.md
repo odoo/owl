@@ -337,15 +337,14 @@ This is the opposite method of `mounted`.
 
 ### Composition
 
-The example above shows a QWeb template with a `t-on-click` directive. Widget
-templates are standard [QWeb](qweb.md) templates, but with an extra directive:
-`t-widget`. With the `t-widget` directive, widget templates can declare sub
-widgets:
+The example above shows a QWeb template with a sub component. In a template,
+components are declared with a tagname corresponding to the class name. It has
+to be capitalized.
 
 ```xml
 <div t-name="ParentWidget">
   <span>some text</span>
-  <t t-widget="MyWidget" info="13"/>
+  <MyWidget info="13" />
 </div>
 ```
 
@@ -357,22 +356,18 @@ class ParentWidget extends owl.Component {
 ```
 
 In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
-after the span. The `info` key will be added to the subwidget's props. Each
-props is a string which represents a javascript (QWeb) expression, so it is
+after the span. The `info` key will be added to the subwidget's `props`. Each
+`props` is a string which represents a javascript (QWeb) expression, so it is
 dynamic. If it is necessary to give a string, this can be done by quoting it:
-`someString="'somevalue'"`. See the
-[QWeb](qweb.md) documentation for more information on the `t-widget` directive.
+`someString="'somevalue'"`. 
 
 Note that the rendering context for the template is the widget itself. This means
 that the template can access `state`, `props`, `env`, or any methods defined in the widget.
 
-The `t-widget` directive is the key to a declarative component
-system. It allows a template to define where and how a sub widget is created
-and/or updated. For example:
 
 ```xml
 <div t-name="ParentWidget">
-    <t t-widget="ChildWidget" count="state.val"/>
+    <ChildWidget count="state.val" />
 </div>
 ```
 
@@ -397,12 +392,11 @@ the subwidget will also be updated automatically.
 Note that there are some restrictions on prop names: `class`, `style` and any
 string which starts with `t-` are not allowed.
 
-The `t-widget` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
+The `t-widget` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
 
 ```xml
 <div t-name="ParentWidget">
-    <t t-widget="ChildWidget{{id}}"/>
+    <t t-widget="ChildWidget{{id}}" />
 </div>
 ```
 
@@ -419,7 +413,7 @@ root widget element.
 
 ```xml
 <div t-name="ParentWidget">
-  <t t-widget="MyWidget" class="someClass" style="font-weight:bold;" info="13"/>
+  <MyWidget class="someClass" style="font-weight:bold;" info="13" />
 </div>
 ```
 
@@ -431,7 +425,7 @@ class that need to be removed. This is why we only support the explicit syntax
 with a class object:
 
 ```xml
-<t t-widget="MyWidget" t-att-class="{a: state.flagA, b: state.flagB}" />
+<MyWidget t-att-class="{a: state.flagA, b: state.flagB}" />
 ```
 
 ### Event Handling
@@ -463,7 +457,7 @@ event.
 A _business_ DOM event is triggered by a call to `trigger` on a component.
 
 ```xml
-<t t-widget="MyWidget" t-on-menu-loaded="someMethod"/>
+<MyWidget t-on-menu-loaded="someMethod" />
 ```
 
 ```js
@@ -538,8 +532,8 @@ class Form extends owl.Component {
 
 ```xml
 <div>
-  <input t-on-input="_updateInputValue"/>
-  <span t-esc="state.text"/>
+  <input t-on-input="_updateInputValue" />
+  <span t-esc="state.text" />
 </div>
 ```
 
@@ -559,8 +553,8 @@ class Form extends owl.Component {
 
 ```xml
 <div>
-  <input t-model="text"/>
-  <span t-esc="state.text"/>
+  <input t-model="text" />
+  <span t-esc="state.text" />
 </div>
 ```
 
@@ -586,7 +580,7 @@ The `t-model` directive works with `<input>`, `<input type="checkbox">`,
             <label for="red">Red</label>
         </span>
         <span>
-            <input type="radio" name="color" id="blue" value="blue" t-model="color"/>
+            <input type="radio" name="color" id="blue" value="blue" t-model="color" />
             <label for="blue">Blue</label>
         </span>
     </div>
@@ -604,7 +598,7 @@ Like event handling, the `t-model` directive accepts some modifiers:
 For example:
 
 ```xml
-<input t-model.lazy="someVal"/>
+<input t-model.lazy="someVal" />
 ```
 
 These modifiers can be combined. For instance, `t-model.lazy.number` will only
@@ -627,7 +621,7 @@ There are three main use cases:
 
   ```xml
     <span t-foreach="todos" t-as="todo" t-key="todo.id">
-        <t t-esc="todo.text"/>
+        <t t-esc="todo.text" />
     </span>
   ```
 
@@ -836,7 +830,7 @@ Like the `t-on` directive, it can work either on a DOM node, or on a component:
 ```xml
 <div>
     <div t-ref="someDiv"/>
-    <t t-widget="SubWidget" t-ref="someWidget"/>
+    <SubWidget t-ref="someWidget"/>
 </div>
 ```
 
@@ -894,14 +888,14 @@ Slots are defined by the caller, with the `t-set` directive:
 ```xml
 <div t-name="SomeWidget">
   <div>some widget</div>
-  <t t-widget="Dialog" title="Some Dialog">
+  <Dialog title="Some Dialog">
     <t t-set="content">
       <div>hey</div>
     </t>
     <t t-set="footer">
       <button t-on-click="doSomething">ok</button>
     </t>
-  </t>
+  </Dialog>
 </div>
 ```
 
@@ -933,9 +927,9 @@ be considered the `default` slot. For example:
 
 ```xml
 <div t-name="Parent">
-  <t t-widget="Child">
+  <Child>
     <span>some content</span>
-  </t>
+  </Child>
 </div>
 
 <div t-name="Child">
@@ -979,7 +973,7 @@ Here are a few tips on how to work with asynchronous widgets:
 
    ```xml
    <div t-name="ParentWidget">
-     <t t-widget="SyncChild"/>
-     <t t-widget="AsyncChild" t-asyncroot="1"/>
+     <SyncChild />
+     <AsyncChild t-asyncroot="1"/>
    </div>
    ```

@@ -468,7 +468,7 @@ describe("lifecycle hooks", () => {
       `
           <div>
             <div t-if="state.flag">
-              <t t-widget="ChildWidget" n="state.n"/>
+              <ChildWidget n="state.n"/>
             </div>
           </div>`
     );
@@ -549,7 +549,7 @@ describe("lifecycle hooks", () => {
     let def = makeDeferred();
     env.qweb.addTemplate(
       "Parent",
-      '<span><t t-widget="Child" n="state.n"/></span>'
+      '<span><Child n="state.n"/></span>'
     );
     class Parent extends Widget {
       state = { n: 1 };
@@ -601,7 +601,7 @@ describe("lifecycle hooks", () => {
 
     env.qweb.addTemplate(
       "Parent",
-      '<div><t t-widget="Child" a="state.a"/></div>'
+      '<div><Child a="state.a"/></div>'
     );
     class Parent extends Widget {
       state = { a: 1 };
@@ -644,7 +644,7 @@ describe("lifecycle hooks", () => {
     let shouldUpdate = false;
     env.qweb.addTemplate(
       "Parent",
-      `<div><t t-widget="Child" val="state.val"/></div>`
+      `<div><Child val="state.val"/></div>`
     );
     class Parent extends Widget {
       state = { val: 42 };
@@ -889,11 +889,26 @@ describe("composition", () => {
     delete QWeb.widgets["WidgetB"];
   });
 
+  test("can define widgets in template without t-widget", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="P"><C a="1"/></div>
+        <span t-name="C"><t t-esc="props.a"/></span>
+      </templates>`);
+    class C extends Widget {}
+    class P extends Widget {
+        widgets = {C};
+    }
+    const parent = new P(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  });
+
   test("throw a nice error if it cannot find widget", async () => {
     expect.assertions(1);
     env.qweb.addTemplate(
       "Parent",
-      `<div><t t-widget="SomeMispelledWidget"/></div>`
+      `<div><SomeMispelledWidget /></div>`
     );
     class Parent extends Widget {
       widgets = { SomeWidget: Widget };
@@ -1074,11 +1089,11 @@ describe("composition", () => {
   test("sub widgets are destroyed if no longer in dom, then recreated", async () => {
     env.qweb.addTemplate(
       "ParentWidget",
-      `<div><t t-if="state.ok"><t t-widget="counter"/></t></div>`
+      `<div><t t-if="state.ok"><Counter /></t></div>`
     );
     class ParentWidget extends Widget {
       state = { ok: true };
-      widgets = { counter: Counter };
+      widgets = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1102,11 +1117,11 @@ describe("composition", () => {
   test("sub widgets with t-keepalive are not destroyed if no longer in dom", async () => {
     env.qweb.addTemplate(
       "ParentWidget",
-      `<div><t t-if="state.ok"><t t-widget="counter" t-keepalive="1"/></t></div>`
+      `<div><t t-if="state.ok"><Counter t-keepalive="1"/></t></div>`
     );
     class ParentWidget extends Widget {
       state = { ok: true };
-      widgets = { counter: Counter };
+      widgets = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1135,7 +1150,7 @@ describe("composition", () => {
   test("sub widgets dom state with t-keepalive is preserved", async () => {
     env.qweb.addTemplate(
       "ParentWidget",
-      `<div><t t-if="state.ok"><t t-widget="InputWidget" t-keepalive="1"/></t></div>`
+      `<div><t t-if="state.ok"><InputWidget t-keepalive="1"/></t></div>`
     );
     class ParentWidget extends Widget {
       state = { ok: true };
@@ -1163,7 +1178,7 @@ describe("composition", () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="ParentWidget">
-          <t t-if="state.ok"><t t-widget="ChildWidget" t-ref="child" t-keepalive="1"/></t>
+          <t t-if="state.ok"><ChildWidget t-ref="child" t-keepalive="1"/></t>
         </div>
         <span t-name="ChildWidget">Hello</span>
       </templates>`);
@@ -1275,7 +1290,7 @@ describe("composition", () => {
       `<div>
             <h1 t-if="state.flag">hey</h1>
             <h2 t-else="1">noo</h2>
-            <span><t t-widget="ChildWidget"/></span>
+            <span><ChildWidget/></span>
             <t t-if="state.flag"><span>test</span></t>
         </div>`
     );
@@ -1723,18 +1738,18 @@ describe("other directives with t-widget", () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="ParentWidget">
-          <t t-widget="child" t-on-ev.prevent.self="onEv"/>
+          <Child t-on-ev.prevent.self="onEv"/>
         </div>
-        <div t-name="Child"><t t-widget="child"/></div>
+        <div t-name="Child"><GrandChild/></div>
       </templates>
     `);
     const steps: boolean[] = [];
     class ParentWidget extends Widget {
-      widgets = { child: Child };
+      widgets = { Child };
       onEv() {}
     }
     class Child extends Widget {
-      widgets = { child: GrandChild };
+      widgets = { GrandChild };
     }
     class GrandChild extends Widget {}
     const widget = new ParentWidget(env);
@@ -1962,7 +1977,7 @@ describe("random stuff/miscellaneous", () => {
         steps.push(`${this.name}:destroy`);
       }
     }
-    env.qweb.addTemplate("A", `<div>A<t t-widget="B"/><t t-widget="C"/></div>`);
+    env.qweb.addTemplate("A", `<div>A<B /><C /></div>`);
     class A extends TestWidget {
       widgets = { B, C };
       name = "A";
@@ -1978,9 +1993,9 @@ describe("random stuff/miscellaneous", () => {
     env.qweb.addTemplate(
       "C",
       `
-        <div>C<t t-widget="D"/>
-            <t t-if="state.flag" t-widget="E"/>
-            <t t-else="!state.flag" t-widget="F"/>
+        <div>C<D />
+            <E t-if="state.flag" />
+            <F t-else="!state.flag" />
         </div>`
     );
     class C extends TestWidget {
@@ -2102,7 +2117,7 @@ describe("async rendering", () => {
     let n = 0;
     env.qweb.addTemplate(
       "W",
-      `<div><t t-if="state.val > 1"><t t-widget="Child" val="state.val"/></t></div>`
+      `<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`
     );
     class W extends Widget {
       widgets = { Child };
@@ -2156,8 +2171,8 @@ describe("async rendering", () => {
       "Parent",
       `
         <div>
-          <t t-if="state.flagA"><t t-widget="ChildA"/></t>
-          <t t-if="state.flagB"><t t-widget="ChildB"/></t>
+          <t t-if="state.flagA"><ChildA /></t>
+          <t t-if="state.flagB"><ChildB /></t>
         </div>`
     );
     class Parent extends Widget {
@@ -2203,8 +2218,8 @@ describe("async rendering", () => {
       "Parent",
       `
         <div>
-          <t t-widget="ChildA" val="state.valA"/>
-          <t t-if="state.flagB"><t t-widget="ChildB" val="state.valB"/></t>
+          <ChildA val="state.valA"/>
+          <t t-if="state.flagB"><ChildB val="state.valB"/></t>
         </div>`
     );
     class Parent extends Widget {
@@ -2254,7 +2269,7 @@ describe("async rendering", () => {
                 <ul>
                     <t t-foreach="items" t-as="item">
                         <li t-key="'li_'+item">
-                            <t t-widget="Child" item="item"/>
+                            <Child item="item"/>
                         </li>
                     </t>
                 </ul>
@@ -2271,7 +2286,7 @@ describe("async rendering", () => {
   test("properly behave when destroyed/unmounted while rendering ", async () => {
     let def = Promise.resolve();
 
-    env.qweb.addTemplate("Child", `<div><t t-widget="SubChild"/></div>`);
+    env.qweb.addTemplate("Child", `<div><SubChild /></div>`);
     class Child extends Widget {
       widgets = { SubChild };
       mounted() {
@@ -2298,7 +2313,7 @@ describe("async rendering", () => {
     env.qweb.addTemplate(
       "Parent",
       `
-        <div><t t-if="state.flag"><t t-widget="Child" val="state.val"/></t></div>`
+        <div><t t-if="state.flag"><Child val="state.val"/></t></div>`
     );
     class Parent extends Widget {
       widgets = { Child };
@@ -2331,8 +2346,8 @@ describe("async rendering", () => {
             <span t-name="ChildB">b<t t-esc="props.val"/></span>
             <span t-name="Parent">
                 <t t-if="state.flag">
-                    <t t-widget="ChildA" val="state.valA"/>
-                    <t t-widget="ChildB" val="state.valB"/>
+                    <ChildA val="state.valA"/>
+                    <ChildB val="state.valB"/>
                 </t>
             </span>
         </templates>
@@ -2368,14 +2383,14 @@ describe("async rendering", () => {
     expect(destroyCount).toBe(0);
   });
 
-  test("delayed t-widget with t-asyncroot directive", async () => {
+  test("delayed component with t-asyncroot directive", async () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="Parent">
           <button t-on-click="updateApp">Update App State</button>
           <div class="children">
-            <t t-widget="Child" val="state.val"/>
-            <t t-widget="AsyncChild" t-asyncroot="1" val="state.val"/>
+            <Child val="state.val"/>
+            <AsyncChild t-asyncroot="1" val="state.val"/>
           </div>
         </div>
         <span t-name="Child"><t t-esc="props.val"/></span>
@@ -2423,14 +2438,14 @@ describe("async rendering", () => {
     );
   });
 
-  test("fast t-widget with t-asyncroot directive", async () => {
+  test("fast component with t-asyncroot directive", async () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="Parent">
           <button t-on-click="updateApp">Update App State</button>
           <div class="children">
-            <t t-widget="Child" t-asyncroot="1" val="state.val"/>
-            <t t-widget="AsyncChild" val="state.val"/>
+            <Child t-asyncroot="1" val="state.val"/>
+            <AsyncChild val="state.val"/>
           </div>
         </div>
         <span t-name="Child"><t t-esc="props.val"/></span>
@@ -2484,8 +2499,8 @@ describe("async rendering", () => {
         <div t-name="Parent">
           <button t-on-click="updateApp">Update App State</button>
           <div class="children">
-            <t t-widget="Child" val="state.val"/>
-            <t t-widget="AsyncChild" t-asyncroot="1" val="state.val"/>
+            <Child val="state.val"/>
+            <AsyncChild t-asyncroot="1" val="state.val"/>
           </div>
         </div>
         <span t-name="Child" t-on-click="increment">
@@ -2617,9 +2632,9 @@ describe("updating environment", () => {
   });
 
   test("updating parent env does modify child env, part 2", async () => {
-    env.qweb.addTemplate("ParentWidget", `<div><t t-widget="child"/></div>`);
+    env.qweb.addTemplate("ParentWidget", `<div><Child/></div>`);
     class ParentWidget extends Widget {
-      widgets = { child: Widget };
+      widgets = { Child: Widget };
     }
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
@@ -2642,7 +2657,7 @@ describe("updating environment", () => {
   });
 
   test("updating env force rerendering children", async () => {
-    env.qweb.addTemplate("Parent", `<div><t t-widget="Child"/></div>`);
+    env.qweb.addTemplate("Parent", `<div><Child /></div>`);
     class Parent extends Widget {
       widgets = { Child };
     }
@@ -2680,7 +2695,7 @@ describe("widget and observable state", () => {
     expect.assertions(1);
     env.qweb.addTemplate(
       "Parent",
-      `<div><t t-widget="Child" obj="state.obj"/></div>`
+      `<div><Child obj="state.obj"/></div>`
     );
     class Parent extends Widget {
       state = { obj: { coffee: 1 } };
@@ -2822,10 +2837,10 @@ describe("t-slot directive", () => {
     env.qweb.addTemplates(`
         <templates>
           <div t-name="Parent">
-             <t t-widget="Dialog">
+             <Dialog>
                 <t t-set="header"><span>header</span></t>
                 <t t-set="footer"><span>footer</span></t>
-             </t>
+             </Dialog>
           </div>
           <div t-name="Dialog">
             <div><t t-slot="header"/></div>
@@ -2852,9 +2867,9 @@ describe("t-slot directive", () => {
         <templates>
           <div t-name="Parent">
             <span class="counter"><t t-esc="state.val"/></span>
-            <t t-widget="Dialog">
+            <Dialog>
               <t t-set="footer"><button t-on-click="doSomething">do something</button></t>
-            </t>
+            </Dialog>
           </div>
           <span t-name="Dialog"><t t-slot="footer"/></span>
         </templates>
@@ -2887,9 +2902,9 @@ describe("t-slot directive", () => {
         <templates>
           <div t-name="Parent">
             <span class="counter"><t t-esc="state.val"/></span>
-            <t t-widget="Dialog">
+            <Dialog>
               <t t-set="footer"><button t-ref="myButton" t-on-click="doSomething">do something</button></t>
-            </t>
+            </Dialog>
           </div>
           <span t-name="Dialog"><t t-slot="footer"/></span>
         </templates>
@@ -3153,9 +3168,9 @@ describe("t-model directive", () => {
     env.qweb.addTemplates(`
         <templates>
           <div t-name="Parent">
-             <t t-widget="Dialog">
+             <Dialog>
                 <span>sts rocks</span>
-             </t>
+             </Dialog>
           </div>
           <div t-name="Dialog"><t t-slot="default"/></div>
         </templates>

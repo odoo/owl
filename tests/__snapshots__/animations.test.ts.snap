@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`animations t-transition combined with t-widget 1`] = `
+exports[`animations t-transition combined with component 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;

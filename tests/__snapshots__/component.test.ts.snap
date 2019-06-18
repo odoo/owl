@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`async rendering delayed t-widget with t-asyncroot directive 1`] = `
+exports[`async rendering delayed component with t-asyncroot directive 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -81,7 +81,7 @@ exports[`async rendering delayed t-widget with t-asyncroot directive 1`] = `
 }"
 `;
 
-exports[`async rendering fast t-widget with t-asyncroot directive 1`] = `
+exports[`async rendering fast component with t-asyncroot directive 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -650,7 +650,7 @@ exports[`other directives with t-widget t-on with prevent and self modifiers (or
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
+        let widgetKey4 = \`Child\`;
         let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
         if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
         w4 = new W4(owner, props4);

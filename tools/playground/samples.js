@@ -26,8 +26,8 @@ const COMPONENTS_XML = `<templates>
   </button>
 
   <div t-name="App">
-    <t t-widget="Counter"/>
-    <t t-widget="Counter"/>
+    <Counter />
+    <Counter />
   </div>
 </templates>`;
 
@@ -88,7 +88,7 @@ const ANIMATION_XML = `<templates>
       <div class="demo">
         <button t-on-click="toggle('widgetFlag')">Toggle widget</button>
         <div>
-          <t t-widget="Counter" t-if="state.widgetFlag" t-transition="fade"/>
+          <Counter t-if="state.widgetFlag" t-transition="fade"/>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ const ANIMATION_XML = `<templates>
         <button t-on-click="addNumber">Add a number</button>
         <div>
           <t t-foreach="state.numbers" t-as="n">
-            <span t-transition="fade" class="numberspan"><t t-esc="n"/></span>
+            <span t-transition="fade" class="numberspan" t-key="n"><t t-esc="n"/></span>
           </t>
         </div>
       </div>
@@ -236,7 +236,7 @@ const LIFECYCLE_DEMO_XML = `<templates>
     <button t-on-click="increment">Increment Parent State</button>
     <button t-on-click="toggleSubWidget">Toggle SubWidget</button>
     <div t-if="state.flag">
-      <t t-widget="DemoWidget" n="state.n"/>
+      <DemoWidget n="state.n"/>
     </div>
   </div>
 </templates>`;
@@ -483,7 +483,7 @@ const TODO_APP_STORE_XML = `<templates>
       <label for="toggle-all"></label>
       <ul class="todo-list">
         <t t-foreach="visibleTodos" t-as="todo">
-          <t t-widget="TodoItem" t-key="todo.id" id="todo.id" completed="todo.completed" title="todo.title"/>
+          <TodoItem t-key="todo.id" id="todo.id" completed="todo.completed" title="todo.title"/>
         </t>
       </ul>
     </section>
@@ -995,17 +995,17 @@ const RESPONSIVE_XML = `<templates>
   </div>
 
   <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
-    <t t-widget="Navbar"/>
-    <t t-widget="ControlPanel"/>
+    <Navbar/>
+    <ControlPanel/>
     <div class="content-wrapper" t-if="!env.isMobile">
       <div class="content">
-        <t t-widget="FormView"/>
-        <t t-widget="Chatter"/>
+        <FormView />
+        <Chatter />
       </div>
     </div>
     <t t-else="1">
-      <t t-widget="FormView"/>
-      <t t-widget="Chatter"/>
+      <FormView />
+      <Chatter />
     </t>
   </div>
 </templates>
@@ -1128,17 +1128,17 @@ const SLOTS_XML = `<templates>
   </div>
 
   <div t-name="App" class="main">
-    <t t-widget="Card" title="'Title card A'">
+    <Card title="'Title card A'">
       <t t-set="content">Content of card 1...  [<t t-esc="state.a"/>]</t>
       <t t-set="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
-    </t>
-    <t t-widget="Card"  title="'Title card B'">
+    </Card>
+    <Card title="'Title card B'">
       <div t-set="content">
         <div>Card 2... [<t t-esc="state.b"/>]</div>
-        <t t-widget="Counter"/>
+        <Counter />
       </div>
       <t t-set="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
-    </t>
+    </Card>
   </div>
 </templates>`;
 
@@ -1226,8 +1226,8 @@ app.mount(document.body);
 const ASYNC_COMPONENTS_XML = `<templates>
   <div t-name="App" class="app">
     <button t-on-click="increment">Increment</button>
-    <t t-widget="SlowWidget" value="state.value"/>
-    <t t-widget="NotificationList" t-asyncroot="1" notifications="state.notifs"/>
+    <SlowWidget value="state.value"/>
+    <NotificationList t-asyncroot="1" notifications="state.notifs"/>
   </div>
 
   <div t-name="SlowWidget" class="value" >

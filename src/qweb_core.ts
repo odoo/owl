@@ -346,6 +346,13 @@ export class QWeb {
       return;
     }
 
+    const firstLetter = node.tagName[0];
+    if (firstLetter === firstLetter.toUpperCase()) {
+        // this is a component, we modify in place the xml document to change
+        // <SomeComponent ... /> to <t t-widget="SomeComponent" ... />
+        node.setAttribute('t-widget', node.tagName);
+        node.nodeValue = 't';
+    }
     const attributes = (<Element>node).attributes;
 
     const validDirectives: {

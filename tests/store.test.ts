@@ -534,8 +534,8 @@ describe("connecting a component to store", () => {
       "App",
       `
             <div>
-                <t t-foreach="props.todos" t-as="todo" t-key="todo">
-                    <t t-widget="Todo" msg="todo.msg"/>
+                <t t-foreach="props.todos" t-as="todo" >
+                    <Todo msg="todo.msg" t-key="todo"/>
                 </t>
             </div>`
     );
@@ -624,8 +624,8 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="App">
-          <t t-foreach="props.todos" t-as="todo" t-key="todo">
-            <t t-widget="Todo" msg="todo.msg"/>
+          <t t-foreach="props.todos" t-as="todo">
+            <Todo msg="todo.msg" t-key="todo" />
           </t>
         </div>
         <span t-name="Todo"><t t-esc="props.msg"/></span>
@@ -734,7 +734,7 @@ describe("connecting a component to store", () => {
       "TodoList",
       `<div>
             <t t-foreach="props.todos" t-as="todo">
-              <t t-widget="ConnectedTodo" id="todo.id"/>
+              <ConnectedTodo id="todo.id" t-key="todo.id"/>
             </t>
           </div>`
     );
@@ -801,7 +801,7 @@ describe("connecting a component to store", () => {
       "TodoList",
       `<div>
             <t t-foreach="props.todos" t-as="todo">
-              <t t-widget="ConnectedTodo" id="todo.id"/>
+              <ConnectedTodo id="todo.id" t-key="todo.id"/>
             </t>
           </div>`
     );
@@ -839,7 +839,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplate(
       "App",
       `<div>
-            <t t-widget="ConnectedBeer" id="state.beerId"/>
+            <ConnectedBeer id="state.beerId"/>
         </div>`
     );
     class App extends Component<any, any, any> {
@@ -923,8 +923,8 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplate(
       "App",
       `<div>
-              <t t-widget="ConnectedBeer" id="state.beerId"/>
-          </div>`
+            <ConnectedBeer id="state.beerId"/>
+        </div>`
     );
     class App extends Component<any, any, any> {
       widgets = { ConnectedBeer };
@@ -995,7 +995,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplate(
       "App",
       `<div>
-              <t t-widget="ConnectedBeer" id="state.beerId"/>
+              <ConnectedBeer id="state.beerId"/>
           </div>`
     );
     class App extends Component<any, any, any> {
@@ -1074,7 +1074,7 @@ describe("connecting a component to store", () => {
       "Parent",
       `
         <div>
-            <t t-widget="Child" key="props.current"/>
+            <Child key="props.current"/>
         </div>
       `
     );

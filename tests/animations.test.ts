@@ -170,12 +170,12 @@ describe("animations", () => {
     expect(spanNode.className).toBe("");
   });
 
-  test("t-transition combined with t-widget", async () => {
+  test("t-transition combined with component", async () => {
     expect.assertions(5);
 
     env.qweb.addTemplate(
       "Parent",
-      `<div><t t-widget="Child" t-transition="chimay"/></div>`
+      `<div><Child t-transition="chimay"/></div>`
     );
     env.qweb.addTemplate("Child", `<span>blue</span>`);
     class Parent extends Widget {

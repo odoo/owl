@@ -24,14 +24,14 @@
           <a class="btn flash" t-on-click="downloadCode" title="Download a Zip with this Code"><i class="fas fa-download"></i></a>
           <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
         </div>
-        <t t-widget="TabbedEditor"
+        <TabbedEditor
             js="state.js"
             css="!state.splitLayout and state.css"
             xml="!state.splitLayout and state.js"
             t-att-style="topEditorStyle"/>
         <t t-if="state.splitLayout">
           <div class="separator horizontal"/>
-          <t t-widget="TabbedEditor" t-keepalive="1"
+          <TabbedEditor t-keepalive="1"
              js="false"
              css="state.css"
              xml="state.xml"

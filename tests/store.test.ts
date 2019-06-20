@@ -1157,4 +1157,21 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div>b</div>");
     expect(steps).toEqual(["willpatch", "patched"]);
   });
+
+  test("connected component has its own name", () => {
+    function mapStoreToProps() { }
+
+    class Named extends Component<any, any, any> { };
+    const namedConnected = connect(Named, mapStoreToProps);
+    expect(namedConnected.name).toMatch('ConnectedNamed');
+
+    class ParentNamed extends Component<any, any, any>{};
+    class ChildNamed extends ParentNamed{};
+    const childConnected = connect(ChildNamed, mapStoreToProps)
+    expect(childConnected.name).toMatch('ConnectedChildNamed')
+
+    const Anonymous = class extends Component<any, any, any>{ };
+    const anonymousConnected = connect(Anonymous, mapStoreToProps);
+    expect(anonymousConnected.name).toMatch(/^Connectedclass_\d+/);
+  });
 });

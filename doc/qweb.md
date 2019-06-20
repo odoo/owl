@@ -44,7 +44,7 @@ with a few interesting points:
 
 - it compiles templates into functions that output a virtual DOM instead of a
   string. This is necessary for the component system.
-- it has a few extra directives: `t-widget`, `t-on`, ...
+- it has a few extra directives: `t-component`, `t-on`, ...
 
 ## Directives
 
@@ -67,7 +67,7 @@ needs. Here is a list of all Owl specific directives:
 
 | Name                                         | Description                                                                         |
 | -------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `t-widget`, `t-keepalive`, `t-asyncroot` | [Defining a sub component](component.md#composition)                                |
+| `t-component`, `t-keepalive`, `t-asyncroot` | [Defining a sub component](component.md#composition)                                |
 | `t-ref`                                      | [Setting a reference to a dom node or a sub component](component.md#references)     |
 | `t-key`                                      | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
 | `t-on-*`                                     | [Event handling](component.md#event-handling)                                       |
@@ -108,7 +108,7 @@ It's API is quite simple:
   const TEMPLATES = `
     <templates>
       <div t-name="App" class="main">main</div>
-      <div t-name="OtherWidget">other widget</div>
+      <div t-name="OtherComponent">other component</div>
     </templates>`;
   qweb.addTemplates(TEMPLATES);
   ```
@@ -117,12 +117,12 @@ It's API is quite simple:
   which is a virtual representation of the DOM (see [vdom doc](vdom.md)).
 
   ```js
-  const vnode = qweb.render("App", widget);
+  const vnode = qweb.render("App", component);
   ```
 
 - **`register(name, Component)`**: static function to register an OWL Component
   to QWeb's global registry. Globally registered Components can be used in
-  templates (see the `t-widget` directive). This is useful for commonly used
+  templates (see the `t-component` directive). This is useful for commonly used
   components accross the application.
 
   ```js
@@ -131,8 +131,8 @@ It's API is quite simple:
 
   ...
 
-  class ParentWidget extends owl.Component { ... }
-  qweb.addTemplate("ParentWidget", "<div><Dialog/></div>");
+  class ParentComponent extends owl.Component { ... }
+  qweb.addTemplate("ParentComponent", "<div><Dialog/></div>");
   ```
 
 ## Reference
@@ -179,7 +179,7 @@ root nodes.
 
 QWeb expressions are strings that will be processed at compile time. Each variable in
 the javascript expression will be replaced by a lookup in the context (so, the
-widget). For example, `a + b.c(d)` will be converted into:
+component). For example, `a + b.c(d)` will be converted into:
 
 ```js
 context["a"] + context["b"].c(context["d"]);

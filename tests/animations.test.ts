@@ -18,7 +18,7 @@ import {
 // - fixture: a div, appended to the DOM, intended to be the target of dom
 //   manipulations.  Note that it is removed after each test.
 // - qweb: a new QWeb instance
-// - env: a WEnv, necessary to create new widgets
+// - env: a WEnv, necessary to create new components
 // - cssEl: a stylesheet injected into the dom
 
 let fixture: HTMLElement;
@@ -179,7 +179,7 @@ describe("animations", () => {
     );
     env.qweb.addTemplate("Child", `<span>blue</span>`);
     class Parent extends Widget {
-      widgets = { Child: Child };
+      components = { Child: Child };
     }
     class Child extends Widget {}
     const widget = new Parent(env);
@@ -209,16 +209,16 @@ describe("animations", () => {
     expect(fixture.innerHTML).toBe('<div><span class="">blue</span></div>');
   });
 
-  test("t-transition combined with t-widget and t-if", async () => {
+  test("t-transition combined with t-component and t-if", async () => {
     expect.assertions(8);
 
     env.qweb.addTemplate(
       "Parent",
-      `<div><t t-if="state.display" t-widget="Child" t-transition="chimay"/></div>`
+      `<div><t t-if="state.display" t-component="Child" t-transition="chimay"/></div>`
     );
     env.qweb.addTemplate("Child", `<span>blue</span>`);
     class Parent extends Widget {
-      widgets = { Child: Child };
+      components = { Child: Child };
       state = { display: true };
     }
     class Child extends Widget {}
@@ -351,21 +351,21 @@ describe("animations", () => {
     );
   });
 
-  test("t-transition combined with t-widget, remove and re-add before transitionend", async () => {
+  test("t-transition combined with t-component, remove and re-add before transitionend", async () => {
     expect.assertions(11);
 
     env.qweb.addTemplates(
       `<templates>
         <div t-name="Parent">
           <button t-on-click="toggle">Toggle</button>
-          <t t-if="state.flag" t-widget="Child" t-transition="chimay"/>
+          <t t-if="state.flag" t-component="Child" t-transition="chimay"/>
         </div>
         <span t-name="Child">blue</span>
       </templates>`
     );
     class Child extends Widget {}
     class Parent extends Widget {
-      widgets = { Child };
+      components = { Child };
       constructor(parent) {
         super(parent);
         this.state = { flag: false };

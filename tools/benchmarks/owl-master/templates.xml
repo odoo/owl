@@ -30,7 +30,7 @@
       <div class="right-thing">
           <div class="content" t-on-remove-message="removeMessage">
               <t t-foreach="state.messages" t-as="message">
-                  <t t-widget="Message" t-key="message.id" message="message"/>
+                  <Message t-key="message.id" message="message"/>
               </t>
           </div>
       </div>
@@ -40,7 +40,7 @@
     <span class="author"><t t-esc="props.message.author"/></span>
     <span class="msg"><t t-esc="props.message.msg"/></span>
     <button class="remove" t-on-click="removeMessage">Remove</button>
-    <t t-widget="Counter"/>
+    <Counter/>
   </div>
 
   <div t-name="Counter">

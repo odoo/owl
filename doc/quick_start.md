@@ -58,16 +58,16 @@ To build an application (or a sub-part of an application), we need two things:
   need. In practice, it could context some user session information, some
   configuration keys (for example, isMobile = true/false if we are in mobile mode).
 
-- a description of the user interface: there should be a root widget, which can
-  have sub widgets
+- a description of the user interface: there should be a root component, which can
+  have sub components
 
 Here are a few steps that we may take to get started:
 
 - get the templates
 - create a qweb engine, with the templates
 - create an environment
-- create an instance of the root widget
-- mount the root widget to a DOM element
+- create an instance of the root component
+- mount the root component to a DOM element
 
 Let us now add the javascript to make it work, in `app.js`:
 

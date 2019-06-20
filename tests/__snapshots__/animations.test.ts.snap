@@ -9,7 +9,7 @@ exports[`animations t-transition combined with component 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -24,9 +24,9 @@ exports[`animations t-transition combined with component 1`] = `
         }
     }
     if (!w4) {
-        let widgetKey4 = \`Child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`Child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -43,7 +43,7 @@ exports[`animations t-transition combined with component 1`] = `
 }"
 `;
 
-exports[`animations t-transition combined with t-widget and t-if 1`] = `
+exports[`animations t-transition combined with t-component and t-if 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -53,7 +53,7 @@ exports[`animations t-transition combined with t-widget and t-if 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     if (context['state'].display) {
-        //WIDGET
+        //COMPONENT
         let def3;
         let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
         let _2_index = c1.length;
@@ -68,9 +68,9 @@ exports[`animations t-transition combined with t-widget and t-if 1`] = `
             }
         }
         if (!w4) {
-            let widgetKey4 = \`Child\`;
-            let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-            if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+            let componentKey4 = \`Child\`;
+            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(owner, props4);
             context.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4._prepare();

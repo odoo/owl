@@ -54,7 +54,7 @@ describe("props validation", () => {
     try {
       await w._updateProps({});
     } catch (e) {
-      expect(e.message).toBe("Missing props 'message' (widget 'TestWidget')");
+      expect(e.message).toBe("Missing props 'message' (component 'TestWidget')");
     }
   });
 
@@ -65,7 +65,7 @@ describe("props validation", () => {
 
     expect(() => {
       new TestWidget(env);
-    }).toThrow("Missing props 'message' (widget 'TestWidget')");
+    }).toThrow("Missing props 'message' (component 'TestWidget')");
   });
 
   test("validate simple types", async () => {
@@ -93,7 +93,7 @@ describe("props validation", () => {
 
       expect(() => {
         new TestWidget(env, { p: test.ko });
-      }).toThrow("Props 'p' of invalid type in widget");
+      }).toThrow("Props 'p' of invalid type in component");
     }
   });
 
@@ -122,7 +122,7 @@ describe("props validation", () => {
 
       expect(() => {
         new TestWidget(env, { p: test.ko });
-      }).toThrow("Props 'p' of invalid type in widget");
+      }).toThrow("Props 'p' of invalid type in component");
     }
   });
 
@@ -139,7 +139,7 @@ describe("props validation", () => {
 
     expect(() => {
       new TestWidget(env, { p: 1 });
-    }).toThrow("Props 'p' of invalid type in widget");
+    }).toThrow("Props 'p' of invalid type in component");
   });
 
   test("can validate an optional props", async () => {

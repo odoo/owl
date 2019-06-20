@@ -541,7 +541,7 @@ describe("connecting a component to store", () => {
     );
     env.qweb.addTemplate("Todo", `<span><t t-esc="props.msg"/></span>`);
     class App extends Component<any, any, any> {
-      widgets = { Todo };
+      components = { Todo };
     }
     class Todo extends Component<any, any, any> {}
     const state = { todos: [] };
@@ -632,7 +632,7 @@ describe("connecting a component to store", () => {
       </templates>
       `);
     class App extends Component<any, any, any> {
-      widgets = { Todo };
+      components = { Todo };
     }
     class Todo extends Component<any, any, any> {}
 
@@ -686,11 +686,11 @@ describe("connecting a component to store", () => {
       "Parent",
       `
           <div>
-              <t t-if="state.child" t-widget="ConnectedChild"/>
+              <t t-if="state.child" t-component="ConnectedChild"/>
           </div>`
     );
     class Parent extends Component<any, any, any> {
-      widgets = { ConnectedChild };
+      components = { ConnectedChild };
 
       constructor(env: Env) {
         super(env);
@@ -739,7 +739,7 @@ describe("connecting a component to store", () => {
           </div>`
     );
     class TodoList extends Component<any, any, any> {
-      widgets = { ConnectedTodo };
+      components = { ConnectedTodo };
     }
 
     function mapStoreToProps(state) {
@@ -806,7 +806,7 @@ describe("connecting a component to store", () => {
           </div>`
     );
     class TodoList extends Component<any, any, any> {
-      widgets = { ConnectedTodo };
+      components = { ConnectedTodo };
     }
 
     function mapStoreToProps(state) {
@@ -843,7 +843,7 @@ describe("connecting a component to store", () => {
         </div>`
     );
     class App extends Component<any, any, any> {
-      widgets = { ConnectedBeer };
+      components = { ConnectedBeer };
       state = { beerId: 1 };
     }
 
@@ -927,7 +927,7 @@ describe("connecting a component to store", () => {
         </div>`
     );
     class App extends Component<any, any, any> {
-      widgets = { ConnectedBeer };
+      components = { ConnectedBeer };
       state = { beerId: 0 };
     }
 
@@ -999,7 +999,7 @@ describe("connecting a component to store", () => {
           </div>`
     );
     class App extends Component<any, any, any> {
-      widgets = { ConnectedBeer };
+      components = { ConnectedBeer };
       state = { beerId: 0 };
     }
 
@@ -1079,7 +1079,7 @@ describe("connecting a component to store", () => {
       `
     );
     class Parent extends Component<any, any, any> {
-      widgets = { Child: ConnectedChild };
+      components = { Child: ConnectedChild };
     }
     const ConnectedParent = connect(
       Parent,

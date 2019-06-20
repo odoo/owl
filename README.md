@@ -32,7 +32,7 @@ find some more information [here](doc/comparison.md).
 
 ## Example
 
-Here is a short example to illustrate interactive widgets:
+Here is a short example to illustrate interactive components:
 
 ```xml
 <templates>

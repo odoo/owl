@@ -130,7 +130,7 @@ let nextID = 1;
 export class QWeb {
   templates: { [name: string]: Template } = {};
   utils = UTILS;
-  static widgets = Object.create(null);
+  static components = Object.create(null);
 
   // dev mode enables better error messages or more costly validations
   static dev: boolean = false;
@@ -140,7 +140,7 @@ export class QWeb {
   // able to map a qweb instance to a template name.
   id = nextID++;
 
-  // slots contains sub templates defined with t-set inside t-widget nodes, and
+  // slots contains sub templates defined with t-set inside t-component nodes, and
   // are meant to be used by the t-slot directive.
   slots = {};
   nextSlotId = 1;
@@ -161,10 +161,10 @@ export class QWeb {
   }
 
   static register(name: string, Component: any) {
-    if (QWeb.widgets[name]) {
+    if (QWeb.components[name]) {
       throw new Error(`Component '${name}' has already been registered`);
     }
-    QWeb.widgets[name] = Component;
+    QWeb.components[name] = Component;
   }
 
   /**
@@ -349,8 +349,8 @@ export class QWeb {
     const firstLetter = node.tagName[0];
     if (firstLetter === firstLetter.toUpperCase()) {
         // this is a component, we modify in place the xml document to change
-        // <SomeComponent ... /> to <t t-widget="SomeComponent" ... />
-        node.setAttribute('t-widget', node.tagName);
+        // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
+        node.setAttribute('t-component', node.tagName);
         node.nodeValue = 't';
     }
     const attributes = (<Element>node).attributes;

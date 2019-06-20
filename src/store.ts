@@ -170,8 +170,6 @@ interface StoreOptions {
   deep?: boolean;
 }
 
-let nextID = 1;
-
 export function connect<E extends EnvWithStore, P, S>(
   Comp: Constructor<Component<E, P, S>>,
   mapStoreToProps,
@@ -292,7 +290,7 @@ export function connect<E extends EnvWithStore, P, S>(
   // this is necessary for Owl to be able to properly deduce templates.
   // Otherwise, all connected components would have the same name, and then
   // each component after the first will necessarily have the same template.
-  let name = `ConnectedComponent${nextID++}`;
+  let name = `Connected${Comp.name}`;
   Object.defineProperty(Result, "name", { value: name });
   return Result;
 }

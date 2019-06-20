@@ -91,17 +91,17 @@ there is a syntax highlighter for jsx here on github!
 This is actually a big difference between OWL and React/Vue: components in OWL
 are totally asynchronous. They have two asynchronous hooks in their lifecycle:
 
-- `willStart` (before the widget starts rendering)
+- `willStart` (before the component starts rendering)
 - `willUpdateProps` (before new props are set)
 
 Both these methods can be implemented and return a promise. The rendering will
 then wait for these promises to be completed before patching the DOM. This is
-useful for some use cases: for example, a widget may want to fetch an external
-library (a calendar widget may need a specialized calendar rendering library),
+useful for some use cases: for example, a component may want to fetch an external
+library (a calendar component may need a specialized calendar rendering library),
 in its willStart hook.
 
 ```javascript
-class MyCalendarWidget extends owl.Component {
+class MyCalendarComponent extends owl.Component {
     ...
 
     willStart() {

@@ -8,9 +8,9 @@ class Counter extends owl.Component {
     }
 }
 
-// Main root widget
+// Main root component
 class App extends owl.Component {
-    widgets = { Counter };
+    components = { Counter };
 }
 
 // Application setup
@@ -49,8 +49,8 @@ class Counter extends owl.Component {
 }
 
 class App extends owl.Component {
-    state = { flag: false, widgetFlag: false, numbers: [] };
-    widgets = { Counter };
+    state = { flag: false, componentFlag: false, numbers: [] };
+    components = { Counter };
 
     toggle(key) {
         this.state[key] = !this.state[key];
@@ -83,12 +83,12 @@ const ANIMATION_XML = `<templates>
         </div>
       </div>
 
-      <h2>Transition on sub widgets</h2>
+      <h2>Transition on sub components</h2>
 
       <div class="demo">
-        <button t-on-click="toggle('widgetFlag')">Toggle widget</button>
+        <button t-on-click="toggle('componentFlag')">Toggle component</button>
         <div>
-          <Counter t-if="state.widgetFlag" t-transition="fade"/>
+          <Counter t-if="state.componentFlag" t-transition="fade"/>
         </div>
       </div>
 
@@ -173,12 +173,12 @@ const ANIMATION_CSS = `button {
 
 const LIFECYCLE_DEMO = `// This example shows all the possible lifecycle hooks
 //
-// The root widget controls a sub widget (DemoWidget). It logs all its lifecycle
+// The root component controls a sub component (DemoComponent). It logs all its lifecycle
 // methods in the console.  Try modifying its state by clicking on it, or by
 // clicking on the two main buttons, and look into the console to see what
 // happens.
 
-class DemoWidget extends owl.Component {
+class DemoComponent extends owl.Component {
     constructor() {
         super(...arguments);
         this.state = { n: 0 };
@@ -208,14 +208,14 @@ class DemoWidget extends owl.Component {
 }
 
 class App extends owl.Component {
-    widgets = { DemoWidget };
+    components = { DemoComponent };
     state = { n: 0, flag: true };
 
     increment() {
         this.state.n++;
     }
 
-    toggleSubWidget() {
+    toggleSubComponent() {
         this.state.flag = !this.state.flag;
     }
 }
@@ -226,17 +226,17 @@ app.mount(document.body);
 `;
 
 const LIFECYCLE_DEMO_XML = `<templates>
-  <div t-name="DemoWidget" t-on-click="increment" class="demo">
-    <div>Demo Sub Widget</div>
+  <div t-name="DemoComponent" t-on-click="increment" class="demo">
+    <div>Demo Sub Component</div>
     <div>(click on me to update me)</div>
     <div>Props: <t t-esc="props.n"/>, State: <t t-esc="state.n"/>. </div>
   </div>
 
   <div t-name="App">
     <button t-on-click="increment">Increment Parent State</button>
-    <button t-on-click="toggleSubWidget">Toggle SubWidget</button>
+    <button t-on-click="toggleSubComponent">Toggle SubComponent</button>
     <div t-if="state.flag">
-      <DemoWidget n="state.n"/>
+      <DemoComponent n="state.n"/>
     </div>
   </div>
 </templates>`;
@@ -406,7 +406,7 @@ function mapStoreToProps(state) {
 }
 
 class TodoApp extends owl.Component {
-    widgets = { TodoItem };
+    components = { TodoItem };
     state = { filter: "all" };
 
     get visibleTodos() {
@@ -910,7 +910,7 @@ const RESPONSIVE = `// In this example, we show how we can modify keys in the gl
 //
 // The main idea is to have a "isMobile" key in the environment, then listen
 // to resize events and update the env if needed.  Then, the whole interface
-// will be updated, creating and destroying widgets as needed.
+// will be updated, creating and destroying components as needed.
 //
 // To see this in action, try resizing the window.  The application will switch
 // to mobile mode whenever it has less than 768px.
@@ -921,14 +921,14 @@ const RESPONSIVE = `// In this example, we show how we can modify keys in the gl
 class Navbar extends owl.Component {}
 
 class ControlPanel extends owl.Component {
-    widgets = { MobileSearchView };
+    components = { MobileSearchView };
 }
 
 class FormView extends owl.Component {
-    widgets = { AdvancedWidget };
+    components = { AdvancedComponent };
 }
 
-class AdvancedWidget extends owl.Component {}
+class AdvancedComponent extends owl.Component {}
 
 class Chatter extends owl.Component {
     messages = Array.from(Array(100).keys());
@@ -938,7 +938,7 @@ class MobileSearchView extends owl.Component {}
 
 
 class App extends owl.Component {
-    widgets = { Navbar, ControlPanel, FormView, Chatter };
+    components = { Navbar, ControlPanel, FormView, Chatter };
 }
 
 //------------------------------------------------------------------------------
@@ -974,12 +974,12 @@ const RESPONSIVE_XML = `<templates>
 
   <div t-name="ControlPanel" class="controlpanel">
     <h2>Control Panel</h2>
-    <t t-if="env.isMobile" t-widget="MobileSearchView"/>
+    <MobileSearchView t-if="env.isMobile" />
   </div>
 
   <div t-name="FormView" class="formview">
     <h2>Form View</h2>
-    <t t-if="!env.isMobile" t-widget="AdvancedWidget"/>
+    <AdvancedComponent t-if="!env.isMobile" />
   </div>
 
   <div t-name="Chatter" class="chatter">
@@ -989,8 +989,8 @@ const RESPONSIVE_XML = `<templates>
 
   <div t-name="MobileSearchView">Mobile searchview</div>
 
-  <div t-name="AdvancedWidget">
-    This widget is only created in desktop mode.
+  <div t-name="AdvancedComponent">
+    This component is only created in desktop mode.
     <button>Button!</button>
   </div>
 
@@ -1072,7 +1072,7 @@ const RESPONSIVE_CSS = `body {
 const SLOTS = `// We show here how slots can be used to create generic components.
 // In this example, the Card component is basically only a container. It is not
 // aware of its content. It just knows where it should be (with t-slot).
-// The parent widget define the content with t-set.
+// The parent component define the content with t-set.
 //
 // Note that the t-on-click event, defined in the App template, is executed in
 // the context of the App component, even though it is inside the Card component
@@ -1093,9 +1093,9 @@ class Counter extends owl.Component {
     }
 }
 
-// Main root widget
+// Main root component
 class App extends owl.Component {
-    widgets = {Card, Counter};
+    components = {Card, Counter};
     state = {a: 1, b: 3};
 
     inc(key, delta) {
@@ -1188,13 +1188,13 @@ const SLOTS_CSS = `.main {
 
 const ASYNC_COMPONENTS = `// This example will not work if your browser does not support ESNext class fields
 
-// In this example, we have 2 sub widgets, one of them being async (slow).
-// However, we don't want renderings of the other sub widget to be delayed
-// because of the slow widget. We use the 't-asyncroot' directive for this
+// In this example, we have 2 sub components, one of them being async (slow).
+// However, we don't want renderings of the other sub component to be delayed
+// because of the slow component. We use the 't-asyncroot' directive for this
 // purpose. Try removing it to see the difference.
 
 class App extends owl.Component {
-    widgets = {SlowWidget, NotificationList};
+    components = {SlowComponent, NotificationList};
     state = { value: 0, notifs: [] };
 
     increment() {
@@ -1208,9 +1208,9 @@ class App extends owl.Component {
     }
 }
 
-class SlowWidget extends owl.Component {
+class SlowComponent extends owl.Component {
     willUpdateProps() {
-        // simulate a widget that needs to perform async stuff (e.g. an RPC)
+        // simulate a component that needs to perform async stuff (e.g. an RPC)
         // with the updated props before re-rendering itself
         return new Promise(resolve => setTimeout(resolve, 1500));
     }
@@ -1226,11 +1226,11 @@ app.mount(document.body);
 const ASYNC_COMPONENTS_XML = `<templates>
   <div t-name="App" class="app">
     <button t-on-click="increment">Increment</button>
-    <SlowWidget value="state.value"/>
+    <SlowComponent value="state.value"/>
     <NotificationList t-asyncroot="1" notifications="state.notifs"/>
   </div>
 
-  <div t-name="SlowWidget" class="value" >
+  <div t-name="SlowComponent" class="value" >
     Current value: <t t-esc="props.value"/>
   </div>
 

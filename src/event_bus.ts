@@ -29,7 +29,7 @@ export class EventBus {
    * Add a listener for the 'eventType' events.
    *
    * Note that the 'owner' of this event can be anything, but will more likely
-   * be a widget or a class. The idea is that the callback will be called with
+   * be a component or a class. The idea is that the callback will be called with
    * the proper owner bound.
    *
    * Also, the owner should be kind of unique. This will be used to remove the

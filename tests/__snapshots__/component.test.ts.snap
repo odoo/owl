@@ -22,7 +22,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     let c4 = [], p4 = {key:4,attrs:{class: _3}};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
-    //WIDGET
+    //COMPONENT
     let def6;
     let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
     let _5_index = c4.length;
@@ -37,9 +37,9 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         }
     }
     if (!w7) {
-        let widgetKey7 = \`Child\`;
-        let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
-        if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+        let componentKey7 = \`Child\`;
+        let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+        if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
         w7 = new W7(owner, props7);
         context.__owl__.cmap[7] = w7.__owl__.id;
         def6 = w7._prepare();
@@ -49,7 +49,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
     }
     extra.promises.push(def6);
-    //WIDGET
+    //COMPONENT
     let def9;
     let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
     let _8_index = c4.length;
@@ -65,9 +65,9 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         }
     }
     if (!w10) {
-        let widgetKey10 = \`AsyncChild\`;
-        let W10 = context.widgets && context.widgets[widgetKey10] || QWeb.widgets[widgetKey10];
-        if (!W10) {throw new Error('Cannot find the definition of widget \\"' + widgetKey10 + '\\"')}
+        let componentKey10 = \`AsyncChild\`;
+        let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
+        if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
         w10 = new W10(owner, props10);
         context.__owl__.cmap[10] = w10.__owl__.id;
         def9 = w10._prepare();
@@ -103,7 +103,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     let c4 = [], p4 = {key:4,attrs:{class: _3}};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
-    //WIDGET
+    //COMPONENT
     let def6;
     let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
     let _5_index = c4.length;
@@ -119,9 +119,9 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         }
     }
     if (!w7) {
-        let widgetKey7 = \`Child\`;
-        let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
-        if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+        let componentKey7 = \`Child\`;
+        let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+        if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
         w7 = new W7(owner, props7);
         context.__owl__.cmap[7] = w7.__owl__.id;
         def6 = w7._prepare();
@@ -131,7 +131,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
     }
     def6.then(w7._applyPatchQueue.bind(w7, patchQueue7));
-    //WIDGET
+    //COMPONENT
     let def9;
     let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
     let _8_index = c4.length;
@@ -146,9 +146,9 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         }
     }
     if (!w10) {
-        let widgetKey10 = \`AsyncChild\`;
-        let W10 = context.widgets && context.widgets[widgetKey10] || QWeb.widgets[widgetKey10];
-        if (!W10) {throw new Error('Cannot find the definition of widget \\"' + widgetKey10 + '\\"')}
+        let componentKey10 = \`AsyncChild\`;
+        let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
+        if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
         w10 = new W10(owner, props10);
         context.__owl__.cmap[10] = w10.__owl__.id;
         def9 = w10._prepare();
@@ -162,7 +162,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
 }"
 `;
 
-exports[`async rendering t-widget with t-asyncroot directive: mixed re-renderings 1`] = `
+exports[`async rendering t-component with t-asyncroot directive: mixed re-renderings 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -184,7 +184,7 @@ exports[`async rendering t-widget with t-asyncroot directive: mixed re-rendering
     let c4 = [], p4 = {key:4,attrs:{class: _3}};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
-    //WIDGET
+    //COMPONENT
     let def6;
     let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
     let _5_index = c4.length;
@@ -199,9 +199,9 @@ exports[`async rendering t-widget with t-asyncroot directive: mixed re-rendering
         }
     }
     if (!w7) {
-        let widgetKey7 = \`Child\`;
-        let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
-        if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+        let componentKey7 = \`Child\`;
+        let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+        if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
         w7 = new W7(owner, props7);
         context.__owl__.cmap[7] = w7.__owl__.id;
         def6 = w7._prepare();
@@ -211,7 +211,7 @@ exports[`async rendering t-widget with t-asyncroot directive: mixed re-rendering
         def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
     }
     extra.promises.push(def6);
-    //WIDGET
+    //COMPONENT
     let def9;
     let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
     let _8_index = c4.length;
@@ -227,9 +227,9 @@ exports[`async rendering t-widget with t-asyncroot directive: mixed re-rendering
         }
     }
     if (!w10) {
-        let widgetKey10 = \`AsyncChild\`;
-        let W10 = context.widgets && context.widgets[widgetKey10] || QWeb.widgets[widgetKey10];
-        if (!W10) {throw new Error('Cannot find the definition of widget \\"' + widgetKey10 + '\\"')}
+        let componentKey10 = \`AsyncChild\`;
+        let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
+        if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
         w10 = new W10(owner, props10);
         context.__owl__.cmap[10] = w10.__owl__.id;
         def9 = w10._prepare();
@@ -243,7 +243,7 @@ exports[`async rendering t-widget with t-asyncroot directive: mixed re-rendering
 }"
 `;
 
-exports[`class and style attributes with t-widget dynamic t-att-style is properly added and updated on widget root el 1`] = `
+exports[`class and style attributes with t-component dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -252,7 +252,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     const _5 = context['state'].style;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
@@ -268,9 +268,9 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -284,7 +284,7 @@ exports[`class and style attributes with t-widget dynamic t-att-style is properl
 }"
 `;
 
-exports[`class and style attributes with t-widget t-att-class is properly added/removed on widget root el 1`] = `
+exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -293,7 +293,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     const _5 = {a:context['state'].a,b:context['state'].b};
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
@@ -309,9 +309,9 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -329,7 +329,7 @@ exports[`class and style attributes with t-widget t-att-class is properly added/
 }"
 `;
 
-exports[`composition sub widgets with some state rendered in a loop 1`] = `
+exports[`composition sub components with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -353,7 +353,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
         context.number_index = i;
         context.number = _3[i];
         context.number_value = _4[i];
-        //WIDGET
+        //COMPONENT
         let key8 = context['number'];
         let def6;
         let w7 = key8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key8]] : false;
@@ -369,9 +369,9 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
             }
         }
         if (!w7) {
-            let widgetKey7 = \`ChildWidget\`;
-            let W7 = context.widgets && context.widgets[widgetKey7] || QWeb.widgets[widgetKey7];
-            if (!W7) {throw new Error('Cannot find the definition of widget \\"' + widgetKey7 + '\\"')}
+            let componentKey7 = \`ChildWidget\`;
+            let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+            if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(owner, props7);
             context.__owl__.cmap[key8] = w7.__owl__.id;
             def6 = w7._prepare();
@@ -386,7 +386,7 @@ exports[`composition sub widgets with some state rendered in a loop 1`] = `
 }"
 `;
 
-exports[`composition t-widget with dynamic value 1`] = `
+exports[`composition t-component with dynamic value 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -395,7 +395,7 @@ exports[`composition t-widget with dynamic value 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -410,9 +410,9 @@ exports[`composition t-widget with dynamic value 1`] = `
         }
     }
     if (!w4) {
-        let widgetKey4 = (context['state'].widget);
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = (context['state'].widget);
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -426,7 +426,7 @@ exports[`composition t-widget with dynamic value 1`] = `
 }"
 `;
 
-exports[`composition t-widget with dynamic value 2 1`] = `
+exports[`composition t-component with dynamic value 2 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -435,7 +435,7 @@ exports[`composition t-widget with dynamic value 2 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -450,9 +450,9 @@ exports[`composition t-widget with dynamic value 2 1`] = `
         }
     }
     if (!w4) {
-        let widgetKey4 = \`Widget\${context['state'].widget}\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`Widget\${context['state'].widget}\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -466,7 +466,7 @@ exports[`composition t-widget with dynamic value 2 1`] = `
 }"
 `;
 
-exports[`other directives with t-widget t-on with handler bound to argument 1`] = `
+exports[`other directives with t-component t-on with handler bound to argument 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -475,7 +475,7 @@ exports[`other directives with t-widget t-on with handler bound to argument 1`] 
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -490,9 +490,9 @@ exports[`other directives with t-widget t-on with handler bound to argument 1`] 
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -506,7 +506,7 @@ exports[`other directives with t-widget t-on with handler bound to argument 1`] 
 }"
 `;
 
-exports[`other directives with t-widget t-on with handler bound to empty object (with non empty inner string) 1`] = `
+exports[`other directives with t-component t-on with handler bound to empty object (with non empty inner string) 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -515,7 +515,7 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -530,9 +530,9 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -546,7 +546,7 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
 }"
 `;
 
-exports[`other directives with t-widget t-on with handler bound to empty object 1`] = `
+exports[`other directives with t-component t-on with handler bound to empty object 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -555,7 +555,7 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -570,9 +570,9 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -586,7 +586,7 @@ exports[`other directives with t-widget t-on with handler bound to empty object 
 }"
 `;
 
-exports[`other directives with t-widget t-on with handler bound to object 1`] = `
+exports[`other directives with t-component t-on with handler bound to object 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -595,7 +595,7 @@ exports[`other directives with t-widget t-on with handler bound to object 1`] = 
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -610,9 +610,9 @@ exports[`other directives with t-widget t-on with handler bound to object 1`] = 
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -626,7 +626,7 @@ exports[`other directives with t-widget t-on with handler bound to object 1`] = 
 }"
 `;
 
-exports[`other directives with t-widget t-on with prevent and self modifiers (order matters) 1`] = `
+exports[`other directives with t-component t-on with prevent and self modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -635,7 +635,7 @@ exports[`other directives with t-widget t-on with prevent and self modifiers (or
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -650,9 +650,9 @@ exports[`other directives with t-widget t-on with prevent and self modifiers (or
         }
     }
     if (!w4) {
-        let widgetKey4 = \`Child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`Child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -666,7 +666,7 @@ exports[`other directives with t-widget t-on with prevent and self modifiers (or
 }"
 `;
 
-exports[`other directives with t-widget t-on with self and prevent modifiers (order matters) 1`] = `
+exports[`other directives with t-component t-on with self and prevent modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -675,7 +675,7 @@ exports[`other directives with t-widget t-on with self and prevent modifiers (or
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -690,9 +690,9 @@ exports[`other directives with t-widget t-on with self and prevent modifiers (or
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -706,7 +706,7 @@ exports[`other directives with t-widget t-on with self and prevent modifiers (or
 }"
 `;
 
-exports[`other directives with t-widget t-on with self modifier 1`] = `
+exports[`other directives with t-component t-on with self modifier 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -715,7 +715,7 @@ exports[`other directives with t-widget t-on with self modifier 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -730,9 +730,9 @@ exports[`other directives with t-widget t-on with self modifier 1`] = `
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -746,7 +746,7 @@ exports[`other directives with t-widget t-on with self modifier 1`] = `
 }"
 `;
 
-exports[`other directives with t-widget t-on with stop and/or prevent modifiers 1`] = `
+exports[`other directives with t-component t-on with stop and/or prevent modifiers 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.utils;
@@ -755,7 +755,7 @@ exports[`other directives with t-widget t-on with stop and/or prevent modifiers 
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -770,9 +770,9 @@ exports[`other directives with t-widget t-on with stop and/or prevent modifiers 
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -795,7 +795,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let key5 = 'somestring';
     let def3;
     let w4 = key5 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key5]] : false;
@@ -811,9 +811,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         }
     }
     if (!w4) {
-        let widgetKey4 = \`child\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[key5] = w4.__owl__.id;
         def3 = w4._prepare();
@@ -983,7 +983,7 @@ exports[`t-slot directive can define and call slots 1`] = `
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //WIDGET
+    //COMPONENT
     let def3;
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
@@ -998,9 +998,9 @@ exports[`t-slot directive can define and call slots 1`] = `
         }
     }
     if (!w4) {
-        let widgetKey4 = \`Dialog\`;
-        let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
-        if (!W4) {throw new Error('Cannot find the definition of widget \\"' + widgetKey4 + '\\"')}
+        let componentKey4 = \`Dialog\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         w4.__owl__.slotId = 1;

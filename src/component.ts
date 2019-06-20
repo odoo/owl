@@ -42,8 +42,8 @@ export interface Meta<T extends Env, Props> {
   isDestroyed: boolean;
   parent: Component<T, any, any> | null;
   children: { [key: number]: Component<T, any, any> };
-  // children mapping: from templateID to widgetID
-  // should it be a map number => Widget?
+  // children mapping: from templateID to componentID
+  // should it be a map number => Component?
   cmap: { [key: number]: number };
 
   renderId: number;
@@ -62,7 +62,7 @@ export interface Meta<T extends Env, Props> {
 const TEMPLATE_MAP: { [key: number]: { [name: string]: string } } = {};
 
 //------------------------------------------------------------------------------
-// Widget
+// Component
 //------------------------------------------------------------------------------
 let nextId = 1;
 
@@ -71,8 +71,8 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   template?: string;
 
   /**
-   * The `el` is the root element of the widget.  Note that it could be null:
-   * this is the case if the widget is not mounted yet, or is destroyed.
+   * The `el` is the root element of the component.  Note that it could be null:
+   * this is the case if the component is not mounted yet, or is destroyed.
    */
   get el(): HTMLElement | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
@@ -97,21 +97,21 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   /**
    * Creates an instance of Component.
    *
-   * The root widget of a component tree needs an environment:
+   * The root component of a component tree needs an environment:
    *
    * ```javascript
-   *   const root = new RootWidget(env, props);
+   *   const root = new RootComponent(env, props);
    * ```
    *
-   * Every other widget simply needs a reference to its parent:
+   * Every other component simply needs a reference to its parent:
    *
    * ```javascript
-   *   const child = new SomeWidget(parent, props);
+   *   const child = new SomeComponent(parent, props);
    * ```
    *
-   * Note that most of the time, only the root widget needs to be created by
-   * hand.  Other widgets should be created automatically by the framework (with
-   * the t-widget directive in a template)
+   * Note that most of the time, only the root component needs to be created by
+   * hand.  Other components should be created automatically by the framework (with
+   * the t-component directive in a template)
    */
   constructor(parent: Component<T, any, any> | T, props?: Props) {
     const defaultProps = (<any>this.constructor).defaultProps;
@@ -122,9 +122,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       this._validateProps(props || {});
     }
     // is this a good idea?
-    //   Pro: if props is empty, we can create easily a widget
+    //   Pro: if props is empty, we can create easily a component
     //   Con: this is not really safe
-    //   Pro: but creating widget (by a template) is always unsafe anyway
+    //   Pro: but creating component (by a template) is always unsafe anyway
     this.props = <Props>props || <Props>{};
     let id: number = nextId++;
     let p: Component<T, any, any> | null = null;
@@ -157,7 +157,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    *
    * It will be called exactly once before the initial rendering. It is useful
    * in some cases, for example, to load external assets (such as a JS library)
-   * before the widget is rendered.
+   * before the component is rendered.
    *
    * Note that a slow willStart method will slow down the rendering of the user
    * interface.  Therefore, some effort should be made to make this method as
@@ -207,7 +207,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * with the DOM (for example, through an external library) whenever the
    * component was updated.
    *
-   * Updating the widget state in this hook is possible, but not encouraged.
+   * Updating the component state in this hook is possible, but not encouraged.
    * One need to be careful, because updates here will cause rerender, which in
    * turn will cause other calls to updated. So, we need to be particularly
    * careful at avoiding endless cycles.
@@ -284,8 +284,8 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    *  - call the willUnmount hooks if necessary
    *  - remove the dom node from the dom
    *
-   * This should only be called manually if you created the widget.  Most widgets
-   * will be automatically destroyed.
+   * This should only be called manually if you created the component.  Most
+   * components will be automatically destroyed.
    */
   destroy() {
     const __owl__ = this.__owl__;
@@ -308,8 +308,8 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * This method is the correct way to update the environment of a widget. Doing
-   * this will cause a full rerender of the widget and its children, so this is
+   * This method is the correct way to update the environment of a component. Doing
+   * this will cause a full rerender of the component and its children, so this is
    * an operation that should not be done frequently.
    *
    * A good usecase for updating the environment would be to update some mostly
@@ -499,9 +499,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
 
     // this part is critical for the patching process to be done correctly. The
-    // tricky part is that a child widget can be rerendered on its own, which
+    // tricky part is that a child component can be rerendered on its own, which
     // will update its own vnode representation without the knowledge of the
-    // parent widget.  With this, we make sure that the parent widget will be
+    // parent component.  With this, we make sure that the parent component will be
     // able to patch itself properly after
     vnode.key = __owl__.id;
     __owl__.renderProps = this.props;
@@ -510,7 +510,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * Only called by qweb t-widget directive
+   * Only called by qweb t-component directive
    */
   _mount(vnode: VNode, elm: HTMLElement): VNode {
     const __owl__ = this.__owl__;
@@ -522,7 +522,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * Only called by qweb t-widget directive (when t-keepalive is set)
+   * Only called by qweb t-component directive (when t-keepalive is set)
    */
   _remount() {
     const __owl__ = this.__owl__;
@@ -593,7 +593,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       for (let i = 0, l = propsDef.length; i < l; i++) {
         if (!(propsDef[i] in props)) {
           throw new Error(
-            `Missing props '${propsDef[i]}' (widget '${this.constructor.name}')`
+            `Missing props '${propsDef[i]}' (component '${this.constructor.name}')`
           );
         }
       }
@@ -603,7 +603,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
         if (!(propName in props)) {
           if (propsDef[propName] && !propsDef[propName].optional) {
             throw new Error(
-              `Missing props '${propName}' (widget '${this.constructor.name}')`
+              `Missing props '${propName}' (component '${this.constructor.name}')`
             );
           } else {
             break;
@@ -612,7 +612,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
         let isValid = isValidProp(props[propName], propsDef[propName]);
         if (!isValid) {
           throw new Error(
-            `Props '${propName}' of invalid type in widget '${
+            `Props '${propName}' of invalid type in component '${
               this.constructor.name
             }'`
           );

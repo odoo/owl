@@ -272,7 +272,7 @@ QWeb.addDirective({
     let shouldWarn =
       nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
     if (!shouldWarn && node.tagName === "t") {
-      if (node.hasAttribute("t-widget") && !node.hasAttribute("t-key")) {
+      if (node.hasAttribute("t-component") && !node.hasAttribute("t-key")) {
         shouldWarn = true;
       }
       if (

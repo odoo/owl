@@ -4,7 +4,7 @@
 
 - [Overview](#overview)
 - [Example](#example)
-- [Root Widget And Environment](#root-widget-and-environment)
+- [Root Component And Environment](#root-component-and-environment)
 - [Reference](#reference)
   - [Properties](#properties)
   - [Static Properties](#static-properties)
@@ -28,11 +28,11 @@ OWL components are the building blocks for user interface. They are designed to 
 1. **declarative:** the user interface should be described in term of the state
    of the application, not as a sequence of imperative steps.
 
-2. **composable:** each widget can seamlessly be created in a parent widget by
-   a simple directive in its template.
+2. **composable:** each component can seamlessly be created in a parent component by
+   a simple tag or directive in its template.
 
 3. **asynchronous rendering:** the framework will transparently wait for each
-   subwidgets to be ready before applying the rendering. It uses native promises
+   sub components to be ready before applying the rendering. It uses native promises
    under the hood.
 
 4. **uses QWeb as a template system:** the templates are described in XML
@@ -41,7 +41,7 @@ OWL components are the building blocks for user interface. They are designed to 
 OWL components are defined as a subclass of Component. The rendering is
 exclusively done by a [QWeb](qweb.md) template (which needs to be preloaded in QWeb).
 Rendering a component generates a virtual dom representation
-of the widget, which is then patched to the DOM, in order to apply the changes in an efficient way.
+of the component, which is then patched to the DOM, in order to apply the changes in an efficient way.
 
 OWL components observe their states, and rerender themselves whenever it is
 changed. This is done by an [observer](observer.md).
@@ -76,10 +76,10 @@ a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
 
-## Root Widget And Environment
+## Root Component And Environment
 
-Most of the time, Owl widget will be created automatically by the `t-widget`
-directive in a template. There is however an obvious exception: the root widget
+Most of the time, an Owl component will be created automatically by a tag (or the `t-component`
+directive) in a template. There is however an obvious exception: the root component
 of an Owl application has to be created manually:
 
 ```js
@@ -91,7 +91,7 @@ const app = new App(env);
 app.mount(document.body);
 ```
 
-The root widget needs an environment. In Owl, an environment is an object with
+The root component needs an environment. In Owl, an environment is an object with
 a `qweb` key, which has to be a [QWeb](qweb.md) instance. This qweb instance will
 be used to render everything.
 
@@ -102,7 +102,7 @@ easy to test a component.
 
 ## Reference
 
-An Owl component is a small class which represent a widget or some UI element.
+An Owl component is a small class which represent a component or some UI element.
 It exists in the context of an environment (`env`), which is propagated from a
 parent to its children. The environment needs to have a QWeb instance, which
 will be used to render the component template.
@@ -123,7 +123,7 @@ find a template with the component name (or one of its ancestor).
 
 - **`state`** (Object): this is the location of the component's state, if there is
   any. After the willStart method, the `state` property is observed, and each
-  change will cause the widget to rerender itself.
+  change will cause the component to rerender itself.
 
 - **`props`** (Object): this is an object given (in the constructor) by the parent
   to configure the component. It can be dynamically changed later by the parent,
@@ -131,7 +131,7 @@ find a template with the component name (or one of its ancestor).
   As such, it should not ever be modified by the component!!
 
 - **`refs`** (Object): the `refs` object contains all references to sub DOM nodes
-  or sub widgets defined by a `t-ref` directive in the component's template.
+  or sub components defined by a `t-ref` directive in the component's template.
 
 ### Static Properties
 
@@ -163,7 +163,7 @@ find a template with the component name (or one of its ancestor).
   DOM in the same stack frame.
 
 - **`shouldUpdate(nextProps)`**: this method is called each time a component's props
-  are updated. It returns a boolean, which indicates if the widget should
+  are updated. It returns a boolean, which indicates if the component should
   ignore a props update. If it returns false, then `willUpdateProps` will not
   be called, and no rendering will occur. Its default implementation is to
   always return true. This is an optimization, similar to React's `shouldComponentUpdate`. Most of the time, this should not be used, but it
@@ -239,7 +239,7 @@ perform some action before the initial rendering of a component.
 
 It will be called exactly once before the initial rendering. It is useful
 in some cases, for example, to load external assets (such as a JS library)
-before the widget is rendered. Another use case is to load data from a server.
+before the component is rendered. Another use case is to load data from a server.
 
 ```javascript
   async willStart() {
@@ -251,7 +251,7 @@ At this point, the component is not yet rendered. Note that a slow `willStart` m
 interface. Therefore, some care should be made to make this method as
 fast as possible.
 
-The widget rendering will take place after `willStart` is completed.
+The component rendering will take place after `willStart` is completed.
 
 #### `mounted()`
 
@@ -296,8 +296,8 @@ scrollbar.
 
 Note that modifying the state object is not allowed here. This method is called just
 before an actual DOM patch, and is only intended to be used to save some local
-DOM state. Also, it will not be called if the widget is not in the DOM (this can
-happen with widgets with `t-keepalive`).
+DOM state. Also, it will not be called if the component is not in the DOM (this can
+happen with components with `t-keepalive`).
 
 The return value of this method will be given as the first argument of the
 corresponding `patched` call.
@@ -309,12 +309,12 @@ likely via a change in its state/props or environment).
 
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
-component was patched. Note that this hook will not be called if the widget is
-not in the DOM (this can happen with widgets with `t-keepalive`).
+component was patched. Note that this hook will not be called if the compoent is
+not in the DOM (this can happen with components with `t-keepalive`).
 
 The `snapshot` parameter is the result of the previous `willPatch` call.
 
-Updating the widget state in this hook is possible, but not encouraged.
+Updating the compoent state in this hook is possible, but not encouraged.
 One need to be careful, because updates here will cause rerender, which in
 turn will cause other calls to patched. So, we need to be particularly
 careful at avoiding endless cycles.
@@ -342,78 +342,78 @@ components are declared with a tagname corresponding to the class name. It has
 to be capitalized.
 
 ```xml
-<div t-name="ParentWidget">
+<div t-name="ParentComponent">
   <span>some text</span>
-  <MyWidget info="13" />
+  <MyComponent info="13" />
 </div>
 ```
 
 ```js
-class ParentWidget extends owl.Component {
-    widgets = { MyWidget: MyWidget};
+class ParentComponent extends owl.Component {
+    components = { MyComponent: MyComponent};
     ...
 }
 ```
 
-In this example, the `ParentWidget`'s template creates a widget `MyWidget` just
-after the span. The `info` key will be added to the subwidget's `props`. Each
+In this example, the `ParentComponent`'s template creates a component `MyComponent` just
+after the span. The `info` key will be added to the subcomponent's `props`. Each
 `props` is a string which represents a javascript (QWeb) expression, so it is
 dynamic. If it is necessary to give a string, this can be done by quoting it:
 `someString="'somevalue'"`. 
 
-Note that the rendering context for the template is the widget itself. This means
-that the template can access `state`, `props`, `env`, or any methods defined in the widget.
+Note that the rendering context for the template is the component itself. This means
+that the template can access `state`, `props`, `env`, or any methods defined in the component.
 
 
 ```xml
-<div t-name="ParentWidget">
-    <ChildWidget count="state.val" />
+<div t-name="ParentComponent">
+    <ChildComponent count="state.val" />
 </div>
 ```
 
 ```js
-class ParentWidget {
-  widgets = { ChildWidget };
+class ParentComponent {
+  components = { ChildComponent };
   state = { val: 4 };
 }
 ```
 
-Whenever the template is rendered, it will automatically create the subwidget
-`ChildWidget` at the correct place. It needs to find the reference to the
-actual component class in the special `widgets` key, or the class registered in
+Whenever the template is rendered, it will automatically create the subcomponent
+`ChildComponent` at the correct place. It needs to find the reference to the
+actual component class in the special `components` key, or the class registered in
 QWeb's global registry (see `register` function of QWeb). It first looks inside
-the local `widgets` key, then fallbacks on the global registry.
+the local `components` key, then fallbacks on the global registry.
 
-_Props_: In this example, the child widget will receive the object `{count: 4}` in its
+_Props_: In this example, the child component will receive the object `{count: 4}` in its
 constructor. This will be assigned to the `props` variable, which can be accessed
-on the widget (and also, in the template). Whenever the state is updated, then
-the subwidget will also be updated automatically.
+on the component (and also, in the template). Whenever the state is updated, then
+the sub component will also be updated automatically.
 
 Note that there are some restrictions on prop names: `class`, `style` and any
 string which starts with `t-` are not allowed.
 
-The `t-widget` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
+The `t-component` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
 
 ```xml
-<div t-name="ParentWidget">
-    <t t-widget="ChildWidget{{id}}" />
+<div t-name="ParentComponent">
+    <t t-component="ChildComponent{{id}}" />
 </div>
 ```
 
 ```js
-class ParentWidget {
-  widgets = { ChildWidget1, ChildWidget2 };
+class ParentComponent {
+  components = { ChildComponent1, ChildComponent2 };
   state = { id: 1 };
 }
 ```
 
 **CSS and style:** there is some specific support to allow the parent to declare
-additional css classes or style for the sub widget: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
-root widget element.
+additional css classes or style for the sub component: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
+root component element.
 
 ```xml
-<div t-name="ParentWidget">
-  <MyWidget class="someClass" style="font-weight:bold;" info="13" />
+<div t-name="ParentComponent">
+  <MyComponent class="someClass" style="font-weight:bold;" info="13" />
 </div>
 ```
 
@@ -425,7 +425,7 @@ class that need to be removed. This is why we only support the explicit syntax
 with a class object:
 
 ```xml
-<MyWidget t-att-class="{a: state.flagA, b: state.flagB}" />
+<MyComponent t-att-class="{a: state.flagA, b: state.flagB}" />
 ```
 
 ### Event Handling
@@ -448,7 +448,7 @@ A _pure_ DOM event is directly triggered by a user interaction (e.g. a `click`).
 This will be roughly translated in javascript like this:
 
 ```js
-button.addEventListener("click", widget.someMethod.bind(widget));
+button.addEventListener("click", component.someMethod.bind(component));
 ```
 
 The suffix (`click` in this example) is simply the name of the actual DOM
@@ -457,11 +457,11 @@ event.
 A _business_ DOM event is triggered by a call to `trigger` on a component.
 
 ```xml
-<MyWidget t-on-menu-loaded="someMethod" />
+<MyComponent t-on-menu-loaded="someMethod" />
 ```
 
 ```js
- class MyWidget {
+ class MyComponent {
      someWhere() {
          const payload = ...;
          this.trigger('menu-loaded', payload);
@@ -471,12 +471,12 @@ A _business_ DOM event is triggered by a call to `trigger` on a component.
 
 The call to `trigger` generates a [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
 of type `menu-loaded` and dispatches it on the component's DOM element
-(`this.el`). The event bubbles and is cancelable. The parent widget listening
+(`this.el`). The event bubbles and is cancelable. The parent component listening
 to event `menu-loaded` will receive the payload in its `someMethod` handler
 (in the `detail` property of the event), whenever the event is triggered.
 
 ```js
- class ParentWidget {
+ class ParentComponent {
      someMethod(ev) {
          const payload = ev.detail;
          ...
@@ -640,7 +640,7 @@ is inserted into the DOM.
 ```
 
 ```js
-class MyWidget extends owl.Component {
+class MyComponent extends owl.Component {
     ...
     focusMe() {
         this.refs.someInput.focus();
@@ -671,27 +671,27 @@ component (with some code like `app.mount(document.body)`).
 
 2. when it is done, template `A` is rendered.
 
-   - widget `B` is created
+   - component `B` is created
      1. `willStart` is called on `B`
      2. template `B` is rendered
-   - widget `C` is created
+   - component `C` is created
      1. `willStart` is called on `C`
      2. template `C` is rendered
-        - widget `D` is created
+        - component `D` is created
           1. `willStart` is called on `D`
           2. template `D` is rendered
-        - widget `E` is created
+        - component `E` is created
           1. `willStart` is called on `E`
           2. template `E` is rendered
 
-3. widget `A` is patched into a detached DOM element. This will create the actual
-   widget `A` DOM structure. The patching process will cause recursively the
+3. component `A` is patched into a detached DOM element. This will create the actual
+   component `A` DOM structure. The patching process will cause recursively the
    patching of the `B`, `C`, `D` and `E` DOM trees. (so the actual full DOM tree is created
    in one pass)
 
-4. the widget `A` root element is actually appended to `document.body`
+4. the component `A` root element is actually appended to `document.body`
 
-5. The method `mounted` is called recursively on all widgets in the following
+5. The method `mounted` is called recursively on all components in the following
    order: `B`, `D`, `E`, `C`, `A`.
 
 **Scenario 2: rerendering a component**. Now, let's assume that the user clicked on some
@@ -699,7 +699,7 @@ button in `C`, and this results in a state update, which is supposed to:
 
 - update `D`,
 - remove `E`,
-- add new widget `F`.
+- add new component `F`.
 
 So, the component tree should look like this:
 
@@ -716,17 +716,17 @@ Here is what Owl will do:
 1. because of a state change, the method `render` is called on `C`
 2. template `C` is rendered again
 
-   - widget `D` is updated:
+   - component `D` is updated:
      1. hook `willUpdateProps` is called on `D` (async)
      2. template `D` is rerendered
-   - widget `F` is created:
+   - component `F` is created:
      1. hook `willStart` is called on `E` (async)
      2. template `F` is rendered
 
-3. `willPatch` hooks are called recursively on widgets `C`, `D` (not on `F`,
+3. `willPatch` hooks are called recursively on components `C`, `D` (not on `F`,
    because it is not mounted yet)
 
-4. widget `C` is patched, which will cause recursively:
+4. component `C` is patched, which will cause recursively:
 
    2. `willUnmount` hook on `E`, then destruction of `E`,
    3. (initial) patching of `F`, then hook `mounted` is called on `F`
@@ -830,42 +830,42 @@ Like the `t-on` directive, it can work either on a DOM node, or on a component:
 ```xml
 <div>
     <div t-ref="someDiv"/>
-    <SubWidget t-ref="someWidget"/>
+    <SubComponent t-ref="someComponent"/>
 </div>
 ```
 
-In this example, the widget will be able to access the `div` and the component
+In this example, the component will be able to access the `div` and the component
 inside the special `refs` variable:
 
 ```js
 this.refs.someDiv;
-this.refs.someWidget;
+this.refs.someComponent;
 ```
 
 This is useful for various usecases: for example, integrating with an external
 library that needs to render itself inside an actual DOM node. Or for calling
-some method on a sub widget.
+some method on a sub component.
 
 Note: if used on a component, the reference will be set in the `refs`
 variable between `willPatch` and `patched`.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
 (like the [`t-attf-`](qweb.md#dynamic-attributes) and
-`t-widget` directives). For example, if we have
+`t-component` directives). For example, if we have
 `id` set to 44 in the rendering context,
 
 ```xml
-<div t-ref="widget_{{id}}"/>
+<div t-ref="component_{{id}}"/>
 ```
 
 ```js
-this.refs.widget_44;
+this.refs.component_44;
 ```
 
 ### Slots
 
-To make generic components, it is useful to be able for a parent widget to _inject_
-some sub template, but still be the owner. For example, a generic dialog widget
+To make generic components, it is useful to be able for a parent component to _inject_
+some sub template, but still be the owner. For example, a generic dialog component
 will need to render some content, some footer, but with the parent as the
 rendering context.
 
@@ -886,8 +886,8 @@ This is what _slots_ are for.
 Slots are defined by the caller, with the `t-set` directive:
 
 ```xml
-<div t-name="SomeWidget">
-  <div>some widget</div>
+<div t-name="SomeComponent">
+  <div>some component</div>
   <Dialog title="Some Dialog">
     <t t-set="content">
       <div>hey</div>
@@ -899,7 +899,7 @@ Slots are defined by the caller, with the `t-set` directive:
 </div>
 ```
 
-In this example, the widget `Dialog` will render the slots `content` and `footer`
+In this example, the component `Dialog` will render the slots `content` and `footer`
 with its parent as rendering context. This means that clicking on the button
 will execute the `doSomething` method on the parent, not on the dialog.
 
@@ -922,7 +922,7 @@ is not allowed. A workaround could be to wrap the content in a div:
 </div>
 ```
 
-Default slot: the first element inside the widget which is not a named slot will
+Default slot: the first element inside the component which is not a named slot will
 be considered the `default` slot. For example:
 
 ```xml
@@ -946,23 +946,23 @@ components.
 
 There are two different common problems with Owl asynchronous rendering model:
 
-- any widget can delay the rendering (initial and subsequent) of the whole
+- any component can delay the rendering (initial and subsequent) of the whole
   application
-- for a given widget, there are two independant situations that will trigger an
+- for a given component, there are two independant situations that will trigger an
   asynchronous rerendering: a change in the state, or a change in the props.
   These changes may be done at different times, and Owl has no way of knowing
   how to reconcile the resulting renderings.
 
-Here are a few tips on how to work with asynchronous widgets:
+Here are a few tips on how to work with asynchronous components:
 
-1. Minimize the use of asynchronous widgets!
+1. Minimize the use of asynchronous components!
 2. Maybe move the asynchronous logic in a store, which then triggers (mostly)
    synchronous renderings
 3. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
    second, and only once (see `owl.utils.loadJS`)
 4. For all the other cases, the `t-asyncroot` directive (to use alongside
-   `t-widget`) is there to help you. When this directive is met, a new rendering
+   `t-component`) is there to help you. When this directive is met, a new rendering
    sub tree is created, such that the rendering of that component (and its
    children) is not tied to the rendering of the rest of the interface. It can
    be used on an asynchronous component, to prevent it from delaying the
@@ -972,7 +972,7 @@ Here are a few tips on how to work with asynchronous widgets:
    (triggered by state or props changes).
 
    ```xml
-   <div t-name="ParentWidget">
+   <div t-name="ParentComponent">
      <SyncChild />
      <AsyncChild t-asyncroot="1"/>
    </div>

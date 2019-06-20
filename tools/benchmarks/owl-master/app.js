@@ -20,7 +20,7 @@ class Counter extends owl.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.Component {
-  widgets = { Counter };
+  components = { Counter };
 
   shouldUpdate(nextProps) {
     return nextProps.message !== this.props.message;
@@ -36,7 +36,7 @@ class Message extends owl.Component {
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  widgets = { Message };
+  components = { Message };
   state = { messages: [], multipleFlag: false, clearAfterFlag: false };
 
   mounted() {

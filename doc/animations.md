@@ -87,7 +87,7 @@ For example, a simple fade in/out effect can be done with this:
 }
 ```
 
-The `t-transition` directive can be combined with `t-widget`.
+The `t-transition` directive can be applied on a node element or on a component.
 
 Notes:
 

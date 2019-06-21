@@ -161,7 +161,7 @@ class App extends owl.Component {
     super(...args);
     this.version = owl.__info__.version;
     this.SAMPLES = SAMPLES;
-    this.widgets = { TabbedEditor };
+    this.components = { TabbedEditor };
 
     this.state = {
       js: SAMPLES[0].code,

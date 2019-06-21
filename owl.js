@@ -1118,7 +1118,7 @@
             // use case is that component's templates are qweb dependant, and need to be
             // able to map a qweb instance to a template name.
             this.id = nextID++;
-            // slots contains sub templates defined with t-set inside t-widget nodes, and
+            // slots contains sub templates defined with t-set inside t-component nodes, and
             // are meant to be used by the t-slot directive.
             this.slots = {};
             this.nextSlotId = 1;
@@ -1135,10 +1135,10 @@
             }
         }
         static register(name, Component) {
-            if (QWeb.widgets[name]) {
+            if (QWeb.components[name]) {
                 throw new Error(`Component '${name}' has already been registered`);
             }
-            QWeb.widgets[name] = Component;
+            QWeb.components[name] = Component;
         }
         /**
          * Add a template to the internal template map.  Note that it is not
@@ -1300,8 +1300,8 @@
             const firstLetter = node.tagName[0];
             if (firstLetter === firstLetter.toUpperCase()) {
                 // this is a component, we modify in place the xml document to change
-                // <SomeComponent ... /> to <t t-widget="SomeComponent" ... />
-                node.setAttribute('t-widget', node.tagName);
+                // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
+                node.setAttribute('t-component', node.tagName);
                 node.nodeValue = 't';
             }
             const attributes = node.attributes;
@@ -1537,7 +1537,7 @@
             }
         }
     }
-    QWeb.widgets = Object.create(null);
+    QWeb.components = Object.create(null);
     // dev mode enables better error messages or more costly validations
     QWeb.dev = false;
     //------------------------------------------------------------------------------
@@ -1640,7 +1640,7 @@
     // qweb instances.
     const TEMPLATE_MAP = {};
     //------------------------------------------------------------------------------
-    // Widget
+    // Component
     //------------------------------------------------------------------------------
     let nextId = 1;
     class Component {
@@ -1650,21 +1650,21 @@
         /**
          * Creates an instance of Component.
          *
-         * The root widget of a component tree needs an environment:
+         * The root component of a component tree needs an environment:
          *
          * ```javascript
-         *   const root = new RootWidget(env, props);
+         *   const root = new RootComponent(env, props);
          * ```
          *
-         * Every other widget simply needs a reference to its parent:
+         * Every other component simply needs a reference to its parent:
          *
          * ```javascript
-         *   const child = new SomeWidget(parent, props);
+         *   const child = new SomeComponent(parent, props);
          * ```
          *
-         * Note that most of the time, only the root widget needs to be created by
-         * hand.  Other widgets should be created automatically by the framework (with
-         * the t-widget directive in a template)
+         * Note that most of the time, only the root component needs to be created by
+         * hand.  Other components should be created automatically by the framework (with
+         * the t-component directive in a template)
          */
         constructor(parent, props) {
             this.refs = {};
@@ -1676,9 +1676,9 @@
                 this._validateProps(props || {});
             }
             // is this a good idea?
-            //   Pro: if props is empty, we can create easily a widget
+            //   Pro: if props is empty, we can create easily a component
             //   Con: this is not really safe
-            //   Pro: but creating widget (by a template) is always unsafe anyway
+            //   Pro: but creating component (by a template) is always unsafe anyway
             this.props = props || {};
             let id = nextId++;
             let p = null;
@@ -1706,8 +1706,8 @@
             };
         }
         /**
-         * The `el` is the root element of the widget.  Note that it could be null:
-         * this is the case if the widget is not mounted yet, or is destroyed.
+         * The `el` is the root element of the component.  Note that it could be null:
+         * this is the case if the component is not mounted yet, or is destroyed.
          */
         get el() {
             return this.__owl__.vnode ? this.__owl__.vnode.elm : null;
@@ -1718,7 +1718,7 @@
          *
          * It will be called exactly once before the initial rendering. It is useful
          * in some cases, for example, to load external assets (such as a JS library)
-         * before the widget is rendered.
+         * before the component is rendered.
          *
          * Note that a slow willStart method will slow down the rendering of the user
          * interface.  Therefore, some effort should be made to make this method as
@@ -1764,7 +1764,7 @@
          * with the DOM (for example, through an external library) whenever the
          * component was updated.
          *
-         * Updating the widget state in this hook is possible, but not encouraged.
+         * Updating the component state in this hook is possible, but not encouraged.
          * One need to be careful, because updates here will cause rerender, which in
          * turn will cause other calls to updated. So, we need to be particularly
          * careful at avoiding endless cycles.
@@ -1833,8 +1833,8 @@
          *  - call the willUnmount hooks if necessary
          *  - remove the dom node from the dom
          *
-         * This should only be called manually if you created the widget.  Most widgets
-         * will be automatically destroyed.
+         * This should only be called manually if you created the component.  Most
+         * components will be automatically destroyed.
          */
         destroy() {
             const __owl__ = this.__owl__;
@@ -1855,8 +1855,8 @@
             return true;
         }
         /**
-         * This method is the correct way to update the environment of a widget. Doing
-         * this will cause a full rerender of the widget and its children, so this is
+         * This method is the correct way to update the environment of a component. Doing
+         * this will cause a full rerender of the component and its children, so this is
          * an operation that should not be done frequently.
          *
          * A good usecase for updating the environment would be to update some mostly
@@ -2027,9 +2027,9 @@
                 __owl__.observer.allowMutations = true;
             }
             // this part is critical for the patching process to be done correctly. The
-            // tricky part is that a child widget can be rerendered on its own, which
+            // tricky part is that a child component can be rerendered on its own, which
             // will update its own vnode representation without the knowledge of the
-            // parent widget.  With this, we make sure that the parent widget will be
+            // parent component.  With this, we make sure that the parent component will be
             // able to patch itself properly after
             vnode.key = __owl__.id;
             __owl__.renderProps = this.props;
@@ -2037,7 +2037,7 @@
             return __owl__.renderPromise;
         }
         /**
-         * Only called by qweb t-widget directive
+         * Only called by qweb t-component directive
          */
         _mount(vnode, elm) {
             const __owl__ = this.__owl__;
@@ -2048,7 +2048,7 @@
             return __owl__.vnode;
         }
         /**
-         * Only called by qweb t-widget directive (when t-keepalive is set)
+         * Only called by qweb t-component directive (when t-keepalive is set)
          */
         _remount() {
             const __owl__ = this.__owl__;
@@ -2114,7 +2114,7 @@
                 // list of strings (prop names)
                 for (let i = 0, l = propsDef.length; i < l; i++) {
                     if (!(propsDef[i] in props)) {
-                        throw new Error(`Missing props '${propsDef[i]}' (widget '${this.constructor.name}')`);
+                        throw new Error(`Missing props '${propsDef[i]}' (component '${this.constructor.name}')`);
                     }
                 }
             }
@@ -2123,7 +2123,7 @@
                 for (let propName in propsDef) {
                     if (!(propName in props)) {
                         if (propsDef[propName] && !propsDef[propName].optional) {
-                            throw new Error(`Missing props '${propName}' (widget '${this.constructor.name}')`);
+                            throw new Error(`Missing props '${propName}' (component '${this.constructor.name}')`);
                         }
                         else {
                             break;
@@ -2131,7 +2131,7 @@
                     }
                     let isValid = isValidProp(props[propName], propsDef[propName]);
                     if (!isValid) {
-                        throw new Error(`Props '${propName}' of invalid type in widget '${this.constructor.name}'`);
+                        throw new Error(`Props '${propName}' of invalid type in component '${this.constructor.name}'`);
                     }
                 }
             }
@@ -2199,7 +2199,7 @@
          * Add a listener for the 'eventType' events.
          *
          * Note that the 'owner' of this event can be anything, but will more likely
-         * be a widget or a class. The idea is that the callback will be called with
+         * be a component or a class. The idea is that the callback will be called with
          * the proper owner bound.
          *
          * Also, the owner should be kind of unique. This will be used to remove the
@@ -2497,7 +2497,7 @@
             const nodeCopy = node.cloneNode(true);
             let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
             if (!shouldWarn && node.tagName === "t") {
-                if (node.hasAttribute("t-widget") && !node.hasAttribute("t-key")) {
+                if (node.hasAttribute("t-component") && !node.hasAttribute("t-key")) {
                     shouldWarn = true;
                 }
                 if (!shouldWarn &&
@@ -2548,7 +2548,7 @@
      * - t-on
      * - t-ref
      * - t-transition
-     * - t-widget/t-keepalive
+     * - t-component/t-keepalive
      * - t-mounted
      * - t-slot
      * - t-model
@@ -2703,19 +2703,19 @@
         }
     });
     //------------------------------------------------------------------------------
-    // t-widget
+    // t-component
     //------------------------------------------------------------------------------
-    const T_WIDGET_MODS_CODE = Object.assign({}, MODS_CODE, {
+    const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
         self: "if (e.target !== vn.elm) {return}"
     });
     /**
-     * The t-widget directive is certainly a complicated and hard to maintain piece
+     * The t-component directive is certainly a complicated and hard to maintain piece
      * of code.  To help you, fellow developer, if you have to maintain it, I offer
      * you this advice: Good luck...
      *
      * Since it is not 'direct' code, but rather code that generates other code, it
      * is not easy to understand.  To help you, here  is a detailed and commented
-     * explanation of the code generated by the t-widget directive for the following
+     * explanation of the code generated by the t-component directive for the following
      * situation:
      * ```xml
      *   <Child
@@ -2726,23 +2726,23 @@
      *
      * ```js
      * // we assign utils on top of the function because it will be useful for
-     * // each widgets
+     * // each components
      * let utils = this.utils;
      *
      * // this is the virtual node representing the parent div
      * let c1 = [], p1 = { key: 1 };
      * var vn1 = h("div", p1, c1);
      *
-     * // t-widget directive: we start by evaluating the expression given by t-key:
+     * // t-component directive: we start by evaluating the expression given by t-key:
      * let key5 = "somestring";
      *
-     * // def3 is the promise that will contain later either the new widget
+     * // def3 is the promise that will contain later either the new component
      * // creation, or the props update...
      * let def3;
      *
-     * // this is kind of tricky: we need here to find if the widget was already
+     * // this is kind of tricky: we need here to find if the component was already
      * // created by a previous rendering.  This is done by checking the internal
-     * // `cmap` (children map) of the parent widget: it maps keys to widget ids,
+     * // `cmap` (children map) of the parent component: it maps keys to component ids,
      * // and, then, if there is an id, we look into the children list to get the
      * // instance
      * let w4 =
@@ -2750,9 +2750,9 @@
      *   ? context.__owl__.children[context.__owl__.cmap[key5]]
      *   : false;
      *
-     * // We keep the index of the position of the widget in the closure.  We push
-     * // null to reserve the slot, and will replace it later by the widget vnode,
-     * // when it will be ready (do not forget that preparing/rendering a widget is
+     * // We keep the index of the position of the component in the closure.  We push
+     * // null to reserve the slot, and will replace it later by the component vnode,
+     * // when it will be ready (do not forget that preparing/rendering a component is
      * // asynchronous)
      * let _2_index = c1.length;
      * c1.push(null);
@@ -2762,7 +2762,7 @@
      * // computation, so it is certainly better to do it only once
      * let props4 = { flag: context["state"].flag };
      *
-     * // If we have a widget, currently rendering, but not ready yet, we do not want
+     * // If we have a component, currently rendering, but not ready yet, we do not want
      * // to wait for it to be ready if we can avoid it
      * if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
      *   // we check if the props are the same.  In that case, we can simply reuse
@@ -2770,7 +2770,7 @@
      *   if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
      *     def3 = w4.__owl__.renderPromise;
      *   } else {
-     *     // if the props are not the same, we destroy the widget and starts anew.
+     *     // if the props are not the same, we destroy the component and starts anew.
      *     // this will be faster than waiting for its rendering, then updating it
      *     w4.destroy();
      *     w4 = false;
@@ -2778,29 +2778,29 @@
      * }
      *
      * if (!w4) {
-     *   // in this situation, we need to create a new widget.  First step is
+     *   // in this situation, we need to create a new component.  First step is
      *   // to get a reference to the class, then create an instance with
      *   // current context as parent, and the props.
-     *   let W4 = context.widgets && context.widgets[widgetKey4] || QWeb.widgets[widgetKey4];
+     *   let W4 = context.component && context.components[componentKey4] || QWeb.component[componentKey4];
 
      *   if (!W4) {
-     *     throw new Error("Cannot find the definition of widget 'child'");
+     *     throw new Error("Cannot find the definition of component 'child'");
      *   }
      *   w4 = new W4(owner, props4);
      *
-     *   // Whenever we rerender the parent widget, we need to be sure that we
-     *   // are able to find the widget instance. To do that, we register it to
+     *   // Whenever we rerender the parent component, we need to be sure that we
+     *   // are able to find the component instance. To do that, we register it to
      *   // the parent cmap (children map).  Note that the 'template' key is
-     *   // used here, since this is what identify the widget from the template
+     *   // used here, since this is what identify the component from the template
      *   // perspective.
      *   context.__owl__.cmap[key5] = w4.__owl__.id;
      *
      *   // _prepare is called, to basically call willStart, then render the
-     *   // widget
+     *   // component
      *   def3 = w4._prepare();
      *
      *   def3 = def3.then(vnode => {
-     *     // we create here a virtual node for the parent (NOT the widget). This
+     *     // we create here a virtual node for the parent (NOT the component). This
      *     // means that the vdom of the parent will be stopped here, and from
      *     // the parent's perspective, it simply is a vnode with no children.
      *     // However, it shares the same dom element with the component root
@@ -2808,16 +2808,16 @@
      *     let pvnode = h(vnode.sel, { key: key5 });
      *
      *     // we add hooks to the parent vnode so we can interact with the new
-     *     // widget at the proper time
+     *     // component at the proper time
      *     pvnode.data.hook = {
      *       insert(vn) {
-     *         // the _mount method will patch the widget vdom into the elm vn.elm,
+     *         // the _mount method will patch the component vdom into the elm vn.elm,
      *         // then call the mounted hooks. However, suprisingly, the snabbdom
      *         // patch method actually replace the elm by a new elm, so we need
      *         // to synchronise the pvnode elm with the resulting elm
      *         let nvn = w4._mount(vnode, vn.elm);
      *         pvnode.elm = nvn.elm;
-     *         // what follows is only present if there are animations on the widget
+     *         // what follows is only present if there are animations on the component
      *         utils.transitionInsert(vn, "fade");
      *       },
      *       remove() {
@@ -2827,7 +2827,7 @@
      *       },
      *       destroy() {
      *         // if there are animations, we delay the call to destroy on the
-     *         // widget, if not, we call it directly.
+     *         // component, if not, we call it directly.
      *         let finalize = () => {
      *           w4.destroy();
      *         };
@@ -2838,19 +2838,19 @@
      *     c1[_2_index] = pvnode;
      *
      *     // we keep here a reference to the parent vnode (representing the
-     *     // widget, so we can reuse it later whenever we update the widget
+     *     // component, so we can reuse it later whenever we update the component
      *     w4.__owl__.pvnode = pvnode;
      *   });
      * } else {
      *   // this is the 'update' path of the directive.
-     *   // the call to _updateProps is the actual widget update
+     *   // the call to _updateProps is the actual component update
      *   // Note that we only update the props if we cannot reuse the previous
      *   // rendering work (in the case it was rendered with the same props)
      *   def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
      *   def3 = def3.then(() => {
-     *     // if widget was destroyed in the meantime, we do nothing (so, this
+     *     // if component was destroyed in the meantime, we do nothing (so, this
      *     // means that the parent's element children list will have a null in
-     *     // the widget's position, which will cause the pvnode to be removed
+     *     // the component's position, which will cause the pvnode to be removed
      *     // when it is patched.
      *     if (w4.__owl__.isDestroyed) {
      *       return;
@@ -2869,11 +2869,11 @@
      * ```
      */
     QWeb.addDirective({
-        name: "widget",
+        name: "component",
         extraNames: ["props", "keepalive", "asyncroot"],
         priority: 100,
         atNodeEncounter({ ctx, value, node, qweb }) {
-            ctx.addLine("//WIDGET");
+            ctx.addLine("//COMPONENT");
             ctx.rootContext.shouldDefineOwner = true;
             ctx.rootContext.shouldDefineQWeb = true;
             ctx.rootContext.shouldDefineUtils = true;
@@ -2916,7 +2916,7 @@
                 .join(",");
             let dummyID = ctx.generateID();
             let defID = ctx.generateID();
-            let widgetID = ctx.generateID();
+            let componentID = ctx.generateID();
             let keyID = key && ctx.generateID();
             if (key) {
                 // we bind a variable to the key (could be a complex expression, so we
@@ -2927,27 +2927,27 @@
             let templateID = key
                 ? `key${keyID}`
                 : ctx.inLoop
-                    ? `String(-${widgetID} - i)`
-                    : String(widgetID);
+                    ? `String(-${componentID} - i)`
+                    : String(componentID);
             let ref = node.getAttribute("t-ref");
             let refExpr = "";
             let refKey = "";
             if (ref) {
                 refKey = `ref${ctx.generateID()}`;
                 ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
-                refExpr = `context.refs[${refKey}] = w${widgetID};`;
+                refExpr = `context.refs[${refKey}] = w${componentID};`;
             }
             let transitionsInsertCode = "";
             if (transition) {
                 transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
             }
-            let finalizeWidgetCode = `w${widgetID}.${keepAlive ? "unmount" : "destroy"}();`;
+            let finalizeComponentCode = `w${componentID}.${keepAlive ? "unmount" : "destroy"}();`;
             if (ref && !keepAlive) {
-                finalizeWidgetCode += `delete context.refs[${refKey}];`;
+                finalizeComponentCode += `delete context.refs[${refKey}];`;
             }
             if (transition) {
-                finalizeWidgetCode = `let finalize = () => {
-          ${finalizeWidgetCode}
+                finalizeComponentCode = `let finalize = () => {
+          ${finalizeComponentCode}
         };
         utils.transitionRemove(vn, '${transition}', finalize);`;
             }
@@ -2979,19 +2979,30 @@
                   vn.elm.classList.add(k);
               }
           }`;
-                    updateClassCode = `let cl=w${widgetID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
+                    updateClassCode = `let cl=w${componentID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
                 }
                 let eventsCode = events
                     .map(function ([eventName, mods, handlerName, extraArgs]) {
-                    let params = extraArgs
-                        ? `owner, ${ctx.formatExpression(extraArgs)}`
-                        : "owner";
+                    let params = "owner";
+                    if (extraArgs) {
+                        if (ctx.inLoop) {
+                            let argId = ctx.generateID();
+                            // we need to evaluate the arguments now, because the handler will
+                            // be set asynchronously later when the widget is ready, and the
+                            // context might be different.
+                            ctx.addLine(`let arg${argId} = ${ctx.formatExpression(extraArgs)};`);
+                            params = `owner, arg${argId}`;
+                        }
+                        else {
+                            params = `owner, ${ctx.formatExpression(extraArgs)}`;
+                        }
+                    }
                     let handler;
                     if (mods.length > 0) {
                         handler = `function (e) {`;
                         handler += mods
                             .map(function (mod) {
-                            return T_WIDGET_MODS_CODE[mod];
+                            return T_COMPONENT_MODS_CODE[mod];
                         })
                             .join("");
                         handler += `owner['${handlerName}'].call(${params}, e);}`;
@@ -3006,38 +3017,38 @@
                 const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
                 createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}${eventsCode}}};`;
             }
-            ctx.addLine(`let w${widgetID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
+            ctx.addLine(`let w${componentID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
             ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
             if (async) {
-                ctx.addLine(`const patchQueue${widgetID} = [];`);
-                ctx.addLine(`c${ctx.parentNode}.push(w${widgetID} && w${widgetID}.__owl__.pvnode || null);`);
+                ctx.addLine(`const patchQueue${componentID} = [];`);
+                ctx.addLine(`c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`);
             }
             else {
                 ctx.addLine(`c${ctx.parentNode}.push(null);`);
             }
-            ctx.addLine(`let props${widgetID} = {${propStr}};`);
-            ctx.addIf(`w${widgetID} && w${widgetID}.__owl__.renderPromise && !w${widgetID}.__owl__.vnode`);
-            ctx.addIf(`utils.shallowEqual(props${widgetID}, w${widgetID}.__owl__.renderProps)`);
-            ctx.addLine(`def${defID} = w${widgetID}.__owl__.renderPromise;`);
+            ctx.addLine(`let props${componentID} = {${propStr}};`);
+            ctx.addIf(`w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`);
+            ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`);
+            ctx.addLine(`def${defID} = w${componentID}.__owl__.renderPromise;`);
             ctx.addElse();
-            ctx.addLine(`w${widgetID}.destroy();`);
-            ctx.addLine(`w${widgetID} = false;`);
+            ctx.addLine(`w${componentID}.destroy();`);
+            ctx.addLine(`w${componentID} = false;`);
             ctx.closeIf();
             ctx.closeIf();
-            ctx.addIf(`!w${widgetID}`);
-            // new widget
-            ctx.addLine(`let widgetKey${widgetID} = ${ctx.interpolate(value)};`);
-            ctx.addLine(`let W${widgetID} = context.widgets && context.widgets[widgetKey${widgetID}] || QWeb.widgets[widgetKey${widgetID}];`);
+            ctx.addIf(`!w${componentID}`);
+            // new component
+            ctx.addLine(`let componentKey${componentID} = ${ctx.interpolate(value)};`);
+            ctx.addLine(`let W${componentID} = context.components && context.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`);
             // maybe only do this in dev mode...
-            ctx.addLine(`if (!W${widgetID}) {throw new Error('Cannot find the definition of widget "' + widgetKey${widgetID} + '"')}`);
-            ctx.addLine(`w${widgetID} = new W${widgetID}(owner, props${widgetID});`);
-            ctx.addLine(`context.__owl__.cmap[${templateID}] = w${widgetID}.__owl__.id;`);
+            ctx.addLine(`if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`);
+            ctx.addLine(`w${componentID} = new W${componentID}(owner, props${componentID});`);
+            ctx.addLine(`context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
             // SLOTS
             if (node.childElementCount) {
                 const clone = node.cloneNode(true);
                 const slotNodes = clone.querySelectorAll("[t-set]");
                 const slotId = qweb.nextSlotId++;
-                ctx.addLine(`w${widgetID}.__owl__.slotId = ${slotId};`);
+                ctx.addLine(`w${componentID}.__owl__.slotId = ${slotId};`);
                 if (slotNodes.length) {
                     for (let i = 0, length = slotNodes.length; i < length; i++) {
                         const slotNode = slotNodes[i];
@@ -3054,21 +3065,23 @@
                     qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
                 }
             }
-            ctx.addLine(`def${defID} = w${widgetID}._prepare();`);
+            ctx.addLine(`def${defID} = w${componentID}._prepare();`);
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${widgetID}._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeWidgetCode}}}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;w${widgetID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;w${componentID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
-            // need to update widget
-            const patchQueueCode = async ? `patchQueue${widgetID}` : "extra.patchQueue";
-            ctx.addLine(`def${defID} = def${defID} || w${widgetID}._updateProps(props${widgetID}, extra.forceUpdate, ${patchQueueCode});`);
+            // need to update component
+            const patchQueueCode = async
+                ? `patchQueue${componentID}`
+                : "extra.patchQueue";
+            ctx.addLine(`def${defID} = def${defID} || w${componentID}._updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`);
             let keepAliveCode = "";
             if (keepAlive) {
-                keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${widgetID}.el,vn.elm);vn.elm=w${widgetID}.el;w${widgetID}._remount();};`;
+                keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}._remount();};`;
             }
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${widgetID}.__owl__.isDestroyed) {return};${tattStyle ? `w${widgetID}.el.style=${tattStyle};` : ""}${updateClassCode}let pvnode=w${widgetID}.__owl__.pvnode;${keepAliveCode}c${ctx.parentNode}[_${dummyID}_index]=pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${tattStyle ? `w${componentID}.el.style=${tattStyle};` : ""}${updateClassCode}let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}c${ctx.parentNode}[_${dummyID}_index]=pvnode;});`);
             ctx.closeIf();
             if (async) {
-                ctx.addLine(`def${defID}.then(w${widgetID}._applyPatchQueue.bind(w${widgetID}, patchQueue${widgetID}));`);
+                ctx.addLine(`def${defID}.then(w${componentID}._applyPatchQueue.bind(w${componentID}, patchQueue${componentID}));`);
             }
             else {
                 ctx.addLine(`extra.promises.push(def${defID});`);
@@ -3261,7 +3274,6 @@
         }
         return 0;
     }
-    let nextID$1 = 1;
     function connect(Comp, mapStoreToProps, options = {}) {
         let hashFunction = options.hashFunction || null;
         const getStore = options.getStore || (env => env.store);
@@ -3357,7 +3369,7 @@
         // this is necessary for Owl to be able to properly deduce templates.
         // Otherwise, all connected components would have the same name, and then
         // each component after the first will necessarily have the same template.
-        let name = `ConnectedComponent${nextID$1++}`;
+        let name = `Connected${Comp.name}`;
         Object.defineProperty(Result, "name", { value: name });
         return Result;
     }
@@ -3497,8 +3509,8 @@
     exports.utils = utils;
 
     exports.__info__.version = '0.15.0';
-    exports.__info__.date = '2019-06-18T13:03:02.358Z';
-    exports.__info__.hash = 'a7cd007';
+    exports.__info__.date = '2019-06-21T19:47:14.131Z';
+    exports.__info__.hash = '63a8fcd';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

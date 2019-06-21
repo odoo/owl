@@ -827,6 +827,64 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 }"
 `;
 
+exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument on a t-foreach 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    context = Object.create(context);
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['props'].items;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    var _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    var _length3 = _3.length;
+    for (let i = 0; i < _length3; i++) {
+        context.item_first = i === 0;
+        context.item_last = i === _length3 - 1;
+        context.item_index = i;
+        context.item = _3[i];
+        context.item_value = _4[i];
+        //COMPONENT
+        let key8 = context['item'];
+        let def6;
+        let arg9 = context['item'];
+        let w7 = key8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key8]] : false;
+        let _5_index = c1.length;
+        c1.push(null);
+        let props7 = {};
+        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
+            if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
+                def6 = w7.__owl__.renderPromise;
+            } else {
+                w7.destroy();
+                w7 = false;
+            }
+        }
+        if (!w7) {
+            let componentKey7 = \`Child\`;
+            let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+            if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
+            w7 = new W7(owner, props7);
+            context.__owl__.cmap[key8] = w7.__owl__.id;
+            def6 = w7._prepare();
+            def6 = def6.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg9));}};let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+        } else {
+            def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+            def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
+        }
+        extra.promises.push(def6);
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-model directive .lazy modifier 1`] = `
 "function anonymous(context,extra
 ) {

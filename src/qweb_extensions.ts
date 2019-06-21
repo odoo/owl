@@ -479,9 +479,21 @@ QWeb.addDirective({
       }
       let eventsCode = events
         .map(function([eventName, mods, handlerName, extraArgs]) {
-          let params = extraArgs
-            ? `owner, ${ctx.formatExpression(extraArgs)}`
-            : "owner";
+          let params = "owner";
+          if (extraArgs) {
+            if (ctx.inLoop) {
+              let argId = ctx.generateID();
+              // we need to evaluate the arguments now, because the handler will
+              // be set asynchronously later when the widget is ready, and the
+              // context might be different.
+              ctx.addLine(
+                `let arg${argId} = ${ctx.formatExpression(extraArgs)};`
+              );
+              params = `owner, arg${argId}`;
+            } else {
+              params = `owner, ${ctx.formatExpression(extraArgs)}`;
+            }
+          }
           let handler;
           if (mods.length > 0) {
             handler = `function (e) {`;
@@ -541,7 +553,9 @@ QWeb.addDirective({
     ctx.addLine(
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
-    ctx.addLine(`w${componentID} = new W${componentID}(owner, props${componentID});`);
+    ctx.addLine(
+      `w${componentID} = new W${componentID}(owner, props${componentID});`
+    );
     ctx.addLine(
       `context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`
     );
@@ -579,7 +593,9 @@ QWeb.addDirective({
 
     ctx.addElse();
     // need to update component
-    const patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
+    const patchQueueCode = async
+      ? `patchQueue${componentID}`
+      : "extra.patchQueue";
     ctx.addLine(
       `def${defID} = def${defID} || w${componentID}._updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`
     );

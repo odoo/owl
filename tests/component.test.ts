@@ -1888,6 +1888,34 @@ describe("random stuff/miscellaneous", () => {
     expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
   });
 
+  test("t-on with handler bound to dynamic argument on a t-foreach", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <t t-foreach="props.items" t-as="item">
+            <Child t-key="item" t-on-ev="onEv(item)"/>
+          </t>
+        </div>
+      </templates>
+    `);
+    const items = [1, 2, 3, 4];
+
+    class ParentWidget extends Widget {
+      components = { Child };
+      onEv(n, ev) {
+        expect(n).toBe(1);
+        expect(ev.detail).toBe(43);
+      }
+    }
+    class Child extends Widget {}
+
+    const widget = new ParentWidget(env, { items });
+    await widget.mount(fixture);
+    children(widget)[0].trigger("ev", 43);
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+  });
+
   test("updating widget immediately", async () => {
     // in this situation, we protect against a bug that occurred: because of the
     // interplay between components and vnodes, a sub widget vnode was patched

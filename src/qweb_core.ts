@@ -1,5 +1,6 @@
 import { VNode, h } from "./vdom";
 import { QWebVar, compileExpr } from "./qweb_expressions";
+import { EventBus } from "./event_bus";
 
 /**
  * Owl QWeb Engine
@@ -127,7 +128,7 @@ let nextID = 1;
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
-export class QWeb {
+export class QWeb extends EventBus {
   templates: { [name: string]: Template } = {};
   utils = UTILS;
   static components = Object.create(null);
@@ -146,6 +147,7 @@ export class QWeb {
   nextSlotId = 1;
 
   constructor(data?: string) {
+    super();
     if (data) {
       this.addTemplates(data);
     }
@@ -348,10 +350,10 @@ export class QWeb {
 
     const firstLetter = node.tagName[0];
     if (firstLetter === firstLetter.toUpperCase()) {
-        // this is a component, we modify in place the xml document to change
-        // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
-        node.setAttribute('t-component', node.tagName);
-        node.nodeValue = 't';
+      // this is a component, we modify in place the xml document to change
+      // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
+      node.setAttribute("t-component", node.tagName);
+      node.nodeValue = "t";
     }
     const attributes = (<Element>node).attributes;
 
@@ -391,7 +393,7 @@ export class QWeb {
           fullName = name;
           value = attributes[j].textContent;
           validDirectives.push({ directive, value, fullName });
-          if (directive.name === "on" || directive.name === 'model') {
+          if (directive.name === "on" || directive.name === "model") {
             withHandlers = true;
           }
         }

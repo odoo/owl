@@ -4,12 +4,13 @@
 
 - [Overview](#overview)
 - [Example](#example)
-- [Root Component And Environment](#root-component-and-environment)
 - [Reference](#reference)
   - [Properties](#properties)
   - [Static Properties](#static-properties)
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
+  - [Root Component](#root-component)
+  - [Environment](#environment)
   - [Composition](#composition)
   - [Event Handling](#event-handling)
   - [Form Input Bindings](#form-input-bindings)
@@ -75,30 +76,6 @@ Owl will use the component's name as template name. Here,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
 change to it will cause a rerendering.
-
-## Root Component And Environment
-
-Most of the time, an Owl component will be created automatically by a tag (or the `t-component`
-directive) in a template. There is however an obvious exception: the root component
-of an Owl application has to be created manually:
-
-```js
-class App extends owl.Component { ... }
-
-const qweb = new owl.QWeb(TEMPLATES);
-const env = { qweb: qweb };
-const app = new App(env);
-app.mount(document.body);
-```
-
-The root component needs an environment. In Owl, an environment is an object with
-a `qweb` key, which has to be a [QWeb](qweb.md) instance. This qweb instance will
-be used to render everything.
-
-The environment will be given to each child, unchanged, in the `env` property.
-This can be very useful to share common information/methods. For example, all
-rpcs can be made through a `rpc` method in the environment. This makes it very
-easy to test a component.
 
 ## Reference
 
@@ -335,6 +312,59 @@ the DOM. This is a good place to remove some listeners, for example.
 
 This is the opposite method of `mounted`.
 
+### Root Component
+
+Most of the time, an Owl component will be created automatically by a tag (or the `t-component`
+directive) in a template. There is however an obvious exception: the root component
+of an Owl application has to be created manually:
+
+```js
+class App extends owl.Component { ... }
+
+const qweb = new owl.QWeb(TEMPLATES);
+const env = { qweb: qweb };
+const app = new App(env);
+app.mount(document.body);
+```
+
+The root component needs an environment.
+
+### Environment
+
+In Owl, an environment is an object with a `qweb` key, which has to be a
+[QWeb](qweb.md) instance. This qweb instance will be used to render everything.
+
+The environment is meant to contain (mostly) static global information and
+methods for the whole application. For example, settings keys (`mode` to determine
+if we are in desktop or mobile mode, or `theme`: dark or light), `rpc` methods,
+session information, ...
+
+The environment will be given to each child, unchanged, in the `env` property.
+This can be very useful to share common information/methods. For example, all
+rpcs can be made through a `rpc` method in the environment. This makes it very
+easy to test a component.
+
+Updating the environment is not as simple as changing a component's state: its
+content is not observed, so updates will not be reflected immediately in the
+user interface.  There is however a mechanism to force root widgets to rerender
+themselves whenever the environment is modified: one only needs to trigger the
+`update` event on the QWeb instance.  For example, a responsive environment
+could be programmed like this:
+
+```js
+function setupResponsivePlugin(env) {
+    const isMobile = () => window.innerWidth <= 768;
+    env.isMobile = isMobile();
+    const updateEnv = owl.utils.debounce(() => {
+        if (env.isMobile !== isMobile()) {
+            env.isMobile = !env.isMobile;
+            env.qweb.trigger('update');
+        }
+    }, 15);
+    window.addEventListener("resize", updateEnv);
+}
+```
+
 ### Composition
 
 The example above shows a QWeb template with a sub component. In a template,
@@ -359,11 +389,10 @@ In this example, the `ParentComponent`'s template creates a component `MyCompone
 after the span. The `info` key will be added to the subcomponent's `props`. Each
 `props` is a string which represents a javascript (QWeb) expression, so it is
 dynamic. If it is necessary to give a string, this can be done by quoting it:
-`someString="'somevalue'"`. 
+`someString="'somevalue'"`.
 
 Note that the rendering context for the template is the component itself. This means
 that the template can access `state`, `props`, `env`, or any methods defined in the component.
-
 
 ```xml
 <div t-name="ParentComponent">

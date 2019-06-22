@@ -65,16 +65,16 @@ We present here a list of all standard QWeb directives:
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                                         | Description                                                                         |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Name                                        | Description                                                                         |
+| ------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `t-component`, `t-keepalive`, `t-asyncroot` | [Defining a sub component](component.md#composition)                                |
-| `t-ref`                                      | [Setting a reference to a dom node or a sub component](component.md#references)     |
-| `t-key`                                      | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
-| `t-on-*`                                     | [Event handling](component.md#event-handling)                                       |
-| `t-transition`                               | [Defining an animation](animations.md#css-transitions)                              |
-| `t-mounted`                                  | [Callback when a node or component is mounted](component.md#t-mounted-directive)    |
-| `t-slot`                                     | [Rendering a slot](component.md#slots)                                              |
-| `t-model`                                    | [Form input bindings](component.md#form-input-bindings)                             |
+| `t-ref`                                     | [Setting a reference to a dom node or a sub component](component.md#references)     |
+| `t-key`                                     | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
+| `t-on-*`                                    | [Event handling](component.md#event-handling)                                       |
+| `t-transition`                              | [Defining an animation](animations.md#css-transitions)                              |
+| `t-mounted`                                 | [Callback when a node or component is mounted](component.md#t-mounted-directive)    |
+| `t-slot`                                    | [Rendering a slot](component.md#slots)                                              |
+| `t-model`                                   | [Form input bindings](component.md#form-input-bindings)                             |
 
 ## QWeb Engine
 
@@ -134,6 +134,11 @@ It's API is quite simple:
   class ParentComponent extends owl.Component { ... }
   qweb.addTemplate("ParentComponent", "<div><Dialog/></div>");
   ```
+
+In some way, a `QWeb` instance is the core of an Owl application. It is the only
+mandatory element of an [environment](component.md#environment). As such, it
+has an extra responsability: it can act as an event bus for internal communication
+between Owl classes. This is the reason why `QWeb` actually extends [EventBus](event_bus.md).
 
 ## Reference
 

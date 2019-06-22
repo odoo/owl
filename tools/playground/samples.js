@@ -942,31 +942,30 @@ class App extends owl.Component {
 }
 
 //------------------------------------------------------------------------------
-// Application Startup
+// Responsive plugin
 //------------------------------------------------------------------------------
-function isMobile() {
-    return window.innerWidth <= 768;
+function setupResponsivePlugin(env) {
+    const isMobile = () => window.innerWidth <= 768;
+    env.isMobile = isMobile();
+    const updateEnv = owl.utils.debounce(() => {
+        if (env.isMobile !== isMobile()) {
+            env.isMobile = !env.isMobile;
+            env.qweb.trigger('update');
+        }
+    }, 15);
+    window.addEventListener("resize", updateEnv);
 }
 
+//------------------------------------------------------------------------------
+// Application Startup
+//------------------------------------------------------------------------------
 const env = {
     qweb: new owl.QWeb(TEMPLATES),
-    isMobile: isMobile()
 };
-
+setupResponsivePlugin(env);
 
 const app = new App(env);
 app.mount(document.body);
-
-function updateEnv() {
-    const _isMobile = isMobile();
-    if (_isMobile !== env.isMobile) {
-        app.updateEnv({
-            isMobile: _isMobile
-        });
-    }
-}
-
-window.addEventListener("resize", owl.utils.debounce(updateEnv, 20));
 `;
 
 const RESPONSIVE_XML = `<templates>

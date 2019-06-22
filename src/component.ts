@@ -134,6 +134,19 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       parent.__owl__.children[id] = this;
     } else {
       this.env = parent;
+      this.env.qweb.on("update", this, () => {
+        if (this.__owl__.isMounted) {
+          this.render(true);
+        }
+        if (this.__owl__.isDestroyed) {
+          // this is unlikely to happen, but if a root widget is destroyed,
+          // we want to remove our subscription.  The usual way to do that
+          // would be to perform some check in the destroy method, but since
+          // it is very performance sensitive, and since this is a rare event,
+          // we simply do it lazily
+          this.env.qweb.off("update", this);
+        }
+      });
     }
     this.__owl__ = {
       id: id,
@@ -593,7 +606,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       for (let i = 0, l = propsDef.length; i < l; i++) {
         if (!(propsDef[i] in props)) {
           throw new Error(
-            `Missing props '${propsDef[i]}' (component '${this.constructor.name}')`
+            `Missing props '${propsDef[i]}' (component '${
+              this.constructor.name
+            }')`
           );
         }
       }
@@ -603,7 +618,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
         if (!(propName in props)) {
           if (propsDef[propName] && !propsDef[propName].optional) {
             throw new Error(
-              `Missing props '${propName}' (component '${this.constructor.name}')`
+              `Missing props '${propName}' (component '${
+                this.constructor.name
+              }')`
             );
           } else {
             break;

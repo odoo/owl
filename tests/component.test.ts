@@ -1,5 +1,6 @@
 import { Component, Env } from "../src/component";
 import { QWeb } from "../src/qweb_core";
+import { EventBus } from "../src/event_bus";
 import {
   makeDeferred,
   makeTestFixture,
@@ -547,10 +548,7 @@ describe("lifecycle hooks", () => {
 
   test("willUpdateProps hook is called", async () => {
     let def = makeDeferred();
-    env.qweb.addTemplate(
-      "Parent",
-      '<span><Child n="state.n"/></span>'
-    );
+    env.qweb.addTemplate("Parent", '<span><Child n="state.n"/></span>');
     class Parent extends Widget {
       state = { n: 1 };
       components = { Child: HookWidget };
@@ -599,10 +597,7 @@ describe("lifecycle hooks", () => {
   test("patched hook is called after updateProps", async () => {
     let n = 0;
 
-    env.qweb.addTemplate(
-      "Parent",
-      '<div><Child a="state.a"/></div>'
-    );
+    env.qweb.addTemplate("Parent", '<div><Child a="state.a"/></div>');
     class Parent extends Widget {
       state = { a: 1 };
       components = { Child: TestWidget };
@@ -642,10 +637,7 @@ describe("lifecycle hooks", () => {
 
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><Child val="state.val"/></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><Child val="state.val"/></div>`);
     class Parent extends Widget {
       state = { val: 42 };
       components = { Child: TestWidget };
@@ -867,7 +859,10 @@ describe("composition", () => {
 
   test("can use components from the global registry", async () => {
     QWeb.register("WidgetB", WidgetB);
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div><t t-component="WidgetB"/></div>`
+    );
     class ParentWidget extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -877,7 +872,10 @@ describe("composition", () => {
 
   test("don't fallback to global registry if widget defined locally", async () => {
     QWeb.register("WidgetB", WidgetB); // should not use this widget
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div><t t-component="WidgetB"/></div>`
+    );
     env.qweb.addTemplate("AnotherWidgetB", `<span>Belgium</span>`);
     class AnotherWidgetB extends Widget {}
     class ParentWidget extends Widget {
@@ -897,7 +895,7 @@ describe("composition", () => {
       </templates>`);
     class C extends Widget {}
     class P extends Widget {
-        components = {C};
+      components = { C };
     }
     const parent = new P(env);
     await parent.mount(fixture);
@@ -906,10 +904,7 @@ describe("composition", () => {
 
   test("throw a nice error if it cannot find component", async () => {
     expect.assertions(1);
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><SomeMispelledWidget /></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><SomeMispelledWidget /></div>`);
     class Parent extends Widget {
       components = { SomeWidget: Widget };
     }
@@ -1012,7 +1007,10 @@ describe("composition", () => {
   });
 
   test("modifying a sub widget", async () => {
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div><t t-component="Counter"/></div>`
+    );
     class ParentWidget extends Widget {
       components = { Counter };
     }
@@ -1068,7 +1066,10 @@ describe("composition", () => {
   });
 
   test("rerendering a widget with a sub widget", async () => {
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div><t t-component="Counter"/></div>`
+    );
     class ParentWidget extends Widget {
       components = { Counter };
     }
@@ -2721,10 +2722,7 @@ describe("widget and observable state", () => {
 
   test("subcomponents cannot change observable state received from parent", async () => {
     expect.assertions(1);
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><Child obj="state.obj"/></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><Child obj="state.obj"/></div>`);
     class Parent extends Widget {
       state = { obj: { coffee: 1 } };
       components = { Child };
@@ -3213,5 +3211,40 @@ describe("t-model directive", () => {
     expect(fixture.innerHTML).toBe(
       "<div><div><span>sts rocks</span></div></div>"
     );
+  });
+});
+
+describe("environment and plugins", () => {
+  // some source of external events
+  let bus = new EventBus();
+
+  // definition of a plugin
+  const somePlugin = env => {
+    env.someFlag = true;
+    bus.on("some-event", null, () => {
+      env.someFlag = !env.someFlag;
+      env.qweb.trigger("update");
+    });
+  };
+
+  test("plugin works as expected", async () => {
+    somePlugin(env);
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="App">
+            <t t-if="env.someFlag">Red</t>
+            <t t-else="1">Blue</t>
+        </div>
+      </templates>
+    `);
+    class App extends Widget {}
+
+    const app = new App(env);
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div>Red</div>");
+    bus.trigger("some-event");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>Blue</div>");
   });
 });

@@ -932,25 +932,6 @@ In this example, the component `Dialog` will render the slots `content` and `foo
 with its parent as rendering context. This means that clicking on the button
 will execute the `doSomething` method on the parent, not on the dialog.
 
-Warning! Slots have a technical constraint: the result of the slot rendering
-should have exactly one root node. So,
-
-```xml
-<t t-set="content">
-  <div>A</div>
-  <div>B</div>
-</t>
-```
-
-is not allowed. A workaround could be to wrap the content in a div:
-
-```xml
-<div t-set="content">
-  <div>A</div>
-  <div>B</div>
-</div>
-```
-
 Default slot: the first element inside the component which is not a named slot will
 be considered the `default` slot. For example:
 

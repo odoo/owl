@@ -421,6 +421,18 @@ QWeb.addDirective({
       : ctx.inLoop
       ? `String(-${componentID} - i)`
       : String(componentID);
+    if (ctx.allowMultipleRoots) {
+      // necessary to prevent collisions
+      if (!key && ctx.inLoop) {
+        let id = ctx.generateID();
+        ctx.addLine(
+          `let template${id} = "_slot_" + String(-${componentID} - i)`
+        );
+        templateID = `template${id}`;
+      } else {
+        templateID = `"_slot_${templateID}"`;
+      }
+    }
 
     let ref = node.getAttribute("t-ref");
     let refExpr = "";
@@ -572,13 +584,24 @@ QWeb.addDirective({
           slotNode.parentElement!.removeChild(slotNode);
           const key = slotNode.getAttribute("t-set")!;
           slotNode.removeAttribute("t-set");
-          const slotFn = qweb._compile(`slot_${key}_template`, slotNode);
+          const slotFn = qweb._compile(
+            `slot_${key}_template`,
+            slotNode,
+            ctx.parentNode!
+          );
           qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
         }
       }
       if (clone.childElementCount) {
-        const content = clone.children[0];
-        const slotFn = qweb._compile(`slot_default_template`, content);
+        const t = clone.ownerDocument!.createElement("t");
+        for (let child of Object.values(clone.children)) {
+          t.appendChild(child);
+        }
+        const slotFn = qweb._compile(
+          `slot_default_template`,
+          t,
+          ctx.parentNode!
+        );
         qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
       }
     }
@@ -683,7 +706,9 @@ QWeb.addDirective({
       `const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`
     );
     ctx.addLine(
-      `c${ctx.parentNode}.push(slot${slotKey}(context.__owl__.parent, extra));`
+      `slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
+        ctx.parentNode
+      }}));`
     );
     return true;
   }

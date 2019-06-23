@@ -1083,12 +1083,12 @@ exports[`t-slot directive can define and call slots 2`] = `
     var vn2 = h('div', p2, c2);
     c1.push(vn2);
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'header'];
-    c2.push(slot3(context.__owl__.parent, extra));
+    slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2}));
     let c4 = [], p4 = {key:4};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
     const slot5 = this.slots[context.__owl__.slotId + '_' + 'footer'];
-    c4.push(slot5(context.__owl__.parent, extra));
+    slot5(context.__owl__.parent, Object.assign({}, extra, {parentNode: c4}));
     return vn1;
 }"
 `;

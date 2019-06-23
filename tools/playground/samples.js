@@ -1132,10 +1132,10 @@ const SLOTS_XML = `<templates>
       <t t-set="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
     </Card>
     <Card title="'Title card B'">
-      <div t-set="content">
+      <t t-set="content">
         <div>Card 2... [<t t-esc="state.b"/>]</div>
         <Counter />
-      </div>
+      </t>
       <t t-set="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
     </Card>
   </div>

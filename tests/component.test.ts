@@ -2957,6 +2957,80 @@ describe("t-slot directive", () => {
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
   });
+
+  test("content is the default slot", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <Dialog>
+                <span>sts rocks</span>
+             </Dialog>
+          </div>
+          <div t-name="Dialog"><t t-slot="default"/></div>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      components = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>sts rocks</span></div></div>"
+    );
+  });
+
+  test("multiple roots are allowed in a named slot", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <Dialog>
+                <t t-set="content">
+                    <span>sts</span>
+                    <span>rocks</span>
+                </t>
+             </Dialog>
+          </div>
+          <div t-name="Dialog"><t t-slot="content"/></div>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      components = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>sts</span><span>rocks</span></div></div>"
+    );
+  });
+
+  test("multiple roots are allowed in a default slot", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <Dialog>
+                <span>sts</span>
+                <span>rocks</span>
+             </Dialog>
+          </div>
+          <div t-name="Dialog"><t t-slot="default"/></div>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      components = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>sts</span><span>rocks</span></div></div>"
+    );
+  });
+
 });
 
 describe("t-model directive", () => {
@@ -3190,28 +3264,7 @@ describe("t-model directive", () => {
     expect(fixture.innerHTML).toBe("<div><input><span>invalid</span></div>");
   });
 
-  test("content is the default slot", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-          <div t-name="Parent">
-             <Dialog>
-                <span>sts rocks</span>
-             </Dialog>
-          </div>
-          <div t-name="Dialog"><t t-slot="default"/></div>
-        </templates>
-    `);
-    class Dialog extends Widget {}
-    class Parent extends Widget {
-      components = { Dialog };
-    }
-    const parent = new Parent(env);
-    await parent.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>sts rocks</span></div></div>"
-    );
-  });
 });
 
 describe("environment and plugins", () => {

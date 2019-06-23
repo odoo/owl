@@ -268,9 +268,15 @@ export class QWeb extends EventBus {
     return template.fn.call(this, context, extra);
   }
 
-  _compile(name: string, elem: Element): CompiledTemplate {
+  _compile(name: string, elem: Element, parentNode?: number): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new Context(name);
+    if (parentNode) {
+      ctx.nextID = parentNode + 1;
+      ctx.parentNode = parentNode;
+      ctx.allowMultipleRoots = true;
+      ctx.addLine(`let c${parentNode} = extra.parentNode;`);
+    }
     this._compileNode(elem, ctx);
 
     if (ctx.shouldProtectContext) {
@@ -288,10 +294,12 @@ export class QWeb extends EventBus {
       ctx.code.unshift("    let utils = this.utils;");
     }
 
-    if (!ctx.rootNode) {
-      throw new Error("A template should have one root node");
+    if (!parentNode) {
+      if (!ctx.rootNode) {
+        throw new Error("A template should have one root node");
+      }
+      ctx.addLine(`return vn${ctx.rootNode};`);
     }
-    ctx.addLine(`return vn${ctx.rootNode};`);
     let template;
     try {
       template = new Function(
@@ -353,7 +361,6 @@ export class QWeb extends EventBus {
       // this is a component, we modify in place the xml document to change
       // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
       node.setAttribute("t-component", node.tagName);
-      node.nodeValue = "t";
     }
     const attributes = (<Element>node).attributes;
 
@@ -648,6 +655,7 @@ export class Context {
   inLoop: boolean = false;
   inPreTag: boolean = false;
   templateName: string;
+  allowMultipleRoots: boolean = false;
 
   constructor(name?: string) {
     this.rootContext = this;
@@ -661,7 +669,11 @@ export class Context {
   }
 
   withParent(node: number): Context {
-    if (this === this.rootContext && (this.parentNode || this.parentTextNode)) {
+    if (
+      !this.allowMultipleRoots &&
+      this === this.rootContext &&
+      (this.parentNode || this.parentTextNode)
+    ) {
       throw new Error("A template should not have more than one root node");
     }
     if (!this.rootContext.rootNode) {

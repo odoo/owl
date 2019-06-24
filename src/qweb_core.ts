@@ -173,7 +173,10 @@ export class QWeb extends EventBus {
    * Add a template to the internal template map.  Note that it is not
    * immediately compiled.
    */
-  addTemplate(name: string, xmlString: string) {
+  addTemplate(name: string, xmlString: string, allowDuplicate?: boolean) {
+    if (allowDuplicate && name in this.templates) {
+      return;
+    }
     const doc = parseXML(xmlString);
     if (!doc.firstChild) {
       throw new Error("Invalid template (should not be empty)");

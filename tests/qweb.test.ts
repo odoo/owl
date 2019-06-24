@@ -25,13 +25,15 @@ describe("static templates", () => {
   });
 
   test("simple dynamic value", () => {
-    qweb.addTemplate("test", "<t><t t-esc=\"text\"/></t>");
-    expect(renderToString(qweb, "test", {text: "hello vdom"})).toBe("hello vdom");
+    qweb.addTemplate("test", '<t><t t-esc="text"/></t>');
+    expect(renderToString(qweb, "test", { text: "hello vdom" })).toBe(
+      "hello vdom"
+    );
   });
 
   test("simple string, with some dynamic value", () => {
-    qweb.addTemplate("test", "<t>hello <t t-esc=\"text\"/></t>");
-    expect(renderToString(qweb, "test", {text: "vdom"})).toBe("hello vdom");
+    qweb.addTemplate("test", '<t>hello <t t-esc="text"/></t>');
+    expect(renderToString(qweb, "test", { text: "vdom" })).toBe("hello vdom");
   });
 
   test("empty div", () => {
@@ -71,6 +73,9 @@ describe("error handling", () => {
 
   test("cannot add twice the same template", () => {
     qweb.addTemplate("test", `<t></t>`);
+    expect(() => qweb.addTemplate("test", "<div/>", true)).not.toThrow(
+      "already defined"
+    );
     expect(() => qweb.addTemplate("test", "<div/>")).toThrow("already defined");
   });
 

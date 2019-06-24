@@ -95,11 +95,13 @@ It's API is quite simple:
   const qweb = new owl.QWeb(TEMPLATES);
   ```
 
-- **`addTemplate(name, xmlStr)`**: add a specific template.
+- **`addTemplate(name, xmlStr, allowDuplicate)`**: add a specific template.
 
   ```js
   qweb.addTemplate("mytemplate", "<div>hello</div>");
   ```
+
+  If the optional `allowDuplicate` is set to `true`, then `QWeb` will simply return whenever a template is added for a second time.  Otherwise, `QWeb` will crash.
 
 - **`addTemplates(xmlStr)`**: add a list of templates (identified by `t-name`
   attribute).

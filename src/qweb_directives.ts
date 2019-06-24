@@ -304,7 +304,7 @@ QWeb.addDirective({
 //------------------------------------------------------------------------------
 QWeb.addDirective({
   name: "debug",
-  priority: 99,
+  priority: 1,
   atNodeEncounter({ ctx }) {
     ctx.addLine("debugger;");
   }
@@ -315,7 +315,7 @@ QWeb.addDirective({
 //------------------------------------------------------------------------------
 QWeb.addDirective({
   name: "log",
-  priority: 99,
+  priority: 1,
   atNodeEncounter({ ctx, value }) {
     const expr = ctx.formatExpression(value);
     ctx.addLine(`console.log(${expr})`);

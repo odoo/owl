@@ -3093,6 +3093,31 @@ describe("t-slot directive", () => {
       '<div><span><span>some content</span></span></div>'
     );
   });
+
+  test("t-debug on a t-set (defining a slot)", async () => {
+    const consoleLog = console.log;
+    console.log = jest.fn();
+
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+            <Dialog><t t-set="content" t-debug="1">abc</t></Dialog>
+          </div>
+          <span t-name="Dialog">
+            <t t-slot="content"/>
+          </span>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      components = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(console.log).toHaveBeenCalledTimes(0);
+    console.log = consoleLog;
+  });
+
 });
 
 describe("t-model directive", () => {

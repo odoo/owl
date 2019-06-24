@@ -3031,6 +3031,30 @@ describe("t-slot directive", () => {
     );
   });
 
+  test("missing slots are ignored", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+            <Dialog/>
+          </div>
+          <span t-name="Dialog">
+            <t t-slot="default"/>
+            <span>some content</span>
+            <t t-slot="footer"/>
+          </span>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      components = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span><span>some content</span></span></div>'
+    );
+  });
 });
 
 describe("t-model directive", () => {

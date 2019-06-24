@@ -705,11 +705,13 @@ QWeb.addDirective({
     ctx.addLine(
       `const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`
     );
+    ctx.addIf(`slot${slotKey}`)
     ctx.addLine(
       `slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
         ctx.parentNode
       }}));`
     );
+    ctx.closeIf();
     return true;
   }
 });

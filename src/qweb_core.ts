@@ -319,10 +319,13 @@ export class QWeb extends EventBus {
       );
     }
     if (isDebug) {
-      console.log(
-        `Template: ${this.templates[name].elem.outerHTML}\nCompiled code:\n` +
-          template.toString()
-      );
+      const tpl = this.templates[name];
+      if (tpl) {
+        const msg = `Template: ${
+          tpl.elem.outerHTML
+        }\nCompiled code:\n${template.toString()}`;
+        console.log(msg);
+      }
     }
     return template;
   }

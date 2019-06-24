@@ -42,10 +42,10 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
         w7 = new W7(owner, props7);
         context.__owl__.cmap[7] = w7.__owl__.id;
-        def6 = w7._prepare();
-        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+        def6 = w7.__prepare();
+        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
     } else {
-        def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+        def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
         def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
     }
     extra.promises.push(def6);
@@ -70,13 +70,13 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
         w10 = new W10(owner, props10);
         context.__owl__.cmap[10] = w10.__owl__.id;
-        def9 = w10._prepare();
-        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+        def9 = w10.__prepare();
+        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
     } else {
-        def9 = def9 || w10._updateProps(props10, extra.forceUpdate, patchQueue10);
+        def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, patchQueue10);
         def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
     }
-    def9.then(w10._applyPatchQueue.bind(w10, patchQueue10));
+    def9.then(w10.__applyPatchQueue.bind(w10, patchQueue10));
     return vn1;
 }"
 `;
@@ -124,13 +124,13 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
         w7 = new W7(owner, props7);
         context.__owl__.cmap[7] = w7.__owl__.id;
-        def6 = w7._prepare();
-        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+        def6 = w7.__prepare();
+        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
     } else {
-        def6 = def6 || w7._updateProps(props7, extra.forceUpdate, patchQueue7);
+        def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, patchQueue7);
         def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
     }
-    def6.then(w7._applyPatchQueue.bind(w7, patchQueue7));
+    def6.then(w7.__applyPatchQueue.bind(w7, patchQueue7));
     //COMPONENT
     let def9;
     let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
@@ -151,10 +151,10 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
         w10 = new W10(owner, props10);
         context.__owl__.cmap[10] = w10.__owl__.id;
-        def9 = w10._prepare();
-        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+        def9 = w10.__prepare();
+        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
     } else {
-        def9 = def9 || w10._updateProps(props10, extra.forceUpdate, extra.patchQueue);
+        def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, extra.patchQueue);
         def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
     }
     extra.promises.push(def9);
@@ -204,10 +204,10 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
         if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
         w7 = new W7(owner, props7);
         context.__owl__.cmap[7] = w7.__owl__.id;
-        def6 = w7._prepare();
-        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+        def6 = w7.__prepare();
+        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
     } else {
-        def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+        def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
         def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
     }
     extra.promises.push(def6);
@@ -232,13 +232,13 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
         if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
         w10 = new W10(owner, props10);
         context.__owl__.cmap[10] = w10.__owl__.id;
-        def9 = w10._prepare();
-        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+        def9 = w10.__prepare();
+        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
     } else {
-        def9 = def9 || w10._updateProps(props10, extra.forceUpdate, patchQueue10);
+        def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, patchQueue10);
         def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
     }
-    def9.then(w10._applyPatchQueue.bind(w10, patchQueue10));
+    def9.then(w10.__applyPatchQueue.bind(w10, patchQueue10));
     return vn1;
 }"
 `;
@@ -273,10 +273,10 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.style = _5;}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.style = _5;}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};w4.el.style=_5;let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -314,14 +314,14 @@ exports[`class and style attributes with t-component t-att-class is properly add
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
+        def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){for (let k in _5) {
               if (_5[k]) {
                   vn.elm.classList.add(k);
               }
-          }}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+          }}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let cl=w4.el.classList;for (let k in _5) {if (_5[k]) {cl.add(k)} else {cl.remove(k)}}let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -374,10 +374,10 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(owner, props7);
             context.__owl__.cmap[key8] = w7.__owl__.id;
-            def6 = w7._prepare();
-            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = w7.__prepare();
+            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
-            def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+            def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
         }
         extra.promises.push(def6);
@@ -415,10 +415,10 @@ exports[`composition t-component with dynamic value 1`] = `
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -455,10 +455,10 @@ exports[`composition t-component with dynamic value 2 1`] = `
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -495,10 +495,10 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, 3));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, 3));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -535,10 +535,10 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -575,10 +575,10 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -615,10 +615,10 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {val:3}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {val:3}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -655,10 +655,10 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {e.preventDefault();if (e.target !== vn.elm) {return}owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {e.preventDefault();if (e.target !== vn.elm) {return}owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -695,10 +695,10 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (e.target !== vn.elm) {return}e.preventDefault();owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (e.target !== vn.elm) {return}e.preventDefault();owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -735,10 +735,10 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', owner['onEv1'].bind(owner));vn.elm.addEventListener('ev-2', function (e) {if (e.target !== vn.elm) {return}owner['onEv2'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', owner['onEv1'].bind(owner));vn.elm.addEventListener('ev-2', function (e) {if (e.target !== vn.elm) {return}owner['onEv2'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -775,10 +775,10 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {e.stopPropagation();owner['onEv1'].call(owner, e);});vn.elm.addEventListener('ev-2', function (e) {e.preventDefault();owner['onEv2'].call(owner, e);});vn.elm.addEventListener('ev-3', function (e) {e.stopPropagation();e.preventDefault();owner['onEv3'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {e.stopPropagation();owner['onEv1'].call(owner, e);});vn.elm.addEventListener('ev-2', function (e) {e.preventDefault();owner['onEv2'].call(owner, e);});vn.elm.addEventListener('ev-3', function (e) {e.stopPropagation();e.preventDefault();owner['onEv3'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -816,10 +816,10 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(owner, props4);
         context.__owl__.cmap[key5] = w4.__owl__.id;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
@@ -873,10 +873,10 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(owner, props7);
             context.__owl__.cmap[key8] = w7.__owl__.id;
-            def6 = w7._prepare();
-            def6 = def6.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg9));}};let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = w7.__prepare();
+            def6 = def6.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg9));}};let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
-            def6 = def6 || w7._updateProps(props7, extra.forceUpdate, extra.patchQueue);
+            def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
         }
         extra.promises.push(def6);
@@ -1062,10 +1062,10 @@ exports[`t-slot directive can define and call slots 1`] = `
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         w4.__owl__.slotId = 1;
-        def3 = w4._prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
-        def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);

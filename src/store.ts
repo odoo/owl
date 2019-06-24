@@ -230,9 +230,9 @@ export function connect<E extends EnvWithStore, P, S>(
      * updates to be called for the parents before the children.  However,
      * if we use the mounted hook, this will be done in the reverse order.
      */
-    _callMounted() {
+    __callMounted() {
       (<any>this.__owl__).store.on("update", this, this._checkUpdate);
-      super._callMounted();
+      super.__callMounted();
     }
     willUnmount() {
       (<any>this.__owl__).store.off("update", this);
@@ -265,10 +265,10 @@ export function connect<E extends EnvWithStore, P, S>(
       }
       if (didChange) {
         (<any>this.__owl__).currentStoreProps = storeProps;
-        this._updateProps(ownProps, false);
+        this.__updateProps(ownProps, false);
       }
     }
-    _updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
+    __updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
       if ((<any>this.__owl__).ownProps !== nextProps) {
         (<any>this.__owl__).currentStoreProps = mapStoreToProps(
           (<any>this.__owl__).store.state,
@@ -282,7 +282,7 @@ export function connect<E extends EnvWithStore, P, S>(
         nextProps,
         (<any>this.__owl__).currentStoreProps
       );
-      return super._updateProps(mergedProps, forceUpdate, patchQueue);
+      return super.__updateProps(mergedProps, forceUpdate, patchQueue);
     }
   };
 

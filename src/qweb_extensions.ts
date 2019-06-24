@@ -285,9 +285,9 @@ const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
  *   // perspective.
  *   context.__owl__.cmap[key5] = w4.__owl__.id;
  *
- *   // _prepare is called, to basically call willStart, then render the
+ *   // __prepare is called, to basically call willStart, then render the
  *   // component
- *   def3 = w4._prepare();
+ *   def3 = w4.__prepare();
  *
  *   def3 = def3.then(vnode => {
  *     // we create here a virtual node for the parent (NOT the component). This
@@ -301,11 +301,11 @@ const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
  *     // component at the proper time
  *     pvnode.data.hook = {
  *       insert(vn) {
- *         // the _mount method will patch the component vdom into the elm vn.elm,
+ *         // the __mount method will patch the component vdom into the elm vn.elm,
  *         // then call the mounted hooks. However, suprisingly, the snabbdom
  *         // patch method actually replace the elm by a new elm, so we need
  *         // to synchronise the pvnode elm with the resulting elm
- *         let nvn = w4._mount(vnode, vn.elm);
+ *         let nvn = w4.__mount(vnode, vn.elm);
  *         pvnode.elm = nvn.elm;
  *         // what follows is only present if there are animations on the component
  *         utils.transitionInsert(vn, "fade");
@@ -333,10 +333,10 @@ const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
  *   });
  * } else {
  *   // this is the 'update' path of the directive.
- *   // the call to _updateProps is the actual component update
+ *   // the call to __updateProps is the actual component update
  *   // Note that we only update the props if we cannot reuse the previous
  *   // rendering work (in the case it was rendered with the same props)
- *   def3 = def3 || w4._updateProps(props4, extra.forceUpdate, extra.patchQueue);
+ *   def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
  *   def3 = def3.then(() => {
  *     // if component was destroyed in the meantime, we do nothing (so, this
  *     // means that the parent's element children list will have a null in
@@ -606,10 +606,10 @@ QWeb.addDirective({
       }
     }
 
-    ctx.addLine(`def${defID} = w${componentID}._prepare();`);
+    ctx.addLine(`def${defID} = w${componentID}.__prepare();`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     ctx.addLine(
-      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}._mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});c${
+      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});c${
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;w${componentID}.__owl__.pvnode = pvnode;});`
     );
@@ -620,11 +620,11 @@ QWeb.addDirective({
       ? `patchQueue${componentID}`
       : "extra.patchQueue";
     ctx.addLine(
-      `def${defID} = def${defID} || w${componentID}._updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`
+      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`
     );
     let keepAliveCode = "";
     if (keepAlive) {
-      keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}._remount();};`;
+      keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}.__remount();};`;
     }
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${
@@ -637,7 +637,7 @@ QWeb.addDirective({
 
     if (async) {
       ctx.addLine(
-        `def${defID}.then(w${componentID}._applyPatchQueue.bind(w${componentID}, patchQueue${componentID}));`
+        `def${defID}.then(w${componentID}.__applyPatchQueue.bind(w${componentID}, patchQueue${componentID}));`
       );
     } else {
       ctx.addLine(`extra.promises.push(def${defID});`);

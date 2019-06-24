@@ -27,7 +27,7 @@
         <TabbedEditor
             js="state.js"
             css="!state.splitLayout and state.css"
-            xml="!state.splitLayout and state.js"
+            xml="!state.splitLayout and state.xml"
             t-att-style="topEditorStyle"/>
         <t t-if="state.splitLayout">
           <div class="separator horizontal"/>

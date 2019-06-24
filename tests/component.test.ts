@@ -140,9 +140,9 @@ describe("basic widget properties", () => {
       async willStart() {
         this.state.drinks++;
       }
-      async _render() {
+      async __render() {
         renderCalls++;
-        return super._render();
+        return super.__render();
       }
     }
     const widget = new TestW(env);
@@ -1974,17 +1974,17 @@ describe("random stuff/miscellaneous", () => {
       async willStart() {
         steps.push(`${this.name}:willStart`);
       }
-      _render(f, p) {
+      __render(f, p) {
         steps.push(`${this.name}:render`);
-        return super._render(f, p);
+        return super.__render(f, p);
       }
-      _patch(vnode) {
-        steps.push(`${this.name}:_patch`);
-        super._patch(vnode);
+      __patch(vnode) {
+        steps.push(`${this.name}:__patch`);
+        super.__patch(vnode);
       }
-      _mount(vnode, elm) {
-        steps.push(`${this.name}:_patch(from _mount)`);
-        return super._mount(vnode, elm);
+      __mount(vnode, elm) {
+        steps.push(`${this.name}:__patch(from __mount)`);
+        return super.__mount(vnode, elm);
       }
       mounted() {
         steps.push(`${this.name}:mounted`);
@@ -2085,11 +2085,11 @@ describe("random stuff/miscellaneous", () => {
       "E:willStart",
       "D:render",
       "E:render",
-      "A:_patch",
-      "B:_patch(from _mount)",
-      "C:_patch(from _mount)",
-      "D:_patch(from _mount)",
-      "E:_patch(from _mount)",
+      "A:__patch",
+      "B:__patch(from __mount)",
+      "C:__patch(from __mount)",
+      "D:__patch(from __mount)",
+      "E:__patch(from __mount)",
       "B:mounted",
       "D:mounted",
       "E:mounted",
@@ -2110,12 +2110,12 @@ describe("random stuff/miscellaneous", () => {
       "F:render",
       "C:willPatch",
       "D:willPatch",
-      "C:_patch",
+      "C:__patch",
       "E:willUnmount",
       "E:destroy",
-      "F:_patch(from _mount)",
+      "F:__patch(from __mount)",
       "F:mounted",
-      "D:_patch",
+      "D:__patch",
       "D:patched",
       "C:patched"
     ]);
@@ -2232,8 +2232,8 @@ describe("async rendering", () => {
 
     env.qweb.addTemplate("ChildA", `<span>a<t t-esc="props.val"/></span>`);
     class ChildA extends Widget {
-      _updateProps(props, forceUpdate, fiber): Promise<void> {
-        return defA.then(() => super._updateProps(props, forceUpdate, fiber));
+      __updateProps(props, forceUpdate, fiber): Promise<void> {
+        return defA.then(() => super.__updateProps(props, forceUpdate, fiber));
       }
     }
     env.qweb.addTemplate("ChildB", `<span>b<t t-esc="props.val"/></span>`);
@@ -2320,11 +2320,11 @@ describe("async rendering", () => {
       components = { SubChild };
       mounted() {
         // from now on, each rendering in child widget will be delayed (see
-        // _render)
+        // __render)
         def = makeDeferred();
       }
-      async _render(f, p) {
-        const result = await super._render(f, p);
+      async __render(f, p) {
+        const result = await super.__render(f, p);
         await def;
         return result;
       }
@@ -2613,9 +2613,9 @@ describe("updating environment", () => {
   test("updating widget env does not render widget (if not mounted)", async () => {
     let n = 0;
     class TestWidget extends Widget {
-      _render() {
+      __render() {
         n++;
-        return super._render();
+        return super.__render();
       }
     }
 

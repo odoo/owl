@@ -52,7 +52,7 @@ describe("props validation", () => {
     }
     const w = new TestWidget(env, { message: "bottle" });
     try {
-      await w._updateProps({});
+      await w.__updateProps({});
     } catch (e) {
       expect(e.message).toBe("Missing props 'message' (component 'TestWidget')");
     }
@@ -257,7 +257,7 @@ describe("default props", () => {
     }
 
     const w = new TestWidget(env, {p: 1});
-    await w._updateProps({});
+    await w.__updateProps({});
     expect(w.props.p).toBe(4);
   });
 });

@@ -123,6 +123,8 @@ find a template with the component name (or one of its ancestor).
 
 ### Methods
 
+We explain here all the public methods of the `Component` class.
+
 - **`mount(target)`** (async): this is the main way a component's hierarchy is added to the
   DOM: the root component is mounted to a target HTMLElement. Obviously, this
   is asynchronous, since each children need to be created as well. Most applications
@@ -156,6 +158,11 @@ find a template with the component name (or one of its ancestor).
   removing the parent/children relationship. This method should almost never be
   called directly (except maybe on the root component), but should be done by the
   framework instead.
+
+Obviously, these methods are reserved for Owl, and should not be used by Owl
+users, unless they want to override them.  Also, Owl reserves all method names
+starting with `__`, in order to prevent possible future conflicts with user code
+whenever Owl needs to change.
 
 ### Lifecycle
 

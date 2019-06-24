@@ -116,10 +116,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   constructor(parent: Component<T, any, any> | T, props?: Props) {
     const defaultProps = (<any>this.constructor).defaultProps;
     if (defaultProps) {
-      props = this._applyDefaultProps(props, defaultProps);
+      props = this.__applyDefaultProps(props, defaultProps);
     }
     if (QWeb.dev) {
-      this._validateProps(props || {});
+      this.__validateProps(props || {});
     }
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a component
@@ -251,22 +251,22 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * created declaratively in templates are managed by the Owl system.
    */
   async mount(target: HTMLElement): Promise<void> {
-    const vnode = await this._prepare();
+    const vnode = await this.__prepare();
     if (this.__owl__.isDestroyed) {
       // component was destroyed before we get here...
       return;
     }
-    this._patch(vnode);
+    this.__patch(vnode);
     target.appendChild(this.el!);
 
     if (document.body.contains(target)) {
-      this._callMounted();
+      this.__callMounted();
     }
   }
 
   unmount() {
     if (this.__owl__.isMounted) {
-      this._callWillUnmount();
+      this.__callWillUnmount();
       this.el!.remove();
     }
   }
@@ -280,14 +280,14 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (shouldPatch) {
       patchQueue = [];
     }
-    const renderVDom = this._render(force, patchQueue);
+    const renderVDom = this.__render(force, patchQueue);
     const renderId = __owl__.renderId;
     await renderVDom;
 
     if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
-      this._applyPatchQueue(<any[]>patchQueue);
+      this.__applyPatchQueue(<any[]>patchQueue);
     }
   }
 
@@ -304,7 +304,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     const __owl__ = this.__owl__;
     if (!__owl__.isDestroyed) {
       const el = this.el;
-      this._destroy(__owl__.parent);
+      this.__destroy(__owl__.parent);
       if (el) {
         el.remove();
       }
@@ -361,7 +361,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   // Private
   //--------------------------------------------------------------------------
 
-  _destroy(parent: Component<any, any, any> | null) {
+  __destroy(parent: Component<any, any, any> | null) {
     const __owl__ = this.__owl__;
     const isMounted = __owl__.isMounted;
     if (isMounted) {
@@ -370,7 +370,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
     const children = __owl__.children;
     for (let key in children) {
-      children[key]._destroy(this);
+      children[key].__destroy(this);
     }
     if (parent) {
       let id = __owl__.id;
@@ -381,13 +381,13 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     delete __owl__.vnode;
   }
 
-  _callMounted() {
+  __callMounted() {
     const __owl__ = this.__owl__;
     const children = __owl__.children;
     for (let id in children) {
       const comp = children[id];
       if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
-        comp._callMounted();
+        comp.__callMounted();
       }
     }
     __owl__.isMounted = true;
@@ -398,7 +398,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     this.mounted();
   }
 
-  _callWillUnmount() {
+  __callWillUnmount() {
     this.willUnmount();
     const __owl__ = this.__owl__;
     __owl__.isMounted = false;
@@ -406,12 +406,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     for (let id in children) {
       const comp = children[id];
       if (comp.__owl__.isMounted) {
-        comp._callWillUnmount();
+        comp.__callWillUnmount();
       }
     }
   }
 
-  async _updateProps(
+  async __updateProps(
     nextProps: Props,
     forceUpdate: boolean = false,
     patchQueue?: any[]
@@ -420,10 +420,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (shouldUpdate) {
       const defaultProps = (<any>this.constructor).defaultProps;
       if (defaultProps) {
-        nextProps = this._applyDefaultProps(nextProps, defaultProps);
+        nextProps = this.__applyDefaultProps(nextProps, defaultProps);
       }
       if (QWeb.dev) {
-        this._validateProps(nextProps);
+        this.__validateProps(nextProps);
       }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
@@ -431,20 +431,21 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
-  _patch(vnode) {
+  __patch(vnode) {
     const __owl__ = this.__owl__;
     __owl__.renderPromise = null;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
     __owl__.vnode = patch(target, vnode);
   }
-  _prepare(): Promise<VNode> {
+
+  __prepare(): Promise<VNode> {
     const __owl__ = this.__owl__;
     __owl__.renderProps = this.props;
-    __owl__.renderPromise = this._prepareAndRender();
+    __owl__.renderPromise = this.__prepareAndRender();
     return __owl__.renderPromise;
   }
 
-  async _prepareAndRender(): Promise<VNode> {
+  async __prepareAndRender(): Promise<VNode> {
     await this.willStart();
     const __owl__ = this.__owl__;
     if (__owl__.isDestroyed) {
@@ -481,11 +482,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
     }
     __owl__.render = qweb.render.bind(qweb, this.template);
-    this._observeState();
-    return this._render();
+    this.__observeState();
+    return this.__render();
   }
 
-  async _render(
+  async __render(
     force: boolean = false,
     patchQueue: any[] = []
   ): Promise<VNode> {
@@ -525,11 +526,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   /**
    * Only called by qweb t-component directive
    */
-  _mount(vnode: VNode, elm: HTMLElement): VNode {
+  __mount(vnode: VNode, elm: HTMLElement): VNode {
     const __owl__ = this.__owl__;
     __owl__.vnode = patch(elm, vnode);
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
-      this._callMounted();
+      this.__callMounted();
     }
     return __owl__.vnode;
   }
@@ -537,7 +538,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   /**
    * Only called by qweb t-component directive (when t-keepalive is set)
    */
-  _remount() {
+  __remount() {
     const __owl__ = this.__owl__;
     if (!__owl__.isMounted) {
       __owl__.isMounted = true;
@@ -545,7 +546,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
-  _observeState() {
+  __observeState() {
     if (this.state) {
       const __owl__ = this.__owl__;
       __owl__.observer = new Observer();
@@ -560,7 +561,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * Note that this method does not modify in place the props, it returns a new
    * prop object
    */
-  _applyDefaultProps(props: Object | undefined, defaultProps: Object): Props {
+  __applyDefaultProps(props: Object | undefined, defaultProps: Object): Props {
     props = props ? Object.create(props) : {};
     for (let propName in defaultProps) {
       if (props![propName] === undefined) {
@@ -574,10 +575,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * Apply the given patch queue. A patch is a pair [c, vn], where c is a
    * Component instance and vn a VNode.
    *   1) Call 'willPatch' on the component of each patch
-   *   2) Call '_patch' on the component of each patch
+   *   2) Call '__patch' on the component of each patch
    *   3) Call 'patched' on the component of each patch, in inverse order
    */
-  _applyPatchQueue(patchQueue: any[]) {
+  __applyPatchQueue(patchQueue: any[]) {
     const patchLen = patchQueue.length;
     for (let i = 0; i < patchLen; i++) {
       const patch = patchQueue[i];
@@ -585,7 +586,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
     for (let i = 0; i < patchLen; i++) {
       const patch = patchQueue[i];
-      patch[0]._patch(patch[1]);
+      patch[0].__patch(patch[1]);
     }
     for (let i = patchLen - 1; i >= 0; i--) {
       const patch = patchQueue[i];
@@ -599,7 +600,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * visit recursively the props and all the children to check if they are valid.
    * This is why it is only done in 'dev' mode.
    */
-  _validateProps(props: Object) {
+  __validateProps(props: Object) {
     const propsDef = (<any>this.constructor).props;
     if (propsDef instanceof Array) {
       // list of strings (prop names)

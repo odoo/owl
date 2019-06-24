@@ -573,7 +573,7 @@ QWeb.addDirective({
     );
 
     // SLOTS
-    if (node.childElementCount) {
+    if (node.childNodes.length) {
       const clone = <Element>node.cloneNode(true);
       const slotNodes = clone.querySelectorAll("[t-set]");
       const slotId = qweb.nextSlotId++;
@@ -592,9 +592,9 @@ QWeb.addDirective({
           qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
         }
       }
-      if (clone.childElementCount) {
+      if (clone.childNodes.length) {
         const t = clone.ownerDocument!.createElement("t");
-        for (let child of Object.values(clone.children)) {
+        for (let child of Object.values(clone.childNodes)) {
           t.appendChild(child);
         }
         const slotFn = qweb._compile(

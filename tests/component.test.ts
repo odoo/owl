@@ -2981,6 +2981,27 @@ describe("t-slot directive", () => {
     );
   });
 
+  test("default slot work with text nodes", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <Dialog>sts rocks</Dialog>
+          </div>
+          <div t-name="Dialog"><t t-slot="default"/></div>
+        </templates>
+    `);
+    class Dialog extends Widget {}
+    class Parent extends Widget {
+      components = { Dialog };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div>sts rocks</div></div>"
+    );
+  });
+
   test("multiple roots are allowed in a named slot", async () => {
     env.qweb.addTemplates(`
         <templates>

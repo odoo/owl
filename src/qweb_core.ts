@@ -88,21 +88,27 @@ const NODE_HOOKS_PARAMS = {
 
 interface Utils {
   h: typeof h;
-  objectToAttrString(obj: Object): string;
+  toObj(expr: any): Object;
   shallowEqual(p1: Object, p2: Object): boolean;
   [key: string]: any;
 }
 
 export const UTILS: Utils = {
   h: h,
-  objectToAttrString(obj: Object): string {
-    let classes: string[] = [];
-    for (let k in obj) {
-      if (obj[k]) {
-        classes.push(k);
+  toObj(expr) {
+    if (typeof expr === "string") {
+        expr = expr.trim();
+        if (!expr) {
+            return {};
+        }
+      let words = expr.split(/\s+/);
+      let result = {};
+      for (let i = 0; i < words.length; i++) {
+        result[words[i]] = true;
       }
+      return result;
     }
-    return classes.join(" ");
+    return expr;
   },
   shallowEqual(p1, p2) {
     for (let k in p1) {
@@ -513,6 +519,7 @@ export class QWeb extends EventBus {
         props.push(`${key}: _${val}`);
       }
     }
+    let classObj = "";
 
     for (let i = 0; i < attributes.length; i++) {
       let name = attributes[i].name;
@@ -524,13 +531,23 @@ export class QWeb extends EventBus {
         !(<Element>node).getAttribute("t-attf-" + name)
       ) {
         const attID = ctx.generateID();
-        ctx.addLine(`var _${attID} = '${value}';`);
-        if (!name.match(/^[a-zA-Z]+$/)) {
-          // attribute contains 'non letters' => we want to quote it
-          name = '"' + name + '"';
+        if (name === "class") {
+          let classDef = value
+            .trim()
+            .split(/\s+/)
+            .map(a => `'${a}':true`)
+            .join(",");
+          classObj = `_${ctx.generateID()}`;
+          ctx.addLine(`let ${classObj} = {${classDef}};`);
+        } else {
+          ctx.addLine(`var _${attID} = '${value}';`);
+          if (!name.match(/^[a-zA-Z]+$/)) {
+            // attribute contains 'non letters' => we want to quote it
+            name = '"' + name + '"';
+          }
+          attrs.push(`${name}: _${attID}`);
+          handleBooleanProps(name, attID);
         }
-        attrs.push(`${name}: _${attID}`);
-        handleBooleanProps(name, attID);
       }
 
       // dynamic attributes
@@ -538,32 +555,37 @@ export class QWeb extends EventBus {
         let attName = name.slice(6);
         const v = ctx.getValue(value);
         let formattedValue = v.id || ctx.formatExpression(v);
-        if (
-          formattedValue[0] === "{" &&
-          formattedValue[formattedValue.length - 1] === "}"
-        ) {
-          formattedValue = `this.utils.objectToAttrString(${formattedValue})`;
+
+        if (attName === "class") {
+          formattedValue = `this.utils.toObj(${formattedValue})`;
+          if (classObj) {
+            ctx.addLine(`Object.assign(${classObj}, ${formattedValue})`);
+          } else {
+            classObj = `_${ctx.generateID()}`;
+            ctx.addLine(`let ${classObj} = ${formattedValue};`);
+          }
+        } else {
+          const attID = ctx.generateID();
+          if (!attName.match(/^[a-zA-Z]+$/)) {
+            // attribute contains 'non letters' => we want to quote it
+            attName = '"' + attName + '"';
+          }
+          // we need to combine dynamic with non dynamic attributes:
+          // class="a" t-att-class="'yop'" should be rendered as class="a yop"
+          const attValue = (<Element>node).getAttribute(attName);
+          if (attValue) {
+            const attValueID = ctx.generateID();
+            ctx.addLine(`var _${attValueID} = ${formattedValue};`);
+            formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
+            const attrIndex = attrs.findIndex(att =>
+              att.startsWith(attName + ":")
+            );
+            attrs.splice(attrIndex, 1);
+          }
+          ctx.addLine(`var _${attID} = ${formattedValue};`);
+          attrs.push(`${attName}: _${attID}`);
+          handleBooleanProps(attName, attID);
         }
-        const attID = ctx.generateID();
-        if (!attName.match(/^[a-zA-Z]+$/)) {
-          // attribute contains 'non letters' => we want to quote it
-          attName = '"' + attName + '"';
-        }
-        // we need to combine dynamic with non dynamic attributes:
-        // class="a" t-att-class="'yop'" should be rendered as class="a yop"
-        const attValue = (<Element>node).getAttribute(attName);
-        if (attValue) {
-          const attValueID = ctx.generateID();
-          ctx.addLine(`var _${attValueID} = ${formattedValue};`);
-          formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
-          const attrIndex = attrs.findIndex(att =>
-            att.startsWith(attName + ":")
-          );
-          attrs.splice(attrIndex, 1);
-        }
-        ctx.addLine(`var _${attID} = ${formattedValue};`);
-        attrs.push(`${attName}: _${attID}`);
-        handleBooleanProps(attName, attID);
       }
 
       if (name.startsWith("t-attf-")) {
@@ -603,6 +625,9 @@ export class QWeb extends EventBus {
     }
     if (props.length > 0) {
       parts.push(`props:{${props.join(",")}}`);
+    }
+    if (classObj) {
+      parts.push(`class:${classObj}`);
     }
     if (withHandlers) {
       parts.push(`on:{}`);

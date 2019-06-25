@@ -53,6 +53,7 @@ export interface Meta<T extends Env, Props> {
   observer?: Observer;
   render?: CompiledTemplate;
   mountedHandlers: { [key: number]: Function };
+  classObj?: { [key: string]: boolean };
 }
 
 // If a component does not define explicitely a template
@@ -435,6 +436,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     const __owl__ = this.__owl__;
     __owl__.renderPromise = null;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
+    if (this.__owl__.classObj) {
+      (<any>vnode).data.class = Object.assign(
+        (<any>vnode).data.class || {},
+        this.__owl__.classObj
+      );
+    }
     __owl__.vnode = patch(target, vnode);
   }
 
@@ -528,6 +535,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    */
   __mount(vnode: VNode, elm: HTMLElement): VNode {
     const __owl__ = this.__owl__;
+    if (__owl__.classObj) {
+      (<any>vnode).data.class = Object.assign(
+        (<any>vnode).data.class || {},
+        __owl__.classObj
+      );
+    }
     __owl__.vnode = patch(elm, vnode);
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this.__callMounted();

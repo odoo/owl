@@ -1481,6 +1481,112 @@ describe("class and style attributes with t-component", () => {
     expect(fixture.innerHTML).toBe(`<div><div class="a b c d"></div></div>`);
   });
 
+  test("t-att-class is properly added/removed on widget root el (v2)", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <Child class="a" t-att-class="{ b: state.b }" t-ref="child"/>
+        </div>
+        <span t-name="Child" class="c" t-att-class="{ d: state.d }"/>
+      </templates>`);
+
+    class ParentWidget extends Widget {
+      components = { Child };
+      state = { b: true };
+    }
+    class Child extends Widget {
+      state = { d: true };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    const span = fixture.querySelector("span")!;
+    expect(span.className).toBe("c d a b");
+
+    widget.state.b = false;
+    await nextTick();
+    expect(span.className).toBe("c d a");
+
+    (<any>widget.refs.child).state.d = false;
+    await nextTick();
+    expect(span.className).toBe("c a");
+
+    widget.state.b = true;
+    await nextTick();
+    expect(span.className).toBe("c a b");
+
+    (<any>widget.refs.child).state.d = true;
+    await nextTick();
+    expect(span.className).toBe("c a b d");
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-att-class is properly added/removed on widget root el (v3)", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ParentWidget">
+          <Child class="a" t-att-class="state.b ? 'b' : ''" t-ref="child"/>
+        </div>
+        <span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>
+      </templates>`);
+
+    class ParentWidget extends Widget {
+      components = { Child };
+      state = { b: true };
+    }
+    class Child extends Widget {
+      state = { d: true };
+    }
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+
+    const span = fixture.querySelector("span")!;
+    expect(span.className).toBe("c d a b");
+
+    widget.state.b = false;
+    await nextTick();
+    expect(span.className).toBe("c d a");
+
+    (<any>widget.refs.child).state.d = false;
+    await nextTick();
+    expect(span.className).toBe("c a");
+
+    widget.state.b = true;
+    await nextTick();
+    expect(span.className).toBe("c a b");
+
+    (<any>widget.refs.child).state.d = true;
+    await nextTick();
+    expect(span.className).toBe("c a b d");
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
+
+  test("class on components do not interfere with user defined classes", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="App" t-att-class="{ c: state.c }" />
+      </templates>`);
+
+    class App extends Widget {
+      state = { c: true };
+      mounted() {
+        this.el!.classList.add("user");
+      }
+    }
+
+    const widget = new App(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div class="c user"></div>');
+
+    widget.state.c = false;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe('<div class="user"></div>');
+  });
+
   test("style is properly added on widget root el", async () => {
     env.qweb.addTemplate(
       "ParentWidget",
@@ -3014,9 +3120,7 @@ describe("t-slot directive", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><div>sts rocks</div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
   });
 
   test("multiple roots are allowed in a named slot", async () => {
@@ -3090,7 +3194,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
-      '<div><span><span>some content</span></span></div>'
+      "<div><span><span>some content</span></span></div>"
     );
   });
 
@@ -3117,7 +3221,6 @@ describe("t-slot directive", () => {
     expect(console.log).toHaveBeenCalledTimes(0);
     console.log = consoleLog;
   });
-
 });
 
 describe("t-model directive", () => {
@@ -3350,8 +3453,6 @@ describe("t-model directive", () => {
     expect(comp.state.number).toBe("invalid");
     expect(fixture.innerHTML).toBe("<div><input><span>invalid</span></div>");
   });
-
-
 });
 
 describe("environment and plugins", () => {

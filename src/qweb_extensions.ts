@@ -469,26 +469,28 @@ QWeb.addDirective({
       ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattStyle)};`);
       tattStyle = attVar;
     }
-    let updateClassCode = "";
+    let classObj = "";
     if (classAttr || tattClass || styleAttr || tattStyle || events.length) {
-      let classCode = "";
       if (classAttr) {
-        classCode =
-          classAttr
-            .trim()
-            .split(/\s+/)
-            .map(c => `vn.elm.classList.add('${c}')`)
-            .join(";") + ";";
+        let classDef = classAttr
+          .trim()
+          .split(/\s+/)
+          .map(a => `'${a}':true`)
+          .join(",");
+        classObj = `_${ctx.generateID()}`;
+        ctx.addLine(`let ${classObj} = {${classDef}};`);
       }
       if (tattClass) {
-        const attVar = `_${ctx.generateID()}`;
-        ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattClass)};`);
-        classCode = `for (let k in ${attVar}) {
-              if (${attVar}[k]) {
-                  vn.elm.classList.add(k);
-              }
-          }`;
-        updateClassCode = `let cl=w${componentID}.el.classList;for (let k in ${attVar}) {if (${attVar}[k]) {cl.add(k)} else {cl.remove(k)}}`;
+        let tattExpr = ctx.formatExpression(tattClass);
+        if (tattExpr[0] !== "{" || tattExpr[tattExpr.length - 1] !== "}") {
+          tattExpr = `this.utils.toObj(${tattExpr})`;
+        }
+        if (classAttr) {
+          ctx.addLine(`Object.assign(${classObj}, ${tattExpr})`);
+        } else {
+          classObj = `_${ctx.generateID()}`;
+          ctx.addLine(`let ${classObj} = ${tattExpr};`);
+        }
       }
       let eventsCode = events
         .map(function([eventName, mods, handlerName, extraArgs]) {
@@ -524,7 +526,7 @@ QWeb.addDirective({
         .join("");
       const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);
       const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
-      createHook = `vnode.data.hook = {create(_, vn){${classCode}${styleCode}${eventsCode}}};`;
+      createHook = `vnode.data.hook = {create(_, vn){${styleCode}${eventsCode}}};`;
     }
 
     ctx.addLine(
@@ -630,11 +632,15 @@ QWeb.addDirective({
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${
         tattStyle ? `w${componentID}.el.style=${tattStyle};` : ""
-      }${updateClassCode}let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}c${
+      }let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}c${
         ctx.parentNode
       }[_${dummyID}_index]=pvnode;});`
     );
     ctx.closeIf();
+
+    if (classObj) {
+      ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
+    }
 
     if (async) {
       ctx.addLine(
@@ -706,7 +712,7 @@ QWeb.addDirective({
     ctx.addLine(
       `const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`
     );
-    ctx.addIf(`slot${slotKey}`)
+    ctx.addIf(`slot${slotKey}`);
     ctx.addLine(
       `slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
         ctx.parentNode

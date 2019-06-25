@@ -128,8 +128,8 @@ exports[`attributes from object variables set previously 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = {a:'b'};
-    var _3 = _2.a;
-    let c4 = [], p4 = {key:4,attrs:{class: _3}};
+    let _3 = this.utils.toObj(_2.a);
+    let c4 = [], p4 = {key:4,class:_3};
     var vn4 = h('span', p4, c4);
     c1.push(vn4);
     return vn1;
@@ -143,8 +143,8 @@ exports[`attributes from variables set previously 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 'def';
-    var _3 = _2;
-    let c4 = [], p4 = {key:4,attrs:{class: _3}};
+    let _3 = this.utils.toObj(_2);
+    let c4 = [], p4 = {key:4,class:_3};
     var vn4 = h('span', p4, c4);
     c1.push(vn4);
     return vn1;
@@ -209,12 +209,11 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = 'hello';
-    var _3 = context['value'];
-    var _2 = 'hello' + (_3 ? ' ' + _3 : '');
-    let c4 = [], p4 = {key:4,attrs:{class: _2}};
-    var vn4 = h('div', p4, c4);
-    return vn4;
+    let _2 = {'hello':true};
+    Object.assign(_2, this.utils.toObj(context['value']))
+    let c3 = [], p3 = {key:3,class:_2};
+    var vn3 = h('div', p3, c3);
+    return vn3;
 }"
 `;
 
@@ -222,12 +221,11 @@ exports[`attributes t-att-class with object 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.utils.h;
-    var _1 = 'static';
-    var _3 = this.utils.objectToAttrString({a:context['b'],c:context['d'],e:context['f']});
-    var _2 = 'static' + (_3 ? ' ' + _3 : '');
-    let c4 = [], p4 = {key:4,attrs:{class: _2}};
-    var vn4 = h('div', p4, c4);
-    return vn4;
+    let _2 = {'static':true};
+    Object.assign(_2, this.utils.toObj({a:context['b'],c:context['d'],e:context['f']}))
+    let c3 = [], p3 = {key:3,class:_2};
+    var vn3 = h('div', p3, c3);
+    return vn3;
 }"
 `;
 

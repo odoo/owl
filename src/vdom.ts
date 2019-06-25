@@ -59,7 +59,7 @@ function vnode(
   elm: Element | Text | undefined
 ): VNode {
   let key = data === undefined ? undefined : data.key;
-  return {sel, data, children, text, elm, key};
+  return { sel, data, children, text, elm, key };
 }
 
 //------------------------------------------------------------------------------
@@ -938,4 +938,44 @@ export const attrsModule = {
   update: updateAttrs
 } as Module;
 
-export const patch = init([eventListenersModule, attrsModule, propsModule]);
+//------------------------------------------------------------------------------
+// class.ts
+//------------------------------------------------------------------------------
+function updateClass(oldVnode: VNode, vnode: VNode): void {
+  var cur: any,
+    name: string,
+    elm: Element,
+    oldClass = (oldVnode.data as VNodeData).class,
+    klass = (vnode.data as VNodeData).class;
+
+  if (!oldClass && !klass) return;
+  if (oldClass === klass) return;
+  oldClass = oldClass || {};
+  klass = klass || {};
+
+  elm = vnode.elm as Element;
+
+  for (name in oldClass) {
+    if (!klass[name]) {
+      elm.classList.remove(name);
+    }
+  }
+  for (name in klass) {
+    cur = klass[name];
+    if (cur !== oldClass[name]) {
+      (elm.classList as any)[cur ? "add" : "remove"](name);
+    }
+  }
+}
+
+const classModule = { create: updateClass, update: updateClass } as Module;
+
+//------------------------------------------------------------------------------
+// patch
+//------------------------------------------------------------------------------
+export const patch = init([
+  eventListenersModule,
+  attrsModule,
+  propsModule,
+  classModule
+]);

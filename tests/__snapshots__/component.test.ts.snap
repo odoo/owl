@@ -18,65 +18,65 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
     p2.on['click'] = extra.handlers['click' + 2];
     c2.push({text: \`Update App State\`});
-    var _3 = 'children';
-    let c4 = [], p4 = {key:4,attrs:{class: _3}};
-    var vn4 = h('div', p4, c4);
-    c1.push(vn4);
+    let _4 = {'children':true};
+    let c5 = [], p5 = {key:5,class:_4};
+    var vn5 = h('div', p5, c5);
+    c1.push(vn5);
     //COMPONENT
-    let def6;
-    let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
-    let _5_index = c4.length;
-    c4.push(null);
-    let props7 = {val:context['state'].val};
-    if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
-        if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
-            def6 = w7.__owl__.renderPromise;
+    let def7;
+    let w8 = 8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[8]] : false;
+    let _6_index = c5.length;
+    c5.push(null);
+    let props8 = {val:context['state'].val};
+    if (w8 && w8.__owl__.renderPromise && !w8.__owl__.vnode) {
+        if (utils.shallowEqual(props8, w8.__owl__.renderProps)) {
+            def7 = w8.__owl__.renderPromise;
         } else {
-            w7.destroy();
-            w7 = false;
+            w8.destroy();
+            w8 = false;
         }
     }
-    if (!w7) {
-        let componentKey7 = \`Child\`;
-        let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
-        if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
-        w7 = new W7(owner, props7);
-        context.__owl__.cmap[7] = w7.__owl__.id;
-        def6 = w7.__prepare();
-        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+    if (!w8) {
+        let componentKey8 = \`Child\`;
+        let W8 = context.components && context.components[componentKey8] || QWeb.components[componentKey8];
+        if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
+        w8 = new W8(owner, props8);
+        context.__owl__.cmap[8] = w8.__owl__.id;
+        def7 = w8.__prepare();
+        def7 = def7.then(vnode=>{let pvnode=h(vnode.sel, {key: 8, hook: {insert(vn) {let nvn=w8.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});c5[_6_index]=pvnode;w8.__owl__.pvnode = pvnode;});
     } else {
-        def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
-        def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
+        def7 = def7 || w8.__updateProps(props8, extra.forceUpdate, extra.patchQueue);
+        def7 = def7.then(()=>{if (w8.__owl__.isDestroyed) {return};let pvnode=w8.__owl__.pvnode;c5[_6_index]=pvnode;});
     }
-    extra.promises.push(def6);
+    extra.promises.push(def7);
     //COMPONENT
-    let def9;
-    let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
-    let _8_index = c4.length;
-    const patchQueue10 = [];
-    c4.push(w10 && w10.__owl__.pvnode || null);
-    let props10 = {val:context['state'].val};
-    if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
-        if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
-            def9 = w10.__owl__.renderPromise;
+    let def10;
+    let w11 = 11 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[11]] : false;
+    let _9_index = c5.length;
+    const patchQueue11 = [];
+    c5.push(w11 && w11.__owl__.pvnode || null);
+    let props11 = {val:context['state'].val};
+    if (w11 && w11.__owl__.renderPromise && !w11.__owl__.vnode) {
+        if (utils.shallowEqual(props11, w11.__owl__.renderProps)) {
+            def10 = w11.__owl__.renderPromise;
         } else {
-            w10.destroy();
-            w10 = false;
+            w11.destroy();
+            w11 = false;
         }
     }
-    if (!w10) {
-        let componentKey10 = \`AsyncChild\`;
-        let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
-        if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
-        w10 = new W10(owner, props10);
-        context.__owl__.cmap[10] = w10.__owl__.id;
-        def9 = w10.__prepare();
-        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+    if (!w11) {
+        let componentKey11 = \`AsyncChild\`;
+        let W11 = context.components && context.components[componentKey11] || QWeb.components[componentKey11];
+        if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
+        w11 = new W11(owner, props11);
+        context.__owl__.cmap[11] = w11.__owl__.id;
+        def10 = w11.__prepare();
+        def10 = def10.then(vnode=>{let pvnode=h(vnode.sel, {key: 11, hook: {insert(vn) {let nvn=w11.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w11.destroy();}}});c5[_9_index]=pvnode;w11.__owl__.pvnode = pvnode;});
     } else {
-        def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, patchQueue10);
-        def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
+        def10 = def10 || w11.__updateProps(props11, extra.forceUpdate, patchQueue11);
+        def10 = def10.then(()=>{if (w11.__owl__.isDestroyed) {return};let pvnode=w11.__owl__.pvnode;c5[_9_index]=pvnode;});
     }
-    def9.then(w10.__applyPatchQueue.bind(w10, patchQueue10));
+    def10.then(w11.__applyPatchQueue.bind(w11, patchQueue11));
     return vn1;
 }"
 `;
@@ -99,65 +99,65 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
     p2.on['click'] = extra.handlers['click' + 2];
     c2.push({text: \`Update App State\`});
-    var _3 = 'children';
-    let c4 = [], p4 = {key:4,attrs:{class: _3}};
-    var vn4 = h('div', p4, c4);
-    c1.push(vn4);
+    let _4 = {'children':true};
+    let c5 = [], p5 = {key:5,class:_4};
+    var vn5 = h('div', p5, c5);
+    c1.push(vn5);
     //COMPONENT
-    let def6;
-    let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
-    let _5_index = c4.length;
-    const patchQueue7 = [];
-    c4.push(w7 && w7.__owl__.pvnode || null);
-    let props7 = {val:context['state'].val};
-    if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
-        if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
-            def6 = w7.__owl__.renderPromise;
+    let def7;
+    let w8 = 8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[8]] : false;
+    let _6_index = c5.length;
+    const patchQueue8 = [];
+    c5.push(w8 && w8.__owl__.pvnode || null);
+    let props8 = {val:context['state'].val};
+    if (w8 && w8.__owl__.renderPromise && !w8.__owl__.vnode) {
+        if (utils.shallowEqual(props8, w8.__owl__.renderProps)) {
+            def7 = w8.__owl__.renderPromise;
         } else {
-            w7.destroy();
-            w7 = false;
+            w8.destroy();
+            w8 = false;
         }
     }
-    if (!w7) {
-        let componentKey7 = \`Child\`;
-        let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
-        if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
-        w7 = new W7(owner, props7);
-        context.__owl__.cmap[7] = w7.__owl__.id;
-        def6 = w7.__prepare();
-        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+    if (!w8) {
+        let componentKey8 = \`Child\`;
+        let W8 = context.components && context.components[componentKey8] || QWeb.components[componentKey8];
+        if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
+        w8 = new W8(owner, props8);
+        context.__owl__.cmap[8] = w8.__owl__.id;
+        def7 = w8.__prepare();
+        def7 = def7.then(vnode=>{let pvnode=h(vnode.sel, {key: 8, hook: {insert(vn) {let nvn=w8.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});c5[_6_index]=pvnode;w8.__owl__.pvnode = pvnode;});
     } else {
-        def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, patchQueue7);
-        def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
+        def7 = def7 || w8.__updateProps(props8, extra.forceUpdate, patchQueue8);
+        def7 = def7.then(()=>{if (w8.__owl__.isDestroyed) {return};let pvnode=w8.__owl__.pvnode;c5[_6_index]=pvnode;});
     }
-    def6.then(w7.__applyPatchQueue.bind(w7, patchQueue7));
+    def7.then(w8.__applyPatchQueue.bind(w8, patchQueue8));
     //COMPONENT
-    let def9;
-    let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
-    let _8_index = c4.length;
-    c4.push(null);
-    let props10 = {val:context['state'].val};
-    if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
-        if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
-            def9 = w10.__owl__.renderPromise;
+    let def10;
+    let w11 = 11 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[11]] : false;
+    let _9_index = c5.length;
+    c5.push(null);
+    let props11 = {val:context['state'].val};
+    if (w11 && w11.__owl__.renderPromise && !w11.__owl__.vnode) {
+        if (utils.shallowEqual(props11, w11.__owl__.renderProps)) {
+            def10 = w11.__owl__.renderPromise;
         } else {
-            w10.destroy();
-            w10 = false;
+            w11.destroy();
+            w11 = false;
         }
     }
-    if (!w10) {
-        let componentKey10 = \`AsyncChild\`;
-        let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
-        if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
-        w10 = new W10(owner, props10);
-        context.__owl__.cmap[10] = w10.__owl__.id;
-        def9 = w10.__prepare();
-        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+    if (!w11) {
+        let componentKey11 = \`AsyncChild\`;
+        let W11 = context.components && context.components[componentKey11] || QWeb.components[componentKey11];
+        if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
+        w11 = new W11(owner, props11);
+        context.__owl__.cmap[11] = w11.__owl__.id;
+        def10 = w11.__prepare();
+        def10 = def10.then(vnode=>{let pvnode=h(vnode.sel, {key: 11, hook: {insert(vn) {let nvn=w11.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w11.destroy();}}});c5[_9_index]=pvnode;w11.__owl__.pvnode = pvnode;});
     } else {
-        def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, extra.patchQueue);
-        def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
+        def10 = def10 || w11.__updateProps(props11, extra.forceUpdate, extra.patchQueue);
+        def10 = def10.then(()=>{if (w11.__owl__.isDestroyed) {return};let pvnode=w11.__owl__.pvnode;c5[_9_index]=pvnode;});
     }
-    extra.promises.push(def9);
+    extra.promises.push(def10);
     return vn1;
 }"
 `;
@@ -180,65 +180,65 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
     p2.on['click'] = extra.handlers['click' + 2];
     c2.push({text: \`Update App State\`});
-    var _3 = 'children';
-    let c4 = [], p4 = {key:4,attrs:{class: _3}};
-    var vn4 = h('div', p4, c4);
-    c1.push(vn4);
+    let _4 = {'children':true};
+    let c5 = [], p5 = {key:5,class:_4};
+    var vn5 = h('div', p5, c5);
+    c1.push(vn5);
     //COMPONENT
-    let def6;
-    let w7 = 7 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[7]] : false;
-    let _5_index = c4.length;
-    c4.push(null);
-    let props7 = {val:context['state'].val};
-    if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
-        if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
-            def6 = w7.__owl__.renderPromise;
+    let def7;
+    let w8 = 8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[8]] : false;
+    let _6_index = c5.length;
+    c5.push(null);
+    let props8 = {val:context['state'].val};
+    if (w8 && w8.__owl__.renderPromise && !w8.__owl__.vnode) {
+        if (utils.shallowEqual(props8, w8.__owl__.renderProps)) {
+            def7 = w8.__owl__.renderPromise;
         } else {
-            w7.destroy();
-            w7 = false;
+            w8.destroy();
+            w8 = false;
         }
     }
-    if (!w7) {
-        let componentKey7 = \`Child\`;
-        let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
-        if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
-        w7 = new W7(owner, props7);
-        context.__owl__.cmap[7] = w7.__owl__.id;
-        def6 = w7.__prepare();
-        def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c4[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+    if (!w8) {
+        let componentKey8 = \`Child\`;
+        let W8 = context.components && context.components[componentKey8] || QWeb.components[componentKey8];
+        if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
+        w8 = new W8(owner, props8);
+        context.__owl__.cmap[8] = w8.__owl__.id;
+        def7 = w8.__prepare();
+        def7 = def7.then(vnode=>{let pvnode=h(vnode.sel, {key: 8, hook: {insert(vn) {let nvn=w8.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});c5[_6_index]=pvnode;w8.__owl__.pvnode = pvnode;});
     } else {
-        def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
-        def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c4[_5_index]=pvnode;});
+        def7 = def7 || w8.__updateProps(props8, extra.forceUpdate, extra.patchQueue);
+        def7 = def7.then(()=>{if (w8.__owl__.isDestroyed) {return};let pvnode=w8.__owl__.pvnode;c5[_6_index]=pvnode;});
     }
-    extra.promises.push(def6);
+    extra.promises.push(def7);
     //COMPONENT
-    let def9;
-    let w10 = 10 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[10]] : false;
-    let _8_index = c4.length;
-    const patchQueue10 = [];
-    c4.push(w10 && w10.__owl__.pvnode || null);
-    let props10 = {val:context['state'].val};
-    if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
-        if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
-            def9 = w10.__owl__.renderPromise;
+    let def10;
+    let w11 = 11 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[11]] : false;
+    let _9_index = c5.length;
+    const patchQueue11 = [];
+    c5.push(w11 && w11.__owl__.pvnode || null);
+    let props11 = {val:context['state'].val};
+    if (w11 && w11.__owl__.renderPromise && !w11.__owl__.vnode) {
+        if (utils.shallowEqual(props11, w11.__owl__.renderProps)) {
+            def10 = w11.__owl__.renderPromise;
         } else {
-            w10.destroy();
-            w10 = false;
+            w11.destroy();
+            w11 = false;
         }
     }
-    if (!w10) {
-        let componentKey10 = \`AsyncChild\`;
-        let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
-        if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
-        w10 = new W10(owner, props10);
-        context.__owl__.cmap[10] = w10.__owl__.id;
-        def9 = w10.__prepare();
-        def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: 10, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c4[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+    if (!w11) {
+        let componentKey11 = \`AsyncChild\`;
+        let W11 = context.components && context.components[componentKey11] || QWeb.components[componentKey11];
+        if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
+        w11 = new W11(owner, props11);
+        context.__owl__.cmap[11] = w11.__owl__.id;
+        def10 = w11.__prepare();
+        def10 = def10.then(vnode=>{let pvnode=h(vnode.sel, {key: 11, hook: {insert(vn) {let nvn=w11.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w11.destroy();}}});c5[_9_index]=pvnode;w11.__owl__.pvnode = pvnode;});
     } else {
-        def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, patchQueue10);
-        def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c4[_8_index]=pvnode;});
+        def10 = def10 || w11.__updateProps(props11, extra.forceUpdate, patchQueue11);
+        def10 = def10.then(()=>{if (w11.__owl__.isDestroyed) {return};let pvnode=w11.__owl__.pvnode;c5[_9_index]=pvnode;});
     }
-    def9.then(w10.__applyPatchQueue.bind(w10, patchQueue10));
+    def10.then(w11.__applyPatchQueue.bind(w11, patchQueue11));
     return vn1;
 }"
 `;
@@ -284,6 +284,118 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
 }"
 `;
 
+exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v2) 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    //COMPONENT
+    let def3;
+    const ref5 = \`child\`;
+    let _6 = {'a':true};
+    Object.assign(_6, {b:context['state'].b})
+    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
+    let props4 = {};
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+            def3 = w4.__owl__.renderPromise;
+        } else {
+            w4.destroy();
+            w4 = false;
+        }
+    }
+    if (!w4) {
+        let componentKey4 = \`Child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+        w4 = new W4(owner, props4);
+        context.__owl__.cmap[4] = w4.__owl__.id;
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+    } else {
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+    }
+    w4.__owl__.classObj=_6;
+    extra.promises.push(def3);
+    return vn1;
+}"
+`;
+
+exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v2) 2`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let _2 = {'c':true};
+    Object.assign(_2, this.utils.toObj({d:context['state'].d}))
+    let c3 = [], p3 = {key:3,class:_2};
+    var vn3 = h('span', p3, c3);
+    return vn3;
+}"
+`;
+
+exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v3) 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    //COMPONENT
+    let def3;
+    const ref5 = \`child\`;
+    let _6 = {'a':true};
+    Object.assign(_6, this.utils.toObj(context['state'].b?'b':''))
+    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let _2_index = c1.length;
+    c1.push(null);
+    let props4 = {};
+    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+            def3 = w4.__owl__.renderPromise;
+        } else {
+            w4.destroy();
+            w4 = false;
+        }
+    }
+    if (!w4) {
+        let componentKey4 = \`Child\`;
+        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+        w4 = new W4(owner, props4);
+        context.__owl__.cmap[4] = w4.__owl__.id;
+        def3 = w4.__prepare();
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+    } else {
+        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+    }
+    w4.__owl__.classObj=_6;
+    extra.promises.push(def3);
+    return vn1;
+}"
+`;
+
+exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v3) 2`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    let _2 = {'c':true};
+    Object.assign(_2, this.utils.toObj(context['state'].d?'d':''))
+    let c3 = [], p3 = {key:3,class:_2};
+    var vn3 = h('span', p3, c3);
+    return vn3;
+}"
+`;
+
 exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
@@ -295,7 +407,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    const _5 = {a:context['state'].a,b:context['state'].b};
+    let _5 = {a:context['state'].a,b:context['state'].b};
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
@@ -315,15 +427,12 @@ exports[`class and style attributes with t-component t-att-class is properly add
         w4 = new W4(owner, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
-        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){for (let k in _5) {
-              if (_5[k]) {
-                  vn.elm.classList.add(k);
-              }
-          }}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
-        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let cl=w4.el.classList;for (let k in _5) {if (_5[k]) {cl.add(k)} else {cl.remove(k)}}let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+        def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
+    w4.__owl__.classObj=_5;
     extra.promises.push(def3);
     return vn1;
 }"

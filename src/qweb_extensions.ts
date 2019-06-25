@@ -476,6 +476,7 @@ QWeb.addDirective({
         classCode =
           classAttr
             .split(" ")
+            .filter(c => !!c)
             .map(c => `vn.elm.classList.add('${c}')`)
             .join(";") + ";";
       }

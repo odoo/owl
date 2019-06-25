@@ -1464,6 +1464,23 @@ describe("class and style attributes with t-component", () => {
     expect(fixture.innerHTML).toBe(`<div><div class="c b"></div></div>`);
   });
 
+  test("class with extra whitespaces", async () => {
+    env.qweb.addTemplate(
+      "ParentWidget",
+      `<div>
+            <Child class="a  b c   d"/>
+      </div>`
+    );
+    class ParentWidget extends Widget {
+      components = { Child };
+    }
+    env.qweb.addTemplate("Child", `<div/>`);
+    class Child extends Widget {}
+    const widget = new ParentWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div><div class="a b c d"></div></div>`);
+  });
+
   test("style is properly added on widget root el", async () => {
     env.qweb.addTemplate(
       "ParentWidget",

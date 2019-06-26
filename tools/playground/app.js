@@ -200,6 +200,8 @@ class App extends owl.Component {
     } catch (e) {
       //probably problem with the templates
       error = e;
+      // we still log the error, always useful to have it available
+      console.error(e);
     }
     if (error) {
       this.displayError(error.message);

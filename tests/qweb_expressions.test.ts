@@ -40,11 +40,13 @@ describe("tokenizer", () => {
   });
 
   test("various operators", () => {
-    expect(tokenize(">= <= < >")).toEqual([
+    expect(tokenize(">= <= < > !== !=")).toEqual([
       { type: "OPERATOR", value: ">=" },
       { type: "OPERATOR", value: "<=" },
       { type: "OPERATOR", value: "<" },
       { type: "OPERATOR", value: ">" },
+      { type: "OPERATOR", value: "!==" },
+      { type: "OPERATOR", value: "!=" },
     ]);
   });
 

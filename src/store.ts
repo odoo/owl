@@ -21,8 +21,8 @@ import { Observer } from "./observer";
 // Store Definition
 //------------------------------------------------------------------------------
 
-type Mutation = ({ state, commit, getters }, payload: any) => void;
-type Action = ({ commit, state, dispatch, env, getters }, payload: any) => void;
+type Mutation = ({ state, commit, getters }, ...payload: any) => void;
+type Action = ({ commit, state, dispatch, env, getters }, ...payload: any) => void;
 type Getter = ({ state, getters }, payload) => any;
 
 interface StoreConfig {
@@ -85,7 +85,7 @@ export class Store extends EventBus {
     }
   }
 
-  dispatch(action: string, payload?: any): Promise<void> | void {
+  dispatch(action: string, ...payload: any): Promise<void> | void {
     if (!this.actions[action]) {
       throw new Error(`[Error] action ${action} is undefined`);
     }
@@ -97,7 +97,7 @@ export class Store extends EventBus {
         state: this.state,
         getters: this.getters
       },
-      payload
+      ...payload
     );
     if (result instanceof Promise) {
       return new Promise((resolve, reject) => {
@@ -107,7 +107,7 @@ export class Store extends EventBus {
     }
   }
 
-  commit(type: string, payload?: any): any {
+  commit(type: string, ...payload: any): any {
     if (!this.mutations[type]) {
       throw new Error(`[Error] mutation ${type} is undefined`);
     }
@@ -121,7 +121,7 @@ export class Store extends EventBus {
         state: this.state,
         getters: this.getters
       },
-      payload
+      ...payload
     );
 
     if (this._commitLevel === 1) {
@@ -130,7 +130,7 @@ export class Store extends EventBus {
         this.history.push({
           state: this.state,
           mutation: type,
-          payload: payload
+          payload: [...payload]
         });
       }
     }

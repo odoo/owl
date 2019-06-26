@@ -42,6 +42,31 @@ describe("basic use", () => {
     expect(store.state.n).toBe(15);
   });
 
+  test("dispatch an action + commit a mutation with positional arguments", () => {
+    const state = { n1: 1, n2: 1, n3: 1 };
+    const mutations = {
+      batchInc({ state }, delta1, delta2, delta3) {
+        state.n1 += delta1;
+        state.n2 += delta2;
+        state.n3 += delta3;
+      }
+    };
+    const actions = {
+      batchInc({ commit }, delta1, delta2, delta3) {
+        commit("batchInc", delta1, delta2, delta3);
+      }
+    };
+    const store = new Store({ state, mutations, actions });
+
+    expect(store.state.n1).toBe(1);
+    expect(store.state.n2).toBe(1);
+    expect(store.state.n3).toBe(1);
+    store.dispatch("batchInc", 14, 30, 88);
+    expect(store.state.n1).toBe(15);
+    expect(store.state.n2).toBe(31);
+    expect(store.state.n3).toBe(89);
+  });
+
   test("modifying state outside of mutations trigger error", () => {
     const state = { n: 1 };
     const actions = {

@@ -86,6 +86,20 @@ object, or modifying an array with the `arr[i] = newValue` syntax). See the
 Mutations are the only way to modify the state. Changing the state outside a
 mutation is not allowed (and should throw an error). Mutations are synchronous.
 
+```js
+const mutations = {
+  setLoginState({ state }, loginState) {
+      state.loginState = loginState;
+  }
+};
+```
+
+Mutations are called with the `commit` method on the store, and can receive an arbitrary number of arguments.
+
+```js
+store.commit("setLoginState", "error");
+```
+
 ### Actions
 
 Actions are used to coordinate state changes. It is also useful whenever some
@@ -94,16 +108,23 @@ in an action.
 
 ```js
 const actions = {
-  async login({ commit }) {
+  async login({ commit }, info) {
     commit("setLoginState", "pending");
     try {
-      const loginInfo = await doSomeRPC("/login/", "someinfo");
+      const loginInfo = await doSomeRPC("/login/", info);
       commit("setLoginState", loginInfo);
     } catch {
       commit("setLoginState", "error");
     }
   }
 };
+```
+
+Actions are called with the `dispatch` method on the store, and can receive an
+arbitrary number of arguments.
+
+```js
+store.dispatch("login", someInfo);
 ```
 
 ### Getters

@@ -82,7 +82,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ")": "RIGHT_PAREN"
 };
 
-const OPERATORS = ".,===,==,+,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(',');
+const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(',');
 
 type Tokenizer = (expr: string) => Token | false;
 

@@ -48,6 +48,7 @@ export class Store extends EventBus {
   observer: Observer;
   getters: { [name: string]: (payload?) => any };
   _gettersCache: { [name: string]: {} };
+  _updateID: number = 1;
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -59,7 +60,8 @@ export class Store extends EventBus {
     this.observer = new Observer();
     this.observer.notifyCB = () => {
       this._gettersCache = {};
-      this.trigger("update");
+      this._updateID++;
+      this.trigger("update", );
     };
     this.observer.allowMutations = false;
     this.observer.observe(this.state);

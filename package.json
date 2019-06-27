@@ -13,7 +13,7 @@
     "tools:serve": "python3 tools/server.py || python tools/server.py",
     "tools": "npm run build && npm run tools:serve",
     "pretools:watch": "npm run build",
-    "tools:watch": "npm-run-all  --parallel tools:serve \"build:* -- --watch\""
+    "tools:watch": "npm-run-all  --parallel tools:serve \"build:js -- --watch\""
   },
   "repository": {
     "type": "git",

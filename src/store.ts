@@ -46,7 +46,7 @@ export class Store extends EventBus {
   debug: boolean;
   env: any;
   observer: Observer;
-  getters: { [name: string]: (payload?) => any };
+  getters: { [name: string]: (payload?) => a ny };
   _gettersCache: { [name: string]: {} };
   _updateID: number = 1;
 

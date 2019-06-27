@@ -48,6 +48,7 @@ export class Store extends EventBus {
   observer: Observer;
   getters: { [name: string]: (payload?) => any };
   _gettersCache: { [name: string]: {} };
+  _updateId: number = 1;
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -57,10 +58,7 @@ export class Store extends EventBus {
     this.mutations = config.mutations;
     this.env = config.env;
     this.observer = new Observer();
-    this.observer.notifyCB = () => {
-      this._gettersCache = {};
-      this.trigger("update");
-    };
+    this.observer.notifyCB = this.__notifyComponents.bind(this);
     this.observer.allowMutations = false;
     this.observer.observe(this.state);
     this.getters = {};
@@ -138,6 +136,34 @@ export class Store extends EventBus {
     }
     this._commitLevel--;
     return res;
+  }
+
+  /**
+   * Instead of using trigger to emit an update event, we actually implement
+   * our own function to do that.  The reason is that we need to be smarter than
+   * a simple trigger function: we need to wait for parent components to be
+   * done before doing children components.  The reason is that if an update
+   * as an effect of destroying a children, we do not want to call the
+   * mapStoreToProps function of the child, nor rendering it.
+   *
+   * This method is not optimal if we have a bunch of asynchronous components:
+   * we wait sequentially for each component to be completed before updating the
+   * next.  However, the only things that matters is that children are updated
+   * after their parents.  So, this could be optimized by being smarter, and
+   * updating all widgets concurrently, except for parents/children.
+   */
+  async __notifyComponents() {
+    this._updateId++;
+    const current = this._updateId;
+    this._gettersCache = {};
+    const subs = this.subscriptions.update || [];
+    for (let i = 0, iLen = subs.length; i < iLen; i++) {
+      const sub = subs[i];
+      const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
+      if (shouldCallback) {
+        await sub.callback.call(sub.owner, current);
+      }
+    }
   }
 }
 
@@ -231,7 +257,7 @@ export function connect<E extends EnvWithStore, P, S>(
      * if we use the mounted hook, this will be done in the reverse order.
      */
     __callMounted() {
-      (<any>this.__owl__).store.on("update", this, this._checkUpdate);
+      (<any>this.__owl__).store.on("update", this, this.__checkUpdate);
       super.__callMounted();
     }
     willUnmount() {
@@ -239,7 +265,10 @@ export function connect<E extends EnvWithStore, P, S>(
       super.willUnmount();
     }
 
-    _checkUpdate() {
+    async __checkUpdate(updateId) {
+      if (updateId === (<any>this.__owl__).currentUpdateId) {
+        return;
+      }
       const ownProps = (<any>this.__owl__).ownProps;
       const storeProps = mapStoreToProps(
         (<any>this.__owl__).store.state,
@@ -265,22 +294,24 @@ export function connect<E extends EnvWithStore, P, S>(
       }
       if (didChange) {
         (<any>this.__owl__).currentStoreProps = storeProps;
-        this.__updateProps(ownProps, false);
+        await this.__updateProps(ownProps, false);
       }
     }
     __updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
-      if ((<any>this.__owl__).ownProps !== nextProps) {
-        (<any>this.__owl__).currentStoreProps = mapStoreToProps(
-          (<any>this.__owl__).store.state,
+      const __owl__ = <any>this.__owl__;
+      __owl__.currentUpdateId = __owl__.store._updateId;
+      if (__owl__.ownProps !== nextProps) {
+        __owl__.currentStoreProps = mapStoreToProps(
+          __owl__.store.state,
           nextProps,
-          (<any>this.__owl__).store.getters
+          __owl__.store.getters
         );
       }
-      (<any>this.__owl__).ownProps = nextProps;
+      __owl__.ownProps = nextProps;
       const mergedProps = Object.assign(
         {},
         nextProps,
-        (<any>this.__owl__).currentStoreProps
+        __owl__.currentStoreProps
       );
       return super.__updateProps(mergedProps, forceUpdate, patchQueue);
     }

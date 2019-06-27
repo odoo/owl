@@ -6,6 +6,7 @@ import {
   nextMicroTick,
   nextTick
 } from "./helpers";
+import { Observer } from "../src";
 
 describe("basic use", () => {
   test("commit a mutation", () => {
@@ -207,7 +208,7 @@ describe("basic use", () => {
       bestBeerName({ state }) {
         n++;
         return state.beers[1].name;
-      },
+      }
     };
     const store = new Store({ state, mutations: {}, actions: {}, getters });
     expect((<any>store.getters).bestBeerName()).toBe("bertinchamps");
@@ -226,7 +227,7 @@ describe("basic use", () => {
           name: "bertinchamps",
           tasterID: 1
         }
-      },
+      }
     };
     let n = 0;
     const getters = {
@@ -265,7 +266,7 @@ describe("basic use", () => {
       }
     };
     const mutations = {
-      changeTaster({ state }, {beerID, tasterID}) {
+      changeTaster({ state }, { beerID, tasterID }) {
         state.beers[beerID].tasterID = tasterID;
       }
     };
@@ -274,15 +275,20 @@ describe("basic use", () => {
       beerTasterName({ state }, beerID) {
         n++;
         return state.tasters[state.beers[beerID].tasterID].name;
-      },
+      }
     };
-    const store = new Store({ state, mutations: mutations, actions: {}, getters });
+    const store = new Store({
+      state,
+      mutations: mutations,
+      actions: {},
+      getters
+    });
     expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
     expect(n).toBe(1);
     expect((<any>store.getters).beerTasterName(1)).toBe("aaron");
     expect(n).toBe(1);
 
-    store.commit('changeTaster', {beerID: 1, tasterID: 2});
+    store.commit("changeTaster", { beerID: 1, tasterID: 2 });
     await nextTick();
 
     expect((<any>store.getters).beerTasterName(1)).toBe("gery");
@@ -295,14 +301,14 @@ describe("basic use", () => {
         1: {
           id: 1,
           name: "bertinchamps"
-        },
+        }
       }
     };
     const mutations = {
       renameBeer({ state, getters }, beerID) {
-        expect(getters.beerName(beerID)).toBe('bertinchamps');
-        state.beers[1].name = 'chouffe';
-        expect(getters.beerName(beerID)).toBe('chouffe');
+        expect(getters.beerName(beerID)).toBe("bertinchamps");
+        state.beers[1].name = "chouffe";
+        expect(getters.beerName(beerID)).toBe("chouffe");
       }
     };
     let n = 0;
@@ -310,12 +316,17 @@ describe("basic use", () => {
       beerName({ state }, beerID) {
         n++;
         return state.beers[beerID].name;
-      },
+      }
     };
-    const store = new Store({ state, mutations: mutations, actions: {}, getters });
+    const store = new Store({
+      state,
+      mutations: mutations,
+      actions: {},
+      getters
+    });
 
-    store.commit('renameBeer', 1);
-    expect((<any>store.getters).beerName(1)).toBe('chouffe');
+    store.commit("renameBeer", 1);
+    expect((<any>store.getters).beerName(1)).toBe("chouffe");
     await nextTick();
 
     expect(n).toBe(3);
@@ -1117,7 +1128,190 @@ describe("connecting a component to store", () => {
 
     store.commit("setCurrent", "b");
     await nextTick();
-    expect(steps).toEqual(["parent", "child", "parent", "child", "child"]);
+    expect(fixture.innerHTML).toBe("<div><span>b</span></div>");
+    expect(steps).toEqual(["parent", "child", "parent", "child"]);
+  });
+
+  test("connected parent/children: no double rendering", async () => {
+    const mutations = {
+      editTodo({ state }) {
+        state.todos[1].title = "abc";
+      }
+    };
+    const todos = { 1: { id: 1, title: "kikoou" } };
+    const state = {
+      todos
+    };
+    const store = new Store({
+      state,
+      mutations
+    });
+
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="TodoApp" class="todoapp">
+                <t t-foreach="Object.values(props.todos)" t-as="todo">
+                    <ConnectedTodoItem t-key="todo.id" id="todo.id"/>
+                </t>
+            </div>
+
+            <div t-name="TodoItem" class="todo">
+                <t t-esc="props.todo.title"/>
+                <button class="destroy" t-on-click="editTodo">x</button>
+            </div>
+        </templates>
+    `);
+
+    function mapStoreToPropsTodoApp(state) {
+      return {
+        todos: state.todos
+      };
+    }
+
+    class TodoApp extends Component<any, any, any> {
+      components = { ConnectedTodoItem };
+    }
+
+    const ConnectedTodoApp = connect(
+      TodoApp,
+      mapStoreToPropsTodoApp
+    );
+
+    let renderCount = 0;
+    let fCount = 0;
+
+    function mapStoreToPropsTodoItem(state, ownProps) {
+      fCount++;
+      return {
+        todo: state.todos[ownProps.id]
+      };
+    }
+
+    class TodoItem extends Component<any, any, any> {
+      state = { isEditing: false };
+
+      editTodo() {
+        this.env.store.commit("editTodo");
+      }
+      __render(...args) {
+        renderCount++;
+        return super.__render(...args);
+      }
+    }
+
+    const ConnectedTodoItem = connect(
+      TodoItem,
+      mapStoreToPropsTodoItem
+    );
+
+    (<any>env).store = store;
+    const app = new ConnectedTodoApp(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      '<div class="todoapp"><div class="todo">kikoou<button class="destroy">x</button></div></div>'
+    );
+
+    expect(renderCount).toBe(1);
+    expect(fCount).toBe(1);
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(renderCount).toBe(2);
+    expect(fCount).toBe(2);
+    expect(fixture.innerHTML).toBe(
+      '<div class="todoapp"><div class="todo">abc<button class="destroy">x</button></div></div>'
+    );
+  });
+
+  test("connected parent/children: no rendering if child is destroyed", async () => {
+    const mutations = {
+      removeTodo({ state }) {
+        Observer.delete(state.todos, 1);
+      }
+    };
+    const todos = { 1: { id: 1, title: "kikoou" } };
+    const state = {
+      todos
+    };
+    const store = new Store({
+      state,
+      mutations
+    });
+
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="TodoApp" class="todoapp">
+                <t t-foreach="Object.values(props.todos)" t-as="todo">
+                    <ConnectedTodoItem t-key="todo.id" id="todo.id"/>
+                </t>
+            </div>
+
+            <div t-name="TodoItem" class="todo">
+                <t t-esc="props.todo.title"/>
+                <button class="destroy" t-on-click="removeTodo">x</button>
+            </div>
+        </templates>
+    `);
+
+    function mapStoreToPropsTodoApp(state) {
+      return {
+        todos: state.todos
+      };
+    }
+
+    class TodoApp extends Component<any, any, any> {
+      components = { ConnectedTodoItem };
+    }
+
+    const ConnectedTodoApp = connect(
+      TodoApp,
+      mapStoreToPropsTodoApp
+    );
+
+    let renderCount = 0;
+    let fCount = 0;
+
+    function mapStoreToPropsTodoItem(state, ownProps) {
+      fCount++;
+      return {
+        todo: state.todos[ownProps.id]
+      };
+    }
+
+    class TodoItem extends Component<any, any, any> {
+      state = { isEditing: false };
+
+      removeTodo() {
+        this.env.store.commit("removeTodo");
+      }
+      __render(...args) {
+        renderCount++;
+        return super.__render(...args);
+      }
+    }
+
+    const ConnectedTodoItem = connect(
+      TodoItem,
+      mapStoreToPropsTodoItem
+    );
+
+    (<any>env).store = store;
+    const app = new ConnectedTodoApp(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      '<div class="todoapp"><div class="todo">kikoou<button class="destroy">x</button></div></div>'
+    );
+
+    expect(renderCount).toBe(1);
+    expect(fCount).toBe(1);
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(renderCount).toBe(1);
+    expect(fCount).toBe(1);
+    expect(fixture.innerHTML).toBe(
+      '<div class="todoapp"></div>'
+    );
   });
 
   test("connected component willpatch/patch hooks are called on store updates", async () => {
@@ -1159,19 +1353,28 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component has its own name", () => {
-    function mapStoreToProps() { }
+    function mapStoreToProps() {}
 
-    class Named extends Component<any, any, any> { };
-    const namedConnected = connect(Named, mapStoreToProps);
-    expect(namedConnected.name).toMatch('ConnectedNamed');
+    class Named extends Component<any, any, any> {}
+    const namedConnected = connect(
+      Named,
+      mapStoreToProps
+    );
+    expect(namedConnected.name).toMatch("ConnectedNamed");
 
-    class ParentNamed extends Component<any, any, any>{};
-    class ChildNamed extends ParentNamed{};
-    const childConnected = connect(ChildNamed, mapStoreToProps)
-    expect(childConnected.name).toMatch('ConnectedChildNamed')
+    class ParentNamed extends Component<any, any, any> {}
+    class ChildNamed extends ParentNamed {}
+    const childConnected = connect(
+      ChildNamed,
+      mapStoreToProps
+    );
+    expect(childConnected.name).toMatch("ConnectedChildNamed");
 
-    const Anonymous = class extends Component<any, any, any>{ };
-    const anonymousConnected = connect(Anonymous, mapStoreToProps);
+    const Anonymous = class extends Component<any, any, any> {};
+    const anonymousConnected = connect(
+      Anonymous,
+      mapStoreToProps
+    );
     expect(anonymousConnected.name).toMatch(/^Connectedclass_\d+/);
   });
 });

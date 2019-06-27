@@ -10,6 +10,8 @@
   - [Actions](#actions)
   - [Getters](#getters)
   - [Connecting a Component](#connecting-a-component)
+  - [Semantics](#semantics)
+  - [Good Practices](#good-practices)
 
 ## Overview
 
@@ -207,3 +209,29 @@ The arguments of `connect` are:
 
 The `connect` function returns a sub class of the given `Component` which is
 connected to the `store`.
+
+### Semantics
+
+The `Store` and the `connect` function try to be smart and to optimize as much
+as possible the rendering and update process.  What is important to know is:
+
+- components are always updated in the order of their creation (so, parent
+  before children)
+- they are updated only if they are in the DOM
+- if a parent is asynchronous, the system will wait for it to complete its
+  update before updating other components.
+- in general, updates are not coordinated.  This is not a problem for synchronous
+  components, but if there are many asynchronous components, this could lead to
+  a situation where some part of the UI is updated and other parts of the UI is
+  not updated.
+
+### Good Practices
+
+- avoid asynchronous components as much as possible.  Asynchronous components
+  lead to situations where parts of the UI is not updated immediately.
+- do not be afraid to connect many components, parent or children if needed. For
+  example, a `MessageList` component could get a list of ids in its `mapStoreToProps` and a `Message` component could get the data of its own
+  message
+- since the `mapStoreToProps` function is called for each connected component,
+  for each state update, it is important to make sure that these functions are
+  as fast as possible.

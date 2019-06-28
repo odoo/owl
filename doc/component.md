@@ -119,24 +119,23 @@ find a template with the component name (or one of its ancestor).
 
   ```js
   class Counter extends owl.Component {
-      static props = {
-          initialValue: Number,
-          optional: true,
-      };
+    static props = {
+      initialValue: Number,
+      optional: true
+    };
   }
   ```
 
-
-- **`defaultProps`** (Object, optional): if given, this object define default
+* **`defaultProps`** (Object, optional): if given, this object define default
   values for (top-level) props. Whenever `props` are given to the object, they
   will be altered to add default value (if missing). Note that it does not
   change the initial object, a new object will be created instead.
 
   ```js
   class Counter extends owl.Component {
-      static defaultProps = {
-          initialValue: 0
-      };
+    static defaultProps = {
+      initialValue: 0
+    };
   }
   ```
 
@@ -179,7 +178,7 @@ We explain here all the public methods of the `Component` class.
   framework instead.
 
 Obviously, these methods are reserved for Owl, and should not be used by Owl
-users, unless they want to override them.  Also, Owl reserves all method names
+users, unless they want to override them. Also, Owl reserves all method names
 starting with `__`, in order to prevent possible future conflicts with user code
 whenever Owl needs to change.
 
@@ -372,22 +371,22 @@ easy to test a component.
 
 Updating the environment is not as simple as changing a component's state: its
 content is not observed, so updates will not be reflected immediately in the
-user interface.  There is however a mechanism to force root widgets to rerender
+user interface. There is however a mechanism to force root widgets to rerender
 themselves whenever the environment is modified: one only needs to trigger the
-`update` event on the QWeb instance.  For example, a responsive environment
+`update` event on the QWeb instance. For example, a responsive environment
 could be programmed like this:
 
 ```js
 function setupResponsivePlugin(env) {
-    const isMobile = () => window.innerWidth <= 768;
-    env.isMobile = isMobile();
-    const updateEnv = owl.utils.debounce(() => {
-        if (env.isMobile !== isMobile()) {
-            env.isMobile = !env.isMobile;
-            env.qweb.trigger('update');
-        }
-    }, 15);
-    window.addEventListener("resize", updateEnv);
+  const isMobile = () => window.innerWidth <= 768;
+  env.isMobile = isMobile();
+  const updateEnv = owl.utils.debounce(() => {
+    if (env.isMobile !== isMobile()) {
+      env.isMobile = !env.isMobile;
+      env.qweb.trigger("update");
+    }
+  }, 15);
+  window.addEventListener("resize", updateEnv);
 }
 ```
 
@@ -805,7 +804,8 @@ of the props. Here is how it works in Owl:
 - props are validated whenever a component is created/updated
 - props are only validated in `dev` mode (see [tooling page](tooling.md#development-mode))
 - if a key does not match the description, an error is thrown
-- it only validates keys defined in (static) `props`. Additional keys in (component) `props` are not validated.
+- it validates keys defined in (static) `props`. Additional keys given by the
+  parent will cause an error.
 
 For example:
 
@@ -833,15 +833,16 @@ class ComponentB extends owl.Component {
 
 - it is an object or a list of strings
 - a list of strings is a simplified props definition, which only lists the name
-  of the props.
+  of the props. Also, if the name ends with `?`, it is considered optional.
 - all props are by default required, unless they are defined with `optional: true`
   (in that case, validation is only done if there is a value)
 - valid types are: `Number, String, Boolean, Object, Array, Date, Function`, and all
   constructor functions (so, if you have a `Person` class, it can be used as a type)
 - arrays are homogeneous (all elements have the same type/shape)
 
-For each key, a `prop` definition is either a constructor, a list of constructors, or an object:
+For each key, a `prop` definition is either a boolean, a constructor, a list of constructors, or an object:
 
+- a boolean: indicate that the props exists, and is mandatory.
 - a constructor: this should describe the type, for example: `id: Number` describe
   the props `id` as a number
 - a list of constructors. In that case, this means that we allow more than one
@@ -860,6 +861,11 @@ Examples:
 ```
 
 ```js
+  // size is optional
+  static props = ['message', 'size?'];
+```
+
+```js
   static props = {
     messageIds: {type: Array, element: Number},  // list of number
     otherArr: {type: Array},   // just array. no validation is made on sub elements
@@ -873,7 +879,8 @@ Examples:
         url: String
       ]},    // object, with keys id (number), name (string, optional) and url (string)
     someFlag: Boolean,     // a boolean, mandatory (even if `false`)
-    someVal: [Boolean, Date]   // either a boolean or a date
+    someVal: [Boolean, Date],   // either a boolean or a date
+    otherValue: true,     // indicates that it is a prop
   };
 ```
 

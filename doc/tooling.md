@@ -37,6 +37,9 @@ owl.__info__.mode = "dev";
 Note that templates compiled with the `prod` settings will not be recompiled.
 So, changing this setting is best done at startup.
 
+An important job done by the `dev` mode is to validate props for each component
+creation and update.  Also, extra props will cause an error.
+
 ## Playground
 
 The playground is an important application designed to help learning and

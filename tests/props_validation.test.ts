@@ -1,6 +1,6 @@
 import { Component, Env } from "../src/component";
 import { makeTestFixture, makeTestEnv } from "./helpers";
-import { QWeb } from "../src";
+import { QWeb, UTILS } from "../src/qweb_core";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -43,19 +43,6 @@ describe("props validation", () => {
     expect(() => {
       new TestWidget(env);
     }).not.toThrow();
-  });
-
-  test("props validation is also done on update props", async () => {
-    expect.assertions(1);
-    class TestWidget extends Widget {
-      static props = ["message"];
-    }
-    const w = new TestWidget(env, { message: "bottle" });
-    try {
-      await w.__updateProps({});
-    } catch (e) {
-      expect(e.message).toBe("Missing props 'message' (component 'TestWidget')");
-    }
   });
 
   test("props: list of strings", async () => {
@@ -234,6 +221,96 @@ describe("props validation", () => {
       new TestWidget(env, { p: { id: 1, url: [12, true] } });
     }).toThrow();
   });
+
+  test("props are validated in dev mode (code snapshot)", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="App">
+          <Child message="1"/>
+        </div>
+        <div t-name="Child"><t t-esc="props.message"/></div>
+      </templates>`);
+
+    class Child extends Widget {
+      static props = ["message"];
+    }
+    class App extends Widget {
+      components = { Child };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+    // need to make sure there are 2 call to update props. one at component
+    // creation, and one at update time.
+    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+  });
+
+  test("props: list of strings with optional props", async () => {
+    class TestWidget extends Widget {
+      static props = ["message", "someProp?"];
+    }
+
+    expect(() => {
+      UTILS.validateProps(TestWidget, { someProp: 1 });
+    }).toThrow();
+    expect(() => {
+      UTILS.validateProps(TestWidget, { message: 1 });
+    }).not.toThrow();
+  });
+
+  test("props: can be defined with a boolean", async () => {
+    class TestWidget extends Widget {
+      static props = { message: true };
+    }
+
+    expect(() => {
+      UTILS.validateProps(TestWidget, {});
+    }).toThrow();
+  });
+
+  test("props: extra props cause an error", async () => {
+    class TestWidget extends Widget {
+      static props = ["message"];
+    }
+
+    expect(() => {
+      UTILS.validateProps(TestWidget, { message: 1, flag: true });
+    }).toThrow();
+  });
+
+  test("props: extra props cause an error, part 2", async () => {
+    class TestWidget extends Widget {
+      static props = {message: true};
+    }
+
+    expect(() => {
+      UTILS.validateProps(TestWidget, { message: 1, flag: true });
+    }).toThrow();
+  });
+
+  test("props: optional prop do not cause an error", async () => {
+    class TestWidget extends Widget {
+      static props = ["message?"];
+    }
+
+    expect(() => {
+      UTILS.validateProps(TestWidget, { message: 1});
+    }).not.toThrow();
+  });
+
+  test("optional prop do not cause an error if value is undefined", async () => {
+    class TestWidget extends Widget {
+      static props = {message: {type: String, optional: true}};
+    }
+
+    expect(() => {
+      UTILS.validateProps(TestWidget, { message: undefined});
+    }).not.toThrow();
+    expect(() => {
+      UTILS.validateProps(TestWidget, { message: null});
+    }).toThrow();
+  });
+
 });
 
 describe("default props", () => {

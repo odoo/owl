@@ -353,7 +353,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let def3;
     const ref5 = \`child\`;
     let _6 = {'a':true};
-    Object.assign(_6, this.utils.toObj(context['state'].b?'b':''))
+    Object.assign(_6, utils.toObj(context['state'].b?'b':''))
     let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);

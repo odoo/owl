@@ -97,10 +97,7 @@ function makeCodeIframe(js, css, xml, errorHandler) {
       setTimeout(function() {
         if (iframe.contentWindow) {
           iframe.contentWindow.removeEventListener("error", errorHandler);
-          iframe.contentWindow.removeEventListener(
-            "unhandledrejection",
-            errorHandler
-          );
+          iframe.contentWindow.removeEventListener("unhandledrejection", errorHandler);
         }
       }, 200);
       doc.body.appendChild(script);
@@ -200,6 +197,8 @@ class App extends owl.Component {
     } catch (e) {
       //probably problem with the templates
       error = e;
+      // we still log the error, always useful to have it available
+      console.error(e);
     }
     if (error) {
       this.displayError(error.message);
@@ -284,15 +283,7 @@ class TabbedEditor extends owl.Component {
     this.setTab = owl.utils.debounce(this.setTab, 250, true);
 
     this.sessions = {};
-    for (let tab of ["js", "xml", "css"]) {
-      if (props[tab]) {
-        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
-        this.sessions[tab].setOption("useWorker", false);
-        const tabSize = tab === "xml" ? 2 : 4;
-        this.sessions[tab].setOption("tabSize", tabSize);
-        this.sessions[tab].setUndoManager(new ace.UndoManager());
-      }
-    }
+    this._setupSessions(props);
     this.editor = null;
   }
 
@@ -317,9 +308,19 @@ class TabbedEditor extends owl.Component {
     });
   }
 
+  willUpdateProps(nextProps) {
+    this._setupSessions(nextProps);
+  }
+
   patched() {
     const session = this.sessions[this.state.currentTab];
-    session.setValue(this.props[this.state.currentTab], -1);
+    let content = this.props[this.state.currentTab];
+    if (content === false) {
+      const tab = this.props.js ? "js" : this.props.xml ? "xml" : "css";
+      content = this.props[tab];
+      this.state.currentTab = tab;
+    }
+    session.setValue(content, -1);
     this.editor.setSession(session);
     this.editor.resize();
   }
@@ -345,6 +346,18 @@ class TabbedEditor extends owl.Component {
       document.body.addEventListener("mouseup", () => {
         document.body.removeEventListener("mousemove", resizer);
       });
+    }
+  }
+
+  _setupSessions(props) {
+    for (let tab of ["js", "xml", "css"]) {
+      if (props[tab] && !this.sessions[tab]) {
+        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
+        this.sessions[tab].setOption("useWorker", false);
+        const tabSize = tab === "xml" ? 2 : 4;
+        this.sessions[tab].setOption("tabSize", tabSize);
+        this.sessions[tab].setUndoManager(new ace.UndoManager());
+      }
     }
   }
 }

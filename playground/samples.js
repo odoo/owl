@@ -942,31 +942,30 @@ class App extends owl.Component {
 }
 
 //------------------------------------------------------------------------------
-// Application Startup
+// Responsive plugin
 //------------------------------------------------------------------------------
-function isMobile() {
-    return window.innerWidth <= 768;
+function setupResponsivePlugin(env) {
+    const isMobile = () => window.innerWidth <= 768;
+    env.isMobile = isMobile();
+    const updateEnv = owl.utils.debounce(() => {
+        if (env.isMobile !== isMobile()) {
+            env.isMobile = !env.isMobile;
+            env.qweb.trigger('update');
+        }
+    }, 15);
+    window.addEventListener("resize", updateEnv);
 }
 
+//------------------------------------------------------------------------------
+// Application Startup
+//------------------------------------------------------------------------------
 const env = {
     qweb: new owl.QWeb(TEMPLATES),
-    isMobile: isMobile()
 };
-
+setupResponsivePlugin(env);
 
 const app = new App(env);
 app.mount(document.body);
-
-function updateEnv() {
-    const _isMobile = isMobile();
-    if (_isMobile !== env.isMobile) {
-        app.updateEnv({
-            isMobile: _isMobile
-        });
-    }
-}
-
-window.addEventListener("resize", owl.utils.debounce(updateEnv, 20));
 `;
 
 const RESPONSIVE_XML = `<templates>
@@ -1133,10 +1132,10 @@ const SLOTS_XML = `<templates>
       <t t-set="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
     </Card>
     <Card title="'Title card B'">
-      <div t-set="content">
+      <t t-set="content">
         <div>Card 2... [<t t-esc="state.b"/>]</div>
         <Counter />
-      </div>
+      </t>
       <t t-set="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
     </Card>
   </div>
@@ -1352,7 +1351,7 @@ export const SAMPLES = [
     description: "Lifecycle demo",
     code: LIFECYCLE_DEMO,
     xml: LIFECYCLE_DEMO_XML,
-    css: LIFECYCLE_CSS,
+    css: LIFECYCLE_CSS
   },
   {
     description: "Todo List App (with store)",

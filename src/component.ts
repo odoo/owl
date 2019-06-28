@@ -1,5 +1,5 @@
 import { Observer } from "./observer";
-import { QWeb, CompiledTemplate } from "./qweb_core";
+import { QWeb, CompiledTemplate, UTILS } from "./qweb_core";
 import { h, patch, VNode } from "./vdom";
 
 /**
@@ -119,9 +119,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (defaultProps) {
       props = this.__applyDefaultProps(props, defaultProps);
     }
-    if (QWeb.dev) {
-      this.__validateProps(props || {});
-    }
     // is this a good idea?
     //   Pro: if props is empty, we can create easily a component
     //   Con: this is not really safe
@@ -135,6 +132,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       parent.__owl__.children[id] = this;
     } else {
       this.env = parent;
+      if (QWeb.dev) {
+        // we only validate props for root widgets here.  "Regular" widget
+        // props are validated by the t-component directive
+        UTILS.validateProps(this.constructor, this.props);
+      }
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {
           this.render(true);
@@ -423,9 +425,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       if (defaultProps) {
         nextProps = this.__applyDefaultProps(nextProps, defaultProps);
       }
-      if (QWeb.dev) {
-        this.__validateProps(nextProps);
-      }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
       await this.render(forceUpdate, patchQueue);
@@ -591,82 +590,4 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       patch[0].patched(patch[2]);
     }
   }
-
-  /**
-   * Validate the component props (or next props) against the (static) props
-   * description.  This is potentially an expensive operation: it may needs to
-   * visit recursively the props and all the children to check if they are valid.
-   * This is why it is only done in 'dev' mode.
-   */
-  __validateProps(props: Object) {
-    const propsDef = (<any>this.constructor).props;
-    if (propsDef instanceof Array) {
-      // list of strings (prop names)
-      for (let i = 0, l = propsDef.length; i < l; i++) {
-        if (!(propsDef[i] in props)) {
-          throw new Error(`Missing props '${propsDef[i]}' (component '${this.constructor.name}')`);
-        }
-      }
-    } else if (propsDef) {
-      // propsDef is an object now
-      for (let propName in propsDef) {
-        if (!(propName in props)) {
-          if (propsDef[propName] && !propsDef[propName].optional) {
-            throw new Error(`Missing props '${propName}' (component '${this.constructor.name}')`);
-          } else {
-            break;
-          }
-        }
-        let isValid = isValidProp(props[propName], propsDef[propName]);
-        if (!isValid) {
-          throw new Error(
-            `Props '${propName}' of invalid type in component '${this.constructor.name}'`
-          );
-        }
-      }
-    }
-  }
-}
-
-//------------------------------------------------------------------------------
-// Prop validation helper
-//------------------------------------------------------------------------------
-
-/**
- * Check if an invidual prop value matches its (static) prop definition
- */
-function isValidProp(prop, propDef): boolean {
-  if (typeof propDef === "function") {
-    // Check if a value is constructed by some Constructor.  Note that there is a
-    // slight abuse of language: we want to consider primitive values as well.
-    //
-    // So, even though 1 is not an instance of Number, we want to consider that
-    // it is valid.
-    if (typeof prop === "object") {
-      return prop instanceof propDef;
-    }
-    return typeof prop === propDef.name.toLowerCase();
-  } else if (propDef instanceof Array) {
-    // If this code is executed, this means that we want to check if a prop
-    // matches at least one of its descriptor.
-    let result = false;
-    for (let i = 0, iLen = propDef.length; i < iLen; i++) {
-      result = result || isValidProp(prop, propDef[i]);
-    }
-    return result;
-  }
-  // propsDef is an object
-  let result = isValidProp(prop, propDef.type);
-  if (propDef.type === Array) {
-    for (let i = 0, iLen = prop.length; i < iLen; i++) {
-      result = result && isValidProp(prop[i], propDef.element);
-    }
-  }
-  if (propDef.type === Object) {
-    const shape = propDef.shape;
-    for (let key in shape) {
-      result = result && isValidProp(prop[key], shape[key]);
-    }
-  }
-  return result;
 }

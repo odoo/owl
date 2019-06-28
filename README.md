@@ -64,8 +64,8 @@ string. More interesting examples can be found on the
 
 If you want to use a simple `<script>` tag, the last release can be downloaded here:
 
-- [owl-0.15.0.js](https://github.com/odoo/owl/releases/download/v0.15.0/owl.js)
-- [owl-0.15.0.min.js](https://github.com/odoo/owl/releases/download/v0.15.0/owl.min.js)
+- [owl-0.16.0.js](https://github.com/odoo/owl/releases/download/v0.16.0/owl.js)
+- [owl-0.16.0.min.js](https://github.com/odoo/owl/releases/download/v0.16.0/owl.min.js)
 
 Some npm scripts are available:
 

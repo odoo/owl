@@ -1,16 +1,17 @@
 const COMPONENTS = `// In this example, we show how components can be defined and created.
 
-class Counter extends owl.Component {
-    state = { value: 0 };
+class Greeter extends owl.Component {
+    state = { word: 'Hello' };
 
-    increment() {
-        this.state.value++;
+    toggle() {
+        this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi'
     }
 }
 
 // Main root component
 class App extends owl.Component {
-    components = { Counter };
+    components = { Greeter };
+    state = { name: 'World'};
 }
 
 // Application setup
@@ -21,20 +22,25 @@ app.mount(document.body);
 `;
 
 const COMPONENTS_XML = `<templates>
-  <button t-name="Counter" t-on-click="increment">
-    Click Me! [<t t-esc="state.value"/>]
-  </button>
+  <div t-name="Greeter" class="greeter" t-on-click="toggle">
+    <t t-esc="state.word"/>, <t t-esc="props.name"/>
+  </div>
 
   <div t-name="App">
-    <Counter />
-    <Counter />
+    <Greeter name="state.name"/>
   </div>
-</templates>`;
+</templates>
+`;
 
-const COMPONENTS_CSS = `button {
+const COMPONENTS_CSS = `.greeter {
     font-size: 20px;
-    width: 220px;
+    width: 300px;
+    height: 100px;
     margin: 5px;
+    text-align: center;
+    line-height: 100px;
+    background-color: #eeeeee;
+    user-select: none;
 }`;
 
 const ANIMATION = `// The goal of this component is to see how the t-transition directive can be

@@ -2,9 +2,7 @@ import { compileExpr, tokenize } from "../src/qweb_expressions";
 
 describe("tokenizer", () => {
   test("simple tokens", () => {
-    expect(tokenize("1.3")).toEqual([
-      { type: "VALUE", value: "1.3" }
-    ]);
+    expect(tokenize("1.3")).toEqual([{ type: "VALUE", value: "1.3" }]);
 
     expect(tokenize("{}")).toEqual([
       { type: "LEFT_BRACE", value: "{" },
@@ -29,10 +27,7 @@ describe("tokenizer", () => {
       { type: "VALUE", value: "2" },
       { type: "RIGHT_BRACE", value: "}" }
     ]);
-    expect(tokenize("a,")).toEqual([
-      { type: "SYMBOL", value: "a" },
-      { type: "COMMA", value: "," }
-    ]);
+    expect(tokenize("a,")).toEqual([{ type: "SYMBOL", value: "a" }, { type: "COMMA", value: "," }]);
     expect(tokenize("][")).toEqual([
       { type: "RIGHT_BRACKET", value: "]" },
       { type: "LEFT_BRACKET", value: "[" }
@@ -46,7 +41,7 @@ describe("tokenizer", () => {
       { type: "OPERATOR", value: "<" },
       { type: "OPERATOR", value: ">" },
       { type: "OPERATOR", value: "!==" },
-      { type: "OPERATOR", value: "!=" },
+      { type: "OPERATOR", value: "!=" }
     ]);
   });
 
@@ -54,25 +49,17 @@ describe("tokenizer", () => {
     expect(() => tokenize("'")).toThrow("Invalid expression");
     expect(() => tokenize("'\\")).toThrow("Invalid expression");
     expect(() => tokenize("'\\'")).toThrow("Invalid expression");
-    expect(tokenize("'hello ged'")).toEqual([
-      { type: "VALUE", value: "'hello ged'" }
-    ]);
-    expect(tokenize("'hello \\'ged\\''")).toEqual([
-      { type: "VALUE", value: "'hello \\'ged\\''" }
-    ]);
+    expect(tokenize("'hello ged'")).toEqual([{ type: "VALUE", value: "'hello ged'" }]);
+    expect(tokenize("'hello \\'ged\\''")).toEqual([{ type: "VALUE", value: "'hello \\'ged\\''" }]);
 
     expect(() => tokenize('"')).toThrow("Invalid expression");
     expect(() => tokenize('"\\"')).toThrow("Invalid expression");
-    expect(tokenize('"hello ged"')).toEqual([
-      { type: "VALUE", value: '"hello ged"' }
-    ]);
+    expect(tokenize('"hello ged"')).toEqual([{ type: "VALUE", value: '"hello ged"' }]);
     expect(tokenize('"hello ged"}')).toEqual([
       { type: "VALUE", value: '"hello ged"' },
       { type: "RIGHT_BRACE", value: "}" }
     ]);
-    expect(tokenize('"hello \\"ged\\""')).toEqual([
-      { type: "VALUE", value: '"hello \\"ged\\""' }
-    ]);
+    expect(tokenize('"hello \\"ged\\""')).toEqual([{ type: "VALUE", value: '"hello \\"ged\\""' }]);
   });
 });
 
@@ -113,9 +100,7 @@ describe("expression evaluation", () => {
   test("arrays and objects", () => {
     expect(compileExpr("[{b:1}] ", {})).toBe("[{b:1}]");
     expect(compileExpr("{a: []} ", {})).toBe("{a:[]}");
-    expect(compileExpr("[{b:1, c: [1, {d: {e: 3}} ]}] ", {})).toBe(
-      "[{b:1,c:[1,{d:{e:3}}]}]"
-    );
+    expect(compileExpr("[{b:1, c: [1, {d: {e: 3}} ]}] ", {})).toBe("[{b:1,c:[1,{d:{e:3}}]}]");
   });
 
   test("dot operator", () => {
@@ -130,13 +115,9 @@ describe("expression evaluation", () => {
   });
 
   test("various binary operators", () => {
-    expect(compileExpr("color == 'black'", {})).toBe(
-      "context['color']=='black'"
-    );
+    expect(compileExpr("color == 'black'", {})).toBe("context['color']=='black'");
     expect(compileExpr("a || b", {})).toBe("context['a']||context['b']");
-    expect(compileExpr("color === 'black'", {})).toBe(
-      "context['color']==='black'"
-    );
+    expect(compileExpr("color === 'black'", {})).toBe("context['color']==='black'");
     expect(compileExpr("'li_'+item", {})).toBe("'li_'+context['item']");
     expect(compileExpr("state.val > 1", {})).toBe("context['state'].val>1");
   });
@@ -164,18 +145,14 @@ describe("expression evaluation", () => {
     expect(compileExpr("a()", {})).toBe("context['a']()");
     expect(compileExpr("a(1)", {})).toBe("context['a'](1)");
     expect(compileExpr("a(1,2)", {})).toBe("context['a'](1,2)");
-    expect(compileExpr("a(1,2,{a:[a]})", {})).toBe(
-      "context['a'](1,2,{a:[context['a']]})"
-    );
+    expect(compileExpr("a(1,2,{a:[a]})", {})).toBe("context['a'](1,2,{a:[context['a']]})");
     expect(compileExpr("'x'.toUpperCase()", {})).toBe("'x'.toUpperCase()");
-    expect(compileExpr("'x'.toUpperCase({a: 3})", {})).toBe(
-      "'x'.toUpperCase({a:3})"
+    expect(compileExpr("'x'.toUpperCase({a: 3})", {})).toBe("'x'.toUpperCase({a:3})");
+    expect(compileExpr("'x'.toUpperCase(a)", { a: { id: "_v5", expr: "" } })).toBe(
+      "'x'.toUpperCase(_v5)"
     );
-    expect(
-      compileExpr("'x'.toUpperCase(a)", { a: { id: "_v5", expr: "" } })
-    ).toBe("'x'.toUpperCase(_v5)");
-    expect(
-      compileExpr("'x'.toUpperCase({b: a})", { a: { id: "_v5", expr: "" } })
-    ).toBe("'x'.toUpperCase({b:_v5})");
+    expect(compileExpr("'x'.toUpperCase({b: a})", { a: { id: "_v5", expr: "" } })).toBe(
+      "'x'.toUpperCase({b:_v5})"
+    );
   });
 });

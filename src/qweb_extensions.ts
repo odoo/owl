@@ -49,9 +49,7 @@ QWeb.addDirective({
       )}'\`)`
     );
     ctx.closeIf();
-    let params = extraArgs
-      ? `owner, ${ctx.formatExpression(extraArgs)}`
-      : "owner";
+    let params = extraArgs ? `owner, ${ctx.formatExpression(extraArgs)}` : "owner";
     let handler;
     if (mods.length > 0) {
       handler = `function (e) {`;
@@ -70,9 +68,7 @@ QWeb.addDirective({
       ctx.addLine(
         `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
       );
-      ctx.addLine(
-        `p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`
-      );
+      ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
     }
   }
 });
@@ -101,9 +97,7 @@ UTILS.transitionInsert = function(vn: VNode, name: string) {
   const elm = <HTMLElement>vn.elm;
   // remove potential duplicated vnode that is currently being removed, to
   // prevent from having twice the same node in the DOM during an animation
-  const dup =
-    elm.parentElement &&
-    elm.parentElement!.querySelector(`*[data-owl-key='${vn.key}']`);
+  const dup = elm.parentElement && elm.parentElement!.querySelector(`*[data-owl-key='${vn.key}']`);
   if (dup) {
     dup.remove();
   }
@@ -164,9 +158,7 @@ function toMs(s: string): number {
 function whenTransitionEnd(elm: HTMLElement, cb) {
   const styles = window.getComputedStyle(elm);
   const delays: Array<string> = (styles.transitionDelay || "").split(", ");
-  const durations: Array<string> = (styles.transitionDuration || "").split(
-    ", "
-  );
+  const durations: Array<string> = (styles.transitionDuration || "").split(", ");
   const timeout: number = getTimeout(delays, durations);
   if (timeout > 0) {
     elm.addEventListener("transitionend", cb, { once: true });
@@ -425,9 +417,7 @@ QWeb.addDirective({
       // necessary to prevent collisions
       if (!key && ctx.inLoop) {
         let id = ctx.generateID();
-        ctx.addLine(
-          `let template${id} = "_slot_" + String(-${componentID} - i)`
-        );
+        ctx.addLine(`let template${id} = "_slot_" + String(-${componentID} - i)`);
         templateID = `template${id}`;
       } else {
         templateID = `"_slot_${templateID}"`;
@@ -446,9 +436,7 @@ QWeb.addDirective({
     if (transition) {
       transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
     }
-    let finalizeComponentCode = `w${componentID}.${
-      keepAlive ? "unmount" : "destroy"
-    }();`;
+    let finalizeComponentCode = `w${componentID}.${keepAlive ? "unmount" : "destroy"}();`;
     if (ref && !keepAlive) {
       finalizeComponentCode += `delete context.refs[${refKey}];`;
     }
@@ -501,9 +489,7 @@ QWeb.addDirective({
               // we need to evaluate the arguments now, because the handler will
               // be set asynchronously later when the widget is ready, and the
               // context might be different.
-              ctx.addLine(
-                `let arg${argId} = ${ctx.formatExpression(extraArgs)};`
-              );
+              ctx.addLine(`let arg${argId} = ${ctx.formatExpression(extraArgs)};`);
               params = `owner, arg${argId}`;
             } else {
               params = `owner, ${ctx.formatExpression(extraArgs)}`;
@@ -536,9 +522,7 @@ QWeb.addDirective({
     if (async) {
       ctx.addLine(`const patchQueue${componentID} = [];`);
       ctx.addLine(
-        `c${
-          ctx.parentNode
-        }.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`
+        `c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`
       );
     } else {
       ctx.addLine(`c${ctx.parentNode}.push(null);`);
@@ -547,9 +531,7 @@ QWeb.addDirective({
     ctx.addIf(
       `w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`
     );
-    ctx.addIf(
-      `utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`
-    );
+    ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`);
     ctx.addLine(`def${defID} = w${componentID}.__owl__.renderPromise;`);
     ctx.addElse();
     ctx.addLine(`w${componentID}.destroy();`);
@@ -568,12 +550,8 @@ QWeb.addDirective({
     ctx.addLine(
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
-    ctx.addLine(
-      `w${componentID} = new W${componentID}(owner, props${componentID});`
-    );
-    ctx.addLine(
-      `context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`
-    );
+    ctx.addLine(`w${componentID} = new W${componentID}(owner, props${componentID});`);
+    ctx.addLine(`context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
 
     // SLOTS
     if (node.childNodes.length) {
@@ -587,11 +565,7 @@ QWeb.addDirective({
           slotNode.parentElement!.removeChild(slotNode);
           const key = slotNode.getAttribute("t-set")!;
           slotNode.removeAttribute("t-set");
-          const slotFn = qweb._compile(
-            `slot_${key}_template`,
-            slotNode,
-            ctx.parentNode!
-          );
+          const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx.parentNode!);
           qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
         }
       }
@@ -600,11 +574,7 @@ QWeb.addDirective({
         for (let child of Object.values(clone.childNodes)) {
           t.appendChild(child);
         }
-        const slotFn = qweb._compile(
-          `slot_default_template`,
-          t,
-          ctx.parentNode!
-        );
+        const slotFn = qweb._compile(`slot_default_template`, t, ctx.parentNode!);
         qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
       }
     }
@@ -619,9 +589,7 @@ QWeb.addDirective({
 
     ctx.addElse();
     // need to update component
-    const patchQueueCode = async
-      ? `patchQueue${componentID}`
-      : "extra.patchQueue";
+    const patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
     ctx.addLine(
       `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`
     );
@@ -650,11 +618,7 @@ QWeb.addDirective({
       ctx.addLine(`extra.promises.push(def${defID});`);
     }
 
-    if (
-      node.hasAttribute("t-if") ||
-      node.hasAttribute("t-else") ||
-      node.hasAttribute("t-elif")
-    ) {
+    if (node.hasAttribute("t-if") || node.hasAttribute("t-else") || node.hasAttribute("t-elif")) {
       ctx.closeIf();
     }
 
@@ -694,10 +658,7 @@ QWeb.addDirective({
         `extra.mountedHandlers[${nodeID}] = extra.mountedHandlers[${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`
       );
     }
-    addNodeHook(
-      "insert",
-      `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`
-    );
+    addNodeHook("insert", `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`);
   }
 });
 
@@ -709,9 +670,7 @@ QWeb.addDirective({
   priority: 80,
   atNodeEncounter({ ctx, value }): boolean {
     const slotKey = ctx.generateID();
-    ctx.addLine(
-      `const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`
-    );
+    ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
     ctx.addIf(`slot${slotKey}`);
     ctx.addLine(
       `slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
@@ -747,9 +706,7 @@ QWeb.addDirective({
       handler = `(ev) => {context.state['${value}'] = ev.target.checked}`;
     } else if (type === "radio") {
       const nodeValue = node.getAttribute("value")!;
-      ctx.addLine(
-        `p${nodeID}.props = {checked:context.state['${value}'] === '${nodeValue}'};`
-      );
+      ctx.addLine(`p${nodeID}.props = {checked:context.state['${value}'] === '${nodeValue}'};`);
       handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
       event = "click";
     } else {
@@ -765,8 +722,6 @@ QWeb.addDirective({
     ctx.addLine(
       `extra.handlers['${event}' + ${nodeID}] = extra.handlers['${event}' + ${nodeID}] || (${handler});`
     );
-    ctx.addLine(
-      `p${nodeID}.on['${event}'] = extra.handlers['${event}' + ${nodeID}];`
-    );
+    ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers['${event}' + ${nodeID}];`);
   }
 });

@@ -1,9 +1,4 @@
-import {
-  buildData,
-  startMeasure,
-  stopMeasure,
-  formatNumber
-} from "../shared/utils.js";
+import { buildData, startMeasure, stopMeasure, formatNumber } from "../shared/utils.js";
 
 //------------------------------------------------------------------------------
 // Likes Counter Widget
@@ -40,11 +35,7 @@ class App extends owl.Component {
   state = { messages: [], multipleFlag: false, clearAfterFlag: false };
 
   mounted() {
-    this.log(
-      `Benchmarking Owl v${owl.__info__.version} (build date: ${
-        owl.__info__.date
-      })`
-    );
+    this.log(`Benchmarking Owl v${owl.__info__.version} (build date: ${owl.__info__.date})`);
   }
 
   benchmark(message, fn, callback) {
@@ -128,9 +119,7 @@ class App extends owl.Component {
 
   removeMessage(event) {
     this.benchmark("remove message", () => {
-      const index = this.state.messages.findIndex(
-        m => m.id === event.detail.id
-      );
+      const index = this.state.messages.findIndex(m => m.id === event.detail.id);
       this.state.messages.splice(index, 1);
     });
   }

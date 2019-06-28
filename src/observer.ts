@@ -21,15 +21,7 @@
 
 // we define here a new modified Array prototype, which basically override all
 // Array methods that change some state to be able to track their changes
-const methodsToPatch = [
-  "push",
-  "pop",
-  "shift",
-  "unshift",
-  "splice",
-  "sort",
-  "reverse"
-];
+const methodsToPatch = ["push", "pop", "shift", "unshift", "splice", "sort", "reverse"];
 const methodLen = methodsToPatch.length;
 
 const ArrayProto = Array.prototype;
@@ -78,18 +70,14 @@ export class Observer {
 
   static set(target: any, key: number | string, value: any) {
     if (!target.__owl__) {
-      throw Error(
-        "`Observer.set()` can only be called with observed Objects or Arrays"
-      );
+      throw Error("`Observer.set()` can only be called with observed Objects or Arrays");
     }
     target.__owl__.observer.set(target, key, value);
   }
 
   static delete(target: any, key: number | string) {
     if (!target.__owl__) {
-      throw Error(
-        "`Observer.delete()` can only be called with observed Objects"
-      );
+      throw Error("`Observer.delete()` can only be called with observed Objects");
     }
     target.__owl__.observer.delete(target, key);
   }
@@ -127,8 +115,7 @@ export class Observer {
 
   set(target: any, key: number | string, value: any) {
     let alreadyDefined =
-      key in target &&
-      Object.getOwnPropertyDescriptor(target, key)!.configurable === false;
+      key in target && Object.getOwnPropertyDescriptor(target, key)!.configurable === false;
     if (alreadyDefined) {
       target[key] = value;
     } else {
@@ -172,11 +159,7 @@ export class Observer {
     }
   }
 
-  _addProp<T extends { __owl__?: any }>(
-    obj: T,
-    key: string | number,
-    value: any
-  ) {
+  _addProp<T extends { __owl__?: any }>(obj: T, key: string | number, value: any) {
     var self = this;
     Object.defineProperty(obj, key, {
       configurable: true,

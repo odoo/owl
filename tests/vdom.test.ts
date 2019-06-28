@@ -59,9 +59,7 @@ describe("attributes", function() {
   test("are set correctly when namespaced", function() {
     const vnode1 = h("div", { attrs: { "xlink:href": "#foo" } });
     elm = patch(vnode0, vnode1).elm;
-    expect(elm.getAttributeNS("http://www.w3.org/1999/xlink", "href")).toBe(
-      "#foo"
-    );
+    expect(elm.getAttributeNS("http://www.w3.org/1999/xlink", "href")).toBe("#foo");
   });
 
   test("should not touch class nor id fields", function() {
@@ -207,12 +205,8 @@ describe("snabbdom", function() {
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
 
       // verify that svg tag automatically gets svg namespace
-      elm = patch(
-        vnode0,
-        h("svg", [
-          h("foreignObject", [h("div", ["I am HTML embedded in SVG"])])
-        ])
-      ).elm;
+      elm = patch(vnode0, h("svg", [h("foreignObject", [h("div", ["I am HTML embedded in SVG"])])]))
+        .elm;
       expect(elm.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.firstChild.namespaceURI).toBe(XHTMLNamespace);
@@ -352,13 +346,7 @@ describe("snabbdom", function() {
         elm = patch(vnode0, vnode1).elm;
         expect(elm.children.length).toBe(2);
         elm = patch(vnode1, vnode2).elm;
-        expect(map(elm.children, c => c.innerHTML)).toEqual([
-          "1",
-          "2",
-          "3",
-          "4",
-          "5"
-        ]);
+        expect(map(elm.children, c => c.innerHTML)).toEqual(["1", "2", "3", "4", "5"]);
       });
 
       test("add elements in the middle", function() {
@@ -368,13 +356,7 @@ describe("snabbdom", function() {
         expect(elm.children.length).toBe(4);
         expect(elm.children.length).toBe(4);
         elm = patch(vnode1, vnode2).elm;
-        expect(map(elm.children, c => c.innerHTML)).toEqual([
-          "1",
-          "2",
-          "3",
-          "4",
-          "5"
-        ]);
+        expect(map(elm.children, c => c.innerHTML)).toEqual(["1", "2", "3", "4", "5"]);
       });
 
       test("add elements at beginning and end", function() {
@@ -383,13 +365,7 @@ describe("snabbdom", function() {
         elm = patch(vnode0, vnode1).elm;
         expect(elm.children.length).toBe(3);
         elm = patch(vnode1, vnode2).elm;
-        expect(map(elm.children, c => c.innerHTML)).toEqual([
-          "1",
-          "2",
-          "3",
-          "4",
-          "5"
-        ]);
+        expect(map(elm.children, c => c.innerHTML)).toEqual(["1", "2", "3", "4", "5"]);
       });
 
       test("adds children to parent with no children", function() {
@@ -588,35 +564,19 @@ describe("snabbdom", function() {
         elm = patch(vnode0, vnode1).elm;
         expect(elm.children.length).toBe(6);
         elm = patch(vnode1, vnode2).elm;
-        expect(map(elm.children, c => c.innerHTML)).toEqual([
-          "4",
-          "3",
-          "2",
-          "1",
-          "5",
-          "0"
-        ]);
+        expect(map(elm.children, c => c.innerHTML)).toEqual(["4", "3", "2", "1", "5", "0"]);
       });
 
       test("supports null/undefined children", function() {
         const vnode1 = h("i", [0, 1, 2, 3, 4, 5].map(spanNum));
         const vnode2 = h(
           "i",
-          [null, 2, undefined, null, 1, 0, null, 5, 4, null, 3, undefined].map(
-            spanNum
-          )
+          [null, 2, undefined, null, 1, 0, null, 5, 4, null, 3, undefined].map(spanNum)
         );
         elm = patch(vnode0, vnode1).elm;
         expect(elm.children.length).toBe(6);
         elm = patch(vnode1, vnode2).elm;
-        expect(map(elm.children, c => c.innerHTML)).toEqual([
-          "2",
-          "1",
-          "0",
-          "5",
-          "4",
-          "3"
-        ]);
+        expect(map(elm.children, c => c.innerHTML)).toEqual(["2", "1", "0", "5", "4", "3"]);
       });
 
       test("supports all null/undefined children", function() {
@@ -627,14 +587,7 @@ describe("snabbdom", function() {
         elm = patch(vnode1, vnode2).elm;
         expect(elm.children.length).toBe(0);
         elm = patch(vnode2, vnode3).elm;
-        expect(map(elm.children, c => c.innerHTML)).toEqual([
-          "5",
-          "4",
-          "3",
-          "2",
-          "1",
-          "0"
-        ]);
+        expect(map(elm.children, c => c.innerHTML)).toEqual(["5", "4", "3", "2", "1", "0"]);
       });
     });
   });
@@ -714,18 +667,10 @@ describe("snabbdom", function() {
     });
 
     test("removes elements", function() {
-      const vnode1 = h("div", [
-        h("span", "One"),
-        h("span", "Two"),
-        h("span", "Three")
-      ]);
+      const vnode1 = h("div", [h("span", "One"), h("span", "Two"), h("span", "Three")]);
       const vnode2 = h("div", [h("span", "One"), h("span", "Three")]);
       elm = patch(vnode0, vnode1).elm;
-      expect(map(elm.children, c => c.innerHTML)).toEqual([
-        "One",
-        "Two",
-        "Three"
-      ]);
+      expect(map(elm.children, c => c.innerHTML)).toEqual(["One", "Two", "Three"]);
       elm = patch(vnode1, vnode2).elm;
       expect(map(elm.children, c => c.innerHTML)).toEqual(["One", "Three"]);
     });
@@ -760,49 +705,19 @@ describe("snabbdom", function() {
     });
 
     test("reorders elements", function() {
-      const vnode1 = h("div", [
-        h("span", "One"),
-        h("div", "Two"),
-        h("b", "Three")
-      ]);
-      const vnode2 = h("div", [
-        h("b", "Three"),
-        h("span", "One"),
-        h("div", "Two")
-      ]);
+      const vnode1 = h("div", [h("span", "One"), h("div", "Two"), h("b", "Three")]);
+      const vnode2 = h("div", [h("b", "Three"), h("span", "One"), h("div", "Two")]);
       elm = patch(vnode0, vnode1).elm;
-      expect(map(elm.children, c => c.innerHTML)).toEqual([
-        "One",
-        "Two",
-        "Three"
-      ]);
+      expect(map(elm.children, c => c.innerHTML)).toEqual(["One", "Two", "Three"]);
       elm = patch(vnode1, vnode2).elm;
       expect(map(elm.children, c => c.tagName)).toEqual(["B", "SPAN", "DIV"]);
-      expect(map(elm.children, c => c.innerHTML)).toEqual([
-        "Three",
-        "One",
-        "Two"
-      ]);
+      expect(map(elm.children, c => c.innerHTML)).toEqual(["Three", "One", "Two"]);
     });
 
     test("supports null/undefined children", function() {
       const vnode1 = h("i", [null, h("i", "1"), h("i", "2"), null]);
-      const vnode2 = h("i", [
-        h("i", "2"),
-        undefined,
-        undefined,
-        h("i", "1"),
-        undefined
-      ]);
-      const vnode3 = h("i", [
-        null,
-        h("i", "1"),
-        undefined,
-        null,
-        h("i", "2"),
-        undefined,
-        null
-      ]);
+      const vnode2 = h("i", [h("i", "2"), undefined, undefined, h("i", "1"), undefined]);
+      const vnode3 = h("i", [null, h("i", "1"), undefined, null, h("i", "2"), undefined, null]);
       elm = patch(vnode0, vnode1).elm;
       expect(map(elm.children, c => c.innerHTML)).toEqual(["1", "2"]);
       elm = patch(vnode1, vnode2).elm;
@@ -835,10 +750,7 @@ describe("snabbdom", function() {
         }
         const vnode1 = h("div", [
           h("span", "First sibling"),
-          h("div", { hook: { create: cb } }, [
-            h("span", "Child 1"),
-            h("span", "Child 2")
-          ]),
+          h("div", { hook: { create: cb } }, [h("span", "Child 1"), h("span", "Child 2")]),
           h("span", "Can't touch me")
         ]);
         patch(vnode0, vnode1);
@@ -855,10 +767,7 @@ describe("snabbdom", function() {
         }
         const vnode1 = h("div", [
           h("span", "First sibling"),
-          h("div", { hook: { insert: cb } }, [
-            h("span", "Child 1"),
-            h("span", "Child 2")
-          ]),
+          h("div", { hook: { insert: cb } }, [h("span", "Child 1"), h("span", "Child 2")]),
           h("span", "Can touch me")
         ]);
         patch(vnode0, vnode1);
@@ -874,17 +783,11 @@ describe("snabbdom", function() {
         }
         const vnode1 = h("div", [
           h("span", "First sibling"),
-          h("div", { hook: { prepatch: cb } }, [
-            h("span", "Child 1"),
-            h("span", "Child 2")
-          ])
+          h("div", { hook: { prepatch: cb } }, [h("span", "Child 1"), h("span", "Child 2")])
         ]);
         const vnode2 = h("div", [
           h("span", "First sibling"),
-          h("div", { hook: { prepatch: cb } }, [
-            h("span", "Child 1"),
-            h("span", "Child 2")
-          ])
+          h("div", { hook: { prepatch: cb } }, [h("span", "Child 1"), h("span", "Child 2")])
         ]);
         patch(vnode0, vnode1);
         patch(vnode1, vnode2);
@@ -965,10 +868,7 @@ describe("snabbdom", function() {
         }
         const vnode1 = h("div", [
           h("span", "First sibling"),
-          h("div", { hook: { remove: cb } }, [
-            h("span", "Child 1"),
-            h("span", "Child 2")
-          ])
+          h("div", { hook: { remove: cb } }, [h("span", "Child 1"), h("span", "Child 2")])
         ]);
         const vnode2 = h("div", [h("span", "First sibling")]);
         patch(vnode0, vnode1);
@@ -981,9 +881,7 @@ describe("snabbdom", function() {
         function cb(vnode) {
           calls++;
         }
-        const vnode1 = h("div", [
-          h("div", { hook: { destroy: cb } }, [h("span", "Child 1")])
-        ]);
+        const vnode1 = h("div", [h("div", { hook: { destroy: cb } }, [h("span", "Child 1")])]);
         const vnode2 = h("div", "Text node");
         patch(vnode0, vnode1);
         patch(vnode1, vnode2);
@@ -1053,10 +951,7 @@ describe("snabbdom", function() {
           result.push(vnode);
           rm();
         }
-        const vnode1 = h("div", { hook: { remove: cb } }, [
-          h("b", "Child 1"),
-          h("i", "Child 2")
-        ]);
+        const vnode1 = h("div", { hook: { remove: cb } }, [h("b", "Child 1"), h("i", "Child 2")]);
         const vnode2 = h("span", [h("b", "Child 1"), h("i", "Child 2")]);
         patch(vnode0, vnode1);
         patch(vnode1, vnode2);
@@ -1091,10 +986,7 @@ describe("snabbdom", function() {
         }
         const vnode1 = h("div", [
           h("span", "First sibling"),
-          h("div", [
-            h("span", { hook: { destroy: cb } }, "Child 1"),
-            h("span", "Child 2")
-          ])
+          h("div", [h("span", { hook: { destroy: cb } }, "Child 1"), h("span", "Child 2")])
         ]);
         const vnode2 = h("div");
         patch(vnode0, vnode1);
@@ -1150,11 +1042,7 @@ describe("snabbdom", function() {
             }
           }
         ]);
-        const vnode1 = h("div", [
-          h("span", "First child"),
-          "",
-          h("span", "Third child")
-        ]);
+        const vnode1 = h("div", [h("span", "First child"), "", h("span", "Third child")]);
         const vnode2 = h("div");
         patch(vnode0, vnode1);
         patch(vnode1, vnode2);
@@ -1196,10 +1084,7 @@ describe("snabbdom", function() {
       function cb(vnode) {
         result.push(vnode);
       }
-      const vnode1 = h("div", [
-        h("span", { hook: { update: cb } }, "Hello"),
-        h("span", "there")
-      ]);
+      const vnode1 = h("div", [h("span", { hook: { update: cb } }, "Hello"), h("span", "there")]);
       patch(vnode0, vnode1);
       patch(vnode1, vnode1);
       expect(result).toHaveLength(0);

@@ -437,10 +437,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     __owl__.renderPromise = null;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
     if (this.__owl__.classObj) {
-      (<any>vnode).data.class = Object.assign(
-        (<any>vnode).data.class || {},
-        this.__owl__.classObj
-      );
+      (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, this.__owl__.classObj);
     }
     __owl__.vnode = patch(target, vnode);
   }
@@ -471,17 +468,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       if (template) {
         this.template = template;
       } else {
-        while (
-          (template = p.name) &&
-          !(template in qweb.templates) &&
-          p !== Component
-        ) {
+        while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
           p = p.__proto__;
         }
         if (p === Component) {
-          throw new Error(
-            `Could not find template for component "${this.constructor.name}"`
-          );
+          throw new Error(`Could not find template for component "${this.constructor.name}"`);
         } else {
           tmap[name] = template;
           this.template = template;
@@ -493,10 +484,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     return this.__render();
   }
 
-  async __render(
-    force: boolean = false,
-    patchQueue: any[] = []
-  ): Promise<VNode> {
+  async __render(force: boolean = false, patchQueue: any[] = []): Promise<VNode> {
     const __owl__ = this.__owl__;
     __owl__.renderId++;
     const promises: Promise<void>[] = [];
@@ -536,10 +524,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   __mount(vnode: VNode, elm: HTMLElement): VNode {
     const __owl__ = this.__owl__;
     if (__owl__.classObj) {
-      (<any>vnode).data.class = Object.assign(
-        (<any>vnode).data.class || {},
-        __owl__.classObj
-      );
+      (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
     }
     __owl__.vnode = patch(elm, vnode);
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
@@ -619,11 +604,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       // list of strings (prop names)
       for (let i = 0, l = propsDef.length; i < l; i++) {
         if (!(propsDef[i] in props)) {
-          throw new Error(
-            `Missing props '${propsDef[i]}' (component '${
-              this.constructor.name
-            }')`
-          );
+          throw new Error(`Missing props '${propsDef[i]}' (component '${this.constructor.name}')`);
         }
       }
     } else if (propsDef) {
@@ -631,11 +612,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       for (let propName in propsDef) {
         if (!(propName in props)) {
           if (propsDef[propName] && !propsDef[propName].optional) {
-            throw new Error(
-              `Missing props '${propName}' (component '${
-                this.constructor.name
-              }')`
-            );
+            throw new Error(`Missing props '${propName}' (component '${this.constructor.name}')`);
           } else {
             break;
           }
@@ -643,9 +620,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
         let isValid = isValidProp(props[propName], propsDef[propName]);
         if (!isValid) {
           throw new Error(
-            `Props '${propName}' of invalid type in component '${
-              this.constructor.name
-            }'`
+            `Props '${propName}' of invalid type in component '${this.constructor.name}'`
           );
         }
       }

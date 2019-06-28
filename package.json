@@ -60,5 +60,8 @@
       "json",
       "node"
     ]
+  },
+  "prettier": {
+      "printWidth": 100
   }
 }

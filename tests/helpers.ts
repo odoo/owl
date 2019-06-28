@@ -68,11 +68,7 @@ export function renderToDOM(
   return result.elm as HTMLElement;
 }
 
-export function renderToString(
-  qweb: QWeb,
-  t: string,
-  context: EvalContext = {}
-): string {
+export function renderToString(qweb: QWeb, t: string, context: EvalContext = {}): string {
   const node = renderToDOM(qweb, t, context);
   return node instanceof Text ? node.textContent! : node.outerHTML;
 }
@@ -92,10 +88,7 @@ export function unpatchNextFrame() {
   UTILS.nextFrame = nextFrame;
 }
 
-export async function editInput(
-  input: HTMLInputElement | HTMLTextAreaElement,
-  value: string
-) {
+export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
   input.value = value;
   input.dispatchEvent(new Event("input"));
   input.dispatchEvent(new Event("change"));

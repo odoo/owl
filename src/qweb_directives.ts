@@ -60,9 +60,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
     ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
     let tempNodeID = ctx.generateID();
     ctx.addLine(`var p${tempNodeID} = {hook: {`);
-    ctx.addLine(
-      `  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`
-    );
+    ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
     ctx.addLine(`}};`);
     ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
     ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
@@ -116,9 +114,7 @@ QWeb.addDirective({
     if (value) {
       const formattedValue = ctx.formatExpression(value);
       if (ctx.variables.hasOwnProperty(variable)) {
-        ctx.addLine(
-          `${(<QWebExprVar>ctx.variables[variable]).id} = ${formattedValue}`
-        );
+        ctx.addLine(`${(<QWebExprVar>ctx.variables[variable]).id} = ${formattedValue}`);
       } else {
         const varName = `_${ctx.generateID()}`;
         ctx.addLine(`var ${varName} = ${formattedValue};`);
@@ -220,9 +216,7 @@ QWeb.addDirective({
     }
 
     // compile sub template
-    const subCtx = ctx
-      .subContext("caller", nodeCopy)
-      .subContext("variables", Object.create(vars));
+    const subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
 
     qweb._compileNode(nodeTemplate.elem, subCtx);
 
@@ -250,9 +244,7 @@ QWeb.addDirective({
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
     ctx.addLine(`var _${arrayID} = ${ctx.formatExpression(elems)};`);
-    ctx.addLine(
-      `if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`
-    );
+    ctx.addLine(`if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`);
     let keysID = ctx.generateID();
     let valuesID = ctx.generateID();
     ctx.addLine(`var _${keysID} = _${valuesID} = _${arrayID};`);
@@ -269,8 +261,7 @@ QWeb.addDirective({
     ctx.addLine(`context.${name} = _${keysID}[i];`);
     ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
     const nodeCopy = <Element>node.cloneNode(true);
-    let shouldWarn =
-      nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
+    let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
     if (!shouldWarn && node.tagName === "t") {
       if (node.hasAttribute("t-component") && !node.hasAttribute("t-key")) {
         shouldWarn = true;

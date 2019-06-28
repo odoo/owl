@@ -82,7 +82,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ")": "RIGHT_PAREN"
 };
 
-const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(',');
+const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(",");
 
 type Tokenizer = (expr: string) => Token | false;
 
@@ -231,10 +231,7 @@ export function tokenize(expr: string): Token[] {
  * - or if the previous token is a left brace or a comma, and the next token is
  *   a colon (in that case, this is an object key: `{a: b}`)
  */
-export function compileExpr(
-  expr: string,
-  vars: { [key: string]: QWebVar }
-): string {
+export function compileExpr(expr: string, vars: { [key: string]: QWebVar }): string {
   const tokens = tokenize(expr);
   let result = "";
   for (let i = 0; i < tokens.length; i++) {
@@ -246,10 +243,7 @@ export function compileExpr(
       if (prevToken) {
         if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
           isVar = false;
-        } else if (
-          prevToken.type === "LEFT_BRACE" ||
-          prevToken.type === "COMMA"
-        ) {
+        } else if (prevToken.type === "LEFT_BRACE" || prevToken.type === "COMMA") {
           let nextToken = tokens[i + 1];
           if (nextToken && nextToken.type === "COLON") {
             isVar = false;

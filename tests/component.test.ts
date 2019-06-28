@@ -92,9 +92,7 @@ describe("basic widget properties", () => {
     try {
       await widget.mount(fixture);
     } catch (e) {
-      expect(e.message).toBe(
-        'Could not find template for component "SomeWidget"'
-      );
+      expect(e.message).toBe('Could not find template for component "SomeWidget"');
     }
   });
 
@@ -128,9 +126,7 @@ describe("basic widget properties", () => {
     class StyledWidget extends Widget {}
     const widget = new StyledWidget(env);
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      `<div style="font-weight:bold;" class="some-class">world</div>`
-    );
+    expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
   });
 
   test("changing state before first render does not trigger a render", async () => {
@@ -249,10 +245,7 @@ describe("lifecycle hooks", () => {
       "ParentWidget",
       `<div><t t-if="state.flag"><t t-component="child"/></t></div>`
     );
-    env.qweb.addTemplate(
-      "ChildWidget",
-      `<div><t t-component="childchild"/></div>`
-    );
+    env.qweb.addTemplate("ChildWidget", `<div><t t-component="childchild"/></div>`);
 
     class ParentWidget extends Widget {
       components = { child: ChildWidget };
@@ -300,10 +293,7 @@ describe("lifecycle hooks", () => {
   test("willPatch, patched hook are called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="child" n="state.n"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" n="state.n"/></div>`);
     class ParentWidget extends Widget {
       components = { child: ChildWidget };
       state = { n: 1 };
@@ -314,10 +304,7 @@ describe("lifecycle hooks", () => {
         steps.push("parent:patched");
       }
     }
-    env.qweb.addTemplate(
-      "ChildWidget",
-      `<div><t t-component="childchild" n="props.n"/></div>`
-    );
+    env.qweb.addTemplate("ChildWidget", `<div><t t-component="childchild" n="props.n"/></div>`);
     class ChildWidget extends Widget {
       components = { childchild: ChildChildWidget };
       willPatch() {
@@ -780,11 +767,7 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual(["child:mounted", "child:willUnmount"]);
     widget.state.flag = true;
     await nextTick();
-    expect(steps).toEqual([
-      "child:mounted",
-      "child:willUnmount",
-      "child:mounted"
-    ]);
+    expect(steps).toEqual(["child:mounted", "child:willUnmount", "child:mounted"]);
   });
 });
 
@@ -859,10 +842,7 @@ describe("composition", () => {
 
   test("can use components from the global registry", async () => {
     QWeb.register("WidgetB", WidgetB);
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="WidgetB"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
     class ParentWidget extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -872,10 +852,7 @@ describe("composition", () => {
 
   test("don't fallback to global registry if widget defined locally", async () => {
     QWeb.register("WidgetB", WidgetB); // should not use this widget
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="WidgetB"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
     env.qweb.addTemplate("AnotherWidgetB", `<span>Belgium</span>`);
     class AnotherWidgetB extends Widget {}
     class ParentWidget extends Widget {
@@ -912,17 +889,12 @@ describe("composition", () => {
     try {
       await parent.mount(fixture);
     } catch (e) {
-      expect(e.message).toBe(
-        'Cannot find the definition of component "SomeMispelledWidget"'
-      );
+      expect(e.message).toBe('Cannot find the definition of component "SomeMispelledWidget"');
     }
   });
 
   test("t-refs on widget are components", async () => {
-    env.qweb.addTemplate(
-      "WidgetC",
-      `<div>Hello<t t-ref="mywidgetb" t-component="b"/></div>`
-    );
+    env.qweb.addTemplate("WidgetC", `<div>Hello<t t-ref="mywidgetb" t-component="b"/></div>`);
     class WidgetC extends Widget {
       components = { b: WidgetB };
     }
@@ -1007,24 +979,17 @@ describe("composition", () => {
   });
 
   test("modifying a sub widget", async () => {
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="Counter"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
     class ParentWidget extends Widget {
       components = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      "<div><div>0<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>0<button>Inc</button></div></div>");
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><div>1<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
   });
 
   test("refs in a loop", async () => {
@@ -1066,10 +1031,7 @@ describe("composition", () => {
   });
 
   test("rerendering a widget with a sub widget", async () => {
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="Counter"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
     class ParentWidget extends Widget {
       components = { Counter };
     }
@@ -1078,20 +1040,13 @@ describe("composition", () => {
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><div>1<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
     await widget.render();
-    expect(fixture.innerHTML).toBe(
-      "<div><div>1<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
   });
 
   test("sub components are destroyed if no longer in dom, then recreated", async () => {
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-if="state.ok"><Counter /></t></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-if="state.ok"><Counter /></t></div>`);
     class ParentWidget extends Widget {
       state = { ok: true };
       components = { Counter };
@@ -1101,18 +1056,14 @@ describe("composition", () => {
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><div>1<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
     widget.state.ok = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
 
     widget.state.ok = true;
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><div>0<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>0<button>Inc</button></div></div>");
   });
 
   test("sub components with t-keepalive are not destroyed if no longer in dom", async () => {
@@ -1129,9 +1080,7 @@ describe("composition", () => {
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><div>1<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
     const counter = children(widget)[0];
     expect(counter.__owl__.isMounted).toBe(true);
 
@@ -1143,9 +1092,7 @@ describe("composition", () => {
     widget.state.ok = true;
     await nextTick();
     expect(counter.__owl__.isMounted).toBe(true);
-    expect(fixture.innerHTML).toBe(
-      "<div><div>1<button>Inc</button></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
   });
 
   test("sub components dom state with t-keepalive is preserved", async () => {
@@ -1320,10 +1267,7 @@ describe("composition", () => {
   });
 
   test("t-component with dynamic value", async () => {
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="{{state.widget}}"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="{{state.widget}}"/></div>`);
     class ParentWidget extends Widget {
       components = { WidgetB };
       state = { widget: "WidgetB" };
@@ -1335,10 +1279,7 @@ describe("composition", () => {
   });
 
   test("t-component with dynamic value 2", async () => {
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="Widget{{state.widget}}"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="Widget{{state.widget}}"/></div>`);
     class ParentWidget extends Widget {
       components = { WidgetB };
       state = { widget: "B" };
@@ -1352,10 +1293,7 @@ describe("composition", () => {
 
 describe("props evaluation ", () => {
   test("explicit object prop", async () => {
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><t t-component="child" value="state.val"/></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><t t-component="child" value="state.val"/></div>`);
     class Parent extends Widget {
       components = { child: Child };
       state = { val: 42 };
@@ -1379,10 +1317,7 @@ describe("props evaluation ", () => {
     env.qweb.addTemplate("Child", `<span><t t-esc="props.greetings"/></span>`);
     class Child extends Widget {}
 
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><t t-component="child" greetings="greetings"/></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><t t-component="child" greetings="greetings"/></div>`);
     class Parent extends Widget {
       components = { child: Child };
       get greetings() {
@@ -1600,9 +1535,7 @@ describe("class and style attributes with t-component", () => {
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      `<div><div style="font-weight: bold;"></div></div>`
-    );
+    expect(fixture.innerHTML).toBe(`<div><div style="font-weight: bold;"></div></div>`);
   });
 
   test("dynamic t-att-style is properly added and updated on widget root el", async () => {
@@ -1622,16 +1555,12 @@ describe("class and style attributes with t-component", () => {
 
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
 
-    expect(fixture.innerHTML).toBe(
-      `<div><div style="font-size: 20px;"></div></div>`
-    );
+    expect(fixture.innerHTML).toBe(`<div><div style="font-size: 20px;"></div></div>`);
 
     widget.state.style = "font-size: 30px";
     await nextTick();
 
-    expect(fixture.innerHTML).toBe(
-      `<div><div style="font-size: 30px;"></div></div>`
-    );
+    expect(fixture.innerHTML).toBe(`<div><div style="font-size: 30px;"></div></div>`);
   });
 });
 
@@ -1891,10 +1820,7 @@ describe("other directives with t-component", () => {
   });
 
   test("t-if works with t-component", async () => {
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-component="child" t-if="state.flag"/></div>`
-    );
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" t-if="state.flag"/></div>`);
     class ParentWidget extends Widget {
       components = { child: Child };
       state = { flag: true };
@@ -2044,19 +1970,13 @@ describe("random stuff/miscellaneous", () => {
     // in this situation, we protect against a bug that occurred: because of the
     // interplay between components and vnodes, a sub widget vnode was patched
     // twice.
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><t t-component="child" flag="state.flag"/></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><t t-component="child" flag="state.flag"/></div>`);
     class Parent extends Widget {
       components = { child: Child };
       state = { flag: false };
     }
 
-    env.qweb.addTemplate(
-      "Child",
-      `<span>abc<t t-if="props.flag">def</t></span>`
-    );
+    env.qweb.addTemplate("Child", `<span>abc<t t-if="props.flag">def</t></span>`);
     class Child extends Widget {}
 
     const widget = new Parent(env);
@@ -2077,10 +1997,7 @@ describe("random stuff/miscellaneous", () => {
       state = { flag: false };
     }
 
-    env.qweb.addTemplate(
-      "Child",
-      `<span>abc<t t-if="props.flag">def</t></span>`
-    );
+    env.qweb.addTemplate("Child", `<span>abc<t t-if="props.flag">def</t></span>`);
     class Child extends Widget {}
 
     const widget = new Parent(env);
@@ -2190,9 +2107,7 @@ describe("random stuff/miscellaneous", () => {
 
     const a = new A(env);
     await a.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      `<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`
-    );
+    expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
     expect(steps).toEqual([
       "A:willStart",
       "A:render",
@@ -2267,10 +2182,7 @@ describe("async rendering", () => {
   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
     let def = makeDeferred();
     let n = 0;
-    env.qweb.addTemplate(
-      "W",
-      `<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`
-    );
+    env.qweb.addTemplate("W", `<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`);
     class W extends Widget {
       components = { Child };
       state = { val: 1 };
@@ -2380,23 +2292,15 @@ describe("async rendering", () => {
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
-    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
-      "<div><span>a1</span></div>"
-    );
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div><span>a1</span></div>");
     parent.state.valA = 2;
     await nextTick();
-    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
-      "<div><span>a1</span></div>"
-    );
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div><span>a1</span></div>");
     parent.state.flagB = true;
     await nextTick();
-    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
-      "<div><span>a1</span></div>"
-    );
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div><span>a1</span></div>");
     defB.resolve();
-    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
-      "<div><span>a1</span></div>"
-    );
+    expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe("<div><span>a1</span></div>");
     defA.resolve();
     await nextTick();
     expect(fixture.innerHTML.replace(/\r?\n|\r|\s+/g, "")).toBe(
@@ -2569,25 +2473,19 @@ describe("async rendering", () => {
     await parent.mount(fixture);
 
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>0</span><span>0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0</span><span>0</span>");
 
     // click on button to increment Parent counter
     def = makeDeferred();
     fixture.querySelector("button")!.click();
     await nextTick();
 
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1</span><span>0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1</span><span>0</span>");
 
     def.resolve();
     await nextTick();
 
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1</span><span>1</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1</span><span>1</span>");
   });
 
   test("fast component with t-asyncroot directive", async () => {
@@ -2624,25 +2522,19 @@ describe("async rendering", () => {
     await parent.mount(fixture);
 
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>0</span><span>0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0</span><span>0</span>");
 
     // click on button to increment Parent counter
     def = makeDeferred();
     fixture.querySelector("button")!.click();
     await nextTick();
 
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1</span><span>0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1</span><span>0</span>");
 
     def.resolve();
     await nextTick();
 
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1</span><span>1</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1</span><span>1</span>");
   });
 
   test("t-component with t-asyncroot directive: mixed re-renderings", async () => {
@@ -2687,40 +2579,30 @@ describe("async rendering", () => {
     await parent.mount(fixture);
 
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>0/0</span><span>0/0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0/0</span><span>0/0</span>");
 
     // click on button to increment Parent counter
     def = makeDeferred();
     fixture.querySelector("button")!.click();
     await nextTick();
 
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>0/1</span><span>0/0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0/1</span><span>0/0</span>");
 
     // click on each Child to increment their local counter
     const children = parent.el!.querySelectorAll("span");
     children[0]!.click();
     await nextTick();
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1/1</span><span>0/0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1/1</span><span>0/0</span>");
 
     children[1]!.click();
     await nextTick();
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1/1</span><span>1/0</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1/1</span><span>1/0</span>");
 
     // finalize first re-rendering (coming from the props update)
     def.resolve();
     await nextTick();
 
-    expect(fixture.querySelector(".children")!.innerHTML).toBe(
-      "<span>1/1</span><span>1/1</span>"
-    );
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1/1</span><span>1/1</span>");
   });
 });
 
@@ -2860,9 +2742,7 @@ describe("widget and observable state", () => {
     try {
       await parent.mount(fixture);
     } catch (e) {
-      expect(e.message).toBe(
-        'Observed state cannot be changed here! (key: "coffee", val: "2")'
-      );
+      expect(e.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
     }
   });
 });
@@ -2903,10 +2783,7 @@ describe("t-mounted directive", () => {
   });
 
   test("combined with a t-if", async () => {
-    env.qweb.addTemplate(
-      "TestWidget",
-      `<div><input t-if="state.flag" t-mounted="f"/></div>`
-    );
+    env.qweb.addTemplate("TestWidget", `<div><input t-if="state.flag" t-mounted="f"/></div>`);
     class TestWidget extends Widget {
       state = { flag: false };
       f() {}
@@ -2922,10 +2799,7 @@ describe("t-mounted directive", () => {
   });
 
   test("combined with a t-ref", async () => {
-    env.qweb.addTemplate(
-      "TestWidget",
-      `<div><input t-ref="input" t-mounted="f"/></div>`
-    );
+    env.qweb.addTemplate("TestWidget", `<div><input t-ref="input" t-mounted="f"/></div>`);
     class TestWidget extends Widget {
       f() {}
     }
@@ -3099,9 +2973,7 @@ describe("t-slot directive", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>sts rocks</span></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
   });
 
   test("default slot work with text nodes", async () => {
@@ -3144,9 +3016,7 @@ describe("t-slot directive", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>sts</span><span>rocks</span></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
   });
 
   test("multiple roots are allowed in a default slot", async () => {
@@ -3168,9 +3038,7 @@ describe("t-slot directive", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>sts</span><span>rocks</span></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
   });
 
   test("missing slots are ignored", async () => {
@@ -3193,9 +3061,7 @@ describe("t-slot directive", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><span><span>some content</span></span></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
   });
 
   test("t-debug on a t-set (defining a slot)", async () => {
@@ -3264,16 +3130,12 @@ describe("t-model directive", () => {
     const comp = new SomeComponent(env);
     await comp.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      '<div><input type="checkbox"><span>no</span></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div><input type="checkbox"><span>no</span></div>');
 
     let input = fixture.querySelector("input")!;
     input.click();
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      '<div><input type="checkbox"><span>yes</span></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div><input type="checkbox"><span>yes</span></div>');
     expect(comp.state.flag).toBe(true);
     expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
 
@@ -3296,16 +3158,12 @@ describe("t-model directive", () => {
     const comp = new SomeComponent(env);
     await comp.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><textarea></textarea><span></span></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><textarea></textarea><span></span></div>");
 
     const textarea = fixture.querySelector("textarea")!;
     await editInput(textarea, "test");
     expect(comp.state.text).toBe("test");
-    expect(fixture.innerHTML).toBe(
-      "<div><textarea></textarea><span>test</span></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><textarea></textarea><span>test</span></div>");
   });
 
   test("on an input type=radio", async () => {

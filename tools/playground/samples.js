@@ -1351,7 +1351,7 @@ export const SAMPLES = [
     description: "Lifecycle demo",
     code: LIFECYCLE_DEMO,
     xml: LIFECYCLE_DEMO_XML,
-    css: LIFECYCLE_CSS,
+    css: LIFECYCLE_CSS
   },
   {
     description: "Todo List App (with store)",

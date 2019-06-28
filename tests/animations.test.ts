@@ -173,10 +173,7 @@ describe("animations", () => {
   test("t-transition combined with component", async () => {
     expect.assertions(5);
 
-    env.qweb.addTemplate(
-      "Parent",
-      `<div><Child t-transition="chimay"/></div>`
-    );
+    env.qweb.addTemplate("Parent", `<div><Child t-transition="chimay"/></div>`);
     env.qweb.addTemplate("Child", `<span>blue</span>`);
     class Parent extends Widget {
       components = { Child: Child };
@@ -320,9 +317,7 @@ describe("animations", () => {
       expect(spans.length).toBe(1);
       expect(spans[0].className).toBe(`chimay-${phase} chimay-${phase}-active`);
       cb();
-      expect(spans[0].className).toBe(
-        `chimay-${phase}-active chimay-${phase}-to`
-      );
+      expect(spans[0].className).toBe(`chimay-${phase}-active chimay-${phase}-to`);
       def.resolve();
     });
 
@@ -330,9 +325,7 @@ describe("animations", () => {
     button!.click();
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe(
-      '<div><button>Toggle</button><span class="">blue</span></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
 
     // click to remove the span, and click again to re-add it before transitionend
     def = makeDeferred();
@@ -346,9 +339,7 @@ describe("animations", () => {
 
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe(
-      '<div><button>Toggle</button><span class="">blue</span></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
   });
 
   test("t-transition combined with t-component, remove and re-add before transitionend", async () => {
@@ -386,9 +377,7 @@ describe("animations", () => {
       expect(spans.length).toBe(1);
       expect(spans[0].className).toBe(`chimay-${phase} chimay-${phase}-active`);
       cb();
-      expect(spans[0].className).toBe(
-        `chimay-${phase}-active chimay-${phase}-to`
-      );
+      expect(spans[0].className).toBe(`chimay-${phase}-active chimay-${phase}-to`);
       def.resolve();
     });
 
@@ -396,9 +385,7 @@ describe("animations", () => {
     button!.click();
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe(
-      '<div><button>Toggle</button><span class="">blue</span></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
 
     // click to remove the span, and click again to re-add it before transitionend
     def = makeDeferred();
@@ -412,8 +399,6 @@ describe("animations", () => {
 
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe(
-      '<div><button>Toggle</button><span class="">blue</span></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
   });
 });

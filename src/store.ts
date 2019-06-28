@@ -308,11 +308,7 @@ export function connect<E extends EnvWithStore, P, S>(
         );
       }
       __owl__.ownProps = nextProps;
-      const mergedProps = Object.assign(
-        {},
-        nextProps,
-        __owl__.currentStoreProps
-      );
+      const mergedProps = Object.assign({}, nextProps, __owl__.currentStoreProps);
       return super.__updateProps(mergedProps, forceUpdate, patchQueue);
     }
   };

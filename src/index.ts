@@ -32,7 +32,7 @@ Object.defineProperty(__info__, "mode", {
         `Owl is running in 'dev' mode.  This is not suitable for production use. See ${url} for more information.`
       );
     } else {
-        console.log(`Owl is now running in 'prod' mode.`)
+      console.log(`Owl is now running in 'prod' mode.`);
     }
   }
 });

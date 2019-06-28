@@ -17,7 +17,7 @@ let nextId = 1;
 export function buildData(n = 1000) {
   const data = [];
   for (let i = 0; i < n; i++) {
-      let id = nextId++;
+    let id = nextId++;
     data.push({
       id: id,
       author: chooseRandomly(AUTHORS),
@@ -32,7 +32,7 @@ export function buildData(n = 1000) {
 // Measuring helpers
 //------------------------------------------------------------------------------
 export function formatNumber(n) {
-    return Number(n).toFixed();
+  return Number(n).toFixed();
 }
 
 let startTime;
@@ -51,7 +51,7 @@ export function stopMeasure(cb) {
       const msg = `[${last}] took  ${formatNumber(delta)}ms`;
       console.log(msg);
       if (cb) {
-          cb({msg, delta});
+        cb({ msg, delta });
       }
     }, 0);
   }

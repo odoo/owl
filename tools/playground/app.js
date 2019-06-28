@@ -97,10 +97,7 @@ function makeCodeIframe(js, css, xml, errorHandler) {
       setTimeout(function() {
         if (iframe.contentWindow) {
           iframe.contentWindow.removeEventListener("error", errorHandler);
-          iframe.contentWindow.removeEventListener(
-            "unhandledrejection",
-            errorHandler
-          );
+          iframe.contentWindow.removeEventListener("unhandledrejection", errorHandler);
         }
       }, 200);
       doc.body.appendChild(script);

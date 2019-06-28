@@ -23,9 +23,7 @@ describe("event bus behaviour", () => {
   test("throw error if callback is undefined", () => {
     expect.assertions(1);
     const bus = new EventBus();
-    expect(() => bus.on("event", {}, <any>undefined)).toThrow(
-      `Missing callback`
-    );
+    expect(() => bus.on("event", {}, <any>undefined)).toThrow(`Missing callback`);
   });
 
   test("can unsubscribe", () => {

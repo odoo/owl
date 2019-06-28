@@ -17,7 +17,7 @@ export function whenReady(fn) {
     } else {
       document.addEventListener("DOMContentLoaded", resolve, false);
     }
-  }).then(fn || function () {});
+  }).then(fn || function() {});
 }
 
 const loadedScripts: { [key: string]: Promise<void> } = {};
@@ -76,11 +76,7 @@ export function escape(str: string | number | undefined): string {
  *
  * Inspired by https://davidwalsh.name/javascript-debounce-function
  */
-export function debounce(
-  func: Function,
-  wait: number,
-  immediate?: boolean
-): Function {
+export function debounce(func: Function, wait: number, immediate?: boolean): Function {
   let timeout;
   return function(this: any) {
     const context = this;

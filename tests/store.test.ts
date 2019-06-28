@@ -1,11 +1,6 @@
 import { Component, Env } from "../src/component";
 import { connect, Store } from "../src/store";
-import {
-  makeTestFixture,
-  makeTestEnv,
-  nextMicroTick,
-  nextTick
-} from "./helpers";
+import { makeTestFixture, makeTestEnv, nextMicroTick, nextTick } from "./helpers";
 import { Observer } from "../src";
 
 describe("basic use", () => {
@@ -794,9 +789,7 @@ describe("connecting a component to store", () => {
 
     store.commit("addTodo", "hoegaarden");
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><span>jupiler</span><span>hoegaarden</span></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>hoegaarden</span></div>");
   });
 
   test("connect receives store getters as third argument", async () => {
@@ -930,9 +923,7 @@ describe("connecting a component to store", () => {
 
     store.commit("addBeer", "kwak");
     await nextTick();
-    expect(fixture.innerHTML).toBe(
-      "<div><span>jupiler</span><span>kwak</span></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>kwak</span></div>");
   });
 
   test("connected component with undefined, null and string props", async () => {
@@ -984,9 +975,7 @@ describe("connecting a component to store", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>taster:aaron</span></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
 
     app.state.beerId = 1;
     await nextTick();
@@ -1062,9 +1051,7 @@ describe("connecting a component to store", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>taster:aaron</span></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
 
     app.state.beerId = 1;
     await nextTick();
@@ -1334,9 +1321,7 @@ describe("connecting a component to store", () => {
     await nextTick();
     expect(renderCount).toBe(1);
     expect(fCount).toBe(1);
-    expect(fixture.innerHTML).toBe(
-      '<div class="todoapp"></div>'
-    );
+    expect(fixture.innerHTML).toBe('<div class="todoapp"></div>');
   });
 
   test("connected component willpatch/patch hooks are called on store updates", async () => {

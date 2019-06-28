@@ -109,14 +109,7 @@ function createKeyToOldIdx(
   return map;
 }
 
-const hooks: (keyof Module)[] = [
-  "create",
-  "update",
-  "remove",
-  "destroy",
-  "pre",
-  "post"
-];
+const hooks: (keyof Module)[] = ["create", "update", "remove", "destroy", "pre", "post"];
 
 export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
   let i: number,
@@ -138,13 +131,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
   function emptyNodeAt(elm: Element) {
     const id = elm.id ? "#" + elm.id : "";
     const c = elm.className ? "." + elm.className.split(" ").join(".") : "";
-    return vnode(
-      api.tagName(elm).toLowerCase() + id + c,
-      {},
-      [],
-      undefined,
-      elm
-    );
+    return vnode(api.tagName(elm).toLowerCase() + id + c, {}, [], undefined, elm);
   }
 
   function createRmCb(childElm: Node, listeners: number) {
@@ -179,19 +166,14 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       const dotIdx = sel.indexOf(".", hashIdx);
       const hash = hashIdx > 0 ? hashIdx : sel.length;
       const dot = dotIdx > 0 ? dotIdx : sel.length;
-      const tag =
-        hashIdx !== -1 || dotIdx !== -1
-          ? sel.slice(0, Math.min(hash, dot))
-          : sel;
+      const tag = hashIdx !== -1 || dotIdx !== -1 ? sel.slice(0, Math.min(hash, dot)) : sel;
       const elm = (vnode.elm =
         isDef(data) && isDef((i = (data as VNodeData).ns))
           ? api.createElementNS(i, tag)
           : api.createElement(tag));
       if (hash < dot) elm.setAttribute("id", sel.slice(hash + 1, dot));
-      if (dotIdx > 0)
-        elm.setAttribute("class", sel.slice(dot + 1).replace(/\./g, " "));
-      for (i = 0, iLen = cbs.create.length; i < iLen; ++i)
-        cbs.create[i](emptyNode, vnode);
+      if (dotIdx > 0) elm.setAttribute("class", sel.slice(dot + 1).replace(/\./g, " "));
+      for (i = 0, iLen = cbs.create.length; i < iLen; ++i) cbs.create[i](emptyNode, vnode);
       if (array(children)) {
         for (i = 0, iLen = children.length; i < iLen; ++i) {
           const ch = children[i];
@@ -237,8 +219,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       data = vnode.data;
     if (data !== undefined) {
       if (isDef((i = data.hook)) && isDef((i = i.destroy))) i(vnode);
-      for (i = 0, iLen = cbs.destroy.length; i < iLen; ++i)
-        cbs.destroy[i](vnode);
+      for (i = 0, iLen = cbs.destroy.length; i < iLen; ++i) cbs.destroy[i](vnode);
       if (vnode.children !== undefined) {
         for (j = 0, jLen = vnode.children.length; j < jLen; ++j) {
           i = vnode.children[j];
@@ -267,13 +248,8 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
           invokeDestroyHook(ch);
           listeners = cbs.remove.length + 1;
           rm = createRmCb(ch.elm as Node, listeners);
-          for (i = 0, iLen = cbs.remove.length; i < iLen; ++i)
-            cbs.remove[i](ch, rm);
-          if (
-            isDef((i = ch.data)) &&
-            isDef((i = i.hook)) &&
-            isDef((i = i.remove))
-          ) {
+          for (i = 0, iLen = cbs.remove.length; i < iLen; ++i) cbs.remove[i](ch, rm);
+          if (isDef((i = ch.data)) && isDef((i = i.hook)) && isDef((i = i.remove))) {
             i(ch, rm);
           } else {
             rm();
@@ -335,11 +311,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       } else if (sameVnode(oldEndVnode, newStartVnode)) {
         // Vnode moved left
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue);
-        api.insertBefore(
-          parentElm,
-          oldEndVnode.elm as Node,
-          oldStartVnode.elm as Node
-        );
+        api.insertBefore(parentElm, oldEndVnode.elm as Node, oldStartVnode.elm as Node);
         oldEndVnode = oldCh[--oldEndIdx];
         newStartVnode = newCh[++newStartIdx];
       } else {
@@ -366,11 +338,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
           } else {
             patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
             oldCh[idxInOld] = undefined as any;
-            api.insertBefore(
-              parentElm,
-              elmToMove.elm as Node,
-              oldStartVnode.elm as Node
-            );
+            api.insertBefore(parentElm, elmToMove.elm as Node, oldStartVnode.elm as Node);
           }
           newStartVnode = newCh[++newStartIdx];
         }
@@ -379,31 +347,16 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
     if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
       if (oldStartIdx > oldEndIdx) {
         before = newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].elm;
-        addVnodes(
-          parentElm,
-          before,
-          newCh,
-          newStartIdx,
-          newEndIdx,
-          insertedVnodeQueue
-        );
+        addVnodes(parentElm, before, newCh, newStartIdx, newEndIdx, insertedVnodeQueue);
       } else {
         removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx);
       }
     }
   }
 
-  function patchVnode(
-    oldVnode: VNode,
-    vnode: VNode,
-    insertedVnodeQueue: VNodeQueue
-  ) {
+  function patchVnode(oldVnode: VNode, vnode: VNode, insertedVnodeQueue: VNodeQueue) {
     let i: any, iLen: number, hook: any;
-    if (
-      isDef((i = vnode.data)) &&
-      isDef((hook = i.hook)) &&
-      isDef((i = hook.prepatch))
-    ) {
+    if (isDef((i = vnode.data)) && isDef((hook = i.hook)) && isDef((i = hook.prepatch))) {
       i(oldVnode, vnode);
     }
     const elm = (vnode.elm = oldVnode.elm as Node);
@@ -411,20 +364,14 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
     let ch = vnode.children;
     if (oldVnode === vnode) return;
     if (vnode.data !== undefined) {
-      for (i = 0, iLen = cbs.update.length; i < iLen; ++i)
-        cbs.update[i](oldVnode, vnode);
+      for (i = 0, iLen = cbs.update.length; i < iLen; ++i) cbs.update[i](oldVnode, vnode);
       i = vnode.data.hook;
       if (isDef(i) && isDef((i = i.update))) i(oldVnode, vnode);
     }
     if (isUndef(vnode.text)) {
       if (isDef(oldCh) && isDef(ch)) {
         if (oldCh !== ch)
-          updateChildren(
-            elm,
-            oldCh as Array<VNode>,
-            ch as Array<VNode>,
-            insertedVnodeQueue
-          );
+          updateChildren(elm, oldCh as Array<VNode>, ch as Array<VNode>, insertedVnodeQueue);
       } else if (isDef(ch)) {
         if (isDef(oldVnode.text)) api.setTextContent(elm, "");
         addVnodes(
@@ -436,23 +383,13 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
           insertedVnodeQueue
         );
       } else if (isDef(oldCh)) {
-        removeVnodes(
-          elm,
-          oldCh as Array<VNode>,
-          0,
-          (oldCh as Array<VNode>).length - 1
-        );
+        removeVnodes(elm, oldCh as Array<VNode>, 0, (oldCh as Array<VNode>).length - 1);
       } else if (isDef(oldVnode.text)) {
         api.setTextContent(elm, "");
       }
     } else if (oldVnode.text !== vnode.text) {
       if (isDef(oldCh)) {
-        removeVnodes(
-          elm,
-          oldCh as Array<VNode>,
-          0,
-          (oldCh as Array<VNode>).length - 1
-        );
+        removeVnodes(elm, oldCh as Array<VNode>, 0, (oldCh as Array<VNode>).length - 1);
       }
       api.setTextContent(elm, vnode.text as string);
     }
@@ -510,11 +447,7 @@ interface DOMAPI {
   createElementNS: (namespaceURI: string, qualifiedName: string) => Element;
   createTextNode: (text: string) => Text;
   createComment: (text: string) => Comment;
-  insertBefore: (
-    parentNode: Node,
-    newNode: Node,
-    referenceNode: Node | null
-  ) => void;
+  insertBefore: (parentNode: Node, newNode: Node, referenceNode: Node | null) => void;
   removeChild: (node: Node, child: Node) => void;
   appendChild: (node: Node, child: Node) => void;
   parentNode: (node: Node) => Node;
@@ -543,11 +476,7 @@ function createComment(text: string): Comment {
   return document.createComment(text);
 }
 
-function insertBefore(
-  parentNode: Node,
-  newNode: Node,
-  referenceNode: Node | null
-): void {
+function insertBefore(parentNode: Node, newNode: Node, referenceNode: Node | null): void {
   parentNode.insertBefore(newNode, referenceNode);
 }
 
@@ -644,21 +573,13 @@ type VNodeChildElement = VNode | string | number | undefined | null;
 type ArrayOrElement<T> = T | T[];
 type VNodeChildren = ArrayOrElement<VNodeChildElement>;
 
-function addNS(
-  data: any,
-  children: VNodes | undefined,
-  sel: string | undefined
-): void {
+function addNS(data: any, children: VNodes | undefined, sel: string | undefined): void {
   data.ns = "http://www.w3.org/2000/svg";
   if (sel !== "foreignObject" && children !== undefined) {
     for (let i = 0, iLen = children.length; i < iLen; ++i) {
       let childData = children[i].data;
       if (childData !== undefined) {
-        addNS(
-          childData,
-          (children[i] as VNode).children as VNodes,
-          children[i].sel
-        );
+        addNS(childData, (children[i] as VNode).children as VNodes, children[i].sel);
       }
     }
   }
@@ -697,13 +618,7 @@ export function h(sel: any, b?: any, c?: any): VNode {
   if (children !== undefined) {
     for (i = 0, iLen = children.length; i < iLen; ++i) {
       if (primitive(children[i]))
-        children[i] = vnode(
-          undefined,
-          undefined,
-          undefined,
-          children[i],
-          undefined
-        );
+        children[i] = vnode(undefined, undefined, undefined, children[i], undefined);
     }
   }
   if (
@@ -769,9 +684,7 @@ interface Module {
 //------------------------------------------------------------------------------
 // module/eventlisteners.ts
 //------------------------------------------------------------------------------
-type On = {
-  [N in keyof HTMLElementEventMap]?: (ev: HTMLElementEventMap[N]) => void
-} & {
+type On = { [N in keyof HTMLElementEventMap]?: (ev: HTMLElementEventMap[N]) => void } & {
   [event: string]: EventListener;
 };
 
@@ -850,8 +763,7 @@ function updateEventListeners(oldVnode: VNode, vnode?: VNode): void {
   // add new listeners which has not already attached
   if (on) {
     // reuse existing listener or create new
-    var listener = ((vnode as any).listener =
-      (oldVnode as any).listener || createListener());
+    var listener = ((vnode as any).listener = (oldVnode as any).listener || createListener());
     // update vnode for listener
     listener.vnode = vnode;
 
@@ -973,9 +885,4 @@ const classModule = { create: updateClass, update: updateClass } as Module;
 //------------------------------------------------------------------------------
 // patch
 //------------------------------------------------------------------------------
-export const patch = init([
-  eventListenersModule,
-  attrsModule,
-  propsModule,
-  classModule
-]);
+export const patch = init([eventListenersModule, attrsModule, propsModule, classModule]);

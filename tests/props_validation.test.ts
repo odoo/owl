@@ -126,7 +126,6 @@ describe("props validation", () => {
     }
   });
 
-
   test("can validate a prop with multiple types", async () => {
     let TestWidget = class extends Widget {
       static props = { p: [String, Boolean] };
@@ -149,15 +148,13 @@ describe("props validation", () => {
 
     expect(() => {
       new TestWidget(env, { p: "hey" });
-      new TestWidget(env, { });
+      new TestWidget(env, {});
     }).not.toThrow();
 
     expect(() => {
       new TestWidget(env, { p: 1 });
     }).toThrow();
-
   });
-
 
   test("can validate an array with given primitive type", async () => {
     let TestWidget = class extends Widget {
@@ -222,7 +219,7 @@ describe("props validation", () => {
           type: Object,
           shape: {
             id: Number,
-            url: [Boolean, {type: Array, element: Number}],
+            url: [Boolean, { type: Array, element: Number }]
           }
         }
       };
@@ -230,21 +227,19 @@ describe("props validation", () => {
 
     expect(() => {
       new TestWidget(env, { p: { id: 1, url: true } });
-      new TestWidget(env, { p: { id: 1, url: [12]} });
+      new TestWidget(env, { p: { id: 1, url: [12] } });
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: { id: 1, url: [12, true]} });
+      new TestWidget(env, { p: { id: 1, url: [12, true] } });
     }).toThrow();
-
   });
 });
-
 
 describe("default props", () => {
   test("can set default values", async () => {
     class TestWidget extends Widget {
-      static defaultProps = {p: 4}
+      static defaultProps = { p: 4 };
     }
 
     const w = new TestWidget(env, {});
@@ -253,10 +248,10 @@ describe("default props", () => {
 
   test("default values are also set whenever component is updated", async () => {
     class TestWidget extends Widget {
-      static defaultProps = {p: 4}
+      static defaultProps = { p: 4 };
     }
 
-    const w = new TestWidget(env, {p: 1});
+    const w = new TestWidget(env, { p: 1 });
     await w.__updateProps({});
     expect(w.props.p).toBe(4);
   });

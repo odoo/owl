@@ -52,15 +52,11 @@ interface FileData {
   sections: MarkDownSection[];
 }
 
-function isLinkValid(
-  link: MarkDownLink,
-  current: FileData,
-  files: FileData[]
-): boolean {
+function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
   const parts = link.link.split("#");
   const currentParts = current.name.split("/");
-  const path = currentParts.length > 1 ? currentParts[0] + '/' : "";
-  const fullName =  path + parts[0];
+  const path = currentParts.length > 1 ? currentParts[0] + "/" : "";
+  const fullName = path + parts[0];
   if (parts.length === 1) {
     // no # in url
     if (parts[0].endsWith(".md")) {
@@ -70,8 +66,7 @@ function isLinkValid(
       }
     }
   } else {
-    const file =
-      parts[0] === "" ? current : files.find(f => f.name === fullName);
+    const file = parts[0] === "" ? current : files.find(f => f.name === fullName);
     if (!file) {
       return false;
     }

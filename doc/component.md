@@ -116,10 +116,29 @@ find a template with the component name (or one of its ancestor).
   type and shape of the (actual) props given to the component. If Owl mode is
   `dev`, this will be used to validate the props each time the component is
   created/updated. See [Props Validation](#props-validation) for more information.
+
+  ```js
+  class Counter extends owl.Component {
+      static props = {
+          initialValue: Number,
+          optional: true,
+      };
+  }
+  ```
+
+
 - **`defaultProps`** (Object, optional): if given, this object define default
   values for (top-level) props. Whenever `props` are given to the object, they
   will be altered to add default value (if missing). Note that it does not
   change the initial object, a new object will be created instead.
+
+  ```js
+  class Counter extends owl.Component {
+      static defaultProps = {
+          initialValue: 0
+      };
+  }
+  ```
 
 ### Methods
 

@@ -1193,14 +1193,183 @@ exports[`t-slot directive can define and call slots 2`] = `
     c1.push(vn2);
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'header'];
     if (slot3) {
-        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2}));
+        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars}));
     }
     let c4 = [], p4 = {key:4};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
     const slot5 = this.slots[context.__owl__.slotId + '_' + 'footer'];
     if (slot5) {
-        slot5(context.__owl__.parent, Object.assign({}, extra, {parentNode: c4}));
+        slot5(context.__owl__.parent, Object.assign({}, extra, {parentNode: c4, vars: extra.vars}));
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var _1 = context['props'].to;
+    let c2 = [], p2 = {key:2,attrs:{href: _1}};
+    var vn2 = h('a', p2, c2);
+    const slot3 = this.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot3) {
+        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars}));
+    }
+    return vn2;
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    context = Object.create(context);
+    const scope = Object.create(null);
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('u', p2, c2);
+    c1.push(vn2);
+    var _3 = context['state'].users;
+    if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
+    var _4 = _5 = _3;
+    if (!(_3 instanceof Array)) {
+        _4 = Object.keys(_3);
+        _5 = Object.values(_3);
+    }
+    var _length4 = _4.length;
+    for (let i = 0; i < _length4; i++) {
+        context.user_first = i === 0;
+        scope.user_first = context.user_first;
+        context.user_last = i === _length4 - 1;
+        scope.user_last = context.user_last;
+        context.user_index = i;
+        scope.user_index = context.user_index;
+        context.user = _4[i];
+        scope.user = context.user;
+        context.user_value = _5[i];
+        scope.user_value = context.user_value;
+        let c6 = [], p6 = {key:context['user'].id};
+        var vn6 = h('li', p6, c6);
+        c2.push(vn6);
+        //COMPONENT
+        let def8;
+        let w9 = String(-9 - i) in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[String(-9 - i)]] : false;
+        let _7_index = c6.length;
+        c6.push(null);
+        let props9 = {to:'/user/'+context['user'].id};
+        if (w9 && w9.__owl__.renderPromise && !w9.__owl__.vnode) {
+            if (utils.shallowEqual(props9, w9.__owl__.renderProps)) {
+                def8 = w9.__owl__.renderPromise;
+            } else {
+                w9.destroy();
+                w9 = false;
+            }
+        }
+        if (!w9) {
+            let componentKey9 = \`Link\`;
+            let W9 = context.components && context.components[componentKey9] || QWeb.components[componentKey9];
+            if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
+            w9 = new W9(owner, props9);
+            context.__owl__.cmap[String(-9 - i)] = w9.__owl__.id;
+            w9.__owl__.slotId = 1;
+            def8 = w9.__prepare(Object.assign({}, scope), {});
+            def8 = def8.then(vnode=>{let pvnode=h(vnode.sel, {key: String(-9 - i), hook: {insert(vn) {let nvn=w9.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w9.destroy();}}});c6[_7_index]=pvnode;w9.__owl__.pvnode = pvnode;});
+        } else {
+            def8 = def8 || w9.__updateProps(props9, extra.forceUpdate, extra.patchQueue, Object.assign({}, scope), {});
+            def8 = def8.then(()=>{if (w9.__owl__.isDestroyed) {return};let pvnode=w9.__owl__.pvnode;c6[_7_index]=pvnode;});
+        }
+        extra.promises.push(def8);
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.utils.h;
+    var _1 = context['props'].to;
+    let c2 = [], p2 = {key:2,attrs:{href: _1}};
+    var vn2 = h('a', p2, c2);
+    const slot3 = this.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot3) {
+        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars}));
+    }
+    return vn2;
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    context = Object.create(context);
+    const scope = Object.create(null);
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('u', p2, c2);
+    c1.push(vn2);
+    var _3 = context['state'].users;
+    if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
+    var _4 = _5 = _3;
+    if (!(_3 instanceof Array)) {
+        _4 = Object.keys(_3);
+        _5 = Object.values(_3);
+    }
+    var _length4 = _4.length;
+    for (let i = 0; i < _length4; i++) {
+        context.user_first = i === 0;
+        scope.user_first = context.user_first;
+        context.user_last = i === _length4 - 1;
+        scope.user_last = context.user_last;
+        context.user_index = i;
+        scope.user_index = context.user_index;
+        context.user = _4[i];
+        scope.user = context.user;
+        context.user_value = _5[i];
+        scope.user_value = context.user_value;
+        let c6 = [], p6 = {key:context['user'].id};
+        var vn6 = h('li', p6, c6);
+        c2.push(vn6);
+        var _7 = 'User '+context['user'].name;
+        //COMPONENT
+        let def9;
+        let w10 = String(-10 - i) in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[String(-10 - i)]] : false;
+        let _8_index = c6.length;
+        c6.push(null);
+        let props10 = {to:'/user/'+context['user'].id};
+        if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
+            if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
+                def9 = w10.__owl__.renderPromise;
+            } else {
+                w10.destroy();
+                w10 = false;
+            }
+        }
+        if (!w10) {
+            let componentKey10 = \`Link\`;
+            let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
+            if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
+            w10 = new W10(owner, props10);
+            context.__owl__.cmap[String(-10 - i)] = w10.__owl__.id;
+            w10.__owl__.slotId = 1;
+            def9 = w10.__prepare(Object.assign({}, scope), {_7});
+            def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: String(-10 - i), hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c6[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+        } else {
+            def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, extra.patchQueue, Object.assign({}, scope), {_7});
+            def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c6[_8_index]=pvnode;});
+        }
+        extra.promises.push(def9);
     }
     return vn1;
 }"

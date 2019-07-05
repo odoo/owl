@@ -274,7 +274,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
-  async render(force: boolean = false, patchQueue?: any[]): Promise<void> {
+  async render(force: boolean = false, patchQueue?: any[], scope?: any, vars?: any): Promise<void> {
     const __owl__ = this.__owl__;
     if (!__owl__.isMounted) {
       return;
@@ -283,7 +283,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (shouldPatch) {
       patchQueue = [];
     }
-    const renderVDom = this.__render(force, patchQueue);
+    const renderVDom = this.__render(force, patchQueue, scope, vars);
     const renderId = __owl__.renderId;
     await renderVDom;
 
@@ -417,7 +417,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   async __updateProps(
     nextProps: Props,
     forceUpdate: boolean = false,
-    patchQueue?: any[]
+    patchQueue?: any[],
+    scope?: any,
+    vars?: any,
   ): Promise<void> {
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
@@ -427,7 +429,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
-      await this.render(forceUpdate, patchQueue);
+      await this.render(forceUpdate, patchQueue, scope, vars);
     }
   }
 
@@ -441,14 +443,14 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     __owl__.vnode = patch(target, vnode);
   }
 
-  __prepare(): Promise<VNode> {
+  __prepare(scope?: Object, vars?: any): Promise<VNode> {
     const __owl__ = this.__owl__;
     __owl__.renderProps = this.props;
-    __owl__.renderPromise = this.__prepareAndRender();
+    __owl__.renderPromise = this.__prepareAndRender(scope, vars);
     return __owl__.renderPromise;
   }
 
-  async __prepareAndRender(): Promise<VNode> {
+  async __prepareAndRender(scope?: Object, vars?: any): Promise<VNode> {
     await this.willStart();
     const __owl__ = this.__owl__;
     if (__owl__.isDestroyed) {
@@ -480,10 +482,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
     __owl__.render = qweb.render.bind(qweb, this.template);
     this.__observeState();
-    return this.__render();
+    return this.__render(false, [], scope, vars);
   }
 
-  async __render(force: boolean = false, patchQueue: any[] = []): Promise<VNode> {
+  async __render(force: boolean = false, patchQueue: any[] = [], scope?: Object, vars?: any): Promise<VNode> {
     const __owl__ = this.__owl__;
     __owl__.renderId++;
     const promises: Promise<void>[] = [];
@@ -499,7 +501,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       handlers: __owl__.boundHandlers,
       mountedHandlers: __owl__.mountedHandlers,
       forceUpdate: force,
-      patchQueue
+      patchQueue,
+      scope,
+      vars
     });
     patch.push(vnode);
     if (__owl__.observer) {

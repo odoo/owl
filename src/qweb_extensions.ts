@@ -556,7 +556,16 @@ QWeb.addDirective({
     ctx.addLine(`context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
 
     // SLOTS
-    if (node.childNodes.length) {
+    const varDefs: string[] = [];
+    const hasSlots = node.childNodes.length;
+    if (hasSlots) {
+      ctx.rootContext.shouldTrackScope = true;
+      for (let v of Object.values(ctx.variables)) {
+        if (v["id"]) {
+          varDefs.push(v["id"]);
+        }
+      }
+
       const clone = <Element>node.cloneNode(true);
       const slotNodes = clone.querySelectorAll("[t-set]");
       const slotId = qweb.nextSlotId++;
@@ -567,7 +576,7 @@ QWeb.addDirective({
           slotNode.parentElement!.removeChild(slotNode);
           const key = slotNode.getAttribute("t-set")!;
           slotNode.removeAttribute("t-set");
-          const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx.parentNode!);
+          const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
           qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
         }
       }
@@ -576,12 +585,14 @@ QWeb.addDirective({
         for (let child of Object.values(clone.childNodes)) {
           t.appendChild(child);
         }
-        const slotFn = qweb._compile(`slot_default_template`, t, ctx.parentNode!);
+        const slotFn = qweb._compile(`slot_default_template`, t, ctx);
         qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
       }
     }
 
-    ctx.addLine(`def${defID} = w${componentID}.__prepare();`);
+    const scopeVars =
+      hasSlots && ctx.scopeVars.length ? `Object.assign({}, scope), {${varDefs.join(",")}}` : "";
+    ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     ctx.addLine(
       `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});c${
@@ -596,7 +607,8 @@ QWeb.addDirective({
       ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
     }
     ctx.addLine(
-      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`
+      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode}${scopeVars &&
+        ", " + scopeVars});`
     );
     let keepAliveCode = "";
     if (keepAlive) {
@@ -774,7 +786,7 @@ QWeb.addDirective({
     ctx.addLine(
       `slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
         ctx.parentNode
-      }}));`
+      }, vars: extra.vars}));`
     );
     ctx.closeIf();
     return true;

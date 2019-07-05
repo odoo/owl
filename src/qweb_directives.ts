@@ -255,11 +255,11 @@ QWeb.addDirective({
     ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
     ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
     ctx.indent();
-    ctx.addLine(`context.${name}_first = i === 0;`);
-    ctx.addLine(`context.${name}_last = i === _length${keysID} - 1;`);
-    ctx.addLine(`context.${name}_index = i;`);
-    ctx.addLine(`context.${name} = _${keysID}[i];`);
-    ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
+    ctx.addToScope(name + '_first', 'i === 0');
+    ctx.addToScope(name + '_last', `i === _length${keysID} - 1`);
+    ctx.addToScope(name + '_index', 'i');
+    ctx.addToScope(name, `_${keysID}[i]`);
+    ctx.addToScope(name + '_value', `_${valuesID}[i]`);
     const nodeCopy = <Element>node.cloneNode(true);
     let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
     if (!shouldWarn && node.tagName === "t") {

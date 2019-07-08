@@ -590,8 +590,13 @@ QWeb.addDirective({
       }
     }
 
-    const scopeVars =
-      hasSlots && ctx.scopeVars.length ? `Object.assign({}, scope), {${varDefs.join(",")}}` : "";
+    let scopeVars = "";
+    if (hasSlots) {
+      scopeVars += ctx.scopeVars.length ? `Object.assign({}, scope)` : varDefs.length ? `{}` : "";
+      if (varDefs.length) {
+        scopeVars += `, {${varDefs.join(",")}}`;
+      }
+    }
     ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     ctx.addLine(

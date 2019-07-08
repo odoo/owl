@@ -2936,15 +2936,15 @@ describe("t-slot directive", () => {
     class Link extends Widget {}
 
     class App extends Widget {
-        state = {users: [{id: 1, name: 'Aaron'}, {id: 2, name: 'David'}]};
-        components = { Link };
+      state = { users: [{ id: 1, name: "Aaron" }, { id: 2, name: "David" }] };
+      components = { Link };
     }
 
     const app = new App(env);
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
-      "<div><u><li><a href=\"/user/1\">User Aaron</a></li><li><a href=\"/user/2\">User David</a></li></u></div>"
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
     );
     expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
     expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
@@ -2953,7 +2953,7 @@ describe("t-slot directive", () => {
     app.state.users[1].name = "Mathieu";
     await nextTick();
     expect(fixture.innerHTML).toBe(
-      "<div><u><li><a href=\"/user/1\">User Aaron</a></li><li><a href=\"/user/2\">User Mathieu</a></li></u></div>"
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
   });
 
@@ -2974,15 +2974,15 @@ describe("t-slot directive", () => {
     class Link extends Widget {}
 
     class App extends Widget {
-        state = {users: [{id: 1, name: 'Aaron'}, {id: 2, name: 'David'}]};
-        components = { Link };
+      state = { users: [{ id: 1, name: "Aaron" }, { id: 2, name: "David" }] };
+      components = { Link };
     }
 
     const app = new App(env);
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
-      "<div><u><li><a href=\"/user/1\">User Aaron</a></li><li><a href=\"/user/2\">User David</a></li></u></div>"
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
     );
     expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
     expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
@@ -2991,9 +2991,40 @@ describe("t-slot directive", () => {
     app.state.users[1].name = "Mathieu";
     await nextTick();
     expect(fixture.innerHTML).toBe(
-      "<div><u><li><a href=\"/user/1\">User Aaron</a></li><li><a href=\"/user/2\">User Mathieu</a></li></u></div>"
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
+  });
 
+  test("slots are rendered with proper context, part 4", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <a t-name="Link" t-att-href="props.to">
+                <t t-slot="default"/>
+            </a>
+            <div t-name="App">
+                <t t-set="userdescr" t-value="'User ' + state.user.name"/>
+                <Link to="'/user/' + state.user.id"><t t-esc="userdescr"/></Link>
+            </div>
+        </templates>
+    `);
+    class Link extends Widget {}
+
+    class App extends Widget {
+      state = { user: { id: 1, name: "Aaron" } };
+      components = { Link };
+    }
+
+    const app = new App(env);
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
+
+    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+
+    // test updateprops here
+    app.state.user.name = "David";
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
   });
 
   test("refs are properly bound in slots", async () => {

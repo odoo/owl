@@ -1278,10 +1278,10 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
             w9 = new W9(owner, props9);
             context.__owl__.cmap[String(-9 - i)] = w9.__owl__.id;
             w9.__owl__.slotId = 1;
-            def8 = w9.__prepare(Object.assign({}, scope), {});
+            def8 = w9.__prepare(Object.assign({}, scope));
             def8 = def8.then(vnode=>{let pvnode=h(vnode.sel, {key: String(-9 - i), hook: {insert(vn) {let nvn=w9.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w9.destroy();}}});c6[_7_index]=pvnode;w9.__owl__.pvnode = pvnode;});
         } else {
-            def8 = def8 || w9.__updateProps(props9, extra.forceUpdate, extra.patchQueue, Object.assign({}, scope), {});
+            def8 = def8 || w9.__updateProps(props9, extra.forceUpdate, extra.patchQueue, Object.assign({}, scope));
             def8 = def8.then(()=>{if (w9.__owl__.isDestroyed) {return};let pvnode=w9.__owl__.pvnode;c6[_7_index]=pvnode;});
         }
         extra.promises.push(def8);
@@ -1371,6 +1371,48 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         }
         extra.promises.push(def9);
     }
+    return vn1;
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let owner = context;
+    var h = this.utils.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 'User '+context['state'].user.name;
+    //COMPONENT
+    let def4;
+    let w5 = 5 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[5]] : false;
+    let _3_index = c1.length;
+    c1.push(null);
+    let props5 = {to:'/user/'+context['state'].user.id};
+    if (w5 && w5.__owl__.renderPromise && !w5.__owl__.vnode) {
+        if (utils.shallowEqual(props5, w5.__owl__.renderProps)) {
+            def4 = w5.__owl__.renderPromise;
+        } else {
+            w5.destroy();
+            w5 = false;
+        }
+    }
+    if (!w5) {
+        let componentKey5 = \`Link\`;
+        let W5 = context.components && context.components[componentKey5] || QWeb.components[componentKey5];
+        if (!W5) {throw new Error('Cannot find the definition of component \\"' + componentKey5 + '\\"')}
+        w5 = new W5(owner, props5);
+        context.__owl__.cmap[5] = w5.__owl__.id;
+        w5.__owl__.slotId = 1;
+        def4 = w5.__prepare({}, {_2});
+        def4 = def4.then(vnode=>{let pvnode=h(vnode.sel, {key: 5, hook: {insert(vn) {let nvn=w5.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w5.destroy();}}});c1[_3_index]=pvnode;w5.__owl__.pvnode = pvnode;});
+    } else {
+        def4 = def4 || w5.__updateProps(props5, extra.forceUpdate, extra.patchQueue, {}, {_2});
+        def4 = def4.then(()=>{if (w5.__owl__.isDestroyed) {return};let pvnode=w5.__owl__.pvnode;c1[_3_index]=pvnode;});
+    }
+    extra.promises.push(def4);
     return vn1;
 }"
 `;

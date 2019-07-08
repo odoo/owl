@@ -1000,17 +1000,19 @@ const RESPONSIVE_XML = `<templates>
   </div>
 
   <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+    <t t-set="maincontent">
+      <FormView />
+      <Chatter />
+    </t>
     <Navbar/>
     <ControlPanel/>
     <div class="content-wrapper" t-if="!env.isMobile">
       <div class="content">
-        <FormView />
-        <Chatter />
+        <t t-raw="maincontent"/>
       </div>
     </div>
     <t t-else="1">
-      <FormView />
-      <Chatter />
+      <t t-raw="maincontent"/>
     </t>
   </div>
 </templates>

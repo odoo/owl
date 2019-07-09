@@ -1,4 +1,4 @@
-import { VNode, h } from "./vdom";
+import { VNode, h, patch } from "./vdom";
 import { QWebVar, compileExpr } from "./qweb_expressions";
 import { EventBus } from "./event_bus";
 
@@ -286,6 +286,23 @@ export class QWeb extends EventBus {
       throw new Error(`Template ${name} does not exist`);
     }
     return template.fn.call(this, context, extra);
+  }
+
+  /**
+   * Render a template to a html string.
+   *
+   * Note that this is more limited than the `render` method: it is not suitable
+   * to render a full component tree, since this is an asynchronous operation.
+   * This method can only render templates without components.
+   */
+  renderToString(name: string, context: EvalContext = {}): string {
+    const vnode = this.render(name, context);
+    if (vnode.sel === undefined) {
+      return vnode.text!;
+    }
+    const node = document.createElement(vnode.sel);
+    const result = patch(node, vnode);
+    return (<HTMLElement>result.elm).outerHTML;
   }
 
   _compile(name: string, elem: Element, parentContext?: Context): CompiledTemplate {

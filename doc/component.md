@@ -21,6 +21,7 @@
   - [References](#references)
   - [Slots](#slots)
   - [Asynchronous Rendering](#asynchronous-rendering)
+  - [Error Handling](#error-handling)
 
 ## Overview
 
@@ -188,15 +189,16 @@ A solid and robust component system needs useful hooks/methods to help
 developers write components. Here is a complete description of the lifecycle of
 a owl component:
 
-| Method                                           | Description                                           |
-| ------------------------------------------------ | ----------------------------------------------------- |
-| **[constructor](#constructorparent-props)**      | constructor                                           |
-| **[willStart](#willstart)**                      | async, before first rendering                         |
-| **[mounted](#mounted)**                          | just after component is rendered and added to the DOM |
-| **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update                            |
-| **[willPatch](#willpatch)**                      | just before the DOM is patched                        |
-| **[patched](#patchedsnapshot)**                  | just after the DOM is patched                         |
-| **[willUnmount](#willunmount)**                  | just before removing component from DOM               |
+| Method                                           | Description                                                  |
+| ------------------------------------------------ | ------------------------------------------------------------ |
+| **[constructor](#constructorparent-props)**      | constructor                                                  |
+| **[willStart](#willstart)**                      | async, before first rendering                                |
+| **[mounted](#mounted)**                          | just after component is rendered and added to the DOM        |
+| **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update                                   |
+| **[willPatch](#willpatch)**                      | just before the DOM is patched                               |
+| **[patched](#patchedsnapshot)**                  | just after the DOM is patched                                |
+| **[willUnmount](#willunmount)**                  | just before removing component from DOM                      |
+| **[catchError](#catcherrorerror)**               | catch errors (see [error handling section](#error-handling)) |
 
 Notes:
 
@@ -336,6 +338,12 @@ the DOM. This is a good place to remove some listeners, for example.
 ```
 
 This is the opposite method of `mounted`.
+
+#### `catchError(error)`
+
+The `catchError` method is useful when we need to intercept and properly react
+to (rendering) errors that occur in some sub components. See the section on
+[error handling](#error-handling)
 
 ### Root Component
 
@@ -1020,3 +1028,62 @@ Here are a few tips on how to work with asynchronous components:
      <AsyncChild t-asyncroot="1"/>
    </div>
    ```
+
+### Error Handling
+
+By default, whenever an error occurs in the rendering of an Owl application, we
+destroy the whole application. Otherwise, we cannot offer any guarantee on the
+state of the resulting component tree. It might be hopelessly corrupted, but
+without any user-visible state.
+
+Clearly, it sometimes is a little bit extreme to destroy the application. This
+is why we have a builtin mechanism to handle rendering errors (and errors coming
+from lifecycle hooks): the `catchError` hook.
+
+Whenever the `catchError` lifecycle hook is implemented, all errors coming from
+sub components rendering and/or lifecycle method calls will be caught and given
+to the `catchError` method. This allow us to properly handle the error, and to
+not break the application.
+
+For example, here is how we could implement an `ErrorBoundary` component:
+
+```xml
+<div t-name="ErrorBoundary">
+    <t t-if="state.error">
+        Error handled
+    </t>
+    <t t-else="1">
+        <t t-slot="default" />
+    </t>
+</div>
+```
+
+```js
+class ErrorBoundary extends Widget {
+  state = { error: false };
+
+  catchError() {
+    this.state.error = true;
+  }
+}
+```
+
+Using the `ErrorBoundary` is then extremely simple:
+
+```xml
+<ErrorBoundary><SomeOtherComponent/></ErrorBoundary>
+```
+
+Note that we need to be careful here: the fallback UI should not throw any
+error, otherwise we risk going into an infinite loop.
+
+Also, it may be useful to know that whenever an error is caught, it is then
+broadcasted to the application by an event on the `qweb` instance. It may be
+useful, for example, to log the error somewhere.
+
+```js
+env.qweb.on("error", null, function(error) {
+  // do something
+  // react to the error
+});
+```

@@ -243,6 +243,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    */
   willUnmount() {}
 
+  /**
+   * catchError is a method called whenever some error happens in the rendering or
+   * lifecycle hooks of a child.
+   */
+  catchError(error: Error): void {}
+
   //--------------------------------------------------------------------------
   // Public
   //--------------------------------------------------------------------------
@@ -398,7 +404,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     for (let key in handlers) {
       handlers[key]();
     }
-    this.mounted();
+    try {
+      this.mounted();
+    } catch (e) {
+      errorHandler(e, this);
+    }
   }
 
   __callWillUnmount() {
@@ -419,7 +429,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     forceUpdate: boolean = false,
     patchQueue?: any[],
     scope?: any,
-    vars?: any,
+    vars?: any
   ): Promise<void> {
     const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
@@ -451,7 +461,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   async __prepareAndRender(scope?: Object, vars?: any): Promise<VNode> {
-    await this.willStart();
+    try {
+      await this.willStart();
+    } catch (e) {
+      errorHandler(e, this);
+      return Promise.resolve(h("div"));
+    }
     const __owl__ = this.__owl__;
     if (__owl__.isDestroyed) {
       return Promise.resolve(h("div"));
@@ -485,7 +500,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     return this.__render(false, [], scope, vars);
   }
 
-  async __render(force: boolean = false, patchQueue: any[] = [], scope?: Object, vars?: any): Promise<VNode> {
+  async __render(
+    force: boolean = false,
+    patchQueue: any[] = [],
+    scope?: Object,
+    vars?: any
+  ): Promise<VNode> {
     const __owl__ = this.__owl__;
     __owl__.renderId++;
     const promises: Promise<void>[] = [];
@@ -496,15 +516,21 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }
-    let vnode = __owl__.render!(this, {
-      promises,
-      handlers: __owl__.boundHandlers,
-      mountedHandlers: __owl__.mountedHandlers,
-      forceUpdate: force,
-      patchQueue,
-      scope,
-      vars
-    });
+    let vnode;
+    try {
+      vnode = __owl__.render!(this, {
+        promises,
+        handlers: __owl__.boundHandlers,
+        mountedHandlers: __owl__.mountedHandlers,
+        forceUpdate: force,
+        patchQueue,
+        scope,
+        vars
+      });
+    } catch (e) {
+      vnode = __owl__.vnode || h("div");
+      errorHandler(e, this);
+    }
     patch.push(vnode);
     if (__owl__.observer) {
       __owl__.observer.allowMutations = true;
@@ -580,18 +606,50 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    *   3) Call 'patched' on the component of each patch, in inverse order
    */
   __applyPatchQueue(patchQueue: any[]) {
-    const patchLen = patchQueue.length;
-    for (let i = 0; i < patchLen; i++) {
-      const patch = patchQueue[i];
-      patch.push(patch[0].willPatch());
+    let component = this;
+    try {
+      const patchLen = patchQueue.length;
+      for (let i = 0; i < patchLen; i++) {
+        const patch = patchQueue[i];
+        component = patch[0];
+        patch.push(patch[0].willPatch());
+      }
+      for (let i = 0; i < patchLen; i++) {
+        const patch = patchQueue[i];
+        patch[0].__patch(patch[1]);
+      }
+      for (let i = patchLen - 1; i >= 0; i--) {
+        const patch = patchQueue[i];
+        component = patch[0];
+        patch[0].patched(patch[2]);
+      }
+    } catch (e) {
+      errorHandler(e, component);
     }
-    for (let i = 0; i < patchLen; i++) {
-      const patch = patchQueue[i];
-      patch[0].__patch(patch[1]);
-    }
-    for (let i = patchLen - 1; i >= 0; i--) {
-      const patch = patchQueue[i];
-      patch[0].patched(patch[2]);
-    }
+  }
+}
+
+//------------------------------------------------------------------------------
+// Error handling
+//------------------------------------------------------------------------------
+
+function errorHandler(error, component) {
+  let canCatch = false;
+  let qweb = component.env.qweb;
+  let root = component;
+  while (component && !(canCatch = component.catchError !== Component.prototype.catchError)) {
+    root = component;
+    component = component.__owl__.parent;
+  }
+  console.error(error);
+  // we trigger error on QWeb so it can be logged/handled
+  qweb.trigger("error", error);
+
+  if (canCatch) {
+    setTimeout(() => {
+      component.catchError(error);
+    });
+  } else {
+    root.destroy();
   }
 }

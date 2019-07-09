@@ -879,18 +879,22 @@ describe("composition", () => {
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   });
 
-  test("throw a nice error if it cannot find component", async () => {
-    expect.assertions(1);
+  test("display a nice error if it cannot find component", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+
     env.qweb.addTemplate("Parent", `<div><SomeMispelledWidget /></div>`);
     class Parent extends Widget {
       components = { SomeWidget: Widget };
     }
     const parent = new Parent(env);
-    try {
-      await parent.mount(fixture);
-    } catch (e) {
-      expect(e.message).toBe('Cannot find the definition of component "SomeMispelledWidget"');
-    }
+    await parent.mount(fixture);
+
+    expect(console.error).toBeCalledTimes(1);
+    expect((<any>console.error).mock.calls[0][0].message).toMatch(
+      'Cannot find the definition of component "SomeMispelledWidget"'
+    );
+    console.error = consoleError;
   });
 
   test("t-refs on widget are components", async () => {
@@ -2726,7 +2730,8 @@ describe("widget and observable state", () => {
   });
 
   test("subcomponents cannot change observable state received from parent", async () => {
-    expect.assertions(1);
+    const consoleError = console.error;
+    console.error = jest.fn();
     env.qweb.addTemplate("Parent", `<div><Child obj="state.obj"/></div>`);
     class Parent extends Widget {
       state = { obj: { coffee: 1 } };
@@ -2739,11 +2744,13 @@ describe("widget and observable state", () => {
       }
     }
     const parent = new Parent(env);
-    try {
-      await parent.mount(fixture);
-    } catch (e) {
-      expect(e.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
-    }
+    await parent.mount(fixture);
+
+    expect(console.error).toBeCalledTimes(1);
+    expect((<any>console.error).mock.calls[0][0].message).toMatch(
+      'Observed state cannot be changed here! (key: "coffee", val: "2")'
+    );
+    console.error = consoleError;
   });
 });
 
@@ -3260,10 +3267,9 @@ describe("t-slot directive", () => {
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><button>Inc[4]</button><div><div> SC:4</div></div></div>");
-    (<any>fixture.querySelector('button')).click();
+    (<any>fixture.querySelector("button")).click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
-
   });
 });
 
@@ -3523,5 +3529,293 @@ describe("environment and plugins", () => {
     bus.trigger("some-event");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>Blue</div>");
+  });
+});
+
+describe("component error handling (catchError)", () => {
+  /**
+   * This test suite requires often to wait for 3 ticks. Here is why:
+   * - First tick is to let the app render and crash.
+   * - When we crash, we call the catchError handler in a setTimeout (because we
+   *   need to wait for the previous rendering to be completely stopped). So, we
+   *   need to wait for the second tick.
+   * - Then, when the handler changes the state, we need to wait for the interface
+   *   to be rerendered.
+   *  */
+
+  test("can catch an error in a component render function", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorBoundary">
+            <t t-if="state.error">Error handled</t>
+            <t t-else="1"><t t-slot="default" /></t>
+        </div>
+        <div t-name="ErrorComponent">hey<t t-esc="props.flag and state.this.will.crash"/>
+        </div>
+        <div t-name="App">
+            <ErrorBoundary><ErrorComponent flag="state.flag"/></ErrorBoundary>
+        </div>
+      </templates>`);
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    class ErrorComponent extends Widget {}
+    class ErrorBoundary extends Widget {
+      state = { error: false };
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Widget {
+      state = { flag: false };
+      components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><div>hey</div></div></div>");
+    app.state.flag = true;
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(1);
+    console.error = consoleError;
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("no component catching error lead to full app destruction", async () => {
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    const consoleError = console.error;
+    console.error = jest.fn();
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorComponent">hey<t t-esc="props.flag and state.this.will.crash"/>
+        </div>
+        <div t-name="App">
+            <ErrorComponent flag="state.flag"/>
+        </div>
+      </templates>`);
+    class ErrorComponent extends Widget {}
+    class App extends Widget {
+      state = { flag: false };
+      components = { ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
+    app.state.flag = true;
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+
+    expect(console.error).toBeCalledTimes(1);
+    console.error = consoleError;
+    expect(app.__owl__.isDestroyed).toBe(true);
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("can catch an error in the initial call of a component render function", async () => {
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    const consoleError = console.error;
+    console.error = jest.fn();
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorBoundary">
+            <t t-if="state.error">Error handled</t>
+            <t t-else="1"><t t-slot="default" /></t>
+        </div>
+        <div t-name="ErrorComponent">hey<t t-esc="state.this.will.crash"/>
+        </div>
+        <div t-name="App">
+            <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+        </div>
+      </templates>`);
+    class ErrorComponent extends Widget {}
+    class ErrorBoundary extends Widget {
+      state = { error: false };
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Widget {
+      components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(1);
+    console.error = consoleError;
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("can catch an error in the constructor call of a component render function", async () => {
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    const consoleError = console.error;
+    console.error = jest.fn();
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorBoundary">
+            <t t-if="state.error">Error handled</t>
+            <t t-else="1"><t t-slot="default" /></t>
+        </div>
+        <div t-name="ErrorComponent">Some text</div>
+        <div t-name="App">
+            <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+        </div>
+      </templates>`);
+    class ErrorComponent extends Widget {
+      constructor(parent) {
+        super(parent);
+        throw new Error("NOOOOO");
+      }
+    }
+    class ErrorBoundary extends Widget {
+      state = { error: false };
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Widget {
+      components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(1);
+    console.error = consoleError;
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("can catch an error in the willStart call", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorBoundary">
+            <t t-if="state.error">Error handled</t>
+            <t t-else="1"><t t-slot="default" /></t>
+        </div>
+        <div t-name="ErrorComponent">Some text</div>
+        <div t-name="App">
+            <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+        </div>
+      </templates>`);
+    class ErrorComponent extends Widget {
+      async willStart() {
+        // we wait a little bit to be in a different stack frame
+        await nextTick();
+        throw new Error("NOOOOO");
+      }
+    }
+    class ErrorBoundary extends Widget {
+      state = { error: false };
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Widget {
+      components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(1);
+    console.error = consoleError;
+  });
+
+  test("can catch an error in the mounted call", async () => {
+    console.error = jest.fn();
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorBoundary">
+            <t t-if="state.error">Error handled</t>
+            <t t-else="1"><t t-slot="default" /></t>
+        </div>
+        <div t-name="ErrorComponent">Some text</div>
+        <div t-name="App">
+            <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+        </div>
+      </templates>`);
+    class ErrorComponent extends Widget {
+      mounted() {
+        throw new Error("NOOOOO");
+      }
+    }
+    class ErrorBoundary extends Widget {
+      state = { error: false };
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Widget {
+      components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+  });
+
+  test("can catch an error in the willPatch call", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="ErrorBoundary">
+            <t t-if="state.error">Error handled</t>
+            <t t-else="1"><t t-slot="default" /></t>
+        </div>
+        <div t-name="ErrorComponent"><t t-esc="props.message"/></div>
+        <div t-name="App">
+            <ErrorBoundary><ErrorComponent message="state.message" /></ErrorBoundary>
+        </div>
+      </templates>`);
+    class ErrorComponent extends Widget {
+      willPatch() {
+        throw new Error("NOOOOO");
+      }
+    }
+    class ErrorBoundary extends Widget {
+      state = { error: false };
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Widget {
+      state = { message: "abc" };
+      components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><div>abc</div></div></div>");
+    app.state.message = "def";
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
   });
 });

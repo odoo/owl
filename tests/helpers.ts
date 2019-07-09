@@ -68,9 +68,22 @@ export function renderToDOM(
   return result.elm as HTMLElement;
 }
 
+/**
+ * Render a template to an html string. The big difference with the
+ * renderToString method in QWeb is that we use the renderToDom method, which
+ * snapshots the resulting template function.  Doing so gives us a large body
+ * of reference to evaluate changes in the generated QWeb code.
+ *
+ * Note that the result of renderToString is guaranteed to be the same as the
+ * one from QWeb.
+ */
 export function renderToString(qweb: QWeb, t: string, context: EvalContext = {}): string {
   const node = renderToDOM(qweb, t, context);
-  return node instanceof Text ? node.textContent! : node.outerHTML;
+  const result = node instanceof Text ? node.textContent! : node.outerHTML;
+  if (result !== qweb.renderToString(t, context)) {
+      throw new Error("HTML string returned by renderToString helper does not match QWeb render");
+  }
+  return result;
 }
 
 // hereafter, we define two helpers to patch/unpatch the nextFrame utils. This

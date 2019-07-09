@@ -122,6 +122,13 @@ It's API is quite simple:
   const vnode = qweb.render("App", component);
   ```
 
+- **`renderToString(name, context)`**: renders a template, but returns an html
+  string.
+
+  ```js
+  const str = qweb.renderToString("someTemplate", somecontext);
+  ```
+
 - **`register(name, Component)`**: static function to register an OWL Component
   to QWeb's global registry. Globally registered Components can be used in
   templates (see the `t-component` directive). This is useful for commonly used

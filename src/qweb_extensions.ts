@@ -359,6 +359,7 @@ QWeb.addDirective({
     ctx.addLine("//COMPONENT");
     ctx.rootContext.shouldDefineOwner = true;
     ctx.rootContext.shouldDefineQWeb = true;
+    ctx.rootContext.shouldDefineParent = true;
     ctx.rootContext.shouldDefineUtils = true;
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
     let async = node.getAttribute("t-asyncroot") ? true : false;
@@ -552,7 +553,7 @@ QWeb.addDirective({
     if (QWeb.dev) {
       ctx.addLine(`utils.validateProps(W${componentID}, props${componentID})`);
     }
-    ctx.addLine(`w${componentID} = new W${componentID}(owner, props${componentID});`);
+    ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
     ctx.addLine(`context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
 
     // SLOTS
@@ -786,12 +787,13 @@ QWeb.addDirective({
   priority: 80,
   atNodeEncounter({ ctx, value }): boolean {
     const slotKey = ctx.generateID();
+    ctx.rootContext.shouldDefineOwner = true;
     ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
     ctx.addIf(`slot${slotKey}`);
     ctx.addLine(
       `slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
         ctx.parentNode
-      }, vars: extra.vars}));`
+      }, vars: extra.vars, parent: owner}));`
     );
     ctx.closeIf();
     return true;

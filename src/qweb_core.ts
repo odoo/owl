@@ -313,6 +313,7 @@ export class QWeb extends EventBus {
       ctx.nextID = parentContext.parentNode! + 1;
       ctx.parentNode = parentContext.parentNode!;
       ctx.allowMultipleRoots = true;
+      ctx.hasParentWidget = true;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
 
       for (let v in parentContext.variables) {
@@ -685,6 +686,7 @@ export class Context {
   rootContext: Context;
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
+  shouldDefineParent: boolean = false;
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
   shouldProtectContext: boolean = false;
@@ -693,6 +695,7 @@ export class Context {
   inPreTag: boolean = false;
   templateName: string;
   allowMultipleRoots: boolean = false;
+  hasParentWidget: boolean = false;
   scopeVars: any[] = [];
 
   constructor(name?: string) {
@@ -724,6 +727,13 @@ export class Context {
       // this is necessary to prevent some directives (t-forach for ex) to
       // pollute the rendering context by adding some keys in it.
       this.code.unshift("    let owner = context;");
+    }
+    if (this.shouldDefineParent) {
+      if (this.hasParentWidget) {
+        this.code.unshift("    let parent = extra.parent;");
+      } else {
+        this.code.unshift("    let parent = context;");
+      }
     }
     if (this.shouldDefineQWeb) {
       this.code.unshift("    let QWeb = this.constructor;");

@@ -5,6 +5,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
 ) {
     let utils = this.utils;
     let QWeb = this.constructor;
+    let parent = context;
     let owner = context;
     var h = this.utils.h;
     let c1 = [], p1 = {key:1};
@@ -28,7 +29,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         utils.validateProps(W4, props4)
-        w4 = new W4(owner, props4);
+        w4 = new W4(parent, props4);
         context.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});

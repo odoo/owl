@@ -3194,6 +3194,37 @@ describe("t-slot directive", () => {
     expect(console.log).toHaveBeenCalledTimes(0);
     console.log = consoleLog;
   });
+
+  test("slot preserves properly parented relationship", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+             <Child>
+                <GrandChild/>
+             </Child>
+          </div>
+          <div t-name="Child"><t t-slot="default"/></div>
+          <div t-name="GrandChild">Grand Child</div>
+        </templates>
+    `);
+    class Child extends Widget {}
+    class GrandChild extends Widget {}
+    class Parent extends Widget {
+      components = { Child, GrandChild };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><div>Grand Child</div></div></div>");
+
+    const parentChildren = children(parent);
+    expect(parentChildren.length).toBe(1);
+    expect(parentChildren[0]).toBeInstanceOf(Child);
+
+    const childrenChildren = children(parentChildren[0]);
+    expect(childrenChildren.length).toBe(1);
+    expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
+  });
 });
 
 describe("t-model directive", () => {

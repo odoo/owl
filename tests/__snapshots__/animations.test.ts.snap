@@ -12,7 +12,7 @@ exports[`animations t-transition combined with component 1`] = `
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -29,7 +29,7 @@ exports[`animations t-transition combined with component 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
           w4.destroy();
@@ -57,7 +57,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
     if (context['state'].display) {
         //COMPONENT
         let def3;
-        let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+        let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
         let _2_index = c1.length;
         c1.push(null);
         let props4 = {};
@@ -74,7 +74,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
-            context.__owl__.cmap[4] = w4.__owl__.id;
+            parent.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4.__prepare();
             def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
           w4.destroy();

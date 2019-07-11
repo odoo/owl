@@ -25,7 +25,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     c1.push(vn5);
     //COMPONENT
     let def7;
-    let w8 = 8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[8]] : false;
+    let w8 = 8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[8]] : false;
     let _6_index = c5.length;
     c5.push(null);
     let props8 = {val:context['state'].val};
@@ -42,7 +42,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         let W8 = context.components && context.components[componentKey8] || QWeb.components[componentKey8];
         if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
         w8 = new W8(parent, props8);
-        context.__owl__.cmap[8] = w8.__owl__.id;
+        parent.__owl__.cmap[8] = w8.__owl__.id;
         def7 = w8.__prepare();
         def7 = def7.then(vnode=>{let pvnode=h(vnode.sel, {key: 8, hook: {insert(vn) {let nvn=w8.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});c5[_6_index]=pvnode;w8.__owl__.pvnode = pvnode;});
     } else {
@@ -52,7 +52,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     extra.promises.push(def7);
     //COMPONENT
     let def10;
-    let w11 = 11 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[11]] : false;
+    let w11 = 11 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[11]] : false;
     let _9_index = c5.length;
     const patchQueue11 = [];
     c5.push(w11 && w11.__owl__.pvnode || null);
@@ -70,7 +70,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         let W11 = context.components && context.components[componentKey11] || QWeb.components[componentKey11];
         if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
         w11 = new W11(parent, props11);
-        context.__owl__.cmap[11] = w11.__owl__.id;
+        parent.__owl__.cmap[11] = w11.__owl__.id;
         def10 = w11.__prepare();
         def10 = def10.then(vnode=>{let pvnode=h(vnode.sel, {key: 11, hook: {insert(vn) {let nvn=w11.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w11.destroy();}}});c5[_9_index]=pvnode;w11.__owl__.pvnode = pvnode;});
     } else {
@@ -107,7 +107,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     c1.push(vn5);
     //COMPONENT
     let def7;
-    let w8 = 8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[8]] : false;
+    let w8 = 8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[8]] : false;
     let _6_index = c5.length;
     const patchQueue8 = [];
     c5.push(w8 && w8.__owl__.pvnode || null);
@@ -125,7 +125,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         let W8 = context.components && context.components[componentKey8] || QWeb.components[componentKey8];
         if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
         w8 = new W8(parent, props8);
-        context.__owl__.cmap[8] = w8.__owl__.id;
+        parent.__owl__.cmap[8] = w8.__owl__.id;
         def7 = w8.__prepare();
         def7 = def7.then(vnode=>{let pvnode=h(vnode.sel, {key: 8, hook: {insert(vn) {let nvn=w8.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});c5[_6_index]=pvnode;w8.__owl__.pvnode = pvnode;});
     } else {
@@ -135,7 +135,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     def7.then(w8.__applyPatchQueue.bind(w8, patchQueue8));
     //COMPONENT
     let def10;
-    let w11 = 11 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[11]] : false;
+    let w11 = 11 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[11]] : false;
     let _9_index = c5.length;
     c5.push(null);
     let props11 = {val:context['state'].val};
@@ -152,7 +152,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         let W11 = context.components && context.components[componentKey11] || QWeb.components[componentKey11];
         if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
         w11 = new W11(parent, props11);
-        context.__owl__.cmap[11] = w11.__owl__.id;
+        parent.__owl__.cmap[11] = w11.__owl__.id;
         def10 = w11.__prepare();
         def10 = def10.then(vnode=>{let pvnode=h(vnode.sel, {key: 11, hook: {insert(vn) {let nvn=w11.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w11.destroy();}}});c5[_9_index]=pvnode;w11.__owl__.pvnode = pvnode;});
     } else {
@@ -189,7 +189,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     c1.push(vn5);
     //COMPONENT
     let def7;
-    let w8 = 8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[8]] : false;
+    let w8 = 8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[8]] : false;
     let _6_index = c5.length;
     c5.push(null);
     let props8 = {val:context['state'].val};
@@ -206,7 +206,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
         let W8 = context.components && context.components[componentKey8] || QWeb.components[componentKey8];
         if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
         w8 = new W8(parent, props8);
-        context.__owl__.cmap[8] = w8.__owl__.id;
+        parent.__owl__.cmap[8] = w8.__owl__.id;
         def7 = w8.__prepare();
         def7 = def7.then(vnode=>{let pvnode=h(vnode.sel, {key: 8, hook: {insert(vn) {let nvn=w8.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});c5[_6_index]=pvnode;w8.__owl__.pvnode = pvnode;});
     } else {
@@ -216,7 +216,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     extra.promises.push(def7);
     //COMPONENT
     let def10;
-    let w11 = 11 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[11]] : false;
+    let w11 = 11 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[11]] : false;
     let _9_index = c5.length;
     const patchQueue11 = [];
     c5.push(w11 && w11.__owl__.pvnode || null);
@@ -234,7 +234,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
         let W11 = context.components && context.components[componentKey11] || QWeb.components[componentKey11];
         if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
         w11 = new W11(parent, props11);
-        context.__owl__.cmap[11] = w11.__owl__.id;
+        parent.__owl__.cmap[11] = w11.__owl__.id;
         def10 = w11.__prepare();
         def10 = def10.then(vnode=>{let pvnode=h(vnode.sel, {key: 11, hook: {insert(vn) {let nvn=w11.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w11.destroy();}}});c5[_9_index]=pvnode;w11.__owl__.pvnode = pvnode;});
     } else {
@@ -259,7 +259,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
     //COMPONENT
     let def3;
     const _5 = context['state'].style;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -276,7 +276,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.style = _5;}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -303,7 +303,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     const ref5 = \`child\`;
     let _6 = {'a':true};
     Object.assign(_6, {b:context['state'].b})
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -320,7 +320,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -360,7 +360,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     const ref5 = \`child\`;
     let _6 = {'a':true};
     Object.assign(_6, utils.toObj(context['state'].b?'b':''))
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -377,7 +377,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -415,7 +415,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     //COMPONENT
     let def3;
     let _5 = {a:context['state'].a,b:context['state'].b};
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -432,7 +432,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -473,7 +473,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         //COMPONENT
         let key8 = context['number'];
         let def6;
-        let w7 = key8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key8]] : false;
+        let w7 = key8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key8]] : false;
         let _5_index = c1.length;
         c1.push(null);
         let props7 = {};
@@ -490,7 +490,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
             let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
-            context.__owl__.cmap[key8] = w7.__owl__.id;
+            parent.__owl__.cmap[key8] = w7.__owl__.id;
             def6 = w7.__prepare();
             def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
@@ -515,7 +515,7 @@ exports[`composition t-component with dynamic value 1`] = `
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -532,7 +532,7 @@ exports[`composition t-component with dynamic value 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -556,7 +556,7 @@ exports[`composition t-component with dynamic value 2 1`] = `
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -573,7 +573,7 @@ exports[`composition t-component with dynamic value 2 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -597,7 +597,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -614,7 +614,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, 3));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -638,7 +638,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -655,7 +655,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -679,7 +679,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -696,7 +696,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -720,7 +720,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -737,7 +737,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {val:3}));}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -761,7 +761,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -778,7 +778,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {e.preventDefault();if (e.target !== vn.elm) {return}owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -802,7 +802,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -819,7 +819,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (e.target !== vn.elm) {return}e.preventDefault();owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -843,7 +843,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -860,7 +860,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', owner['onEv1'].bind(owner));vn.elm.addEventListener('ev-2', function (e) {if (e.target !== vn.elm) {return}owner['onEv2'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -884,7 +884,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -901,7 +901,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {e.stopPropagation();owner['onEv1'].call(owner, e);});vn.elm.addEventListener('ev-2', function (e) {e.preventDefault();owner['onEv2'].call(owner, e);});vn.elm.addEventListener('ev-3', function (e) {e.stopPropagation();e.preventDefault();owner['onEv3'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -926,7 +926,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     //COMPONENT
     let key5 = 'somestring';
     let def3;
-    let w4 = key5 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key5]] : false;
+    let w4 = key5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key5]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {flag:context['state'].flag};
@@ -943,7 +943,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[key5] = w4.__owl__.id;
+        parent.__owl__.cmap[key5] = w4.__owl__.id;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: key5, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
@@ -984,7 +984,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         let key8 = context['item'];
         let def6;
         let arg9 = context['item'];
-        let w7 = key8 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[key8]] : false;
+        let w7 = key8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key8]] : false;
         let _5_index = c1.length;
         c1.push(null);
         let props7 = {};
@@ -1001,7 +1001,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
             let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
-            context.__owl__.cmap[key8] = w7.__owl__.id;
+            parent.__owl__.cmap[key8] = w7.__owl__.id;
             def6 = w7.__prepare();
             def6 = def6.then(vnode=>{vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg9));}};let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
@@ -1173,7 +1173,7 @@ exports[`t-slot directive can define and call slots 1`] = `
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[4]] : false;
+    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
@@ -1190,7 +1190,7 @@ exports[`t-slot directive can define and call slots 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        context.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[4] = w4.__owl__.id;
         w4.__owl__.slotId = 1;
         def3 = w4.__prepare();
         def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
@@ -1283,7 +1283,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         c2.push(vn6);
         //COMPONENT
         let def8;
-        let w9 = String(-9 - i) in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[String(-9 - i)]] : false;
+        let w9 = String(-9 - i) in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[String(-9 - i)]] : false;
         let _7_index = c6.length;
         c6.push(null);
         let props9 = {to:'/user/'+context['user'].id};
@@ -1300,7 +1300,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
             let W9 = context.components && context.components[componentKey9] || QWeb.components[componentKey9];
             if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
             w9 = new W9(parent, props9);
-            context.__owl__.cmap[String(-9 - i)] = w9.__owl__.id;
+            parent.__owl__.cmap[String(-9 - i)] = w9.__owl__.id;
             w9.__owl__.slotId = 1;
             def8 = w9.__prepare(Object.assign({}, scope));
             def8 = def8.then(vnode=>{let pvnode=h(vnode.sel, {key: String(-9 - i), hook: {insert(vn) {let nvn=w9.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w9.destroy();}}});c6[_7_index]=pvnode;w9.__owl__.pvnode = pvnode;});
@@ -1370,7 +1370,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         var _7 = 'User '+context['user'].name;
         //COMPONENT
         let def9;
-        let w10 = String(-10 - i) in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[String(-10 - i)]] : false;
+        let w10 = String(-10 - i) in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[String(-10 - i)]] : false;
         let _8_index = c6.length;
         c6.push(null);
         let props10 = {to:'/user/'+context['user'].id};
@@ -1387,7 +1387,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
             let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
             if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
             w10 = new W10(parent, props10);
-            context.__owl__.cmap[String(-10 - i)] = w10.__owl__.id;
+            parent.__owl__.cmap[String(-10 - i)] = w10.__owl__.id;
             w10.__owl__.slotId = 1;
             def9 = w10.__prepare(Object.assign({}, scope), {_7});
             def9 = def9.then(vnode=>{let pvnode=h(vnode.sel, {key: String(-10 - i), hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c6[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
@@ -1414,7 +1414,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     var _2 = 'User '+context['state'].user.name;
     //COMPONENT
     let def4;
-    let w5 = 5 in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[5]] : false;
+    let w5 = 5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[5]] : false;
     let _3_index = c1.length;
     c1.push(null);
     let props5 = {to:'/user/'+context['state'].user.id};
@@ -1431,7 +1431,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
         let W5 = context.components && context.components[componentKey5] || QWeb.components[componentKey5];
         if (!W5) {throw new Error('Cannot find the definition of component \\"' + componentKey5 + '\\"')}
         w5 = new W5(parent, props5);
-        context.__owl__.cmap[5] = w5.__owl__.id;
+        parent.__owl__.cmap[5] = w5.__owl__.id;
         w5.__owl__.slotId = 1;
         def4 = w5.__prepare({}, {_2});
         def4 = def4.then(vnode=>{let pvnode=h(vnode.sel, {key: 5, hook: {insert(vn) {let nvn=w5.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w5.destroy();}}});c1[_3_index]=pvnode;w5.__owl__.pvnode = pvnode;});

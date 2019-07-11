@@ -517,7 +517,7 @@ QWeb.addDirective({
     }
 
     ctx.addLine(
-      `let w${componentID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`
+      `let w${componentID} = ${templateID} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateID}]] : false;`
     );
     ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     if (async) {
@@ -554,7 +554,7 @@ QWeb.addDirective({
       ctx.addLine(`utils.validateProps(W${componentID}, props${componentID})`);
     }
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
-    ctx.addLine(`context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
+    ctx.addLine(`parent.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
 
     // SLOTS
     const varDefs: string[] = [];

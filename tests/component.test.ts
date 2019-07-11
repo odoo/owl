@@ -3225,6 +3225,46 @@ describe("t-slot directive", () => {
     expect(childrenChildren.length).toBe(1);
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
+
+  test("slot are properly rendered if inner props are changed", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            SC:<t t-esc="props.val"/>
+        </div>
+
+
+        <div t-name="GenericComponent">
+            <t t-slot="default" />
+        </div>
+
+        <div t-name="App">
+            <button t-on-click="inc">Inc[<t t-esc="state.val"/>]</button>
+            <GenericComponent>
+                <SomeComponent val="state.val"/>
+            </GenericComponent>
+        </div>
+    </templates>
+    `);
+    class SomeComponent extends Widget {}
+    class GenericComponent extends Widget {}
+    class App extends Widget {
+      components = { GenericComponent, SomeComponent };
+      state = { val: 4 };
+
+      inc() {
+        this.state.val++;
+      }
+    }
+    const app = new App(env);
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><button>Inc[4]</button><div><div> SC:4</div></div></div>");
+    (<any>fixture.querySelector('button')).click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
+
+  });
 });
 
 describe("t-model directive", () => {

@@ -3819,3 +3819,104 @@ describe("component error handling (catchError)", () => {
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
   });
 });
+
+describe("top level sub widgets", () => {
+  test("basic use", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <t t-name="Parent">
+            <Child p="1"/>
+          </t>
+          <span t-name="Child">child<t t-esc="props.p"/></span>
+        </templates>`);
+    class Child extends Widget {}
+    class Parent extends Widget {
+      components = { Child };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>child1</span>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+  });
+
+
+  test("sub widget is interactive", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <t t-name="Parent">
+            <Child p="1"/>
+          </t>
+          <span t-name="Child"><button t-on-click="inc">click</button>child<t t-esc="state.val"/></span>
+        </templates>`);
+    class Child extends Widget {
+        state = {val: 1};
+        inc() {
+            this.state.val++;
+        }
+    }
+    class Parent extends Widget {
+      components = { Child };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span><button>click</button>child1</span>");
+    const button = fixture.querySelector('button')!;
+    button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span><button>click</button>child2</span>");
+  });
+
+  test("can select a sub widget ", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <t t-name="Parent">
+            <t t-if="env.flag"><Child /></t>
+            <t t-if="!env.flag"><OtherChild /></t>
+          </t>
+          <span t-name="Child">CHILD 1</span>
+          <div t-name="OtherChild">CHILD 2</div>
+        </templates>`);
+    class Child extends Widget {}
+    class OtherChild extends Widget {}
+    class Parent extends Widget {
+      components = { Child, OtherChild };
+    }
+    (<any>env).flag = true;
+    let parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
+    parent.destroy();
+    (<any>env).flag = false;
+    parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
+
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+  });
+
+  test("can select a sub widget, part 2", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <t t-name="Parent">
+            <t t-if="state.flag"><Child /></t>
+            <t t-if="!state.flag"><OtherChild /></t>
+          </t>
+          <span t-name="Child">CHILD 1</span>
+          <div t-name="OtherChild">CHILD 2</div>
+        </templates>`);
+    class Child extends Widget {}
+    class OtherChild extends Widget {}
+    class Parent extends Widget {
+        state = {flag: true}
+      components = { Child, OtherChild };
+    }
+    let parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
+
+  });
+
+});

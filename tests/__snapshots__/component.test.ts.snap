@@ -1443,3 +1443,114 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     return vn1;
 }"
 `;
+
+exports[`top level sub widgets basic use 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    let result;
+    var h = this.utils.h;
+    //COMPONENT
+    let def2;
+    let w3 = 3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[3]] : false;
+    let vn4 = {};
+    result = vn4;
+    let props3 = {p:1};
+    if (w3 && w3.__owl__.renderPromise && !w3.__owl__.vnode) {
+        if (utils.shallowEqual(props3, w3.__owl__.renderProps)) {
+            def2 = w3.__owl__.renderPromise;
+        } else {
+            w3.destroy();
+            w3 = false;
+        }
+    }
+    if (!w3) {
+        let componentKey3 = \`Child\`;
+        let W3 = context.components && context.components[componentKey3] || QWeb.components[componentKey3];
+        if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+        w3 = new W3(parent, props3);
+        parent.__owl__.cmap[3] = w3.__owl__.id;
+        def2 = w3.__prepare();
+        def2 = def2.then(vnode=>{let pvnode=h(vnode.sel, {key: 3, hook: {insert(vn) {let nvn=w3.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});utils.defineProxy(vn4, pvnode);w3.__owl__.pvnode = pvnode;});
+    } else {
+        def2 = def2 || w3.__updateProps(props3, extra.forceUpdate, extra.patchQueue);
+        def2 = def2.then(()=>{if (w3.__owl__.isDestroyed) {return};let pvnode=w3.__owl__.pvnode;utils.defineProxy(vn4, pvnode);});
+    }
+    extra.promises.push(def2);
+    return result;
+}"
+`;
+
+exports[`top level sub widgets can select a sub widget  1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    let result;
+    var h = this.utils.h;
+    if (context['env'].flag) {
+        //COMPONENT
+        let def2;
+        let w3 = 3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[3]] : false;
+        let vn4 = {};
+        result = vn4;
+        let props3 = {};
+        if (w3 && w3.__owl__.renderPromise && !w3.__owl__.vnode) {
+            if (utils.shallowEqual(props3, w3.__owl__.renderProps)) {
+                def2 = w3.__owl__.renderPromise;
+            } else {
+                w3.destroy();
+                w3 = false;
+            }
+        }
+        if (!w3) {
+            let componentKey3 = \`Child\`;
+            let W3 = context.components && context.components[componentKey3] || QWeb.components[componentKey3];
+            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+            w3 = new W3(parent, props3);
+            parent.__owl__.cmap[3] = w3.__owl__.id;
+            def2 = w3.__prepare();
+            def2 = def2.then(vnode=>{let pvnode=h(vnode.sel, {key: 3, hook: {insert(vn) {let nvn=w3.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});utils.defineProxy(vn4, pvnode);w3.__owl__.pvnode = pvnode;});
+        } else {
+            def2 = def2 || w3.__updateProps(props3, extra.forceUpdate, extra.patchQueue);
+            def2 = def2.then(()=>{if (w3.__owl__.isDestroyed) {return};let pvnode=w3.__owl__.pvnode;utils.defineProxy(vn4, pvnode);});
+        }
+        extra.promises.push(def2);
+    }
+    if (!context['env'].flag) {
+        //COMPONENT
+        let def6;
+        let w7 = 7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[7]] : false;
+        let vn8 = {};
+        result = vn8;
+        let props7 = {};
+        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
+            if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
+                def6 = w7.__owl__.renderPromise;
+            } else {
+                w7.destroy();
+                w7 = false;
+            }
+        }
+        if (!w7) {
+            let componentKey7 = \`OtherChild\`;
+            let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+            if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
+            w7 = new W7(parent, props7);
+            parent.__owl__.cmap[7] = w7.__owl__.id;
+            def6 = w7.__prepare();
+            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});utils.defineProxy(vn8, pvnode);w7.__owl__.pvnode = pvnode;});
+        } else {
+            def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
+            def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;utils.defineProxy(vn8, pvnode);});
+        }
+        extra.promises.push(def6);
+    }
+    return result;
+}"
+`;

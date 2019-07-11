@@ -330,7 +330,7 @@ export class QWeb extends EventBus {
 
     if (!parentContext) {
       if (!ctx.rootNode) {
-        throw new Error("A template should have one root node");
+        throw new Error(`A template should have one root node (${ctx.templateName})`);
       }
       ctx.addLine(`return vn${ctx.rootNode};`);
     }

@@ -329,10 +329,14 @@ export class QWeb extends EventBus {
     this._compileNode(elem, ctx);
 
     if (!parentContext) {
-      if (!ctx.rootNode) {
-        throw new Error(`A template should have one root node (${ctx.templateName})`);
+      if (ctx.shouldDefineResult) {
+        ctx.addLine(`return result;`);
+      } else {
+        if (!ctx.rootNode) {
+          throw new Error(`A template should have one root node (${ctx.templateName})`);
+        }
+        ctx.addLine(`return vn${ctx.rootNode};`);
       }
-      ctx.addLine(`return vn${ctx.rootNode};`);
     }
 
     let code = ctx.generateCode();
@@ -689,6 +693,7 @@ export class Context {
   shouldDefineParent: boolean = false;
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
+  shouldDefineResult: boolean = false;
   shouldProtectContext: boolean = false;
   shouldTrackScope: boolean = false;
   inLoop: boolean = false;
@@ -722,6 +727,9 @@ export class Context {
     }
     if (this.shouldProtectContext) {
       this.code.unshift("    context = Object.create(context);");
+    }
+    if (this.shouldDefineResult) {
+      this.code.unshift("    let result;");
     }
     if (this.shouldDefineOwner) {
       // this is necessary to prevent some directives (t-forach for ex) to

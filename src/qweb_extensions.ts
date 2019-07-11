@@ -190,6 +190,19 @@ const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
   self: "if (e.target !== vn.elm) {return}"
 });
 
+UTILS.defineProxy = function defineProxy(target, source) {
+  for (let k in source) {
+    Object.defineProperty(target, k, {
+      get() {
+        return source[k];
+      },
+      set(val) {
+        source[k] = val;
+      }
+    });
+  }
+};
+
 /**
  * The t-component directive is certainly a complicated and hard to maintain piece
  * of code.  To help you, fellow developer, if you have to maintain it, I offer
@@ -519,14 +532,26 @@ QWeb.addDirective({
     ctx.addLine(
       `let w${componentID} = ${templateID} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateID}]] : false;`
     );
-    ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+    if (ctx.parentNode) {
+      ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+    }
+    let shouldProxy = false;
     if (async) {
       ctx.addLine(`const patchQueue${componentID} = [];`);
       ctx.addLine(
         `c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`
       );
     } else {
-      ctx.addLine(`c${ctx.parentNode}.push(null);`);
+      if (ctx.parentNode) {
+        ctx.addLine(`c${ctx.parentNode}.push(null);`);
+      } else {
+        let id = ctx.generateID();
+        ctx.rootContext.rootNode = id;
+        shouldProxy = true;
+        ctx.rootContext.shouldDefineResult = true;
+        ctx.addLine(`let vn${id} = {};`);
+        ctx.addLine(`result = vn${id};`);
+      }
     }
     ctx.addLine(`let props${componentID} = {${propStr}};`);
     ctx.addIf(
@@ -600,10 +625,12 @@ QWeb.addDirective({
     }
     ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
+    let registerCode = `c${ctx.parentNode}[_${dummyID}_index]=pvnode;`;
+    if (shouldProxy) {
+      registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
+    }
     ctx.addLine(
-      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});c${
-        ctx.parentNode
-      }[_${dummyID}_index]=pvnode;w${componentID}.__owl__.pvnode = pvnode;});`
+      `def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`
     );
 
     ctx.addElse();
@@ -623,9 +650,7 @@ QWeb.addDirective({
     ctx.addLine(
       `def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${
         tattStyle ? `w${componentID}.el.style=${tattStyle};` : ""
-      }let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}c${
-        ctx.parentNode
-      }[_${dummyID}_index]=pvnode;});`
+      }let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}${registerCode}});`
     );
     ctx.closeIf();
 

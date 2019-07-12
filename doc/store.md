@@ -89,7 +89,7 @@ mutation is not allowed (and should throw an error). Mutations are synchronous.
 ```js
 const mutations = {
   setLoginState({ state }, loginState) {
-      state.loginState = loginState;
+    state.loginState = loginState;
   }
 };
 ```
@@ -165,17 +165,16 @@ const getters = {
 const post = store.getters.getPost(id);
 ```
 
-Getters take *at most* one argument.
-
+Getters take _at most_ one argument.
 
 Note that getters are cached if they don't take any argument, or their argument
 is a string or a number.
 
 ### Connecting a Component
 
-By default, an Owl `Component` is not connected to any store. The `connect`
-function is there to create sub Components that are connected versions of
-Components.
+At some point, we need a way to access the state in the store from a component.
+By default, an Owl `Component` is not connected to any store. To do that, we
+need to create a component inheriting from `OwlComponent`:
 
 ```javascript
 const actions = {
@@ -193,19 +192,18 @@ const state = {
 };
 const store = new owl.Store({ state, actions, mutations });
 
-class Counter extends owl.Component {
+class Counter extends owl.ConnectedComponent {
+  static mapStoreToProps(state) {
+    return {
+      value: state.counter
+    };
+  }
   increment() {
     this.env.store.dispatch("increment");
   }
 }
-function mapStoreToProps(state) {
-  return {
-    value: state.counter
-  };
-}
-const ConnectedCounter = owl.connect(Counter, mapStoreToProps);
 
-const counter = new ConnectedCounter({ store, qweb });
+const counter = new Counter({ store, qweb });
 ```
 
 ```xml
@@ -214,41 +212,36 @@ const counter = new ConnectedCounter({ store, qweb });
 </button>
 ```
 
-The arguments of `connect` are:
+The `ConnectedComponent` class can be configured with the following fields:
 
-- `Counter`: an owl `Component` to connect
 - `mapStoreToProps`: a function that extracts the `props` of the Component
-  from the `state` of the `Store` and returns them as a dict
-- `options`: dictionary of optional parameters that may contain
-  - `getStore`: a function that takes the `env` in arguments and returns an
-    instance of `Store` to connect to (if not given, connects to `env.store`)
-  - `hashFunction`: the function to use to detect changes in the state (if not
-    given, generates a function that uses revision numbers, incremented at
-    each state change)
-  - `deep`: [only useful if no hashFunction is given] if false, only watch
-    for top level state changes (true by default)
-
-The `connect` function returns a sub class of the given `Component` which is
-connected to the `store`.
+  from the `state` of the `Store` and returns them as a dict.
+- `getStore`: a function that takes the `env` in arguments and returns an
+  instance of `Store` to connect to (if not given, connects to `env.store`)
+- `hashFunction`: the function to use to detect changes in the state (if not
+  given, generates a function that uses revision numbers, incremented at
+  each state change)
+- `deep` (boolean): [only useful if no hashFunction is given] if `false`, only watch
+  for top level state changes (`true` by default)
 
 ### Semantics
 
-The `Store` and the `connect` function try to be smart and to optimize as much
-as possible the rendering and update process.  What is important to know is:
+The `Store` and the `ConnectedComponent` try to be smart and to optimize as much
+as possible the rendering and update process. What is important to know is:
 
 - components are always updated in the order of their creation (so, parent
   before children)
 - they are updated only if they are in the DOM
 - if a parent is asynchronous, the system will wait for it to complete its
   update before updating other components.
-- in general, updates are not coordinated.  This is not a problem for synchronous
+- in general, updates are not coordinated. This is not a problem for synchronous
   components, but if there are many asynchronous components, this could lead to
   a situation where some part of the UI is updated and other parts of the UI is
   not updated.
 
 ### Good Practices
 
-- avoid asynchronous components as much as possible.  Asynchronous components
+- avoid asynchronous components as much as possible. Asynchronous components
   lead to situations where parts of the UI is not updated immediately.
 - do not be afraid to connect many components, parent or children if needed. For
   example, a `MessageList` component could get a list of ids in its `mapStoreToProps` and a `Message` component could get the data of its own

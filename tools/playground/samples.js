@@ -405,16 +405,15 @@ class TodoItem extends owl.Component {
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
-function mapStoreToProps(state) {
-    return {
-        todos: state.todos
-    };
-}
-
-class TodoApp extends owl.Component {
+class TodoApp extends owl.ConnectedComponent {
     components = { TodoItem };
     state = { filter: "all" };
 
+    static mapStoreToProps(state) {
+        return {
+            todos: state.todos
+        };
+    }
     get visibleTodos() {
         let todos = this.props.todos;
         if (this.state.filter === "active") {
@@ -462,8 +461,6 @@ class TodoApp extends owl.Component {
     }
 }
 
-const ConnectedTodoApp = owl.connect(TodoApp, mapStoreToProps);
-
 //------------------------------------------------------------------------------
 // App Initialization
 //------------------------------------------------------------------------------
@@ -474,7 +471,7 @@ const env = {
     store,
     dispatch: store.dispatch.bind(store),
 };
-const app = new ConnectedTodoApp(env);
+const app = new TodoApp(env);
 app.mount(document.body);
 `;
 

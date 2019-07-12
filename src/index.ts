@@ -15,7 +15,7 @@ import "./qweb_extensions";
 import { QWeb } from "./qweb_core";
 export { QWeb };
 
-export { connect, Store } from "./store";
+export { Store, ConnectedComponent } from "./store";
 import * as _utils from "./utils";
 
 export const __info__ = {};

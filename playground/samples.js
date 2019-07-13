@@ -1,16 +1,17 @@
 const COMPONENTS = `// In this example, we show how components can be defined and created.
 
-class Counter extends owl.Component {
-    state = { value: 0 };
+class Greeter extends owl.Component {
+    state = { word: 'Hello' };
 
-    increment() {
-        this.state.value++;
+    toggle() {
+        this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi'
     }
 }
 
 // Main root component
 class App extends owl.Component {
-    components = { Counter };
+    components = { Greeter };
+    state = { name: 'World'};
 }
 
 // Application setup
@@ -21,20 +22,25 @@ app.mount(document.body);
 `;
 
 const COMPONENTS_XML = `<templates>
-  <button t-name="Counter" t-on-click="increment">
-    Click Me! [<t t-esc="state.value"/>]
-  </button>
+  <div t-name="Greeter" class="greeter" t-on-click="toggle">
+    <t t-esc="state.word"/>, <t t-esc="props.name"/>
+  </div>
 
   <div t-name="App">
-    <Counter />
-    <Counter />
+    <Greeter name="state.name"/>
   </div>
-</templates>`;
+</templates>
+`;
 
-const COMPONENTS_CSS = `button {
+const COMPONENTS_CSS = `.greeter {
     font-size: 20px;
-    width: 220px;
+    width: 300px;
+    height: 100px;
     margin: 5px;
+    text-align: center;
+    line-height: 100px;
+    background-color: #eeeeee;
+    user-select: none;
 }`;
 
 const ANIMATION = `// The goal of this component is to see how the t-transition directive can be
@@ -399,16 +405,15 @@ class TodoItem extends owl.Component {
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
-function mapStoreToProps(state) {
-    return {
-        todos: state.todos
-    };
-}
-
-class TodoApp extends owl.Component {
+class TodoApp extends owl.ConnectedComponent {
     components = { TodoItem };
     state = { filter: "all" };
 
+    static mapStoreToProps(state) {
+        return {
+            todos: state.todos
+        };
+    }
     get visibleTodos() {
         let todos = this.props.todos;
         if (this.state.filter === "active") {
@@ -456,8 +461,6 @@ class TodoApp extends owl.Component {
     }
 }
 
-const ConnectedTodoApp = owl.connect(TodoApp, mapStoreToProps);
-
 //------------------------------------------------------------------------------
 // App Initialization
 //------------------------------------------------------------------------------
@@ -468,7 +471,7 @@ const env = {
     store,
     dispatch: store.dispatch.bind(store),
 };
-const app = new ConnectedTodoApp(env);
+const app = new TodoApp(env);
 app.mount(document.body);
 `;
 
@@ -994,17 +997,19 @@ const RESPONSIVE_XML = `<templates>
   </div>
 
   <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+    <t t-set="maincontent">
+      <FormView />
+      <Chatter />
+    </t>
     <Navbar/>
     <ControlPanel/>
     <div class="content-wrapper" t-if="!env.isMobile">
       <div class="content">
-        <FormView />
-        <Chatter />
+        <t t-raw="maincontent"/>
       </div>
     </div>
     <t t-else="1">
-      <FormView />
-      <Chatter />
+      <t t-raw="maincontent"/>
     </t>
   </div>
 </templates>

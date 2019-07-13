@@ -1170,7 +1170,27 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(xml, "text/xml");
         if (doc.getElementsByTagName("parsererror").length) {
-            throw new Error("Invalid XML in template");
+            let msg = "Invalid XML in template.";
+            const parsererrorText = doc.getElementsByTagName("parsererror")[0].textContent;
+            if (parsererrorText) {
+                msg += "\nThe parser has produced the following error message:\n" + parsererrorText;
+                const re = /\d+/g;
+                const firstMatch = re.exec(parsererrorText);
+                if (firstMatch) {
+                    const lineNumber = Number(firstMatch[0]);
+                    const line = xml.split("\n")[lineNumber - 1];
+                    const secondMatch = re.exec(parsererrorText);
+                    if (line && secondMatch) {
+                        const columnIndex = Number(secondMatch[0]) - 1;
+                        if (line[columnIndex]) {
+                            msg +=
+                                `\nThe error might be located at xml line ${lineNumber} column ${columnIndex}\n` +
+                                    `${line}\n${"-".repeat(columnIndex - 1)}^`;
+                        }
+                    }
+                }
+            }
+            throw new Error(msg);
         }
         return doc;
     }
@@ -1300,44 +1320,63 @@
             }
             return template.fn.call(this, context, extra);
         }
-        _compile(name, elem, parentNode) {
+        /**
+         * Render a template to a html string.
+         *
+         * Note that this is more limited than the `render` method: it is not suitable
+         * to render a full component tree, since this is an asynchronous operation.
+         * This method can only render templates without components.
+         */
+        renderToString(name, context = {}) {
+            const vnode = this.render(name, context);
+            if (vnode.sel === undefined) {
+                return vnode.text;
+            }
+            const node = document.createElement(vnode.sel);
+            const result = patch(node, vnode);
+            return result.elm.outerHTML;
+        }
+        _compile(name, elem, parentContext) {
             const isDebug = elem.attributes.hasOwnProperty("t-debug");
             const ctx = new Context(name);
-            if (parentNode) {
-                ctx.nextID = parentNode + 1;
-                ctx.parentNode = parentNode;
+            if (parentContext) {
+                ctx.variables = Object.create(parentContext.variables);
+                ctx.nextID = parentContext.parentNode + 1;
+                ctx.parentNode = parentContext.parentNode;
                 ctx.allowMultipleRoots = true;
-                ctx.addLine(`let c${parentNode} = extra.parentNode;`);
+                ctx.hasParentWidget = true;
+                ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
+                for (let v in parentContext.variables) {
+                    let variable = parentContext.variables[v];
+                    if (variable.id) {
+                        ctx.addLine(`let ${variable.id} = extra.vars.${variable.id}`);
+                    }
+                }
+            }
+            if (parentContext) {
+                ctx.addLine("    Object.assign(context, extra.scope);");
             }
             this._compileNode(elem, ctx);
-            if (ctx.shouldProtectContext) {
-                ctx.code.unshift("    context = Object.create(context);");
-            }
-            if (ctx.shouldDefineOwner) {
-                // this is necessary to prevent some directives (t-forach for ex) to
-                // pollute the rendering context by adding some keys in it.
-                ctx.code.unshift("    let owner = context;");
-            }
-            if (ctx.shouldDefineQWeb) {
-                ctx.code.unshift("    let QWeb = this.constructor;");
-            }
-            if (ctx.shouldDefineUtils) {
-                ctx.code.unshift("    let utils = this.utils;");
-            }
-            if (!parentNode) {
-                if (!ctx.rootNode) {
-                    throw new Error("A template should have one root node");
+            if (!parentContext) {
+                if (ctx.shouldDefineResult) {
+                    ctx.addLine(`return result;`);
                 }
-                ctx.addLine(`return vn${ctx.rootNode};`);
+                else {
+                    if (!ctx.rootNode) {
+                        throw new Error(`A template should have one root node (${ctx.templateName})`);
+                    }
+                    ctx.addLine(`return vn${ctx.rootNode};`);
+                }
             }
+            let code = ctx.generateCode();
             let template;
             try {
-                template = new Function("context", "extra", ctx.code.join("\n"));
+                template = new Function("context", "extra", code.join("\n"));
             }
             catch (e) {
                 const templateName = ctx.templateName.replace(/`/g, "'");
                 console.groupCollapsed(`Invalid Code generated by ${templateName}`);
-                console.warn(ctx.code.join("\n"));
+                console.warn(code.join("\n"));
                 console.groupEnd();
                 throw new Error(`Invalid generated code while compiling template '${templateName}': ${e.message}`);
             }
@@ -1657,12 +1696,17 @@
             this.rootNode = null;
             this.indentLevel = 0;
             this.shouldDefineOwner = false;
+            this.shouldDefineParent = false;
             this.shouldDefineQWeb = false;
             this.shouldDefineUtils = false;
+            this.shouldDefineResult = false;
             this.shouldProtectContext = false;
+            this.shouldTrackScope = false;
             this.inLoop = false;
             this.inPreTag = false;
             this.allowMultipleRoots = false;
+            this.hasParentWidget = false;
+            this.scopeVars = [];
             this.rootContext = this;
             this.templateName = name || "noname";
             this.addLine("var h = this.utils.h;");
@@ -1670,6 +1714,44 @@
         generateID() {
             const id = this.rootContext.nextID++;
             return id;
+        }
+        generateCode() {
+            const shouldTrackScope = this.shouldTrackScope && this.scopeVars.length;
+            if (shouldTrackScope) {
+                // add some vars to scope if needed
+                for (let scopeVar of this.scopeVars.reverse()) {
+                    let { index, key, indent } = scopeVar;
+                    const prefix = new Array(indent + 2).join("    ");
+                    this.code.splice(index + 1, 0, prefix + `scope.${key} = context.${key};`);
+                }
+                this.code.unshift("    const scope = Object.create(null);");
+            }
+            if (this.shouldProtectContext) {
+                this.code.unshift("    context = Object.create(context);");
+            }
+            if (this.shouldDefineResult) {
+                this.code.unshift("    let result;");
+            }
+            if (this.shouldDefineOwner) {
+                // this is necessary to prevent some directives (t-forach for ex) to
+                // pollute the rendering context by adding some keys in it.
+                this.code.unshift("    let owner = context;");
+            }
+            if (this.shouldDefineParent) {
+                if (this.hasParentWidget) {
+                    this.code.unshift("    let parent = extra.parent;");
+                }
+                else {
+                    this.code.unshift("    let parent = context;");
+                }
+            }
+            if (this.shouldDefineQWeb) {
+                this.code.unshift("    let QWeb = this.constructor;");
+            }
+            if (this.shouldDefineUtils) {
+                this.code.unshift("    let utils = this.utils;");
+            }
+            return this.code;
         }
         withParent(node) {
             if (!this.allowMultipleRoots &&
@@ -1696,6 +1778,11 @@
         addLine(line) {
             const prefix = new Array(this.indentLevel + 2).join("    ");
             this.code.push(prefix + line);
+            return this.code.length - 1;
+        }
+        addToScope(key, expr) {
+            const index = this.addLine(`context.${key} = ${expr};`);
+            this.rootContext.scopeVars.push({ index, key, indent: this.indentLevel });
         }
         addIf(condition) {
             this.addLine(`if (${condition}) {`);
@@ -1778,9 +1865,6 @@
             if (defaultProps) {
                 props = this.__applyDefaultProps(props, defaultProps);
             }
-            if (QWeb.dev) {
-                this.__validateProps(props || {});
-            }
             // is this a good idea?
             //   Pro: if props is empty, we can create easily a component
             //   Con: this is not really safe
@@ -1795,6 +1879,11 @@
             }
             else {
                 this.env = parent;
+                if (QWeb.dev) {
+                    // we only validate props for root widgets here.  "Regular" widget
+                    // props are validated by the t-component directive
+                    UTILS.validateProps(this.constructor, this.props);
+                }
                 this.env.qweb.on("update", this, () => {
                     if (this.__owl__.isMounted) {
                         this.render(true);
@@ -1901,6 +1990,11 @@
          * @see mounted
          */
         willUnmount() { }
+        /**
+         * catchError is a method called whenever some error happens in the rendering or
+         * lifecycle hooks of a child.
+         */
+        catchError(error) { }
         //--------------------------------------------------------------------------
         // Public
         //--------------------------------------------------------------------------
@@ -1928,7 +2022,7 @@
                 this.el.remove();
             }
         }
-        async render(force = false, patchQueue) {
+        async render(force = false, patchQueue, scope, vars) {
             const __owl__ = this.__owl__;
             if (!__owl__.isMounted) {
                 return;
@@ -1937,7 +2031,7 @@
             if (shouldPatch) {
                 patchQueue = [];
             }
-            const renderVDom = this.__render(force, patchQueue);
+            const renderVDom = this.__render(force, patchQueue, scope, vars);
             const renderId = __owl__.renderId;
             await renderVDom;
             if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
@@ -2044,7 +2138,12 @@
             for (let key in handlers) {
                 handlers[key]();
             }
-            this.mounted();
+            try {
+                this.mounted();
+            }
+            catch (e) {
+                errorHandler(e, this);
+            }
         }
         __callWillUnmount() {
             this.willUnmount();
@@ -2058,19 +2157,16 @@
                 }
             }
         }
-        async __updateProps(nextProps, forceUpdate = false, patchQueue) {
+        async __updateProps(nextProps, forceUpdate = false, patchQueue, scope, vars) {
             const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
             if (shouldUpdate) {
                 const defaultProps = this.constructor.defaultProps;
                 if (defaultProps) {
                     nextProps = this.__applyDefaultProps(nextProps, defaultProps);
                 }
-                if (QWeb.dev) {
-                    this.__validateProps(nextProps);
-                }
                 await this.willUpdateProps(nextProps);
                 this.props = nextProps;
-                await this.render(forceUpdate, patchQueue);
+                await this.render(forceUpdate, patchQueue, scope, vars);
             }
         }
         __patch(vnode) {
@@ -2082,14 +2178,20 @@
             }
             __owl__.vnode = patch(target, vnode);
         }
-        __prepare() {
+        __prepare(scope, vars) {
             const __owl__ = this.__owl__;
             __owl__.renderProps = this.props;
-            __owl__.renderPromise = this.__prepareAndRender();
+            __owl__.renderPromise = this.__prepareAndRender(scope, vars);
             return __owl__.renderPromise;
         }
-        async __prepareAndRender() {
-            await this.willStart();
+        async __prepareAndRender(scope, vars) {
+            try {
+                await this.willStart();
+            }
+            catch (e) {
+                errorHandler(e, this);
+                return Promise.resolve(h("div"));
+            }
             const __owl__ = this.__owl__;
             if (__owl__.isDestroyed) {
                 return Promise.resolve(h("div"));
@@ -2122,9 +2224,9 @@
             }
             __owl__.render = qweb.render.bind(qweb, this.template);
             this.__observeState();
-            return this.__render();
+            return this.__render(false, [], scope, vars);
         }
-        async __render(force = false, patchQueue = []) {
+        async __render(force = false, patchQueue = [], scope, vars) {
             const __owl__ = this.__owl__;
             __owl__.renderId++;
             const promises = [];
@@ -2135,13 +2237,22 @@
             if (__owl__.observer) {
                 __owl__.observer.allowMutations = false;
             }
-            let vnode = __owl__.render(this, {
-                promises,
-                handlers: __owl__.boundHandlers,
-                mountedHandlers: __owl__.mountedHandlers,
-                forceUpdate: force,
-                patchQueue
-            });
+            let vnode;
+            try {
+                vnode = __owl__.render(this, {
+                    promises,
+                    handlers: __owl__.boundHandlers,
+                    mountedHandlers: __owl__.mountedHandlers,
+                    forceUpdate: force,
+                    patchQueue,
+                    scope,
+                    vars
+                });
+            }
+            catch (e) {
+                vnode = __owl__.vnode || h("div");
+                errorHandler(e, this);
+            }
             patch.push(vnode);
             if (__owl__.observer) {
                 __owl__.observer.allowMutations = true;
@@ -2211,96 +2322,51 @@
          *   3) Call 'patched' on the component of each patch, in inverse order
          */
         __applyPatchQueue(patchQueue) {
-            const patchLen = patchQueue.length;
-            for (let i = 0; i < patchLen; i++) {
-                const patch = patchQueue[i];
-                patch.push(patch[0].willPatch());
-            }
-            for (let i = 0; i < patchLen; i++) {
-                const patch = patchQueue[i];
-                patch[0].__patch(patch[1]);
-            }
-            for (let i = patchLen - 1; i >= 0; i--) {
-                const patch = patchQueue[i];
-                patch[0].patched(patch[2]);
-            }
-        }
-        /**
-         * Validate the component props (or next props) against the (static) props
-         * description.  This is potentially an expensive operation: it may needs to
-         * visit recursively the props and all the children to check if they are valid.
-         * This is why it is only done in 'dev' mode.
-         */
-        __validateProps(props) {
-            const propsDef = this.constructor.props;
-            if (propsDef instanceof Array) {
-                // list of strings (prop names)
-                for (let i = 0, l = propsDef.length; i < l; i++) {
-                    if (!(propsDef[i] in props)) {
-                        throw new Error(`Missing props '${propsDef[i]}' (component '${this.constructor.name}')`);
-                    }
+            let component = this;
+            try {
+                const patchLen = patchQueue.length;
+                for (let i = 0; i < patchLen; i++) {
+                    const patch = patchQueue[i];
+                    component = patch[0];
+                    patch.push(patch[0].willPatch());
+                }
+                for (let i = 0; i < patchLen; i++) {
+                    const patch = patchQueue[i];
+                    patch[0].__patch(patch[1]);
+                }
+                for (let i = patchLen - 1; i >= 0; i--) {
+                    const patch = patchQueue[i];
+                    component = patch[0];
+                    patch[0].patched(patch[2]);
                 }
             }
-            else if (propsDef) {
-                // propsDef is an object now
-                for (let propName in propsDef) {
-                    if (!(propName in props)) {
-                        if (propsDef[propName] && !propsDef[propName].optional) {
-                            throw new Error(`Missing props '${propName}' (component '${this.constructor.name}')`);
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                    let isValid = isValidProp(props[propName], propsDef[propName]);
-                    if (!isValid) {
-                        throw new Error(`Props '${propName}' of invalid type in component '${this.constructor.name}'`);
-                    }
-                }
+            catch (e) {
+                errorHandler(e, component);
             }
         }
     }
     //------------------------------------------------------------------------------
-    // Prop validation helper
+    // Error handling
     //------------------------------------------------------------------------------
-    /**
-     * Check if an invidual prop value matches its (static) prop definition
-     */
-    function isValidProp(prop, propDef) {
-        if (typeof propDef === "function") {
-            // Check if a value is constructed by some Constructor.  Note that there is a
-            // slight abuse of language: we want to consider primitive values as well.
-            //
-            // So, even though 1 is not an instance of Number, we want to consider that
-            // it is valid.
-            if (typeof prop === "object") {
-                return prop instanceof propDef;
-            }
-            return typeof prop === propDef.name.toLowerCase();
+    function errorHandler(error, component) {
+        let canCatch = false;
+        let qweb = component.env.qweb;
+        let root = component;
+        while (component && !(canCatch = component.catchError !== Component.prototype.catchError)) {
+            root = component;
+            component = component.__owl__.parent;
         }
-        else if (propDef instanceof Array) {
-            // If this code is executed, this means that we want to check if a prop
-            // matches at least one of its descriptor.
-            let result = false;
-            for (let i = 0, iLen = propDef.length; i < iLen; i++) {
-                result = result || isValidProp(prop, propDef[i]);
-            }
-            return result;
+        console.error(error);
+        // we trigger error on QWeb so it can be logged/handled
+        qweb.trigger("error", error);
+        if (canCatch) {
+            setTimeout(() => {
+                component.catchError(error);
+            });
         }
-        // propsDef is an object
-        let result = isValidProp(prop, propDef.type);
-        if (propDef.type === Array) {
-            for (let i = 0, iLen = prop.length; i < iLen; i++) {
-                result = result && isValidProp(prop[i], propDef.element);
-            }
+        else {
+            root.destroy();
         }
-        if (propDef.type === Object) {
-            const shape = propDef.shape;
-            for (let key in shape) {
-                result = result && isValidProp(prop[key], shape[key]);
-            }
-        }
-        return result;
     }
 
     /**
@@ -2545,11 +2611,11 @@
             ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
             ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
             ctx.indent();
-            ctx.addLine(`context.${name}_first = i === 0;`);
-            ctx.addLine(`context.${name}_last = i === _length${keysID} - 1;`);
-            ctx.addLine(`context.${name}_index = i;`);
-            ctx.addLine(`context.${name} = _${keysID}[i];`);
-            ctx.addLine(`context.${name}_value = _${valuesID}[i];`);
+            ctx.addToScope(name + '_first', 'i === 0');
+            ctx.addToScope(name + '_last', `i === _length${keysID} - 1`);
+            ctx.addToScope(name + '_index', 'i');
+            ctx.addToScope(name, `_${keysID}[i]`);
+            ctx.addToScope(name + '_value', `_${valuesID}[i]`);
             const nodeCopy = node.cloneNode(true);
             let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
             if (!shouldWarn && node.tagName === "t") {
@@ -2761,6 +2827,18 @@
     const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
         self: "if (e.target !== vn.elm) {return}"
     });
+    UTILS.defineProxy = function defineProxy(target, source) {
+        for (let k in source) {
+            Object.defineProperty(target, k, {
+                get() {
+                    return source[k];
+                },
+                set(val) {
+                    source[k] = val;
+                }
+            });
+        }
+    };
     /**
      * The t-component directive is certainly a complicated and hard to maintain piece
      * of code.  To help you, fellow developer, if you have to maintain it, I offer
@@ -2929,6 +3007,7 @@
             ctx.addLine("//COMPONENT");
             ctx.rootContext.shouldDefineOwner = true;
             ctx.rootContext.shouldDefineQWeb = true;
+            ctx.rootContext.shouldDefineParent = true;
             ctx.rootContext.shouldDefineUtils = true;
             let keepAlive = node.getAttribute("t-keepalive") ? true : false;
             let async = node.getAttribute("t-asyncroot") ? true : false;
@@ -3039,7 +3118,7 @@
                 if (tattClass) {
                     let tattExpr = ctx.formatExpression(tattClass);
                     if (tattExpr[0] !== "{" || tattExpr[tattExpr.length - 1] !== "}") {
-                        tattExpr = `this.utils.toObj(${tattExpr})`;
+                        tattExpr = `utils.toObj(${tattExpr})`;
                     }
                     if (classAttr) {
                         ctx.addLine(`Object.assign(${classObj}, ${tattExpr})`);
@@ -3085,14 +3164,27 @@
                 const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
                 createHook = `vnode.data.hook = {create(_, vn){${styleCode}${eventsCode}}};`;
             }
-            ctx.addLine(`let w${componentID} = ${templateID} in context.__owl__.cmap ? context.__owl__.children[context.__owl__.cmap[${templateID}]] : false;`);
-            ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+            ctx.addLine(`let w${componentID} = ${templateID} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateID}]] : false;`);
+            if (ctx.parentNode) {
+                ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
+            }
+            let shouldProxy = false;
             if (async) {
                 ctx.addLine(`const patchQueue${componentID} = [];`);
                 ctx.addLine(`c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`);
             }
             else {
-                ctx.addLine(`c${ctx.parentNode}.push(null);`);
+                if (ctx.parentNode) {
+                    ctx.addLine(`c${ctx.parentNode}.push(null);`);
+                }
+                else {
+                    let id = ctx.generateID();
+                    ctx.rootContext.rootNode = id;
+                    shouldProxy = true;
+                    ctx.rootContext.shouldDefineResult = true;
+                    ctx.addLine(`let vn${id} = {};`);
+                    ctx.addLine(`result = vn${id};`);
+                }
             }
             ctx.addLine(`let props${componentID} = {${propStr}};`);
             ctx.addIf(`w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`);
@@ -3109,10 +3201,21 @@
             ctx.addLine(`let W${componentID} = context.components && context.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`);
             // maybe only do this in dev mode...
             ctx.addLine(`if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`);
-            ctx.addLine(`w${componentID} = new W${componentID}(owner, props${componentID});`);
-            ctx.addLine(`context.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
+            if (QWeb.dev) {
+                ctx.addLine(`utils.validateProps(W${componentID}, props${componentID})`);
+            }
+            ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
+            ctx.addLine(`parent.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
             // SLOTS
-            if (node.childNodes.length) {
+            const varDefs = [];
+            const hasSlots = node.childNodes.length;
+            if (hasSlots) {
+                ctx.rootContext.shouldTrackScope = true;
+                for (let v of Object.values(ctx.variables)) {
+                    if (v["id"]) {
+                        varDefs.push(v["id"]);
+                    }
+                }
                 const clone = node.cloneNode(true);
                 const slotNodes = clone.querySelectorAll("[t-set]");
                 const slotId = qweb.nextSlotId++;
@@ -3123,7 +3226,7 @@
                         slotNode.parentElement.removeChild(slotNode);
                         const key = slotNode.getAttribute("t-set");
                         slotNode.removeAttribute("t-set");
-                        const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx.parentNode);
+                        const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
                         qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
                     }
                 }
@@ -3132,22 +3235,37 @@
                     for (let child of Object.values(clone.childNodes)) {
                         t.appendChild(child);
                     }
-                    const slotFn = qweb._compile(`slot_default_template`, t, ctx.parentNode);
+                    const slotFn = qweb._compile(`slot_default_template`, t, ctx);
                     qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
                 }
             }
-            ctx.addLine(`def${defID} = w${componentID}.__prepare();`);
+            let scopeVars = "";
+            if (hasSlots) {
+                scopeVars += ctx.scopeVars.length ? `Object.assign({}, scope)` : varDefs.length ? `{}` : "";
+                if (varDefs.length) {
+                    scopeVars += `, {${varDefs.join(",")}}`;
+                }
+            }
+            ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});c${ctx.parentNode}[_${dummyID}_index]=pvnode;w${componentID}.__owl__.pvnode = pvnode;});`);
+            let registerCode = `c${ctx.parentNode}[_${dummyID}_index]=pvnode;`;
+            if (shouldProxy) {
+                registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
+            }
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             // need to update component
             const patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
-            ctx.addLine(`def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode});`);
+            if (QWeb.dev) {
+                ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
+            }
+            ctx.addLine(`def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode}${scopeVars &&
+            ", " + scopeVars});`);
             let keepAliveCode = "";
             if (keepAlive) {
                 keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}.__remount();};`;
             }
-            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${tattStyle ? `w${componentID}.el.style=${tattStyle};` : ""}let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}c${ctx.parentNode}[_${dummyID}_index]=pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${tattStyle ? `w${componentID}.el.style=${tattStyle};` : ""}let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}${registerCode}});`);
             ctx.closeIf();
             if (classObj) {
                 ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
@@ -3164,6 +3282,100 @@
             return true;
         }
     });
+    //------------------------------------------------------------------------------
+    // Prop validation helper
+    //------------------------------------------------------------------------------
+    /**
+     * Validate the component props (or next props) against the (static) props
+     * description.  This is potentially an expensive operation: it may needs to
+     * visit recursively the props and all the children to check if they are valid.
+     * This is why it is only done in 'dev' mode.
+     */
+    UTILS.validateProps = function (Widget, props) {
+        const propsDef = Widget.props;
+        if (propsDef instanceof Array) {
+            // list of strings (prop names)
+            for (let i = 0, l = propsDef.length; i < l; i++) {
+                const propName = propsDef[i];
+                if (propName[propName.length - 1] === "?") {
+                    // optional prop
+                    break;
+                }
+                if (!props[propName]) {
+                    throw new Error(`Missing props '${propsDef[i]}' (component '${Widget.name}')`);
+                }
+            }
+            for (let key in props) {
+                if (!propsDef.includes(key) && !propsDef.includes(key + "?")) {
+                    throw new Error(`Unknown prop '${key}' given to component '${Widget.name}'`);
+                }
+            }
+        }
+        else if (propsDef) {
+            // propsDef is an object now
+            for (let propName in propsDef) {
+                if (props[propName] === undefined) {
+                    if (propsDef[propName] && !propsDef[propName].optional) {
+                        throw new Error(`Missing props '${propName}' (component '${Widget.name}')`);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                let isValid = isValidProp(props[propName], propsDef[propName]);
+                if (!isValid) {
+                    throw new Error(`Props '${propName}' of invalid type in component '${Widget.name}'`);
+                }
+            }
+            for (let propName in props) {
+                if (!(propName in propsDef)) {
+                    throw new Error(`Unknown prop '${propName}' given to component '${Widget.name}'`);
+                }
+            }
+        }
+    };
+    /**
+     * Check if an invidual prop value matches its (static) prop definition
+     */
+    function isValidProp(prop, propDef) {
+        if (propDef === true) {
+            return true;
+        }
+        if (typeof propDef === "function") {
+            // Check if a value is constructed by some Constructor.  Note that there is a
+            // slight abuse of language: we want to consider primitive values as well.
+            //
+            // So, even though 1 is not an instance of Number, we want to consider that
+            // it is valid.
+            if (typeof prop === "object") {
+                return prop instanceof propDef;
+            }
+            return typeof prop === propDef.name.toLowerCase();
+        }
+        else if (propDef instanceof Array) {
+            // If this code is executed, this means that we want to check if a prop
+            // matches at least one of its descriptor.
+            let result = false;
+            for (let i = 0, iLen = propDef.length; i < iLen; i++) {
+                result = result || isValidProp(prop, propDef[i]);
+            }
+            return result;
+        }
+        // propsDef is an object
+        let result = isValidProp(prop, propDef.type);
+        if (propDef.type === Array) {
+            for (let i = 0, iLen = prop.length; i < iLen; i++) {
+                result = result && isValidProp(prop[i], propDef.element);
+            }
+        }
+        if (propDef.type === Object) {
+            const shape = propDef.shape;
+            for (let key in shape) {
+                result = result && isValidProp(prop[key], shape[key]);
+            }
+        }
+        return result;
+    }
     //------------------------------------------------------------------------------
     // t-mounted
     //------------------------------------------------------------------------------
@@ -3199,9 +3411,10 @@
         priority: 80,
         atNodeEncounter({ ctx, value }) {
             const slotKey = ctx.generateID();
+            ctx.rootContext.shouldDefineOwner = true;
             ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
             ctx.addIf(`slot${slotKey}`);
-            ctx.addLine(`slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}}));`);
+            ctx.addLine(`slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`);
             ctx.closeIf();
             return true;
         }
@@ -3371,21 +3584,20 @@
         }
         return 0;
     }
-    function connect(Comp, mapStoreToProps, options = {}) {
-        let hashFunction = options.hashFunction || null;
-        const getStore = options.getStore || (env => env.store);
-        if (!hashFunction) {
-            let deep = "deep" in options ? options.deep : true;
-            let defaultRevFunction = deep ? deepRevNumber : revNumber;
-            hashFunction = function ({ storeProps }, options) {
-                const { currentStoreProps } = options;
+    class ConnectedComponent extends Component {
+        constructor(parent, props) {
+            super(parent, props);
+            this.deep = true;
+            this.hashFunction = ({ storeProps }, options) => {
+                let refFunction = this.deep ? deepRevNumber : revNumber;
                 if ("__owl__" in storeProps) {
-                    return defaultRevFunction(storeProps);
+                    return refFunction(storeProps);
                 }
+                const { currentStoreProps } = options;
                 let hash = 0;
                 for (let key in storeProps) {
                     const val = storeProps[key];
-                    const hashVal = defaultRevFunction(val);
+                    const hashVal = refFunction(val);
                     if (hashVal === 0) {
                         if (val !== currentStoreProps[key]) {
                             options.didChange = true;
@@ -3397,83 +3609,77 @@
                 }
                 return hash;
             };
+            const store = this.getStore(this.env);
+            const ownProps = Object.assign({}, props || {});
+            const storeProps = this.constructor.mapStoreToProps(store.state, ownProps, store.getters);
+            const mergedProps = Object.assign({}, props || {}, storeProps);
+            this.props = mergedProps;
+            this.__owl__.ownProps = ownProps;
+            this.__owl__.currentStoreProps = storeProps;
+            this.__owl__.store = store;
+            this.__owl__.storeHash = this.hashFunction({
+                state: store.state,
+                storeProps: storeProps,
+                revNumber,
+                deepRevNumber
+            }, {
+                currentStoreProps: storeProps
+            });
         }
-        const Result = class extends Comp {
-            constructor(parent, props) {
-                const env = parent instanceof Component ? parent.env : parent;
-                const store = getStore(env);
-                const ownProps = Object.assign({}, props || {});
-                const storeProps = mapStoreToProps(store.state, ownProps, store.getters);
-                const mergedProps = Object.assign({}, props || {}, storeProps);
-                super(parent, mergedProps);
-                this.__owl__.ownProps = ownProps;
+        getStore(env) {
+            return env.store;
+        }
+        static mapStoreToProps(storeState, ownProps, getters) {
+            return {};
+        }
+        /**
+         * We do not use the mounted hook here for a subtle reason: we want the
+         * updates to be called for the parents before the children.  However,
+         * if we use the mounted hook, this will be done in the reverse order.
+         */
+        __callMounted() {
+            this.__owl__.store.on("update", this, this.__checkUpdate);
+            super.__callMounted();
+        }
+        willUnmount() {
+            this.__owl__.store.off("update", this);
+            super.willUnmount();
+        }
+        async __checkUpdate(updateId) {
+            if (updateId === this.__owl__.currentUpdateId) {
+                return;
+            }
+            const ownProps = this.__owl__.ownProps;
+            const storeProps = this.constructor.mapStoreToProps(this.__owl__.store.state, ownProps, this.__owl__.store.getters);
+            const options = {
+                currentStoreProps: this.__owl__.currentStoreProps
+            };
+            const storeHash = this.hashFunction({
+                state: this.__owl__.store.state,
+                storeProps: storeProps,
+                revNumber,
+                deepRevNumber
+            }, options);
+            let didChange = options.didChange;
+            if (storeHash !== this.__owl__.storeHash) {
+                didChange = true;
+                this.__owl__.storeHash = storeHash;
+            }
+            if (didChange) {
                 this.__owl__.currentStoreProps = storeProps;
-                this.__owl__.store = store;
-                this.__owl__.storeHash = hashFunction({
-                    state: store.state,
-                    storeProps: storeProps,
-                    revNumber,
-                    deepRevNumber
-                }, {
-                    currentStoreProps: storeProps
-                });
+                await this.__updateProps(ownProps, false);
             }
-            /**
-             * We do not use the mounted hook here for a subtle reason: we want the
-             * updates to be called for the parents before the children.  However,
-             * if we use the mounted hook, this will be done in the reverse order.
-             */
-            __callMounted() {
-                this.__owl__.store.on("update", this, this.__checkUpdate);
-                super.__callMounted();
+        }
+        __updateProps(nextProps, forceUpdate, patchQueue) {
+            const __owl__ = this.__owl__;
+            __owl__.currentUpdateId = __owl__.store._updateId;
+            if (__owl__.ownProps !== nextProps) {
+                __owl__.currentStoreProps = this.constructor.mapStoreToProps(__owl__.store.state, nextProps, __owl__.store.getters);
             }
-            willUnmount() {
-                this.__owl__.store.off("update", this);
-                super.willUnmount();
-            }
-            async __checkUpdate(updateId) {
-                if (updateId === this.__owl__.currentUpdateId) {
-                    return;
-                }
-                const ownProps = this.__owl__.ownProps;
-                const storeProps = mapStoreToProps(this.__owl__.store.state, ownProps, this.__owl__.store.getters);
-                const options = {
-                    currentStoreProps: this.__owl__.currentStoreProps
-                };
-                const storeHash = hashFunction({
-                    state: this.__owl__.store.state,
-                    storeProps: storeProps,
-                    revNumber,
-                    deepRevNumber
-                }, options);
-                let didChange = options.didChange;
-                if (storeHash !== this.__owl__.storeHash) {
-                    didChange = true;
-                    this.__owl__.storeHash = storeHash;
-                }
-                if (didChange) {
-                    this.__owl__.currentStoreProps = storeProps;
-                    await this.__updateProps(ownProps, false);
-                }
-            }
-            __updateProps(nextProps, forceUpdate, patchQueue) {
-                const __owl__ = this.__owl__;
-                __owl__.currentUpdateId = __owl__.store._updateId;
-                if (__owl__.ownProps !== nextProps) {
-                    __owl__.currentStoreProps = mapStoreToProps(__owl__.store.state, nextProps, __owl__.store.getters);
-                }
-                __owl__.ownProps = nextProps;
-                const mergedProps = Object.assign({}, nextProps, __owl__.currentStoreProps);
-                return super.__updateProps(mergedProps, forceUpdate, patchQueue);
-            }
-        };
-        // we assign here a unique name to the resulting anonymous class.
-        // this is necessary for Owl to be able to properly deduce templates.
-        // Otherwise, all connected components would have the same name, and then
-        // each component after the first will necessarily have the same template.
-        let name = `Connected${Comp.name}`;
-        Object.defineProperty(Result, "name", { value: name });
-        return Result;
+            __owl__.ownProps = nextProps;
+            const mergedProps = Object.assign({}, nextProps, __owl__.currentStoreProps);
+            return super.__updateProps(mergedProps, forceUpdate, patchQueue);
+        }
     }
 
     /**
@@ -3602,17 +3808,17 @@
     const utils = _utils;
 
     exports.Component = Component;
+    exports.ConnectedComponent = ConnectedComponent;
     exports.EventBus = EventBus;
     exports.Observer = Observer;
     exports.QWeb = QWeb;
     exports.Store = Store;
     exports.__info__ = __info__;
-    exports.connect = connect;
     exports.utils = utils;
 
-    exports.__info__.version = '0.16.0';
-    exports.__info__.date = '2019-06-28T09:20:47.478Z';
-    exports.__info__.hash = 'd381e85';
+    exports.__info__.version = '0.17.0';
+    exports.__info__.date = '2019-07-13T15:13:31.926Z';
+    exports.__info__.hash = '4a90ec7';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

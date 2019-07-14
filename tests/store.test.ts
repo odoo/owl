@@ -1,7 +1,9 @@
 import { Component, Env } from "../src/component";
 import { Store, ConnectedComponent } from "../src/store";
 import { makeTestFixture, makeTestEnv, nextMicroTick, nextTick } from "./helpers";
-import { Observer } from "../src";
+import { misc } from "../src";
+
+const Observer = misc.Observer;
 
 describe("basic use", () => {
   test("commit a mutation", () => {

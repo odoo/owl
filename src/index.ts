@@ -5,9 +5,10 @@
  * Note that dynamic values, such as a date or a commit hash are added by rollup
  */
 export { Component } from "./component";
-export { EventBus } from "./event_bus";
-export { Observer } from "./observer";
+import { EventBus } from "./event_bus";
+import { Observer } from "./observer";
 
+export const misc = {EventBus, Observer};
 // we need to import manually the extra directives so they can register
 // themselves in QWeb, otherwise these files will not even be loaded.
 import "./qweb_directives";
@@ -15,7 +16,9 @@ import "./qweb_extensions";
 import { QWeb } from "./qweb_core";
 export { QWeb };
 
-export { Store, ConnectedComponent } from "./store";
+import { Store, ConnectedComponent } from "./store";
+
+export const store = {Store, ConnectedComponent};
 import * as _utils from "./utils";
 
 export const __info__ = {};

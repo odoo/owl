@@ -1,6 +1,6 @@
-import { Component, Env } from "../src/component";
-import { makeTestFixture, makeTestEnv } from "./helpers";
-import { QWeb, UTILS } from "../src/qweb_core";
+import { Component, Env } from "../../src/component/component";
+import { makeTestFixture, makeTestEnv } from "../helpers";
+import { QWeb } from "../../src/qweb";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -251,10 +251,10 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      UTILS.validateProps(TestWidget, { someProp: 1 });
+      QWeb.utils.validateProps(TestWidget, { someProp: 1 });
     }).toThrow();
     expect(() => {
-      UTILS.validateProps(TestWidget, { message: 1 });
+      QWeb.utils.validateProps(TestWidget, { message: 1 });
     }).not.toThrow();
   });
 
@@ -264,7 +264,7 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      UTILS.validateProps(TestWidget, {});
+      QWeb.utils.validateProps(TestWidget, {});
     }).toThrow();
   });
 
@@ -274,7 +274,7 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      UTILS.validateProps(TestWidget, { message: 1, flag: true });
+      QWeb.utils.validateProps(TestWidget, { message: 1, flag: true });
     }).toThrow();
   });
 
@@ -284,7 +284,7 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      UTILS.validateProps(TestWidget, { message: 1, flag: true });
+      QWeb.utils.validateProps(TestWidget, { message: 1, flag: true });
     }).toThrow();
   });
 
@@ -294,7 +294,7 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      UTILS.validateProps(TestWidget, { message: 1});
+      QWeb.utils.validateProps(TestWidget, { message: 1});
     }).not.toThrow();
   });
 
@@ -304,10 +304,10 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      UTILS.validateProps(TestWidget, { message: undefined});
+      QWeb.utils.validateProps(TestWidget, { message: undefined});
     }).not.toThrow();
     expect(() => {
-      UTILS.validateProps(TestWidget, { message: null});
+      QWeb.utils.validateProps(TestWidget, { message: null});
     }).toThrow();
   });
 

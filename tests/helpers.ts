@@ -1,8 +1,9 @@
-import { Env } from "../src/component";
-import { EvalContext, QWeb, UTILS } from "../src/qweb_core";
+import { Env } from "../src/component/component";
+import { EvalContext, QWeb } from "../src/qweb/qweb";
 import { patch } from "../src/vdom";
-import "../src/qweb_directives";
-import "../src/qweb_extensions";
+import "../src/qweb/base_directives";
+import "../src/qweb/extensions";
+import "../src/component/directive";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
@@ -90,15 +91,15 @@ export function renderToString(qweb: QWeb, t: string, context: EvalContext = {})
 // is useful for animations tests, as we hook before repaints to trigger
 // animations (thanks to requestAnimationFrame). Patching nextFrame allows to
 // simulate calls to this hook. One must not forget to unpatch afterwards.
-let nextFrame = UTILS.nextFrame;
+let nextFrame = QWeb.utils.nextFrame;
 export function patchNextFrame(f: Function) {
-  UTILS.nextFrame = (cb: () => void) => {
+  QWeb.utils.nextFrame = (cb: () => void) => {
     setTimeout(() => f(cb));
   };
 }
 
 export function unpatchNextFrame() {
-  UTILS.nextFrame = nextFrame;
+  QWeb.utils.nextFrame = nextFrame;
 }
 
 export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, value: string) {

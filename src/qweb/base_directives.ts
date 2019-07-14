@@ -1,5 +1,6 @@
-import { Context, QWeb, UTILS } from "./qweb_core";
-import { QWebExprVar } from "./qweb_expressions";
+import { Context } from "./context";
+import { QWebExprVar } from "./expression_parser";
+import { QWeb } from "./qweb";
 
 /**
  * Owl QWeb Directives
@@ -18,7 +19,7 @@ import { QWebExprVar } from "./qweb_expressions";
 //------------------------------------------------------------------------------
 // t-esc and t-raw
 //------------------------------------------------------------------------------
-(<any>UTILS).getFragment = function(str: string): DocumentFragment {
+QWeb.utils.getFragment = function(str: string): DocumentFragment {
   const temp = document.createElement("template");
   temp.innerHTML = str;
   return temp.content;
@@ -57,7 +58,8 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
     }
   } else {
     let fragID = ctx.generateID();
-    ctx.addLine(`var frag${fragID} = this.utils.getFragment(${exprID})`);
+    ctx.rootContext.shouldDefineUtils = true;
+    ctx.addLine(`var frag${fragID} = utils.getFragment(${exprID})`);
     let tempNodeID = ctx.generateID();
     ctx.addLine(`var p${tempNodeID} = {hook: {`);
     ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
@@ -255,11 +257,11 @@ QWeb.addDirective({
     ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
     ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
     ctx.indent();
-    ctx.addToScope(name + '_first', 'i === 0');
-    ctx.addToScope(name + '_last', `i === _length${keysID} - 1`);
-    ctx.addToScope(name + '_index', 'i');
+    ctx.addToScope(name + "_first", "i === 0");
+    ctx.addToScope(name + "_last", `i === _length${keysID} - 1`);
+    ctx.addToScope(name + "_index", "i");
     ctx.addToScope(name, `_${keysID}[i]`);
-    ctx.addToScope(name + '_value', `_${valuesID}[i]`);
+    ctx.addToScope(name + "_value", `_${valuesID}[i]`);
     const nodeCopy = <Element>node.cloneNode(true);
     let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
     if (!shouldWarn && node.tagName === "t") {

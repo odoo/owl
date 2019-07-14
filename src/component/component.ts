@@ -1,6 +1,8 @@
-import { Observer } from "./observer";
-import { QWeb, CompiledTemplate, UTILS } from "./qweb_core";
-import { h, patch, VNode } from "./vdom";
+import { Observer } from "../core/observer";
+import { CompiledTemplate, QWeb } from "../qweb/index";
+import { h, patch, VNode } from "../vdom/index";
+import "./directive";
+import "./props_validation";
 
 /**
  * Owl Component System
@@ -135,7 +137,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       if (QWeb.dev) {
         // we only validate props for root widgets here.  "Regular" widget
         // props are validated by the t-component directive
-        UTILS.validateProps(this.constructor, this.props);
+        QWeb.utils.validateProps(this.constructor, this.props);
       }
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {

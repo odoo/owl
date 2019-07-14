@@ -3,11 +3,11 @@
 exports[`props validation props are validated in dev mode (code snapshot) 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT

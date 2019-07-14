@@ -1,5 +1,5 @@
-import { Observer } from "../src/observer";
-import { nextMicroTick } from "./helpers";
+import { Observer } from "../../src/core/observer";
+import { nextMicroTick } from "../helpers";
 
 describe("observer", () => {
   test("properly observe objects", () => {

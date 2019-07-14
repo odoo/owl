@@ -1,4 +1,5 @@
-import { h, patch, init } from "../src/vdom";
+import { h, patch } from "../src/vdom";
+import { init } from "../src/vdom/vdom";
 
 function map(list, fn) {
   var ret: any[] = [];

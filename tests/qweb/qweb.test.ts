@@ -1,5 +1,5 @@
-import { QWeb } from "../src/qweb_core";
-import { normalize, renderToDOM, renderToString, trim } from "./helpers";
+import { QWeb } from "../../src/qweb/index";
+import { normalize, renderToDOM, renderToString, trim } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

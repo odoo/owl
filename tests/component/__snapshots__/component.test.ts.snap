@@ -3,11 +3,11 @@
 exports[`async rendering delayed component with t-asyncroot directive 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
@@ -85,11 +85,11 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
 exports[`async rendering fast component with t-asyncroot directive 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
@@ -167,11 +167,11 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
 exports[`async rendering t-component with t-asyncroot directive: mixed re-renderings 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
@@ -249,11 +249,11 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
 exports[`class and style attributes with t-component dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -291,11 +291,11 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
 exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v2) 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -336,9 +336,10 @@ exports[`class and style attributes with t-component t-att-class is properly add
 exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v2) 2`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    let utils = this.constructor.utils;
+    var h = this.h;
     let _2 = {'c':true};
-    Object.assign(_2, this.utils.toObj({d:context['state'].d}))
+    Object.assign(_2, utils.toObj({d:context['state'].d}))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('span', p3, c3);
     return vn3;
@@ -348,11 +349,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
 exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v3) 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -393,9 +394,10 @@ exports[`class and style attributes with t-component t-att-class is properly add
 exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el (v3) 2`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    let utils = this.constructor.utils;
+    var h = this.h;
     let _2 = {'c':true};
-    Object.assign(_2, this.utils.toObj(context['state'].d?'d':''))
+    Object.assign(_2, utils.toObj(context['state'].d?'d':''))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('span', p3, c3);
     return vn3;
@@ -405,11 +407,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
 exports[`class and style attributes with t-component t-att-class is properly added/removed on widget root el 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -448,12 +450,12 @@ exports[`class and style attributes with t-component t-att-class is properly add
 exports[`composition sub components with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
     context = Object.create(context);
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = context['state'].numbers;
@@ -506,11 +508,11 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
 exports[`composition t-component with dynamic value 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -547,11 +549,11 @@ exports[`composition t-component with dynamic value 1`] = `
 exports[`composition t-component with dynamic value 2 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -588,11 +590,11 @@ exports[`composition t-component with dynamic value 2 1`] = `
 exports[`other directives with t-component t-on with handler bound to argument 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -629,11 +631,11 @@ exports[`other directives with t-component t-on with handler bound to argument 1
 exports[`other directives with t-component t-on with handler bound to empty object (with non empty inner string) 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -670,11 +672,11 @@ exports[`other directives with t-component t-on with handler bound to empty obje
 exports[`other directives with t-component t-on with handler bound to empty object 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -711,11 +713,11 @@ exports[`other directives with t-component t-on with handler bound to empty obje
 exports[`other directives with t-component t-on with handler bound to object 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -752,11 +754,11 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
 exports[`other directives with t-component t-on with prevent and self modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -793,11 +795,11 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
 exports[`other directives with t-component t-on with self and prevent modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -834,11 +836,11 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
 exports[`other directives with t-component t-on with self modifier 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -875,11 +877,11 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
 exports[`other directives with t-component t-on with stop and/or prevent modifiers 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -916,11 +918,11 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
 exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -958,12 +960,12 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument on a t-foreach 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
     context = Object.create(context);
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = context['props'].items;
@@ -1017,7 +1019,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
 exports[`t-model directive .lazy modifier 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
@@ -1040,7 +1042,7 @@ exports[`t-model directive .lazy modifier 1`] = `
 exports[`t-model directive basic use, on an input 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
@@ -1063,7 +1065,7 @@ exports[`t-model directive basic use, on an input 1`] = `
 exports[`t-model directive on a select 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
@@ -1102,7 +1104,7 @@ exports[`t-model directive on a select 1`] = `
 exports[`t-model directive on an input type=radio 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 'radio';
@@ -1138,7 +1140,7 @@ exports[`t-model directive on an input type=radio 1`] = `
 exports[`t-model directive on an input, type=checkbox 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 'checkbox';
@@ -1164,11 +1166,11 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
 exports[`t-slot directive can define and call slots 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -1207,7 +1209,7 @@ exports[`t-slot directive can define and call slots 2`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -1232,7 +1234,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     var _1 = context['props'].to;
     let c2 = [], p2 = {key:2,attrs:{href: _1}};
     var vn2 = h('a', p2, c2);
@@ -1247,13 +1249,13 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
 exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
     context = Object.create(context);
     const scope = Object.create(null);
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -1318,7 +1320,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     var _1 = context['props'].to;
     let c2 = [], p2 = {key:2,attrs:{href: _1}};
     var vn2 = h('a', p2, c2);
@@ -1333,13 +1335,13 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
 exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
     context = Object.create(context);
     const scope = Object.create(null);
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2};
@@ -1404,11 +1406,11 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
 exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 'User '+context['state'].user.name;
@@ -1447,12 +1449,12 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
 exports[`top level sub widgets basic use 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
     let result;
-    var h = this.utils.h;
+    var h = this.h;
     //COMPONENT
     let def2;
     let w3 = 3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[3]] : false;
@@ -1487,12 +1489,12 @@ exports[`top level sub widgets basic use 1`] = `
 exports[`top level sub widgets can select a sub widget  1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
     let result;
-    var h = this.utils.h;
+    var h = this.h;
     if (context['env'].flag) {
         //COMPONENT
         let def2;

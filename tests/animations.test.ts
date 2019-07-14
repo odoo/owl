@@ -1,5 +1,5 @@
-import { Component, Env } from "../src/component";
-import { QWeb } from "../src/qweb_core";
+import { Component, Env } from "../src/component/component";
+import { QWeb } from "../src/qweb/index";
 import {
   makeDeferred,
   makeTestFixture,

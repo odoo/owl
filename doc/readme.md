@@ -1,5 +1,28 @@
 # 🦉 OWL Documentation 🦉
 
+## Owl Content
+
+Owl is a javascript library that contains some core classes and function to help
+build applications.  Here is a complete representation of its content:
+
+```
+owl
+    Component
+    QWeb
+    core
+        EventBus
+        Observer
+    store
+        Store
+        ConnectedComponent
+    utils
+        whenReady
+        loadJS
+        loadTemplates
+        escape
+        debounce
+```
+
 ## Reference
 
 - [Animations](animations.md)

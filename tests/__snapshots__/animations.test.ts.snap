@@ -3,11 +3,11 @@
 exports[`animations t-transition combined with component 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
@@ -47,11 +47,11 @@ exports[`animations t-transition combined with component 1`] = `
 exports[`animations t-transition combined with t-component and t-if 1`] = `
 "function anonymous(context,extra
 ) {
-    let utils = this.utils;
+    let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    var h = this.utils.h;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     if (context['state'].display) {
@@ -93,15 +93,16 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
 exports[`animations t-transition with no delay/duration 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    let utils = this.constructor.utils;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     p1.hook = {
       insert: vn => {
-        this.utils.transitionInsert(vn, 'jupiler');
+        utils.transitionInsert(vn, 'jupiler');
       },
       remove: (vn, rm) => {
-        this.utils.transitionRemove(vn, 'jupiler', rm);
+        utils.transitionRemove(vn, 'jupiler', rm);
       },
     };
     c1.push({text: \`blue\`});
@@ -112,15 +113,16 @@ exports[`animations t-transition with no delay/duration 1`] = `
 exports[`animations t-transition, on a simple node (insert) 1`] = `
 "function anonymous(context,extra
 ) {
-    var h = this.utils.h;
+    let utils = this.constructor.utils;
+    var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     p1.hook = {
       insert: vn => {
-        this.utils.transitionInsert(vn, 'chimay');
+        utils.transitionInsert(vn, 'chimay');
       },
       remove: (vn, rm) => {
-        this.utils.transitionRemove(vn, 'chimay', rm);
+        utils.transitionRemove(vn, 'chimay', rm);
       },
     };
     c1.push({text: \`blue\`});

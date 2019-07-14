@@ -5,7 +5,7 @@
     "noImplicitThis": true,
     "removeComments": false,
     "declaration": true,
-    "target": "es5",
+    "target": "esnext",
     "outDir": "dist",
     "alwaysStrict": true,
     "noUnusedLocals": true,
@@ -15,5 +15,5 @@
     "strictPropertyInitialization": true,
     "strictNullChecks": true
   },
-  "include": ["src/*.ts"]
+  "include": ["src/**/*.ts","src/*.ts"]
 }

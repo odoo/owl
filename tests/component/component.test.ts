@@ -1,6 +1,6 @@
-import { Component, Env } from "../src/component";
-import { QWeb } from "../src/qweb_core";
-import { EventBus } from "../src/event_bus";
+import { Component, Env } from "../../src/component/component";
+import { QWeb } from "../../src/qweb/qweb";
+import { EventBus } from "../../src/core/event_bus";
 import {
   makeDeferred,
   makeTestFixture,
@@ -9,7 +9,7 @@ import {
   nextTick,
   normalize,
   editInput
-} from "./helpers";
+} from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

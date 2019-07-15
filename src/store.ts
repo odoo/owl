@@ -226,7 +226,11 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
       ownProps,
       store.getters
     );
-    const mergedProps = Object.assign({}, props || {}, storeProps);
+    let mergedProps = Object.assign({}, props || {}, storeProps);
+    const defaultProps = (<any>this.constructor).defaultProps;
+    if (defaultProps) {
+      mergedProps = this.__applyDefaultProps(mergedProps, defaultProps);
+    }
     this.props = mergedProps;
     (<any>this.__owl__).ownProps = ownProps;
     (<any>this.__owl__).currentStoreProps = storeProps;

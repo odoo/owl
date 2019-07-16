@@ -806,6 +806,22 @@ exports[`t-call (template calling scoped parameters 1`] = `
 }"
 `;
 
+exports[`t-call (template calling t-call with t-if 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['flag']) {
+        let c2 = [], p2 = {key:2};
+        var vn2 = h('span', p2, c2);
+        c1.push(vn2);
+        c2.push({text: \`ok\`});
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling with unused body 1`] = `
 "function anonymous(context,extra
 ) {

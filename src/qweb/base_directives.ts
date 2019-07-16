@@ -228,6 +228,10 @@ QWeb.addDirective({
       ctx.addLine("}");
     }
 
+    if (node.hasAttribute("t-if") || node.hasAttribute("t-else") || node.hasAttribute("t-elif")) {
+      ctx.closeIf();
+    }
+
     return true;
   }
 });

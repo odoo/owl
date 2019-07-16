@@ -501,6 +501,13 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb, "caller")).toBe(expected);
   });
 
+  test("t-call with t-if", () => {
+    qweb.addTemplate("sub", "<span>ok</span>");
+    qweb.addTemplate("caller", '<div><t t-if="flag" t-call="sub"/></div>');
+    const expected = "<div><span>ok</span></div>";
+    expect(renderToString(qweb, "caller", {flag: true})).toBe(expected);
+  });
+
   test("t-call not allowed on a non t node", () => {
     qweb.addTemplate("_basic-callee", "<t>ok</t>");
     qweb.addTemplate("caller", '<div t-call="_basic-callee"/>');

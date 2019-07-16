@@ -759,3 +759,156 @@ describe("connecting a component to store", () => {
     expect(steps).toEqual(["willpatch", "patched"]);
   });
 });
+
+
+describe("connected components and default values", () => {
+  let fixture: HTMLElement;
+  let env: Env;
+
+  beforeEach(() => {
+    fixture = makeTestFixture();
+    env = makeTestEnv();
+  });
+
+  afterEach(() => {
+    fixture.remove();
+  });
+
+  test("can set default values", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Greeter">Hello, <t t-esc="props.recipient"/></div>
+            <div t-name="App"><Greeter/></div>
+        </templates>
+    `);
+
+    class Greeter extends ConnectedComponent<any, any, any> {
+      static defaultProps = { recipient: "John" };
+    }
+
+    class App extends Component<any, any, any> {
+      components = { Greeter };
+    }
+
+    const store = new Store({ state: {} });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe('<div><div>Hello, John</div></div>');
+  });
+
+  test("can set default values", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Greeter">Hello, <t t-esc="props.recipient"/></div>
+            <div t-name="App"><Greeter recipient="props.initialRecipient"/></div>
+        </templates>
+    `);
+
+    class Greeter extends ConnectedComponent<any, any, any> {
+      static defaultProps = { recipient: "John" };
+    }
+
+    class App extends Component<any, any, any> {
+      components = { Greeter };
+    }
+
+    const store = new Store({ state: {} });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe('<div><div>Hello, John</div></div>');
+
+    await app.__updateProps({ initialRecipient: "James" }, true);
+    expect(fixture.innerHTML).toBe('<div><div>Hello, James</div></div>');
+
+    await app.__updateProps({ initialRecipient: undefined }, true);
+    expect(fixture.innerHTML).toBe('<div><div>Hello, John</div></div>');
+  });
+
+  test("can set default values (v2)", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Message">
+                <t t-if="props.showId"><t t-esc="props.messageId"/></t>
+                <t t-esc="props.message.content"/>
+            </div>
+            <div t-name="Thread">
+                <t t-if="props.showMessages">
+                    <Message t-foreach="props.thread.messages" t-as="messageId" messageId="messageId" t-key="messageId"/>
+                </t>
+            </div>
+            <div t-name="App"><Thread threadId="props.threadId"/></div>
+        </templates>
+    `);
+
+    class Message extends ConnectedComponent<any, any, any> {
+      static defaultProps = { showId: true };
+      static mapStoreToProps = function (state, ownProps) {
+        return {
+          message: state.messages[ownProps.messageId],
+        };
+      };
+    }
+
+    class Thread extends ConnectedComponent<any, any, any> {
+      components = { Message };
+      static defaultProps = { showMessages: true };
+      static mapStoreToProps = function (state, ownProps) {
+        const thread = state.threads[ownProps.threadId];
+        return {
+          thread,
+        };
+      };
+    }
+
+    class App extends Component<any, any, any> {
+      components = { Thread };
+      static defaultProps = { threadId: 1 };
+    }
+
+    const state = {
+      threads: {
+        1: {
+          messages: [100, 101],
+        },
+        2: {
+          messages: [200],
+        },
+      },
+      messages: {
+        100: {
+          content: "Message100"
+        },
+        101: {
+          content: "Message101"
+        },
+        200: {
+          content: "Message200"
+        }
+      }
+    };
+
+    const mutations = {
+      changeMessageContent({ state }, messageId, newContent) {
+        state.messages[messageId].content = newContent;
+      }
+    };
+
+    const store = new Store({ state, mutations });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe('<div><div><div>100Message100</div><div>101Message101</div></div></div>');
+
+    await app.__updateProps({ threadId: 2 }, true);
+    expect(fixture.innerHTML).toBe('<div><div><div>200Message200</div></div></div>');
+
+    store.commit('changeMessageContent', 200, "UpdatedMessage200");
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div><div><div>200UpdatedMessage200</div></div></div>');
+  });
+});

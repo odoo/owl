@@ -591,7 +591,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * prop object
    */
   __applyDefaultProps(props: Object | undefined, defaultProps: Object): Props {
-    props = props ? Object.create(props) : {};
+    props = props ? Object.assign({}, props) : {};
     for (let propName in defaultProps) {
       if (props![propName] === undefined) {
         props![propName] = defaultProps[propName];

@@ -52,15 +52,18 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
   }
   constructor(parent, props?: any) {
     super(parent, props);
+
     const store = this.getStore(this.env);
-    const ownProps = Object.assign({}, props || {});
+    const ownProps = this.props || {};
     const storeProps = (<any>this.constructor).mapStoreToProps(
       store.state,
       ownProps,
       store.getters
     );
-    const mergedProps = Object.assign({}, props || {}, storeProps);
+    const mergedProps = Object.assign({}, ownProps, storeProps);
+
     this.props = mergedProps;
+
     (<any>this.__owl__).ownProps = ownProps;
     (<any>this.__owl__).currentStoreProps = storeProps;
     (<any>this.__owl__).store = store;

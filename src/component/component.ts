@@ -30,6 +30,7 @@ import "./props_validation";
  */
 export interface Env {
   qweb: QWeb;
+  [key: string]: any;
 }
 
 /**

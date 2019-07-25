@@ -60,7 +60,8 @@ export class Router {
 
     this.checkRoute();
 
-    window.addEventListener("popstate", () => this.checkAndUpdateRoute());
+    this.checkAndUpdateRoute = this.checkAndUpdateRoute.bind(this);
+    window.addEventListener("popstate", this.checkAndUpdateRoute);
 
     // setup link and directive
     env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
@@ -74,11 +75,14 @@ export class Router {
   }
 
   destToUrl(dest: Destination): string {
+    if ((!dest.path && !dest.name) || (dest.path && dest.name)) {
+      throw new Error(`Invalid destination: ${JSON.stringify(dest)}`);
+    }
     return dest.path || this.routeToURL(this.routes[dest.name!].path, dest.params!);
   }
 
-  get currentRouteName(): string | null{
-      return this.currentRoute && this.currentRoute.name;
+  get currentRouteName(): string | null {
+    return this.currentRoute && this.currentRoute.name;
   }
 
   private routeToURL(path: string, params: RouteParams): string {
@@ -112,7 +116,7 @@ export class Router {
     this.currentParams = {};
   }
 
-  private checkAndUpdateRoute(): void {
+  protected checkAndUpdateRoute(): void {
     const initialName = this.currentRoute ? this.currentRoute.name : null;
     this.checkRoute();
     const currentName = this.currentRoute ? this.currentRoute.name : null;

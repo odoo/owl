@@ -1,7 +1,23 @@
-import { Router } from "../../src/router/Router";
+import { Destination, Router, RouterEnv } from "../../src/router/Router";
+import { makeTestEnv } from "../helpers";
+import { TestRouter } from "./TestRouter";
+
+let env: RouterEnv;
+let router: TestRouter | null = null;
+
+beforeEach(() => {
+  env = <RouterEnv>makeTestEnv();
+});
+
+afterEach(() => {
+  if (router) {
+    router.destroy();
+  }
+  router = null;
+});
 
 describe("routeToURL", () => {
-  const routeToURL = Router.prototype.routeToURL;
+  const routeToURL = Router.prototype["routeToURL"];
   test("simple non parameterized path", () => {
     expect(routeToURL("/abc", {})).toBe("/abc");
     expect(routeToURL("/abc/def", {})).toBe("/abc/def");
@@ -13,8 +29,25 @@ describe("routeToURL", () => {
   });
 });
 
+describe("destToURL", () => {
+  test("validate destination shape", () => {
+    router = new TestRouter(env, [{ name: "someroute", path: "/some/path" }]);
+    expect(() => {
+      router!.destToUrl({ abc: 123 } as Destination);
+    }).toThrow('Invalid destination: {"abc":123}');
+
+    expect(() => {
+      router!.destToUrl({ name: "someroute" } as Destination);
+    }).not.toThrow();
+
+    expect(() => {
+      router!.destToUrl({ path: "/someroute", name: "otherroute" } as Destination);
+    }).toThrow();
+  });
+});
+
 describe("match routes", () => {
-  const matchRoute = Router.prototype.matchRoute;
+  const matchRoute = Router.prototype["matchRoute"];
   test("properly match simple routes", () => {
     // simple route
     expect(matchRoute("/home", "/home")).toEqual({});

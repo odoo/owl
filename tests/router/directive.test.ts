@@ -1,24 +1,24 @@
 import { Component } from "../../src/component/component";
-import { QWeb } from "../../src/qweb/index";
-import { Router, RouterEnv } from "../../src/router/Router";
+import { RouterEnv } from "../../src/router/Router";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
+import { TestRouter } from "./TestRouter";
 
 describe("router directive t-routecomponent", () => {
   let fixture: HTMLElement;
   let env: RouterEnv;
+  let router: TestRouter | null = null;
 
   beforeEach(() => {
     fixture = makeTestFixture();
     env = <RouterEnv>makeTestEnv();
-    delete QWeb.DIRECTIVE_NAMES.routecomponent;
-    QWeb.DIRECTIVES = QWeb.DIRECTIVES.filter(d => d.name !== "routecomponent");
-    for (let key in QWeb.components) {
-        delete QWeb.components[key];
-    }
   });
 
   afterEach(() => {
     fixture.remove();
+    if (router) {
+      router.destroy();
+    }
+    router = null;
   });
 
   test("can render simple cases", async () => {
@@ -42,7 +42,7 @@ describe("router directive t-routecomponent", () => {
       { name: "users", path: "/users", component: Users }
     ];
 
-    const router = new Router(env,routes, {mode: 'history'})
+    router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ name: "about" });
     const app = new App(env);
     await app.mount(fixture);
@@ -69,7 +69,7 @@ describe("router directive t-routecomponent", () => {
     }
 
     const routes = [{ name: "book", path: "/book/{{title}}", component: Book }];
-    const router = new Router(env,routes, {mode: 'history'})
+    router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ name: "book", params: { title: "1984" } });
     const app = new App(env);
     await app.mount(fixture);
@@ -87,16 +87,16 @@ describe("router directive t-routecomponent", () => {
         </templates>
     `);
     class Book extends Component<any, any, any> {
-        get incVal() {
-            return this.props.val + 1;
-        }
+      get incVal() {
+        return this.props.val + 1;
+      }
     }
     class App extends Component<any, any, any> {
       components = { Book };
     }
 
     const routes = [{ name: "book", path: "/book/{{title}}/{{val.number}}", component: Book }];
-    const router = new Router(env,routes, {mode: 'history'})
+    router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ name: "book", params: { title: "1984", val: "123" } });
     const app = new App(env);
     await app.mount(fixture);

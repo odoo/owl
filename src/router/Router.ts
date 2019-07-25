@@ -18,8 +18,8 @@ export interface RouterEnv extends Env {
 }
 
 export interface Destination {
-  to?: string;
-  route?: string;
+  path?: string;
+  name?: string;
   params?: RouteParams;
 }
 
@@ -74,7 +74,7 @@ export class Router {
   }
 
   destToUrl(dest: Destination): string {
-    return dest.to || this.routeToURL(this.routes[dest.route!].path, dest.params!);
+    return dest.path || this.routeToURL(this.routes[dest.name!].path, dest.params!);
   }
 
   get currentRouteName(): string | null{

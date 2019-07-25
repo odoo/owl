@@ -1,6 +1,6 @@
 import { Component } from "../../src/component/component";
 import { QWeb } from "../../src/qweb/index";
-import { activate, RouterEnv } from "../../src/router/plugin";
+import { Router, RouterEnv } from "../../src/router/Router";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
 
 describe("router directive t-routecomponent", () => {
@@ -41,8 +41,8 @@ describe("router directive t-routecomponent", () => {
       { name: "about", path: "/about", component: About },
       { name: "users", path: "/users", component: Users }
     ];
-    activate(env, routes, {mode: 'history'});
-    const router = env.router;
+
+    const router = new Router(env,routes, {mode: 'history'})
     router.navigate({ route: "about" });
     const app = new App(env);
     await app.mount(fixture);
@@ -69,8 +69,7 @@ describe("router directive t-routecomponent", () => {
     }
 
     const routes = [{ name: "book", path: "/book/{{title}}", component: Book }];
-    activate(env, routes, {mode: 'history'});
-    const router = env.router;
+    const router = new Router(env,routes, {mode: 'history'})
     router.navigate({ route: "book", params: { title: "1984" } });
     const app = new App(env);
     await app.mount(fixture);
@@ -97,8 +96,7 @@ describe("router directive t-routecomponent", () => {
     }
 
     const routes = [{ name: "book", path: "/book/{{title}}/{{val.number}}", component: Book }];
-    activate(env, routes, {mode: 'history'});
-    const router = env.router;
+    const router = new Router(env,routes, {mode: 'history'})
     router.navigate({ route: "book", params: { title: "1984", val: "123" } });
     const app = new App(env);
     await app.mount(fixture);

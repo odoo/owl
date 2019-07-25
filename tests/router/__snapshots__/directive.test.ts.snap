@@ -10,13 +10,13 @@ exports[`router directive t-routecomponent can render parameterized route 1`] = 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    if (context['env'].router.routeName==='book') {
+    if (context['env'].router.currentRouteName==='book') {
         //COMPONENT
         let def3;
         let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
         let _2_index = c1.length;
         c1.push(null);
-        let props4 = {title:context['env'].router.routeParams.title};
+        let props4 = {title:context['env'].router.currentParams.title};
         if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
             if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
                 def3 = w4.__owl__.renderPromise;
@@ -53,13 +53,13 @@ exports[`router directive t-routecomponent can render parameterized route with s
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    if (context['env'].router.routeName==='book') {
+    if (context['env'].router.currentRouteName==='book') {
         //COMPONENT
         let def3;
         let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
         let _2_index = c1.length;
         c1.push(null);
-        let props4 = {title:context['env'].router.routeParams.title,val:context['env'].router.routeParams.val};
+        let props4 = {title:context['env'].router.currentParams.title,val:context['env'].router.currentParams.val};
         if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
             if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
                 def3 = w4.__owl__.renderPromise;
@@ -96,7 +96,7 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    if (context['env'].router.routeName==='about') {
+    if (context['env'].router.currentRouteName==='about') {
         //COMPONENT
         let def3;
         let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -125,7 +125,7 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
         }
         extra.promises.push(def3);
     }
-    else if (context['env'].router.routeName==='users') {
+    else if (context['env'].router.currentRouteName==='users') {
         //COMPONENT
         let def6;
         let w7 = 7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[7]] : false;

@@ -1,4 +1,4 @@
-import { RouterEnv } from "./plugin";
+import { RouterEnv } from "./Router";
 
 export function makeDirective(env: RouterEnv) {
   return {
@@ -6,17 +6,17 @@ export function makeDirective(env: RouterEnv) {
     priority: 13,
     atNodeEncounter({ node }): boolean {
       let first = true;
-      const info = env.router.info;
-      for (let name of info.routeIds) {
-        const route = info.routes[name];
+      const router = env.router;
+      for (let name of router.routeIds) {
+        const route = router.routes[name];
         if (route.component) {
           // make new t t-component element
           const comp = node.ownerDocument.createElement("t");
           comp.setAttribute("t-component", "__component__" + route.name);
-          comp.setAttribute(first ? "t-if" : "t-elif", `env.router.routeName === '${route.name}'`);
+          comp.setAttribute(first ? "t-if" : "t-elif", `env.router.currentRouteName === '${route.name}'`);
           first = false;
           for (let param of route.params) {
-            comp.setAttribute(param, `env.router.routeParams.${param}`);
+            comp.setAttribute(param, `env.router.currentParams.${param}`);
           }
           node.appendChild(comp);
         }

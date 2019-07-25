@@ -1,5 +1,5 @@
 import { Component } from "../component/component";
-import { Destination, RouterEnv } from "./plugin";
+import { Destination, RouterEnv } from "./Router";
 
 export const LINK_TEMPLATE_NAME = "__owl__-router-link";
 export const LINK_TEMPLATE = `
@@ -13,17 +13,17 @@ type Props = Destination;
 
 export class Link<Env extends RouterEnv> extends Component<Env, Props, {}> {
   template = LINK_TEMPLATE_NAME;
-  href: string = this.env.router.info.destToUrl(this.props);
+  href: string = this.env.router.destToUrl(this.props);
 
   async willUpdateProps(nextProps) {
-    this.href = this.env.router.info.destToUrl(nextProps);
+    this.href = this.env.router.destToUrl(nextProps);
   }
 
   get isActive() {
-    if (this.env.router.info.mode === "hash") {
-      return document.location.hash === this.href;
+    if (this.env.router.mode === "hash") {
+      return (<any>document.location).hash === this.href;
     }
-    return document.location.pathname === this.href;
+    return (<any>document.location).pathname === this.href;
   }
 
   navigate() {

@@ -11,12 +11,12 @@ import { ConnectedComponent } from "./store/connected_component";
 import { Store } from "./store/store";
 import * as _utils from "./utils";
 import { Link } from "./router/Link";
-import { activate } from "./router/plugin";
+import { Router } from "./router/Router";
 
 export { Component } from "./component/component";
 export { QWeb };
 export const core = { EventBus, Observer };
-export const router = { activate, Link };
+export const router = { Router, Link };
 export const store = { Store, ConnectedComponent };
 export const utils = _utils;
 

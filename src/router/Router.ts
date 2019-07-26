@@ -68,9 +68,9 @@ export class Router {
     QWeb.addDirective(makeDirective(<RouterEnv>env));
   }
 
-  navigate(dest: Destination): void {
-    const to = this.destToUrl(dest);
-    history.pushState({}, to, location.origin + to);
+  navigate(to: Destination): void {
+    const url = this.destToUrl(to);
+    history.pushState({}, url, location.origin + url);
     this.checkAndUpdateRoute();
   }
 
@@ -107,6 +107,11 @@ export class Router {
       let route = this.routes[routeId];
       let params = this.matchRoute(route.path, currentPath);
       if (params) {
+        if (route.redirect) {
+          this.navigate(route.redirect);
+          this.checkRoute();
+          return;
+        }
         this.currentRoute = route;
         this.currentParams = params;
         return;

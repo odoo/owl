@@ -71,3 +71,27 @@ describe("match routes", () => {
     });
   });
 });
+
+describe("redirect", () => {
+  test("can redirect to other route", () => {
+    router = new TestRouter(env, [
+      { name: "routea", path: "/some/path" },
+      { name: "routeb", path: "/some/other/path", redirect: { name: "routea" } }
+    ]);
+
+    router.navigate({ name: "routeb" });
+    expect(window.location.pathname).toBe("/some/path");
+    expect(router.currentRouteName).toBe("routea");
+  });
+
+  test("can redirect to other path", () => {
+    router = new TestRouter(env, [
+      { name: "routea", path: "/some/path" },
+      { name: "routeb", path: "/some/other/path", redirect: { path: "/some/path" } }
+    ]);
+
+    router.navigate({ name: "routeb" });
+    expect(window.location.pathname).toBe("/some/path");
+    expect(router.currentRouteName).toBe("routea");
+  });
+});

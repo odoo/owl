@@ -19,7 +19,7 @@ export interface RouterEnv extends Env {
 
 export interface Destination {
   path?: string;
-  name?: string;
+  to?: string;
   params?: RouteParams;
 }
 
@@ -53,6 +53,9 @@ export class Router {
       if (partialRoute.component) {
         QWeb.register("__component__" + partialRoute.name, partialRoute.component);
       }
+      if (partialRoute.redirect) {
+          this.validateDestination(partialRoute.redirect);
+      }
       partialRoute.params = partialRoute.path ? findParams(partialRoute.path) : [];
       this.routes[partialRoute.name] = partialRoute as Route;
       this.routeIds.push(partialRoute.name);
@@ -75,14 +78,18 @@ export class Router {
   }
 
   destToUrl(dest: Destination): string {
-    if ((!dest.path && !dest.name) || (dest.path && dest.name)) {
-      throw new Error(`Invalid destination: ${JSON.stringify(dest)}`);
-    }
-    return dest.path || this.routeToURL(this.routes[dest.name!].path, dest.params!);
+    this.validateDestination(dest);
+    return dest.path || this.routeToURL(this.routes[dest.to!].path, dest.params!);
   }
 
   get currentRouteName(): string | null {
     return this.currentRoute && this.currentRoute.name;
+  }
+
+  private validateDestination(dest: Destination) {
+    if ((!dest.path && !dest.to) || (dest.path && dest.to)) {
+      throw new Error(`Invalid destination: ${JSON.stringify(dest)}`);
+    }
   }
 
   private routeToURL(path: string, params: RouteParams): string {

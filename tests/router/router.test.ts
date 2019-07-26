@@ -16,6 +16,16 @@ afterEach(() => {
   router = null;
 });
 
+describe("router miscellaneous", () => {
+  test("validate routes shape", () => {
+    expect(() => {
+      router = new TestRouter(env, [
+        { name: "someroute", path: "/some/path", redirect: { abc: "hey" } as Destination }
+      ]);
+    }).toThrow(`Invalid destination: {"abc":"hey"}`);
+  });
+});
+
 describe("routeToURL", () => {
   const routeToURL = Router.prototype["routeToURL"];
   test("simple non parameterized path", () => {
@@ -37,11 +47,11 @@ describe("destToURL", () => {
     }).toThrow('Invalid destination: {"abc":123}');
 
     expect(() => {
-      router!.destToUrl({ name: "someroute" } as Destination);
+      router!.destToUrl({ to: "someroute" } as Destination);
     }).not.toThrow();
 
     expect(() => {
-      router!.destToUrl({ path: "/someroute", name: "otherroute" } as Destination);
+      router!.destToUrl({ path: "/someroute", to: "otherroute" } as Destination);
     }).toThrow();
   });
 });
@@ -76,10 +86,10 @@ describe("redirect", () => {
   test("can redirect to other route", () => {
     router = new TestRouter(env, [
       { name: "routea", path: "/some/path" },
-      { name: "routeb", path: "/some/other/path", redirect: { name: "routea" } }
+      { name: "routeb", path: "/some/other/path", redirect: { to: "routea" } }
     ]);
 
-    router.navigate({ name: "routeb" });
+    router.navigate({ to: "routeb" });
     expect(window.location.pathname).toBe("/some/path");
     expect(router.currentRouteName).toBe("routea");
   });
@@ -90,7 +100,7 @@ describe("redirect", () => {
       { name: "routeb", path: "/some/other/path", redirect: { path: "/some/path" } }
     ]);
 
-    router.navigate({ name: "routeb" });
+    router.navigate({ to: "routeb" });
     expect(window.location.pathname).toBe("/some/path");
     expect(router.currentRouteName).toBe("routea");
   });

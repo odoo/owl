@@ -64,15 +64,6 @@ const DISABLED_TAGS = ["input", "textarea", "button", "select", "option", "optgr
 const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
 
-const DIRECTIVE_NAMES = {
-  name: 1,
-  att: 1,
-  attf: 1,
-  key: 1
-};
-
-const DIRECTIVES: Directive[] = [];
-
 const NODE_HOOKS_PARAMS = {
   create: "(_, n)",
   insert: "vn",
@@ -150,6 +141,14 @@ export class QWeb extends EventBus {
   static utils = UTILS;
   static components = Object.create(null);
 
+  static DIRECTIVE_NAMES: { [key: string]: 1 } = {
+    name: 1,
+    att: 1,
+    attf: 1,
+    key: 1
+  };
+  static DIRECTIVES: Directive[] = [];
+
   h = h;
   // dev mode enables better error messages or more costly validations
   static dev: boolean = false;
@@ -172,11 +171,14 @@ export class QWeb extends EventBus {
   }
 
   static addDirective(directive: Directive) {
-    DIRECTIVES.push(directive);
-    DIRECTIVE_NAMES[directive.name] = 1;
-    DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
+    if (directive.name in QWeb.DIRECTIVE_NAMES) {
+      throw new Error(`Directive "${directive.name} already registered`);
+    }
+    QWeb.DIRECTIVES.push(directive);
+    QWeb.DIRECTIVE_NAMES[directive.name] = 1;
+    QWeb.DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
     if (directive.extraNames) {
-      directive.extraNames.forEach(n => (DIRECTIVE_NAMES[n] = 1));
+      directive.extraNames.forEach(n => (QWeb.DIRECTIVE_NAMES[n] = 1));
     }
   }
 
@@ -413,16 +415,16 @@ export class QWeb extends EventBus {
       let attrName = attributes[i].name;
       if (attrName.startsWith("t-")) {
         let dName = attrName.slice(2).split(/-|\./)[0];
-        if (!(dName in DIRECTIVE_NAMES)) {
+        if (!(dName in QWeb.DIRECTIVE_NAMES)) {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
       }
     }
 
-    const DIR_N = DIRECTIVES.length;
+    const DIR_N = QWeb.DIRECTIVES.length;
     const ATTR_N = attributes.length;
     for (let i = 0; i < DIR_N; i++) {
-      let directive = DIRECTIVES[i];
+      let directive = QWeb.DIRECTIVES[i];
       let fullName;
       let value;
       for (let j = 0; j < ATTR_N; j++) {

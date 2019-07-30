@@ -953,7 +953,7 @@ function setupResponsivePlugin(env) {
     const updateEnv = owl.utils.debounce(() => {
         if (env.isMobile !== isMobile()) {
             env.isMobile = !env.isMobile;
-            env.qweb.trigger('update');
+            env.qweb.forceUpdate();
         }
     }, 15);
     window.addEventListener("resize", updateEnv);

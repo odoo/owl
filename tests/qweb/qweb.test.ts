@@ -1,5 +1,5 @@
 import { QWeb } from "../../src/qweb/index";
-import { normalize, renderToDOM, renderToString, trim } from "../helpers";
+import { normalize, renderToDOM, renderToString, trim, nextTick } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -505,7 +505,7 @@ describe("t-call (template calling", () => {
     qweb.addTemplate("sub", "<span>ok</span>");
     qweb.addTemplate("caller", '<div><t t-if="flag" t-call="sub"/></div>');
     const expected = "<div><span>ok</span></div>";
-    expect(renderToString(qweb, "caller", {flag: true})).toBe(expected);
+    expect(renderToString(qweb, "caller", { flag: true })).toBe(expected);
   });
 
   test("t-call not allowed on a non t node", () => {
@@ -1176,5 +1176,17 @@ describe("debugging", () => {
 
     expect(console.log).toHaveBeenCalledWith(45);
     console.log = consoleLog;
+  });
+});
+
+describe("update on event bus", () => {
+  test("two consecutive forceUpdates only causes one listener update", async () => {
+    const fn = jest.fn();
+    qweb.on("update", null, fn);
+    qweb.forceUpdate();
+    qweb.forceUpdate();
+    expect(fn).toBeCalledTimes(0);
+    await nextTick();
+    expect(fn).toBeCalledTimes(1);
   });
 });

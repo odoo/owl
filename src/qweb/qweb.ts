@@ -163,6 +163,8 @@ export class QWeb extends EventBus {
   slots = {};
   nextSlotId = 1;
 
+  isUpdating: boolean = false;
+
   constructor(data?: string) {
     super();
     if (data) {
@@ -304,6 +306,22 @@ export class QWeb extends EventBus {
     const node = document.createElement(vnode.sel);
     const result = patch(node, vnode);
     return (<HTMLElement>result.elm).outerHTML;
+  }
+
+  /**
+   * Force all widgets connected to this QWeb instance to rerender themselves.
+   *
+   * This method is mostly useful for external code that want to modify the
+   * application in some cases.  For example, a router plugin.
+   */
+  forceUpdate() {
+    this.isUpdating = true;
+    Promise.resolve().then(() => {
+      if (this.isUpdating) {
+        this.isUpdating = false;
+        this.trigger("update");
+      }
+    });
   }
 
   _compile(name: string, elem: Element, parentContext?: Context): CompiledTemplate {

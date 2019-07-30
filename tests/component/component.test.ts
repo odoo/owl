@@ -3539,7 +3539,7 @@ describe("environment and plugins", () => {
     env.someFlag = true;
     bus.on("some-event", null, () => {
       env.someFlag = !env.someFlag;
-      env.qweb.trigger("update");
+      env.qweb.forceUpdate();
     });
   };
 

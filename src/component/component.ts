@@ -49,8 +49,13 @@ export interface Meta<T extends Env, Props> {
   cmap: { [key: number]: number };
 
   renderId: number;
+
+  // the renderProps and renderPromise keys are only useful for the "prepare"
+  // step of the lifecycle of a component.  Once a component has been rendered
+  // and patched, it is no longer useful.
   renderProps: Props | null;
   renderPromise: Promise<VNode> | null;
+
   boundHandlers: { [key: number]: any };
   observer?: Observer;
   render?: CompiledTemplate;
@@ -447,7 +452,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
 
   __patch(vnode) {
     const __owl__ = this.__owl__;
-    __owl__.renderPromise = null;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
     if (this.__owl__.classObj) {
       (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, this.__owl__.classObj);
@@ -544,9 +548,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     // parent component.  With this, we make sure that the parent component will be
     // able to patch itself properly after
     vnode.key = __owl__.id;
-    __owl__.renderProps = this.props;
-    __owl__.renderPromise = Promise.all(promises).then(() => vnode);
-    return __owl__.renderPromise;
+    return Promise.all(promises).then(() => vnode);
   }
 
   /**

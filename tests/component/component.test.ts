@@ -2608,6 +2608,39 @@ describe("async rendering", () => {
 
     expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1/1</span><span>1/1</span>");
   });
+
+  test("rendering component again in next microtick", async () => {
+    class Child extends Widget {}
+
+    class App extends Widget {
+      components = { Child };
+
+      async onClick() {
+        (env as any).flag = true;
+        this.render();
+        await Promise.resolve();
+        this.render();
+      }
+    }
+
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="Child">Child</div>
+
+        <div t-name="App">
+            <button t-on-click="onClick">Click</button>
+            <t t-if="env.flag"><Child/></t>
+        </div>
+    </templates>
+    `);
+
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
+  });
 });
 
 describe("updating environment", () => {
@@ -3839,7 +3872,6 @@ describe("top level sub widgets", () => {
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
   });
 
-
   test("sub widget is interactive", async () => {
     env.qweb.addTemplates(`
         <templates>
@@ -3849,10 +3881,10 @@ describe("top level sub widgets", () => {
           <span t-name="Child"><button t-on-click="inc">click</button>child<t t-esc="state.val"/></span>
         </templates>`);
     class Child extends Widget {
-        state = {val: 1};
-        inc() {
-            this.state.val++;
-        }
+      state = { val: 1 };
+      inc() {
+        this.state.val++;
+      }
     }
     class Parent extends Widget {
       components = { Child };
@@ -3860,7 +3892,7 @@ describe("top level sub widgets", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<span><button>click</button>child1</span>");
-    const button = fixture.querySelector('button')!;
+    const button = fixture.querySelector("button")!;
     button.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<span><button>click</button>child2</span>");
@@ -3907,7 +3939,7 @@ describe("top level sub widgets", () => {
     class Child extends Widget {}
     class OtherChild extends Widget {}
     class Parent extends Widget {
-        state = {flag: true}
+      state = { flag: true };
       components = { Child, OtherChild };
     }
     let parent = new Parent(env);
@@ -3916,7 +3948,5 @@ describe("top level sub widgets", () => {
     parent.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
-
   });
-
 });

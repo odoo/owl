@@ -54,7 +54,7 @@ export class Router {
         QWeb.register("__component__" + partialRoute.name, partialRoute.component);
       }
       if (partialRoute.redirect) {
-          this.validateDestination(partialRoute.redirect);
+        this.validateDestination(partialRoute.redirect);
       }
       partialRoute.params = partialRoute.path ? findParams(partialRoute.path) : [];
       this.routes[partialRoute.name] = partialRoute as Route;
@@ -116,7 +116,6 @@ export class Router {
       if (params) {
         if (route.redirect) {
           this.navigate(route.redirect);
-          this.checkRoute();
           return;
         }
         this.currentRoute = route;

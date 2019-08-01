@@ -43,12 +43,12 @@ describe("router directive t-routecomponent", () => {
     ];
 
     router = new TestRouter(env, routes, { mode: "history" });
-    router.navigate({ to: "about" });
+    await router.navigate({ to: "about" });
     const app = new App(env);
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>About</span></div>");
 
-    router.navigate({ to: "users" });
+    await router.navigate({ to: "users" });
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>Users</span></div>");
     expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
@@ -70,7 +70,7 @@ describe("router directive t-routecomponent", () => {
 
     const routes = [{ name: "book", path: "/book/{{title}}", component: Book }];
     router = new TestRouter(env, routes, { mode: "history" });
-    router.navigate({ to: "book", params: { title: "1984" } });
+    await router.navigate({ to: "book", params: { title: "1984" } });
     const app = new App(env);
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984</span></div>");
@@ -97,7 +97,7 @@ describe("router directive t-routecomponent", () => {
 
     const routes = [{ name: "book", path: "/book/{{title}}/{{val.number}}", component: Book }];
     router = new TestRouter(env, routes, { mode: "history" });
-    router.navigate({ to: "book", params: { title: "1984", val: "123" } });
+    await router.navigate({ to: "book", params: { title: "1984", val: "123" } });
     const app = new App(env);
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984|124</span></div>");

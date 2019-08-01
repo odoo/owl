@@ -1,4 +1,4 @@
-import { Destination, Router, RouterEnv } from "../../src/router/Router";
+import { Destination, Router, RouterEnv, Route } from "../../src/router/Router";
 import { makeTestEnv } from "../helpers";
 import { TestRouter } from "./TestRouter";
 
@@ -7,6 +7,7 @@ let router: TestRouter | null = null;
 
 beforeEach(() => {
   env = <RouterEnv>makeTestEnv();
+  window.history.pushState({}, "/", "/");
 });
 
 afterEach(() => {
@@ -26,82 +27,138 @@ describe("router miscellaneous", () => {
   });
 });
 
-describe("routeToURL", () => {
-  const routeToURL = Router.prototype["routeToURL"];
+describe("routeToPath", () => {
+  const routeToPath = Router.prototype["routeToPath"];
   test("simple non parameterized path", () => {
-    expect(routeToURL("/abc", {})).toBe("/abc");
-    expect(routeToURL("/abc/def", {})).toBe("/abc/def");
-    expect(routeToURL("/abc", { val: 12 })).toBe("/abc");
+    expect(routeToPath({path: "/abc"} as Route, {})).toBe("/abc");
+    expect(routeToPath({path: "/abc/def"} as Route, {})).toBe("/abc/def");
+    expect(routeToPath({path: "/abc"} as Route, { val: 12 })).toBe("/abc");
   });
 
   test("simple parameterized path", () => {
-    expect(routeToURL("/abc/{{def}}", { def: 34 })).toBe("/abc/34");
+    expect(routeToPath({path: "/abc/{{def}}"} as Route, { def: 34 })).toBe("/abc/34");
   });
 });
 
-describe("destToURL", () => {
+describe("destToPath", () => {
   test("validate destination shape", () => {
     router = new TestRouter(env, [{ name: "someroute", path: "/some/path" }]);
     expect(() => {
-      router!.destToUrl({ abc: 123 } as Destination);
+      router!.destToPath({ abc: 123 } as Destination);
     }).toThrow('Invalid destination: {"abc":123}');
 
     expect(() => {
-      router!.destToUrl({ to: "someroute" } as Destination);
+      router!.destToPath({ to: "someroute" } as Destination);
     }).not.toThrow();
 
     expect(() => {
-      router!.destToUrl({ path: "/someroute", to: "otherroute" } as Destination);
+      router!.destToPath({ path: "/someroute", to: "otherroute" } as Destination);
     }).toThrow();
   });
 });
 
-describe("match routes", () => {
-  const matchRoute = Router.prototype["matchRoute"];
+describe("getRouteParams", () => {
+  const getRouteParams = Router.prototype["getRouteParams"];
   test("properly match simple routes", () => {
     // simple route
-    expect(matchRoute("/home", "/home")).toEqual({});
+    expect(getRouteParams({path: "/home"} as Route, "/home")).toEqual({});
 
     // no match
-    expect(matchRoute("/home", "/otherpath")).toEqual(false);
+    expect(getRouteParams({path: "/home"} as Route, "/otherpath")).toEqual(false);
 
     // fallback route
-    expect(matchRoute("*", "somepath")).toEqual({});
+    expect(getRouteParams({path: "*"} as Route, "somepath")).toEqual({});
   });
 
   test("match some parameterized routes", () => {
-    expect(matchRoute("/invoices/{{id}}", "/invoices/3")).toEqual({
+    expect(getRouteParams({path: "/invoices/{{id}}"} as Route, "/invoices/3")).toEqual({
       id: "3"
     });
   });
 
   test("can convert to number if needed", () => {
-    expect(matchRoute("/invoices/{{id.number}}", "/invoices/3")).toEqual({
+    expect(getRouteParams({path: "/invoices/{{id.number}}"} as Route, "/invoices/3")).toEqual({
       id: 3
     });
   });
 });
 
 describe("redirect", () => {
-  test("can redirect to other route", () => {
+  test("can redirect to other route", async () => {
     router = new TestRouter(env, [
       { name: "routea", path: "/some/path" },
       { name: "routeb", path: "/some/other/path", redirect: { to: "routea" } }
     ]);
 
-    router.navigate({ to: "routeb" });
+    await router.start();
+    expect(window.location.pathname).toBe("/");
+    await router.navigate({ to: "routeb" });
     expect(window.location.pathname).toBe("/some/path");
     expect(router.currentRouteName).toBe("routea");
   });
 
-  test("can redirect to other path", () => {
+  test("can redirect to other path", async () => {
     router = new TestRouter(env, [
       { name: "routea", path: "/some/path" },
       { name: "routeb", path: "/some/other/path", redirect: { path: "/some/path" } }
     ]);
+    router.navigate = jest.fn(router.navigate);
 
-    router.navigate({ to: "routeb" });
+    await router.start();
+    await router.navigate({ to: "routeb" });
+
+    // once because we ask for it, once because it is redirected
+    // expect(router.navigate).toBeCalledTimes(2);
     expect(window.location.pathname).toBe("/some/path");
     expect(router.currentRouteName).toBe("routea");
+  });
+});
+
+describe("beforeRouteEnter", () => {
+  test("navigation guard is called and properly handle return true", async () => {
+    expect(window.location.pathname).not.toBe("/some/path");
+    const guard = jest.fn(() => true);
+    router = new TestRouter(env, [{ name: "route", path: "/some/path", beforeRouteEnter: guard }]);
+
+    await router.start();
+    await router.navigate({ to: "route" });
+    expect(guard).toBeCalledTimes(1);
+    expect(window.location.pathname).toBe("/some/path");
+    expect(router.currentRouteName).toBe("route");
+  });
+
+  test("navigation is cancelled if guard return false", async () => {
+    expect(window.location.pathname).toBe("/");
+    const guard = jest.fn(() => false);
+    router = new TestRouter(env, [
+        { name: "routea", path: "/some/patha"},
+        { name: "routeb", path: "/some/pathb", beforeRouteEnter: guard }
+        ]);
+
+    await router.start();
+    await router.navigate({ to: "routea" });
+    expect(window.location.pathname).toBe("/some/patha");
+    await router.navigate({ to: "routeb" });
+    expect(guard).toBeCalledTimes(1);
+    expect(window.location.pathname).toBe("/some/patha");
+    expect(router.currentRouteName).toBe("routea");
+  });
+
+  test("navigation is redirected if guard decides so", async () => {
+    expect(window.location.pathname).toBe("/");
+    const guard = jest.fn(() => {return {to: "routec"}});
+    router = new TestRouter(env, [
+        { name: "routea", path: "/some/patha"},
+        { name: "routeb", path: "/some/pathb", beforeRouteEnter: guard },
+        { name: "routec", path: "/some/pathc"},
+        ]);
+
+    await router.start();
+    await router.navigate({ to: "routea" });
+    expect(window.location.pathname).toBe("/some/patha");
+    await router.navigate({ to: "routeb" });
+    expect(guard).toBeCalledTimes(1);
+    expect(window.location.pathname).toBe("/some/pathc");
+    expect(router.currentRouteName).toBe("routec");
   });
 });

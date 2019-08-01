@@ -13,10 +13,10 @@ type Props = Destination;
 
 export class Link<Env extends RouterEnv> extends Component<Env, Props, {}> {
   template = LINK_TEMPLATE_NAME;
-  href: string = this.env.router.destToUrl(this.props);
+  href: string = this.env.router.destToPath(this.props);
 
   async willUpdateProps(nextProps) {
-    this.href = this.env.router.destToUrl(nextProps);
+    this.href = this.env.router.destToPath(nextProps);
   }
 
   get isActive() {

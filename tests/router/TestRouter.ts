@@ -3,7 +3,7 @@ import { QWeb } from "../../src/qweb/index";
 
 export class TestRouter extends Router {
   destroy() {
-    window.removeEventListener("popstate", this.checkAndUpdateRoute);
+    window.removeEventListener("popstate", (this as any)._listener);
     delete QWeb.DIRECTIVE_NAMES.routecomponent;
     QWeb.DIRECTIVES = QWeb.DIRECTIVES.filter(d => d.name !== "routecomponent");
 

@@ -3,12 +3,19 @@ import { QWeb } from "../qweb/index";
 import { makeDirective } from "./directive";
 import { LINK_TEMPLATE, LINK_TEMPLATE_NAME } from "./Link";
 
-interface Route {
+type NavigationGuard = (info: {
+  env: Env;
+  to: Route | null;
+  from: Route | null;
+}) => boolean | Destination;
+
+export interface Route {
   name: string;
   path: string;
   component?: any;
   redirect?: Destination;
   params: string[];
+  beforeRouteEnter?: NavigationGuard;
 }
 
 export type RouteParams = { [key: string]: string | number };
@@ -22,6 +29,22 @@ export interface Destination {
   to?: string;
   params?: RouteParams;
 }
+
+interface PositiveMatchResult {
+  type: "match";
+  route: Route;
+  params: RouteParams;
+}
+
+interface NegativeMatchResult {
+  type: "nomatch";
+}
+
+interface CancelledMatch {
+  type: "cancelled";
+}
+
+type MatchResult = PositiveMatchResult | NegativeMatchResult | CancelledMatch;
 
 interface Options {
   mode: Router["mode"];
@@ -61,30 +84,57 @@ export class Router {
       this.routeIds.push(partialRoute.name);
     }
 
-    this.checkRoute();
-
-    this.checkAndUpdateRoute = this.checkAndUpdateRoute.bind(this);
-    window.addEventListener("popstate", this.checkAndUpdateRoute);
+    (this as any)._listener = () => this.matchAndApplyRules(this.currentPath());
+    window.addEventListener("popstate", (this as any)._listener);
 
     // setup link and directive
     env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
     QWeb.addDirective(makeDirective(<RouterEnv>env));
   }
 
-  navigate(to: Destination): void {
-    const url = this.destToUrl(to);
-    history.pushState({}, url, location.origin + url);
-    this.checkAndUpdateRoute();
+  //--------------------------------------------------------------------------
+  // Public API
+  //--------------------------------------------------------------------------
+
+  async start() {
+    const result = await this.matchAndApplyRules(this.currentPath());
+    if (result.type === "match") {
+      this.currentRoute = result.route;
+      this.currentParams = result.params;
+    }
   }
 
-  destToUrl(dest: Destination): string {
+  async navigate(to: Destination): Promise<void> {
+    const path = this.destToPath(to);
+    const initialName = this.currentRouteName;
+    const result = await this.matchAndApplyRules(path);
+    if (result.type === "match") {
+      const finalPath = this.routeToPath(result.route, result.params);
+      const url = location.origin + finalPath;
+      history.pushState({}, path, url);
+      this.currentRoute = result.route;
+      this.currentParams = result.params;
+    } else if (result.type === "nomatch") {
+      this.currentRoute = null;
+      this.currentParams = null;
+    }
+    if (this.currentRouteName !== initialName) {
+      this.env.qweb.forceUpdate();
+    }
+  }
+
+  destToPath(dest: Destination): string {
     this.validateDestination(dest);
-    return dest.path || this.routeToURL(this.routes[dest.to!].path, dest.params!);
+    return dest.path || this.routeToPath(this.routes[dest.to!], dest.params!);
   }
 
   get currentRouteName(): string | null {
     return this.currentRoute && this.currentRoute.name;
   }
+
+  //--------------------------------------------------------------------------
+  // Private helpers
+  //--------------------------------------------------------------------------
 
   private validateDestination(dest: Destination) {
     if ((!dest.path && !dest.to) || (dest.path && dest.to)) {
@@ -92,7 +142,8 @@ export class Router {
     }
   }
 
-  private routeToURL(path: string, params: RouteParams): string {
+  private routeToPath(route: Route, params: RouteParams): string {
+    const path = route.path;
     const parts = path.split("/");
     const l = parts.length;
     for (let i = 0; i < l; i++) {
@@ -106,42 +157,63 @@ export class Router {
     return parts.join("/");
   }
 
-  private checkRoute(): void {
-    let currentPath =
-      this.mode === "history" ? window.location.pathname : window.location.hash.slice(1);
-    currentPath = currentPath || "/";
+  private currentPath(): string {
+    let result = this.mode === "history" ? window.location.pathname : window.location.hash.slice(1);
+    return result || "/";
+  }
+
+  private match(path: string): MatchResult {
     for (let routeId of this.routeIds) {
       let route = this.routes[routeId];
-      let params = this.matchRoute(route.path, currentPath);
+      let params = this.getRouteParams(route, path);
       if (params) {
-        if (route.redirect) {
-          this.navigate(route.redirect);
-          return;
-        }
-        this.currentRoute = route;
-        this.currentParams = params;
-        return;
+        return {
+          type: "match",
+          route: route,
+          params: params
+        };
       }
     }
-    this.currentRoute = null;
-    this.currentParams = {};
+    return { type: "nomatch" };
   }
 
-  protected checkAndUpdateRoute(): void {
-    const initialName = this.currentRoute ? this.currentRoute.name : null;
-    this.checkRoute();
-    const currentName = this.currentRoute ? this.currentRoute.name : null;
-
-    if (currentName !== initialName) {
-      this.env.qweb.forceUpdate();
+  private async matchAndApplyRules(path: string): Promise<MatchResult> {
+    const result = this.match(path);
+    if (result.type === "match") {
+      return this.applyRules(result);
     }
+    return result;
   }
 
-  private matchRoute(routePath: string, path: string): RouteParams | false {
-    if (routePath === "*") {
+  private async applyRules(matchResult: PositiveMatchResult): Promise<MatchResult> {
+    const route = matchResult.route;
+    if (route.redirect) {
+      const path = this.destToPath(route.redirect);
+      return this.matchAndApplyRules(path);
+    }
+    if (route.beforeRouteEnter) {
+      const result = await route.beforeRouteEnter({
+        env: this.env,
+        from: this.currentRoute,
+        to: route
+      });
+      if (result === false) {
+        return { type: "cancelled" };
+      } else if (result !== true) {
+        // we want to navigate to another destination
+        const path = this.destToPath(result);
+        return this.matchAndApplyRules(path);
+      }
+    }
+
+    return matchResult;
+  }
+
+  private getRouteParams(route: Route, path: string): RouteParams | false {
+    if (route.path === "*") {
       return {};
     }
-    const descrParts = routePath.split("/");
+    const descrParts = route.path.split("/");
     const targetParts = path.split("/");
     const l = descrParts.length;
     if (l !== targetParts.length) {

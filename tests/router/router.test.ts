@@ -161,4 +161,18 @@ describe("beforeRouteEnter", () => {
     expect(window.location.pathname).toBe("/some/pathc");
     expect(router.currentRouteName).toBe("routec");
   });
+
+  test("navigation is initially redirected if guard decides so", async () => {
+    expect(window.location.pathname).toBe("/");
+    const guard = jest.fn(() => {return {to: "otherroute"}});
+    router = new TestRouter(env, [
+        { name: "landing", path: "/", beforeRouteEnter: guard},
+        { name: "otherroute", path: "/some/other/route"}
+        ]);
+
+    expect(window.location.pathname).toBe("/");
+
+    await router.start();
+    expect(window.location.pathname).toBe("/some/other/route");
+  });
 });

@@ -101,6 +101,10 @@ export class Router {
     if (result.type === "match") {
       this.currentRoute = result.route;
       this.currentParams = result.params;
+      const currentPath = this.routeToPath(result.route, result.params);
+      if (currentPath !== this.currentPath()) {
+        this.setUrlFromPath(currentPath);
+      }
     }
   }
 
@@ -110,8 +114,7 @@ export class Router {
     const result = await this.matchAndApplyRules(path);
     if (result.type === "match") {
       const finalPath = this.routeToPath(result.route, result.params);
-      const url = location.origin + finalPath;
-      history.pushState({}, path, url);
+      this.setUrlFromPath(finalPath);
       this.currentRoute = result.route;
       this.currentParams = result.params;
     } else if (result.type === "nomatch") {
@@ -135,6 +138,11 @@ export class Router {
   //--------------------------------------------------------------------------
   // Private helpers
   //--------------------------------------------------------------------------
+
+  private setUrlFromPath(path: string) {
+    const url = location.origin + path;
+    window.history.pushState({}, path, url);
+  }
 
   private validateDestination(dest: Destination) {
     if ((!dest.path && !dest.to) || (dest.path && dest.to)) {

@@ -138,7 +138,8 @@ describe("beforeRouteEnter", () => {
     await router.start();
     await router.navigate({ to: "routea" });
     expect(window.location.pathname).toBe("/some/patha");
-    await router.navigate({ to: "routeb" });
+    const result = await router.navigate({ to: "routeb" });
+    expect(result).toBe(false);
     expect(guard).toBeCalledTimes(1);
     expect(window.location.pathname).toBe("/some/patha");
     expect(router.currentRouteName).toBe("routea");
@@ -154,7 +155,8 @@ describe("beforeRouteEnter", () => {
         ]);
 
     await router.start();
-    await router.navigate({ to: "routea" });
+    const result = await router.navigate({ to: "routea" });
+    expect(result).toBe(true);
     expect(window.location.pathname).toBe("/some/patha");
     await router.navigate({ to: "routeb" });
     expect(guard).toBeCalledTimes(1);

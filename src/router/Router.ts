@@ -108,7 +108,7 @@ export class Router {
     }
   }
 
-  async navigate(to: Destination): Promise<void> {
+  async navigate(to: Destination): Promise<boolean> {
     const path = this.destToPath(to);
     const initialName = this.currentRouteName;
     const result = await this.matchAndApplyRules(path);
@@ -123,7 +123,9 @@ export class Router {
     }
     if (this.currentRouteName !== initialName) {
       this.env.qweb.forceUpdate();
+      return true;
     }
+    return false;
   }
 
   destToPath(dest: Destination): string {

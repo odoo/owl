@@ -13,7 +13,7 @@ exports[`Link component can render simple cases 1`] = `
     if (!context['navigate']) {
         throw new Error('Missing handler \\\\'' + 'navigate' + \`\\\\' when evaluating template '__owl__-router-link'\`)
     }
-    extra.handlers['click' + 3] = extra.handlers['click' + 3] || function (e) {e.preventDefault();context['navigate'].call(owner, e);};
+    extra.handlers['click' + 3] = extra.handlers['click' + 3] || context['navigate'].bind(owner);
     p3.on['click'] = extra.handlers['click' + 3];
     const slot4 = this.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot4) {

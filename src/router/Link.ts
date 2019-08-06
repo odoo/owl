@@ -5,7 +5,7 @@ export const LINK_TEMPLATE_NAME = "__owl__-router-link";
 export const LINK_TEMPLATE = `
     <a  t-att-class="{'router-link-active': isActive }"
         t-att-href="href"
-        t-on-click.prevent="navigate">
+        t-on-click="navigate">
         <t t-slot="default"/>
     </a>`;
 
@@ -26,7 +26,23 @@ export class Link<Env extends RouterEnv> extends Component<Env, Props, {}> {
     return (<any>document.location).pathname === this.href;
   }
 
-  navigate() {
+  navigate(ev) {
+    // don't redirect with control keys
+    if (ev.metaKey || ev.altKey || ev.ctrlKey || ev.shiftKey) {
+      return;
+    }
+    // don't redirect on right click
+    if (ev.button !== undefined && ev.button !== 0) {
+      return;
+    }
+    // don't redirect if `target="_blank"`
+    if (ev.currentTarget && ev.currentTarget.getAttribute) {
+      const target = ev.currentTarget.getAttribute("target");
+      if (/\b_blank\b/i.test(target)) {
+        return;
+      }
+    }
+    ev.preventDefault();
     this.env.router.navigate(this.props);
   }
 }

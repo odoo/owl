@@ -306,9 +306,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (shouldPatch) {
       patchQueue = [];
     }
-    const renderVDom = this.__render(force, patchQueue, scope, vars);
+    __owl__.renderId++
     const renderId = __owl__.renderId;
-    await renderVDom;
+    await this.__render(force, patchQueue, scope, vars);
 
     if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
@@ -523,7 +523,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     vars?: any
   ): Promise<VNode> {
     const __owl__ = this.__owl__;
-    __owl__.renderId++;
     const promises: Promise<void>[] = [];
     const patch: any[] = [this];
     if (__owl__.isMounted) {

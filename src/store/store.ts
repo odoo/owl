@@ -99,12 +99,7 @@ export class Store extends EventBus {
       },
       ...payload
     );
-    if (result instanceof Promise) {
-      return new Promise((resolve, reject) => {
-        result.then(() => resolve());
-        result.catch(reject);
-      });
-    }
+    return result;
   }
 
   commit(type: string, ...payload: any): any {

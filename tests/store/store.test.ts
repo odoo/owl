@@ -160,6 +160,36 @@ describe("basic use", () => {
     expect(store.state.n).toBe(13);
   });
 
+  test("return data from dispatching an action", async () => {
+    const state = { n: 1 };
+    const mutations = {
+      inc({ state }, delta) {
+        state.n += delta;
+      },
+      setN({ state }, n) {
+        state.n = n;
+      }
+    };
+    const actions = {
+      async dosomething({ commit, dispatch }) {
+        const val = await dispatch("setTo10");
+        commit("inc", val);
+      },
+      async setTo10({ commit }) {
+        await Promise.resolve();
+        commit("setN", 10);
+        return 5;
+      }
+    };
+    const store = new Store({ state, mutations, actions });
+
+    expect(store.state.n).toBe(1);
+    store.dispatch("dosomething");
+    expect(store.state.n).toBe(1);
+    await nextTick();
+    expect(store.state.n).toBe(15);
+  });
+
   test("env is given to actions", () => {
     expect.assertions(1);
     const someEnv = <Env>{};

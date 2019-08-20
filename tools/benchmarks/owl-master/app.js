@@ -107,9 +107,9 @@ class App extends owl.Component {
 
   updateSomeMessages() {
     this.benchmark("update every 10th", () => {
-      const setState = owl.Observer.set;
+      const setState = owl.core.Observer.set;
       const messages = this.state.messages;
-      for (let i = 0; i < this.state.messages.length; i += 10) {
+      for (let i = 0; i < messages.length; i += 10) {
         const msg = Object.assign({}, messages[i]);
         msg.author += "!!!";
         setState(messages, i, msg);

@@ -474,12 +474,11 @@ describe("basic use", () => {
 
 describe("advanced state properties", () => {
   test("state in the store is reference equal after mutation", async () => {
-    const state = {};
     const mutations = {
       donothing() {}
     };
-    const store = new Store({ state, mutations });
-    expect(store.state).toBe(state);
+    const store = new Store({ state:{}, mutations });
+    const state = store.state;
     store.commit("donothing");
     expect(store.state).toBe(state);
   });

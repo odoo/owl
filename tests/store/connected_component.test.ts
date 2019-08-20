@@ -1,10 +1,7 @@
-import { core } from "../../src";
 import { Component, Env } from "../../src/component/component";
 import { ConnectedComponent } from "../../src/store/connected_component";
 import { Store } from "../../src/store/store";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
-
-const Observer = core.Observer;
 
 describe("connecting a component to store", () => {
   let fixture: HTMLElement;
@@ -644,7 +641,7 @@ describe("connecting a component to store", () => {
   test("connected parent/children: no rendering if child is destroyed", async () => {
     const mutations = {
       removeTodo({ state }) {
-        Observer.delete(state.todos, 1);
+        delete state.todos[1];
       }
     };
     const todos = { 1: { id: 1, title: "kikoou" } };
@@ -760,7 +757,6 @@ describe("connecting a component to store", () => {
   });
 });
 
-
 describe("connected components and default values", () => {
   let fixture: HTMLElement;
   let env: Env;
@@ -795,7 +791,7 @@ describe("connected components and default values", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe('<div><div>Hello, John</div></div>');
+    expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
   });
 
   test("can set default values", async () => {
@@ -819,13 +815,13 @@ describe("connected components and default values", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe('<div><div>Hello, John</div></div>');
+    expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
 
     await app.__updateProps({ initialRecipient: "James" }, true);
-    expect(fixture.innerHTML).toBe('<div><div>Hello, James</div></div>');
+    expect(fixture.innerHTML).toBe("<div><div>Hello, James</div></div>");
 
     await app.__updateProps({ initialRecipient: undefined }, true);
-    expect(fixture.innerHTML).toBe('<div><div>Hello, John</div></div>');
+    expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
   });
 
   test("can set default values (v2)", async () => {
@@ -846,9 +842,9 @@ describe("connected components and default values", () => {
 
     class Message extends ConnectedComponent<any, any, any> {
       static defaultProps = { showId: true };
-      static mapStoreToProps = function (state, ownProps) {
+      static mapStoreToProps = function(state, ownProps) {
         return {
-          message: state.messages[ownProps.messageId],
+          message: state.messages[ownProps.messageId]
         };
       };
     }
@@ -856,10 +852,10 @@ describe("connected components and default values", () => {
     class Thread extends ConnectedComponent<any, any, any> {
       components = { Message };
       static defaultProps = { showMessages: true };
-      static mapStoreToProps = function (state, ownProps) {
+      static mapStoreToProps = function(state, ownProps) {
         const thread = state.threads[ownProps.threadId];
         return {
-          thread,
+          thread
         };
       };
     }
@@ -872,11 +868,11 @@ describe("connected components and default values", () => {
     const state = {
       threads: {
         1: {
-          messages: [100, 101],
+          messages: [100, 101]
         },
         2: {
-          messages: [200],
-        },
+          messages: [200]
+        }
       },
       messages: {
         100: {
@@ -902,13 +898,15 @@ describe("connected components and default values", () => {
     const app = new App(env);
 
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe('<div><div><div>100Message100</div><div>101Message101</div></div></div>');
+    expect(fixture.innerHTML).toBe(
+      "<div><div><div>100Message100</div><div>101Message101</div></div></div>"
+    );
 
     await app.__updateProps({ threadId: 2 }, true);
-    expect(fixture.innerHTML).toBe('<div><div><div>200Message200</div></div></div>');
+    expect(fixture.innerHTML).toBe("<div><div><div>200Message200</div></div></div>");
 
-    store.commit('changeMessageContent', 200, "UpdatedMessage200");
+    store.commit("changeMessageContent", 200, "UpdatedMessage200");
     await nextTick();
-    expect(fixture.innerHTML).toBe('<div><div><div>200UpdatedMessage200</div></div></div>');
+    expect(fixture.innerHTML).toBe("<div><div><div>200UpdatedMessage200</div></div></div>");
   });
 });

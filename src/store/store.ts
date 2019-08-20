@@ -53,14 +53,13 @@ export class Store extends EventBus {
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
     this.debug = options.debug || false;
-    this.state = config.state || {};
     this.actions = config.actions;
     this.mutations = config.mutations;
     this.env = config.env;
     this.observer = new Observer();
     this.observer.notifyCB = this.__notifyComponents.bind(this);
     this.observer.allowMutations = false;
-    this.observer.observe(this.state);
+    this.state = this.observer.observe(config.state || {});
     this.getters = {};
     this._gettersCache = {};
 

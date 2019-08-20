@@ -4,307 +4,362 @@ import { nextMicroTick } from "../helpers";
 describe("observer", () => {
   test("properly observe objects", () => {
     const observer = new Observer();
-    const obj: any = {};
+    const obj: any = observer.observe({});
 
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
+    expect(typeof obj).toBe("object");
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
-    const ob2: any = { a: 1 };
-    observer.observe(ob2);
-    expect(ob2.__owl__.rev).toBe(1);
-    ob2.a = 2;
-    expect(observer.rev).toBe(2);
-    expect(ob2.__owl__.rev).toBe(2);
+    const obj2: any = observer.observe({ a: 1 });
+    expect(observer.revNumber(obj2)).toBe(1);
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(1);
+    expect(observer.rev).toBe(1);
 
-    ob2.b = 3;
-    expect(observer.rev).toBe(2);
-    expect(ob2.__owl__.rev).toBe(2);
+    obj2.a = 2;
 
-    observer.set(ob2, "b", 4);
-    expect(observer.rev).toBe(3);
-    expect(ob2.__owl__.rev).toBe(3);
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.revNumber(obj2)).toBe(2);
+    expect(observer.rev).toBe(2);
+
+    expect(obj2).toEqual({
+      a: 2
+    });
   });
 
   test("properly handle null or undefined", () => {
     const observer = new Observer();
-    const obj: any = { a: null, b: undefined };
+    const obj: any = observer.observe({ a: null, b: undefined });
 
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj.a = 3;
-    expect(obj.__owl__.rev).toBe(2);
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.deepRevNumber(obj)).toBe(2);
+    expect(observer.rev).toBe(2);
 
     obj.b = 5;
-    expect(obj.__owl__.rev).toBe(3);
+    expect(observer.revNumber(obj)).toBe(3);
+    expect(observer.deepRevNumber(obj)).toBe(3);
+    expect(observer.rev).toBe(3);
 
     obj.a = null;
     obj.b = undefined;
-    expect(obj.__owl__.rev).toBe(5);
+    expect(observer.revNumber(obj)).toBe(5);
+    expect(observer.deepRevNumber(obj)).toBe(5);
+    expect(observer.rev).toBe(5);
+    expect(obj).toEqual({
+      a: null,
+      b: undefined
+    });
   });
 
   test("can change values in array", () => {
     const observer = new Observer();
-    const obj: any = { arr: [1, 2] };
+    const obj: any = observer.observe({ arr: [1, 2] });
 
-    observer.observe(obj);
-    expect(obj.arr.__owl__.rev).toBe(1);
+    expect(Array.isArray(obj.arr)).toBe(true);
+    expect(observer.revNumber(obj.arr)).toBe(1);
+    expect(observer.deepRevNumber(obj.arr)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj.arr[0] = "nope";
-    expect(obj.arr.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-
-    observer.set(obj.arr, 0, "yep");
-    expect(obj.arr.__owl__.rev).toBe(2);
+    expect(observer.revNumber(obj.arr)).toBe(2);
+    expect(observer.deepRevNumber(obj.arr)).toBe(2);
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
   });
 
   test("various object property changes", () => {
     const observer = new Observer();
-    const obj: any = { a: 1 };
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
+    const obj: any = observer.observe({ a: 1 });
+
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(1);
+    expect(observer.rev).toBe(1);
+
     obj.a = 2;
+
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
 
     // same value again
     obj.a = 2;
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
 
     obj.a = 3;
+    expect(observer.revNumber(obj)).toBe(3);
+    expect(observer.deepRevNumber(obj)).toBe(3);
     expect(observer.rev).toBe(3);
-    expect(obj.__owl__.rev).toBe(3);
   });
 
   test("properly observe arrays", () => {
     const observer = new Observer();
-    const arr: any = [];
-    observer.observe(arr);
-    expect(arr.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
+    const arr: any = observer.observe([]);
+
+    expect(Array.isArray(arr)).toBe(true);
     expect(arr.length).toBe(0);
+    expect(observer.revNumber(arr)).toBe(1);
+    expect(observer.deepRevNumber(arr)).toBe(1);
+    expect(observer.rev).toBe(1);
 
     arr.push(1);
-    expect(arr.__owl__.rev).toBe(2);
+    expect(observer.revNumber(arr)).toBe(2);
+    expect(observer.deepRevNumber(arr)).toBe(2);
     expect(observer.rev).toBe(2);
     expect(arr.length).toBe(1);
+    expect(arr).toEqual([1]);
 
     arr.splice(1, 0, "hey");
-    expect(arr.__owl__.rev).toBe(3);
+    expect(observer.revNumber(arr)).toBe(3);
+    expect(observer.deepRevNumber(arr)).toBe(3);
     expect(observer.rev).toBe(3);
+    expect(arr).toEqual([1, "hey"]);
     expect(arr.length).toBe(2);
 
     arr.unshift("lindemans");
-    expect(arr.__owl__.rev).toBe(4);
+    //it generates 3 primitive operations
+    expect(observer.revNumber(arr)).toBe(6);
+    expect(observer.deepRevNumber(arr)).toBe(6);
+    expect(observer.rev).toBe(6);
+    expect(arr).toEqual(["lindemans", 1, "hey"]);
+    expect(arr.length).toBe(3);
 
     arr.reverse();
-    expect(arr.__owl__.rev).toBe(5);
+    //it generates 2 primitive operations
+    expect(observer.revNumber(arr)).toBe(8);
+    expect(observer.deepRevNumber(arr)).toBe(8);
+    expect(observer.rev).toBe(8);
+    expect(arr).toEqual(["hey", 1, "lindemans"]);
+    expect(arr.length).toBe(3);
 
-    arr.pop();
-    expect(arr.__owl__.rev).toBe(6);
+    arr.pop(); // one set, one delete
+    expect(observer.revNumber(arr)).toBe(10);
+    expect(observer.deepRevNumber(arr)).toBe(10);
+    expect(observer.rev).toBe(10);
+    expect(arr).toEqual(["hey", 1]);
+    expect(arr.length).toBe(2);
 
-    arr.shift();
-    expect(arr.__owl__.rev).toBe(7);
-
-    arr.sort();
-    expect(arr.__owl__.rev).toBe(8);
-
+    arr.shift(); // 2 sets, 1 delete
+    expect(observer.revNumber(arr)).toBe(13);
+    expect(observer.deepRevNumber(arr)).toBe(13);
+    expect(observer.rev).toBe(13);
     expect(arr).toEqual([1]);
+    expect(arr.length).toBe(1);
   });
 
   test("object pushed into arrays are observed", () => {
     const observer = new Observer();
-    const arr: any = [];
-    observer.observe(arr);
+    const arr: any = observer.observe([]);
     expect(observer.rev).toBe(1);
 
     arr.push({ kriek: 5 });
     expect(observer.rev).toBe(2);
-    expect(arr.__owl__.rev).toBe(2);
-    expect(arr[0].__owl__.rev).toBe(2);
+    expect(observer.revNumber(arr)).toBe(2);
+    expect(observer.revNumber(arr[0])).toBe(2);
 
     arr[0].kriek = 6;
+
     expect(observer.rev).toBe(3);
-    expect(arr.__owl__.rev).toBe(2);
-    expect(arr[0].__owl__.rev).toBe(3);
+    expect(observer.revNumber(arr)).toBe(2);
+    expect(observer.deepRevNumber(arr)).toBe(3);
+    expect(observer.revNumber(arr[0])).toBe(3);
   });
 
   test("set new property on observed object", async () => {
     const observer = new Observer();
     observer.notifyCB = jest.fn();
-    const state: any = { a: 1 };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
+    const state: any = observer.observe({ a: 1 });
     expect(observer.notifyCB).toBeCalledTimes(0);
+    expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state)).toBe(1);
 
-    Observer.set(state, "b", 8);
+    state.b = 8;
+
     await nextMicroTick();
-    expect(state.__owl__.rev).toBe(2);
-    expect(observer.rev).toBe(2);
+
     expect(observer.notifyCB).toBeCalledTimes(1);
+    expect(observer.rev).toBe(2);
+    expect(observer.revNumber(state)).toBe(2);
+
     expect(state.b).toBe(8);
   });
 
   test("delete property from observed object", async () => {
     const observer = new Observer();
     observer.notifyCB = jest.fn();
-    const state: any = { a: 1, b: 8 };
+    const state: any = observer.observe({ a: 1, b: 8 });
     observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    expect(observer.rev).toBe(1);
-    expect(observer.notifyCB).toBeCalledTimes(0);
 
-    Observer.delete(state, "b");
+    expect(observer.notifyCB).toBeCalledTimes(0);
+    expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state)).toBe(1);
+
+    delete state.b;
     await nextMicroTick();
-    expect(state.__owl__.rev).toBe(2);
-    expect(observer.rev).toBe(2);
+
     expect(observer.notifyCB).toBeCalledTimes(1);
+    expect(observer.rev).toBe(2);
+    expect(observer.revNumber(state)).toBe(2);
+
     expect(state).toEqual({ a: 1 });
   });
 
   test("set element in observed array", async () => {
     const observer = new Observer();
     observer.notifyCB = jest.fn();
-    const state: any = ["a"];
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
+    const state: any = observer.observe(["a"]);
+
     expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.deepRevNumber(state)).toBe(1);
     expect(observer.notifyCB).toBeCalledTimes(0);
 
-    Observer.set(state, 1, "b");
+    state[1] = "b";
+
     await nextMicroTick();
-    expect(state.__owl__.rev).toBe(2);
+
     expect(observer.rev).toBe(2);
+    expect(observer.revNumber(state)).toBe(2);
+    expect(observer.deepRevNumber(state)).toBe(2);
     expect(observer.notifyCB).toBeCalledTimes(1);
+
     expect(state).toEqual(["a", "b"]);
   });
 
   test("properly observe arrays in object", () => {
     const observer = new Observer();
-    const state: any = { arr: [] };
-    observer.observe(state);
-    expect(state.arr.__owl__.rev).toBe(1);
+    const state: any = observer.observe({ arr: [] });
+
     expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state.arr)).toBe(1);
+    expect(observer.deepRevNumber(state.arr)).toBe(1);
     expect(state.arr.length).toBe(0);
 
     state.arr.push(1);
-    expect(state.arr.__owl__.rev).toBe(2);
     expect(observer.rev).toBe(2);
+    expect(observer.revNumber(state.arr)).toBe(2);
+    expect(observer.deepRevNumber(state.arr)).toBe(2);
     expect(state.arr.length).toBe(1);
   });
 
   test("properly observe objects in array", () => {
     const observer = new Observer();
-    const state: any = { arr: [{ something: 1 }] };
+    const state: any = observer.observe({ arr: [{ something: 1 }] });
     observer.observe(state);
-    expect(state.arr.__owl__.rev).toBe(1);
-    expect(state.arr[0].__owl__.rev).toBe(1);
+
+    expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state.arr)).toBe(1);
+    expect(observer.revNumber(state.arr[0])).toBe(1);
 
     state.arr[0].something = 2;
-    expect(state.arr.__owl__.rev).toBe(1);
-    expect(state.arr[0].__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
+    expect(observer.revNumber(state.arr)).toBe(1);
+    expect(observer.revNumber(state.arr[0])).toBe(2);
   });
 
   test("properly observe objects in object", () => {
     const observer = new Observer();
-    const state: any = { a: { b: 1 } };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.a.__owl__.rev).toBe(1);
+    const state: any = observer.observe({ a: { b: 1 } });
+
+    expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.revNumber(state.a)).toBe(1);
 
     state.a.b = 2;
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.a.__owl__.rev).toBe(2);
+    expect(observer.rev).toBe(2);
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.revNumber(state.a)).toBe(2);
   });
 
   test("reobserve new object values", () => {
     const observer = new Observer();
-    const obj: any = { a: 1 };
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
+    const obj: any = observer.observe({ a: 1 });
+
+    expect(observer.rev).toBe(1);
+    expect(observer.revNumber(obj)).toBe(1);
+
     obj.a = { b: 2 };
+
     expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
-
-    // we start at 2 because it is the new observer rev number
-    expect(obj.a.__owl__.rev).toBe(2);
-
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.revNumber(obj.a)).toBe(2);
     obj.a.b = 3;
     expect(observer.rev).toBe(3);
-    expect(obj.__owl__.rev).toBe(2);
-    expect(obj.a.__owl__.rev).toBe(3);
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.revNumber(obj.a)).toBe(3);
   });
 
   test("deep observe misc changes", () => {
     const observer = new Observer();
-    const state: any = { o: { a: 1 }, arr: [1], n: 13 };
-    observer.observe(state);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.__owl__.deepRev).toBe(1);
+    const state: any = observer.observe({ o: { a: 1 }, arr: [1], n: 13 });
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.deepRevNumber(state)).toBe(1);
 
     state.o.a = 2;
     expect(observer.rev).toBe(2);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.__owl__.deepRev).toBe(2);
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.deepRevNumber(state)).toBe(2);
 
     state.arr.push(2);
-    expect(state.__owl__.rev).toBe(1);
-    expect(state.__owl__.deepRev).toBe(3);
+    expect(observer.rev).toBe(3);
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.deepRevNumber(state)).toBe(3);
 
     state.n = 155;
-    expect(state.__owl__.rev).toBe(2);
-    expect(state.__owl__.deepRev).toBe(4);
+    expect(observer.rev).toBe(4);
+    expect(observer.revNumber(state)).toBe(2);
+    expect(observer.deepRevNumber(state)).toBe(4);
   });
 
   test("properly handle already observed state", () => {
     const observer = new Observer();
-    const obj1: any = { a: 1 };
-    const obj2: any = { b: 1 };
-    observer.observe(obj1);
-    observer.observe(obj2);
-    expect(obj1.__owl__.rev).toBe(1);
-    expect(obj2.__owl__.rev).toBe(1);
+    const obj1: any = observer.observe({ a: 1 });
+    const obj2: any = observer.observe({ b: 1 });
+
+    expect(observer.revNumber(obj1)).toBe(1);
+    expect(observer.revNumber(obj2)).toBe(1);
 
     obj1.a = 2;
     obj2.b = 3;
-    expect(obj1.__owl__.rev).toBe(2);
-    expect(obj2.__owl__.rev).toBe(2);
+    expect(observer.revNumber(obj1)).toBe(2);
+    expect(observer.revNumber(obj2)).toBe(2);
 
     obj2.b = obj1;
-    expect(obj1.__owl__.rev).toBe(2);
-    expect(obj2.__owl__.rev).toBe(3);
+    expect(observer.revNumber(obj1)).toBe(2);
+    expect(observer.revNumber(obj2)).toBe(3);
   });
 
   test("can set a property more than once", () => {
     const observer = new Observer();
-    const obj: any = {};
+    const obj: any = observer.observe({});
 
-    observer.observe(obj);
-    expect(obj.__owl__.rev).toBe(1);
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
-    expect(obj.__owl__.deepRev).toBe(1);
 
-    observer.set(obj, "aku", "always finds annoying problems");
+    obj.aku = "always finds annoying problems";
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
-    expect(obj.__owl__.rev).toBe(2);
-    expect(obj.__owl__.deepRev).toBe(2);
 
-    observer.set(obj, "aku", "always finds good problems");
+    obj.aku = "always finds good problems";
+
+    expect(observer.revNumber(obj)).toBe(3);
+    expect(observer.deepRevNumber(obj)).toBe(3);
     expect(observer.rev).toBe(3);
-    expect(obj.__owl__.rev).toBe(3);
-    expect(obj.__owl__.deepRev).toBe(3);
   });
 
   test("properly handle swapping elements", () => {
     const observer = new Observer();
-    const obj: any = { a: { arr: [] }, b: 1 };
-    observer.observe(obj);
+    const obj: any = observer.observe({ a: { arr: [] }, b: 1 });
 
     // swap a and b
     const b = obj.b;
@@ -319,9 +374,9 @@ describe("observer", () => {
 
   test("properly handle assigning observed obj containing array", () => {
     const observer = new Observer();
-    const obj: any = { a: { arr: [], val: "test" } };
-    observer.observe(obj);
+    const obj: any = observer.observe({ a: { arr: [], val: "test" } });
 
+    expect(observer.rev).toBe(1);
     obj.a = { ...obj.a, val: "test2" };
     expect(observer.rev).toBe(2);
 
@@ -332,24 +387,25 @@ describe("observer", () => {
 
   test("accept cycles in observed state", () => {
     const observer = new Observer();
-    const obj1: any = {};
-    const obj2: any = { b: obj1, key: 1 };
+    let obj1: any = {};
+    let obj2: any = { b: obj1, key: 1 };
     obj1.a = obj2;
-    observer.observe(obj1);
-    expect(obj1.__owl__.rev).toBe(1);
-    expect(obj2.__owl__.rev).toBe(1);
+    obj1 = observer.observe(obj1);
+    obj2 = obj1.a;
+
+    expect(observer.revNumber(obj1)).toBe(1);
+    expect(observer.revNumber(obj2)).toBe(1);
 
     obj2.key = 3;
-    expect(obj1.__owl__.rev).toBe(1);
-    expect(obj2.__owl__.rev).toBe(2);
+    expect(observer.revNumber(obj1)).toBe(1);
+    expect(observer.revNumber(obj2)).toBe(2);
   });
 
   test("call callback when state is changed", async () => {
     const observer = new Observer();
     observer.notifyCB = jest.fn();
-    const obj: any = { a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 };
+    const obj: any = observer.observe({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 });
 
-    observer.observe(obj);
     expect(observer.notifyCB).toBeCalledTimes(0);
 
     obj.a = 2;
@@ -373,9 +429,7 @@ describe("observer", () => {
   test("throw error when state is mutated in object if allowMutation=false", async () => {
     const observer = new Observer();
     observer.allowMutations = false;
-    const obj: any = { a: 1 };
-    observer.observe(obj);
-
+    const obj: any = observer.observe({ a: 1 });
     expect(() => {
       obj.a = 2;
     }).toThrow('Observed state cannot be changed here! (key: "a", val: "2")');
@@ -384,11 +438,10 @@ describe("observer", () => {
   test("throw error when state is mutated in array if allowMutation=false", async () => {
     const observer = new Observer();
     observer.allowMutations = false;
-    const obj: any = { a: [1] };
-    observer.observe(obj);
+    const obj: any = observer.observe({ a: [1] });
 
     expect(() => {
       obj.a.push(2);
-    }).toThrow("Array cannot be changed here");
+    }).toThrow('Observed state cannot be changed here! (key: "1", val: "2")');
   });
 });

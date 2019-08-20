@@ -506,7 +506,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     return this.__render(false, [], scope, vars);
   }
 
-  async __render(
+  __render(
     force: boolean = false,
     patchQueue: any[] = [],
     scope?: Object,
@@ -581,7 +581,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (this.state) {
       const __owl__ = this.__owl__;
       __owl__.observer = new Observer();
-      __owl__.observer.observe(this.state);
+      this.state = __owl__.observer.observe(this.state);
       __owl__.observer.notifyCB = this.render.bind(this);
     }
   }

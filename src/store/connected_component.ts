@@ -4,20 +4,6 @@ import { Component, Env } from "../component/component";
 // Connect function
 //------------------------------------------------------------------------------
 
-function revNumber<T extends Object>(o: T): number {
-  if (o !== null && typeof o === "object" && (<any>o).__owl__) {
-    return (<any>o).__owl__.rev;
-  }
-  return 0;
-}
-
-function deepRevNumber<T extends Object>(o: T): number {
-  if (o !== null && typeof o === "object" && (<any>o).__owl__) {
-    return (<any>o).__owl__.deepRev;
-  }
-  return 0;
-}
-
 type HashFunction = (a: any, b: any) => number;
 
 export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> {
@@ -27,15 +13,16 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
   }
 
   hashFunction: HashFunction = ({ storeProps }, options) => {
-    let refFunction = this.deep ? deepRevNumber : revNumber;
+    const observer = (this.__owl__ as any).store.observer;
+    let refFunction = this.deep ? observer.deepRevNumber : observer.revNumber;
     if ("__owl__" in storeProps) {
-      return refFunction(storeProps);
+      return refFunction.call(observer, storeProps);
     }
     const { currentStoreProps } = options;
     let hash = 0;
     for (let key in storeProps) {
       const val = storeProps[key];
-      const hashVal = refFunction(val);
+      const hashVal = refFunction.call(observer, val);
       if (hashVal === 0) {
         if (val !== currentStoreProps[key]) {
           options.didChange = true;
@@ -70,9 +57,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     (<any>this.__owl__).storeHash = this.hashFunction(
       {
         state: store.state,
-        storeProps: storeProps,
-        revNumber,
-        deepRevNumber
+        storeProps: storeProps
       },
       {
         currentStoreProps: storeProps
@@ -109,9 +94,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     const storeHash = this.hashFunction(
       {
         state: (<any>this.__owl__).store.state,
-        storeProps: storeProps,
-        revNumber,
-        deepRevNumber
+        storeProps: storeProps
       },
       options
     );

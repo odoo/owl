@@ -265,14 +265,23 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    *
    * This should only be done if the component was created manually. Components
    * created declaratively in templates are managed by the Owl system.
+   *
+   * Note that a component can be mounted an unmounted several times
    */
   async mount(target: HTMLElement): Promise<void> {
-    const vnode = await this.__prepare();
-    if (this.__owl__.isDestroyed) {
-      // component was destroyed before we get here...
+    if (this.__owl__.isMounted) {
       return;
     }
-    this.__patch(vnode);
+    if (this.__owl__.renderId === 1) {
+      // we use the fact that renderId === 1 as a way to determine that the
+      // component is mounted for the first time
+      const vnode = await this.__prepare();
+      if (this.__owl__.isDestroyed) {
+        // component was destroyed before we get here...
+        return;
+      }
+      this.__patch(vnode);
+    }
     target.appendChild(this.el!);
 
     if (document.body.contains(target)) {

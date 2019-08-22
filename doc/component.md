@@ -149,6 +149,8 @@ We explain here all the public methods of the `Component` class.
   is asynchronous, since each children need to be created as well. Most applications
   will need to call `mount` exactly once, on the root component.
 
+  Note that a component can be mounted and unmounted multiple times if needed.
+
 - **`unmount()`**: in case a component need to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more
   useful to the underlying component system.

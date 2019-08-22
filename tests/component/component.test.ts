@@ -3950,3 +3950,64 @@ describe("top level sub widgets", () => {
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
   });
 });
+
+describe("unmounting and remounting", () => {
+  test("widget can be unmounted and remounted", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="MyWidget">Hey</div>
+        </templates>`);
+
+    const steps: string[] = [];
+    class MyWidget extends Widget {
+      async willStart() {
+        steps.push("willstart");
+      }
+      mounted() {
+        steps.push("mounted");
+      }
+      willUnmount() {
+        steps.push("willunmount");
+      }
+    }
+
+    const w = new MyWidget(env);
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>Hey</div>");
+    expect(steps).toEqual(["willstart", "mounted"]);
+
+    w.unmount();
+    expect(fixture.innerHTML).toBe("");
+    expect(steps).toEqual(["willstart", "mounted", "willunmount"]);
+
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>Hey</div>");
+    expect(steps).toEqual(["willstart", "mounted", "willunmount", "mounted"]);
+  });
+
+  test("widget can be mounted twice without ill effect", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="MyWidget">Hey</div>
+        </templates>`);
+
+    const steps: string[] = [];
+    class MyWidget extends Widget {
+      async willStart() {
+        steps.push("willstart");
+      }
+      mounted() {
+        steps.push("mounted");
+      }
+      willUnmount() {
+        steps.push("willunmount");
+      }
+    }
+
+    const w = new MyWidget(env);
+    await w.mount(fixture);
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>Hey</div>");
+    expect(steps).toEqual(["willstart", "mounted"]);
+  });
+});

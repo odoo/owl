@@ -111,7 +111,7 @@ class App extends owl.Component {
       for (let i = 0; i < this.state.messages.length; i += 10) {
         const msg = Object.assign({}, messages[i]);
         msg.author += "!!!";
-        owl.Observer.set(messages, i, msg);
+        messages[i] = msg;
       }
     });
   }

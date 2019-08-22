@@ -1,0 +1,159 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`router directive t-routecomponent can render parameterized route 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['env'].router.currentRouteName==='book') {
+        //COMPONENT
+        let def3;
+        let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
+        let _2_index = c1.length;
+        c1.push(null);
+        let props4 = {title:context['env'].router.currentParams.title};
+        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+                def3 = w4.__owl__.renderPromise;
+            } else {
+                w4.destroy();
+                w4 = false;
+            }
+        }
+        if (!w4) {
+            let componentKey4 = \`__component__book\`;
+            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+            w4 = new W4(parent, props4);
+            parent.__owl__.cmap[4] = w4.__owl__.id;
+            def3 = w4.__prepare();
+            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        } else {
+            def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
+            def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+        }
+        extra.promises.push(def3);
+    }
+    return vn1;
+}"
+`;
+
+exports[`router directive t-routecomponent can render parameterized route with suffixes 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['env'].router.currentRouteName==='book') {
+        //COMPONENT
+        let def3;
+        let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
+        let _2_index = c1.length;
+        c1.push(null);
+        let props4 = {title:context['env'].router.currentParams.title,val:context['env'].router.currentParams.val};
+        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+                def3 = w4.__owl__.renderPromise;
+            } else {
+                w4.destroy();
+                w4 = false;
+            }
+        }
+        if (!w4) {
+            let componentKey4 = \`__component__book\`;
+            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+            w4 = new W4(parent, props4);
+            parent.__owl__.cmap[4] = w4.__owl__.id;
+            def3 = w4.__prepare();
+            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        } else {
+            def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
+            def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+        }
+        extra.promises.push(def3);
+    }
+    return vn1;
+}"
+`;
+
+exports[`router directive t-routecomponent can render simple cases 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['env'].router.currentRouteName==='about') {
+        //COMPONENT
+        let def3;
+        let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
+        let _2_index = c1.length;
+        c1.push(null);
+        let props4 = {};
+        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+                def3 = w4.__owl__.renderPromise;
+            } else {
+                w4.destroy();
+                w4 = false;
+            }
+        }
+        if (!w4) {
+            let componentKey4 = \`__component__about\`;
+            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+            w4 = new W4(parent, props4);
+            parent.__owl__.cmap[4] = w4.__owl__.id;
+            def3 = w4.__prepare();
+            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        } else {
+            def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
+            def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
+        }
+        extra.promises.push(def3);
+    }
+    else if (context['env'].router.currentRouteName==='users') {
+        //COMPONENT
+        let def6;
+        let w7 = 7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[7]] : false;
+        let _5_index = c1.length;
+        c1.push(null);
+        let props7 = {};
+        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
+            if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
+                def6 = w7.__owl__.renderPromise;
+            } else {
+                w7.destroy();
+                w7 = false;
+            }
+        }
+        if (!w7) {
+            let componentKey7 = \`__component__users\`;
+            let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+            if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
+            w7 = new W7(parent, props7);
+            parent.__owl__.cmap[7] = w7.__owl__.id;
+            def6 = w7.__prepare();
+            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+        } else {
+            def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
+            def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
+        }
+        extra.promises.push(def6);
+    }
+    return vn1;
+}"
+`;

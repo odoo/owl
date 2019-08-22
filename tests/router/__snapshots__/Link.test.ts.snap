@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Link component can render simple cases 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let owner = context;
+    var h = this.h;
+    let _1 = utils.toObj({'router-link-active':context['isActive']});
+    var _2 = context['href'];
+    let c3 = [], p3 = {key:3,attrs:{href: _2},class:_1,on:{}};
+    var vn3 = h('a', p3, c3);
+    if (!context['navigate']) {
+        throw new Error('Missing handler \\\\'' + 'navigate' + \`\\\\' when evaluating template '__owl__-router-link'\`)
+    }
+    extra.handlers['click' + 3] = extra.handlers['click' + 3] || context['navigate'].bind(owner);
+    p3.on['click'] = extra.handlers['click' + 3];
+    const slot4 = this.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot4) {
+        slot4(context.__owl__.parent, Object.assign({}, extra, {parentNode: c3, vars: extra.vars, parent: owner}));
+    }
+    return vn3;
+}"
+`;

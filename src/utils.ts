@@ -10,7 +10,7 @@
  * - debounce
  */
 
-export function whenReady(fn) {
+export function whenReady(fn?: any) {
   return new Promise(function(resolve) {
     if (document.readyState !== "loading") {
       resolve();

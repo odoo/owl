@@ -7,6 +7,7 @@
     "build:js": "tsc --target esnext --module es6 --outDir dist/owl",
     "build:bundle": "rollup -c",
     "build": "npm run build:js && npm run build:bundle",
+    "buildcommonjs": "npm run build:js && npm run build:bundle -- -f cjs",
     "minify": "uglifyjs dist/owl.js -o dist/owl.min.js --compress --mangle",
     "test": "jest",
     "test:watch": "jest --watch",

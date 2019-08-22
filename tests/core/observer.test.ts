@@ -57,6 +57,25 @@ describe("observer", () => {
     });
   });
 
+  test("properly handle dates", () => {
+    const observer = new Observer();
+    const date = new Date();
+    const obj: any = observer.observe({ date });
+
+    expect(observer.revNumber(obj)).toBe(1);
+    expect(observer.deepRevNumber(obj)).toBe(1);
+    expect(observer.rev).toBe(1);
+    expect(typeof obj.date.getFullYear()).toBe('number');
+    expect(obj.date).toBe(date);
+
+    obj.date = new Date();
+
+    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.deepRevNumber(obj)).toBe(2);
+    expect(observer.rev).toBe(2);
+    expect(obj.date).not.toBe(date);
+  });
+
   test("can change values in array", () => {
     const observer = new Observer();
     const obj: any = observer.observe({ arr: [1, 2] });

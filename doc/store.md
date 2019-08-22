@@ -127,6 +127,9 @@ arbitrary number of arguments.
 store.dispatch("login", someInfo);
 ```
 
+Note that anything returned by an action will also be returned by the `dispatch`
+call.
+
 ### Getters
 
 Usually, data contained in the store will be stored in a normalized way. For

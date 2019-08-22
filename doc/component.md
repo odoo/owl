@@ -255,7 +255,8 @@ At this point, the component is not yet rendered. Note that a slow `willStart` m
 interface. Therefore, some care should be made to make this method as
 fast as possible.
 
-The component rendering will take place after `willStart` is completed.
+After the `willStart` method is completed, the state will be observed with a
+new `Observer`.  Then, the component will be rendered by `QWeb`.
 
 #### `mounted()`
 

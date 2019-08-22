@@ -35,7 +35,7 @@ export class Observer {
   }
 
   observe(value: any, parent?: any): any {
-    if (value === null || typeof value !== "object") {
+    if (value === null || typeof value !== "object" || value instanceof Date) {
       // fun fact: typeof null === 'object'
       return value;
     }

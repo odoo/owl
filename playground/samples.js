@@ -338,7 +338,7 @@ function makeStore() {
         todos,
         nextId
     };
-    const store = new owl.Store({
+    const store = new owl.store.Store({
         state,
         actions,
         mutations
@@ -405,7 +405,7 @@ class TodoItem extends owl.Component {
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
-class TodoApp extends owl.ConnectedComponent {
+class TodoApp extends owl.store.ConnectedComponent {
     components = { TodoItem };
     state = { filter: "all" };
 
@@ -953,7 +953,7 @@ function setupResponsivePlugin(env) {
     const updateEnv = owl.utils.debounce(() => {
         if (env.isMobile !== isMobile()) {
             env.isMobile = !env.isMobile;
-            env.qweb.trigger('update');
+            env.qweb.forceUpdate();
         }
     }, 15);
     window.addEventListener("resize", updateEnv);

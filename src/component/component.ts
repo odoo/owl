@@ -273,7 +273,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (this.__owl__.isMounted) {
       return;
     }
-    if (this.__owl__.renderId === 1) {
+    if (!this.__owl__.vnode ) {
       // we use the fact that renderId === 1 as a way to determine that the
       // component is mounted for the first time
       const vnode = await this.__prepare();

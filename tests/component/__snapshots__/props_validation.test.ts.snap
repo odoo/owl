@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`default props default values are also set whenever component is updated 1`] = `"<div>1</div>"`;
+
+exports[`default props default values are also set whenever component is updated 2`] = `"<div>4</div>"`;
+
 exports[`props validation props are validated in dev mode (code snapshot) 1`] = `
 "function anonymous(context,extra
 ) {

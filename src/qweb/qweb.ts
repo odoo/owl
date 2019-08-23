@@ -207,12 +207,12 @@ export class QWeb extends EventBus {
   }
 
   /**
-   * Load templates from a xml (as a string).  This will look up for the first
-   * <templates> tag, and will consider each child of this as a template, with
-   * the name given by the t-name attribute.
+   * Load templates from a xml (as a string or xml document).  This will look up
+   * for the first <templates> tag, and will consider each child of this as a
+   * template, with the name given by the t-name attribute.
    */
-  addTemplates(xmlstr: string) {
-    const doc = parseXML(xmlstr);
+  addTemplates(xmlstr: string | Document) {
+    const doc = typeof xmlstr === 'string' ? parseXML(xmlstr) : xmlstr;
     const templates = doc.getElementsByTagName("templates")[0];
     if (!templates) {
       return;

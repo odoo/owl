@@ -12,19 +12,20 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     return env.store;
   }
 
-  hashFunction: HashFunction = ({ storeProps }, options) => {
-    const observer = (this.__owl__ as any).store.observer;
-    let refFunction = this.deep ? observer.deepRevNumber : observer.revNumber;
-    if ("__owl__" in storeProps) {
-      return refFunction.call(observer, storeProps);
+  storeProps: any;
+
+  hashFunction: HashFunction = (storeProps, options) => {
+    const revFn = (this.__owl__ as any).revFn;
+    const rev = revFn(storeProps);
+    if (rev > 0) {
+      return rev;
     }
-    const { currentStoreProps } = options;
     let hash = 0;
     for (let key in storeProps) {
       const val = storeProps[key];
-      const hashVal = refFunction.call(observer, val);
+      const hashVal = revFn(val);
       if (hashVal === 0) {
-        if (val !== currentStoreProps[key]) {
+        if (val !== options.prevStoreProps[key]) {
           options.didChange = true;
         }
       } else {
@@ -37,32 +38,23 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
   static mapStoreToProps(storeState, ownProps, getters) {
     return {};
   }
-  constructor(parent, props?: any) {
-    super(parent, props);
 
+  /**
+   * Need to do this here so 'deep' can be overrided by subcomponent easily
+   */
+  async __prepareAndRender(scope?: Object, vars?: any): ReturnType<Component<any,any,any>["__prepareAndRender"]> {
     const store = this.getStore(this.env);
     const ownProps = this.props || {};
-    const storeProps = (<any>this.constructor).mapStoreToProps(
-      store.state,
-      ownProps,
-      store.getters
-    );
-    const mergedProps = Object.assign({}, ownProps, storeProps);
-
-    this.props = mergedProps;
-
-    (<any>this.__owl__).ownProps = ownProps;
-    (<any>this.__owl__).currentStoreProps = storeProps;
-    (<any>this.__owl__).store = store;
-    (<any>this.__owl__).storeHash = this.hashFunction(
-      {
-        state: store.state,
-        storeProps: storeProps
-      },
-      {
-        currentStoreProps: storeProps
-      }
-    );
+    this.storeProps = (<any>this.constructor).mapStoreToProps(store.state, ownProps, store.getters);
+    const observer = store.observer;
+    const revFn = this.deep ? observer.deepRevNumber : observer.revNumber;
+    (this.__owl__ as any).store = store;
+    (this.__owl__ as any).revFn = revFn.bind(observer);
+    (this.__owl__ as any).storeHash = this.hashFunction(this.storeProps, {
+      prevStoreProps: this.storeProps
+    });
+    (this.__owl__ as any).rev = observer.rev;
+    return super.__prepareAndRender(scope, vars);
   }
   /**
    * We do not use the mounted hook here for a subtle reason: we want the
@@ -70,56 +62,47 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
    * if we use the mounted hook, this will be done in the reverse order.
    */
   __callMounted() {
-    (<any>this.__owl__).store.on("update", this, this.__checkUpdate);
+    (this.__owl__ as any).store.on("update", this, this.__checkUpdate);
     super.__callMounted();
   }
-  willUnmount() {
-    (<any>this.__owl__).store.off("update", this);
-    super.willUnmount();
+  __callWillUnmount() {
+    (this.__owl__ as any).store.off("update", this);
+    super.__callWillUnmount();
   }
 
-  async __checkUpdate(updateId) {
-    if (updateId === (<any>this.__owl__).currentUpdateId) {
-      return;
-    }
-    const ownProps = (<any>this.__owl__).ownProps;
-    const storeProps = (<any>this.constructor).mapStoreToProps(
-      (<any>this.__owl__).store.state,
-      ownProps,
-      (<any>this.__owl__).store.getters
-    );
-    const options: any = {
-      currentStoreProps: (<any>this.__owl__).currentStoreProps
-    };
-    const storeHash = this.hashFunction(
-      {
-        state: (<any>this.__owl__).store.state,
-        storeProps: storeProps
-      },
-      options
-    );
-    let didChange = options.didChange;
-    if (storeHash !== (<any>this.__owl__).storeHash) {
-      didChange = true;
-      (<any>this.__owl__).storeHash = storeHash;
-    }
-    if (didChange) {
-      (<any>this.__owl__).currentStoreProps = storeProps;
-      await this.__updateProps(ownProps, false);
-    }
+  async __updateProps(nextProps: P, f, p, s, v) {
+    this.__updateStoreProps(nextProps);
+    return super.__updateProps(nextProps, f, p, s, v);
   }
-  __updateProps(nextProps, forceUpdate, patchQueue?: any[]) {
-    const __owl__ = <any>this.__owl__;
-    __owl__.currentUpdateId = __owl__.store._updateId;
-    if (__owl__.ownProps !== nextProps) {
-      __owl__.currentStoreProps = (<any>this.constructor).mapStoreToProps(
-        __owl__.store.state,
-        nextProps,
-        __owl__.store.getters
-      );
+
+  __updateStoreProps(nextProps): boolean {
+    const store = (this.__owl__ as any).store;
+    const storeProps = (<any>this.constructor).mapStoreToProps(
+      store.state,
+      nextProps,
+      store.getters
+    );
+    const options = { prevStoreProps: this.storeProps, didChange: false };
+    const storeHash = this.hashFunction(storeProps, options);
+    this.storeProps = storeProps;
+    let didChange = options.didChange;
+    if (storeHash !== (this.__owl__ as any).storeHash) {
+    (this.__owl__ as any).storeHash = storeHash;
+      didChange = true;
     }
-    __owl__.ownProps = nextProps;
-    const mergedProps = Object.assign({}, nextProps, __owl__.currentStoreProps);
-    return super.__updateProps(mergedProps, forceUpdate, patchQueue);
+    (this.__owl__ as any).rev = store.observer.rev;
+    return didChange
+  }
+
+  async __checkUpdate() {
+    const observer = (this.__owl__ as any).store.observer;
+    if (observer.rev === (this.__owl__ as any).rev) {
+        // update was already done by updateProps, from parent
+        return;
+    }
+    const didChange = this.__updateStoreProps(this.props);
+    if (didChange) {
+        this.render();
+    }
   }
 }

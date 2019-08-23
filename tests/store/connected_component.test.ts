@@ -20,7 +20,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="App">
-                <t t-foreach="props.todos" t-as="todo" >
+                <t t-foreach="storeProps.todos" t-as="todo" >
                     <Todo msg="todo.msg" t-key="todo"/>
                 </t>
             </div>
@@ -56,7 +56,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="App">
-                <span t-foreach="props.todos" t-as="todo" t-key="todo">
+                <span t-foreach="storeProps.todos" t-as="todo" t-key="todo">
                   <t t-esc="todo.title"/>
                 </span>
             </div>
@@ -104,7 +104,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
       <templates>
         <div t-name="App">
-          <t t-foreach="props.todos" t-as="todo">
+          <t t-foreach="storeProps.todos" t-as="todo">
             <Todo msg="todo.msg" t-key="todo" />
           </t>
         </div>
@@ -196,9 +196,9 @@ describe("connecting a component to store", () => {
 
     env.qweb.addTemplates(`
         <templates>
-            <span t-name="TodoItem"><t t-esc="props.text"/></span>
+            <span t-name="TodoItem"><t t-esc="storeProps.text"/></span>
             <div t-name="TodoList">
-                <t t-foreach="props.todos" t-as="todo">
+                <t t-foreach="storeProps.todos" t-as="todo">
                     <TodoItem id="todo.id" t-key="todo.id"/>
                 </t>
           </div>
@@ -247,11 +247,11 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="TodoItem">
-                <span><t t-esc="props.activeTodoText"/></span>
-                <span><t t-esc="props.importantTodoText"/></span>
+                <span><t t-esc="storeProps.activeTodoText"/></span>
+                <span><t t-esc="storeProps.importantTodoText"/></span>
             </div>
             <div t-name="TodoList">
-                <t t-foreach="props.todos" t-as="todo">
+                <t t-foreach="storeProps.todos" t-as="todo">
                     <TodoItem id="todo.id" t-key="todo.id"/>
                 </t>
             </div>
@@ -287,7 +287,7 @@ describe("connecting a component to store", () => {
   test("connected component is updated when props are updated", async () => {
     env.qweb.addTemplates(`
         <templates>
-            <span t-name="Beer"><t t-esc="props.name"/></span>
+            <span t-name="Beer"><t t-esc="storeProps.name"/></span>
             <div t-name="App">
                 <Beer id="state.beerId"/>
             </div>
@@ -322,7 +322,7 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="App">
-              <span t-foreach="props.beers" t-as="beer" t-key="beer.name"><t t-esc="beer.name"/></span>
+              <span t-foreach="storeProps.beers" t-as="beer" t-key="beer.name"><t t-esc="beer.name"/></span>
           </div>
         </templates>
     `);
@@ -357,9 +357,9 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="Beer">
-                <span>taster:<t t-esc="props.taster"/></span>
-                <span t-if="props.selected">selected:<t t-esc="props.selected.name"/></span>
-                <span t-if="props.consumed">consumed:<t t-esc="props.consumed.name"/></span>
+                <span>taster:<t t-esc="storeProps.taster"/></span>
+                <span t-if="storeProps.selected">selected:<t t-esc="storeProps.selected.name"/></span>
+                <span t-if="storeProps.consumed">consumed:<t t-esc="storeProps.consumed.name"/></span>
             </div>
             <div t-name="App">
                <Beer id="state.beerId"/>
@@ -424,9 +424,9 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="Beer">
-                <span>taster:<t t-esc="props.taster"/></span>
-                <span t-if="props.selected">selected:<t t-esc="props.selected.name"/></span>
-                <span t-if="props.consumed">consumed:<t t-esc="props.consumed.name"/></span>
+                <span>taster:<t t-esc="storeProps.taster"/></span>
+                <span t-if="storeProps.selected">selected:<t t-esc="storeProps.selected.name"/></span>
+                <span t-if="storeProps.consumed">consumed:<t t-esc="storeProps.consumed.name"/></span>
             </div>
             <div t-name="App">
                <Beer id="state.beerId"/>
@@ -517,9 +517,9 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="Parent">
-                <Child key="props.current"/>
+                <Child key="storeProps.current"/>
             </div>
-            <span t-name="Child"><t t-esc="props.msg"/></span>
+            <span t-name="Child"><t t-esc="storeProps.msg"/></span>
         </templates>
     `);
 
@@ -577,13 +577,13 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="TodoApp" class="todoapp">
-                <t t-foreach="Object.values(props.todos)" t-as="todo">
+                <t t-foreach="Object.values(storeProps.todos)" t-as="todo">
                     <TodoItem t-key="todo.id" id="todo.id"/>
                 </t>
             </div>
 
             <div t-name="TodoItem" class="todo">
-                <t t-esc="props.todo.title"/>
+                <t t-esc="storeProps.todo.title"/>
                 <button class="destroy" t-on-click="editTodo">x</button>
             </div>
         </templates>
@@ -656,13 +656,13 @@ describe("connecting a component to store", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="TodoApp" class="todoapp">
-                <t t-foreach="Object.values(props.todos)" t-as="todo">
+                <t t-foreach="Object.values(storeProps.todos)" t-as="todo">
                     <TodoItem t-key="todo.id" id="todo.id"/>
                 </t>
             </div>
 
             <div t-name="TodoItem" class="todo">
-                <t t-esc="props.todo.title"/>
+                <t t-esc="storeProps.todo.title"/>
                 <button class="destroy" t-on-click="removeTodo">x</button>
             </div>
         </templates>
@@ -720,7 +720,7 @@ describe("connecting a component to store", () => {
 
     env.qweb.addTemplates(`
         <templates>
-            <div t-name="App"><t t-esc="props.msg"/></div>
+            <div t-name="App"><t t-esc="storeProps.msg"/></div>
         </templates>
     `);
 
@@ -829,11 +829,11 @@ describe("connected components and default values", () => {
         <templates>
             <div t-name="Message">
                 <t t-if="props.showId"><t t-esc="props.messageId"/></t>
-                <t t-esc="props.message.content"/>
+                <t t-esc="storeProps.message.content"/>
             </div>
             <div t-name="Thread">
                 <t t-if="props.showMessages">
-                    <Message t-foreach="props.thread.messages" t-as="messageId" messageId="messageId" t-key="messageId"/>
+                    <Message t-foreach="storeProps.thread.messages" t-as="messageId" messageId="messageId" t-key="messageId"/>
                 </t>
             </div>
             <div t-name="App"><Thread threadId="props.threadId"/></div>

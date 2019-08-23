@@ -273,7 +273,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (this.__owl__.isMounted) {
       return;
     }
-    if (!this.__owl__.vnode ) {
+    if (!this.__owl__.vnode) {
       // we use the fact that renderId === 1 as a way to determine that the
       // component is mounted for the first time
       const vnode = await this.__prepare();
@@ -297,20 +297,17 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
-  async render(force: boolean = false, patchQueue?: any[], scope?: any, vars?: any): Promise<void> {
+  async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
     if (!__owl__.isMounted) {
       return;
     }
-    const shouldPatch: boolean = !patchQueue;
-    if (shouldPatch) {
-      patchQueue = [];
-    }
-    __owl__.renderId++
-    const renderId = __owl__.renderId;
-    await this.__render(force, patchQueue, scope, vars);
+    const patchQueue = [];
 
-    if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
+    const renderId = ++__owl__.renderId;
+    await this.__render(force, patchQueue, undefined, undefined);
+
+    if (__owl__.isMounted && renderId === __owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
       this.__applyPatchQueue(<any[]>patchQueue);
@@ -456,7 +453,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
-      await this.render(forceUpdate, patchQueue, scope, vars);
+      await this.__render(forceUpdate, patchQueue, scope, vars);
     }
   }
 
@@ -513,6 +510,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
     __owl__.render = qweb.render.bind(qweb, this.template);
     this.__observeState();
+
     return this.__render(false, [], scope, vars);
   }
 

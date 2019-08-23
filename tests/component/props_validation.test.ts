@@ -327,9 +327,17 @@ describe("default props", () => {
     class TestWidget extends Widget {
       static defaultProps = { p: 4 };
     }
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="TestWidget"><t t-esc="props.p"/></div>
+        </templates>`);
 
     const w = new TestWidget(env, { p: 1 });
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toMatchSnapshot();
     await w.__updateProps({});
+    await w.render();
     expect(w.props.p).toBe(4);
+    expect(fixture.innerHTML).toMatchSnapshot();
   });
 });

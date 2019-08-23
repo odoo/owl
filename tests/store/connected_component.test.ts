@@ -818,9 +818,11 @@ describe("connected components and default values", () => {
     expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
 
     await app.__updateProps({ initialRecipient: "James" }, true);
+    await app.render();
     expect(fixture.innerHTML).toBe("<div><div>Hello, James</div></div>");
 
     await app.__updateProps({ initialRecipient: undefined }, true);
+    await app.render();
     expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
   });
 
@@ -903,6 +905,7 @@ describe("connected components and default values", () => {
     );
 
     await app.__updateProps({ threadId: 2 }, true);
+    await app.render();
     expect(fixture.innerHTML).toBe("<div><div><div>200Message200</div></div></div>");
 
     store.commit("changeMessageContent", 200, "UpdatedMessage200");

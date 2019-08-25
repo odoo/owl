@@ -274,37 +274,6 @@ const LOCALSTORAGE_KEY = "todos-odoo";
 // Store Definition
 //------------------------------------------------------------------------------
 const actions = {
-    addTodo({ commit }, title) {
-        commit("addTodo", title);
-    },
-    removeTodo({ commit }, id) {
-        commit("removeTodo", id);
-    },
-    toggleTodo({ state, commit }, id) {
-        const todo = state.todos.find(t => t.id === id);
-        commit("editTodo", { id, completed: !todo.completed });
-    },
-    clearCompleted({ state, commit }) {
-        state.todos
-            .filter(todo => todo.completed)
-            .forEach(todo => {
-                commit("removeTodo", todo.id);
-            });
-    },
-    toggleAll({ state, commit }, completed) {
-        state.todos.forEach(todo => {
-            commit("editTodo", {
-                id: todo.id,
-                completed
-            });
-        });
-    },
-    editTodo({ commit }, { id, title }) {
-        commit("editTodo", { id, title });
-    }
-};
-
-const mutations = {
     addTodo({ state }, title) {
         const id = state.nextId++;
         const todo = {
@@ -317,6 +286,25 @@ const mutations = {
     removeTodo({ state }, id) {
         const index = state.todos.findIndex(t => t.id === id);
         state.todos.splice(index, 1);
+    },
+    toggleTodo({ state, dispatch }, id) {
+        const todo = state.todos.find(t => t.id === id);
+        dispatch("editTodo", { id, completed: !todo.completed });
+    },
+    clearCompleted({ state, dispatch }) {
+        state.todos
+            .filter(todo => todo.completed)
+            .forEach(todo => {
+                dispatch("removeTodo", todo.id);
+            });
+    },
+    toggleAll({ state, commit }, completed) {
+        state.todos.forEach(todo => {
+            dispatch("editTodo", {
+                id: todo.id,
+                completed
+            });
+        });
     },
     editTodo({ state }, { id, title, completed }) {
         const todo = state.todos.find(t => t.id === id);
@@ -338,11 +326,7 @@ function makeStore() {
         todos,
         nextId
     };
-    const store = new owl.store.Store({
-        state,
-        actions,
-        mutations
-    });
+    const store = new owl.store.Store({ state, actions });
     store.on("update", null, () => {
         const state = JSON.stringify(store.state.todos);
         window.localStorage.setItem(LOCALSTORAGE_KEY, state);
@@ -415,7 +399,7 @@ class TodoApp extends owl.store.ConnectedComponent {
         };
     }
     get visibleTodos() {
-        let todos = this.props.todos;
+        let todos = this.storeProps.todos;
         if (this.state.filter === "active") {
             todos = todos.filter(t => !t.completed);
         }
@@ -426,11 +410,11 @@ class TodoApp extends owl.store.ConnectedComponent {
     }
 
     get allChecked() {
-        return this.props.todos.every(todo => todo.completed);
+        return this.storeProps.todos.every(todo => todo.completed);
     }
 
     get remaining() {
-        return this.props.todos.filter(todo => !todo.completed).length;
+        return this.storeProps.todos.filter(todo => !todo.completed).length;
     }
 
     get remainingText() {
@@ -481,7 +465,7 @@ const TODO_APP_STORE_XML = `<templates>
       <h1>todos</h1>
       <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
     </header>
-    <section class="main" t-if="props.todos.length">
+    <section class="main" t-if="storeProps.todos.length">
       <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="toggleAll"/>
       <label for="toggle-all"></label>
       <ul class="todo-list">
@@ -490,7 +474,7 @@ const TODO_APP_STORE_XML = `<templates>
         </t>
       </ul>
     </section>
-    <footer class="footer" t-if="props.todos.length">
+    <footer class="footer" t-if="storeProps.todos.length">
       <span class="todo-count">
         <strong>
             <t t-esc="remaining"/>
@@ -508,7 +492,7 @@ const TODO_APP_STORE_XML = `<templates>
           <a t-on-click="setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
         </li>
       </ul>
-      <button class="clear-completed" t-if="props.todos.length gt remaining" t-on-click="clearCompleted">
+      <button class="clear-completed" t-if="storeProps.todos.length gt remaining" t-on-click="clearCompleted">
         Clear completed
       </button>
     </footer>

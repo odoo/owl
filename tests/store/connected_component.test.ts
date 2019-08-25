@@ -35,19 +35,19 @@ describe("connecting a component to store", () => {
     }
     class Todo extends Component<any, any, any> {}
     const state = { todos: [] };
-    const mutations = {
+    const actions = {
       addTodo({ state }, msg) {
         state.todos.push({ msg });
       }
     };
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
     const app = new App(env);
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toMatchSnapshot();
 
-    store.commit("addTodo", "hello");
+    store.dispatch("addTodo", "hello");
     await nextTick();
     expect(fixture.innerHTML).toMatchSnapshot();
   });
@@ -63,12 +63,12 @@ describe("connecting a component to store", () => {
         </templates>
     `);
     const state = { todos: [{ title: "Kasteel" }] };
-    const mutations = {
+    const actions = {
       edit({ state }, title) {
         state.todos[0].title = title;
       }
     };
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
 
     class App extends ConnectedComponent<any, any, any> {
       static mapStoreToProps(s) {
@@ -94,7 +94,7 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toMatchSnapshot();
     expect(shallowFix.innerHTML).toMatchSnapshot();
 
-    store.commit("edit", "Bertinchamps");
+    store.dispatch("edit", "Bertinchamps");
     await nextTick();
     expect(fixture.innerHTML).toMatchSnapshot();
     expect(shallowFix.innerHTML).toMatchSnapshot();
@@ -113,10 +113,9 @@ describe("connecting a component to store", () => {
       `);
     class Todo extends Component<any, any, any> {}
 
-    (<any>env).store = new Store({});
     const store = new Store({
       state: { todos: [] },
-      mutations: {
+      actions: {
         addTodo({ state }, msg) {
           state.todos.push({ msg });
         }
@@ -136,7 +135,7 @@ describe("connecting a component to store", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toMatchSnapshot();
 
-    (<any>app.__owl__).store.commit("addTodo", "hello");
+    (<any>app.__owl__).store.dispatch("addTodo", "hello");
     await nextTick();
     expect(fixture.innerHTML).toMatchSnapshot();
   });
@@ -187,12 +186,12 @@ describe("connecting a component to store", () => {
   test("mapStoreToProps receives ownprops as second argument", async () => {
     const state = { todos: [{ id: 1, text: "jupiler" }] };
     let nextId = 2;
-    const mutations = {
+    const actions = {
       addTodo({ state }, text) {
         state.todos.push({ text, id: nextId++ });
       }
     };
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
 
     env.qweb.addTemplates(`
         <templates>
@@ -224,7 +223,7 @@ describe("connecting a component to store", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
 
-    store.commit("addTodo", "hoegaarden");
+    store.dispatch("addTodo", "hoegaarden");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>hoegaarden</span></div>");
   });
@@ -333,14 +332,14 @@ describe("connecting a component to store", () => {
       }
     }
 
-    const mutations = {
+    const actions = {
       addBeer({ state }, name) {
         state.beers.push({ name });
       }
     };
 
     const state = { beers: [{ name: "jupiler" }] };
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
 
     const app = new App(env);
@@ -348,7 +347,7 @@ describe("connecting a component to store", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
 
-    store.commit("addBeer", "kwak");
+    store.dispatch("addBeer", "kwak");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>kwak</span></div>");
   });
@@ -382,7 +381,7 @@ describe("connecting a component to store", () => {
       state = { beerId: 0 };
     }
 
-    const mutations = {
+    const actions = {
       consume({ state }, beerId) {
         state.consumedID = beerId;
       }
@@ -394,7 +393,7 @@ describe("connecting a component to store", () => {
       consumedID: null,
       taster: "aaron"
     };
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
     const app = new App(env);
 
@@ -407,7 +406,7 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>"
     );
 
-    store.commit("consume", 1);
+    store.dispatch("consume", 1);
     await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>selected:jupiler</span><span>consumed:jupiler</span></div></div>"
@@ -449,7 +448,7 @@ describe("connecting a component to store", () => {
       state = { beerId: 0 };
     }
 
-    const mutations = {
+    const actions = {
       changeTaster({ state }, newTaster) {
         state.taster = newTaster;
       },
@@ -467,7 +466,7 @@ describe("connecting a component to store", () => {
       consumedID: null,
       taster: "aaron"
     };
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
     const app = new App(env);
 
@@ -480,13 +479,13 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span><span>selected:jupiler</span></div></div>"
     );
 
-    store.commit("renameBeer", { beerId: 1, name: "kwak" });
+    store.dispatch("renameBeer", { beerId: 1, name: "kwak" });
     await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>selected:kwak</span></div></div>"
     );
 
-    store.commit("consume", 1);
+    store.dispatch("consume", 1);
     await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>selected:kwak</span><span>consumed:kwak</span></div></div>"
@@ -498,13 +497,13 @@ describe("connecting a component to store", () => {
       "<div><div><span>taster:aaron</span><span>consumed:kwak</span></div></div>"
     );
 
-    store.commit("renameBeer", { beerId: 1, name: "jupiler" });
+    store.dispatch("renameBeer", { beerId: 1, name: "jupiler" });
     await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:aaron</span><span>consumed:jupiler</span></div></div>"
     );
 
-    store.commit("changeTaster", "matthieu");
+    store.dispatch("changeTaster", "matthieu");
     await nextTick();
     expect(fixture.innerHTML).toBe(
       "<div><div><span>taster:matthieu</span><span>consumed:jupiler</span></div></div>"
@@ -539,13 +538,13 @@ describe("connecting a component to store", () => {
     }
 
     const state = { current: "a", msg: { a: "a", b: "b" } };
-    const mutations = {
+    const actions = {
       setCurrent({ state }, c) {
         state.current = c;
       }
     };
 
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
     const app = new Parent(env);
 
@@ -553,14 +552,14 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>a</span></div>");
     expect(steps).toEqual(["parent", "child"]);
 
-    store.commit("setCurrent", "b");
+    store.dispatch("setCurrent", "b");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>b</span></div>");
     expect(steps).toEqual(["parent", "child", "parent", "child"]);
   });
 
   test("connected parent/children: no double rendering", async () => {
-    const mutations = {
+    const actions = {
       editTodo({ state }) {
         state.todos[1].title = "abc";
       }
@@ -571,7 +570,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({
       state,
-      mutations
+      actions
     });
 
     env.qweb.addTemplates(`
@@ -611,7 +610,7 @@ describe("connecting a component to store", () => {
       }
 
       editTodo() {
-        this.env.store.commit("editTodo");
+        this.env.store.dispatch("editTodo");
       }
       __render(...args) {
         renderCount++;
@@ -639,7 +638,7 @@ describe("connecting a component to store", () => {
   });
 
   test("connected parent/children: no rendering if child is destroyed", async () => {
-    const mutations = {
+    const actions = {
       removeTodo({ state }) {
         delete state.todos[1];
       }
@@ -650,7 +649,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({
       state,
-      mutations
+      actions
     });
 
     env.qweb.addTemplates(`
@@ -690,7 +689,7 @@ describe("connecting a component to store", () => {
         };
       }
       removeTodo() {
-        this.env.store.commit("removeTodo");
+        this.env.store.dispatch("removeTodo");
       }
       __render(...args) {
         renderCount++;
@@ -737,20 +736,20 @@ describe("connecting a component to store", () => {
     }
 
     const state = { msg: "a" };
-    const mutations = {
+    const actions = {
       setMsg({ state }, c) {
         state.msg = c;
       }
     };
 
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
     const app = new App(env);
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>a</div>");
 
-    store.commit("setMsg", "b");
+    store.dispatch("setMsg", "b");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>b</div>");
     expect(steps).toEqual(["willpatch", "patched"]);
@@ -889,13 +888,13 @@ describe("connected components and default values", () => {
       }
     };
 
-    const mutations = {
+    const actions = {
       changeMessageContent({ state }, messageId, newContent) {
         state.messages[messageId].content = newContent;
       }
     };
 
-    const store = new Store({ state, mutations });
+    const store = new Store({ state, actions });
     (<any>env).store = store;
     const app = new App(env);
 
@@ -908,7 +907,7 @@ describe("connected components and default values", () => {
     await app.render();
     expect(fixture.innerHTML).toBe("<div><div><div>200Message200</div></div></div>");
 
-    store.commit("changeMessageContent", 200, "UpdatedMessage200");
+    store.dispatch("changeMessageContent", 200, "UpdatedMessage200");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div><div>200UpdatedMessage200</div></div></div>");
   });

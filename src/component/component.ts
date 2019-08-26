@@ -38,15 +38,21 @@ export interface Env {
  * useful to typecheck and describe the internal keys used by Owl to manage the
  * component tree.
  */
-export interface Meta<T extends Env, Props> {
+interface Internal<T extends Env, Props> {
+  // each component has a unique id, useful mostly to handle parent/child
+  // relationships
   readonly id: number;
   vnode: VNode | null;
   isMounted: boolean;
   isDestroyed: boolean;
+
+  // parent and children keys are obviously useful to setup the parent-children
+  // relationship.
   parent: Component<T, any, any> | null;
   children: { [key: number]: Component<T, any, any> };
-  // children mapping: from templateID to componentID
-  // should it be a map number => Component?
+  // children mapping: from templateID to componentID. templateID identifies a
+  // place in a template. The t-component directive needs it to be able to get
+  // the component instance back whenever the template is rerendered.
   cmap: { [key: number]: number };
 
   renderId: number;
@@ -58,10 +64,10 @@ export interface Meta<T extends Env, Props> {
   renderPromise: Promise<VNode> | null;
 
   boundHandlers: { [key: number]: any };
-  observer?: Observer;
-  render?: CompiledTemplate;
+  observer: Observer | null;
+  render: CompiledTemplate | null;
   mountedHandlers: { [key: number]: Function };
-  classObj?: { [key: string]: boolean };
+  classObj: { [key: string]: boolean } | null;
 }
 
 // If a component does not define explicitely a template
@@ -76,7 +82,7 @@ const TEMPLATE_MAP: { [key: number]: { [name: string]: string } } = {};
 let nextId = 1;
 
 export class Component<T extends Env, Props extends {}, State extends {}> {
-  readonly __owl__: Meta<Env, Props>;
+  readonly __owl__: Internal<Env, Props>;
   template?: string;
 
   /**
@@ -171,7 +177,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       renderPromise: null,
       renderProps: props || null,
       boundHandlers: {},
-      mountedHandlers: {}
+      mountedHandlers: {},
+      observer: null,
+      render: null,
+      classObj: null
     };
   }
 
@@ -290,6 +299,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
+  /**
+   * The unmount method is the opposite of the mount method.  It is useful
+   * to call willUnmount calls and remove the component from the DOM.
+   */
   unmount() {
     if (this.__owl__.isMounted) {
       this.__callWillUnmount();
@@ -297,6 +310,15 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
+  /**
+   * The render method is the main entry point to render a component (once it
+   * is ready. This method is not initially called when the component is
+   * rendered the first time).
+   *
+   * This method will cause all its sub components to potentially rerender
+   * themselves.  Note that `render` is not called if a component is updated via
+   * its props.
+   */
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
     if (!__owl__.isMounted) {
@@ -384,6 +406,17 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   // Private
   //--------------------------------------------------------------------------
 
+  /**
+   * Private helper to perform a full destroy, from the point of view of an Owl
+   * component. It does not remove the el (this is done only once on the top
+   * level destroyed component, for performance reasons).
+   *
+   * The job of this method is mostly to call willUnmount hooks, and to perform
+   * all necessary internal cleanup.
+   *
+   * Note that it does not call the __callWillUnmount method to avoid visiting
+   * all children many times.
+   */
   __destroy(parent: Component<any, any, any> | null) {
     const __owl__ = this.__owl__;
     const isMounted = __owl__.isMounted;
@@ -438,6 +471,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
+  /**
+   * The __updateProps method is called by the t-component directive whenever
+   * it updates a component (so, when the parent template is rerendered).
+   */
   async __updateProps(
     nextProps: Props,
     forceUpdate: boolean = false,
@@ -457,12 +494,13 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
+  /**
+   * Main patching method. We call the virtual dom patch method here to convert
+   * a virtual dom vnode into some actual dom.
+   */
   __patch(vnode) {
     const __owl__ = this.__owl__;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
-    if (this.__owl__.classObj) {
-      (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, this.__owl__.classObj);
-    }
     __owl__.vnode = patch(target, vnode);
   }
 
@@ -555,6 +593,14 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     // parent component.  With this, we make sure that the parent component will be
     // able to patch itself properly after
     vnode.key = __owl__.id;
+
+    // we applly here the class information described on the component by the
+    // template (so, something like <MyComponent class="..."/>) to the actual
+    // root vnode
+    if (__owl__.classObj) {
+      vnode.data.class = Object.assign(vnode.data.class || {}, __owl__.classObj);
+    }
+
     return Promise.all(promises).then(() => vnode);
   }
 
@@ -584,6 +630,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
+  /**
+   * Enable the observe feature on the state.  We only create an observer if
+   * there is some state to be observed.
+   */
   __observeState() {
     if (this.state) {
       const __owl__ = this.__owl__;
@@ -644,13 +694,21 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
 // Error handling
 //------------------------------------------------------------------------------
 
-function errorHandler(error, component) {
+/**
+ * This is the global error handler for errors occurring in Owl main lifecycle
+ * methods.  Caught errors are triggered on the QWeb instance, and are
+ * potentially given to some parent component which implements `catchError`.
+ *
+ * If there are no such component, we destroy everything. This is better than
+ * being in a corrupted state.
+ */
+function errorHandler(error: Error, component: Component<any, any, any>) {
   let canCatch = false;
   let qweb = component.env.qweb;
   let root = component;
   while (component && !(canCatch = component.catchError !== Component.prototype.catchError)) {
     root = component;
-    component = component.__owl__.parent;
+    component = component.__owl__.parent!;
   }
   console.error(error);
   // we trigger error on QWeb so it can be logged/handled

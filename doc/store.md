@@ -227,6 +227,25 @@ The `ConnectedComponent` class can be configured with the following fields:
 - `deep` (boolean): [only useful if no hashFunction is given] if `false`, only watch
   for top level state changes (`true` by default)
 
+Note that the class `ConnectedComponent` has a `dispatch` method.  This means
+that the previous example could be simplified like this:
+
+```javascript
+class Counter extends owl.ConnectedComponent {
+  static mapStoreToProps(state) {
+    return {
+      value: state.counter
+    };
+  }
+}
+```
+
+```xml
+<button t-name="Counter" t-on-click="dispatch('increment')">
+  Click Me! [<t t-esc="props.value"/>]
+</button>
+```
+
 ### Semantics
 
 The `Store` and the `ConnectedComponent` try to be smart and to optimize as much

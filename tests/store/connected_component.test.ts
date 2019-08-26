@@ -140,6 +140,43 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toMatchSnapshot();
   });
 
+  test("can dispatch actions from a connected component", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="App">
+            <button t-on-click="dispatch('inc')">Inc</button>
+            <span><t t-esc="storeProps.value"/></span>
+        </div>
+      </templates>
+      `);
+
+    const store = new Store({
+      state: { value: 1 },
+      actions: {
+        inc({ state }) {
+          state.value++;
+        }
+      }
+    });
+    (<any>env).store = store;
+
+    class App extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps(s) {
+        return { value: s.value };
+      }
+    }
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><button>Inc</button><span>1</span></div>");
+
+    const button = (<HTMLElement>app.el).getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div><button>Inc</button><span>2</span></div>");
+  });
+
   test("connected child components with custom hooks", async () => {
     let steps: any = [];
     env.qweb.addTemplates(`

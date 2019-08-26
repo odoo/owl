@@ -39,10 +39,18 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     return {};
   }
 
+  dispatch() {
+    const [name, ...payload] = arguments;
+    (this.__owl__ as any).store.dispatch(name, ...payload);
+  }
+
   /**
    * Need to do this here so 'deep' can be overrided by subcomponent easily
    */
-  async __prepareAndRender(scope?: Object, vars?: any): ReturnType<Component<any,any,any>["__prepareAndRender"]> {
+  async __prepareAndRender(
+    scope?: Object,
+    vars?: any
+  ): ReturnType<Component<any, any, any>["__prepareAndRender"]> {
     const store = this.getStore(this.env);
     const ownProps = this.props || {};
     this.storeProps = (<any>this.constructor).mapStoreToProps(store.state, ownProps, store.getters);
@@ -87,22 +95,22 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     this.storeProps = storeProps;
     let didChange = options.didChange;
     if (storeHash !== (this.__owl__ as any).storeHash) {
-    (this.__owl__ as any).storeHash = storeHash;
+      (this.__owl__ as any).storeHash = storeHash;
       didChange = true;
     }
     (this.__owl__ as any).rev = store.observer.rev;
-    return didChange
+    return didChange;
   }
 
   async __checkUpdate() {
     const observer = (this.__owl__ as any).store.observer;
     if (observer.rev === (this.__owl__ as any).rev) {
-        // update was already done by updateProps, from parent
-        return;
+      // update was already done by updateProps, from parent
+      return;
     }
     const didChange = this.__updateStoreProps(this.props);
     if (didChange) {
-        this.render();
+      this.render();
     }
   }
 }

@@ -275,13 +275,11 @@ const LOCALSTORAGE_KEY = "todos-odoo";
 //------------------------------------------------------------------------------
 const actions = {
     addTodo({ state }, title) {
-        const id = state.nextId++;
-        const todo = {
-            id,
+        state.todos.push({
+            id: state.nextId++,
             title,
             completed: false
-        };
-        state.todos.push(todo);
+        });
     },
     removeTodo({ state }, id) {
         const index = state.todos.findIndex(t => t.id === id);
@@ -298,7 +296,7 @@ const actions = {
                 dispatch("removeTodo", todo.id);
             });
     },
-    toggleAll({ state, commit }, completed) {
+    toggleAll({ state, dispatch }, completed) {
         state.todos.forEach(todo => {
             dispatch("editTodo", {
                 id: todo.id,
@@ -341,11 +339,11 @@ class TodoItem extends owl.Component {
     state = { isEditing: false };
 
     removeTodo() {
-        this.env.dispatch("removeTodo", this.props.id);
+        this.env.store.dispatch("removeTodo", this.props.id);
     }
 
     toggleTodo() {
-        this.env.dispatch("toggleTodo", this.props.id);
+        this.env.store.dispatch("toggleTodo", this.props.id);
     }
 
     async editTodo() {
@@ -426,18 +424,10 @@ class TodoApp extends owl.store.ConnectedComponent {
         if (ev.keyCode === ENTER_KEY) {
             const title = ev.target.value;
             if (title.trim()) {
-                this.env.dispatch("addTodo", title);
+                this.dispatch("addTodo", title);
             }
             ev.target.value = "";
         }
-    }
-
-    clearCompleted() {
-        this.env.dispatch("clearCompleted");
-    }
-
-    toggleAll() {
-        this.env.dispatch("toggleAll", !this.allChecked);
     }
 
     setFilter(filter) {
@@ -453,7 +443,6 @@ const qweb = new owl.QWeb(TEMPLATES);
 const env = {
     qweb,
     store,
-    dispatch: store.dispatch.bind(store),
 };
 const app = new TodoApp(env);
 app.mount(document.body);
@@ -466,7 +455,7 @@ const TODO_APP_STORE_XML = `<templates>
       <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
     </header>
     <section class="main" t-if="storeProps.todos.length">
-      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="toggleAll"/>
+      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="dispatch('toggleAll', !allChecked)"/>
       <label for="toggle-all"></label>
       <ul class="todo-list">
         <t t-foreach="visibleTodos" t-as="todo">
@@ -492,7 +481,7 @@ const TODO_APP_STORE_XML = `<templates>
           <a t-on-click="setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
         </li>
       </ul>
-      <button class="clear-completed" t-if="storeProps.todos.length gt remaining" t-on-click="clearCompleted">
+      <button class="clear-completed" t-if="storeProps.todos.length gt remaining" t-on-click="dispatch('clearCompleted')">
         Clear completed
       </button>
     </footer>

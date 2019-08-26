@@ -5,8 +5,7 @@
 - [Overview](#overview)
 - [Example](#example)
 - [Reference](#reference)
-  - [Public API](#public-api)
-  - [Mutations](#mutations)
+  - [Store](#store)
   - [Actions](#actions)
   - [Getters](#getters)
   - [Connecting a Component](#connecting-a-component)
@@ -22,11 +21,10 @@ in various parts of the user interface, and then, it is not obvious which
 component should own which part of the state.
 
 Owl's solution to this issue is a centralized store. It is a class that owns
-some state, and let the developer update it in a structured way (through
-mutations and actions). Owl components can then connect to the store, and will
-be updated if necessary.
+some state, and let the developer update it in a structured way, with `actions`.
+Owl components can then connect to the store, and will be updated if necessary.
 
-Note: Owl's store is inspired by React Redux and VueX.
+Note: Owl store is inspired by React Redux and VueX.
 
 ## Example
 
@@ -34,19 +32,12 @@ Here is what a simple store looks like:
 
 ```js
 const actions = {
-  addTodo({ commit }, message) {
-    commit("addTodo", message);
-  }
-};
-
-const mutations = {
   addTodo({ state }, message) {
-    const todo = {
+    state.todos.push({
       id: state.nextId++,
       message,
       isCompleted: false
-    };
-    state.todos.push(todo);
+    });
   }
 };
 
@@ -55,66 +46,65 @@ const state = {
   nextId: 1
 };
 
-const store = new owl.Store({ state, actions, mutations });
+const store = new owl.Store({ state, actions });
 store.on("update", () => console.log(store.state));
 
 // updating the state
 store.dispatch("addTodo", "fix all bugs");
 ```
 
+This example shows how a store can be defined and used. Note that in most cases,
+actions will be dispatched by connected components.
+
 ## Reference
 
-The store is a simple [`owl.EventBus`](event_bus.md) that triggers `update` events whenever its
-state is changed. Note that these events are triggered only after a microtask
-tick, so only one event will be triggered for any number of state changes in a
+### `Store`
+
+The store is a simple [`owl.EventBus`](event_bus.md) that triggers `update` events
+whenever its state is changed. Note that these events are triggered only after a
+microtask tick, so only one event will be triggered for any number of state changes in a
 call stack.
 
 Also, it is important to mention that the state is observed (with an `owl.Observer`),
-which is the reason why it is able to know if it was changed. This implies that
-state changes need to be done carefully in some cases (adding a new key to an
-object, or modifying an array with the `arr[i] = newValue` syntax). See the
+which is the reason why it is able to know if it was changed. See the
 [Observer](observer.md)'s documentation for more details.
 
-### Public API
+The `Store` class is quite small. It has two public methods:
 
-1. `constructor`
-2. `commit`
-3. `dispatch`
+- its constructor
+- `dispatch`
 
-### Mutations
+The constructor takes a configuration object with four (optional) keys:
 
-Mutations are the only way to modify the state. Changing the state outside a
-mutation is not allowed (and should throw an error). Mutations are synchronous.
+- the initial state
+- the actions
+- the getters
+- the environment
 
-```js
-const mutations = {
-  setLoginState({ state }, loginState) {
-    state.loginState = loginState;
-  }
+```javascript
+const config = {
+  state,
+  actions,
+  getters,
+  env
 };
-```
-
-Mutations are called with the `commit` method on the store, and can receive an arbitrary number of arguments.
-
-```js
-store.commit("setLoginState", "error");
+const store = new Store(config);
 ```
 
 ### Actions
 
-Actions are used to coordinate state changes. It is also useful whenever some
-asynchronous logic is necessary. For example, fetching data should be done
-in an action.
+Actions are used to coordinate state changes. It can be used for both synchronous
+and asynchronous logic.
 
 ```js
 const actions = {
-  async login({ commit }, info) {
-    commit("setLoginState", "pending");
+  async login({ state }, info) {
+    state.loginState = "pending";
     try {
       const loginInfo = await doSomeRPC("/login/", info);
-      commit("setLoginState", loginInfo);
+      state.loginState = loginInfo;
     } catch {
-      commit("setLoginState", "error");
+      state.loginState = "error";
     }
   }
 };
@@ -129,6 +119,36 @@ store.dispatch("login", someInfo);
 
 Note that anything returned by an action will also be returned by the `dispatch`
 call.
+
+Also, it is important to be aware that we need to be careful with asynchronous
+logic. Each state change will potentially trigger a rerendering, so we need to
+make sure that we do not have a partial corrupted state. Here is an example that
+is likely not a good idea:
+
+```javascript
+const actions = {
+  async fetchSomeData({ state }, recordId) {
+    state.recordId = recordId;
+    const data = await doSomeRPC("/read/", recordId);
+    state.recordData = data;
+  }
+};
+```
+
+In the previous example, there is a period of time in which the state has a
+`recordId` which does not correspond to the `recordData`. It is more likely that
+we want an atomic update: updating the `recordId` at the same time as the `recordData`
+values:
+
+```javascript
+const actions = {
+  async fetchSomeData({ state }, recordId) {
+    const data = await doSomeRPC("/read/", recordId);
+    state.recordId = recordId;
+    state.recordData = data;
+  }
+};
+```
 
 ### Getters
 
@@ -181,19 +201,15 @@ need to create a component inheriting from `OwlComponent`:
 
 ```javascript
 const actions = {
-  increment({ commit }) {
-    commit("increment", 1);
-  }
-};
-const mutations = {
   increment({ state }, val) {
     state.counter += val;
   }
 };
+
 const state = {
   counter: 0
 };
-const store = new owl.Store({ state, actions, mutations });
+const store = new owl.Store({ state, actions });
 
 class Counter extends owl.ConnectedComponent {
   static mapStoreToProps(state) {
@@ -227,7 +243,7 @@ The `ConnectedComponent` class can be configured with the following fields:
 - `deep` (boolean): [only useful if no hashFunction is given] if `false`, only watch
   for top level state changes (`true` by default)
 
-Note that the class `ConnectedComponent` has a `dispatch` method.  This means
+Note that the class `ConnectedComponent` has a `dispatch` method. This means
 that the previous example could be simplified like this:
 
 ```javascript

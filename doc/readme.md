@@ -12,15 +12,18 @@ owl
     core
         EventBus
         Observer
+    router
+        Link
+        Router
     store
         Store
         ConnectedComponent
     utils
-        whenReady
+        debounce
+        escape
         loadJS
         loadTemplates
-        escape
-        debounce
+        whenReady
 ```
 
 ## Reference
@@ -30,6 +33,7 @@ owl
 - [Event Bus](event_bus.md)
 - [Observer](observer.md)
 - [QWeb](qweb.md)
+- [Router](router.md)
 - [Store](store.md)
 - [Utils](utils.md)
 - [Virtual DOM](vdom.md)
@@ -42,3 +46,4 @@ owl
 
 - [Comparison with React/Vue](comparison.md)
 - [Tooling](tooling.md)
+- [Templates to start Owl applications (external link)](https://github.com/ged-odoo/owl-templates)

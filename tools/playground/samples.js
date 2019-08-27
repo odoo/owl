@@ -1307,6 +1307,246 @@ const FORM_XML = `<templates>
 </templates>
 `;
 
+const WMS = `// This example is slightly more complex than usual. We demonstrate
+// here a way to manage sub windows in Owl, declaratively. This is still just a
+// demonstration. Managing windows can be as complex as we want.  For example,
+// we could implement the following features:
+// - resizing windows
+// - minimizing windows
+// - configuration options for windows to make a window non resizeable
+// - minimal width/height
+// - better heuristic for initial window position
+// - ...
+
+class HelloWorld extends owl.Component {}
+
+class Counter extends owl.Component {
+  state = { value: 0 };
+
+  inc() {
+    this.state.value++;
+  }
+}
+
+class Window extends owl.Component {
+  get style() {
+    let { width, height, top, left, zindex } = this.props.info;
+
+    return \`width: \${width}px;height: \${height}px;top:\${top}px;left:\${left}px;z-index:\${zindex}\`;
+  }
+  close() {
+    this.trigger("close-window", { id: this.props.info.id });
+  }
+  startDragAndDrop(ev) {
+    this.updateZIndex();
+    this.el.classList.add('dragging');
+    const offsetX = this.props.info.left - ev.pageX;
+    const offsetY = this.props.info.top - ev.pageY;
+    let left, top;
+
+    const el = this.el;
+    const self = this;
+    window.addEventListener("mousemove", moveWindow);
+    window.addEventListener("mouseup", stopDnD, { once: true });
+
+    function moveWindow(ev) {
+      left = Math.max(offsetX + ev.pageX, 0);
+      top = Math.max(offsetY + ev.pageY, 0);
+      el.style.left = \`\${left}px\`;
+      el.style.top = \`\${top}px\`;
+    }
+    function stopDnD() {
+      window.removeEventListener("mousemove", moveWindow);
+      const options = { id: self.props.info.id, left, top };
+      self.el.classList.remove('dragging');
+      self.trigger("set-window-position", options);
+    }
+  }
+  updateZIndex() {
+    this.trigger("update-z-index", { id: this.props.info.id });
+  }
+}
+
+class WindowManager extends owl.Component {
+  components = { Window };
+  windows = [];
+  nextId = 1;
+  currentZindex = 1;
+  addWindow(name) {
+    const info = this.env.windows.find(w => w.name === name);
+    const id = \`w\${this.nextId++}\`;
+    this.windows.push({
+      id: id,
+      title: info.title,
+      width: info.defaultWidth,
+      height: info.defaultHeight,
+      top: 0,
+      left: 0,
+      zindex: this.currentZindex++
+    });
+    this.components[id] = info.component;
+    this.render();
+  }
+  closeWindow(ev) {
+    const id = ev.detail.id;
+    delete this.components[id];
+    const index = this.windows.findIndex(w => w.id === id);
+    this.windows.splice(index, 1);
+    this.render();
+  }
+  setWindowPosition(ev) {
+    const id = ev.detail.id;
+    const w = this.windows.find(w => w.id === id);
+    w.top = ev.detail.top;
+    w.left = ev.detail.left;
+  }
+  updateZIndex(ev) {
+    const id = ev.detail.id;
+    const w = this.windows.find(w => w.id === id);
+    w.zindex = this.currentZindex++;
+    ev.target.style["z-index"] = w.zindex;
+  }
+}
+
+class App extends owl.Component {
+  components = { WindowManager };
+
+  addWindow(name) {
+    this.refs.wm.addWindow(name);
+  }
+}
+
+const qweb = new owl.QWeb(TEMPLATES);
+const windows = [
+  {
+    name: "Hello",
+    title: "Hello",
+    component: HelloWorld,
+    defaultWidth: 200,
+    defaultHeight: 100
+  },
+  {
+    name: "Counter",
+    title: "Click Counter",
+    component: Counter,
+    defaultWidth: 300,
+    defaultHeight: 120
+  }
+];
+
+const env = { qweb, windows };
+const app = new App(env);
+app.mount(document.body);
+`;
+
+const WMS_XML = `<templates>
+  <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex">
+    <div class="header">
+      <span t-on-mousedown="startDragAndDrop"><t t-esc="props.info.title"/></span>
+      <span class="close" t-on-click="close">×</span>
+    </div>
+    <t t-slot="default"/>
+  </div>
+
+  <div t-name="WindowManager" class="window-manager"
+       t-on-close-window="closeWindow"
+       t-on-update-z-index="updateZIndex"
+       t-on-set-window-position="setWindowPosition">
+    <Window t-foreach="windows" t-as="w" t-key="w.id" info="w">
+      <t t-component="{{w.id}}"/>
+    </Window>
+  </div>
+
+  <div t-name="App" class="app">
+    <WindowManager t-ref="wm"/>
+    <div class="menubar">
+      <button t-on-click="addWindow('Hello')">Say Hello</button>
+      <button t-on-click="addWindow('Counter')">Counter</button>
+    </div>
+  </div>
+
+  <div t-name="HelloWorld">
+    World
+  </div>
+
+  <div t-name="Counter" class="counter">
+    <button t-on-click="inc">Inc</button>
+    <span><t t-esc="state.value"/></span>
+  </div>
+</templates>
+`;
+
+const WMS_CSS = `body {
+    margin: 0;
+}
+
+.app {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 50px;
+}
+
+.window-manager {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #eeeeee;
+    overflow: hidden;
+}
+
+.menubar {
+    background-color: #875a7b;
+    color: white;
+}
+
+.menubar button {
+    height: 40px;
+    font-size: 18px;
+    margin: 5px;
+}
+
+.window {
+    display: grid;
+    grid-template-rows: 30px auto;
+    border: 1px solid gray;
+    background-color: white;
+    position: absolute;
+    box-shadow: 1px 1px 2px 1px grey;
+}
+
+.window.dragging {
+    opacity: 0.75;
+}
+
+.window .header {
+    background-color: #875a7b;
+    display: grid;
+    grid-template-columns: auto 24px;
+    color: white;
+    line-height: 30px;
+    padding-left: 5px;
+    cursor: default;
+    user-select: none;
+}
+
+.window .header .close {
+    cursor: pointer;
+    font-size: 22px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: bold;
+}
+
+.counter {
+    font-size: 20px;
+}
+.counter button {
+    width: 80px;
+    height:40px;
+    font-size: 20px;
+}`;
+
 export const SAMPLES = [
   {
     description: "Components",
@@ -1348,6 +1588,12 @@ export const SAMPLES = [
     code: SLOTS,
     xml: SLOTS_XML,
     css: SLOTS_CSS
+  },
+  {
+      description: "Window Management System",
+      code: WMS,
+      xml: WMS_XML,
+      css: WMS_CSS,
   },
   {
     description: "Asynchronous components",

@@ -1,7 +1,7 @@
 import { Component, Env } from "../../src/component/component";
 import { ConnectedComponent } from "../../src/store/connected_component";
 import { Store } from "../../src/store/store";
-import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
+import { makeTestEnv, makeTestFixture, nextTick, makeDeferred } from "../helpers";
 
 describe("connecting a component to store", () => {
   let fixture: HTMLElement;
@@ -595,6 +595,66 @@ describe("connecting a component to store", () => {
     expect(steps).toEqual(["parent", "child", "parent", "child"]);
   });
 
+  test("correct update order when parent/children are connectedddd", async () => {
+    const steps: string[] = [];
+    let def = makeDeferred();
+    def.resolve();
+
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent">
+                <Child t-if="storeProps.flag" someId="storeProps.someId"/>
+            </div>
+            <span t-name="Child"><t t-esc="storeProps.msg"/></span>
+        </templates>
+    `);
+
+    class Parent extends ConnectedComponent<any, any, any> {
+      components = { Child };
+      static mapStoreToProps(s) {
+        steps.push("parent");
+        return { flag: s.flag, someId: s.someId };
+      }
+      async render(force) {
+          await def;
+          return super.render(force);
+      }
+    }
+
+    class Child extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps(s, props) {
+        steps.push("child");
+        return { msg: s.messages[props.someId] };
+      }
+    }
+
+    const state = { someId: 1, flag: true, messages: {1: "abc"}};
+    const actions = {
+      setFlagToFalse({ state }) {
+        state.flag = false;
+      }
+    };
+
+    const store = new Store({ state, actions });
+    (<any>env).store = store;
+    const app = new Parent(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
+    expect(steps).toEqual(["parent", "child"]);
+
+    def = makeDeferred();
+    store.dispatch("setFlagToFalse");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
+    expect(steps).toEqual(["parent", "child", "parent"]);
+
+    def.resolve();
+    await nextTick();
+    expect(steps).toEqual(["parent", "child", "parent"]);
+    expect(fixture.innerHTML).toBe("<div></div>");
+  });
+
   test("connected parent/children: no double rendering", async () => {
     const actions = {
       editTodo({ state }) {
@@ -947,5 +1007,50 @@ describe("connected components and default values", () => {
     store.dispatch("changeMessageContent", 200, "UpdatedMessage200");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div><div>200UpdatedMessage200</div></div></div>");
+  });
+
+  test("connected child components stop listening to store when destroyed", async () => {
+    let steps: any = [];
+    env.qweb.addTemplates(`
+        <templates>
+          <div t-name="Parent">
+              <Child t-if="state.child" />
+          </div>
+          <div t-name="Child"><t t-esc="storeProps.val"/></div>
+        </templates>
+    `);
+    class Child extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps(s) {
+        return s;
+      }
+    }
+
+    class Parent extends Component<any, any, any> {
+      components = { Child };
+      state = { child: true };
+    }
+
+    class TestStore extends Store {
+      on(eventType, owner, callback) {
+        steps.push(`on:${eventType}`);
+        super.on(eventType, owner, callback);
+      }
+      off(eventType, owner) {
+        steps.push(`off:${eventType}`);
+        super.off(eventType, owner);
+      }
+    }
+    const store = new TestStore({ state: {val: 1} });
+    (<any>env).store = store;
+    const parent = new Parent(env);
+
+    await parent.mount(fixture);
+    expect(steps).toEqual(["on:update"]);
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+
+    parent.state.child = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(steps).toEqual(["on:update", "off:update"]);
   });
 });

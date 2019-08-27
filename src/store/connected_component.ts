@@ -77,6 +77,10 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     (this.__owl__ as any).store.off("update", this);
     super.__callWillUnmount();
   }
+  __destroy(parent: any) {
+    (this.__owl__ as any).store.off("update", this);
+    super.__destroy(parent);
+  }
 
   async __updateProps(nextProps: P, f, p, s, v) {
     this.__updateStoreProps(nextProps);
@@ -110,7 +114,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     }
     const didChange = this.__updateStoreProps(this.props);
     if (didChange) {
-      this.render();
+      return this.render();
     }
   }
 }

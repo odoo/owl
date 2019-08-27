@@ -469,10 +469,6 @@ interface DOMAPI {
   nextSibling: (node: Node) => Node;
   tagName: (elm: Element) => string;
   setTextContent: (node: Node, text: string | null) => void;
-  getTextContent: (node: Node) => string | null;
-  isElement: (node: Node) => node is Element;
-  isText: (node: Node) => node is Text;
-  isComment: (node: Node) => node is Comment;
 }
 
 function createElement(tagName: any): HTMLElement {
@@ -519,22 +515,6 @@ function setTextContent(node: Node, text: string | null): void {
   node.textContent = text;
 }
 
-function getTextContent(node: Node): string | null {
-  return node.textContent;
-}
-
-function isElement(node: Node): node is Element {
-  return node.nodeType === 1;
-}
-
-function isText(node: Node): node is Text {
-  return node.nodeType === 3;
-}
-
-function isComment(node: Node): node is Comment {
-  return node.nodeType === 8;
-}
-
 const htmlDomApi = {
   createElement,
   createElementNS,
@@ -547,10 +527,6 @@ const htmlDomApi = {
   nextSibling,
   tagName,
   setTextContent,
-  getTextContent,
-  isElement,
-  isText,
-  isComment
 } as DOMAPI;
 
 //------------------------------------------------------------------------------

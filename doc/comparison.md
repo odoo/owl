@@ -10,6 +10,7 @@ discussed, feel free to open an issue/submit a PR to correct this text.
 ## Content
 
 - [Size](#size)
+- [Class Based](#class-based)
 - [Tooling/Build Step](#toolingbuild-step)
 - [Templating](#templating)
 - [Asynchronous rendering](#asynchronous-rendering)
@@ -21,12 +22,23 @@ discussed, feel free to open an issue/submit a PR to correct this text.
 OWL is intended to be small and to work at a slightly lower level of abstraction
 than React and Vue. Also, jQuery is not the same kind of framework, but it is interesting to compare.
 
-| Framework                | Size (minified) | Size (minified, gzipped) |
-| ------------------------ | --------------- | ------------------------ |
-| OWL                      | 32kb            | 11kb                     |
-| Vue + VueX               |                 | 30kb                     |
-| React + ReactDOM + Redux |                 | 40kb                     |
-| jQuery                   | 86kb            | 30kb                     |
+| Framework                | Size (minified, gzipped) |
+| ------------------------ | ------------------------ |
+| OWL                      | 16kb                     |
+| Vue + VueX               | 30kb                     |
+| React + ReactDOM + Redux | 40kb                     |
+| jQuery                   | 30kb                     |
+
+## Class Based
+
+Both React and Vue moved away from defining components with classes.  They prefer
+a more functional approach, in particular, with the new `hooks` mechanisms.
+
+This has some advantages and disadvantages.  But the end result is that React
+and Vue both offers multiple different ways of defining new components.  In
+contrast, Owl has only one mechanism: class-based components. We believe that Owl
+components are fast enough for all our usecases, and making it as simple as
+possible for developers is more valuable (for us).
 
 ## Tooling/Build step
 
@@ -45,7 +57,7 @@ components, which also necessitate a build step.
 On the flipside, external tooling may make it harder to use in some case, but it
 also brings a lot of benefits. And React/Vue have both a large ecosystem.
 
-### Templating
+## Templating
 
 OWL uses its own QWeb engine, which compiles templates on the
 frontend, as they are needed. This is extremely convenient for our use case, in
@@ -128,8 +140,10 @@ by getters/setters. With that, it can notify components whenever the state that
 they read was changed.
 
 Owl is closer to vue: it also tracks magically the state properties, but it does
-only increment a counter whenever it changes (and a _deep_ counter for each of
-its parents). This assumes that the state is actually a tree.
+only increment an internal counter whenever it changes. Note that it is done
+with a `Proxy`, which means that it is totally transparent to the developers.
+Adding new keys is supported. Once any part of the state has been changed, a
+rendering is scheduled in the next microtask tick (promise queue).
 
 ## State Management
 
@@ -190,7 +204,33 @@ keeps track of who get data, and retrigger a render when it was changed.
 
 **Owl**
 
-Owl store is a little bit like a mix of redux and vuex: it has mutations and
-actions, like VueX, it keeps track of the state changes, but it does not notify
-a component when the state changes. Instead, components need to connect to the
-store like in redux, with a function that will listen to the relevant state.
+Owl store is a little bit like a mix of redux and vuex: it has actions (but not
+mutations), and like VueX, it keeps track of the state changes. However, it does
+not notify a component when the state changes. Instead, components need to connect
+to the store like in redux, by inheriting the `ConnectedComponent` class.
+
+```javascript
+const actions = {
+  increment({ state }, val) {
+    state.counter += val;
+  }
+};
+
+const state = {
+  counter: 0
+};
+const store = new owl.Store({ state, actions });
+
+class Counter extends owl.ConnectedComponent {
+  static mapStoreToProps(state) {
+    return {
+      value: state.counter
+    };
+  }
+  increment() {
+    this.env.store.dispatch("increment");
+  }
+}
+
+const counter = new Counter({ store, qweb });
+```

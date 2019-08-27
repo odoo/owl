@@ -4,16 +4,20 @@ _A web framework for structured, dynamic and maintainable applications_
 
 ## Project Overview
 
-The Odoo Web Library (OWL) is a small
-UI framework intended to be the basis for the [Odoo](https://www.odoo.com/) Web Client, and hopefully many
-other Odoo related projects. OWL's main feature is a _declarative component system_, with QWeb as a template engine, asynchronous rendering, and an underlying virtual dom.
+The Odoo Web Library (OWL) is a small (~16kb gzipped) UI framework intended to be the basis for
+the [Odoo](https://www.odoo.com/) Web Client, and hopefully many other Odoo
+related projects. OWL's main features are:
+
+- a _declarative component system_, (template based, with asynchronous rendering and a virtual dom)
+- a store implementation (for state management)
+- a small frontend router
 
 **Try it online!** An online playground is available at [https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground) to let you experiment with the OWL framework.
 
 ## OWL's Design Principles
 
 OWL is designed to be used in highly dynamic applications where changing
-requirements are common, code needs to be maintained by large teams.
+requirements are common and code needs to be maintained by large teams.
 
 - **XML based**: templates are based on the XML format, which allows interesting
   applications. For example, they could be stored in a database and modified
@@ -26,8 +30,11 @@ requirements are common, code needs to be maintained by large teams.
   for various reasons (security/deployment/dynamic modules/specific assets tools),
   it is not ok to use standard web tools based on `npm`.
 
-Owl is not designed to be fast or small (even though it is quite good on those
-two topics). If you are interested in a comparison with React or Vue, you will
+Owl is not designed to be fast nor small (even though it is quite good on those
+two topics). It is a no nonsense framework to build applications.  There is only
+one way to define components (with classes).
+
+If you are interested in a comparison with React or Vue, you will
 find some more information [here](doc/comparison.md).
 
 ## Example

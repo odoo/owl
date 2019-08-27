@@ -39,9 +39,8 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     return {};
   }
 
-  dispatch() {
-    const [name, ...payload] = arguments;
-    (this.__owl__ as any).store.dispatch(name, ...payload);
+  dispatch(name, ...payload) {
+    return (this.__owl__ as any).store.dispatch(name, ...payload);
   }
 
   /**

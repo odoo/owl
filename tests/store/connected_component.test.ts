@@ -1053,4 +1053,44 @@ describe("connected components and default values", () => {
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(steps).toEqual(["on:update", "off:update"]);
   });
+
+  test("dispatch an action", async () => {
+    env.qweb.addTemplates(`
+      <templates>
+        <div t-name="App">
+          <t t-esc="storeProps.counter"/>
+        </div>
+      </templates>
+    `);
+
+    class App extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps = function(state) {
+        return {
+          counter: state.counter
+        };
+      };
+    }
+
+    const state = {
+      counter: 0
+    };
+
+    const actions = {
+      inc({ state }) {
+        return ++state.counter;
+      }
+    };
+
+    const store = new Store({ state, actions });
+    (<any>env).store = store;
+    const app = new App(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>0</div>");
+
+    const res = app.dispatch('inc');
+    expect(res).toBe(1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+  });
 });

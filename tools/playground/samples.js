@@ -268,7 +268,7 @@ const TODO_APP_STORE = `// This example is an implementation of the TodoList app
 
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
-const LOCALSTORAGE_KEY = "todos-odoo";
+const LOCALSTORAGE_KEY = "todomvc";
 
 //------------------------------------------------------------------------------
 // Store Definition
@@ -315,20 +315,20 @@ const actions = {
     }
 };
 
+function saveState(state) {
+    const str = JSON.stringify(state);
+    window.localStorage.setItem(LOCALSTORAGE_KEY, str);
+}
+
+function loadState() {
+    const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
+    return localState ? JSON.parse(localState) : { todos: [], nextId: 1};
+}
+
 function makeStore() {
-    const todos = JSON.parse(
-        window.localStorage.getItem(LOCALSTORAGE_KEY) || "[]"
-    );
-    const nextId = Math.max(0, ...todos.map(t => t.id || 0)) + 1;
-    const state = {
-        todos,
-        nextId
-    };
+    const state = loadState();
     const store = new owl.store.Store({ state, actions });
-    store.on("update", null, () => {
-        const state = JSON.stringify(store.state.todos);
-        window.localStorage.setItem(LOCALSTORAGE_KEY, state);
-    });
+    store.on("update", null, () => saveState(store.state));
     return store;
 }
 
@@ -375,7 +375,7 @@ class TodoItem extends owl.Component {
         if (!value) {
             this.removeTodo(this.props.id);
         } else {
-            this.env.dispatch("editTodo", {
+            this.env.store.dispatch("editTodo", {
                 id: this.props.id,
                 title: value
             });

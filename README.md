@@ -14,29 +14,6 @@ related projects. OWL's main features are:
 
 **Try it online!** An online playground is available at [https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground) to let you experiment with the OWL framework.
 
-## OWL's Design Principles
-
-OWL is designed to be used in highly dynamic applications where changing
-requirements are common and code needs to be maintained by large teams.
-
-- **XML based**: templates are based on the XML format, which allows interesting
-  applications. For example, they could be stored in a database and modified
-  dynamically with `xpaths`.
-- **templates compilation in the browser**: this may not be a good fit for all
-  applications, but if you need to generate dynamically user interfaces in the
-  browser, this is very powerful. For example, a generic form view component
-  could generate a specific form user interface for each various models, from a XML view.
-- **no toolchain required**: this is extremely useful for some applications, if,
-  for various reasons (security/deployment/dynamic modules/specific assets tools),
-  it is not ok to use standard web tools based on `npm`.
-
-Owl is not designed to be fast nor small (even though it is quite good on those
-two topics). It is a no nonsense framework to build applications.  There is only
-one way to define components (with classes).
-
-If you are interested in a comparison with React or Vue, you will
-find some more information [here](doc/comparison.md).
-
 ## Example
 
 Here is a short example to illustrate interactive components:
@@ -67,6 +44,40 @@ Note that we assume here that the xml templates are available in the `TEMPLATES`
 string. More interesting examples can be found on the
 [playground](https://odoo.github.io/owl/playground) application.
 
+## OWL's Design Principles
+
+OWL is designed to be used in highly dynamic applications where changing
+requirements are common and code needs to be maintained by large teams.
+
+- **XML based**: templates are based on the XML format, which allows interesting
+  applications. For example, they could be stored in a database and modified
+  dynamically with `xpaths`.
+- **templates compilation in the browser**: this may not be a good fit for all
+  applications, but if you need to generate dynamically user interfaces in the
+  browser, this is very powerful. For example, a generic form view component
+  could generate a specific form user interface for each various models, from a XML view.
+- **no toolchain required**: this is extremely useful for some applications, if,
+  for various reasons (security/deployment/dynamic modules/specific assets tools),
+  it is not ok to use standard web tools based on `npm`.
+
+Owl is not designed to be fast nor small (even though it is quite good on those
+two topics). It is a no nonsense framework to build applications.  There is only
+one way to define components (with classes).
+
+If you are interested in a comparison with React or Vue, you will
+find some more information [here](doc/comparison.md).
+
+## Documentation
+
+The complete documentation can be found [here](doc/readme.md). The most important sections are:
+
+- [Quick Start](doc/quick_start.md)
+- [Component](doc/component.md)
+- [QWeb](doc/qweb.md)
+
+Found an issue in the documentation? A broken link? Some outdated information?
+Submit a PR!
+
 ## Installing/Building
 
 If you want to use a simple `<script>` tag, the last release can be downloaded here:
@@ -85,17 +96,6 @@ Some npm scripts are available:
 | `npm run test:watch`  | run all tests, and keep a watcher                                            |
 | `npm run tools`       | build tools applications, start a static server (see [here](doc/tooling.md)) |
 | `npm run tools:watch` | same as `tools`, but with a watcher to rebuild owl                           |
-
-## Documentation
-
-The complete documentation can be found [here](doc/readme.md). The most important sections are:
-
-- [Quick Start](doc/quick_start.md)
-- [Component](doc/component.md)
-- [QWeb](doc/qweb.md)
-
-Found an issue in the documentation? A broken link? Some outdated information?
-Submit a PR!
 
 ## License
 

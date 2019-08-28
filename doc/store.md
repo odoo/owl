@@ -103,7 +103,7 @@ const actions = {
     try {
       const loginInfo = await doSomeRPC("/login/", info);
       state.loginState = loginInfo;
-    } catch {
+    } catch (e) {
       state.loginState = "error";
     }
   }

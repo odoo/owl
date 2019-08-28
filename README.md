@@ -23,6 +23,10 @@ Here is a short example to illustrate interactive components:
   <button t-name="Counter" t-on-click="increment">
     Click Me! [<t t-esc="state.value"/>]
   </button>
+  <div t-name="App">
+    <span>Hello Owl</span>
+    <Counter />
+  </div>
 </templates>
 ```
 
@@ -35,9 +39,13 @@ class Counter extends owl.Component {
   }
 }
 
+class App extends owl.Component {
+    components = { Counter };
+}
+
 const qweb = new owl.QWeb(TEMPLATES);
-const counter = new Counter({ qweb });
-counter.mount(document.body);
+const app = new App({ qweb });
+app.mount(document.body);
 ```
 
 Note that we assume here that the xml templates are available in the `TEMPLATES`
@@ -99,4 +107,4 @@ Some npm scripts are available:
 
 ## License
 
-OWL is [GPL licensed](./LICENSE).
+OWL is [LGPL licensed](./LICENSE).

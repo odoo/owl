@@ -144,12 +144,16 @@ find a template with the component name (or one of its ancestor).
 
 We explain here all the public methods of the `Component` class.
 
-- **`mount(target)`** (async): this is the main way a component's hierarchy is added to the
-  DOM: the root component is mounted to a target HTMLElement. Obviously, this
-  is asynchronous, since each children need to be created as well. Most applications
-  will need to call `mount` exactly once, on the root component.
+- **`mount(target, renderBeforeRemount=false)`** (async): this is the main way a
+  component is added to the DOM: the root component is mounted to a target
+  HTMLElement. Obviously, this is asynchronous, since each children need to be
+  created as well. Most applications will need to call `mount` exactly once, on
+  the root component.
 
-  Note that a component can be mounted and unmounted multiple times if needed.
+  The `renderBeforeRemount` argument is useful when a component is unmounted and remounted.
+  In that case, we may want to rerender the component _before_ it is remounted, if
+  we know that its state (or something in the environment, or ...) has changed.
+  In that case, it should simply set to `true`.
 
 - **`unmount()`**: in case a component need to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more
@@ -258,7 +262,7 @@ interface. Therefore, some care should be made to make this method as
 fast as possible.
 
 After the `willStart` method is completed, the state will be observed with a
-new `Observer`.  Then, the component will be rendered by `QWeb`.
+new `Observer`. Then, the component will be rendered by `QWeb`.
 
 #### `mounted()`
 

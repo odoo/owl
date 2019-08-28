@@ -447,6 +447,49 @@ exports[`class and style attributes with t-component t-att-class is properly add
 }"
 `;
 
+exports[`composition sub components dom state with t-keepalive is preserved 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['state'].ok) {
+        //COMPONENT
+        let def3;
+        let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
+        let _2_index = c1.length;
+        c1.push(null);
+        let props4 = {};
+        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+                def3 = w4.__owl__.renderPromise;
+            } else {
+                w4.destroy();
+                w4 = false;
+            }
+        }
+        if (!w4) {
+            let componentKey4 = \`InputWidget\`;
+            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+            w4 = new W4(parent, props4);
+            parent.__owl__.cmap[4] = w4.__owl__.id;
+            def3 = w4.__prepare();
+            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.unmount();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        } else {
+            def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, w4.__owl__.isMounted ? extra.patchQueue : []);
+            def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w4.el,vn.elm);vn.elm=w4.el;w4.__remount();};c1[_2_index]=pvnode;});
+        }
+        extra.promises.push(def3);
+    }
+    return vn1;
+}"
+`;
+
 exports[`composition sub components with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
@@ -583,6 +626,49 @@ exports[`composition t-component with dynamic value 2 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
+    return vn1;
+}"
+`;
+
+exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['state'].flag) {
+        //COMPONENT
+        let def3;
+        let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
+        let _2_index = c1.length;
+        c1.push(null);
+        let props4 = {v:context['state'].n};
+        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
+                def3 = w4.__owl__.renderPromise;
+            } else {
+                w4.destroy();
+                w4 = false;
+            }
+        }
+        if (!w4) {
+            let componentKey4 = \`ChildWidget\`;
+            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+            w4 = new W4(parent, props4);
+            parent.__owl__.cmap[4] = w4.__owl__.id;
+            def3 = w4.__prepare();
+            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.unmount();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        } else {
+            def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, w4.__owl__.isMounted ? extra.patchQueue : []);
+            def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w4.el,vn.elm);vn.elm=w4.el;w4.__remount();};c1[_2_index]=pvnode;});
+        }
+        extra.promises.push(def3);
+    }
     return vn1;
 }"
 `;

@@ -733,15 +733,16 @@ describe("lifecycle hooks", () => {
     // we make sure here that willPatch/patched is only called if widget is in
     // dom, mounted
     const steps: string[] = [];
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `
-        <div>
-            <t t-if="state.flag" t-component="child" v="state.n" t-keepalive="1"/>
-        </div>`
-    );
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="ParentWidget">
+                <ChildWidget t-if="state.flag" v="state.n" t-keepalive="1"/>
+            </div>
+        </templates>
+    `);
+
     class ParentWidget extends Widget {
-      components = { child: ChildWidget };
+      components = { ChildWidget };
       state = { n: 1, flag: true };
     }
 
@@ -761,6 +762,8 @@ describe("lifecycle hooks", () => {
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
+
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
     expect(steps).toEqual(["child:mounted"]);
     widget.state.flag = false;
     await nextTick();
@@ -1124,6 +1127,7 @@ describe("composition", () => {
     const input2 = fixture.getElementsByTagName("input")[0];
     expect(input).toBe(input2);
     expect(input2.value).toBe("test");
+    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
   });
 
   test("sub widget with t-ref and t-keepalive", async () => {
@@ -4009,5 +4013,75 @@ describe("unmounting and remounting", () => {
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
     expect(steps).toEqual(["willstart", "mounted"]);
+  });
+
+  test("state changes in willUnmount do not trigger rerender", async () => {
+    const steps: string[] = [];
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent">
+                <Child t-if="state.flag" val="state.val"/>
+            </div>
+            <span t-name="Child"><t t-esc="props.val"/><t t-esc="state.n"/></span>
+        </templates>
+    `);
+
+    class Child extends Widget {
+      state = { n: 2 };
+      __render(a, b, c, d) {
+        steps.push("render");
+        return super.__render(a, b, c, d);
+      }
+      willPatch() {
+        steps.push("willPatch");
+      }
+      patched() {
+        steps.push("patched");
+      }
+
+      willUnmount() {
+        steps.push("willUnmount");
+        this.state.n = 3;
+      }
+    }
+    class Parent extends Widget {
+      components = { Child };
+      state = { val: 1, flag: true };
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(steps).toEqual(["render"]);
+    expect(fixture.innerHTML).toBe("<div><span>12</span></div>");
+    widget.state.flag = false;
+    await nextTick();
+    // we make sure here that no call to __render is done
+    expect(steps).toEqual(["render", "willUnmount"]);
+  });
+
+  test("state changes in willUnmount will be applied on remount", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="TestWidget"><t t-esc="state.val"/></div>
+        </templates>
+    `);
+
+    class TestWidget extends Widget {
+      state = { val: 1 };
+      willUnmount() {
+        this.state.val = 3;
+      }
+    }
+
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+    widget.unmount();
+    expect(fixture.innerHTML).toBe("");
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+    widget.unmount();
+    await widget.mount(fixture, true);
+    expect(fixture.innerHTML).toBe("<div>3</div>");
   });
 });

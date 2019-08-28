@@ -278,19 +278,22 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    *
    * Note that a component can be mounted an unmounted several times
    */
-  async mount(target: HTMLElement): Promise<void> {
-    if (this.__owl__.isMounted) {
+  async mount(target: HTMLElement, renderBeforeRemount: boolean = false): Promise<void> {
+    const __owl__ = this.__owl__;
+    if (__owl__.isMounted) {
       return;
     }
-    if (!this.__owl__.vnode) {
-      // we use the fact that renderId === 1 as a way to determine that the
-      // component is mounted for the first time
+    if (!__owl__.vnode) {
       const vnode = await this.__prepare();
-      if (this.__owl__.isDestroyed) {
+      if (__owl__.isDestroyed) {
         // component was destroyed before we get here...
         return;
       }
       this.__patch(vnode);
+    } else if (renderBeforeRemount) {
+      const patchQueue = [];
+      await this.__render(false, patchQueue, undefined, undefined);
+      this.__applyPatchQueue(<any[]>patchQueue);
     }
     target.appendChild(this.el!);
 
@@ -561,9 +564,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     const __owl__ = this.__owl__;
     const promises: Promise<void>[] = [];
     const patch: any[] = [this];
-    if (__owl__.isMounted) {
-      patchQueue.push(patch);
-    }
+    patchQueue.push(patch);
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }

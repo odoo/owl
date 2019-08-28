@@ -1109,18 +1109,6 @@
     function setTextContent(node, text) {
         node.textContent = text;
     }
-    function getTextContent(node) {
-        return node.textContent;
-    }
-    function isElement(node) {
-        return node.nodeType === 1;
-    }
-    function isText(node) {
-        return node.nodeType === 3;
-    }
-    function isComment(node) {
-        return node.nodeType === 8;
-    }
     const htmlDomApi = {
         createElement,
         createElementNS,
@@ -1133,10 +1121,6 @@
         nextSibling,
         tagName,
         setTextContent,
-        getTextContent,
-        isElement,
-        isText,
-        isComment
     };
     function addNS(data, children, sel) {
         data.ns = "http://www.w3.org/2000/svg";
@@ -1312,12 +1296,12 @@
             this._addTemplate(name, doc.firstChild);
         }
         /**
-         * Load templates from a xml (as a string).  This will look up for the first
-         * <templates> tag, and will consider each child of this as a template, with
-         * the name given by the t-name attribute.
+         * Load templates from a xml (as a string or xml document).  This will look up
+         * for the first <templates> tag, and will consider each child of this as a
+         * template, with the name given by the t-name attribute.
          */
         addTemplates(xmlstr) {
-            const doc = parseXML(xmlstr);
+            const doc = typeof xmlstr === 'string' ? parseXML(xmlstr) : xmlstr;
             const templates = doc.getElementsByTagName("templates")[0];
             if (!templates) {
                 return;
@@ -2752,7 +2736,14 @@
             ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             // need to update component
-            const patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
+            let patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
+            if (keepAlive) {
+                // if we have t-keepalive="1", the component could be unmounted, but then
+                // we __updateProps is called.  This is ok, but we do not want to call
+                // the willPatch/patched hooks of the component in this case, so we
+                // disable the patch queue
+                patchQueueCode = `w${componentID}.__owl__.isMounted ? ${patchQueueCode} : []`;
+            }
             if (QWeb.dev) {
                 ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
             }
@@ -2958,7 +2949,10 @@
                 renderPromise: null,
                 renderProps: props || null,
                 boundHandlers: {},
-                mountedHandlers: {}
+                mountedHandlers: {},
+                observer: null,
+                render: null,
+                classObj: null
             };
         }
         /**
@@ -3054,44 +3048,57 @@
          *
          * Note that a component can be mounted an unmounted several times
          */
-        async mount(target) {
-            if (this.__owl__.isMounted) {
+        async mount(target, renderBeforeRemount = false) {
+            const __owl__ = this.__owl__;
+            if (__owl__.isMounted) {
                 return;
             }
-            if (!this.__owl__.vnode) {
-                // we use the fact that renderId === 1 as a way to determine that the
-                // component is mounted for the first time
+            if (!__owl__.vnode) {
                 const vnode = await this.__prepare();
-                if (this.__owl__.isDestroyed) {
+                if (__owl__.isDestroyed) {
                     // component was destroyed before we get here...
                     return;
                 }
                 this.__patch(vnode);
+            }
+            else if (renderBeforeRemount) {
+                const patchQueue = [];
+                await this.__render(false, patchQueue, undefined, undefined);
+                this.__applyPatchQueue(patchQueue);
             }
             target.appendChild(this.el);
             if (document.body.contains(target)) {
                 this.__callMounted();
             }
         }
+        /**
+         * The unmount method is the opposite of the mount method.  It is useful
+         * to call willUnmount calls and remove the component from the DOM.
+         */
         unmount() {
             if (this.__owl__.isMounted) {
                 this.__callWillUnmount();
                 this.el.remove();
             }
         }
-        async render(force = false, patchQueue, scope, vars) {
+        /**
+         * The render method is the main entry point to render a component (once it
+         * is ready. This method is not initially called when the component is
+         * rendered the first time).
+         *
+         * This method will cause all its sub components to potentially rerender
+         * themselves.  Note that `render` is not called if a component is updated via
+         * its props.
+         */
+        async render(force = false) {
             const __owl__ = this.__owl__;
             if (!__owl__.isMounted) {
                 return;
             }
-            const shouldPatch = !patchQueue;
-            if (shouldPatch) {
-                patchQueue = [];
-            }
-            __owl__.renderId++;
-            const renderId = __owl__.renderId;
-            await this.__render(force, patchQueue, scope, vars);
-            if (shouldPatch && __owl__.isMounted && renderId === __owl__.renderId) {
+            const patchQueue = [];
+            const renderId = ++__owl__.renderId;
+            await this.__render(force, patchQueue, undefined, undefined);
+            if (__owl__.isMounted && renderId === __owl__.renderId) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
                 this.__applyPatchQueue(patchQueue);
@@ -3162,6 +3169,17 @@
         //--------------------------------------------------------------------------
         // Private
         //--------------------------------------------------------------------------
+        /**
+         * Private helper to perform a full destroy, from the point of view of an Owl
+         * component. It does not remove the el (this is done only once on the top
+         * level destroyed component, for performance reasons).
+         *
+         * The job of this method is mostly to call willUnmount hooks, and to perform
+         * all necessary internal cleanup.
+         *
+         * Note that it does not call the __callWillUnmount method to avoid visiting
+         * all children many times.
+         */
         __destroy(parent) {
             const __owl__ = this.__owl__;
             const isMounted = __owl__.isMounted;
@@ -3214,6 +3232,10 @@
                 }
             }
         }
+        /**
+         * The __updateProps method is called by the t-component directive whenever
+         * it updates a component (so, when the parent template is rerendered).
+         */
         async __updateProps(nextProps, forceUpdate = false, patchQueue, scope, vars) {
             const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
             if (shouldUpdate) {
@@ -3223,15 +3245,16 @@
                 }
                 await this.willUpdateProps(nextProps);
                 this.props = nextProps;
-                await this.render(forceUpdate, patchQueue, scope, vars);
+                await this.__render(forceUpdate, patchQueue, scope, vars);
             }
         }
+        /**
+         * Main patching method. We call the virtual dom patch method here to convert
+         * a virtual dom vnode into some actual dom.
+         */
         __patch(vnode) {
             const __owl__ = this.__owl__;
             const target = __owl__.vnode || document.createElement(vnode.sel);
-            if (this.__owl__.classObj) {
-                vnode.data.class = Object.assign(vnode.data.class || {}, this.__owl__.classObj);
-            }
             __owl__.vnode = patch(target, vnode);
         }
         __prepare(scope, vars) {
@@ -3286,9 +3309,7 @@
             const __owl__ = this.__owl__;
             const promises = [];
             const patch = [this];
-            if (__owl__.isMounted) {
-                patchQueue.push(patch);
-            }
+            patchQueue.push(patch);
             if (__owl__.observer) {
                 __owl__.observer.allowMutations = false;
             }
@@ -3318,6 +3339,12 @@
             // parent component.  With this, we make sure that the parent component will be
             // able to patch itself properly after
             vnode.key = __owl__.id;
+            // we applly here the class information described on the component by the
+            // template (so, something like <MyComponent class="..."/>) to the actual
+            // root vnode
+            if (__owl__.classObj) {
+                vnode.data.class = Object.assign(vnode.data.class || {}, __owl__.classObj);
+            }
             return Promise.all(promises).then(() => vnode);
         }
         /**
@@ -3344,6 +3371,10 @@
                 this.mounted();
             }
         }
+        /**
+         * Enable the observe feature on the state.  We only create an observer if
+         * there is some state to be observed.
+         */
         __observeState() {
             if (this.state) {
                 const __owl__ = this.__owl__;
@@ -3401,6 +3432,14 @@
     //------------------------------------------------------------------------------
     // Error handling
     //------------------------------------------------------------------------------
+    /**
+     * This is the global error handler for errors occurring in Owl main lifecycle
+     * methods.  Caught errors are triggered on the QWeb instance, and are
+     * potentially given to some parent component which implements `catchError`.
+     *
+     * If there are no such component, we destroy everything. This is better than
+     * being in a corrupted state.
+     */
     function errorHandler(error, component) {
         let canCatch = false;
         let qweb = component.env.qweb;
@@ -3423,22 +3462,21 @@
     }
 
     class ConnectedComponent extends Component {
-        constructor(parent, props) {
-            super(parent, props);
+        constructor() {
+            super(...arguments);
             this.deep = true;
-            this.hashFunction = ({ storeProps }, options) => {
-                const observer = this.__owl__.store.observer;
-                let refFunction = this.deep ? observer.deepRevNumber : observer.revNumber;
-                if ("__owl__" in storeProps) {
-                    return refFunction.call(observer, storeProps);
+            this.hashFunction = (storeProps, options) => {
+                const revFn = this.__owl__.revFn;
+                const rev = revFn(storeProps);
+                if (rev > 0) {
+                    return rev;
                 }
-                const { currentStoreProps } = options;
                 let hash = 0;
                 for (let key in storeProps) {
                     const val = storeProps[key];
-                    const hashVal = refFunction.call(observer, val);
+                    const hashVal = revFn(val);
                     if (hashVal === 0) {
-                        if (val !== currentStoreProps[key]) {
+                        if (val !== options.prevStoreProps[key]) {
                             options.didChange = true;
                         }
                     }
@@ -3448,26 +3486,32 @@
                 }
                 return hash;
             };
-            const store = this.getStore(this.env);
-            const ownProps = this.props || {};
-            const storeProps = this.constructor.mapStoreToProps(store.state, ownProps, store.getters);
-            const mergedProps = Object.assign({}, ownProps, storeProps);
-            this.props = mergedProps;
-            this.__owl__.ownProps = ownProps;
-            this.__owl__.currentStoreProps = storeProps;
-            this.__owl__.store = store;
-            this.__owl__.storeHash = this.hashFunction({
-                state: store.state,
-                storeProps: storeProps
-            }, {
-                currentStoreProps: storeProps
-            });
         }
         getStore(env) {
             return env.store;
         }
         static mapStoreToProps(storeState, ownProps, getters) {
             return {};
+        }
+        dispatch(name, ...payload) {
+            return this.__owl__.store.dispatch(name, ...payload);
+        }
+        /**
+         * Need to do this here so 'deep' can be overrided by subcomponent easily
+         */
+        async __prepareAndRender(scope, vars) {
+            const store = this.getStore(this.env);
+            const ownProps = this.props || {};
+            this.storeProps = this.constructor.mapStoreToProps(store.state, ownProps, store.getters);
+            const observer = store.observer;
+            const revFn = this.deep ? observer.deepRevNumber : observer.revNumber;
+            this.__owl__.store = store;
+            this.__owl__.revFn = revFn.bind(observer);
+            this.__owl__.storeHash = this.hashFunction(this.storeProps, {
+                prevStoreProps: this.storeProps
+            });
+            this.__owl__.rev = observer.rev;
+            return super.__prepareAndRender(scope, vars);
         }
         /**
          * We do not use the mounted hook here for a subtle reason: we want the
@@ -3478,78 +3522,63 @@
             this.__owl__.store.on("update", this, this.__checkUpdate);
             super.__callMounted();
         }
-        willUnmount() {
+        __callWillUnmount() {
             this.__owl__.store.off("update", this);
-            super.willUnmount();
+            super.__callWillUnmount();
         }
-        async __checkUpdate(updateId) {
-            if (updateId === this.__owl__.currentUpdateId) {
-                return;
-            }
-            const ownProps = this.__owl__.ownProps;
-            const storeProps = this.constructor.mapStoreToProps(this.__owl__.store.state, ownProps, this.__owl__.store.getters);
-            const options = {
-                currentStoreProps: this.__owl__.currentStoreProps
-            };
-            const storeHash = this.hashFunction({
-                state: this.__owl__.store.state,
-                storeProps: storeProps
-            }, options);
+        __destroy(parent) {
+            this.__owl__.store.off("update", this);
+            super.__destroy(parent);
+        }
+        async __updateProps(nextProps, f, p, s, v) {
+            this.__updateStoreProps(nextProps);
+            return super.__updateProps(nextProps, f, p, s, v);
+        }
+        __updateStoreProps(nextProps) {
+            const store = this.__owl__.store;
+            const storeProps = this.constructor.mapStoreToProps(store.state, nextProps, store.getters);
+            const options = { prevStoreProps: this.storeProps, didChange: false };
+            const storeHash = this.hashFunction(storeProps, options);
+            this.storeProps = storeProps;
             let didChange = options.didChange;
             if (storeHash !== this.__owl__.storeHash) {
-                didChange = true;
                 this.__owl__.storeHash = storeHash;
+                didChange = true;
             }
-            if (didChange) {
-                this.__owl__.currentStoreProps = storeProps;
-                await this.__updateProps(ownProps, false);
-            }
+            this.__owl__.rev = store.observer.rev;
+            return didChange;
         }
-        __updateProps(nextProps, forceUpdate, patchQueue) {
-            const __owl__ = this.__owl__;
-            __owl__.currentUpdateId = __owl__.store._updateId;
-            if (__owl__.ownProps !== nextProps) {
-                __owl__.currentStoreProps = this.constructor.mapStoreToProps(__owl__.store.state, nextProps, __owl__.store.getters);
+        async __checkUpdate() {
+            const observer = this.__owl__.store.observer;
+            if (observer.rev === this.__owl__.rev) {
+                // update was already done by updateProps, from parent
+                return;
             }
-            __owl__.ownProps = nextProps;
-            const mergedProps = Object.assign({}, nextProps, __owl__.currentStoreProps);
-            return super.__updateProps(mergedProps, forceUpdate, patchQueue);
+            const didChange = this.__updateStoreProps(this.props);
+            if (didChange) {
+                return this.render();
+            }
         }
     }
 
     class Store extends EventBus {
         constructor(config, options = {}) {
             super();
-            this._commitLevel = 0;
-            this.history = [];
-            this._updateId = 1;
             this.debug = options.debug || false;
             this.actions = config.actions;
-            this.mutations = config.mutations;
             this.env = config.env;
             this.observer = new Observer();
             this.observer.notifyCB = this.__notifyComponents.bind(this);
-            this.observer.allowMutations = false;
             this.state = this.observer.observe(config.state || {});
             this.getters = {};
-            this._gettersCache = {};
-            if (this.debug) {
-                this.history.push({ state: this.state });
-            }
-            const cTypes = ["undefined", "number", "string"];
-            for (let entry of Object.entries(config.getters || {})) {
-                const name = entry[0];
-                const func = entry[1];
-                this.getters[name] = payload => {
-                    if (this._commitLevel === 0 && cTypes.indexOf(typeof payload) >= 0) {
-                        this._gettersCache[name] = this._gettersCache[name] || {};
-                        this._gettersCache[name][payload] =
-                            this._gettersCache[name][payload] ||
-                                func({ state: this.state, getters: this.getters }, payload);
-                        return this._gettersCache[name][payload];
-                    }
-                    return func({ state: this.state, getters: this.getters }, payload);
+            if (config.getters) {
+                const firstArg = {
+                    state: this.state,
+                    getters: this.getters,
                 };
+                for (let g in config.getters) {
+                    this.getters[g] = config.getters[g].bind(this, firstArg);
+                }
             }
         }
         dispatch(action, ...payload) {
@@ -3557,37 +3586,12 @@
                 throw new Error(`[Error] action ${action} is undefined`);
             }
             const result = this.actions[action]({
-                commit: this.commit.bind(this),
                 dispatch: this.dispatch.bind(this),
                 env: this.env,
                 state: this.state,
                 getters: this.getters
             }, ...payload);
             return result;
-        }
-        commit(type, ...payload) {
-            if (!this.mutations[type]) {
-                throw new Error(`[Error] mutation ${type} is undefined`);
-            }
-            this._commitLevel++;
-            this.observer.allowMutations = true;
-            const res = this.mutations[type].call(null, {
-                commit: this.commit.bind(this),
-                state: this.state,
-                getters: this.getters
-            }, ...payload);
-            if (this._commitLevel === 1) {
-                this.observer.allowMutations = false;
-                if (this.debug) {
-                    this.history.push({
-                        state: this.state,
-                        mutation: type,
-                        payload: [...payload]
-                    });
-                }
-            }
-            this._commitLevel--;
-            return res;
         }
         /**
          * Instead of using trigger to emit an update event, we actually implement
@@ -3604,15 +3608,12 @@
          * updating all widgets concurrently, except for parents/children.
          */
         async __notifyComponents() {
-            this._updateId++;
-            const current = this._updateId;
-            this._gettersCache = {};
             const subs = this.subscriptions.update || [];
             for (let i = 0, iLen = subs.length; i < iLen; i++) {
                 const sub = subs[i];
                 const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
                 if (shouldCallback) {
-                    await sub.callback.call(sub.owner, current);
+                    await sub.callback.call(sub.owner);
                 }
             }
         }
@@ -4012,9 +4013,9 @@
     exports.store = store;
     exports.utils = utils;
 
-    exports.__info__.version = '0.18.0';
-    exports.__info__.date = '2019-08-22T13:04:23.405Z';
-    exports.__info__.hash = '70a7016';
+    exports.__info__.version = '0.19.0';
+    exports.__info__.date = '2019-08-28T09:55:59.136Z';
+    exports.__info__.hash = 'f289cb1';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

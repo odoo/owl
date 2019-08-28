@@ -268,55 +268,41 @@ const TODO_APP_STORE = `// This example is an implementation of the TodoList app
 
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
-const LOCALSTORAGE_KEY = "todos-odoo";
+const LOCALSTORAGE_KEY = "todomvc";
 
 //------------------------------------------------------------------------------
 // Store Definition
 //------------------------------------------------------------------------------
 const actions = {
-    addTodo({ commit }, title) {
-        commit("addTodo", title);
-    },
-    removeTodo({ commit }, id) {
-        commit("removeTodo", id);
-    },
-    toggleTodo({ state, commit }, id) {
-        const todo = state.todos.find(t => t.id === id);
-        commit("editTodo", { id, completed: !todo.completed });
-    },
-    clearCompleted({ state, commit }) {
-        state.todos
-            .filter(todo => todo.completed)
-            .forEach(todo => {
-                commit("removeTodo", todo.id);
-            });
-    },
-    toggleAll({ state, commit }, completed) {
-        state.todos.forEach(todo => {
-            commit("editTodo", {
-                id: todo.id,
-                completed
-            });
-        });
-    },
-    editTodo({ commit }, { id, title }) {
-        commit("editTodo", { id, title });
-    }
-};
-
-const mutations = {
     addTodo({ state }, title) {
-        const id = state.nextId++;
-        const todo = {
-            id,
+        state.todos.push({
+            id: state.nextId++,
             title,
             completed: false
-        };
-        state.todos.push(todo);
+        });
     },
     removeTodo({ state }, id) {
         const index = state.todos.findIndex(t => t.id === id);
         state.todos.splice(index, 1);
+    },
+    toggleTodo({ state, dispatch }, id) {
+        const todo = state.todos.find(t => t.id === id);
+        dispatch("editTodo", { id, completed: !todo.completed });
+    },
+    clearCompleted({ state, dispatch }) {
+        state.todos
+            .filter(todo => todo.completed)
+            .forEach(todo => {
+                dispatch("removeTodo", todo.id);
+            });
+    },
+    toggleAll({ state, dispatch }, completed) {
+        state.todos.forEach(todo => {
+            dispatch("editTodo", {
+                id: todo.id,
+                completed
+            });
+        });
     },
     editTodo({ state }, { id, title, completed }) {
         const todo = state.todos.find(t => t.id === id);
@@ -329,24 +315,20 @@ const mutations = {
     }
 };
 
+function saveState(state) {
+    const str = JSON.stringify(state);
+    window.localStorage.setItem(LOCALSTORAGE_KEY, str);
+}
+
+function loadState() {
+    const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
+    return localState ? JSON.parse(localState) : { todos: [], nextId: 1};
+}
+
 function makeStore() {
-    const todos = JSON.parse(
-        window.localStorage.getItem(LOCALSTORAGE_KEY) || "[]"
-    );
-    const nextId = Math.max(0, ...todos.map(t => t.id || 0)) + 1;
-    const state = {
-        todos,
-        nextId
-    };
-    const store = new owl.store.Store({
-        state,
-        actions,
-        mutations
-    });
-    store.on("update", null, () => {
-        const state = JSON.stringify(store.state.todos);
-        window.localStorage.setItem(LOCALSTORAGE_KEY, state);
-    });
+    const state = loadState();
+    const store = new owl.store.Store({ state, actions });
+    store.on("update", null, () => saveState(store.state));
     return store;
 }
 
@@ -357,11 +339,11 @@ class TodoItem extends owl.Component {
     state = { isEditing: false };
 
     removeTodo() {
-        this.env.dispatch("removeTodo", this.props.id);
+        this.env.store.dispatch("removeTodo", this.props.id);
     }
 
     toggleTodo() {
-        this.env.dispatch("toggleTodo", this.props.id);
+        this.env.store.dispatch("toggleTodo", this.props.id);
     }
 
     async editTodo() {
@@ -393,7 +375,7 @@ class TodoItem extends owl.Component {
         if (!value) {
             this.removeTodo(this.props.id);
         } else {
-            this.env.dispatch("editTodo", {
+            this.env.store.dispatch("editTodo", {
                 id: this.props.id,
                 title: value
             });
@@ -415,7 +397,7 @@ class TodoApp extends owl.store.ConnectedComponent {
         };
     }
     get visibleTodos() {
-        let todos = this.props.todos;
+        let todos = this.storeProps.todos;
         if (this.state.filter === "active") {
             todos = todos.filter(t => !t.completed);
         }
@@ -426,11 +408,11 @@ class TodoApp extends owl.store.ConnectedComponent {
     }
 
     get allChecked() {
-        return this.props.todos.every(todo => todo.completed);
+        return this.storeProps.todos.every(todo => todo.completed);
     }
 
     get remaining() {
-        return this.props.todos.filter(todo => !todo.completed).length;
+        return this.storeProps.todos.filter(todo => !todo.completed).length;
     }
 
     get remainingText() {
@@ -442,18 +424,10 @@ class TodoApp extends owl.store.ConnectedComponent {
         if (ev.keyCode === ENTER_KEY) {
             const title = ev.target.value;
             if (title.trim()) {
-                this.env.dispatch("addTodo", title);
+                this.dispatch("addTodo", title);
             }
             ev.target.value = "";
         }
-    }
-
-    clearCompleted() {
-        this.env.dispatch("clearCompleted");
-    }
-
-    toggleAll() {
-        this.env.dispatch("toggleAll", !this.allChecked);
     }
 
     setFilter(filter) {
@@ -469,7 +443,6 @@ const qweb = new owl.QWeb(TEMPLATES);
 const env = {
     qweb,
     store,
-    dispatch: store.dispatch.bind(store),
 };
 const app = new TodoApp(env);
 app.mount(document.body);
@@ -481,8 +454,8 @@ const TODO_APP_STORE_XML = `<templates>
       <h1>todos</h1>
       <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
     </header>
-    <section class="main" t-if="props.todos.length">
-      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="toggleAll"/>
+    <section class="main" t-if="storeProps.todos.length">
+      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="dispatch('toggleAll', !allChecked)"/>
       <label for="toggle-all"></label>
       <ul class="todo-list">
         <t t-foreach="visibleTodos" t-as="todo">
@@ -490,7 +463,7 @@ const TODO_APP_STORE_XML = `<templates>
         </t>
       </ul>
     </section>
-    <footer class="footer" t-if="props.todos.length">
+    <footer class="footer" t-if="storeProps.todos.length">
       <span class="todo-count">
         <strong>
             <t t-esc="remaining"/>
@@ -508,7 +481,7 @@ const TODO_APP_STORE_XML = `<templates>
           <a t-on-click="setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
         </li>
       </ul>
-      <button class="clear-completed" t-if="props.todos.length gt remaining" t-on-click="clearCompleted">
+      <button class="clear-completed" t-if="storeProps.todos.length gt remaining" t-on-click="dispatch('clearCompleted')">
         Clear completed
       </button>
     </footer>
@@ -1334,6 +1307,246 @@ const FORM_XML = `<templates>
 </templates>
 `;
 
+const WMS = `// This example is slightly more complex than usual. We demonstrate
+// here a way to manage sub windows in Owl, declaratively. This is still just a
+// demonstration. Managing windows can be as complex as we want.  For example,
+// we could implement the following features:
+// - resizing windows
+// - minimizing windows
+// - configuration options for windows to make a window non resizeable
+// - minimal width/height
+// - better heuristic for initial window position
+// - ...
+
+class HelloWorld extends owl.Component {}
+
+class Counter extends owl.Component {
+  state = { value: 0 };
+
+  inc() {
+    this.state.value++;
+  }
+}
+
+class Window extends owl.Component {
+  get style() {
+    let { width, height, top, left, zindex } = this.props.info;
+
+    return \`width: \${width}px;height: \${height}px;top:\${top}px;left:\${left}px;z-index:\${zindex}\`;
+  }
+  close() {
+    this.trigger("close-window", { id: this.props.info.id });
+  }
+  startDragAndDrop(ev) {
+    this.updateZIndex();
+    this.el.classList.add('dragging');
+    const offsetX = this.props.info.left - ev.pageX;
+    const offsetY = this.props.info.top - ev.pageY;
+    let left, top;
+
+    const el = this.el;
+    const self = this;
+    window.addEventListener("mousemove", moveWindow);
+    window.addEventListener("mouseup", stopDnD, { once: true });
+
+    function moveWindow(ev) {
+      left = Math.max(offsetX + ev.pageX, 0);
+      top = Math.max(offsetY + ev.pageY, 0);
+      el.style.left = \`\${left}px\`;
+      el.style.top = \`\${top}px\`;
+    }
+    function stopDnD() {
+      window.removeEventListener("mousemove", moveWindow);
+      const options = { id: self.props.info.id, left, top };
+      self.el.classList.remove('dragging');
+      self.trigger("set-window-position", options);
+    }
+  }
+  updateZIndex() {
+    this.trigger("update-z-index", { id: this.props.info.id });
+  }
+}
+
+class WindowManager extends owl.Component {
+  components = { Window };
+  windows = [];
+  nextId = 1;
+  currentZindex = 1;
+  addWindow(name) {
+    const info = this.env.windows.find(w => w.name === name);
+    const id = \`w\${this.nextId++}\`;
+    this.windows.push({
+      id: id,
+      title: info.title,
+      width: info.defaultWidth,
+      height: info.defaultHeight,
+      top: 0,
+      left: 0,
+      zindex: this.currentZindex++
+    });
+    this.components[id] = info.component;
+    this.render();
+  }
+  closeWindow(ev) {
+    const id = ev.detail.id;
+    delete this.components[id];
+    const index = this.windows.findIndex(w => w.id === id);
+    this.windows.splice(index, 1);
+    this.render();
+  }
+  setWindowPosition(ev) {
+    const id = ev.detail.id;
+    const w = this.windows.find(w => w.id === id);
+    w.top = ev.detail.top;
+    w.left = ev.detail.left;
+  }
+  updateZIndex(ev) {
+    const id = ev.detail.id;
+    const w = this.windows.find(w => w.id === id);
+    w.zindex = this.currentZindex++;
+    ev.target.style["z-index"] = w.zindex;
+  }
+}
+
+class App extends owl.Component {
+  components = { WindowManager };
+
+  addWindow(name) {
+    this.refs.wm.addWindow(name);
+  }
+}
+
+const qweb = new owl.QWeb(TEMPLATES);
+const windows = [
+  {
+    name: "Hello",
+    title: "Hello",
+    component: HelloWorld,
+    defaultWidth: 200,
+    defaultHeight: 100
+  },
+  {
+    name: "Counter",
+    title: "Click Counter",
+    component: Counter,
+    defaultWidth: 300,
+    defaultHeight: 120
+  }
+];
+
+const env = { qweb, windows };
+const app = new App(env);
+app.mount(document.body);
+`;
+
+const WMS_XML = `<templates>
+  <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex">
+    <div class="header">
+      <span t-on-mousedown="startDragAndDrop"><t t-esc="props.info.title"/></span>
+      <span class="close" t-on-click="close">×</span>
+    </div>
+    <t t-slot="default"/>
+  </div>
+
+  <div t-name="WindowManager" class="window-manager"
+       t-on-close-window="closeWindow"
+       t-on-update-z-index="updateZIndex"
+       t-on-set-window-position="setWindowPosition">
+    <Window t-foreach="windows" t-as="w" t-key="w.id" info="w">
+      <t t-component="{{w.id}}"/>
+    </Window>
+  </div>
+
+  <div t-name="App" class="app">
+    <WindowManager t-ref="wm"/>
+    <div class="menubar">
+      <button t-on-click="addWindow('Hello')">Say Hello</button>
+      <button t-on-click="addWindow('Counter')">Counter</button>
+    </div>
+  </div>
+
+  <div t-name="HelloWorld">
+    World
+  </div>
+
+  <div t-name="Counter" class="counter">
+    <button t-on-click="inc">Inc</button>
+    <span><t t-esc="state.value"/></span>
+  </div>
+</templates>
+`;
+
+const WMS_CSS = `body {
+    margin: 0;
+}
+
+.app {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 50px;
+}
+
+.window-manager {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #eeeeee;
+    overflow: hidden;
+}
+
+.menubar {
+    background-color: #875a7b;
+    color: white;
+}
+
+.menubar button {
+    height: 40px;
+    font-size: 18px;
+    margin: 5px;
+}
+
+.window {
+    display: grid;
+    grid-template-rows: 30px auto;
+    border: 1px solid gray;
+    background-color: white;
+    position: absolute;
+    box-shadow: 1px 1px 2px 1px grey;
+}
+
+.window.dragging {
+    opacity: 0.75;
+}
+
+.window .header {
+    background-color: #875a7b;
+    display: grid;
+    grid-template-columns: auto 24px;
+    color: white;
+    line-height: 30px;
+    padding-left: 5px;
+    cursor: default;
+    user-select: none;
+}
+
+.window .header .close {
+    cursor: pointer;
+    font-size: 22px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: bold;
+}
+
+.counter {
+    font-size: 20px;
+}
+.counter button {
+    width: 80px;
+    height:40px;
+    font-size: 20px;
+}`;
+
 export const SAMPLES = [
   {
     description: "Components",
@@ -1375,6 +1588,12 @@ export const SAMPLES = [
     code: SLOTS,
     xml: SLOTS_XML,
     css: SLOTS_CSS
+  },
+  {
+      description: "Window Management System",
+      code: WMS,
+      xml: WMS_XML,
+      css: WMS_CSS,
   },
   {
     description: "Asynchronous components",

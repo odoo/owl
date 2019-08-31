@@ -164,7 +164,8 @@ export class Router {
         parts[i] = <string>params[key];
       }
     }
-    return parts.join("/");
+    const prefix = this.mode === "hash" ? "#" : "";
+    return prefix + parts.join("/");
   }
 
   private currentPath(): string {
@@ -222,6 +223,9 @@ export class Router {
   private getRouteParams(route: Route, path: string): RouteParams | false {
     if (route.path === "*") {
       return {};
+    }
+    if (path.startsWith("#")) {
+      path = path.slice(1);
     }
     const descrParts = route.path.split("/");
     const targetParts = path.split("/");

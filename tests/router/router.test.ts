@@ -25,6 +25,18 @@ describe("router miscellaneous", () => {
       ]);
     }).toThrow(`Invalid destination: {"abc":"hey"}`);
   });
+
+  test("navigate to same route but with different params should trigger update", async () => {
+    router = new TestRouter(env, [{ name: "users", path: "/users/{{id}}" }]);
+    env.qweb.forceUpdate = jest.fn();
+    await router.navigate({ to: "users", params: { id: 3 } });
+    expect(window.location.pathname).toBe("/users/3");
+    expect(env.qweb.forceUpdate).toHaveBeenCalledTimes(1);
+
+    await router.navigate({ to: "users", params: { id: 5 } });
+    expect(window.location.pathname).toBe("/users/5");
+    expect(env.qweb.forceUpdate).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe("routeToPath", () => {

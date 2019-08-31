@@ -283,9 +283,7 @@ QWeb.addDirective({
     }
     if (shouldWarn) {
       console.warn(
-        `Directive t-foreach should always be used with a t-key! (in template: '${
-          ctx.templateName
-        }')`
+        `Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`
       );
     }
     nodeCopy.removeAttribute("t-foreach");

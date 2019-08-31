@@ -13,7 +13,10 @@ export function makeDirective(env: RouterEnv) {
           // make new t t-component element
           const comp = node.ownerDocument.createElement("t");
           comp.setAttribute("t-component", "__component__" + route.name);
-          comp.setAttribute(first ? "t-if" : "t-elif", `env.router.currentRouteName === '${route.name}'`);
+          comp.setAttribute(
+            first ? "t-if" : "t-elif",
+            `env.router.currentRouteName === '${route.name}'`
+          );
           first = false;
           for (let param of route.params) {
             comp.setAttribute(param, `env.router.currentParams.${param}`);

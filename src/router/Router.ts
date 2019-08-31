@@ -2,6 +2,7 @@ import { Env } from "../component/component";
 import { QWeb } from "../qweb/index";
 import { makeDirective } from "./directive";
 import { LINK_TEMPLATE, LINK_TEMPLATE_NAME } from "./Link";
+import { shallowEqual } from "../utils";
 
 type NavigationGuard = (info: {
   env: Env;
@@ -111,6 +112,7 @@ export class Router {
   async navigate(to: Destination): Promise<boolean> {
     const path = this.destToPath(to);
     const initialName = this.currentRouteName;
+    const initialParams = this.currentParams;
     const result = await this.matchAndApplyRules(path);
     if (result.type === "match") {
       const finalPath = this.routeToPath(result.route, result.params);
@@ -121,7 +123,9 @@ export class Router {
       this.currentRoute = null;
       this.currentParams = null;
     }
-    if (this.currentRouteName !== initialName) {
+    const didChange =
+      this.currentRouteName !== initialName || !shallowEqual(this.currentParams, initialParams);
+    if (didChange) {
       this.env.qweb.forceUpdate();
       return true;
     }

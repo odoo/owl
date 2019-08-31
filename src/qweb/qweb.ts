@@ -1,6 +1,7 @@
 import { EventBus } from "../core/event_bus";
 import { h, patch, VNode } from "../vdom/index";
 import { Context } from "./context";
+import { shallowEqual } from "../utils";
 
 /**
  * Owl QWeb Engine
@@ -92,14 +93,7 @@ const UTILS: Utils = {
     }
     return expr;
   },
-  shallowEqual(p1, p2) {
-    for (let k in p1) {
-      if (p1[k] !== p2[k]) {
-        return false;
-      }
-    }
-    return true;
-  }
+  shallowEqual
 };
 
 function parseXML(xml: string): Document {
@@ -212,7 +206,7 @@ export class QWeb extends EventBus {
    * template, with the name given by the t-name attribute.
    */
   addTemplates(xmlstr: string | Document) {
-    const doc = typeof xmlstr === 'string' ? parseXML(xmlstr) : xmlstr;
+    const doc = typeof xmlstr === "string" ? parseXML(xmlstr) : xmlstr;
     const templates = doc.getElementsByTagName("templates")[0];
     if (!templates) {
       return;

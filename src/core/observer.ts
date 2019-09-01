@@ -25,7 +25,6 @@ export class Observer {
 
   notifyCB() {}
   async notifyChange() {
-
     this.dirty = true;
     await Promise.resolve();
     if (this.dirty) {

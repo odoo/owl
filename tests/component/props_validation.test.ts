@@ -280,7 +280,7 @@ describe("props validation", () => {
 
   test("props: extra props cause an error, part 2", async () => {
     class TestWidget extends Widget {
-      static props = {message: true};
+      static props = { message: true };
     }
 
     expect(() => {
@@ -294,23 +294,22 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      QWeb.utils.validateProps(TestWidget, { message: 1});
+      QWeb.utils.validateProps(TestWidget, { message: 1 });
     }).not.toThrow();
   });
 
   test("optional prop do not cause an error if value is undefined", async () => {
     class TestWidget extends Widget {
-      static props = {message: {type: String, optional: true}};
+      static props = { message: { type: String, optional: true } };
     }
 
     expect(() => {
-      QWeb.utils.validateProps(TestWidget, { message: undefined});
+      QWeb.utils.validateProps(TestWidget, { message: undefined });
     }).not.toThrow();
     expect(() => {
-      QWeb.utils.validateProps(TestWidget, { message: null});
+      QWeb.utils.validateProps(TestWidget, { message: null });
     }).toThrow();
   });
-
 });
 
 describe("default props", () => {

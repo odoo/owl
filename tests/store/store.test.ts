@@ -249,32 +249,32 @@ describe("advanced state properties", () => {
     expect(store.state.a).toEqual([1, 2, 3, 53]);
   });
 
-    test("can use object assign in store", async () => {
-      const actions = {
-        dosomething({ state }) {
-          Object.assign(state.westmalle, { a: 3, b: 4 });
-        }
-      };
-      const store = new Store({
-        state: { westmalle: { a: 1, b: 2 } },
-        actions
-      });
-      store.dispatch("dosomething");
-      expect(store.state.westmalle).toEqual({ a: 3, b: 4 });
+  test("can use object assign in store", async () => {
+    const actions = {
+      dosomething({ state }) {
+        Object.assign(state.westmalle, { a: 3, b: 4 });
+      }
+    };
+    const store = new Store({
+      state: { westmalle: { a: 1, b: 2 } },
+      actions
     });
+    store.dispatch("dosomething");
+    expect(store.state.westmalle).toEqual({ a: 3, b: 4 });
+  });
 
-    test("aku reactive store state 1", async () => {
-      const actions = {
-        inc({ state }) {
-          state.counter++;
-        }
-      };
-      const state = { counter: 0 };
-      const store = new Store({ state, actions });
-      expect(store.state.counter).toBe(0);
-      store.dispatch("inc", {});
-      expect(store.state.counter).toBe(1);
-    });
+  test("aku reactive store state 1", async () => {
+    const actions = {
+      inc({ state }) {
+        state.counter++;
+      }
+    };
+    const state = { counter: 0 };
+    const store = new Store({ state, actions });
+    expect(store.state.counter).toBe(0);
+    store.dispatch("inc", {});
+    expect(store.state.counter).toBe(1);
+  });
 });
 
 describe("updates triggered by the store", () => {

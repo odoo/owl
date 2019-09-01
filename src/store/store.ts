@@ -42,7 +42,7 @@ export class Store extends EventBus {
   debug: boolean;
   env: any;
   observer: Observer;
-    getters: { [name: string]: (payload?) => any };
+  getters: { [name: string]: (payload?) => any };
 
   constructor(config: StoreConfig, options: StoreOption = {}) {
     super();
@@ -54,13 +54,13 @@ export class Store extends EventBus {
     this.state = this.observer.observe(config.state || {});
     this.getters = {};
     if (config.getters) {
-        const firstArg = {
-            state: this.state,
-            getters: this.getters,
-        };
-        for (let g in config.getters) {
-            this.getters[g] = config.getters[g].bind(this, firstArg);
-        }
+      const firstArg = {
+        state: this.state,
+        getters: this.getters
+      };
+      for (let g in config.getters) {
+        this.getters[g] = config.getters[g].bind(this, firstArg);
+      }
     }
   }
 

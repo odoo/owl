@@ -65,7 +65,7 @@ describe("observer", () => {
     expect(observer.revNumber(obj)).toBe(1);
     expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
-    expect(typeof obj.date.getFullYear()).toBe('number');
+    expect(typeof obj.date.getFullYear()).toBe("number");
     expect(obj.date).toBe(date);
 
     obj.date = new Date();

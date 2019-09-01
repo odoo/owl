@@ -85,9 +85,6 @@ export class Router {
       this.routeIds.push(partialRoute.name);
     }
 
-    (this as any)._listener = () => this.matchAndApplyRules(this.currentPath());
-    window.addEventListener("popstate", (this as any)._listener);
-
     // setup link and directive
     env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
     QWeb.addDirective(makeDirective(<RouterEnv>env));
@@ -98,6 +95,11 @@ export class Router {
   //--------------------------------------------------------------------------
 
   async start() {
+    (this as any)._listener = () => this._navigate(this.currentPath());
+    window.addEventListener("popstate", (this as any)._listener);
+    if (this.mode === "hash") {
+      window.addEventListener("hashchange", (this as any)._listener);
+    }
     const result = await this.matchAndApplyRules(this.currentPath());
     if (result.type === "match") {
       this.currentRoute = result.route;
@@ -111,6 +113,9 @@ export class Router {
 
   async navigate(to: Destination): Promise<boolean> {
     const path = this.destToPath(to);
+    return this._navigate(path);
+  }
+  async _navigate(path: string): Promise<boolean> {
     const initialName = this.currentRouteName;
     const initialParams = this.currentParams;
     const result = await this.matchAndApplyRules(path);

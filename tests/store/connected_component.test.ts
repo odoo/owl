@@ -616,8 +616,8 @@ describe("connecting a component to store", () => {
         return { flag: s.flag, someId: s.someId };
       }
       async render(force) {
-          await def;
-          return super.render(force);
+        await def;
+        return super.render(force);
       }
     }
 
@@ -628,7 +628,7 @@ describe("connecting a component to store", () => {
       }
     }
 
-    const state = { someId: 1, flag: true, messages: {1: "abc"}};
+    const state = { someId: 1, flag: true, messages: { 1: "abc" } };
     const actions = {
       setFlagToFalse({ state }) {
         state.flag = false;
@@ -1040,7 +1040,7 @@ describe("connected components and default values", () => {
         super.off(eventType, owner);
       }
     }
-    const store = new TestStore({ state: {val: 1} });
+    const store = new TestStore({ state: { val: 1 } });
     (<any>env).store = store;
     const parent = new Parent(env);
 
@@ -1088,7 +1088,7 @@ describe("connected components and default values", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>0</div>");
 
-    const res = app.dispatch('inc');
+    const res = app.dispatch("inc");
     expect(res).toBe(1);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1</div>");

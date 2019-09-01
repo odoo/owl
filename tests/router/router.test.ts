@@ -1,5 +1,5 @@
 import { Destination, RouterEnv, Route } from "../../src/router/Router";
-import { makeTestEnv } from "../helpers";
+import { makeTestEnv, nextTick } from "../helpers";
 import { TestRouter } from "./TestRouter";
 
 let env: RouterEnv;
@@ -35,6 +35,21 @@ describe("router miscellaneous", () => {
 
     await router.navigate({ to: "users", params: { id: 5 } });
     expect(window.location.pathname).toBe("/users/5");
+    expect(env.qweb.forceUpdate).toHaveBeenCalledTimes(2);
+  });
+
+  test("changing url to same route but with different params should trigger update (hash mode)", async () => {
+    env.qweb.forceUpdate = jest.fn();
+    router = new TestRouter(env, [{ name: "users", path: "/users/{{id}}" }], { mode: "hash" });
+    await router.start();
+    await router.navigate({ to: "users", params: { id: 3 } });
+    expect(window.location.hash).toBe("#/users/3");
+    expect(env.qweb.forceUpdate).toHaveBeenCalledTimes(1);
+
+    window.location.hash = "/users/5";
+    window.dispatchEvent(new Event("hashchange"));
+    await nextTick();
+    expect(window.location.hash).toBe("#/users/5");
     expect(env.qweb.forceUpdate).toHaveBeenCalledTimes(2);
   });
 });

@@ -456,11 +456,11 @@ QWeb.addDirective({
     // need to update component
     let patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
     if (keepAlive) {
-        // if we have t-keepalive="1", the component could be unmounted, but then
-        // we __updateProps is called.  This is ok, but we do not want to call
-        // the willPatch/patched hooks of the component in this case, so we
-        // disable the patch queue
-        patchQueueCode = `w${componentID}.__owl__.isMounted ? ${patchQueueCode} : []`;
+      // if we have t-keepalive="1", the component could be unmounted, but then
+      // we __updateProps is called.  This is ok, but we do not want to call
+      // the willPatch/patched hooks of the component in this case, so we
+      // disable the patch queue
+      patchQueueCode = `w${componentID}.__owl__.isMounted ? ${patchQueueCode} : []`;
     }
     if (QWeb.dev) {
       ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);

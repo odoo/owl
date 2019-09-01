@@ -32,7 +32,7 @@ exports[`router directive t-routecomponent can render parameterized route 1`] = 
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4.__prepare();
-            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+            def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
         } else {
             def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
             def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -75,7 +75,7 @@ exports[`router directive t-routecomponent can render parameterized route with s
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4.__prepare();
-            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+            def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
         } else {
             def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
             def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -118,7 +118,7 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4.__prepare();
-            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+            def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
         } else {
             def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
             def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -147,7 +147,7 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
             w7 = new W7(parent, props7);
             parent.__owl__.cmap[7] = w7.__owl__.id;
             def6 = w7.__prepare();
-            def6 = def6.then(vnode=>{let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
             def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});

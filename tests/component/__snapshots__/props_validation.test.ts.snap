@@ -36,7 +36,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         utils.validateProps(w4.constructor, props4)
         def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);

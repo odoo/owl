@@ -31,7 +31,7 @@ exports[`animations t-transition combined with component 1`] = `
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare();
-        def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
           w4.destroy();
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
@@ -76,7 +76,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
             def3 = w4.__prepare();
-            def3 = def3.then(vnode=>{let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+            def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
           w4.destroy();
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});

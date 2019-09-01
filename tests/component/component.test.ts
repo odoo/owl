@@ -833,6 +833,50 @@ describe("destroy method", () => {
     expect(fixture.innerHTML).toBe("");
     expect(isRendered).toBe(false);
   });
+
+  test("destroying a widget before being mounted", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent" t-on-some-event="doStuff">
+                <Child />
+            </div>
+            <span t-name="Child">
+                <GrandChild t-if="state.flag" val="something"/>
+                <button t-on-click="doSomething">click</button>
+            </span>
+            <span t-name="GrandChild">
+                <t t-esc="props.val.val"/>
+            </span>
+        </templates>`);
+    class Parent extends Component<any, any, any> {
+      components = { Child };
+      state = { p: 1 };
+      doStuff() {
+        this.state.p = 2;
+      }
+    }
+
+    class Child extends Component<any, any, any> {
+      components = { GrandChild };
+      state = { val: 33, flag: false };
+      doSomething() {
+        this.state.val = 12;
+        this.state.flag = true;
+        this.trigger("some-event");
+      }
+      get something() {
+        return { val: this.state.val };
+      }
+    }
+    class GrandChild extends Component<any, any, any> {}
+
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span><button>click</button></span></div>");
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span><span>12</span><button>click</button></span></div>");
+  });
 });
 
 describe("composition", () => {

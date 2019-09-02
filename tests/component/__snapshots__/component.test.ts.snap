@@ -516,7 +516,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         context.number = _3[i];
         context.number_value = _4[i];
         //COMPONENT
-        let key8 = context['number'];
+        let key8 = 'key' + context['number'];
         let def6;
         let w7 = key8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key8]] : false;
         let _5_index = c1.length;
@@ -1012,7 +1012,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
-    let key5 = 'somestring';
+    let key5 = 'key' + 'somestring';
     let def3;
     let w4 = key5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key5]] : false;
     let _2_index = c1.length;
@@ -1069,7 +1069,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         context.item = _3[i];
         context.item_value = _4[i];
         //COMPONENT
-        let key8 = context['item'];
+        let key8 = 'key' + context['item'];
         let def6;
         let arg9 = context['item'];
         let w7 = key8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key8]] : false;

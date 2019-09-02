@@ -160,6 +160,30 @@ describe("basic widget properties", () => {
     widget.render();
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
   });
+
+  test("reconciliation alg is not confused in some specific situation", async () => {
+    // in this test, we set t-key to 4 because it was in conflict with the
+    // template id corresponding to the first child.
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent">
+                <Child />
+                <Child t-key="4"/>
+            </div>
+            <span t-name="Child">child</span>
+        </templates>
+    `);
+
+    class Child extends Component<any, any, any> {}
+
+    class Parent extends Component<any, any, any> {
+      components = { Child };
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
+  });
 });
 
 describe("lifecycle hooks", () => {

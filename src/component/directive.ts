@@ -238,7 +238,7 @@ QWeb.addDirective({
     if (key) {
       // we bind a variable to the key (could be a complex expression, so we
       // want to evaluate it only once)
-      ctx.addLine(`let key${keyID} = ${key};`);
+      ctx.addLine(`let key${keyID} = 'key' + ${key};`);
     }
     ctx.addLine(`let def${defID};`);
     let templateID = key

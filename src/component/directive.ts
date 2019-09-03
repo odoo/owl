@@ -245,7 +245,7 @@ QWeb.addDirective({
       ? `key${keyID}`
       : ctx.inLoop
       ? ctx.currentKey
-        ? `String(${ctx.currentKey} + '_k_' + i)`
+        ? `String(${ctx.currentKey} + '_k_' + i + '_c_' + ${componentID} )`
         : `String(-${componentID} - i)`
       : String(componentID);
     if (ctx.allowMultipleRoots) {

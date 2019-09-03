@@ -1375,7 +1375,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         c2.push(vn6);
         //COMPONENT
         let def8;
-        let templateId10 = String(nodeKey6 + '_k_' + i);
+        let templateId10 = String(nodeKey6 + '_k_' + i + '_c_' + 9 );
         let w9 = templateId10 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId10]] : false;
         let _7_index = c6.length;
         c6.push(null);
@@ -1464,7 +1464,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         var _7 = 'User '+context['user'].name;
         //COMPONENT
         let def9;
-        let templateId11 = String(nodeKey6 + '_k_' + i);
+        let templateId11 = String(nodeKey6 + '_k_' + i + '_c_' + 10 );
         let w10 = templateId11 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId11]] : false;
         let _8_index = c6.length;
         c6.push(null);

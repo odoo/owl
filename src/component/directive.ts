@@ -244,17 +244,17 @@ QWeb.addDirective({
     let templateID = key
       ? `key${keyID}`
       : ctx.inLoop
-      ? `String(-${componentID} - i)`
+      ? ctx.currentKey
+        ? `String(${ctx.currentKey} + '_k_' + i)`
+        : `String(-${componentID} - i)`
       : String(componentID);
     if (ctx.allowMultipleRoots) {
-      // necessary to prevent collisions
-      if (!key && ctx.inLoop) {
-        let id = ctx.generateID();
-        ctx.addLine(`let template${id} = "_slot_" + String(-${componentID} - i)`);
-        templateID = `template${id}`;
-      } else {
-        templateID = `"_slot_${templateID}"`;
-      }
+      templateID = `"_slot_${templateID}"`;
+    }
+    if (key || ctx.inLoop) {
+      let id = ctx.generateID();
+      ctx.addLine(`let templateId${id} = ${templateID};`);
+      templateID = `templateId${id}`;
     }
 
     let ref = node.getAttribute("t-ref");

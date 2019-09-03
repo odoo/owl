@@ -473,6 +473,7 @@ export class QWeb extends EventBus {
     if (node.nodeName !== "t") {
       let nodeID = this._compileGenericNode(node, ctx, withHandlers);
       ctx = ctx.withParent(nodeID);
+      ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
       let nodeHooks = {};
       let addNodeHook = function(hook, handler) {
         nodeHooks[hook] = nodeHooks[hook] || [];
@@ -641,7 +642,9 @@ export class QWeb extends EventBus {
     let nodeID = ctx.generateID();
     let nodeKey: any = (<Element>node).getAttribute("t-key");
     if (nodeKey) {
-      nodeKey = ctx.formatExpression(nodeKey);
+      ctx.addLine(`const nodeKey${nodeID} = ${ctx.formatExpression(nodeKey)}`);
+      nodeKey = `nodeKey${nodeID}`;
+      ctx.lastNodeKey = nodeKey;
     } else {
       nodeKey = nodeID;
     }

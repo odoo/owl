@@ -361,7 +361,8 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        let c5 = [], p5 = {key:context['item']};
+        const nodeKey5 = context['item']
+        let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
         var _6 = context['item'];
@@ -1095,7 +1096,8 @@ exports[`t-key can use t-key directive on a node 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.h;
-    let c1 = [], p1 = {key:context['beer'].id};
+    const nodeKey1 = context['beer'].id
+    let c1 = [], p1 = {key:nodeKey1};
     var vn1 = h('div', p1, c1);
     var _2 = context['beer'].name;
     if (_2 || _2 === 0) {
@@ -1126,7 +1128,8 @@ exports[`t-key t-key directive in a list 1`] = `
         context.beer_index = i;
         context.beer = _3[i];
         context.beer_value = _4[i];
-        let c5 = [], p5 = {key:context['beer'].id};
+        const nodeKey5 = context['beer'].id
+        let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('li', p5, c5);
         c1.push(vn5);
         var _6 = context['beer'].name;
@@ -1227,7 +1230,8 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         context.action_index = i;
         context.action = _3[i];
         context.action_value = _4[i];
-        let c5 = [], p5 = {key:context['action_index']};
+        const nodeKey5 = context['action_index']
+        let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('li', p5, c5);
         c1.push(vn5);
         let c6 = [], p6 = {key:6,on:{}};
@@ -1560,7 +1564,8 @@ exports[`t-ref refs in a loop 1`] = `
         context.item_index = i;
         context.item = _3[i];
         context.item_value = _4[i];
-        let c5 = [], p5 = {key:context['item']};
+        const nodeKey5 = context['item']
+        let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('div', p5, c5);
         c1.push(vn5);
         const ref6 = (context['item']);
@@ -1720,7 +1725,8 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         context.elem_index = i;
         context.elem = _4[i];
         context.elem_value = _5[i];
-        let c6 = [], p6 = {key:context['elem_index']};
+        const nodeKey6 = context['elem_index']
+        let c6 = [], p6 = {key:nodeKey6};
         var vn6 = h('div', p6, c6);
         c1.push(vn6);
         let c7 = [], p7 = {key:7};

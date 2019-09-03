@@ -28,6 +28,8 @@ export class Context {
   allowMultipleRoots: boolean = false;
   hasParentWidget: boolean = false;
   scopeVars: any[] = [];
+  currentKey: string = "";
+  lastNodeKey: string = ""; // temp variable to communicate to previous caller
 
   constructor(name?: string) {
     this.rootContext = this;

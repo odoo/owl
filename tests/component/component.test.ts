@@ -1342,6 +1342,37 @@ describe("composition", () => {
     );
   });
 
+  test("list of sub components inside other nodes", async () => {
+    // this confuses the patching algorithm...
+    env.qweb.addTemplate("ChildWidget", `<span>child</span>`);
+
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent">
+                <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+                    <SubWidget />
+                </div>
+            </div>
+            <span t-name="SubWidget">asdf</span>
+        </templates>`);
+
+    class SubWidget extends Widget {}
+    class Parent extends Widget {
+      components = { SubWidget };
+      state = { blips: [{ a: "a", id: 1 }, { b: "b", id: 2 }, { c: "c", id: 4 }] };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>asdf</span></div><div><span>asdf</span></div><div><span>asdf</span></div></div>"
+    );
+    parent.state.blips.splice(0, 1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>asdf</span></div><div><span>asdf</span></div></div>"
+    );
+  });
+
   test("t-component with dynamic value", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="{{state.widget}}"/></div>`);
     class ParentWidget extends Widget {

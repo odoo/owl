@@ -518,7 +518,8 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         //COMPONENT
         let key8 = 'key' + context['number'];
         let def6;
-        let w7 = key8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key8]] : false;
+        let templateId9 = key8;
+        let w7 = templateId9 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId9]] : false;
         let _5_index = c1.length;
         c1.push(null);
         let props7 = {};
@@ -535,9 +536,9 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
             let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
-            parent.__owl__.cmap[key8] = w7.__owl__.id;
+            parent.__owl__.cmap[templateId9] = w7.__owl__.id;
             def6 = w7.__prepare();
-            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId9, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
             def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
@@ -1014,7 +1015,8 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     //COMPONENT
     let key5 = 'key' + 'somestring';
     let def3;
-    let w4 = key5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key5]] : false;
+    let templateId6 = key5;
+    let w4 = templateId6 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId6]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {flag:context['state'].flag};
@@ -1031,9 +1033,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
-        parent.__owl__.cmap[key5] = w4.__owl__.id;
+        parent.__owl__.cmap[templateId6] = w4.__owl__.id;
         def3 = w4.__prepare();
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: key5, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId6, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -1071,8 +1073,9 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         //COMPONENT
         let key8 = 'key' + context['item'];
         let def6;
-        let arg9 = context['item'];
-        let w7 = key8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[key8]] : false;
+        let templateId9 = key8;
+        let arg10 = context['item'];
+        let w7 = templateId9 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId9]] : false;
         let _5_index = c1.length;
         c1.push(null);
         let props7 = {};
@@ -1089,9 +1092,9 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
             let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
-            parent.__owl__.cmap[key8] = w7.__owl__.id;
+            parent.__owl__.cmap[templateId9] = w7.__owl__.id;
             def6 = w7.__prepare();
-            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg9));}};let pvnode=h(vnode.sel, {key: key8, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg10));}};let pvnode=h(vnode.sel, {key: templateId9, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
             def6 = def6 || w7.__updateProps(props7, extra.forceUpdate, extra.patchQueue);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
@@ -1366,12 +1369,14 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         scope.user = context.user;
         context.user_value = _5[i];
         scope.user_value = context.user_value;
-        let c6 = [], p6 = {key:context['user'].id};
+        const nodeKey6 = context['user'].id
+        let c6 = [], p6 = {key:nodeKey6};
         var vn6 = h('li', p6, c6);
         c2.push(vn6);
         //COMPONENT
         let def8;
-        let w9 = String(-9 - i) in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[String(-9 - i)]] : false;
+        let templateId10 = String(nodeKey6 + '_k_' + i);
+        let w9 = templateId10 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId10]] : false;
         let _7_index = c6.length;
         c6.push(null);
         let props9 = {to:'/user/'+context['user'].id};
@@ -1388,10 +1393,10 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
             let W9 = context.components && context.components[componentKey9] || QWeb.components[componentKey9];
             if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
             w9 = new W9(parent, props9);
-            parent.__owl__.cmap[String(-9 - i)] = w9.__owl__.id;
+            parent.__owl__.cmap[templateId10] = w9.__owl__.id;
             w9.__owl__.slotId = 1;
             def8 = w9.__prepare(Object.assign({}, scope));
-            def8 = def8.then(vnode=>{if (w9.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: String(-9 - i), hook: {insert(vn) {let nvn=w9.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w9.destroy();}}});c6[_7_index]=pvnode;w9.__owl__.pvnode = pvnode;});
+            def8 = def8.then(vnode=>{if (w9.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId10, hook: {insert(vn) {let nvn=w9.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w9.destroy();}}});c6[_7_index]=pvnode;w9.__owl__.pvnode = pvnode;});
         } else {
             def8 = def8 || w9.__updateProps(props9, extra.forceUpdate, extra.patchQueue, Object.assign({}, scope));
             def8 = def8.then(()=>{if (w9.__owl__.isDestroyed) {return};let pvnode=w9.__owl__.pvnode;c6[_7_index]=pvnode;});
@@ -1452,13 +1457,15 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         scope.user = context.user;
         context.user_value = _5[i];
         scope.user_value = context.user_value;
-        let c6 = [], p6 = {key:context['user'].id};
+        const nodeKey6 = context['user'].id
+        let c6 = [], p6 = {key:nodeKey6};
         var vn6 = h('li', p6, c6);
         c2.push(vn6);
         var _7 = 'User '+context['user'].name;
         //COMPONENT
         let def9;
-        let w10 = String(-10 - i) in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[String(-10 - i)]] : false;
+        let templateId11 = String(nodeKey6 + '_k_' + i);
+        let w10 = templateId11 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId11]] : false;
         let _8_index = c6.length;
         c6.push(null);
         let props10 = {to:'/user/'+context['user'].id};
@@ -1475,10 +1482,10 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
             let W10 = context.components && context.components[componentKey10] || QWeb.components[componentKey10];
             if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
             w10 = new W10(parent, props10);
-            parent.__owl__.cmap[String(-10 - i)] = w10.__owl__.id;
+            parent.__owl__.cmap[templateId11] = w10.__owl__.id;
             w10.__owl__.slotId = 1;
             def9 = w10.__prepare(Object.assign({}, scope), {_7});
-            def9 = def9.then(vnode=>{if (w10.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: String(-10 - i), hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c6[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
+            def9 = def9.then(vnode=>{if (w10.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId11, hook: {insert(vn) {let nvn=w10.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w10.destroy();}}});c6[_8_index]=pvnode;w10.__owl__.pvnode = pvnode;});
         } else {
             def9 = def9 || w10.__updateProps(props10, extra.forceUpdate, extra.patchQueue, Object.assign({}, scope), {_7});
             def9 = def9.then(()=>{if (w10.__owl__.isDestroyed) {return};let pvnode=w10.__owl__.pvnode;c6[_8_index]=pvnode;});

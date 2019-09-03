@@ -82,6 +82,7 @@ QWeb.addDirective({
     if (node.nodeName !== "t") {
       let nodeID = qweb._compileGenericNode(node, ctx);
       ctx = ctx.withParent(nodeID);
+      ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
     }
     let value = ctx.getValue(node.getAttribute("t-esc")!);
     compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
@@ -96,6 +97,7 @@ QWeb.addDirective({
     if (node.nodeName !== "t") {
       let nodeID = qweb._compileGenericNode(node, ctx);
       ctx = ctx.withParent(nodeID);
+      ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
     }
     let value = ctx.getValue(node.getAttribute("t-raw")!);
     compileValueNode(value, node, qweb, ctx);

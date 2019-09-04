@@ -95,7 +95,7 @@ export class Router {
   //--------------------------------------------------------------------------
 
   async start() {
-    (this as any)._listener = () => this._navigate(this.currentPath());
+    (this as any)._listener = ev => this._navigate(this.currentPath(), ev);
     window.addEventListener("popstate", (this as any)._listener);
     if (this.mode === "hash") {
       window.addEventListener("hashchange", (this as any)._listener);
@@ -115,13 +115,16 @@ export class Router {
     const path = this.destToPath(to);
     return this._navigate(path);
   }
-  async _navigate(path: string): Promise<boolean> {
+  async _navigate(path: string, ev?: any): Promise<boolean> {
     const initialName = this.currentRouteName;
     const initialParams = this.currentParams;
     const result = await this.matchAndApplyRules(path);
     if (result.type === "match") {
       const finalPath = this.routeToPath(result.route, result.params);
-      this.setUrlFromPath(finalPath);
+      const isPopStateEvent = ev && ev instanceof PopStateEvent;
+      if (!isPopStateEvent) {
+        this.setUrlFromPath(finalPath);
+      }
       this.currentRoute = result.route;
       this.currentParams = result.params;
     } else if (result.type === "nomatch") {
@@ -151,8 +154,11 @@ export class Router {
   //--------------------------------------------------------------------------
 
   private setUrlFromPath(path: string) {
-    const url = location.origin + path;
-    window.history.pushState({}, path, url);
+    const separator = this.mode === "hash" ? "/" : "";
+    const url = location.origin + separator + path;
+    if (url !== window.location.href) {
+      window.history.pushState({}, path, url);
+    }
   }
 
   private validateDestination(dest: Destination) {

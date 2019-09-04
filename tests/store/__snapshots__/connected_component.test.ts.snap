@@ -15,3 +15,7 @@ exports[`connecting a component to store deep and shallow connecting a component
 exports[`connecting a component to store deep and shallow connecting a component 3`] = `"<div><span>Bertinchamps</span></div>"`;
 
 exports[`connecting a component to store deep and shallow connecting a component 4`] = `"<div><span>Kasteel</span></div>"`;
+
+exports[`various scenarios scenarios with async store updates and some components events 1`] = `"<div><button>Do stuff</button><div><span>Attachment 100</span><span>Name: text.txt</span></div></div>"`;
+
+exports[`various scenarios scenarios with async store updates and some components events 2`] = `"<div><button>Do stuff</button></div>"`;

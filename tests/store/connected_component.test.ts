@@ -1094,3 +1094,85 @@ describe("connected components and default values", () => {
     expect(fixture.innerHTML).toBe("<div>1</div>");
   });
 });
+
+describe("various scenarios", () => {
+  let fixture: HTMLElement;
+  let env: Env;
+
+  beforeEach(() => {
+    fixture = makeTestFixture();
+    env = makeTestEnv();
+  });
+
+  afterEach(() => {
+    fixture.remove();
+  });
+
+  test("scenarios with async store updates and some components events", async () => {
+    const actions = {
+      async deleteAttachment({ state }) {
+        await Promise.resolve();
+        delete state.attachments[100];
+        state.messages[10].attachmentIds = [];
+      }
+    };
+    const state = {
+      attachments: {
+        100: {
+          id: 100,
+          name: "text.txt"
+        }
+      },
+      messages: {
+        10: {
+          attachmentIds: [100],
+          id: 10
+        }
+      }
+    };
+    const store = new Store({ actions, state });
+
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="Message">
+                <button t-on-click="doStuff">Do stuff</button>
+                <Attachment t-foreach="storeProps.attachmentIds" t-key="attachmentId" t-as="attachmentId" id="attachmentId"/>
+            </div>
+            <div t-name="Attachment">
+                <span>Attachment <t t-esc="props.id"/></span>
+                <span>Name: <t t-esc="storeProps.name"/></span>
+            </div>
+        </templates>
+    `);
+    class Attachment extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps(state, ownProps) {
+        return {
+          name: state.attachments[ownProps.id].name
+        };
+      }
+    }
+    class Message extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps(state) {
+        return {
+          attachmentIds: state.messages[10].attachmentIds
+        };
+      }
+      components = { Attachment };
+      state = { isAttachmentDeleted: false };
+      doStuff() {
+        this.dispatch("deleteAttachment", 100);
+        this.state.isAttachmentDeleted = true;
+      }
+    }
+
+    (<any>env).store = store;
+    const message = new Message(env);
+    await message.mount(fixture);
+
+    expect(fixture.innerHTML).toMatchSnapshot();
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toMatchSnapshot();
+  });
+});

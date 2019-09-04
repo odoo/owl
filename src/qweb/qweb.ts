@@ -157,6 +157,11 @@ export class QWeb extends EventBus {
   slots = {};
   nextSlotId = 1;
 
+  // recursiveTemplates contains sub templates called with t-call, but which
+  // ends up in recursive situations.  This is very similar to the slot situation,
+  // as in we need to propagate the scope.
+  recursiveFns = {};
+
   isUpdating: boolean = false;
 
   constructor(data?: string) {
@@ -322,6 +327,7 @@ export class QWeb extends EventBus {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new Context(name);
     if (parentContext) {
+      ctx.templates = Object.create(parentContext.templates);
       ctx.variables = Object.create(parentContext.variables);
       ctx.nextID = parentContext.parentNode! + 1;
       ctx.parentNode = parentContext.parentNode!;

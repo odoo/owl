@@ -573,6 +573,76 @@ describe("t-call (template calling", () => {
     const expected = "<div>ok</div>";
     expect(trim(renderToString(qweb, "caller"))).toBe(expected);
   });
+
+  test("recursive template, part 1", () => {
+    qweb.addTemplates(`
+        <templates>
+            <div t-name="recursive">
+                <span>hey</span>
+                <t t-if="false">
+                    <t t-call="recursive"/>
+                </t>
+            </div>
+        </templates>
+    `);
+    const expected = "<div><span>hey</span></div>";
+    expect(renderToString(qweb, "recursive")).toBe(expected);
+    const recursiveFn = Object.values(qweb.recursiveFns)[0];
+    expect(recursiveFn.toString()).toMatchSnapshot();
+
+  });
+
+  test("recursive template, part 2", () => {
+    qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent">
+                <t t-call="nodeTemplate">
+                    <t t-set="node" t-value="root"/>
+                </t>
+            </div>
+            <div t-name="nodeTemplate">
+                <p><t t-esc="node.val"/></p>
+                <t t-foreach="node.children or []" t-as="subtree">
+                    <t t-call="nodeTemplate">
+                        <t t-set="node" t-value="subtree"/>
+                    </t>
+                </t>
+            </div>
+
+        </templates>
+    `);
+    const root = { val: "a", children: [{val: "b"}, {val: "c"}]};
+    const expected = "<div><div><p>a</p><div><p>b</p></div><div><p>c</p></div></div></div>";
+    expect(renderToString(qweb, "Parent", {root })).toBe(expected);
+    const recursiveFn = Object.values(qweb.recursiveFns)[0];
+    expect(recursiveFn.toString()).toMatchSnapshot();
+  });
+
+  test("recursive template, part 3", () => {
+    qweb.addTemplates(`
+        <templates>
+            <div t-name="Parent">
+                <t t-call="nodeTemplate">
+                    <t t-set="node" t-value="root"/>
+                </t>
+            </div>
+            <div t-name="nodeTemplate">
+                <p><t t-esc="node.val"/></p>
+                <t t-foreach="node.children or []" t-as="subtree">
+                    <t t-call="nodeTemplate">
+                        <t t-set="node" t-value="subtree"/>
+                    </t>
+                </t>
+            </div>
+
+        </templates>
+    `);
+    const root = { val: "a", children: [{val: "b", children: [{val: "d"}]}, {val: "c"}]};
+    const expected = "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
+    expect(renderToString(qweb, "Parent", {root })).toBe(expected);
+    const recursiveFn = Object.values(qweb.recursiveFns)[0];
+    expect(recursiveFn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("foreach", () => {

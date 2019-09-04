@@ -789,6 +789,226 @@ exports[`t-call (template calling inherit context 1`] = `
 }"
 `;
 
+exports[`t-call (template calling recursive template, part 1 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`hey\`});
+    if (false) {
+        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c1, vars: {}, scope}));
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling recursive template, part 1 2`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('div', p2, c2);
+    c1.push(vn2);
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c2.push(vn3);
+    c3.push({text: \`hey\`});
+    if (false) {
+        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c2, vars: {}, scope}));
+    }
+}"
+`;
+
+exports[`t-call (template calling recursive template, part 2 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    const scope = Object.create(null);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    {
+        let _2 = context['root'];
+        let c3 = [], p3 = {key:3};
+        var vn3 = h('div', p3, c3);
+        c1.push(vn3);
+        let c4 = [], p4 = {key:4};
+        var vn4 = h('p', p4, c4);
+        c3.push(vn4);
+        var _5 = _2.val;
+        if (_5 || _5 === 0) {
+            c4.push({text: _5});
+        }
+        var _6 = _2.children||[];
+        if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
+        var _7 = _8 = _6;
+        if (!(_6 instanceof Array)) {
+            _7 = Object.keys(_6);
+            _8 = Object.values(_6);
+        }
+        var _length7 = _7.length;
+        for (let i = 0; i < _length7; i++) {
+            context.subtree_first = i === 0;
+            scope.subtree_first = context.subtree_first;
+            context.subtree_last = i === _length7 - 1;
+            scope.subtree_last = context.subtree_last;
+            context.subtree_index = i;
+            scope.subtree_index = context.subtree_index;
+            context.subtree = _7[i];
+            scope.subtree = context.subtree;
+            context.subtree_value = _8[i];
+            scope.subtree_value = context.subtree_value;
+            this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, vars: {_v0: context['subtree']}, scope}));
+        }
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling recursive template, part 2 2`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    const scope = Object.create(null);
+    var h = this.h;
+    let c3 = extra.parentNode;
+    let _v0 = extra.vars._v0
+        Object.assign(context, extra.scope);
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('div', p4, c4);
+    c3.push(vn4);
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('p', p5, c5);
+    c4.push(vn5);
+    var _6 = _v0.val;
+    if (_6 || _6 === 0) {
+        c5.push({text: _6});
+    }
+    var _7 = _v0.children||[];
+    if (!_7) { throw new Error('QWeb error: Invalid loop expression')}
+    var _8 = _9 = _7;
+    if (!(_7 instanceof Array)) {
+        _8 = Object.keys(_7);
+        _9 = Object.values(_7);
+    }
+    var _length8 = _8.length;
+    for (let i = 0; i < _length8; i++) {
+        context.subtree_first = i === 0;
+        scope.subtree_first = context.subtree_first;
+        context.subtree_last = i === _length8 - 1;
+        scope.subtree_last = context.subtree_last;
+        context.subtree_index = i;
+        scope.subtree_index = context.subtree_index;
+        context.subtree = _8[i];
+        scope.subtree = context.subtree;
+        context.subtree_value = _9[i];
+        scope.subtree_value = context.subtree_value;
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, vars: {_v0: context['subtree']}, scope}));
+    }
+}"
+`;
+
+exports[`t-call (template calling recursive template, part 3 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    const scope = Object.create(null);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    {
+        let _2 = context['root'];
+        let c3 = [], p3 = {key:3};
+        var vn3 = h('div', p3, c3);
+        c1.push(vn3);
+        let c4 = [], p4 = {key:4};
+        var vn4 = h('p', p4, c4);
+        c3.push(vn4);
+        var _5 = _2.val;
+        if (_5 || _5 === 0) {
+            c4.push({text: _5});
+        }
+        var _6 = _2.children||[];
+        if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
+        var _7 = _8 = _6;
+        if (!(_6 instanceof Array)) {
+            _7 = Object.keys(_6);
+            _8 = Object.values(_6);
+        }
+        var _length7 = _7.length;
+        for (let i = 0; i < _length7; i++) {
+            context.subtree_first = i === 0;
+            scope.subtree_first = context.subtree_first;
+            context.subtree_last = i === _length7 - 1;
+            scope.subtree_last = context.subtree_last;
+            context.subtree_index = i;
+            scope.subtree_index = context.subtree_index;
+            context.subtree = _7[i];
+            scope.subtree = context.subtree;
+            context.subtree_value = _8[i];
+            scope.subtree_value = context.subtree_value;
+            this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, vars: {_v0: context['subtree']}, scope}));
+        }
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling recursive template, part 3 2`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    const scope = Object.create(null);
+    var h = this.h;
+    let c3 = extra.parentNode;
+    let _v0 = extra.vars._v0
+        Object.assign(context, extra.scope);
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('div', p4, c4);
+    c3.push(vn4);
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('p', p5, c5);
+    c4.push(vn5);
+    var _6 = _v0.val;
+    if (_6 || _6 === 0) {
+        c5.push({text: _6});
+    }
+    var _7 = _v0.children||[];
+    if (!_7) { throw new Error('QWeb error: Invalid loop expression')}
+    var _8 = _9 = _7;
+    if (!(_7 instanceof Array)) {
+        _8 = Object.keys(_7);
+        _9 = Object.values(_7);
+    }
+    var _length8 = _8.length;
+    for (let i = 0; i < _length8; i++) {
+        context.subtree_first = i === 0;
+        scope.subtree_first = context.subtree_first;
+        context.subtree_last = i === _length8 - 1;
+        scope.subtree_last = context.subtree_last;
+        context.subtree_index = i;
+        scope.subtree_index = context.subtree_index;
+        context.subtree = _8[i];
+        scope.subtree = context.subtree;
+        context.subtree_value = _9[i];
+        scope.subtree_value = context.subtree_value;
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, vars: {_v0: context['subtree']}, scope}));
+    }
+}"
+`;
+
 exports[`t-call (template calling scoped parameters 1`] = `
 "function anonymous(context,extra
 ) {

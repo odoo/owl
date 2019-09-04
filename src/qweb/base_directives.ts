@@ -204,8 +204,50 @@ QWeb.addDirective({
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
     ctx.rootContext.nextID = tempCtx.nextID;
 
+    const templateMap = Object.create(ctx.templates);
     // open new scope, if necessary
     const hasNewVariables = Object.keys(tempCtx.variables).length > 0;
+
+    // compile sub template
+    let subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
+    subCtx = subCtx.subContext("templates", templateMap);
+
+    if (templateMap[subTemplate]) {
+      // OUCH, IT IS A RECURSIVE TEMPLATE SITUATION...
+      // This is a tricky situation... We obviously cannot inline the compiled
+      // template. So, what we need to do is to compile it, and make sure we
+      // properly transfer everything from the current scope to the sub template.
+      ctx.rootContext.shouldTrackScope = true;
+      ctx.rootContext.shouldDefineOwner = true;
+      let subTemplateName;
+      if (ctx.hasParentWidget) {
+        subTemplateName = ctx.templateName;
+      } else {
+        subTemplateName = `__${ctx.generateID()}`;
+        subCtx.variables = {};
+        let id = 0;
+        for (let v in vars) {
+          subCtx.variables[v] = vars[v];
+          (vars[v] as any).id = `_v${id++}`;
+        }
+        const subTemplateFn = qweb._compile(subTemplateName, nodeTemplate.elem, subCtx);
+        qweb.recursiveFns[subTemplateName] = subTemplateFn;
+      }
+      let varCode = `{}`;
+      if (Object.keys(vars).length) {
+        let id = 0;
+        const content = Object.values(vars)
+          .map((v: any) => `_v${id++}: ${v.expr}`)
+          .join(",");
+        varCode = `{${content}}`;
+      }
+      ctx.addLine(
+        `this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: ${varCode}, scope}));`
+      );
+      return true;
+    }
+    templateMap[subTemplate] = true;
+
     if (hasNewVariables) {
       ctx.addLine("{");
       ctx.indent();
@@ -218,10 +260,6 @@ QWeb.addDirective({
         // todo: handle XML variables...
       }
     }
-
-    // compile sub template
-    const subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
-
     qweb._compileNode(nodeTemplate.elem, subCtx);
 
     // close new scope

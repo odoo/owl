@@ -30,10 +30,12 @@ export class Context {
   scopeVars: any[] = [];
   currentKey: string = "";
   lastNodeKey: string = ""; // temp variable to communicate to previous caller
+  templates: { [key: string]: boolean } = {};
 
   constructor(name?: string) {
     this.rootContext = this;
     this.templateName = name || "noname";
+    this.templates[this.templateName] = true;
     this.addLine("var h = this.h;");
   }
 

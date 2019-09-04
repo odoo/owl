@@ -1395,9 +1395,7 @@ describe("composition", () => {
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
-    expect(fixture.innerHTML).toBe(
-      "<div><div><span>asdf</span><span>asdf</span></div></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
   });
 
   test("t-component with dynamic value", async () => {

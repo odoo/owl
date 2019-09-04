@@ -97,10 +97,10 @@ export function debounce(func: Function, wait: number, immediate?: boolean): Fun
 }
 
 export function shallowEqual(p1, p2): boolean {
-for (let k in p1) {
+  for (let k in p1) {
     if (p1[k] !== p2[k]) {
-    return false;
+      return false;
     }
-}
-return true;
+  }
+  return true;
 }

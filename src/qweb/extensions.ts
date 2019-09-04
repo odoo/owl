@@ -254,7 +254,7 @@ QWeb.addDirective({
     let event = fullName.includes(".lazy") ? "change" : "input";
     if (node.tagName === "select") {
       ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
-      addNodeHook('create', `n.elm.value=context.state['${value}'];`)
+      addNodeHook("create", `n.elm.value=context.state['${value}'];`);
       event = "change";
       handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
     } else if (type === "checkbox") {

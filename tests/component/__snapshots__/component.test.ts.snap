@@ -1163,6 +1163,11 @@ exports[`t-model directive on a select 1`] = `
     p2.props = {value: context.state['color']};
     extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context.state['color'] = ev.target.value});
     p2.on['change'] = extra.handlers['change' + 2];
+    p2.hook = {
+      create: (_, n) => {
+        n.elm.value=context.state['color'];
+      },
+    };
     var _3 = '';
     let c4 = [], p4 = {key:4,attrs:{value: _3}};
     var vn4 = h('option', p4, c4);

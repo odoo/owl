@@ -3585,6 +3585,26 @@ describe("t-model directive", () => {
     expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
   });
 
+  test("on a select, initial state", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <select t-model="color">
+                <option value="">Please select one</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+            </select>
+        </div>
+    </templates>`);
+    class SomeComponent extends Widget {
+      state = { color: "red" };
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+    const select = fixture.querySelector("select")!;
+    expect(select.value).toBe("red");
+  });
+
   test(".lazy modifier", async () => {
     env.qweb.addTemplates(`
     <templates>

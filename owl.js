@@ -410,8 +410,12 @@
             this.allowMultipleRoots = false;
             this.hasParentWidget = false;
             this.scopeVars = [];
+            this.currentKey = "";
+            this.lastNodeKey = ""; // temp variable to communicate to previous caller
+            this.templates = {};
             this.rootContext = this;
             this.templateName = name || "noname";
+            this.templates[this.templateName] = true;
             this.addLine("var h = this.h;");
         }
         generateID() {
@@ -1120,7 +1124,7 @@
         parentNode,
         nextSibling,
         tagName,
-        setTextContent,
+        setTextContent
     };
     function addNS(data, children, sel) {
         data.ns = "http://www.w3.org/2000/svg";
@@ -1178,6 +1182,116 @@
 
     const patch = init([eventListenersModule, attrsModule, propsModule, classModule]);
 
+    /**
+     * Owl Utils
+     *
+     * We have here a small collection of utility functions:
+     *
+     * - whenReady
+     * - loadJS
+     * - loadTemplates
+     * - escape
+     * - debounce
+     */
+    function whenReady(fn) {
+        return new Promise(function (resolve) {
+            if (document.readyState !== "loading") {
+                resolve();
+            }
+            else {
+                document.addEventListener("DOMContentLoaded", resolve, false);
+            }
+        }).then(fn || function () { });
+    }
+    const loadedScripts = {};
+    function loadJS(url) {
+        if (url in loadedScripts) {
+            return loadedScripts[url];
+        }
+        const promise = new Promise(function (resolve, reject) {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            script.onload = function () {
+                resolve();
+            };
+            script.onerror = function () {
+                reject(`Error loading file '${url}'`);
+            };
+            const head = document.head || document.getElementsByTagName("head")[0];
+            head.appendChild(script);
+        });
+        loadedScripts[url] = promise;
+        return promise;
+    }
+    async function loadTemplates(url) {
+        const result = await fetch(url);
+        if (!result.ok) {
+            throw new Error("Error while fetching xml templates");
+        }
+        let templates = await result.text();
+        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
+        return templates;
+    }
+    function escape(str) {
+        if (str === undefined) {
+            return "";
+        }
+        if (typeof str === "number") {
+            return String(str);
+        }
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&#x27;")
+            .replace(/`/g, "&#x60;");
+    }
+    /**
+     * Returns a function, that, as long as it continues to be invoked, will not
+     * be triggered. The function will be called after it stops being called for
+     * N milliseconds. If `immediate` is passed, trigger the function on the
+     * leading edge, instead of the trailing.
+     *
+     * Inspired by https://davidwalsh.name/javascript-debounce-function
+     */
+    function debounce(func, wait, immediate) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            function later() {
+                timeout = null;
+                if (!immediate) {
+                    func.apply(context, args);
+                }
+            }
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(context, args);
+            }
+        };
+    }
+    function shallowEqual(p1, p2) {
+        for (let k in p1) {
+            if (p1[k] !== p2[k]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var _utils = /*#__PURE__*/Object.freeze({
+        whenReady: whenReady,
+        loadJS: loadJS,
+        loadTemplates: loadTemplates,
+        escape: escape,
+        debounce: debounce,
+        shallowEqual: shallowEqual
+    });
+
     //------------------------------------------------------------------------------
     // Const/global stuff/helpers
     //------------------------------------------------------------------------------
@@ -1205,14 +1319,7 @@
             }
             return expr;
         },
-        shallowEqual(p1, p2) {
-            for (let k in p1) {
-                if (p1[k] !== p2[k]) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        shallowEqual
     };
     function parseXML(xml) {
         const parser = new DOMParser();
@@ -1259,6 +1366,10 @@
             // are meant to be used by the t-slot directive.
             this.slots = {};
             this.nextSlotId = 1;
+            // recursiveTemplates contains sub templates called with t-call, but which
+            // ends up in recursive situations.  This is very similar to the slot situation,
+            // as in we need to propagate the scope.
+            this.recursiveFns = {};
             this.isUpdating = false;
             if (data) {
                 this.addTemplates(data);
@@ -1301,7 +1412,7 @@
          * template, with the name given by the t-name attribute.
          */
         addTemplates(xmlstr) {
-            const doc = typeof xmlstr === 'string' ? parseXML(xmlstr) : xmlstr;
+            const doc = typeof xmlstr === "string" ? parseXML(xmlstr) : xmlstr;
             const templates = doc.getElementsByTagName("templates")[0];
             if (!templates) {
                 return;
@@ -1407,6 +1518,7 @@
             const isDebug = elem.attributes.hasOwnProperty("t-debug");
             const ctx = new Context(name);
             if (parentContext) {
+                ctx.templates = Object.create(parentContext.templates);
                 ctx.variables = Object.create(parentContext.variables);
                 ctx.nextID = parentContext.parentNode + 1;
                 ctx.parentNode = parentContext.parentNode;
@@ -1543,6 +1655,7 @@
             if (node.nodeName !== "t") {
                 let nodeID = this._compileGenericNode(node, ctx, withHandlers);
                 ctx = ctx.withParent(nodeID);
+                ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
                 let nodeHooks = {};
                 let addNodeHook = function (hook, handler) {
                     nodeHooks[hook] = nodeHooks[hook] || [];
@@ -1703,7 +1816,9 @@
             let nodeID = ctx.generateID();
             let nodeKey = node.getAttribute("t-key");
             if (nodeKey) {
-                nodeKey = ctx.formatExpression(nodeKey);
+                ctx.addLine(`const nodeKey${nodeID} = ${ctx.formatExpression(nodeKey)}`);
+                nodeKey = `nodeKey${nodeID}`;
+                ctx.lastNodeKey = nodeKey;
             }
             else {
                 nodeKey = nodeID;
@@ -1838,6 +1953,7 @@
             if (node.nodeName !== "t") {
                 let nodeID = qweb._compileGenericNode(node, ctx);
                 ctx = ctx.withParent(nodeID);
+                ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
             }
             let value = ctx.getValue(node.getAttribute("t-esc"));
             compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
@@ -1851,6 +1967,7 @@
             if (node.nodeName !== "t") {
                 let nodeID = qweb._compileGenericNode(node, ctx);
                 ctx = ctx.withParent(nodeID);
+                ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
             }
             let value = ctx.getValue(node.getAttribute("t-raw"));
             compileValueNode(value, node, qweb, ctx);
@@ -1952,8 +2069,46 @@
             qweb._compileNode(nodeCopy, tempCtx);
             const vars = Object.assign({}, ctx.variables, tempCtx.variables);
             ctx.rootContext.nextID = tempCtx.nextID;
+            const templateMap = Object.create(ctx.templates);
             // open new scope, if necessary
             const hasNewVariables = Object.keys(tempCtx.variables).length > 0;
+            // compile sub template
+            let subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
+            subCtx = subCtx.subContext("templates", templateMap);
+            if (templateMap[subTemplate]) {
+                // OUCH, IT IS A RECURSIVE TEMPLATE SITUATION...
+                // This is a tricky situation... We obviously cannot inline the compiled
+                // template. So, what we need to do is to compile it, and make sure we
+                // properly transfer everything from the current scope to the sub template.
+                ctx.rootContext.shouldTrackScope = true;
+                ctx.rootContext.shouldDefineOwner = true;
+                let subTemplateName;
+                if (ctx.hasParentWidget) {
+                    subTemplateName = ctx.templateName;
+                }
+                else {
+                    subTemplateName = `__${ctx.generateID()}`;
+                    subCtx.variables = {};
+                    let id = 0;
+                    for (let v in vars) {
+                        subCtx.variables[v] = vars[v];
+                        vars[v].id = `_v${id++}`;
+                    }
+                    const subTemplateFn = qweb._compile(subTemplateName, nodeTemplate.elem, subCtx);
+                    qweb.recursiveFns[subTemplateName] = subTemplateFn;
+                }
+                let varCode = `{}`;
+                if (Object.keys(vars).length) {
+                    let id = 0;
+                    const content = Object.values(vars)
+                        .map((v) => `_v${id++}: ${v.expr}`)
+                        .join(",");
+                    varCode = `{${content}}`;
+                }
+                ctx.addLine(`this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: ${varCode}, scope}));`);
+                return true;
+            }
+            templateMap[subTemplate] = true;
             if (hasNewVariables) {
                 ctx.addLine("{");
                 ctx.indent();
@@ -1966,8 +2121,6 @@
                     // todo: handle XML variables...
                 }
             }
-            // compile sub template
-            const subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
             qweb._compileNode(nodeTemplate.elem, subCtx);
             // close new scope
             if (hasNewVariables) {
@@ -2253,7 +2406,7 @@
             ctx.rootContext.shouldDefineOwner = true;
             ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
             ctx.addIf(`slot${slotKey}`);
-            ctx.addLine(`slot${slotKey}(context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`);
+            ctx.addLine(`slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`);
             ctx.closeIf();
             return true;
         }
@@ -2268,34 +2421,36 @@
     QWeb.addDirective({
         name: "model",
         priority: 42,
-        atNodeCreation({ ctx, nodeID, value, node, fullName }) {
+        atNodeCreation({ ctx, nodeID, value, node, fullName, addNodeHook }) {
             const type = node.getAttribute("type");
             let handler;
             let event = fullName.includes(".lazy") ? "change" : "input";
+            const expr = ctx.formatExpression(`state.${value}`);
             if (node.tagName === "select") {
-                ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
+                ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
+                addNodeHook("create", `n.elm.value=${expr};`);
                 event = "change";
-                handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
+                handler = `(ev) => {${expr} = ev.target.value}`;
             }
             else if (type === "checkbox") {
-                ctx.addLine(`p${nodeID}.props = {checked: context.state['${value}']};`);
-                handler = `(ev) => {context.state['${value}'] = ev.target.checked}`;
+                ctx.addLine(`p${nodeID}.props = {checked: ${expr}};`);
+                handler = `(ev) => {${expr} = ev.target.checked}`;
             }
             else if (type === "radio") {
                 const nodeValue = node.getAttribute("value");
-                ctx.addLine(`p${nodeID}.props = {checked:context.state['${value}'] === '${nodeValue}'};`);
-                handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
+                ctx.addLine(`p${nodeID}.props = {checked:${expr} === '${nodeValue}'};`);
+                handler = `(ev) => {${expr} = ev.target.value}`;
                 event = "click";
             }
             else {
-                ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
+                ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
                 const trimCode = fullName.includes(".trim") ? ".trim()" : "";
                 let valueCode = `ev.target.value${trimCode}`;
                 if (fullName.includes(".number")) {
                     ctx.rootContext.shouldDefineUtils = true;
                     valueCode = `utils.toNumber(${valueCode})`;
                 }
-                handler = `(ev) => {context.state['${value}'] = ${valueCode}}`;
+                handler = `(ev) => {${expr} = ${valueCode}}`;
             }
             ctx.addLine(`extra.handlers['${event}' + ${nodeID}] = extra.handlers['${event}' + ${nodeID}] || (${handler});`);
             ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers['${event}' + ${nodeID}];`);
@@ -2534,24 +2689,23 @@
             if (key) {
                 // we bind a variable to the key (could be a complex expression, so we
                 // want to evaluate it only once)
-                ctx.addLine(`let key${keyID} = ${key};`);
+                ctx.addLine(`let key${keyID} = 'key' + ${key};`);
             }
             ctx.addLine(`let def${defID};`);
             let templateID = key
                 ? `key${keyID}`
                 : ctx.inLoop
-                    ? `String(-${componentID} - i)`
+                    ? ctx.currentKey
+                        ? `String(${ctx.currentKey} + '_k_' + i + '_c_' + ${componentID} )`
+                        : `String(-${componentID} - i)`
                     : String(componentID);
             if (ctx.allowMultipleRoots) {
-                // necessary to prevent collisions
-                if (!key && ctx.inLoop) {
-                    let id = ctx.generateID();
-                    ctx.addLine(`let template${id} = "_slot_" + String(-${componentID} - i)`);
-                    templateID = `template${id}`;
-                }
-                else {
-                    templateID = `"_slot_${templateID}"`;
-                }
+                templateID = `"_slot_${templateID}"`;
+            }
+            if (key || ctx.inLoop) {
+                let id = ctx.generateID();
+                ctx.addLine(`let templateId${id} = ${templateID};`);
+                templateID = `templateId${id}`;
             }
             let ref = node.getAttribute("t-ref");
             let refExpr = "";
@@ -2708,7 +2862,7 @@
                         const key = slotNode.getAttribute("t-set");
                         slotNode.removeAttribute("t-set");
                         const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
-                        qweb.slots[`${slotId}_${key}`] = slotFn.bind(qweb);
+                        qweb.slots[`${slotId}_${key}`] = slotFn;
                     }
                 }
                 if (clone.childNodes.length) {
@@ -2717,7 +2871,7 @@
                         t.appendChild(child);
                     }
                     const slotFn = qweb._compile(`slot_default_template`, t, ctx);
-                    qweb.slots[`${slotId}_default`] = slotFn.bind(qweb);
+                    qweb.slots[`${slotId}_default`] = slotFn;
                 }
             }
             let scopeVars = "";
@@ -2733,7 +2887,7 @@
             if (shouldProxy) {
                 registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
             }
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             // need to update component
             let patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
@@ -3506,6 +3660,7 @@
             const observer = store.observer;
             const revFn = this.deep ? observer.deepRevNumber : observer.revNumber;
             this.__owl__.store = store;
+            this.__owl__.ownProps = this.props;
             this.__owl__.revFn = revFn.bind(observer);
             this.__owl__.storeHash = this.hashFunction(this.storeProps, {
                 prevStoreProps: this.storeProps
@@ -3530,34 +3685,60 @@
             this.__owl__.store.off("update", this);
             super.__destroy(parent);
         }
+        async render(force = false) {
+            this.__updateStoreProps(this.props);
+            // this is quite technical, so this deserves some explanation.
+            // When we have a connected component, it can be updated for 3 reasons:
+            // - some internal state changes (this will go through this method)
+            // - some props changes (if a parent is changed and need to rerender itself)
+            // - a store update
+            //
+            // It is possible (with connected component and parent) to have the following
+            // situation: the parent component is rendered first (from its state change),
+            // then immediately after, it is rendered (from store update). Then, if the
+            // __checkUpdate method is immediately over, the children component will
+            // be rendered again by the store update, even though it is supposed to be
+            // destroyed by the first rendering.
+            //
+            // So, the solution is to keep the information that there is a current
+            // rendering occuring with the same store state, the same props, and return
+            // that in the __checkUpdate method.  To do this, we use the renderPromise
+            // deferred, which is not used by the component system once the
+            // component is ready, so we can use it for our own purpose.
+            this.__owl__.renderPromise = super.render(force);
+            return this.__owl__.renderPromise;
+        }
         async __updateProps(nextProps, f, p, s, v) {
             this.__updateStoreProps(nextProps);
             return super.__updateProps(nextProps, f, p, s, v);
         }
         __updateStoreProps(nextProps) {
-            const store = this.__owl__.store;
+            const __owl__ = this.__owl__;
+            const store = __owl__.store;
+            const observer = store.observer;
+            if (observer.rev === __owl__.rev && nextProps === __owl__.ownProps) {
+                return false;
+            }
             const storeProps = this.constructor.mapStoreToProps(store.state, nextProps, store.getters);
             const options = { prevStoreProps: this.storeProps, didChange: false };
             const storeHash = this.hashFunction(storeProps, options);
             this.storeProps = storeProps;
             let didChange = options.didChange;
-            if (storeHash !== this.__owl__.storeHash) {
-                this.__owl__.storeHash = storeHash;
+            if (storeHash !== __owl__.storeHash) {
+                __owl__.storeHash = storeHash;
                 didChange = true;
             }
-            this.__owl__.rev = store.observer.rev;
+            __owl__.rev = store.observer.rev;
+            __owl__.ownProps = nextProps;
             return didChange;
         }
         async __checkUpdate() {
-            const observer = this.__owl__.store.observer;
-            if (observer.rev === this.__owl__.rev) {
-                // update was already done by updateProps, from parent
-                return;
-            }
             const didChange = this.__updateStoreProps(this.props);
             if (didChange) {
                 return this.render();
             }
+            // see note in render method
+            return this.__owl__.renderPromise;
         }
     }
 
@@ -3574,7 +3755,7 @@
             if (config.getters) {
                 const firstArg = {
                     state: this.state,
-                    getters: this.getters,
+                    getters: this.getters
                 };
                 for (let g in config.getters) {
                     this.getters[g] = config.getters[g].bind(this, firstArg);
@@ -3618,107 +3799,6 @@
             }
         }
     }
-
-    /**
-     * Owl Utils
-     *
-     * We have here a small collection of utility functions:
-     *
-     * - whenReady
-     * - loadJS
-     * - loadTemplates
-     * - escape
-     * - debounce
-     */
-    function whenReady(fn) {
-        return new Promise(function (resolve) {
-            if (document.readyState !== "loading") {
-                resolve();
-            }
-            else {
-                document.addEventListener("DOMContentLoaded", resolve, false);
-            }
-        }).then(fn || function () { });
-    }
-    const loadedScripts = {};
-    function loadJS(url) {
-        if (url in loadedScripts) {
-            return loadedScripts[url];
-        }
-        const promise = new Promise(function (resolve, reject) {
-            const script = document.createElement("script");
-            script.type = "text/javascript";
-            script.src = url;
-            script.onload = function () {
-                resolve();
-            };
-            script.onerror = function () {
-                reject(`Error loading file '${url}'`);
-            };
-            const head = document.head || document.getElementsByTagName("head")[0];
-            head.appendChild(script);
-        });
-        loadedScripts[url] = promise;
-        return promise;
-    }
-    async function loadTemplates(url) {
-        const result = await fetch(url);
-        if (!result.ok) {
-            throw new Error("Error while fetching xml templates");
-        }
-        let templates = await result.text();
-        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-        return templates;
-    }
-    function escape(str) {
-        if (str === undefined) {
-            return "";
-        }
-        if (typeof str === "number") {
-            return String(str);
-        }
-        return str
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&#x27;")
-            .replace(/`/g, "&#x60;");
-    }
-    /**
-     * Returns a function, that, as long as it continues to be invoked, will not
-     * be triggered. The function will be called after it stops being called for
-     * N milliseconds. If `immediate` is passed, trigger the function on the
-     * leading edge, instead of the trailing.
-     *
-     * Inspired by https://davidwalsh.name/javascript-debounce-function
-     */
-    function debounce(func, wait, immediate) {
-        let timeout;
-        return function () {
-            const context = this;
-            const args = arguments;
-            function later() {
-                timeout = null;
-                if (!immediate) {
-                    func.apply(context, args);
-                }
-            }
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) {
-                func.apply(context, args);
-            }
-        };
-    }
-
-    var _utils = /*#__PURE__*/Object.freeze({
-        whenReady: whenReady,
-        loadJS: loadJS,
-        loadTemplates: loadTemplates,
-        escape: escape,
-        debounce: debounce
-    });
 
     const LINK_TEMPLATE_NAME = "__owl__-router-link";
     const LINK_TEMPLATE = `
@@ -3815,8 +3895,6 @@
                 this.routes[partialRoute.name] = partialRoute;
                 this.routeIds.push(partialRoute.name);
             }
-            this._listener = () => this.matchAndApplyRules(this.currentPath());
-            window.addEventListener("popstate", this._listener);
             // setup link and directive
             env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
             QWeb.addDirective(makeDirective(env));
@@ -3825,6 +3903,11 @@
         // Public API
         //--------------------------------------------------------------------------
         async start() {
+            this._listener = ev => this._navigate(this.currentPath(), ev);
+            window.addEventListener("popstate", this._listener);
+            if (this.mode === "hash") {
+                window.addEventListener("hashchange", this._listener);
+            }
             const result = await this.matchAndApplyRules(this.currentPath());
             if (result.type === "match") {
                 this.currentRoute = result.route;
@@ -3837,11 +3920,18 @@
         }
         async navigate(to) {
             const path = this.destToPath(to);
+            return this._navigate(path);
+        }
+        async _navigate(path, ev) {
             const initialName = this.currentRouteName;
+            const initialParams = this.currentParams;
             const result = await this.matchAndApplyRules(path);
             if (result.type === "match") {
                 const finalPath = this.routeToPath(result.route, result.params);
-                this.setUrlFromPath(finalPath);
+                const isPopStateEvent = ev && ev instanceof PopStateEvent;
+                if (!isPopStateEvent) {
+                    this.setUrlFromPath(finalPath);
+                }
                 this.currentRoute = result.route;
                 this.currentParams = result.params;
             }
@@ -3849,7 +3939,8 @@
                 this.currentRoute = null;
                 this.currentParams = null;
             }
-            if (this.currentRouteName !== initialName) {
+            const didChange = this.currentRouteName !== initialName || !shallowEqual(this.currentParams, initialParams);
+            if (didChange) {
                 this.env.qweb.forceUpdate();
                 return true;
             }
@@ -3866,8 +3957,11 @@
         // Private helpers
         //--------------------------------------------------------------------------
         setUrlFromPath(path) {
-            const url = location.origin + path;
-            window.history.pushState({}, path, url);
+            const separator = this.mode === "hash" ? "/" : "";
+            const url = location.origin + separator + path;
+            if (url !== window.location.href) {
+                window.history.pushState({}, path, url);
+            }
         }
         validateDestination(dest) {
             if ((!dest.path && !dest.to) || (dest.path && dest.to)) {
@@ -3886,7 +3980,8 @@
                     parts[i] = params[key];
                 }
             }
-            return parts.join("/");
+            const prefix = this.mode === "hash" ? "#" : "";
+            return prefix + parts.join("/");
         }
         currentPath() {
             let result = this.mode === "history" ? window.location.pathname : window.location.hash.slice(1);
@@ -3939,6 +4034,9 @@
         getRouteParams(route, path) {
             if (route.path === "*") {
                 return {};
+            }
+            if (path.startsWith("#")) {
+                path = path.slice(1);
             }
             const descrParts = route.path.split("/");
             const targetParts = path.split("/");
@@ -4013,9 +4111,9 @@
     exports.store = store;
     exports.utils = utils;
 
-    exports.__info__.version = '0.19.0';
-    exports.__info__.date = '2019-08-28T09:55:59.136Z';
-    exports.__info__.hash = 'f289cb1';
+    exports.__info__.version = '0.20.0';
+    exports.__info__.date = '2019-09-05T12:42:15.744Z';
+    exports.__info__.hash = '9fad164';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

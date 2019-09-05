@@ -252,28 +252,29 @@ QWeb.addDirective({
     const type = node.getAttribute("type");
     let handler;
     let event = fullName.includes(".lazy") ? "change" : "input";
+    const expr = ctx.formatExpression(`state.${value}`);
     if (node.tagName === "select") {
-      ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
-      addNodeHook("create", `n.elm.value=context.state['${value}'];`);
+      ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
+      addNodeHook("create", `n.elm.value=${expr};`);
       event = "change";
-      handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
+      handler = `(ev) => {${expr} = ev.target.value}`;
     } else if (type === "checkbox") {
-      ctx.addLine(`p${nodeID}.props = {checked: context.state['${value}']};`);
-      handler = `(ev) => {context.state['${value}'] = ev.target.checked}`;
+      ctx.addLine(`p${nodeID}.props = {checked: ${expr}};`);
+      handler = `(ev) => {${expr} = ev.target.checked}`;
     } else if (type === "radio") {
       const nodeValue = node.getAttribute("value")!;
-      ctx.addLine(`p${nodeID}.props = {checked:context.state['${value}'] === '${nodeValue}'};`);
-      handler = `(ev) => {context.state['${value}'] = ev.target.value}`;
+      ctx.addLine(`p${nodeID}.props = {checked:${expr} === '${nodeValue}'};`);
+      handler = `(ev) => {${expr} = ev.target.value}`;
       event = "click";
     } else {
-      ctx.addLine(`p${nodeID}.props = {value: context.state['${value}']};`);
+      ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
       const trimCode = fullName.includes(".trim") ? ".trim()" : "";
       let valueCode = `ev.target.value${trimCode}`;
       if (fullName.includes(".number")) {
         ctx.rootContext.shouldDefineUtils = true;
         valueCode = `utils.toNumber(${valueCode})`;
       }
-      handler = `(ev) => {context.state['${value}'] = ${valueCode}}`;
+      handler = `(ev) => {${expr} = ${valueCode}}`;
     }
     ctx.addLine(
       `extra.handlers['${event}' + ${nodeID}] = extra.handlers['${event}' + ${nodeID}] || (${handler});`

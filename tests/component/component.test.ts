@@ -3603,6 +3603,30 @@ describe("t-model directive", () => {
     expect(select.value).toBe("red");
   });
 
+  test("on a sub state key", async () => {
+    env.qweb.addTemplates(`
+    <templates>
+        <div t-name="SomeComponent">
+            <input t-model="something.text"/>
+            <span><t t-esc="state.something.text"/></span>
+        </div>
+    </templates>`);
+
+    class SomeComponent extends Widget {
+      state = { something: {text: "" }};
+    }
+    const comp = new SomeComponent(env);
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "test");
+    expect(comp.state.something.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+  });
+
   test(".lazy modifier", async () => {
     env.qweb.addTemplates(`
     <templates>

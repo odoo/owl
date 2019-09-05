@@ -1114,8 +1114,8 @@ exports[`t-model directive .lazy modifier 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
-    p2.props = {value: context.state['text']};
-    extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context.state['text'] = ev.target.value});
+    p2.props = {value: context['state'].text};
+    extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context['state'].text = ev.target.value});
     p2.on['change'] = extra.handlers['change' + 2];
     let c3 = [], p3 = {key:3};
     var vn3 = h('span', p3, c3);
@@ -1137,8 +1137,8 @@ exports[`t-model directive basic use, on an input 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
-    p2.props = {value: context.state['text']};
-    extra.handlers['input' + 2] = extra.handlers['input' + 2] || ((ev) => {context.state['text'] = ev.target.value});
+    p2.props = {value: context['state'].text};
+    extra.handlers['input' + 2] = extra.handlers['input' + 2] || ((ev) => {context['state'].text = ev.target.value});
     p2.on['input'] = extra.handlers['input' + 2];
     let c3 = [], p3 = {key:3};
     var vn3 = h('span', p3, c3);
@@ -1160,12 +1160,12 @@ exports[`t-model directive on a select 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('select', p2, c2);
     c1.push(vn2);
-    p2.props = {value: context.state['color']};
-    extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context.state['color'] = ev.target.value});
+    p2.props = {value: context['state'].color};
+    extra.handlers['change' + 2] = extra.handlers['change' + 2] || ((ev) => {context['state'].color = ev.target.value});
     p2.on['change'] = extra.handlers['change' + 2];
     p2.hook = {
       create: (_, n) => {
-        n.elm.value=context.state['color'];
+        n.elm.value=context['state'].color;
       },
     };
     var _3 = '';
@@ -1195,6 +1195,29 @@ exports[`t-model directive on a select 1`] = `
 }"
 `;
 
+exports[`t-model directive on a sub state key 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('input', p2, c2);
+    c1.push(vn2);
+    p2.props = {value: context['state'].something.text};
+    extra.handlers['input' + 2] = extra.handlers['input' + 2] || ((ev) => {context['state'].something.text = ev.target.value});
+    p2.on['input'] = extra.handlers['input' + 2];
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    var _4 = context['state'].something.text;
+    if (_4 || _4 === 0) {
+        c3.push({text: _4});
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-model directive on an input type=radio 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1207,8 +1230,8 @@ exports[`t-model directive on an input type=radio 1`] = `
     let c5 = [], p5 = {key:5,attrs:{type: _2,id: _3,value: _4},on:{}};
     var vn5 = h('input', p5, c5);
     c1.push(vn5);
-    p5.props = {checked:context.state['choice'] === 'One'};
-    extra.handlers['click' + 5] = extra.handlers['click' + 5] || ((ev) => {context.state['choice'] = ev.target.value});
+    p5.props = {checked:context['state'].choice === 'One'};
+    extra.handlers['click' + 5] = extra.handlers['click' + 5] || ((ev) => {context['state'].choice = ev.target.value});
     p5.on['click'] = extra.handlers['click' + 5];
     var _6 = 'radio';
     var _7 = 'two';
@@ -1216,8 +1239,8 @@ exports[`t-model directive on an input type=radio 1`] = `
     let c9 = [], p9 = {key:9,attrs:{type: _6,id: _7,value: _8},on:{}};
     var vn9 = h('input', p9, c9);
     c1.push(vn9);
-    p9.props = {checked:context.state['choice'] === 'Two'};
-    extra.handlers['click' + 9] = extra.handlers['click' + 9] || ((ev) => {context.state['choice'] = ev.target.value});
+    p9.props = {checked:context['state'].choice === 'Two'};
+    extra.handlers['click' + 9] = extra.handlers['click' + 9] || ((ev) => {context['state'].choice = ev.target.value});
     p9.on['click'] = extra.handlers['click' + 9];
     let c10 = [], p10 = {key:10};
     var vn10 = h('span', p10, c10);
@@ -1241,8 +1264,8 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
     let c3 = [], p3 = {key:3,attrs:{type: _2},on:{}};
     var vn3 = h('input', p3, c3);
     c1.push(vn3);
-    p3.props = {checked: context.state['flag']};
-    extra.handlers['input' + 3] = extra.handlers['input' + 3] || ((ev) => {context.state['flag'] = ev.target.checked});
+    p3.props = {checked: context['state'].flag};
+    extra.handlers['input' + 3] = extra.handlers['input' + 3] || ((ev) => {context['state'].flag = ev.target.checked});
     p3.on['input'] = extra.handlers['input' + 3];
     let c4 = [], p4 = {key:4};
     var vn4 = h('span', p4, c4);

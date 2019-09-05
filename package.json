@@ -1,5 +1,5 @@
 {
-  "name": "owl",
+  "name": "owl-framework",
   "version": "0.20.0",
   "description": "Odoo Web Library (OWL)",
   "main": "src/index.ts",
@@ -21,11 +21,12 @@
     "url": "git+https://github.com/odoo/owl.git"
   },
   "author": "Odoo",
-  "license": "GPL-3.0-or-later",
+  "license": "LGPL",
   "bugs": {
     "url": "https://github.com/odoo/owl/issues"
   },
   "homepage": "https://github.com/odoo/owl#readme",
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^23.3.12",
     "cpx": "^1.5.0",
@@ -42,7 +43,6 @@
     "typescript": "^3.2.2",
     "uglify-es": "^3.3.9"
   },
-  "dependencies": {},
   "jest": {
     "roots": [
       "<rootDir>/src",

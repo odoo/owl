@@ -1334,16 +1334,143 @@ exports[`t-slot directive can define and call slots 2`] = `
     c1.push(vn2);
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'header'];
     if (slot3) {
-        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
+        slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
     }
     let c4 = [], p4 = {key:4};
     var vn4 = h('div', p4, c4);
     c1.push(vn4);
     const slot5 = this.slots[context.__owl__.slotId + '_' + 'footer'];
     if (slot5) {
-        slot5(context.__owl__.parent, Object.assign({}, extra, {parentNode: c4, vars: extra.vars, parent: owner}));
+        slot5.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c4, vars: extra.vars, parent: owner}));
     }
     return vn1;
+}"
+`;
+
+exports[`t-slot directive can define and call slots 3`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`header\`});
+}"
+`;
+
+exports[`t-slot directive can define and call slots 4`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`footer\`});
+}"
+`;
+
+exports[`t-slot directive content is the default slot 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`sts rocks\`});
+}"
+`;
+
+exports[`t-slot directive default slot work with text nodes 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    c1.push({text: \`sts rocks\`});
+}"
+`;
+
+exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`sts\`});
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`rocks\`});
+}"
+`;
+
+exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`sts\`});
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`rocks\`});
+}"
+`;
+
+exports[`t-slot directive refs are properly bound in slots 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['doSomething']) {
+        throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'slot_footer_template'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['doSomething'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    const ref3 = \`myButton\`;
+    p2.hook = {
+      create: (_, n) => {
+        context.refs[ref3] = n.elm;
+      },
+    };
+    c2.push({text: \`do something\`});
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    var h = this.h;
+    let c1 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['doSomething']) {
+        throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'slot_footer_template'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['doSomething'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    c2.push({text: \`do something\`});
 }"
 `;
 
@@ -1357,7 +1484,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
     var vn2 = h('a', p2, c2);
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot3) {
-        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
+        slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
     }
     return vn2;
 }"
@@ -1435,6 +1562,20 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
 }"
 `;
 
+exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c6 = extra.parentNode;
+        Object.assign(context, extra.scope);
+    c6.push({text: \`User \`});
+    var _7 = context['user'].name;
+    if (_7 || _7 === 0) {
+        c6.push({text: _7});
+    }
+}"
+`;
+
 exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1445,7 +1586,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
     var vn2 = h('a', p2, c2);
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot3) {
-        slot3(context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
+        slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
     }
     return vn2;
 }"
@@ -1524,6 +1665,19 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
 }"
 `;
 
+exports[`t-slot directive slots are rendered with proper context, part 3 3`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c6 = extra.parentNode;
+    let _7 = extra.vars._7
+        Object.assign(context, extra.scope);
+    if (_7 || _7 === 0) {
+        c6.push({text: _7});
+    }
+}"
+`;
+
 exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1564,6 +1718,19 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     }
     extra.promises.push(def4);
     return vn1;
+}"
+`;
+
+exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = extra.parentNode;
+    let _2 = extra.vars._2
+        Object.assign(context, extra.scope);
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    }
 }"
 `;
 

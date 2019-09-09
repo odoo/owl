@@ -574,6 +574,24 @@ describe("t-call (template calling", () => {
     expect(trim(renderToString(qweb, "caller"))).toBe(expected);
   });
 
+  test("call with several sub nodes on same line", () => {
+    qweb.addTemplates(`
+        <templates>
+            <div t-name="SubTemplate">
+                <t t-raw="0"/>
+            </div>
+
+            <div t-name="main">
+                <t t-call="SubTemplate">
+                    <span>hey</span> <span>yay</span>
+                </t>
+            </div>
+        </templates>
+    `);
+    const expected = "<div><div><span>hey</span> <span>yay</span></div></div>";
+    expect(renderToString(qweb, "main")).toBe(expected);
+  });
+
   test("recursive template, part 1", () => {
     qweb.addTemplates(`
         <templates>
@@ -589,7 +607,6 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb, "recursive")).toBe(expected);
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
-
   });
 
   test("recursive template, part 2", () => {
@@ -611,9 +628,9 @@ describe("t-call (template calling", () => {
 
         </templates>
     `);
-    const root = { val: "a", children: [{val: "b"}, {val: "c"}]};
+    const root = { val: "a", children: [{ val: "b" }, { val: "c" }] };
     const expected = "<div><div><p>a</p><div><p>b</p></div><div><p>c</p></div></div></div>";
-    expect(renderToString(qweb, "Parent", {root })).toBe(expected);
+    expect(renderToString(qweb, "Parent", { root })).toBe(expected);
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
@@ -637,9 +654,10 @@ describe("t-call (template calling", () => {
 
         </templates>
     `);
-    const root = { val: "a", children: [{val: "b", children: [{val: "d"}]}, {val: "c"}]};
-    const expected = "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
-    expect(renderToString(qweb, "Parent", {root })).toBe(expected);
+    const root = { val: "a", children: [{ val: "b", children: [{ val: "d" }] }, { val: "c" }] };
+    const expected =
+      "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
+    expect(renderToString(qweb, "Parent", { root })).toBe(expected);
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });

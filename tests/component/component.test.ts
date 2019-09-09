@@ -3051,8 +3051,8 @@ describe("t-slot directive", () => {
     );
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
     expect(env.qweb.templates.Dialog.fn.toString()).toMatchSnapshot();
-    expect(env.qweb.slots['1_header'].toString()).toMatchSnapshot();
-    expect(env.qweb.slots['1_footer'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_header"].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context", async () => {
@@ -3088,7 +3088,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
-    expect(env.qweb.slots['1_footer'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context, part 2", async () => {
@@ -3126,7 +3126,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
-    expect(env.qweb.slots['1_default'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context, part 3", async () => {
@@ -3165,7 +3165,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
-    expect(env.qweb.slots['1_default'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context, part 4", async () => {
@@ -3198,7 +3198,7 @@ describe("t-slot directive", () => {
     app.state.user.name = "David";
     await nextTick();
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
-    expect(env.qweb.slots['1_default'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("refs are properly bound in slots", async () => {
@@ -3234,7 +3234,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
-    expect(env.qweb.slots['1_footer'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
   test("content is the default slot", async () => {
@@ -3256,7 +3256,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
-    expect(env.qweb.slots['1_default'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("default slot work with text nodes", async () => {
@@ -3276,7 +3276,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
-    expect(env.qweb.slots['1_default'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("multiple roots are allowed in a named slot", async () => {
@@ -3301,7 +3301,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
-    expect(env.qweb.slots['1_content'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_content"].toString()).toMatchSnapshot();
   });
 
   test("multiple roots are allowed in a default slot", async () => {
@@ -3324,7 +3324,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
-    expect(env.qweb.slots['1_default'].toString()).toMatchSnapshot();
+    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("missing slots are ignored", async () => {
@@ -3624,7 +3624,7 @@ describe("t-model directive", () => {
     </templates>`);
 
     class SomeComponent extends Widget {
-      state = { something: {text: "" }};
+      state = { something: { text: "" } };
     }
     const comp = new SomeComponent(env);
     await comp.mount(fixture);

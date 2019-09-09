@@ -200,6 +200,7 @@ QWeb.addDirective({
     // extract variables from nodecopy
     const tempCtx = new Context();
     tempCtx.nextID = ctx.rootContext.nextID;
+    tempCtx.allowMultipleRoots = true;
     qweb._compileNode(nodeCopy, tempCtx);
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
     ctx.rootContext.nextID = tempCtx.nextID;

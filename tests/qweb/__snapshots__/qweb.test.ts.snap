@@ -775,6 +775,28 @@ exports[`t-call (template calling basic caller 1`] = `
 }"
 `;
 
+exports[`t-call (template calling call with several sub nodes on same line 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('div', p5, c5);
+    c1.push(vn5);
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c5.push(vn6);
+    c6.push({text: \`hey\`});
+    c5.push({text: \` \`});
+    let c7 = [], p7 = {key:7};
+    var vn7 = h('span', p7, c7);
+    c5.push(vn7);
+    c7.push({text: \`yay\`});
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling inherit context 1`] = `
 "function anonymous(context,extra
 ) {

@@ -92,6 +92,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   get el(): HTMLElement | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
   }
+  static components = {};
 
   env: T;
   state?: State;

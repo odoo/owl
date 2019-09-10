@@ -151,6 +151,97 @@ Promise.all([loadTemplates(), owl.utils.whenReady()]).then(start);
 }
 
 //------------------------------------------------------------------------------
+// Tabbed editor
+//------------------------------------------------------------------------------
+class TabbedEditor extends owl.Component {
+  constructor(parent, props) {
+    super(parent, props);
+    this.state = {
+      currentTab: props.js ? "js" : props.xml ? "xml" : "css"
+    };
+    this.setTab = owl.utils.debounce(this.setTab, 250, true);
+
+    this.sessions = {};
+    this._setupSessions(props);
+    this.editor = null;
+  }
+
+  mounted() {
+    this.editor = this.editor || ace.edit(this.refs.editor);
+
+    this.editor.setValue(this.props[this.state.currentTab], -1);
+    this.editor.setFontSize("12px");
+    this.editor.setTheme("ace/theme/monokai");
+    this.editor.setSession(this.sessions[this.state.currentTab]);
+    const tabSize = this.state.currentTab === "xml" ? 2 : 4;
+    this.editor.session.setOption("tabSize", tabSize);
+    this.editor.on("blur", () => {
+      const editorValue = this.editor.getValue();
+      const propsValue = this.props[this.state.currentTab];
+      if (editorValue !== propsValue) {
+        this.trigger("updateCode", {
+          type: this.state.currentTab,
+          value: editorValue
+        });
+      }
+    });
+  }
+
+  willUpdateProps(nextProps) {
+    this._setupSessions(nextProps);
+  }
+
+  patched() {
+    const session = this.sessions[this.state.currentTab];
+    let content = this.props[this.state.currentTab];
+    if (content === false) {
+      const tab = this.props.js ? "js" : this.props.xml ? "xml" : "css";
+      content = this.props[tab];
+      this.state.currentTab = tab;
+    }
+    session.setValue(content, -1);
+    this.editor.setSession(session);
+    this.editor.resize();
+  }
+
+  setTab(tab) {
+    if (this.state.currentTab !== tab) {
+      this.state.currentTab = tab;
+      const session = this.sessions[this.state.currentTab];
+      session.doc.setValue(this.props[tab], -1);
+      this.editor.setSession(session);
+    }
+  }
+
+  onMouseDown(ev) {
+    if (ev.target.tagName === "DIV") {
+      let y = ev.clientY;
+      const resizer = ev => {
+        const delta = ev.clientY - y;
+        y = ev.clientY;
+        this.trigger("updatePanelHeight", { delta });
+      };
+      document.body.addEventListener("mousemove", resizer);
+      document.body.addEventListener("mouseup", () => {
+        document.body.removeEventListener("mousemove", resizer);
+      });
+    }
+  }
+
+  _setupSessions(props) {
+    for (let tab of ["js", "xml", "css"]) {
+      if (props[tab] && !this.sessions[tab]) {
+        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
+        this.sessions[tab].setOption("useWorker", false);
+        const tabSize = tab === "xml" ? 2 : 4;
+        this.sessions[tab].setOption("tabSize", tabSize);
+        this.sessions[tab].setUndoManager(new ace.UndoManager());
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 // MAIN APP
 //------------------------------------------------------------------------------
 class App extends owl.Component {
@@ -158,7 +249,6 @@ class App extends owl.Component {
     super(...args);
     this.version = owl.__info__.version;
     this.SAMPLES = SAMPLES;
-    this.components = { TabbedEditor };
 
     this.state = {
       js: SAMPLES[0].code,
@@ -270,97 +360,8 @@ class App extends owl.Component {
     saveAs(content, "app.zip");
   }
 }
+App.components = { TabbedEditor };
 
-//------------------------------------------------------------------------------
-// Tabbed editor
-//------------------------------------------------------------------------------
-class TabbedEditor extends owl.Component {
-  constructor(parent, props) {
-    super(parent, props);
-    this.state = {
-      currentTab: props.js ? "js" : props.xml ? "xml" : "css"
-    };
-    this.setTab = owl.utils.debounce(this.setTab, 250, true);
-
-    this.sessions = {};
-    this._setupSessions(props);
-    this.editor = null;
-  }
-
-  mounted() {
-    this.editor = this.editor || ace.edit(this.refs.editor);
-
-    this.editor.setValue(this.props[this.state.currentTab], -1);
-    this.editor.setFontSize("12px");
-    this.editor.setTheme("ace/theme/monokai");
-    this.editor.setSession(this.sessions[this.state.currentTab]);
-    const tabSize = this.state.currentTab === "xml" ? 2 : 4;
-    this.editor.session.setOption("tabSize", tabSize);
-    this.editor.on("blur", () => {
-      const editorValue = this.editor.getValue();
-      const propsValue = this.props[this.state.currentTab];
-      if (editorValue !== propsValue) {
-        this.trigger("updateCode", {
-          type: this.state.currentTab,
-          value: editorValue
-        });
-      }
-    });
-  }
-
-  willUpdateProps(nextProps) {
-    this._setupSessions(nextProps);
-  }
-
-  patched() {
-    const session = this.sessions[this.state.currentTab];
-    let content = this.props[this.state.currentTab];
-    if (content === false) {
-      const tab = this.props.js ? "js" : this.props.xml ? "xml" : "css";
-      content = this.props[tab];
-      this.state.currentTab = tab;
-    }
-    session.setValue(content, -1);
-    this.editor.setSession(session);
-    this.editor.resize();
-  }
-
-  setTab(tab) {
-    if (this.state.currentTab !== tab) {
-      this.state.currentTab = tab;
-      const session = this.sessions[this.state.currentTab];
-      session.doc.setValue(this.props[tab], -1);
-      this.editor.setSession(session);
-    }
-  }
-
-  onMouseDown(ev) {
-    if (ev.target.tagName === "DIV") {
-      let y = ev.clientY;
-      const resizer = ev => {
-        const delta = ev.clientY - y;
-        y = ev.clientY;
-        this.trigger("updatePanelHeight", { delta });
-      };
-      document.body.addEventListener("mousemove", resizer);
-      document.body.addEventListener("mouseup", () => {
-        document.body.removeEventListener("mousemove", resizer);
-      });
-    }
-  }
-
-  _setupSessions(props) {
-    for (let tab of ["js", "xml", "css"]) {
-      if (props[tab] && !this.sessions[tab]) {
-        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
-        this.sessions[tab].setOption("useWorker", false);
-        const tabSize = tab === "xml" ? 2 : 4;
-        this.sessions[tab].setOption("tabSize", tabSize);
-        this.sessions[tab].setUndoManager(new ace.UndoManager());
-      }
-    }
-  }
-}
 
 //------------------------------------------------------------------------------
 // Application initialization

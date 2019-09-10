@@ -27,13 +27,13 @@ describe("connecting a component to store", () => {
             <span t-name="Todo"><t t-esc="props.msg"/></span>
         </templates>
     `);
+    class Todo extends Component<any, any, any> {}
     class App extends ConnectedComponent<any, any, any> {
-      components = { Todo };
+      static components = { Todo };
       static mapStoreToProps(s) {
         return { todos: s.todos };
       }
     }
-    class Todo extends Component<any, any, any> {}
     const state = { todos: [] };
     const actions = {
       addTodo({ state }, msg) {
@@ -122,7 +122,7 @@ describe("connecting a component to store", () => {
       }
     });
     class App extends ConnectedComponent<any, any, any> {
-      components = { Todo };
+      static components = { Todo };
       static mapStoreToProps(s) {
         return { todos: s.todos };
       }
@@ -200,7 +200,7 @@ describe("connecting a component to store", () => {
     }
 
     class Parent extends Component<any, any, any> {
-      components = { Child };
+      static components = { Child };
 
       constructor(env: Env) {
         super(env);
@@ -248,7 +248,7 @@ describe("connecting a component to store", () => {
     }
 
     class TodoList extends ConnectedComponent<any, any, any> {
-      components = { TodoItem };
+      static components = { TodoItem };
       static mapStoreToProps(state) {
         return { todos: state.todos };
       }
@@ -305,7 +305,7 @@ describe("connecting a component to store", () => {
     }
 
     class TodoList extends ConnectedComponent<any, any, any> {
-      components = { TodoItem };
+      static components = { TodoItem };
       static mapStoreToProps(state) {
         return { todos: state.todos };
       }
@@ -337,7 +337,7 @@ describe("connecting a component to store", () => {
     }
 
     class App extends Component<any, any, any> {
-      components = { Beer };
+      static components = { Beer };
       state = { beerId: 1 };
     }
 
@@ -414,7 +414,7 @@ describe("connecting a component to store", () => {
     }
 
     class App extends Component<any, any, any> {
-      components = { Beer };
+      static components = { Beer };
       state = { beerId: 0 };
     }
 
@@ -481,7 +481,7 @@ describe("connecting a component to store", () => {
     }
 
     class App extends Component<any, any, any> {
-      components = { Beer };
+      static components = { Beer };
       state = { beerId: 0 };
     }
 
@@ -559,20 +559,20 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class Parent extends ConnectedComponent<any, any, any> {
-      components = { Child };
-      static mapStoreToProps(s) {
-        steps.push("parent");
-        return { current: s.current, isvisible: s.isvisible };
-      }
-    }
-
     class Child extends ConnectedComponent<any, any, any> {
       static mapStoreToProps(s, props) {
         steps.push("child");
         return { msg: s.msg[props.key] };
       }
     }
+    class Parent extends ConnectedComponent<any, any, any> {
+      static components = { Child };
+      static mapStoreToProps(s) {
+        steps.push("parent");
+        return { current: s.current, isvisible: s.isvisible };
+      }
+    }
+
 
     const state = { current: "a", msg: { a: "a", b: "b" } };
     const actions = {
@@ -609,8 +609,14 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
+    class Child extends ConnectedComponent<any, any, any> {
+      static mapStoreToProps(s, props) {
+        steps.push("child");
+        return { msg: s.messages[props.someId] };
+      }
+    }
     class Parent extends ConnectedComponent<any, any, any> {
-      components = { Child };
+      static components = { Child };
       static mapStoreToProps(s) {
         steps.push("parent");
         return { flag: s.flag, someId: s.someId };
@@ -621,12 +627,6 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class Child extends ConnectedComponent<any, any, any> {
-      static mapStoreToProps(s, props) {
-        steps.push("child");
-        return { msg: s.messages[props.someId] };
-      }
-    }
 
     const state = { someId: 1, flag: true, messages: { 1: "abc" } };
     const actions = {
@@ -685,15 +685,6 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class TodoApp extends ConnectedComponent<any, any, any> {
-      components = { TodoItem };
-      static mapStoreToProps(state) {
-        return {
-          todos: state.todos
-        };
-      }
-    }
-
     let renderCount = 0;
     let fCount = 0;
 
@@ -714,6 +705,15 @@ describe("connecting a component to store", () => {
         return super.__render(...args);
       }
     }
+    class TodoApp extends ConnectedComponent<any, any, any> {
+      static components = { TodoItem };
+      static mapStoreToProps(state) {
+        return {
+          todos: state.todos
+        };
+      }
+    }
+
 
     (<any>env).store = store;
     const app = new TodoApp(env);
@@ -764,15 +764,6 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class TodoApp extends ConnectedComponent<any, any, any> {
-      components = { TodoItem };
-      static mapStoreToProps(state) {
-        return {
-          todos: state.todos
-        };
-      }
-    }
-
     let renderCount = 0;
     let fCount = 0;
 
@@ -791,6 +782,15 @@ describe("connecting a component to store", () => {
       __render(...args) {
         renderCount++;
         return super.__render(...args);
+      }
+    }
+
+    class TodoApp extends ConnectedComponent<any, any, any> {
+      static components = { TodoItem };
+      static mapStoreToProps(state) {
+        return {
+          todos: state.todos
+        };
       }
     }
 
@@ -879,7 +879,7 @@ describe("connected components and default values", () => {
     }
 
     class App extends Component<any, any, any> {
-      components = { Greeter };
+      static components = { Greeter };
     }
 
     const store = new Store({ state: {} });
@@ -903,7 +903,7 @@ describe("connected components and default values", () => {
     }
 
     class App extends Component<any, any, any> {
-      components = { Greeter };
+      static components = { Greeter };
     }
 
     const store = new Store({ state: {} });
@@ -948,7 +948,7 @@ describe("connected components and default values", () => {
     }
 
     class Thread extends ConnectedComponent<any, any, any> {
-      components = { Message };
+      static components = { Message };
       static defaultProps = { showMessages: true };
       static mapStoreToProps = function(state, ownProps) {
         const thread = state.threads[ownProps.threadId];
@@ -959,7 +959,7 @@ describe("connected components and default values", () => {
     }
 
     class App extends Component<any, any, any> {
-      components = { Thread };
+      static components = { Thread };
       static defaultProps = { threadId: 1 };
     }
 
@@ -1026,7 +1026,7 @@ describe("connected components and default values", () => {
     }
 
     class Parent extends Component<any, any, any> {
-      components = { Child };
+      static components = { Child };
       state = { child: true };
     }
 
@@ -1157,7 +1157,7 @@ describe("various scenarios", () => {
           attachmentIds: state.messages[10].attachmentIds
         };
       }
-      components = { Attachment };
+      static components = { Attachment };
       state = { isAttachmentDeleted: false };
       doStuff() {
         this.dispatch("deleteAttachment", 100);

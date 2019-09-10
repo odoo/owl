@@ -113,6 +113,16 @@ find a template with the component name (or one of its ancestor).
 
 ### Static Properties
 
+- **`components`** (Object, optional): if given, this is an object that contains
+  the classes of any sub components needed by the template. This is the main way
+  used by Owl to be able to create sub components.
+
+  ```js
+  class ParentComponent extends owl.Component {
+      static components = { SubComponent };
+  }
+  ```
+
 - **`props`** (Object, optional): if given, this is an object that describes the
   type and shape of the (actual) props given to the component. If Owl mode is
   `dev`, this will be used to validate the props each time the component is
@@ -420,7 +430,7 @@ to be capitalized.
 
 ```js
 class ParentComponent extends owl.Component {
-    components = { MyComponent: MyComponent};
+    static components = { MyComponent: MyComponent};
     ...
 }
 ```
@@ -442,16 +452,16 @@ that the template can access `state`, `props`, `env`, or any methods defined in 
 
 ```js
 class ParentComponent {
-  components = { ChildComponent };
+  static components = { ChildComponent };
   state = { val: 4 };
 }
 ```
 
 Whenever the template is rendered, it will automatically create the subcomponent
 `ChildComponent` at the correct place. It needs to find the reference to the
-actual component class in the special `components` key, or the class registered in
+actual component class in the special static `components` key, or the class registered in
 QWeb's global registry (see `register` function of QWeb). It first looks inside
-the local `components` key, then fallbacks on the global registry.
+the static `components` key, then fallbacks on the global registry.
 
 _Props_: In this example, the child component will receive the object `{count: 4}` in its
 constructor. This will be assigned to the `props` variable, which can be accessed
@@ -471,7 +481,7 @@ The `t-component` directive can also be used to accept dynamic values with strin
 
 ```js
 class ParentComponent {
-  components = { ChildComponent1, ChildComponent2 };
+  static components = { ChildComponent1, ChildComponent2 };
   state = { id: 1 };
 }
 ```

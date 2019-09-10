@@ -175,10 +175,10 @@ describe("animations", () => {
 
     env.qweb.addTemplate("Parent", `<div><Child t-transition="chimay"/></div>`);
     env.qweb.addTemplate("Child", `<span>blue</span>`);
-    class Parent extends Widget {
-      components = { Child: Child };
-    }
     class Child extends Widget {}
+    class Parent extends Widget {
+      static components = { Child: Child };
+    }
     const widget = new Parent(env);
 
     let def = makeDeferred();
@@ -214,11 +214,11 @@ describe("animations", () => {
       `<div><t t-if="state.display" t-component="Child" t-transition="chimay"/></div>`
     );
     env.qweb.addTemplate("Child", `<span>blue</span>`);
+    class Child extends Widget {}
     class Parent extends Widget {
-      components = { Child: Child };
+      static components = { Child: Child };
       state = { display: true };
     }
-    class Child extends Widget {}
     const widget = new Parent(env);
 
     let def = makeDeferred();
@@ -356,7 +356,7 @@ describe("animations", () => {
     );
     class Child extends Widget {}
     class Parent extends Widget {
-      components = { Child };
+      static components = { Child };
       constructor(parent) {
         super(parent);
         this.state = { flag: false };

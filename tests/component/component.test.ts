@@ -57,11 +57,12 @@ class Counter extends Widget {
   }
 }
 
+class WidgetB extends Widget {}
+
 class WidgetA extends Widget {
-  components = { b: WidgetB };
+  static components = { b: WidgetB };
 }
 
-class WidgetB extends Widget {}
 
 //------------------------------------------------------------------------------
 // Tests
@@ -177,7 +178,7 @@ describe("basic widget properties", () => {
     class Child extends Component<any, any, any> {}
 
     class Parent extends Component<any, any, any> {
-      components = { Child };
+      static components = { Child };
     }
 
     const widget = new Parent(env);
@@ -227,13 +228,14 @@ describe("lifecycle hooks", () => {
   test("willStart hook is called on subwidget", async () => {
     let ok = false;
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
-    class ParentWidget extends Widget {
-      components = { child: ChildWidget };
-    }
     class ChildWidget extends Widget {
       async willStart() {
         ok = true;
       }
+    }
+
+    class ParentWidget extends Widget {
+      static components = { child: ChildWidget };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -245,16 +247,17 @@ describe("lifecycle hooks", () => {
 
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
 
-    class ParentWidget extends Widget {
-      components = { child: ChildWidget };
-      mounted() {
-        steps.push("parent:mounted");
-      }
-    }
     class ChildWidget extends Widget {
       mounted() {
         expect(document.body.contains(this.el)).toBe(true);
         steps.push("child:mounted");
+      }
+    }
+
+    class ParentWidget extends Widget {
+      static components = { child: ChildWidget };
+      mounted() {
+        steps.push("parent:mounted");
       }
     }
     const widget = new ParentWidget(env);
@@ -271,18 +274,17 @@ describe("lifecycle hooks", () => {
     );
     env.qweb.addTemplate("ChildWidget", `<div><t t-component="childchild"/></div>`);
 
-    class ParentWidget extends Widget {
-      components = { child: ChildWidget };
-      state = { flag: false };
+    class ChildChildWidget extends Widget {
       mounted() {
-        steps.push("parent:mounted");
+        steps.push("childchild:mounted");
       }
       willUnmount() {
-        steps.push("parent:willUnmount");
+        steps.push("childchild:willUnmount");
       }
     }
+
     class ChildWidget extends Widget {
-      components = { childchild: ChildChildWidget };
+      static components = { childchild: ChildChildWidget };
       mounted() {
         steps.push("child:mounted");
       }
@@ -290,12 +292,15 @@ describe("lifecycle hooks", () => {
         steps.push("child:willUnmount");
       }
     }
-    class ChildChildWidget extends Widget {
+
+    class ParentWidget extends Widget {
+      static components = { child: ChildWidget };
+      state = { flag: false };
       mounted() {
-        steps.push("childchild:mounted");
+        steps.push("parent:mounted");
       }
       willUnmount() {
-        steps.push("childchild:willUnmount");
+        steps.push("parent:willUnmount");
       }
     }
     const widget = new ParentWidget(env);
@@ -317,27 +322,7 @@ describe("lifecycle hooks", () => {
   test("willPatch, patched hook are called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" n="state.n"/></div>`);
-    class ParentWidget extends Widget {
-      components = { child: ChildWidget };
-      state = { n: 1 };
-      willPatch() {
-        steps.push("parent:willPatch");
-      }
-      patched() {
-        steps.push("parent:patched");
-      }
-    }
     env.qweb.addTemplate("ChildWidget", `<div><t t-component="childchild" n="props.n"/></div>`);
-    class ChildWidget extends Widget {
-      components = { childchild: ChildChildWidget };
-      willPatch() {
-        steps.push("child:willPatch");
-      }
-      patched() {
-        steps.push("child:patched");
-      }
-    }
     env.qweb.addTemplate("ChildChildWidget", `<div><t t-esc="props.n"/></div>`);
 
     class ChildChildWidget extends Widget {
@@ -348,6 +333,28 @@ describe("lifecycle hooks", () => {
         steps.push("childchild:patched");
       }
     }
+    class ChildWidget extends Widget {
+      static components = { childchild: ChildChildWidget };
+      willPatch() {
+        steps.push("child:willPatch");
+      }
+      patched() {
+        steps.push("child:patched");
+      }
+    }
+
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" n="state.n"/></div>`);
+    class ParentWidget extends Widget {
+      static components = { child: ChildWidget };
+      state = { n: 1 };
+      willPatch() {
+        steps.push("parent:willPatch");
+      }
+      patched() {
+        steps.push("parent:patched");
+      }
+    }
+
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual([]);
@@ -382,10 +389,6 @@ describe("lifecycle hooks", () => {
             </t>
           </div>`
     );
-    class ParentWidget extends Widget {
-      state = { ok: false };
-      components = { child: ChildWidget };
-    }
     class ChildWidget extends Widget {
       async willStart() {
         steps.push("child:willStart");
@@ -393,6 +396,10 @@ describe("lifecycle hooks", () => {
       mounted() {
         steps.push("child:mounted");
       }
+    }
+    class ParentWidget extends Widget {
+      state = { ok: false };
+      static components = { child: ChildWidget };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -435,11 +442,6 @@ describe("lifecycle hooks", () => {
         <t t-if="state.ok"><t t-component="child"/></t>
       </div>`
     );
-    class ParentWidget extends Widget {
-      state = { ok: true };
-      components = { child: ChildWidget };
-    }
-
     class ChildWidget extends Widget {
       constructor(parent) {
         super(parent);
@@ -455,6 +457,11 @@ describe("lifecycle hooks", () => {
         steps.push("willunmount");
       }
     }
+    class ParentWidget extends Widget {
+      state = { ok: true };
+      static components = { child: ChildWidget };
+    }
+
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual(["init", "willstart", "mounted"]);
@@ -485,7 +492,7 @@ describe("lifecycle hooks", () => {
           </div>`
     );
     class ParentWidget extends Widget {
-      components = { ChildWidget };
+      static components = { ChildWidget };
       state = { n: 0, flag: true };
       increment() {
         this.state.n += 1;
@@ -510,23 +517,6 @@ describe("lifecycle hooks", () => {
   test("hooks are called in proper order in widget creation/destruction", async () => {
     let steps: string[] = [];
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
-    class ParentWidget extends Widget {
-      components = { child: ChildWidget };
-      constructor(parent) {
-        super(parent);
-        steps.push("p init");
-      }
-      async willStart() {
-        steps.push("p willstart");
-      }
-      mounted() {
-        steps.push("p mounted");
-      }
-      willUnmount() {
-        steps.push("p willunmount");
-      }
-    }
-
     class ChildWidget extends Widget {
       constructor(parent) {
         super(parent);
@@ -542,6 +532,23 @@ describe("lifecycle hooks", () => {
         steps.push("c willunmount");
       }
     }
+    class ParentWidget extends Widget {
+      static components = { child: ChildWidget };
+      constructor(parent) {
+        super(parent);
+        steps.push("p init");
+      }
+      async willStart() {
+        steps.push("p willstart");
+      }
+      mounted() {
+        steps.push("p mounted");
+      }
+      willUnmount() {
+        steps.push("p willunmount");
+      }
+    }
+
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     widget.destroy();
@@ -560,17 +567,17 @@ describe("lifecycle hooks", () => {
   test("willUpdateProps hook is called", async () => {
     let def = makeDeferred();
     env.qweb.addTemplate("Parent", '<span><Child n="state.n"/></span>');
-    class Parent extends Widget {
-      state = { n: 1 };
-      components = { Child: HookWidget };
-    }
-    env.qweb.addTemplate("HookWidget", '<span><t t-esc="props.n"/></span>');
     class HookWidget extends Widget {
       willUpdateProps(nextProps) {
         expect(nextProps.n).toBe(2);
         return def;
       }
     }
+    class Parent extends Widget {
+      state = { n: 1 };
+      static components = { Child: HookWidget };
+    }
+    env.qweb.addTemplate("HookWidget", '<span><t t-esc="props.n"/></span>');
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<span><span>1</span></span>");
@@ -609,16 +616,16 @@ describe("lifecycle hooks", () => {
     let n = 0;
 
     env.qweb.addTemplate("Parent", '<div><Child a="state.a"/></div>');
-    class Parent extends Widget {
-      state = { a: 1 };
-      components = { Child: TestWidget };
-    }
-
     class TestWidget extends Widget {
       patched() {
         n++;
       }
     }
+    class Parent extends Widget {
+      state = { a: 1 };
+      static components = { Child: TestWidget };
+    }
+
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(n).toBe(0);
@@ -649,16 +656,16 @@ describe("lifecycle hooks", () => {
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
     env.qweb.addTemplate("Parent", `<div><Child val="state.val"/></div>`);
-    class Parent extends Widget {
-      state = { val: 42 };
-      components = { Child: TestWidget };
-    }
-    env.qweb.addTemplate("TestWidget", `<div><t t-esc="props.val"/></div>`);
     class TestWidget extends Widget {
       shouldUpdate() {
         return shouldUpdate;
       }
     }
+    class Parent extends Widget {
+      state = { val: 42 };
+      static components = { Child: TestWidget };
+    }
+    env.qweb.addTemplate("TestWidget", `<div><t t-esc="props.val"/></div>`);
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>42</div></div>");
@@ -683,10 +690,6 @@ describe("lifecycle hooks", () => {
           </t>
         </div>`
     );
-    class ParentWidget extends Widget {
-      components = { child: ChildWidget };
-      state = { flag: false };
-    }
 
     class ChildWidget extends Widget {
       constructor(parent, props) {
@@ -696,6 +699,10 @@ describe("lifecycle hooks", () => {
       mounted() {
         mounted = true;
       }
+    }
+    class ParentWidget extends Widget {
+      static components = { child: ChildWidget };
+      state = { flag: false };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -717,8 +724,16 @@ describe("lifecycle hooks", () => {
             <t t-component="child" v="state.n"/>
         </div>`
     );
+    class ChildWidget extends Widget {
+      willPatch() {
+        steps.push("child:willPatch");
+      }
+      patched() {
+        steps.push("child:patched");
+      }
+    }
     class ParentWidget extends Widget {
-      components = { child: ChildWidget };
+      static components = { child: ChildWidget };
       state = { n: 1 };
       willPatch() {
         steps.push("parent:willPatch");
@@ -730,14 +745,6 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    class ChildWidget extends Widget {
-      willPatch() {
-        steps.push("child:willPatch");
-      }
-      patched() {
-        steps.push("child:patched");
-      }
-    }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(steps).toEqual([]);
@@ -765,11 +772,6 @@ describe("lifecycle hooks", () => {
         </templates>
     `);
 
-    class ParentWidget extends Widget {
-      components = { ChildWidget };
-      state = { n: 1, flag: true };
-    }
-
     class ChildWidget extends Widget {
       willPatch() {
         steps.push("child:willPatch");
@@ -784,6 +786,11 @@ describe("lifecycle hooks", () => {
         steps.push("child:mounted");
       }
     }
+    class ParentWidget extends Widget {
+      static components = { ChildWidget };
+      state = { n: 1, flag: true };
+    }
+
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
 
@@ -872,16 +879,9 @@ describe("destroy method", () => {
                 <t t-esc="props.val.val"/>
             </span>
         </templates>`);
-    class Parent extends Component<any, any, any> {
-      components = { Child };
-      state = { p: 1 };
-      doStuff() {
-        this.state.p = 2;
-      }
-    }
-
+    class GrandChild extends Component<any, any, any> {}
     class Child extends Component<any, any, any> {
-      components = { GrandChild };
+      static components = { GrandChild };
       state = { val: 33, flag: false };
       doSomething() {
         this.state.val = 12;
@@ -892,7 +892,14 @@ describe("destroy method", () => {
         return { val: this.state.val };
       }
     }
-    class GrandChild extends Component<any, any, any> {}
+    class Parent extends Component<any, any, any> {
+      static components = { Child };
+      state = { p: 1 };
+      doStuff() {
+        this.state.p = 2;
+      }
+    }
+
 
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -927,7 +934,7 @@ describe("composition", () => {
     env.qweb.addTemplate("AnotherWidgetB", `<span>Belgium</span>`);
     class AnotherWidgetB extends Widget {}
     class ParentWidget extends Widget {
-      components = { WidgetB: AnotherWidgetB };
+      static components = { WidgetB: AnotherWidgetB };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -943,7 +950,7 @@ describe("composition", () => {
       </templates>`);
     class C extends Widget {}
     class P extends Widget {
-      components = { C };
+      static components = { C };
     }
     const parent = new P(env);
     await parent.mount(fixture);
@@ -956,7 +963,7 @@ describe("composition", () => {
 
     env.qweb.addTemplate("Parent", `<div><SomeMispelledWidget /></div>`);
     class Parent extends Widget {
-      components = { SomeWidget: Widget };
+      static components = { SomeWidget: Widget };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -971,7 +978,7 @@ describe("composition", () => {
   test("t-refs on widget are components", async () => {
     env.qweb.addTemplate("WidgetC", `<div>Hello<t t-ref="mywidgetb" t-component="b"/></div>`);
     class WidgetC extends Widget {
-      components = { b: WidgetB };
+      static components = { b: WidgetB };
     }
     const widget = new WidgetC(env);
     await widget.mount(fixture);
@@ -988,7 +995,7 @@ describe("composition", () => {
         </div>`
     );
     class ParentWidget extends Widget {
-      components = { Widget };
+      static components = { Widget };
       state = { list: <any>[] };
       willPatch() {
         expect(this.refs.child).toBeUndefined();
@@ -1015,7 +1022,7 @@ describe("composition", () => {
         </div>`
     );
     class ParentWidget extends Widget {
-      components = { Widget };
+      static components = { Widget };
       state = { child1: true, child2: false };
       count = 0;
       mounted() {
@@ -1056,7 +1063,7 @@ describe("composition", () => {
   test("modifying a sub widget", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
     class ParentWidget extends Widget {
-      components = { Counter };
+      static components = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1078,7 +1085,7 @@ describe("composition", () => {
     );
     class ParentWidget extends Widget {
       state = { items: [1, 2, 3] };
-      components = { Child: Widget };
+      static components = { Child: Widget };
     }
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
@@ -1108,7 +1115,7 @@ describe("composition", () => {
   test("rerendering a widget with a sub widget", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
     class ParentWidget extends Widget {
-      components = { Counter };
+      static components = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1124,7 +1131,7 @@ describe("composition", () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-if="state.ok"><Counter /></t></div>`);
     class ParentWidget extends Widget {
       state = { ok: true };
-      components = { Counter };
+      static components = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1148,7 +1155,7 @@ describe("composition", () => {
     );
     class ParentWidget extends Widget {
       state = { ok: true };
-      components = { Counter };
+      static components = { Counter };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1175,12 +1182,12 @@ describe("composition", () => {
       "ParentWidget",
       `<div><t t-if="state.ok"><InputWidget t-keepalive="1"/></t></div>`
     );
+    class InputWidget extends Widget {}
     class ParentWidget extends Widget {
       state = { ok: true };
-      components = { InputWidget };
+      static components = { InputWidget };
     }
     env.qweb.addTemplate("InputWidget", "<input/>");
-    class InputWidget extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     const input = fixture.getElementsByTagName("input")[0];
@@ -1206,11 +1213,11 @@ describe("composition", () => {
         </div>
         <span t-name="ChildWidget">Hello</span>
       </templates>`);
+    class ChildWidget extends Widget {}
     class ParentWidget extends Widget {
       state = { ok: true };
-      components = { ChildWidget };
+      static components = { ChildWidget };
     }
-    class ChildWidget extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
@@ -1248,7 +1255,7 @@ describe("composition", () => {
       state = {
         numbers: [1, 2, 3]
       };
-      components = { ChildWidget };
+      static components = { ChildWidget };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -1287,7 +1294,7 @@ describe("composition", () => {
       state = {
         numbers: [1, 2, 3]
       };
-      components = { ChildWidget };
+      static components = { ChildWidget };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -1321,7 +1328,7 @@ describe("composition", () => {
 
     class Parent extends Widget {
       state = { flag: false };
-      components = { ChildWidget };
+      static components = { ChildWidget };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -1358,7 +1365,7 @@ describe("composition", () => {
 
     class SubWidget extends Widget {}
     class Parent extends Widget {
-      components = { SubWidget };
+      static components = { SubWidget };
       state = { blips: [{ a: "a", id: 1 }, { b: "b", id: 2 }, { c: "c", id: 4 }] };
     }
     const parent = new Parent(env);
@@ -1390,7 +1397,7 @@ describe("composition", () => {
 
     class SubWidget extends Widget {}
     class Parent extends Widget {
-      components = { SubWidget };
+      static components = { SubWidget };
       state = { blips: [{ a: "a", id: 1 }] };
     }
     const parent = new Parent(env);
@@ -1401,7 +1408,7 @@ describe("composition", () => {
   test("t-component with dynamic value", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="{{state.widget}}"/></div>`);
     class ParentWidget extends Widget {
-      components = { WidgetB };
+      static components = { WidgetB };
       state = { widget: "WidgetB" };
     }
     const widget = new ParentWidget(env);
@@ -1413,7 +1420,7 @@ describe("composition", () => {
   test("t-component with dynamic value 2", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="Widget{{state.widget}}"/></div>`);
     class ParentWidget extends Widget {
-      components = { WidgetB };
+      static components = { WidgetB };
       state = { widget: "B" };
     }
     const widget = new ParentWidget(env);
@@ -1426,12 +1433,6 @@ describe("composition", () => {
 describe("props evaluation ", () => {
   test("explicit object prop", async () => {
     env.qweb.addTemplate("Parent", `<div><t t-component="child" value="state.val"/></div>`);
-    class Parent extends Widget {
-      components = { child: Child };
-      state = { val: 42 };
-    }
-
-    env.qweb.addTemplate("Child", `<span><t t-esc="state.someval"/></span>`);
     class Child extends Widget {
       state: { someval: number };
       constructor(parent: Parent, props: { value: number }) {
@@ -1439,6 +1440,12 @@ describe("props evaluation ", () => {
         this.state = { someval: props.value };
       }
     }
+    class Parent extends Widget {
+      static components = { child: Child };
+      state = { val: 42 };
+    }
+
+    env.qweb.addTemplate("Child", `<span><t t-esc="state.someval"/></span>`);
 
     const widget = new Parent(env);
     await widget.mount(fixture);
@@ -1451,7 +1458,7 @@ describe("props evaluation ", () => {
 
     env.qweb.addTemplate("Parent", `<div><t t-component="child" greetings="greetings"/></div>`);
     class Parent extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       get greetings() {
         return `hello ${this.props.name}`;
       }
@@ -1462,6 +1469,7 @@ describe("props evaluation ", () => {
   });
 
   test("t-set works ", async () => {
+    class Child extends Widget {}
     env.qweb.addTemplate(
       "Parent",
       `
@@ -1471,7 +1479,7 @@ describe("props evaluation ", () => {
         </div>`
     );
     class Parent extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
     }
     env.qweb.addTemplate(
       "Child",
@@ -1480,7 +1488,6 @@ describe("props evaluation ", () => {
           <t t-esc="props.val"/>
         </span>`
     );
-    class Child extends Widget {}
 
     const widget = new Parent(env);
     await widget.mount(fixture);
@@ -1497,11 +1504,11 @@ describe("class and style attributes with t-component", () => {
             <t t-component="child" class="a b"/>
         </div>`
     );
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
     }
     env.qweb.addTemplate("Child", `<div class="c"/>`);
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
@@ -1514,12 +1521,12 @@ describe("class and style attributes with t-component", () => {
             <t t-component="child" t-att-class="{a:state.a, b:state.b}"/>
         </div>`
     );
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { a: true, b: false };
     }
     env.qweb.addTemplate("Child", `<div class="c"/>`);
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
@@ -1538,11 +1545,11 @@ describe("class and style attributes with t-component", () => {
             <Child class="a  b c   d"/>
       </div>`
     );
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { Child };
+      static components = { Child };
     }
     env.qweb.addTemplate("Child", `<div/>`);
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="a b c d"></div></div>`);
@@ -1557,12 +1564,12 @@ describe("class and style attributes with t-component", () => {
         <span t-name="Child" class="c" t-att-class="{ d: state.d }"/>
       </templates>`);
 
-    class ParentWidget extends Widget {
-      components = { Child };
-      state = { b: true };
-    }
     class Child extends Widget {
       state = { d: true };
+    }
+    class ParentWidget extends Widget {
+      static components = { Child };
+      state = { b: true };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1598,12 +1605,12 @@ describe("class and style attributes with t-component", () => {
         <span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>
       </templates>`);
 
-    class ParentWidget extends Widget {
-      components = { Child };
-      state = { b: true };
-    }
     class Child extends Widget {
       state = { d: true };
+    }
+    class ParentWidget extends Widget {
+      static components = { Child };
+      state = { b: true };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1663,7 +1670,7 @@ describe("class and style attributes with t-component", () => {
         </div>`
     );
     class ParentWidget extends Widget {
-      components = { child: Widget };
+      static components = { child: Widget };
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1679,7 +1686,7 @@ describe("class and style attributes with t-component", () => {
         </div>`
     );
     class ParentWidget extends Widget {
-      components = { child: Widget };
+      static components = { child: Widget };
       state = { style: "font-size: 20px" };
     }
     const widget = new ParentWidget(env);
@@ -1704,15 +1711,15 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-custom-event="someMethod"/></div>
       </templates>
     `);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       n = 0;
       someMethod(ev) {
         expect(ev.detail).toBe(43);
         this.n++;
       }
     }
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
@@ -1731,14 +1738,14 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv(3)"/></div>
       </templates>
     `);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv(n, ev) {
         expect(n).toBe(3);
         expect(ev.detail).toBe(43);
       }
     }
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
@@ -1753,14 +1760,14 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv({val: 3})"/></div>
       </templates>
     `);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv(o, ev) {
         expect(o).toEqual({ val: 3 });
         expect(ev.detail).toBe(43);
       }
     }
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
@@ -1775,14 +1782,14 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv({})"/></div>
       </templates>
     `);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv(o, ev) {
         expect(o).toEqual({});
         expect(ev.detail).toBe(43);
       }
     }
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
@@ -1797,14 +1804,14 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv({  })"/></div>
       </templates>
     `);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv(o, ev) {
         expect(o).toEqual({});
         expect(ev.detail).toBe(43);
       }
     }
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
@@ -1824,8 +1831,9 @@ describe("other directives with t-component", () => {
         </div>
       </templates>
     `);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv1(ev) {
         expect(ev.defaultPrevented).toBe(false);
         expect(ev.cancelBubble).toBe(true);
@@ -1839,7 +1847,6 @@ describe("other directives with t-component", () => {
         expect(ev.cancelBubble).toBe(true);
       }
     }
-    class Child extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
 
@@ -1860,8 +1867,12 @@ describe("other directives with t-component", () => {
       </templates>
     `);
     const steps: string[] = [];
+    class GrandChild extends Widget {}
+    class Child extends Widget {
+      static components = { child: GrandChild };
+    }
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv1(ev) {
         steps.push("onEv1");
       }
@@ -1869,10 +1880,6 @@ describe("other directives with t-component", () => {
         steps.push("onEv2");
       }
     }
-    class Child extends Widget {
-      components = { child: GrandChild };
-    }
-    class GrandChild extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
 
@@ -1897,14 +1904,14 @@ describe("other directives with t-component", () => {
       </templates>
     `);
     const steps: boolean[] = [];
+    class GrandChild extends Widget {}
+    class Child extends Widget {
+      static components = { child: GrandChild };
+    }
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       onEv() {}
     }
-    class Child extends Widget {
-      components = { child: GrandChild };
-    }
-    class GrandChild extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     (<HTMLElement>fixture).addEventListener("ev", function(e) {
@@ -1929,14 +1936,14 @@ describe("other directives with t-component", () => {
       </templates>
     `);
     const steps: boolean[] = [];
+    class GrandChild extends Widget {}
+    class Child extends Widget {
+      static components = { GrandChild };
+    }
     class ParentWidget extends Widget {
-      components = { Child };
+      static components = { Child };
       onEv() {}
     }
-    class Child extends Widget {
-      components = { GrandChild };
-    }
-    class GrandChild extends Widget {}
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     (<HTMLElement>fixture).addEventListener("ev", function(e) {
@@ -1953,12 +1960,12 @@ describe("other directives with t-component", () => {
 
   test("t-if works with t-component", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" t-if="state.flag"/></div>`);
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { flag: true };
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
-    class Child extends Widget {}
 
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1983,12 +1990,12 @@ describe("other directives with t-component", () => {
           <t t-else="1" t-component="child"/>
         </div>`
     );
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { flag: true };
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
-    class Child extends Widget {}
 
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -2009,12 +2016,12 @@ describe("other directives with t-component", () => {
           <t t-elif="!state.flag" t-component="child"/>
         </div>`
     );
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { flag: true };
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
-    class Child extends Widget {}
 
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -2035,12 +2042,12 @@ describe("other directives with t-component", () => {
           <t t-else="" t-component="child"/>
         </div>`
     );
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { flag: true };
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
-    class Child extends Widget {}
 
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -2063,7 +2070,7 @@ describe("random stuff/miscellaneous", () => {
       `<div><t t-foreach="Array(2)">txt</t><t t-component="widget"/></div>`
     );
     class Test extends Widget {
-      components = { widget: Widget };
+      static components = { widget: Widget };
     }
     const widget = new Test(env);
     await widget.mount(fixture);
@@ -2083,14 +2090,14 @@ describe("random stuff/miscellaneous", () => {
     `);
     const items = [1, 2, 3, 4];
 
+    class Child extends Widget {}
     class ParentWidget extends Widget {
-      components = { Child };
+      static components = { Child };
       onEv(n, ev) {
         expect(n).toBe(1);
         expect(ev.detail).toBe(43);
       }
     }
-    class Child extends Widget {}
 
     const widget = new ParentWidget(env, { items });
     await widget.mount(fixture);
@@ -2103,13 +2110,13 @@ describe("random stuff/miscellaneous", () => {
     // interplay between components and vnodes, a sub widget vnode was patched
     // twice.
     env.qweb.addTemplate("Parent", `<div><t t-component="child" flag="state.flag"/></div>`);
+    class Child extends Widget {}
     class Parent extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { flag: false };
     }
 
     env.qweb.addTemplate("Child", `<span>abc<t t-if="props.flag">def</t></span>`);
-    class Child extends Widget {}
 
     const widget = new Parent(env);
     await widget.mount(fixture);
@@ -2124,13 +2131,13 @@ describe("random stuff/miscellaneous", () => {
       "Parent",
       `<div><t t-component="child" t-key="'somestring'" flag="state.flag"/></div>`
     );
+    class Child extends Widget {}
     class Parent extends Widget {
-      components = { child: Child };
+      static components = { child: Child };
       state = { flag: false };
     }
 
     env.qweb.addTemplate("Child", `<span>abc<t t-if="props.flag">def</t></span>`);
-    class Child extends Widget {}
 
     const widget = new Parent(env);
     await widget.mount(fixture);
@@ -2178,11 +2185,6 @@ describe("random stuff/miscellaneous", () => {
         steps.push(`${this.name}:destroy`);
       }
     }
-    env.qweb.addTemplate("A", `<div>A<B /><C /></div>`);
-    class A extends TestWidget {
-      components = { B, C };
-      name = "A";
-    }
     env.qweb.addTemplate("B", `<div>B</div>`);
     class B extends TestWidget {
       name = "B";
@@ -2191,26 +2193,6 @@ describe("random stuff/miscellaneous", () => {
         steps.push("B:constructor");
       }
     }
-    env.qweb.addTemplate(
-      "C",
-      `
-        <div>C<D />
-            <E t-if="state.flag" />
-            <F t-else="!state.flag" />
-        </div>`
-    );
-    class C extends TestWidget {
-      components = { D, E, F };
-      name = "C";
-      state = { flag: true };
-
-      constructor(parent, props) {
-        super(parent, props);
-        c = this;
-        steps.push("C:constructor");
-      }
-    }
-
     env.qweb.addTemplate("D", `<div>D</div>`);
     class D extends TestWidget {
       name = "D";
@@ -2236,6 +2218,31 @@ describe("random stuff/miscellaneous", () => {
         steps.push("F:constructor");
       }
     }
+    env.qweb.addTemplate(
+      "C",
+      `
+        <div>C<D />
+            <E t-if="state.flag" />
+            <F t-else="!state.flag" />
+        </div>`
+    );
+    class C extends TestWidget {
+      static components = { D, E, F };
+      name = "C";
+      state = { flag: true };
+
+      constructor(parent, props) {
+        super(parent, props);
+        c = this;
+        steps.push("C:constructor");
+      }
+    }
+    env.qweb.addTemplate("A", `<div>A<B /><C /></div>`);
+    class A extends TestWidget {
+      static components = { B, C };
+      name = "A";
+    }
+
 
     const a = new A(env);
     await a.mount(fixture);
@@ -2315,11 +2322,6 @@ describe("async rendering", () => {
     let def = makeDeferred();
     let n = 0;
     env.qweb.addTemplate("W", `<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`);
-    class W extends Widget {
-      components = { Child };
-      state = { val: 1 };
-    }
-
     env.qweb.addTemplate("Child", `<span>child:<t t-esc="props.val"/></span>`);
     class Child extends Widget {
       constructor(parent, props) {
@@ -2330,6 +2332,11 @@ describe("async rendering", () => {
         return def;
       }
     }
+    class W extends Widget {
+      static components = { Child };
+      state = { val: 1 };
+    }
+
     const w = new W(env);
     await w.mount(fixture);
     expect(n).toBe(0);
@@ -2372,7 +2379,7 @@ describe("async rendering", () => {
         </div>`
     );
     class Parent extends Widget {
-      components = { ChildA, ChildB };
+      static components = { ChildA, ChildB };
       state = { flagA: false, flagB: false };
     }
     const parent = new Parent(env);
@@ -2419,7 +2426,7 @@ describe("async rendering", () => {
         </div>`
     );
     class Parent extends Widget {
-      components = { ChildA, ChildB };
+      static components = { ChildA, ChildB };
       state = { valA: 1, valB: 2, flagB: false };
     }
     const parent = new Parent(env);
@@ -2444,7 +2451,7 @@ describe("async rendering", () => {
     class Child extends Widget {}
 
     class App extends Widget {
-      components = { Child };
+      static components = { Child };
 
       get items() {
         return [1, 2];
@@ -2475,8 +2482,17 @@ describe("async rendering", () => {
     let def = Promise.resolve();
 
     env.qweb.addTemplate("Child", `<div><SubChild /></div>`);
+    class SubChild extends Widget {
+      willPatch() {
+        throw new Error("Should not happen!");
+      }
+      patched() {
+        throw new Error("Should not happen!");
+      }
+    }
+
     class Child extends Widget {
-      components = { SubChild };
+      static components = { SubChild };
       mounted() {
         // from now on, each rendering in child widget will be delayed (see
         // __render)
@@ -2489,22 +2505,13 @@ describe("async rendering", () => {
       }
     }
 
-    class SubChild extends Widget {
-      willPatch() {
-        throw new Error("Should not happen!");
-      }
-      patched() {
-        throw new Error("Should not happen!");
-      }
-    }
-
     env.qweb.addTemplate(
       "Parent",
       `
         <div><t t-if="state.flag"><Child val="state.val"/></t></div>`
     );
     class Parent extends Widget {
-      components = { Child };
+      static components = { Child };
       state = { flag: true, val: "Framboise Lindemans" };
     }
     const parent = new Parent(env);
@@ -2554,7 +2561,7 @@ describe("async rendering", () => {
       }
     }
     class Parent extends Widget {
-      components = { ChildA, ChildB };
+      static components = { ChildA, ChildB };
       state = { valA: 1, valB: 2, flag: false };
     }
     const parent = new Parent(env);
@@ -2586,18 +2593,18 @@ describe("async rendering", () => {
     `);
 
     let def;
-    class Parent extends Widget {
-      components = { Child, AsyncChild };
-      state = { val: 0 };
-
-      updateApp() {
-        this.state.val++;
-      }
-    }
     class Child extends Widget {}
     class AsyncChild extends Child {
       willUpdateProps() {
         return def;
+      }
+    }
+    class Parent extends Widget {
+      static components = { Child, AsyncChild };
+      state = { val: 0 };
+
+      updateApp() {
+        this.state.val++;
       }
     }
 
@@ -2635,18 +2642,18 @@ describe("async rendering", () => {
     `);
 
     let def;
-    class Parent extends Widget {
-      components = { Child, AsyncChild };
-      state = { val: 0 };
-
-      updateApp() {
-        this.state.val++;
-      }
-    }
     class Child extends Widget {}
     class AsyncChild extends Child {
       willUpdateProps() {
         return def;
+      }
+    }
+    class Parent extends Widget {
+      static components = { Child, AsyncChild };
+      state = { val: 0 };
+
+      updateApp() {
+        this.state.val++;
       }
     }
 
@@ -2686,14 +2693,6 @@ describe("async rendering", () => {
     `);
 
     let def;
-    class Parent extends Widget {
-      components = { Child, AsyncChild };
-      state = { val: 0 };
-
-      updateApp() {
-        this.state.val++;
-      }
-    }
     class Child extends Widget {
       state = { val: 0 };
 
@@ -2704,6 +2703,14 @@ describe("async rendering", () => {
     class AsyncChild extends Child {
       willUpdateProps() {
         return def;
+      }
+    }
+    class Parent extends Widget {
+      static components = { Child, AsyncChild };
+      state = { val: 0 };
+
+      updateApp() {
+        this.state.val++;
       }
     }
 
@@ -2741,7 +2748,7 @@ describe("async rendering", () => {
     class Child extends Widget {}
 
     class App extends Widget {
-      components = { Child };
+      static components = { Child };
 
       async onClick() {
         (env as any).flag = true;
@@ -2806,7 +2813,7 @@ describe("updating environment", () => {
   test("updating child env does not modify parent env", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
     class ParentWidget extends Widget {
-      components = { child: Widget };
+      static components = { child: Widget };
     }
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
@@ -2820,7 +2827,7 @@ describe("updating environment", () => {
   test("updating parent env does modify child env", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
     class ParentWidget extends Widget {
-      components = { child: Widget };
+      static components = { child: Widget };
     }
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
@@ -2833,7 +2840,7 @@ describe("updating environment", () => {
   test("updating parent env does modify child env, part 2", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><Child/></div>`);
     class ParentWidget extends Widget {
-      components = { Child: Widget };
+      static components = { Child: Widget };
     }
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
@@ -2857,11 +2864,11 @@ describe("updating environment", () => {
 
   test("updating env force rerendering children", async () => {
     env.qweb.addTemplate("Parent", `<div><Child /></div>`);
+    class Child extends Widget {}
     class Parent extends Widget {
-      components = { Child };
+      static components = { Child };
     }
     env.qweb.addTemplate("Child", `<div><t t-esc="env.someKey"/></div>`);
-    class Child extends Widget {}
     (<any>env).someKey = "hey";
     const widget = new Parent(env);
     await widget.mount(fixture);
@@ -2894,15 +2901,15 @@ describe("widget and observable state", () => {
     const consoleError = console.error;
     console.error = jest.fn();
     env.qweb.addTemplate("Parent", `<div><Child obj="state.obj"/></div>`);
-    class Parent extends Widget {
-      state = { obj: { coffee: 1 } };
-      components = { Child };
-    }
     class Child extends Widget {
       constructor(parent, props) {
         super(parent, props);
         props.obj.coffee = 2;
       }
+    }
+    class Parent extends Widget {
+      state = { obj: { coffee: 1 } };
+      static components = { Child };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3041,7 +3048,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3069,7 +3076,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
       state = { val: 0 };
       doSomething() {
         this.state.val++;
@@ -3108,7 +3115,7 @@ describe("t-slot directive", () => {
 
     class App extends Widget {
       state = { users: [{ id: 1, name: "Aaron" }, { id: 2, name: "David" }] };
-      components = { Link };
+      static components = { Link };
     }
 
     const app = new App(env);
@@ -3147,7 +3154,7 @@ describe("t-slot directive", () => {
 
     class App extends Widget {
       state = { users: [{ id: 1, name: "Aaron" }, { id: 2, name: "David" }] };
-      components = { Link };
+      static components = { Link };
     }
 
     const app = new App(env);
@@ -3184,7 +3191,7 @@ describe("t-slot directive", () => {
 
     class App extends Widget {
       state = { user: { id: 1, name: "Aaron" } };
-      components = { Link };
+      static components = { Link };
     }
 
     const app = new App(env);
@@ -3215,7 +3222,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
       state = { val: 0 };
       doSomething() {
         this.state.val++;
@@ -3250,7 +3257,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3270,7 +3277,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3295,7 +3302,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3318,7 +3325,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3342,7 +3349,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3366,7 +3373,7 @@ describe("t-slot directive", () => {
     `);
     class Dialog extends Widget {}
     class Parent extends Widget {
-      components = { Dialog };
+      static components = { Dialog };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3389,7 +3396,7 @@ describe("t-slot directive", () => {
     class Child extends Widget {}
     class GrandChild extends Widget {}
     class Parent extends Widget {
-      components = { Child, GrandChild };
+      static components = { Child, GrandChild };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -3428,7 +3435,7 @@ describe("t-slot directive", () => {
     class SomeComponent extends Widget {}
     class GenericComponent extends Widget {}
     class App extends Widget {
-      components = { GenericComponent, SomeComponent };
+      static components = { GenericComponent, SomeComponent };
       state = { val: 4 };
 
       inc() {
@@ -3786,7 +3793,7 @@ describe("component error handling (catchError)", () => {
     }
     class App extends Widget {
       state = { flag: false };
-      components = { ErrorBoundary, ErrorComponent };
+      static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -3818,7 +3825,7 @@ describe("component error handling (catchError)", () => {
     class ErrorComponent extends Widget {}
     class App extends Widget {
       state = { flag: false };
-      components = { ErrorComponent };
+      static components = { ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -3861,7 +3868,7 @@ describe("component error handling (catchError)", () => {
       }
     }
     class App extends Widget {
-      components = { ErrorBoundary, ErrorComponent };
+      static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -3905,7 +3912,7 @@ describe("component error handling (catchError)", () => {
       }
     }
     class App extends Widget {
-      components = { ErrorBoundary, ErrorComponent };
+      static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -3948,7 +3955,7 @@ describe("component error handling (catchError)", () => {
       }
     }
     class App extends Widget {
-      components = { ErrorBoundary, ErrorComponent };
+      static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -3987,7 +3994,7 @@ describe("component error handling (catchError)", () => {
       }
     }
     class App extends Widget {
-      components = { ErrorBoundary, ErrorComponent };
+      static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -4023,7 +4030,7 @@ describe("component error handling (catchError)", () => {
     }
     class App extends Widget {
       state = { message: "abc" };
-      components = { ErrorBoundary, ErrorComponent };
+      static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -4047,7 +4054,7 @@ describe("top level sub widgets", () => {
         </templates>`);
     class Child extends Widget {}
     class Parent extends Widget {
-      components = { Child };
+      static components = { Child };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -4070,7 +4077,7 @@ describe("top level sub widgets", () => {
       }
     }
     class Parent extends Widget {
-      components = { Child };
+      static components = { Child };
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -4094,7 +4101,7 @@ describe("top level sub widgets", () => {
     class Child extends Widget {}
     class OtherChild extends Widget {}
     class Parent extends Widget {
-      components = { Child, OtherChild };
+      static components = { Child, OtherChild };
     }
     (<any>env).flag = true;
     let parent = new Parent(env);
@@ -4123,7 +4130,7 @@ describe("top level sub widgets", () => {
     class OtherChild extends Widget {}
     class Parent extends Widget {
       state = { flag: true };
-      components = { Child, OtherChild };
+      static components = { Child, OtherChild };
     }
     let parent = new Parent(env);
     await parent.mount(fixture);
@@ -4224,7 +4231,7 @@ describe("unmounting and remounting", () => {
       }
     }
     class Parent extends Widget {
-      components = { Child };
+      static components = { Child };
       state = { val: 1, flag: true };
     }
 

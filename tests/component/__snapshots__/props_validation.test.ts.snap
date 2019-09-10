@@ -30,7 +30,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     }
     if (!w4) {
         let componentKey4 = \`Child\`;
-        let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         utils.validateProps(W4, props4)
         w4 = new W4(parent, props4);

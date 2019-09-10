@@ -31,7 +31,7 @@ describe("Link component", () => {
         </templates>
     `);
     class App extends Component<any, any, any> {
-      components = { Link: Link };
+      static components = { Link: Link };
     }
 
     const routes = [{ name: "about", path: "/about" }, { name: "users", path: "/users" }];
@@ -62,7 +62,7 @@ describe("Link component", () => {
         </templates>
     `);
     class App extends Component<any, any, any> {
-      components = { Link: Link };
+      static components = { Link: Link };
     }
 
     const routes = [{ name: "about", path: "/about" }, { name: "users", path: "/users" }];

@@ -235,7 +235,7 @@ describe("props validation", () => {
       static props = ["message"];
     }
     class App extends Widget {
-      components = { Child };
+      static components = { Child };
     }
     const app = new App(env);
     await app.mount(fixture);

@@ -40,7 +40,7 @@ class Counter extends owl.Component {
 }
 
 class App extends owl.Component {
-    components = { Counter };
+    static components = { Counter };
 }
 
 const qweb = new owl.QWeb(TEMPLATES);

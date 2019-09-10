@@ -27,7 +27,7 @@ exports[`router directive t-routecomponent can render parameterized route 1`] = 
         }
         if (!w4) {
             let componentKey4 = \`__component__book\`;
-            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -70,7 +70,7 @@ exports[`router directive t-routecomponent can render parameterized route with s
         }
         if (!w4) {
             let componentKey4 = \`__component__book\`;
-            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -113,7 +113,7 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
         }
         if (!w4) {
             let componentKey4 = \`__component__about\`;
-            let W4 = context.components && context.components[componentKey4] || QWeb.components[componentKey4];
+            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -142,7 +142,7 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
         }
         if (!w7) {
             let componentKey7 = \`__component__users\`;
-            let W7 = context.components && context.components[componentKey7] || QWeb.components[componentKey7];
+            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
             parent.__owl__.cmap[7] = w7.__owl__.id;

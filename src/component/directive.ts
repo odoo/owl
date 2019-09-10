@@ -388,7 +388,7 @@ QWeb.addDirective({
     // new component
     ctx.addLine(`let componentKey${componentID} = ${ctx.interpolate(value)};`);
     ctx.addLine(
-      `let W${componentID} = context.components && context.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`
+      `let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`
     );
     // maybe only do this in dev mode...
     ctx.addLine(

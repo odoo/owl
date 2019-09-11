@@ -31,11 +31,11 @@ than React and Vue. Also, jQuery is not the same kind of framework, but it is in
 
 ## Class Based
 
-Both React and Vue moved away from defining components with classes.  They prefer
+Both React and Vue moved away from defining components with classes. They prefer
 a more functional approach, in particular, with the new `hooks` mechanisms.
 
-This has some advantages and disadvantages.  But the end result is that React
-and Vue both offers multiple different ways of defining new components.  In
+This has some advantages and disadvantages. But the end result is that React
+and Vue both offers multiple different ways of defining new components. In
 contrast, Owl has only one mechanism: class-based components. We believe that Owl
 components are fast enough for all our usecases, and making it as simple as
 possible for developers is more valuable (for us).

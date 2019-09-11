@@ -573,7 +573,6 @@ describe("connecting a component to store", () => {
       }
     }
 
-
     const state = { current: "a", msg: { a: "a", b: "b" } };
     const actions = {
       setCurrent({ state }, c) {
@@ -626,7 +625,6 @@ describe("connecting a component to store", () => {
         return super.render(force);
       }
     }
-
 
     const state = { someId: 1, flag: true, messages: { 1: "abc" } };
     const actions = {
@@ -713,7 +711,6 @@ describe("connecting a component to store", () => {
         };
       }
     }
-
 
     (<any>env).store = store;
     const app = new TodoApp(env);

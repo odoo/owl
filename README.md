@@ -40,7 +40,7 @@ class Counter extends owl.Component {
 }
 
 class App extends owl.Component {
-    static components = { Counter };
+  static components = { Counter };
 }
 
 const qweb = new owl.QWeb(TEMPLATES);
@@ -69,7 +69,7 @@ requirements are common and code needs to be maintained by large teams.
   it is not ok to use standard web tools based on `npm`.
 
 Owl is not designed to be fast nor small (even though it is quite good on those
-two topics). It is a no nonsense framework to build applications.  There is only
+two topics). It is a no nonsense framework to build applications. There is only
 one way to define components (with classes).
 
 If you are interested in a comparison with React or Vue, you will

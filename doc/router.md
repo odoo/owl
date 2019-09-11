@@ -125,7 +125,7 @@ The router also has a `navigate` method, useful to programmatically change the
 application to another state (and the url):
 
 ```js
-router.navigate({to: 'USER', params: {id: 51}});
+router.navigate({ to: "USER", params: { id: 51 } });
 ```
 
 ### Navigation Guards
@@ -159,7 +159,6 @@ to the currently active route (if any):
     <t t-routecomponent="1"/>
 </div>
 ```
-
 
 ### `Link`
 

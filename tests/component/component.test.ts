@@ -63,7 +63,6 @@ class WidgetA extends Widget {
   static components = { b: WidgetB };
 }
 
-
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
@@ -899,7 +898,6 @@ describe("destroy method", () => {
         this.state.p = 2;
       }
     }
-
 
     const parent = new Parent(env);
     await parent.mount(fixture);
@@ -2242,7 +2240,6 @@ describe("random stuff/miscellaneous", () => {
       static components = { B, C };
       name = "A";
     }
-
 
     const a = new A(env);
     await a.mount(fixture);
@@ -4317,7 +4314,7 @@ describe("dynamic root nodes", () => {
         </templates>
     `);
     class TestWidget extends Widget {
-        state = {flag: true};
+      state = { flag: true };
     }
 
     const widget = new TestWidget(env);
@@ -4344,8 +4341,8 @@ describe("dynamic root nodes", () => {
     class ChildA extends Widget {}
     class ChildB extends Widget {}
     class TestWidget extends Widget {
-        static components = {ChildA, ChildB};
-        state = {flag: true};
+      static components = { ChildA, ChildB };
+      state = { flag: true };
     }
 
     const widget = new TestWidget(env);
@@ -4357,5 +4354,38 @@ describe("dynamic root nodes", () => {
 
     expect(fixture.innerHTML).toBe("<div>abc</div>");
   });
+});
 
+describe("dynamic t-props", () => {
+  test("basic use", async () => {
+    expect.assertions(4);
+    env.qweb.addTemplates(`
+        <templates>
+            <span t-name="Child">
+                <t t-esc="props.a + props.b"/>
+            </span>
+            <div t-name="Parent">
+                <Child t-props="some.obj"/>
+            </div>
+        </templates>
+    `);
+    class Child extends Widget {
+      constructor(parent, props) {
+        super(parent, props);
+        expect(props).toEqual({ a: 1, b: 2 });
+        expect(props).not.toBe(widget.some.obj);
+      }
+    }
+    class Parent extends Widget {
+      static components = { Child };
+
+      some = { obj: { a: 1, b: 2 } };
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+  });
 });

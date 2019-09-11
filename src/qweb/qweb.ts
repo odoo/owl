@@ -333,6 +333,7 @@ export class QWeb extends EventBus {
       ctx.parentNode = parentContext.parentNode!;
       ctx.allowMultipleRoots = true;
       ctx.hasParentWidget = true;
+      ctx.shouldDefineResult = false;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
 
       for (let v in parentContext.variables) {
@@ -405,6 +406,7 @@ export class QWeb extends EventBus {
         // template rendering.
         let nodeID = ctx.generateID();
         ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
+        ctx.addLine(`result = vn${nodeID};`);
         ctx.rootContext.rootNode = nodeID;
         ctx.rootContext.parentTextNode = nodeID;
       }

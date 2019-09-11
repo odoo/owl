@@ -7,9 +7,11 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -78,7 +80,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
         def10 = def10.then(()=>{if (w11.__owl__.isDestroyed) {return};let pvnode=w11.__owl__.pvnode;c5[_9_index]=pvnode;});
     }
     def10.then(w11.__applyPatchQueue.bind(w11, patchQueue11));
-    return vn1;
+    return result;
 }"
 `;
 
@@ -89,9 +91,11 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -160,7 +164,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
         def10 = def10.then(()=>{if (w11.__owl__.isDestroyed) {return};let pvnode=w11.__owl__.pvnode;c5[_9_index]=pvnode;});
     }
     extra.promises.push(def10);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -171,9 +175,11 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -242,7 +248,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
         def10 = def10.then(()=>{if (w11.__owl__.isDestroyed) {return};let pvnode=w11.__owl__.pvnode;c5[_9_index]=pvnode;});
     }
     def10.then(w11.__applyPatchQueue.bind(w11, patchQueue11));
-    return vn1;
+    return result;
 }"
 `;
 
@@ -253,9 +259,11 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     const _5 = context['state'].style;
@@ -284,7 +292,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};w4.el.style=_5;let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -295,9 +303,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     const ref5 = \`child\`;
@@ -329,7 +339,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     }
     w4.__owl__.classObj=_6;
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -337,12 +347,14 @@ exports[`class and style attributes with t-component t-att-class is properly add
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let _2 = {'c':true};
     Object.assign(_2, utils.toObj({d:context['state'].d}))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('span', p3, c3);
-    return vn3;
+    result = vn3;
+    return result;
 }"
 `;
 
@@ -353,9 +365,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     const ref5 = \`child\`;
@@ -387,7 +401,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     }
     w4.__owl__.classObj=_6;
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -395,12 +409,14 @@ exports[`class and style attributes with t-component t-att-class is properly add
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let _2 = {'c':true};
     Object.assign(_2, utils.toObj(context['state'].d?'d':''))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('span', p3, c3);
-    return vn3;
+    result = vn3;
+    return result;
 }"
 `;
 
@@ -411,9 +427,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let _5 = {a:context['state'].a,b:context['state'].b};
@@ -443,7 +461,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     }
     w4.__owl__.classObj=_5;
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -454,9 +472,11 @@ exports[`composition sub components dom state with t-keepalive is preserved 1`] 
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['state'].ok) {
         //COMPONENT
         let def3;
@@ -486,7 +506,7 @@ exports[`composition sub components dom state with t-keepalive is preserved 1`] 
         }
         extra.promises.push(def3);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -497,10 +517,12 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -545,7 +567,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         }
         extra.promises.push(def6);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -556,9 +578,11 @@ exports[`composition t-component with dynamic value 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -586,7 +610,7 @@ exports[`composition t-component with dynamic value 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -597,9 +621,11 @@ exports[`composition t-component with dynamic value 2 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -627,7 +653,7 @@ exports[`composition t-component with dynamic value 2 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -638,9 +664,11 @@ exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['state'].flag) {
         //COMPONENT
         let def3;
@@ -670,7 +698,7 @@ exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
         }
         extra.promises.push(def3);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -681,9 +709,11 @@ exports[`other directives with t-component t-on with handler bound to argument 1
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -711,7 +741,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -722,9 +752,11 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -752,7 +784,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -763,9 +795,11 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -793,7 +827,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -804,9 +838,11 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -834,7 +870,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -845,9 +881,11 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -875,7 +913,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -886,9 +924,11 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -916,7 +956,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -927,9 +967,11 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -957,7 +999,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -968,9 +1010,11 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -998,7 +1042,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1009,9 +1053,11 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let key5 = 'key' + 'somestring';
     let def3;
@@ -1041,7 +1087,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1052,10 +1098,12 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['props'].items;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -1101,16 +1149,18 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         }
         extra.promises.push(def6);
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-model directive .lazy modifier 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1124,16 +1174,18 @@ exports[`t-model directive .lazy modifier 1`] = `
     if (_4 || _4 === 0) {
         c3.push({text: _4});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-model directive basic use, on an input 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1147,16 +1199,18 @@ exports[`t-model directive basic use, on an input 1`] = `
     if (_4 || _4 === 0) {
         c3.push({text: _4});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-model directive on a select 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('select', p2, c2);
     c1.push(vn2);
@@ -1191,16 +1245,18 @@ exports[`t-model directive on a select 1`] = `
     if (_10 || _10 === 0) {
         c9.push({text: _10});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-model directive on a sub state key 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1214,16 +1270,18 @@ exports[`t-model directive on a sub state key 1`] = `
     if (_4 || _4 === 0) {
         c3.push({text: _4});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-model directive on an input type=radio 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 'radio';
     var _3 = 'one';
     var _4 = 'One';
@@ -1250,16 +1308,18 @@ exports[`t-model directive on an input type=radio 1`] = `
     if (_11 || _11 === 0) {
         c10.push({text: _11});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-model directive on an input, type=checkbox 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 'checkbox';
     let c3 = [], p3 = {key:3,attrs:{type: _2},on:{}};
     var vn3 = h('input', p3, c3);
@@ -1276,7 +1336,7 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
     else {
         c4.push({text: \`no\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1287,9 +1347,11 @@ exports[`t-slot directive can define and call slots 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -1318,7 +1380,7 @@ exports[`t-slot directive can define and call slots 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1326,9 +1388,11 @@ exports[`t-slot directive can define and call slots 2`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('div', p2, c2);
     c1.push(vn2);
@@ -1343,7 +1407,7 @@ exports[`t-slot directive can define and call slots 2`] = `
     if (slot5) {
         slot5.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c4, vars: extra.vars, parent: owner}));
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1478,15 +1542,17 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     var _1 = context['props'].to;
     let c2 = [], p2 = {key:2,attrs:{href: _1}};
     var vn2 = h('a', p2, c2);
+    result = vn2;
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot3) {
         slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
     }
-    return vn2;
+    return result;
 }"
 `;
 
@@ -1497,11 +1563,13 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     context = Object.create(context);
     const scope = Object.create(null);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('u', p2, c2);
     c1.push(vn2);
@@ -1558,7 +1626,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         }
         extra.promises.push(def8);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1580,15 +1648,17 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     var _1 = context['props'].to;
     let c2 = [], p2 = {key:2,attrs:{href: _1}};
     var vn2 = h('a', p2, c2);
+    result = vn2;
     const slot3 = this.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot3) {
         slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
     }
-    return vn2;
+    return result;
 }"
 `;
 
@@ -1599,11 +1669,13 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     context = Object.create(context);
     const scope = Object.create(null);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('u', p2, c2);
     c1.push(vn2);
@@ -1661,7 +1733,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         }
         extra.promises.push(def9);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1685,9 +1757,11 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 'User '+context['state'].user.name;
     //COMPONENT
     let def4;
@@ -1717,7 +1791,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
         def4 = def4.then(()=>{if (w5.__owl__.isDestroyed) {return};let pvnode=w5.__owl__.pvnode;c1[_3_index]=pvnode;});
     }
     extra.promises.push(def4);
-    return vn1;
+    return result;
 }"
 `;
 

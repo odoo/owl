@@ -3,121 +3,143 @@
 exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = 'hello ' + (context['value']?'world':'');
     let c2 = [], p2 = {key:2,attrs:{class: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes dynamic attribute with a dash 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = context['id'];
     let c2 = [], p2 = {key:2,attrs:{\\"data-action-id\\": _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes dynamic attributes 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = 'bar';
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = \`Some text \${context['id']}\`;
     let c2 = [], p2 = {key:2,attrs:{\\"aria-label\\": _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes fixed variable 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes format expression 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = (context['value']+37);
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes format expression, other format 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = (context['value']+37);
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes format literal 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = \`bar\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes format multiple 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = \`a \${context['value1']} is \${context['value2']} of \${context['value3']} ]\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes format value 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = \`b\${context['value']}r\`;
     let c2 = [], p2 = {key:2,attrs:{foo: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
@@ -125,15 +147,17 @@ exports[`attributes from object variables set previously 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = {a:'b'};
     let _3 = utils.toObj(_2.a);
     let c4 = [], p4 = {key:4,class:_3};
     var vn4 = h('span', p4, c4);
     c1.push(vn4);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -141,21 +165,24 @@ exports[`attributes from variables set previously 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 'def';
     let _3 = utils.toObj(_2);
     let c4 = [], p4 = {key:4,class:_3};
     var vn4 = h('span', p4, c4);
     c1.push(vn4);
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`attributes object 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{}};
@@ -167,43 +194,50 @@ exports[`attributes object 1`] = `
         }
     }
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes static attributes 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = 'a';
     var _2 = 'b';
     var _3 = 'c';
     let c4 = [], p4 = {key:4,attrs:{foo: _1,bar: _2,baz: _3}};
     var vn4 = h('div', p4, c4);
-    return vn4;
+    result = vn4;
+    return result;
 }"
 `;
 
 exports[`attributes static attributes on void elements 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = '/test.jpg';
     var _2 = 'Test';
     let c3 = [], p3 = {key:3,attrs:{src: _1,alt: _2}};
     var vn3 = h('img', p3, c3);
-    return vn3;
+    result = vn3;
+    return result;
 }"
 `;
 
 exports[`attributes static attributes with dashes 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = 'Close';
     let c2 = [], p2 = {key:2,attrs:{\\"aria-label\\": _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
@@ -211,12 +245,14 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let _2 = {'hello':true};
     Object.assign(_2, utils.toObj(context['value']))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('div', p3, c3);
-    return vn3;
+    result = vn3;
+    return result;
 }"
 `;
 
@@ -224,29 +260,34 @@ exports[`attributes t-att-class with object 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let _2 = {'static':true};
     Object.assign(_2, utils.toObj({a:context['b'],c:context['d'],e:context['f']}))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('div', p3, c3);
-    return vn3;
+    result = vn3;
+    return result;
 }"
 `;
 
 exports[`attributes t-attf-class should combine with class 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = 'hello ' + \`world\`;
     let c2 = [], p2 = {key:2,attrs:{class: _1}};
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes tuple literal 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = ['foo','bar'];
     let c2 = [], p2 = {key:2,attrs:{}};
@@ -258,13 +299,15 @@ exports[`attributes tuple literal 1`] = `
         }
     }
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`attributes tuple variable 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = context['value'];
     let c2 = [], p2 = {key:2,attrs:{}};
@@ -276,17 +319,20 @@ exports[`attributes tuple variable 1`] = `
         }
     }
     var vn2 = h('div', p2, c2);
-    return vn2;
+    result = vn2;
+    return result;
 }"
 `;
 
 exports[`debugging t-debug 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     debugger;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (true) {
         debugger;
         let c2 = [], p2 = {key:2};
@@ -294,29 +340,33 @@ exports[`debugging t-debug 1`] = `
         c1.push(vn2);
         c2.push({text: \`hey\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`debugging t-log 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 42;
     console.log(_2+3)
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`foreach does not pollute the rendering context 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = [1];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -336,17 +386,19 @@ exports[`foreach does not pollute the rendering context 1`] = `
             c1.push({text: _5});
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`foreach iterate on items (on a element node) 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = [1,2];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -370,17 +422,19 @@ exports[`foreach iterate on items (on a element node) 1`] = `
             c5.push({text: _6});
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`foreach iterate on items 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = [3,2,1];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -412,17 +466,19 @@ exports[`foreach iterate on items 1`] = `
         }
         c1.push({text: \`] \`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`foreach iterate, dict param 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['value'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -454,17 +510,19 @@ exports[`foreach iterate, dict param 1`] = `
         }
         c1.push({text: \`] \`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`foreach iterate, position 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = Array(5);
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -493,17 +551,19 @@ exports[`foreach iterate, position 1`] = `
         }
         c1.push({text: \`) \`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`foreach warn if no key in some case 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = [1,2];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -526,27 +586,31 @@ exports[`foreach warn if no key in some case 1`] = `
             c5.push({text: _6});
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`loading templates can initialize qweb with a string 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     c1.push({text: \`jupiler\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`loading templates can load a few templates from a xml string 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('ul', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('li', p2, c2);
     c1.push(vn2);
@@ -555,7 +619,7 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
     var vn3 = h('li', p3, c3);
     c1.push(vn3);
     c3.push({text: \`foo\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -563,10 +627,12 @@ exports[`misc global 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = [4,5,6];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -639,28 +705,32 @@ exports[`misc global 1`] = `
     } else {
         c21.push({text: \`toto default\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`special cases for some boolean html attributes/properties input type= checkbox, with t-att-checked 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = 'checkbox';
     var _2 = context['flag'];
     let c3 = [], p3 = {key:3,attrs:{type: _1,checked: _2},props:{checked: _2}};
     var vn3 = h('input', p3, c3);
-    return vn3;
+    result = vn3;
+    return result;
 }"
 `;
 
 exports[`special cases for some boolean html attributes/properties various boolean html attributes 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 'checkbox';
     var _3 = 'checked';
     let c4 = [], p4 = {key:4,attrs:{type: _2,checked: _3},props:{checked: _3}};
@@ -691,96 +761,112 @@ exports[`special cases for some boolean html attributes/properties various boole
     let c17 = [], p17 = {key:17,attrs:{disabled: _16},props:{disabled: _16}};
     var vn17 = h('button', p17, c17);
     c1.push(vn17);
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`static templates div with a span child node 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
     c2.push({text: \`word\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`static templates div with a text node 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     c1.push({text: \`word\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`static templates empty div 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    return vn1;
+    result = vn1;
+    return result;
 }"
 `;
 
 exports[`static templates simple dynamic value 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var _1 = context['text'];
     if (_1 || _1 === 0) {
         var vn2 = {text: _1};
+        result = vn2
     }
-    return vn2;
+    return result;
 }"
 `;
 
 exports[`static templates simple string 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var vn1 = {text: \`hello vdom\`};
-    return vn1;
+    result = vn1;
+    return result;
 }"
 `;
 
 exports[`static templates simple string, with some dynamic value 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var vn1 = {text: \`hello \`};
+    result = vn1;
     var _2 = context['text'];
     if (_2 || _2 === 0) {
         vn1.text += _2;
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling basic caller 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     c1.push({text: \`ok\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling call with several sub nodes on same line 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c5 = [], p5 = {key:5};
     var vn5 = h('div', p5, c5);
     c1.push(vn5);
@@ -793,21 +879,23 @@ exports[`t-call (template calling call with several sub nodes on same line 1`] =
     var vn7 = h('span', p7, c7);
     c5.push(vn7);
     c7.push({text: \`yay\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling inherit context 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 1;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -815,9 +903,11 @@ exports[`t-call (template calling recursive template, part 1 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -825,7 +915,7 @@ exports[`t-call (template calling recursive template, part 1 1`] = `
     if (false) {
         this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c1, vars: {}, scope}));
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -853,11 +943,13 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     context = Object.create(context);
     const scope = Object.create(null);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     {
         let _2 = context['root'];
         let c3 = [], p3 = {key:3};
@@ -892,7 +984,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, vars: {_v0: context['subtree']}, scope}));
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -944,11 +1036,13 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     context = Object.create(context);
     const scope = Object.create(null);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     {
         let _2 = context['root'];
         let c3 = [], p3 = {key:3};
@@ -983,7 +1077,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, vars: {_v0: context['subtree']}, scope}));
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1034,9 +1128,11 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
 exports[`t-call (template calling scoped parameters 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     {
         let _2 = 42;
         c1.push({text: \`ok\`});
@@ -1045,158 +1141,180 @@ exports[`t-call (template calling scoped parameters 1`] = `
     if (_3 || _3 === 0) {
         c1.push({text: _3});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling t-call with t-if 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['flag']) {
         let c2 = [], p2 = {key:2};
         var vn2 = h('span', p2, c2);
         c1.push(vn2);
         c2.push({text: \`ok\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling with unused body 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c2 = [], p2 = {key:2};
     var vn2 = h('div', p2, c2);
+    result = vn2;
     c2.push({text: \`ok\`});
-    return vn2;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling with unused setbody 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     {
         let _1 = 3;
         let c2 = [], p2 = {key:2};
         var vn2 = h('div', p2, c2);
+        result = vn2;
         c2.push({text: \`ok\`});
     }
-    return vn2;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling with used body 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c2 = [], p2 = {key:2};
     var vn2 = h('h1', p2, c2);
+    result = vn2;
     c2.push({text: \`ok\`});
-    return vn2;
+    return result;
 }"
 `;
 
 exports[`t-call (template calling with used set body 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     {
         let _2 = 'ok';
         if (_2 || _2 === 0) {
             c1.push({text: _2});
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-esc escaping on a node 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = 'ok';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-esc escaping on a node with a body 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = 'ok';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     } else {
         c1.push({text: \`nope\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-esc escaping on a node with a body, as a default 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = context['var'];
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     } else {
         c1.push({text: \`nope\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-esc literal 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = 'ok';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-esc variable 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = context['var'];
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if boolean value condition elif 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['color']=='black') {
         c1.push({text: \`black pearl\`});
     }
@@ -1209,16 +1327,18 @@ exports[`t-if boolean value condition elif 1`] = `
     else {
         c1.push({text: \`beer\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if boolean value condition else 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -1233,16 +1353,18 @@ exports[`t-if boolean value condition else 1`] = `
     var vn3 = h('span', p3, c3);
     c1.push(vn3);
     c3.push({text: \`end\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if boolean value condition false else 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -1257,55 +1379,63 @@ exports[`t-if boolean value condition false else 1`] = `
     var vn3 = h('span', p3, c3);
     c1.push(vn3);
     c3.push({text: \`end\`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if boolean value condition missing 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     if (context['condition']) {
         c1.push({text: \`fail\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if boolean value false condition 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['condition']) {
         c1.push({text: \`ok\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if boolean value true condition 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['condition']) {
         c1.push({text: \`ok\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-if can use some boolean operators in expressions 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['cond1']&&context['cond2']) {
         c1.push({text: \`and\`});
     }
@@ -1330,32 +1460,36 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
     if (context['n']<3) {
         c1.push({text: \`nlt\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-key can use t-key directive on a node 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     const nodeKey1 = context['beer'].id
     let c1 = [], p1 = {key:nodeKey1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['beer'].name;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-key t-key directive in a list 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('ul', p1, c1);
+    result = vn1;
     var _2 = context['beers'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -1379,7 +1513,7 @@ exports[`t-key t-key directive in a list 1`] = `
             c5.push({text: _6});
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1389,16 +1523,18 @@ exports[`t-on can bind event handler 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['add']) {
         throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)
     }
     extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
     p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1406,15 +1542,17 @@ exports[`t-on can bind handlers with arguments 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['add']) {
         throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)
     }
     p1.on['click'] = context['add'].bind(owner, 5);
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1422,15 +1560,17 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['doSomething']) {
         throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'test'\`)
     }
     p1.on['click'] = context['doSomething'].bind(owner, {});
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1438,15 +1578,17 @@ exports[`t-on can bind handlers with empty object 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['doSomething']) {
         throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'test'\`)
     }
     p1.on['click'] = context['doSomething'].bind(owner, {});
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1454,10 +1596,12 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('ul', p1, c1);
+    result = vn1;
     var _2 = ['someval'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -1485,7 +1629,7 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         p6.on['click'] = context['activate'].bind(owner, context['action']);
         c6.push({text: \`link\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1493,15 +1637,17 @@ exports[`t-on can bind handlers with object arguments 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['add']) {
         throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)
     }
     p1.on['click'] = context['add'].bind(owner, {val:5});
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1509,9 +1655,11 @@ exports[`t-on can bind two event handlers 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['handleClick']) {
         throw new Error('Missing handler \\\\'' + 'handleClick' + \`\\\\' when evaluating template 'test'\`)
     }
@@ -1523,7 +1671,7 @@ exports[`t-on can bind two event handlers 1`] = `
     extra.handlers['dblclick' + 1] = extra.handlers['dblclick' + 1] || context['handleDblClick'].bind(owner);
     p1.on['dblclick'] = extra.handlers['dblclick' + 1];
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1531,16 +1679,18 @@ exports[`t-on handler is bound to proper owner 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
+    result = vn1;
     if (!context['add']) {
         throw new Error('Missing handler \\\\'' + 'add' + \`\\\\' when evaluating template 'test'\`)
     }
     extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
     p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1548,9 +1698,11 @@ exports[`t-on t-on with prevent and self modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -1563,7 +1715,7 @@ exports[`t-on t-on with prevent and self modifiers (order matters) 1`] = `
     var vn3 = h('span', p3, c3);
     c2.push(vn3);
     c3.push({text: \`Button\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1571,9 +1723,11 @@ exports[`t-on t-on with prevent and/or stop modifiers 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -1601,7 +1755,7 @@ exports[`t-on t-on with prevent and/or stop modifiers 1`] = `
     extra.handlers['click' + 4] = extra.handlers['click' + 4] || function (e) {e.preventDefault();e.stopPropagation();context['onClickPreventedAndStopped'].call(owner, e);};
     p4.on['click'] = extra.handlers['click' + 4];
     c4.push({text: \`Button 3\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1609,9 +1763,11 @@ exports[`t-on t-on with self and prevent modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -1624,7 +1780,7 @@ exports[`t-on t-on with self and prevent modifiers (order matters) 1`] = `
     var vn3 = h('span', p3, c3);
     c2.push(vn3);
     c3.push({text: \`Button\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1632,9 +1788,11 @@ exports[`t-on t-on with self modifier 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -1659,7 +1817,7 @@ exports[`t-on t-on with self modifier 1`] = `
     var vn5 = h('span', p5, c5);
     c4.push(vn5);
     c5.push({text: \`Button\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1667,9 +1825,11 @@ exports[`t-raw literal 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = 'ok';
     if (_2 || _2 === 0) {
         var frag3 = utils.getFragment(_2)
@@ -1679,7 +1839,7 @@ exports[`t-raw literal 1`] = `
         var vn4 = h('div', p4)
         c1.push(vn4);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1687,9 +1847,11 @@ exports[`t-raw not escaping 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['var'];
     if (_2 || _2 === 0) {
         var frag3 = utils.getFragment(_2)
@@ -1699,7 +1861,7 @@ exports[`t-raw not escaping 1`] = `
         var vn4 = h('div', p4)
         c1.push(vn4);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1707,9 +1869,11 @@ exports[`t-raw t-raw and another sibling node 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -1723,7 +1887,7 @@ exports[`t-raw t-raw and another sibling node 1`] = `
         var vn5 = h('div', p5)
         c1.push(vn5);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -1731,9 +1895,11 @@ exports[`t-raw variable 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     var _2 = context['var'];
     if (_2 || _2 === 0) {
         var frag3 = utils.getFragment(_2)
@@ -1743,16 +1909,18 @@ exports[`t-raw variable 1`] = `
         var vn4 = h('div', p4)
         c1.push(vn4);
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-ref can get a dynamic ref on a node 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -1762,16 +1930,18 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
         context.refs[ref3] = n.elm;
       },
     };
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -1781,17 +1951,19 @@ exports[`t-ref can get a ref on a node 1`] = `
         context.refs[ref3] = n.elm;
       },
     };
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-ref refs in a loop 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['items'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -1821,119 +1993,137 @@ exports[`t-ref refs in a loop 1`] = `
             c5.push({text: _7});
         }
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set evaluate value expression 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 1+2;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set evaluate value expression, part 2 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['somevariable']+2;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set set from attribute literal 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 'ok';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set set from attribute lookup 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['value'];
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set set from body literal 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     var vn1 = {text: \`ok\`};
-    return vn1;
+    result = vn1;
+    return result;
 }"
 `;
 
 exports[`t-set set from body lookup 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['value'];
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set set from empty body 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    return vn1;
+    result = vn1;
+    return result;
 }"
 `;
 
 exports[`t-set t-set and t-if 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['value'];
     if (_2==='ok') {
         c1.push({text: \`grimbergen\`});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set t-set evaluates an expression only once 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = context['value']+' artois';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
@@ -1941,17 +2131,19 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set t-set should reuse variable if possible 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 1;
     var _3 = context['list'];
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
@@ -1980,93 +2172,107 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         }
         _2 = context['elem']
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`t-set value priority 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     var _2 = 1;
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`whitespace handling consecutives whitespaces are condensed into a single space 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     c1.push({text: \` abc \`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`whitespace handling nothing is done in pre tags 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('pre', p1, c1);
+    result = vn1;
     c1.push({text: \`  \`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`whitespace handling nothing is done in pre tags 2`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('pre', p1, c1);
+    result = vn1;
     c1.push({text: \`
         some text
       \`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`whitespace handling nothing is done in pre tags 3`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('pre', p1, c1);
+    result = vn1;
     c1.push({text: \`
         
       \`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`whitespace handling white space only text nodes are condensed into a single space 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     c1.push({text: \` \`});
-    return vn1;
+    return result;
 }"
 `;
 
 exports[`whitespace handling whitespace only text nodes with newlines are removed 1`] = `
 "function anonymous(context,extra
 ) {
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
     c2.push({text: \`abc\`});
-    return vn1;
+    return result;
 }"
 `;

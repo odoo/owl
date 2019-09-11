@@ -7,9 +7,11 @@ exports[`router directive t-routecomponent can render parameterized route 1`] = 
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['env'].router.currentRouteName==='book') {
         //COMPONENT
         let def3;
@@ -39,7 +41,7 @@ exports[`router directive t-routecomponent can render parameterized route 1`] = 
         }
         extra.promises.push(def3);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -50,9 +52,11 @@ exports[`router directive t-routecomponent can render parameterized route with s
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['env'].router.currentRouteName==='book') {
         //COMPONENT
         let def3;
@@ -82,7 +86,7 @@ exports[`router directive t-routecomponent can render parameterized route with s
         }
         extra.promises.push(def3);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -93,9 +97,11 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['env'].router.currentRouteName==='about') {
         //COMPONENT
         let def3;
@@ -154,6 +160,6 @@ exports[`router directive t-routecomponent can render simple cases 1`] = `
         }
         extra.promises.push(def6);
     }
-    return vn1;
+    return result;
 }"
 `;

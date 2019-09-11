@@ -4,8 +4,6 @@ import { QWeb } from "../../src/qweb/index";
 export class TestRouter extends Router {
   destroy() {
     window.removeEventListener("popstate", (this as any)._listener);
-    delete QWeb.DIRECTIVE_NAMES.routecomponent;
-    QWeb.DIRECTIVES = QWeb.DIRECTIVES.filter(d => d.name !== "routecomponent");
 
     // remove component defined inroutes
     for (let key in QWeb.components) {

@@ -1,9 +1,10 @@
 import { Component } from "../../src/component/component";
 import { RouterEnv } from "../../src/router/Router";
+import { RouteComponent, ROUTE_COMPONENT_TEMPLATE_NAME } from "../../src/router/RouteComponent";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
 import { TestRouter } from "./TestRouter";
 
-describe("router directive t-routecomponent", () => {
+describe("RouteComponent", () => {
   let fixture: HTMLElement;
   let env: RouterEnv;
   let router: TestRouter | null = null;
@@ -25,7 +26,7 @@ describe("router directive t-routecomponent", () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="App">
-                <t t-routecomponent="1" />
+                <RouteComponent />
             </div>
             <span t-name="About">About</span>
             <span t-name="Users">Users</span>
@@ -34,7 +35,7 @@ describe("router directive t-routecomponent", () => {
     class About extends Component<any, any, any> {}
     class Users extends Component<any, any, any> {}
     class App extends Component<any, any, any> {
-      components = { About, Users };
+      static components = { RouteComponent };
     }
 
     const routes = [
@@ -51,21 +52,22 @@ describe("router directive t-routecomponent", () => {
     await router.navigate({ to: "users" });
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>Users</span></div>");
-    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[ROUTE_COMPONENT_TEMPLATE_NAME].fn.toString()).toMatchSnapshot();
+
   });
 
   test("can render parameterized route", async () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="App">
-                <t t-routecomponent="1" />
+                <RouteComponent />
             </div>
             <span t-name="Book">Book <t t-esc="props.title"/></span>
         </templates>
     `);
     class Book extends Component<any, any, any> {}
     class App extends Component<any, any, any> {
-      components = { Book };
+      static components = { RouteComponent };
     }
 
     const routes = [{ name: "book", path: "/book/{{title}}", component: Book }];
@@ -74,14 +76,13 @@ describe("router directive t-routecomponent", () => {
     const app = new App(env);
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984</span></div>");
-    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
   });
 
   test("can render parameterized route with suffixes", async () => {
     env.qweb.addTemplates(`
         <templates>
             <div t-name="App">
-                <t t-routecomponent="1" />
+                <RouteComponent />
             </div>
             <span t-name="Book">Book <t t-esc="props.title"/>|<t t-esc="incVal"/></span>
         </templates>
@@ -92,7 +93,7 @@ describe("router directive t-routecomponent", () => {
       }
     }
     class App extends Component<any, any, any> {
-      components = { Book };
+      static components = { RouteComponent };
     }
 
     const routes = [{ name: "book", path: "/book/{{title}}/{{val.number}}", component: Book }];
@@ -101,6 +102,5 @@ describe("router directive t-routecomponent", () => {
     const app = new App(env);
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984|124</span></div>");
-    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
   });
 });

@@ -194,6 +194,7 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineParent = true;
     ctx.rootContext.shouldDefineUtils = true;
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
+    let hasDynamicProps = node.getAttribute("t-props") ? true : false;
     let async = node.getAttribute("t-asyncroot") ? true : false;
 
     // t-on- events and t-transition
@@ -372,7 +373,12 @@ QWeb.addDirective({
         ctx.addLine(`result = vn${id};`);
       }
     }
-    ctx.addLine(`let props${componentID} = {${propStr}};`);
+    if (hasDynamicProps) {
+      const dynamicProp = ctx.formatExpression(node.getAttribute("t-props")!);
+      ctx.addLine(`let props${componentID} = Object.assign({${propStr}}, ${dynamicProp});`);
+    } else {
+      ctx.addLine(`let props${componentID} = {${propStr}};`);
+    }
     ctx.addIf(
       `w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`
     );

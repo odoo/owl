@@ -119,7 +119,7 @@ find a template with the component name (or one of its ancestor).
 
   ```js
   class ParentComponent extends owl.Component {
-      static components = { SubComponent };
+    static components = { SubComponent };
   }
   ```
 
@@ -471,7 +471,8 @@ the sub component will also be updated automatically.
 Note that there are some restrictions on prop names: `class`, `style` and any
 string which starts with `t-` are not allowed.
 
-The `t-component` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
+It is not common, but sometimes we need a dynamic component name and/or dynamic props. In this case,
+the `t-component` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
 
 ```xml
 <div t-name="ParentComponent">
@@ -483,6 +484,21 @@ The `t-component` directive can also be used to accept dynamic values with strin
 class ParentComponent {
   static components = { ChildComponent1, ChildComponent2 };
   state = { id: 1 };
+}
+```
+
+And the `t-props` directive can be used to specify totally dynamic props:
+
+```xml
+<div t-name="ParentComponent">
+    <Child t-props="some.obj"/>
+</div>
+```
+
+```js
+class ParentComponent {
+  static components = { Child };
+  some = { obj: { a: 1, b: 2 } };
 }
 ```
 

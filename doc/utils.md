@@ -18,9 +18,7 @@ not ready yet, resolved directly otherwise). If called with a callback as
 argument, it executes it as soon as the DOM ready (or directly).
 
 ```js
-Promise.all([loadTemplates(), owl.utils.whenReady()]).then(function([
-  templates
-]) {
+Promise.all([loadTemplates(), owl.utils.whenReady()]).then(function([templates]) {
   const qweb = new owl.QWeb(templates);
   const app = new App({ qweb });
   app.mount(document.body);

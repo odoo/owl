@@ -1,6 +1,6 @@
 import { Env } from "../component/component";
 import { QWeb } from "../qweb/index";
-import { makeDirective } from "./directive";
+import { ROUTE_COMPONENT_TEMPLATE, ROUTE_COMPONENT_TEMPLATE_NAME } from "./RouteComponent";
 import { LINK_TEMPLATE, LINK_TEMPLATE_NAME } from "./Link";
 import { shallowEqual } from "../utils";
 
@@ -87,7 +87,7 @@ export class Router {
 
     // setup link and directive
     env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
-    QWeb.addDirective(makeDirective(<RouterEnv>env));
+    env.qweb.addTemplate(ROUTE_COMPONENT_TEMPLATE_NAME, ROUTE_COMPONENT_TEMPLATE);
   }
 
   //--------------------------------------------------------------------------

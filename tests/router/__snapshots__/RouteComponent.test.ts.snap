@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RouteComponent can render simple cases 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    let result;
+    context = Object.create(context);
+    var h = this.h;
+    var _1 = context['routes'];
+    if (!_1) { throw new Error('QWeb error: Invalid loop expression')}
+    var _2 = _3 = _1;
+    if (!(_1 instanceof Array)) {
+        _2 = Object.keys(_1);
+        _3 = Object.values(_1);
+    }
+    var _length2 = _2.length;
+    for (let i = 0; i < _length2; i++) {
+        context.route_first = i === 0;
+        context.route_last = i === _length2 - 1;
+        context.route_index = i;
+        context.route = _2[i];
+        context.route_value = _3[i];
+        if (context['env'].router.currentRouteName===context['route'].name) {
+            //COMPONENT
+            let def5;
+            let templateId7 = String(-6 - i);
+            let w6 = templateId7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId7]] : false;
+            let vn8 = {};
+            result = vn8;
+            let props6 = Object.assign({}, context['env'].router.currentParams);
+            if (w6 && w6.__owl__.renderPromise && !w6.__owl__.vnode) {
+                if (utils.shallowEqual(props6, w6.__owl__.renderProps)) {
+                    def5 = w6.__owl__.renderPromise;
+                } else {
+                    w6.destroy();
+                    w6 = false;
+                }
+            }
+            if (!w6) {
+                let componentKey6 = (context['route'].component);
+                let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6];
+                if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
+                w6 = new W6(parent, props6);
+                parent.__owl__.cmap[templateId7] = w6.__owl__.id;
+                def5 = w6.__prepare();
+                def5 = def5.then(vnode=>{if (w6.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId7, hook: {insert(vn) {let nvn=w6.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w6.destroy();}}});utils.defineProxy(vn8, pvnode);w6.__owl__.pvnode = pvnode;});
+            } else {
+                def5 = def5 || w6.__updateProps(props6, extra.forceUpdate, extra.patchQueue);
+                def5 = def5.then(()=>{if (w6.__owl__.isDestroyed) {return};let pvnode=w6.__owl__.pvnode;utils.defineProxy(vn8, pvnode);});
+            }
+            extra.promises.push(def5);
+        }
+    }
+    return result;
+}"
+`;

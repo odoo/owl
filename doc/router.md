@@ -8,7 +8,7 @@
   - [Route Definition](#route-definition)
   - [Router](#router)
   - [Navigation Guards](#navigation-guards)
-  - [`t-routecomponent`](#t-routecomponent)
+  - [RouteComponent](#routecomponent)
   - [Link](#link)
 
 ## Overview
@@ -26,8 +26,8 @@ The Owl router support the following features:
 - route redirection
 - navigation guards
 - parameterized routes
-- a `<Link>` component
-- a `t-routecomponent` directive
+- a `<Link/>` component
+- a `<RouteComponent/>` component
 
 Note that it is still in early stage of developments, and there are probably
 still some issues.
@@ -148,15 +148,15 @@ async function protectRoute({ env, to }) {
 A navigation guard is a function that returns a promise, which either resolves
 to `true` (the navigation is accepted), or to another destination object.
 
-### `t-routecomponent`
+### `RouteComponent`
 
-The `t-routecomponent` directive directs Owl to render the component associated
+The `RouteComponent` component directs Owl to render the component associated
 to the currently active route (if any):
 
 ```xml
 <div t-name="App">
     <NavBar />
-    <t t-routecomponent="1"/>
+    <RouteComponent />
 </div>
 ```
 

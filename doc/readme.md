@@ -14,6 +14,7 @@ owl
         Observer
     router
         Link
+        RouteComponent
         Router
     store
         Store

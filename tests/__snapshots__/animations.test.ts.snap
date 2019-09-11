@@ -7,9 +7,11 @@ exports[`animations t-transition combined with component 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -40,7 +42,7 @@ exports[`animations t-transition combined with component 1`] = `
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
-    return vn1;
+    return result;
 }"
 `;
 
@@ -51,9 +53,11 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    result = vn1;
     if (context['state'].display) {
         //COMPONENT
         let def3;
@@ -86,7 +90,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
         }
         extra.promises.push(def3);
     }
-    return vn1;
+    return result;
 }"
 `;
 
@@ -94,9 +98,11 @@ exports[`animations t-transition with no delay/duration 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     p1.hook = {
       insert: vn => {
         utils.transitionInsert(vn, 'jupiler');
@@ -106,7 +112,7 @@ exports[`animations t-transition with no delay/duration 1`] = `
       },
     };
     c1.push({text: \`blue\`});
-    return vn1;
+    return result;
 }"
 `;
 
@@ -114,9 +120,11 @@ exports[`animations t-transition, on a simple node (insert) 1`] = `
 "function anonymous(context,extra
 ) {
     let utils = this.constructor.utils;
+    let result;
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
+    result = vn1;
     p1.hook = {
       insert: vn => {
         utils.transitionInsert(vn, 'chimay');
@@ -126,6 +134,6 @@ exports[`animations t-transition, on a simple node (insert) 1`] = `
       },
     };
     c1.push({text: \`blue\`});
-    return vn1;
+    return result;
 }"
 `;

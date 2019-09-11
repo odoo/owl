@@ -19,7 +19,7 @@ export class Context {
   shouldDefineParent: boolean = false;
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
-  shouldDefineResult: boolean = false;
+  shouldDefineResult: boolean = true;
   shouldProtectContext: boolean = false;
   shouldTrackScope: boolean = false;
   inLoop: boolean = false;
@@ -92,6 +92,9 @@ export class Context {
     }
     if (!this.rootContext.rootNode) {
       this.rootContext.rootNode = node;
+    }
+    if (!this.parentNode) {
+        this.addLine(`result = vn${node};`);
     }
     return this.subContext("parentNode", node);
   }

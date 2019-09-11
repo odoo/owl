@@ -4271,3 +4271,91 @@ describe("unmounting and remounting", () => {
     expect(fixture.innerHTML).toBe("<div>3</div>");
   });
 });
+
+describe("dynamic root nodes", () => {
+  test("template with t-if, part 1", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <t t-name="TestWidget">
+                <t t-if="true"><span>hey</span></t>
+                <t t-if="false"><div>abc</div></t>
+            </t>
+        </templates>
+    `);
+    class TestWidget extends Widget {}
+
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<span>hey</span>");
+  });
+
+  test("template with t-if, part 2", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <t t-name="TestWidget">
+                <t t-if="false"><span>hey</span></t>
+                <t t-if="true"><div>abc</div></t>
+            </t>
+        </templates>
+    `);
+    class TestWidget extends Widget {}
+
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div>abc</div>");
+  });
+
+  test("switching between sub branches dynamically", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <t t-name="TestWidget">
+                <t t-if="state.flag"><span>hey</span></t>
+                <t t-if="!state.flag"><div>abc</div></t>
+            </t>
+        </templates>
+    `);
+    class TestWidget extends Widget {
+        state = {flag: true};
+    }
+
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<span>hey</span>");
+    widget.state.flag = false;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div>abc</div>");
+  });
+
+  test("switching between sub components dynamically", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <t t-name="ChildA"><span>hey</span></t>
+            <t t-name="ChildB"><div>abc</div></t>
+            <t t-name="TestWidget">
+                <t t-if="state.flag"><ChildA/></t>
+                <t t-if="!state.flag"><ChildB/></t>
+            </t>
+        </templates>
+    `);
+    class ChildA extends Widget {}
+    class ChildB extends Widget {}
+    class TestWidget extends Widget {
+        static components = {ChildA, ChildB};
+        state = {flag: true};
+    }
+
+    const widget = new TestWidget(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<span>hey</span>");
+    widget.state.flag = false;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div>abc</div>");
+  });
+
+});

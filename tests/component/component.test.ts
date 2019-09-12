@@ -917,7 +917,7 @@ describe("composition", () => {
   });
 
   test("can use components from the global registry", async () => {
-    QWeb.register("WidgetB", WidgetB);
+    QWeb.registerComponent("WidgetB", WidgetB);
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
     class ParentWidget extends Widget {}
     const widget = new ParentWidget(env);
@@ -927,7 +927,7 @@ describe("composition", () => {
   });
 
   test("don't fallback to global registry if widget defined locally", async () => {
-    QWeb.register("WidgetB", WidgetB); // should not use this widget
+    QWeb.registerComponent("WidgetB", WidgetB); // should not use this widget
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
     env.qweb.addTemplate("AnotherWidgetB", `<span>Belgium</span>`);
     class AnotherWidgetB extends Widget {}

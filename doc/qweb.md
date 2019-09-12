@@ -138,14 +138,14 @@ It's API is quite simple:
   QWeb.registerTemplate('mytemplate', `<div>some template`);
   ```
 
-- **`register(name, Component)`**: static function to register an OWL Component
+- **`registerComponent(name, Component)`**: static function to register an OWL Component
   to QWeb's global registry. Globally registered Components can be used in
   templates (see the `t-component` directive). This is useful for commonly used
   components accross the application.
 
   ```js
   class Dialog extends owl.Component { ... }
-  QWeb.register("Dialog", Dialog);
+  QWeb.registerComponent("Dialog", Dialog);
 
   ...
 

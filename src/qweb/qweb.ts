@@ -180,7 +180,7 @@ export class QWeb extends EventBus {
     }
   }
 
-  static register(name: string, Component: any) {
+  static registerComponent(name: string, Component: any) {
     if (QWeb.components[name]) {
       throw new Error(`Component '${name}' has already been registered`);
     }

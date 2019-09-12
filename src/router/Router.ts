@@ -75,7 +75,7 @@ export class Router {
         partialRoute.name = "__route__" + nextId++;
       }
       if (partialRoute.component) {
-        QWeb.register("__component__" + partialRoute.name, partialRoute.component);
+        QWeb.registerComponent("__component__" + partialRoute.name, partialRoute.component);
       }
       if (partialRoute.redirect) {
         this.validateDestination(partialRoute.redirect);

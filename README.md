@@ -1,12 +1,11 @@
 <h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Odoo Web Library</a> 🦉</h1>
 
-_A web framework for structured, dynamic and maintainable applications_
+_A no nonsense web framework for structured, dynamic and maintainable applications_
 
 ## Project Overview
 
-The Odoo Web Library (OWL) is a small (~16kb gzipped) UI framework intended to be the basis for
-the [Odoo](https://www.odoo.com/) Web Client, and hopefully many other Odoo
-related projects. OWL's main features are:
+The Odoo Web Library (OWL) is a smallish (~17kb gzipped) UI framework intended to be the basis for
+the [Odoo](https://www.odoo.com/) Web Client. OWL's main features are:
 
 - a _declarative component system_, (template based, with asynchronous rendering and a virtual dom)
 - a store implementation (for state management)
@@ -43,7 +42,6 @@ class App extends Component {
     </div>`;
 
   static components = { Counter };
-
 }
 
 const app = new App({ qweb: new QWeb() });

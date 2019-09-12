@@ -241,7 +241,7 @@ export class QWeb extends EventBus {
     this._processTemplate(elem);
     const template = {
       elem,
-      fn: (context, extra) => {
+      fn: function (this: QWeb, context, extra) {
         const compiledFunction = this._compile(name, elem);
         template.fn = compiledFunction;
         return compiledFunction.call(this, context, extra);

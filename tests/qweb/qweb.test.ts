@@ -662,6 +662,14 @@ describe("t-call (template calling", () => {
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
+
+  test("t-call, global templates", () => {
+    QWeb.registerTemplate('abcd', '<div><t t-call="john"/></div>')
+    qweb.addTemplate("john", `<span>desk</span>`);
+    const expected = "<div><span>desk</span></div>";
+    expect(trim(renderToString(qweb, "abcd"))).toBe(expected);
+  });
+
 });
 
 describe("foreach", () => {

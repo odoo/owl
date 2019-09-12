@@ -5,7 +5,6 @@ exports[`Link component can render simple cases 1`] = `
 ) {
     let utils = this.constructor.utils;
     let owner = context;
-    let result;
     var h = this.h;
     let _1 = utils.toObj({'router-link-active':context['isActive']});
     var _2 = context['href'];
@@ -21,6 +20,6 @@ exports[`Link component can render simple cases 1`] = `
     if (slot4) {
         slot4.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c3, vars: extra.vars, parent: owner}));
     }
-    return result;
+    return vn3;
 }"
 `;

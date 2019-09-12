@@ -326,6 +326,9 @@ export class QWeb extends EventBus {
   _compile(name: string, elem: Element, parentContext?: Context): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new Context(name);
+    if (elem.tagName !== 't') {
+        ctx.shouldDefineResult = false;
+    }
     if (parentContext) {
       ctx.templates = Object.create(parentContext.templates);
       ctx.variables = Object.create(parentContext.variables);

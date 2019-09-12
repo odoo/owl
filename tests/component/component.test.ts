@@ -1,5 +1,6 @@
 import { Component, Env } from "../../src/component/component";
 import { QWeb } from "../../src/qweb/qweb";
+import { xml } from "../../src/tags";
 import { EventBus } from "../../src/core/event_bus";
 import {
   makeDeferred,
@@ -119,11 +120,11 @@ describe("basic widget properties", () => {
   });
 
   test("widget style and classname", async () => {
-    env.qweb.addTemplate(
-      "StyledWidget",
-      `<div style="font-weight:bold;" class="some-class">world</div>`
-    );
-    class StyledWidget extends Widget {}
+    class StyledWidget extends Widget {
+      static template = xml`
+        <div style="font-weight:bold;" class="some-class">world</div>
+      `;
+    }
     const widget = new StyledWidget(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
@@ -164,19 +165,17 @@ describe("basic widget properties", () => {
   test("reconciliation alg is not confused in some specific situation", async () => {
     // in this test, we set t-key to 4 because it was in conflict with the
     // template id corresponding to the first child.
-    env.qweb.addTemplates(`
-        <templates>
-            <div t-name="Parent">
-                <Child />
-                <Child t-key="4"/>
-            </div>
-            <span t-name="Child">child</span>
-        </templates>
-    `);
-
-    class Child extends Component<any, any, any> {}
+    class Child extends Component<any, any, any> {
+      static template = xml`<span>child</span>`;
+    }
 
     class Parent extends Component<any, any, any> {
+      static template = xml`
+        <div>
+            <Child />
+            <Child t-key="4"/>
+        </div>
+      `;
       static components = { Child };
     }
 
@@ -226,7 +225,6 @@ describe("lifecycle hooks", () => {
 
   test("willStart hook is called on subwidget", async () => {
     let ok = false;
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
     class ChildWidget extends Widget {
       async willStart() {
         ok = true;
@@ -234,6 +232,7 @@ describe("lifecycle hooks", () => {
     }
 
     class ParentWidget extends Widget {
+      static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
     }
     const widget = new ParentWidget(env);
@@ -244,8 +243,6 @@ describe("lifecycle hooks", () => {
   test("mounted hook is called on subcomponents, in proper order", async () => {
     const steps: any[] = [];
 
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
-
     class ChildWidget extends Widget {
       mounted() {
         expect(document.body.contains(this.el)).toBe(true);
@@ -254,7 +251,8 @@ describe("lifecycle hooks", () => {
     }
 
     class ParentWidget extends Widget {
-      static components = { child: ChildWidget };
+      static template = xml`<div><ChildWidget /></div>`
+      static components = { ChildWidget };
       mounted() {
         steps.push("parent:mounted");
       }
@@ -267,12 +265,6 @@ describe("lifecycle hooks", () => {
   test("mounted hook is called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div><t t-if="state.flag"><t t-component="child"/></t></div>`
-    );
-    env.qweb.addTemplate("ChildWidget", `<div><t t-component="childchild"/></div>`);
-
     class ChildChildWidget extends Widget {
       mounted() {
         steps.push("childchild:mounted");
@@ -283,6 +275,7 @@ describe("lifecycle hooks", () => {
     }
 
     class ChildWidget extends Widget {
+      static template = xml`<div><t t-component="childchild"/></div>`;
       static components = { childchild: ChildChildWidget };
       mounted() {
         steps.push("child:mounted");
@@ -293,6 +286,7 @@ describe("lifecycle hooks", () => {
     }
 
     class ParentWidget extends Widget {
+      static template = xml`<div><t t-if="state.flag"><t t-component="child"/></t></div>`;
       static components = { child: ChildWidget };
       state = { flag: false };
       mounted() {
@@ -435,12 +429,7 @@ describe("lifecycle hooks", () => {
 
   test("components are unmounted and destroyed if no longer in DOM", async () => {
     let steps: string[] = [];
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `<div>
-        <t t-if="state.ok"><t t-component="child"/></t>
-      </div>`
-    );
+
     class ChildWidget extends Widget {
       constructor(parent) {
         super(parent);
@@ -457,8 +446,13 @@ describe("lifecycle hooks", () => {
       }
     }
     class ParentWidget extends Widget {
+      static template = xml`
+        <div>
+          <t t-if="state.ok"><ChildWidget /></t>
+        </div>
+      `;
+      static components = { ChildWidget };
       state = { ok: true };
-      static components = { child: ChildWidget };
     }
 
     const widget = new ParentWidget(env);
@@ -471,8 +465,9 @@ describe("lifecycle hooks", () => {
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
     let childUnmounted = false;
-    env.qweb.addTemplate("ChildWidget", `<span><t t-esc="props.n"/></span>`);
+
     class ChildWidget extends Widget {
+      static template = xml`<span><t t-esc="props.n"/></span>`;
       willUnmount() {
         childUnmounted = true;
       }
@@ -481,16 +476,14 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `
-          <div>
-            <div t-if="state.flag">
-              <ChildWidget n="state.n"/>
-            </div>
-          </div>`
-    );
     class ParentWidget extends Widget {
+      static template = xml`
+        <div>
+          <div t-if="state.flag">
+            <ChildWidget n="state.n"/>
+          </div>
+        </div>
+      `;
       static components = { ChildWidget };
       state = { n: 0, flag: true };
       increment() {
@@ -515,7 +508,7 @@ describe("lifecycle hooks", () => {
 
   test("hooks are called in proper order in widget creation/destruction", async () => {
     let steps: string[] = [];
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
+
     class ChildWidget extends Widget {
       constructor(parent) {
         super(parent);
@@ -532,6 +525,7 @@ describe("lifecycle hooks", () => {
       }
     }
     class ParentWidget extends Widget {
+      static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
       constructor(parent) {
         super(parent);
@@ -614,13 +608,13 @@ describe("lifecycle hooks", () => {
   test("patched hook is called after updateProps", async () => {
     let n = 0;
 
-    env.qweb.addTemplate("Parent", '<div><Child a="state.a"/></div>');
     class TestWidget extends Widget {
       patched() {
         n++;
       }
     }
     class Parent extends Widget {
+      static template = xml`<div><Child a="state.a"/></div>`;
       state = { a: 1 };
       static components = { Child: TestWidget };
     }
@@ -654,17 +648,18 @@ describe("lifecycle hooks", () => {
 
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
-    env.qweb.addTemplate("Parent", `<div><Child val="state.val"/></div>`);
     class TestWidget extends Widget {
+      static template = xml`<div><t t-esc="props.val"/></div>`;
       shouldUpdate() {
         return shouldUpdate;
       }
     }
     class Parent extends Widget {
-      state = { val: 42 };
+      static template = xml`<div><Child val="state.val"/></div>`;
       static components = { Child: TestWidget };
+      state = { val: 42 };
     }
-    env.qweb.addTemplate("TestWidget", `<div><t t-esc="props.val"/></div>`);
+
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>42</div></div>");
@@ -680,15 +675,6 @@ describe("lifecycle hooks", () => {
   test("sub widget (inside sub node): hooks are correctly called", async () => {
     let created = false;
     let mounted = false;
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `
-        <div>
-          <t t-if="state.flag">
-            <div><t t-component="child"/></div>
-          </t>
-        </div>`
-    );
 
     class ChildWidget extends Widget {
       constructor(parent, props) {
@@ -700,6 +686,13 @@ describe("lifecycle hooks", () => {
       }
     }
     class ParentWidget extends Widget {
+      static template = xml`
+        <div>
+          <t t-if="state.flag">
+            <div><t t-component="child"/></div>
+          </t>
+        </div>
+      `;
       static components = { child: ChildWidget };
       state = { flag: false };
     }
@@ -716,13 +709,7 @@ describe("lifecycle hooks", () => {
 
   test("willPatch/patched hook", async () => {
     const steps: string[] = [];
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `
-        <div>
-            <t t-component="child" v="state.n"/>
-        </div>`
-    );
+
     class ChildWidget extends Widget {
       willPatch() {
         steps.push("child:willPatch");
@@ -732,6 +719,11 @@ describe("lifecycle hooks", () => {
       }
     }
     class ParentWidget extends Widget {
+      static template = xml`
+        <div>
+          <t t-component="child" v="state.n"/>
+        </div>
+      `;
       static components = { child: ChildWidget };
       state = { n: 1 };
       willPatch() {
@@ -763,13 +755,6 @@ describe("lifecycle hooks", () => {
     // we make sure here that willPatch/patched is only called if widget is in
     // dom, mounted
     const steps: string[] = [];
-    env.qweb.addTemplates(`
-        <templates>
-            <div t-name="ParentWidget">
-                <ChildWidget t-if="state.flag" v="state.n" t-keepalive="1"/>
-            </div>
-        </templates>
-    `);
 
     class ChildWidget extends Widget {
       willPatch() {
@@ -786,6 +771,11 @@ describe("lifecycle hooks", () => {
       }
     }
     class ParentWidget extends Widget {
+      static template = xml`
+        <div>
+          <ChildWidget t-if="state.flag" v="state.n" t-keepalive="1"/>
+        </div>
+      `;
       static components = { ChildWidget };
       state = { n: 1, flag: true };
     }
@@ -793,7 +783,7 @@ describe("lifecycle hooks", () => {
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
 
-    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[ParentWidget.template].fn.toString()).toMatchSnapshot();
     expect(steps).toEqual(["child:mounted"]);
     widget.state.flag = false;
     await nextTick();
@@ -865,21 +855,20 @@ describe("destroy method", () => {
   });
 
   test("destroying a widget before being mounted", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-            <div t-name="Parent" t-on-some-event="doStuff">
-                <Child />
-            </div>
-            <span t-name="Child">
-                <GrandChild t-if="state.flag" val="something"/>
-                <button t-on-click="doSomething">click</button>
-            </span>
-            <span t-name="GrandChild">
-                <t t-esc="props.val.val"/>
-            </span>
-        </templates>`);
-    class GrandChild extends Component<any, any, any> {}
+    class GrandChild extends Component<any, any, any> {
+      static template = xml`
+        <span>
+          <t t-esc="props.val.val"/>
+        </span>
+      `;
+    }
     class Child extends Component<any, any, any> {
+      static template = xml`
+        <span>
+          <GrandChild t-if="state.flag" val="something"/>
+          <button t-on-click="doSomething">click</button>
+        </span>
+      `;
       static components = { GrandChild };
       state = { val: 33, flag: false };
       doSomething() {
@@ -892,6 +881,11 @@ describe("destroy method", () => {
       }
     }
     class Parent extends Component<any, any, any> {
+      static template = xml`
+        <div t-on-some-event="doStuff">
+          <Child />
+        </div>
+      `;
       static components = { Child };
       state = { p: 1 };
       doStuff() {
@@ -985,14 +979,12 @@ describe("composition", () => {
 
   test("t-refs are bound at proper timing", async () => {
     expect.assertions(2);
-    env.qweb.addTemplate(
-      "ParentWidget",
-      `
+    class ParentWidget extends Widget {
+      static template = xml`
         <div>
           <t t-foreach="state.list" t-as="elem" t-ref="child" t-key="elem" t-component="Widget"/>
-        </div>`
-    );
-    class ParentWidget extends Widget {
+        </div>
+      `;
       static components = { Widget };
       state = { list: <any>[] };
       willPatch() {
@@ -3055,8 +3047,8 @@ describe("t-slot directive", () => {
     );
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
     expect(env.qweb.templates.Dialog.fn.toString()).toMatchSnapshot();
-    expect(env.qweb.slots["1_header"].toString()).toMatchSnapshot();
-    expect(env.qweb.slots["1_footer"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_header"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context", async () => {
@@ -3092,7 +3084,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
-    expect(env.qweb.slots["1_footer"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context, part 2", async () => {
@@ -3130,7 +3122,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
-    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context, part 3", async () => {
@@ -3169,7 +3161,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
-    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("slots are rendered with proper context, part 4", async () => {
@@ -3202,7 +3194,7 @@ describe("t-slot directive", () => {
     app.state.user.name = "David";
     await nextTick();
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
-    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("refs are properly bound in slots", async () => {
@@ -3238,7 +3230,7 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
-    expect(env.qweb.slots["1_footer"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
   test("content is the default slot", async () => {
@@ -3260,7 +3252,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
-    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("default slot work with text nodes", async () => {
@@ -3280,7 +3272,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
-    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("multiple roots are allowed in a named slot", async () => {
@@ -3305,7 +3297,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
-    expect(env.qweb.slots["1_content"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_content"].toString()).toMatchSnapshot();
   });
 
   test("multiple roots are allowed in a default slot", async () => {
@@ -3328,7 +3320,7 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
-    expect(env.qweb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
   test("missing slots are ignored", async () => {
@@ -3599,17 +3591,16 @@ describe("t-model directive", () => {
   });
 
   test("on a select, initial state", async () => {
-    env.qweb.addTemplates(`
-    <templates>
-        <div t-name="SomeComponent">
-            <select t-model="color">
-                <option value="">Please select one</option>
-                <option value="red">Red</option>
-                <option value="blue">Blue</option>
-            </select>
-        </div>
-    </templates>`);
     class SomeComponent extends Widget {
+      static template = xml`
+        <div>
+          <select t-model="color">
+            <option value="">Please select one</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+          </select>
+        </div>
+      `;
       state = { color: "red" };
     }
     const comp = new SomeComponent(env);
@@ -3619,15 +3610,13 @@ describe("t-model directive", () => {
   });
 
   test("on a sub state key", async () => {
-    env.qweb.addTemplates(`
-    <templates>
-        <div t-name="SomeComponent">
-            <input t-model="something.text"/>
-            <span><t t-esc="state.something.text"/></span>
-        </div>
-    </templates>`);
-
     class SomeComponent extends Widget {
+      static template = xml`
+        <div>
+          <input t-model="something.text"/>
+          <span><t t-esc="state.something.text"/></span>
+        </div>
+      `;
       state = { something: { text: "" } };
     }
     const comp = new SomeComponent(env);
@@ -3639,18 +3628,17 @@ describe("t-model directive", () => {
     await editInput(input, "test");
     expect(comp.state.something.text).toBe("test");
     expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
-    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
   });
 
   test(".lazy modifier", async () => {
-    env.qweb.addTemplates(`
-    <templates>
-        <div t-name="SomeComponent">
+    class SomeComponent extends Widget {
+      static template = xml`
+        <div>
             <input t-model.lazy="text"/>
             <span><t t-esc="state.text"/></span>
         </div>
-    </templates>`);
-    class SomeComponent extends Widget {
+      `;
       state = { text: "" };
     }
     const comp = new SomeComponent(env);
@@ -3668,18 +3656,17 @@ describe("t-model directive", () => {
     await nextTick();
     expect(comp.state.text).toBe("test");
     expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
-    expect(env.qweb.templates.SomeComponent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
   });
 
   test(".trim modifier", async () => {
-    env.qweb.addTemplates(`
-    <templates>
-        <div t-name="SomeComponent">
-            <input t-model.trim="text"/>
-            <span><t t-esc="state.text"/></span>
-        </div>
-    </templates>`);
     class SomeComponent extends Widget {
+      static template = xml`
+        <div t-name="SomeComponent">
+          <input t-model.trim="text"/>
+          <span><t t-esc="state.text"/></span>
+        </div>
+      `;
       state = { text: "" };
     }
     const comp = new SomeComponent(env);
@@ -3692,14 +3679,13 @@ describe("t-model directive", () => {
   });
 
   test(".number modifier", async () => {
-    env.qweb.addTemplates(`
-    <templates>
-        <div t-name="SomeComponent">
-            <input t-model.number="number"/>
-            <span><t t-esc="state.number"/></span>
-        </div>
-    </templates>`);
     class SomeComponent extends Widget {
+      static template = xml`
+        <div>
+          <input t-model.number="number"/>
+          <span><t t-esc="state.number"/></span>
+        </div>
+      `;
       state = { number: 0 };
     }
     const comp = new SomeComponent(env);
@@ -3732,15 +3718,14 @@ describe("environment and plugins", () => {
 
   test("plugin works as expected", async () => {
     somePlugin(env);
-    env.qweb.addTemplates(`
-      <templates>
-        <div t-name="App">
+    class App extends Widget {
+      static template=xml`
+        <div>
             <t t-if="env.someFlag">Red</t>
             <t t-else="1">Blue</t>
         </div>
-      </templates>
-    `);
-    class App extends Widget {}
+      `;
+    }
 
     const app = new App(env);
     await app.mount(fixture);
@@ -4086,18 +4071,19 @@ describe("top level sub widgets", () => {
   });
 
   test("can select a sub widget ", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-          <t t-name="Parent">
-            <t t-if="env.flag"><Child /></t>
-            <t t-if="!env.flag"><OtherChild /></t>
-          </t>
-          <span t-name="Child">CHILD 1</span>
-          <div t-name="OtherChild">CHILD 2</div>
-        </templates>`);
-    class Child extends Widget {}
-    class OtherChild extends Widget {}
+    class Child extends Widget {
+      static template = xml`<span>CHILD 1</span>`;
+    }
+    class OtherChild extends Widget {
+      static template = xml`<div>CHILD 2</div>`;
+    }
     class Parent extends Widget {
+      static template = xml`
+        <t>
+          <t t-if="env.flag"><Child /></t>
+          <t t-if="!env.flag"><OtherChild /></t>
+        </t>
+      `;
       static components = { Child, OtherChild };
     }
     (<any>env).flag = true;
@@ -4110,22 +4096,23 @@ describe("top level sub widgets", () => {
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
 
-    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
   });
 
   test("can select a sub widget, part 2", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-          <t t-name="Parent">
-            <t t-if="state.flag"><Child /></t>
-            <t t-if="!state.flag"><OtherChild /></t>
-          </t>
-          <span t-name="Child">CHILD 1</span>
-          <div t-name="OtherChild">CHILD 2</div>
-        </templates>`);
-    class Child extends Widget {}
-    class OtherChild extends Widget {}
+    class Child extends Widget {
+      static template = xml`<span>CHILD 1</span>`;
+    }
+    class OtherChild extends Widget {
+      static template = xml`<div>CHILD 2</div>`;
+    }
     class Parent extends Widget {
+      static template = xml`
+        <t>
+          <t t-if="state.flag"><Child /></t>
+          <t t-if="!state.flag"><OtherChild /></t>
+        </t>
+      `;
       state = { flag: true };
       static components = { Child, OtherChild };
     }
@@ -4140,13 +4127,9 @@ describe("top level sub widgets", () => {
 
 describe("unmounting and remounting", () => {
   test("widget can be unmounted and remounted", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-          <div t-name="MyWidget">Hey</div>
-        </templates>`);
-
     const steps: string[] = [];
     class MyWidget extends Widget {
+      static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");
       }
@@ -4173,13 +4156,9 @@ describe("unmounting and remounting", () => {
   });
 
   test("widget can be mounted twice without ill effect", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-          <div t-name="MyWidget">Hey</div>
-        </templates>`);
-
     const steps: string[] = [];
     class MyWidget extends Widget {
+      static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");
       }
@@ -4200,16 +4179,11 @@ describe("unmounting and remounting", () => {
 
   test("state changes in willUnmount do not trigger rerender", async () => {
     const steps: string[] = [];
-    env.qweb.addTemplates(`
-        <templates>
-            <div t-name="Parent">
-                <Child t-if="state.flag" val="state.val"/>
-            </div>
-            <span t-name="Child"><t t-esc="props.val"/><t t-esc="state.n"/></span>
-        </templates>
-    `);
 
     class Child extends Widget {
+      static template = xml`
+        <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
+      `;
       state = { n: 2 };
       __render(a, b, c, d) {
         steps.push("render");
@@ -4228,6 +4202,11 @@ describe("unmounting and remounting", () => {
       }
     }
     class Parent extends Widget {
+      static template = xml`
+        <div>
+          <Child t-if="state.flag" val="state.val"/>
+        </div>
+      `;
       static components = { Child };
       state = { val: 1, flag: true };
     }
@@ -4243,13 +4222,10 @@ describe("unmounting and remounting", () => {
   });
 
   test("state changes in willUnmount will be applied on remount", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-            <div t-name="TestWidget"><t t-esc="state.val"/></div>
-        </templates>
-    `);
-
     class TestWidget extends Widget {
+      static template = xml`
+        <div><t t-esc="state.val"/></div>
+      `;
       state = { val: 1 };
       willUnmount() {
         this.state.val = 3;
@@ -4271,15 +4247,14 @@ describe("unmounting and remounting", () => {
 
 describe("dynamic root nodes", () => {
   test("template with t-if, part 1", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-            <t t-name="TestWidget">
-                <t t-if="true"><span>hey</span></t>
-                <t t-if="false"><div>abc</div></t>
-            </t>
-        </templates>
-    `);
-    class TestWidget extends Widget {}
+    class TestWidget extends Widget {
+      static template = xml`
+        <t>
+          <t t-if="true"><span>hey</span></t>
+          <t t-if="false"><div>abc</div></t>
+        </t>
+      `;
+    }
 
     const widget = new TestWidget(env);
     await widget.mount(fixture);
@@ -4288,15 +4263,14 @@ describe("dynamic root nodes", () => {
   });
 
   test("template with t-if, part 2", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-            <t t-name="TestWidget">
-                <t t-if="false"><span>hey</span></t>
-                <t t-if="true"><div>abc</div></t>
-            </t>
-        </templates>
-    `);
-    class TestWidget extends Widget {}
+    class TestWidget extends Widget {
+      static template = xml`
+        <t>
+          <t t-if="false"><span>hey</span></t>
+          <t t-if="true"><div>abc</div></t>
+        </t>
+      `;
+    }
 
     const widget = new TestWidget(env);
     await widget.mount(fixture);
@@ -4305,15 +4279,13 @@ describe("dynamic root nodes", () => {
   });
 
   test("switching between sub branches dynamically", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-            <t t-name="TestWidget">
-                <t t-if="state.flag"><span>hey</span></t>
-                <t t-if="!state.flag"><div>abc</div></t>
-            </t>
-        </templates>
-    `);
     class TestWidget extends Widget {
+      static template = xml`
+        <t>
+          <t t-if="state.flag"><span>hey</span></t>
+          <t t-if="!state.flag"><div>abc</div></t>
+        </t>
+      `;
       state = { flag: true };
     }
 
@@ -4328,19 +4300,19 @@ describe("dynamic root nodes", () => {
   });
 
   test("switching between sub components dynamically", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-            <t t-name="ChildA"><span>hey</span></t>
-            <t t-name="ChildB"><div>abc</div></t>
-            <t t-name="TestWidget">
-                <t t-if="state.flag"><ChildA/></t>
-                <t t-if="!state.flag"><ChildB/></t>
-            </t>
-        </templates>
-    `);
-    class ChildA extends Widget {}
-    class ChildB extends Widget {}
+    class ChildA extends Widget {
+      static template = xml`<span>hey</span>`;
+    }
+    class ChildB extends Widget {
+      static template = xml`<div>abc</div>`;
+    }
     class TestWidget extends Widget {
+      static template = xml`
+        <t>
+            <t t-if="state.flag"><ChildA/></t>
+            <t t-if="!state.flag"><ChildB/></t>
+        </t>
+      `;
       static components = { ChildA, ChildB };
       state = { flag: true };
     }
@@ -4359,17 +4331,13 @@ describe("dynamic root nodes", () => {
 describe("dynamic t-props", () => {
   test("basic use", async () => {
     expect.assertions(4);
-    env.qweb.addTemplates(`
-        <templates>
-            <span t-name="Child">
-                <t t-esc="props.a + props.b"/>
-            </span>
-            <div t-name="Parent">
-                <Child t-props="some.obj"/>
-            </div>
-        </templates>
-    `);
+
     class Child extends Widget {
+      static template = xml`
+        <span>
+            <t t-esc="props.a + props.b"/>
+        </span>
+      `;
       constructor(parent, props) {
         super(parent, props);
         expect(props).toEqual({ a: 1, b: 2 });
@@ -4377,6 +4345,11 @@ describe("dynamic t-props", () => {
       }
     }
     class Parent extends Widget {
+      static template = xml`
+        <div>
+            <Child t-props="some.obj"/>
+        </div>
+      `;
       static components = { Child };
 
       some = { obj: { a: 1, b: 2 } };
@@ -4386,6 +4359,6 @@ describe("dynamic t-props", () => {
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
   });
 });

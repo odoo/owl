@@ -1,18 +1,18 @@
 import { Component } from "../component/component";
+import { xml } from "../tags";
 import { Destination, RouterEnv } from "./Router";
-
-export const LINK_TEMPLATE_NAME = "__owl__-router-link";
-export const LINK_TEMPLATE = `
-    <a  t-att-class="{'router-link-active': isActive }"
-        t-att-href="href"
-        t-on-click="navigate">
-        <t t-slot="default"/>
-    </a>`;
 
 type Props = Destination;
 
 export class Link<Env extends RouterEnv> extends Component<Env, Props, {}> {
-  static template = LINK_TEMPLATE_NAME;
+  static template = xml`
+    <a  t-att-class="{'router-link-active': isActive }"
+        t-att-href="href"
+        t-on-click="navigate">
+        <t t-slot="default"/>
+    </a>
+  `;
+
   href: string = this.env.router.destToPath(this.props);
 
   async willUpdateProps(nextProps) {

@@ -1,6 +1,6 @@
 import { Component } from "../../src/component/component";
 import { RouterEnv } from "../../src/router/Router";
-import { RouteComponent, ROUTE_COMPONENT_TEMPLATE_NAME } from "../../src/router/RouteComponent";
+import { RouteComponent } from "../../src/router/RouteComponent";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
 import { TestRouter } from "./TestRouter";
 
@@ -52,7 +52,7 @@ describe("RouteComponent", () => {
     await router.navigate({ to: "users" });
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>Users</span></div>");
-    expect(env.qweb.templates[ROUTE_COMPONENT_TEMPLATE_NAME].fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[RouteComponent.template].fn.toString()).toMatchSnapshot();
   });
 
   test("can render parameterized route", async () => {

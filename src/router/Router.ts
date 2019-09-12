@@ -1,7 +1,5 @@
 import { Env } from "../component/component";
 import { QWeb } from "../qweb/index";
-import { ROUTE_COMPONENT_TEMPLATE, ROUTE_COMPONENT_TEMPLATE_NAME } from "./RouteComponent";
-import { LINK_TEMPLATE, LINK_TEMPLATE_NAME } from "./Link";
 import { shallowEqual } from "../utils";
 
 type NavigationGuard = (info: {
@@ -84,10 +82,6 @@ export class Router {
       this.routes[partialRoute.name] = partialRoute as Route;
       this.routeIds.push(partialRoute.name);
     }
-
-    // setup link and directive
-    env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
-    env.qweb.addTemplate(ROUTE_COMPONENT_TEMPLATE_NAME, ROUTE_COMPONENT_TEMPLATE);
   }
 
   //--------------------------------------------------------------------------

@@ -5,6 +5,27 @@ import "../src/qweb/base_directives";
 import "../src/qweb/extensions";
 import "../src/component/directive";
 
+// Some static cleanup
+let nextSlotId;
+let slots;
+let nextId;
+let TEMPLATES;
+
+beforeEach(() => {
+  nextSlotId = QWeb.nextSlotId;
+  slots = Object.assign({}, QWeb.slots);
+  nextId = QWeb.nextId;
+  TEMPLATES = Object.assign({}, QWeb.TEMPLATES);
+});
+
+afterEach(() => {
+  QWeb.nextSlotId = nextSlotId;
+  QWeb.slots = slots;
+  QWeb.nextId = nextId;
+  QWeb.TEMPLATES = TEMPLATES;
+});
+
+// helpers
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
 }
@@ -82,7 +103,7 @@ export function renderToString(qweb: QWeb, t: string, context: EvalContext = {})
   const node = renderToDOM(qweb, t, context);
   const result = node instanceof Text ? node.textContent! : node.outerHTML;
   if (result !== qweb.renderToString(t, context)) {
-      throw new Error("HTML string returned by renderToString helper does not match QWeb render");
+    throw new Error("HTML string returned by renderToString helper does not match QWeb render");
   }
   return result;
 }

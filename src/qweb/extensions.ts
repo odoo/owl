@@ -227,7 +227,9 @@ QWeb.addDirective({
   atNodeEncounter({ ctx, value }): boolean {
     const slotKey = ctx.generateID();
     ctx.rootContext.shouldDefineOwner = true;
-    ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
+    ctx.addLine(
+      `const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`
+    );
     ctx.addIf(`slot${slotKey}`);
     ctx.addLine(
       `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`

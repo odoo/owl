@@ -10,7 +10,7 @@ class Greeter extends owl.Component {
 
 // Main root component
 class App extends owl.Component {
-    components = { Greeter };
+    static components = { Greeter };
     state = { name: 'World'};
 }
 
@@ -56,7 +56,7 @@ class Counter extends owl.Component {
 
 class App extends owl.Component {
     state = { flag: false, componentFlag: false, numbers: [] };
-    components = { Counter };
+    static components = { Counter };
 
     toggle(key) {
         this.state[key] = !this.state[key];
@@ -214,7 +214,7 @@ class DemoComponent extends owl.Component {
 }
 
 class App extends owl.Component {
-    components = { DemoComponent };
+    static components = { DemoComponent };
     state = { n: 0, flag: true };
 
     increment() {
@@ -388,7 +388,7 @@ class TodoItem extends owl.Component {
 // TodoApp
 //------------------------------------------------------------------------------
 class TodoApp extends owl.store.ConnectedComponent {
-    components = { TodoItem };
+    static components = { TodoItem };
     state = { filter: "all" };
 
     static mapStoreToProps(state) {
@@ -896,25 +896,24 @@ const RESPONSIVE = `// In this example, we show how we can modify keys in the gl
 //------------------------------------------------------------------------------
 class Navbar extends owl.Component {}
 
-class ControlPanel extends owl.Component {
-    components = { MobileSearchView };
-}
+class MobileSearchView extends owl.Component {}
 
-class FormView extends owl.Component {
-    components = { AdvancedComponent };
+class ControlPanel extends owl.Component {
+    static components = { MobileSearchView };
 }
 
 class AdvancedComponent extends owl.Component {}
+
+class FormView extends owl.Component {
+    static components = { AdvancedComponent };
+}
 
 class Chatter extends owl.Component {
     messages = Array.from(Array(100).keys());
 }
 
-class MobileSearchView extends owl.Component {}
-
-
 class App extends owl.Component {
-    components = { Navbar, ControlPanel, FormView, Chatter };
+    static components = { Navbar, ControlPanel, FormView, Chatter };
 }
 
 //------------------------------------------------------------------------------
@@ -1072,7 +1071,7 @@ class Counter extends owl.Component {
 
 // Main root component
 class App extends owl.Component {
-    components = {Card, Counter};
+    static components = {Card, Counter};
     state = {a: 1, b: 3};
 
     inc(key, delta) {
@@ -1170,8 +1169,18 @@ const ASYNC_COMPONENTS = `// This example will not work if your browser does not
 // because of the slow component. We use the 't-asyncroot' directive for this
 // purpose. Try removing it to see the difference.
 
+class SlowComponent extends owl.Component {
+    willUpdateProps() {
+        // simulate a component that needs to perform async stuff (e.g. an RPC)
+        // with the updated props before re-rendering itself
+        return new Promise(resolve => setTimeout(resolve, 1500));
+    }
+}
+
+class NotificationList extends owl.Component {}
+
 class App extends owl.Component {
-    components = {SlowComponent, NotificationList};
+    static components = {SlowComponent, NotificationList};
     state = { value: 0, notifs: [] };
 
     increment() {
@@ -1184,16 +1193,6 @@ class App extends owl.Component {
         }, 3000);
     }
 }
-
-class SlowComponent extends owl.Component {
-    willUpdateProps() {
-        // simulate a component that needs to perform async stuff (e.g. an RPC)
-        // with the updated props before re-rendering itself
-        return new Promise(resolve => setTimeout(resolve, 1500));
-    }
-}
-
-class NotificationList extends owl.Component {}
 
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
@@ -1368,7 +1367,7 @@ class Window extends owl.Component {
 }
 
 class WindowManager extends owl.Component {
-  components = { Window };
+  static components = { Window };
   windows = [];
   nextId = 1;
   currentZindex = 1;
@@ -1384,12 +1383,12 @@ class WindowManager extends owl.Component {
       left: 0,
       zindex: this.currentZindex++
     });
-    this.components[id] = info.component;
+    this.constructor.components[id] = info.component;
     this.render();
   }
   closeWindow(ev) {
     const id = ev.detail.id;
-    delete this.components[id];
+    delete this.constructor.components[id];
     const index = this.windows.findIndex(w => w.id === id);
     this.windows.splice(index, 1);
     this.render();
@@ -1409,7 +1408,7 @@ class WindowManager extends owl.Component {
 }
 
 class App extends owl.Component {
-  components = { WindowManager };
+  static components = { WindowManager };
 
   addWindow(name) {
     this.refs.wm.addWindow(name);

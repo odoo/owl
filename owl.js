@@ -402,7 +402,7 @@
             this.shouldDefineParent = false;
             this.shouldDefineQWeb = false;
             this.shouldDefineUtils = false;
-            this.shouldDefineResult = false;
+            this.shouldDefineResult = true;
             this.shouldProtectContext = false;
             this.shouldTrackScope = false;
             this.inLoop = false;
@@ -468,6 +468,9 @@
             }
             if (!this.rootContext.rootNode) {
                 this.rootContext.rootNode = node;
+            }
+            if (!this.parentNode) {
+                this.addLine(`result = vn${node};`);
             }
             return this.subContext("parentNode", node);
         }
@@ -1349,28 +1352,19 @@
         }
         return doc;
     }
-    let nextID = 1;
     //------------------------------------------------------------------------------
     // QWeb rendering engine
     //------------------------------------------------------------------------------
     class QWeb extends EventBus {
         constructor(data) {
             super();
-            this.templates = {};
             this.h = h;
-            // the id field is useful to be able to hash qweb instances.  The current
-            // use case is that component's templates are qweb dependant, and need to be
-            // able to map a qweb instance to a template name.
-            this.id = nextID++;
-            // slots contains sub templates defined with t-set inside t-component nodes, and
-            // are meant to be used by the t-slot directive.
-            this.slots = {};
-            this.nextSlotId = 1;
             // recursiveTemplates contains sub templates called with t-call, but which
             // ends up in recursive situations.  This is very similar to the slot situation,
             // as in we need to propagate the scope.
             this.recursiveFns = {};
             this.isUpdating = false;
+            this.templates = Object.create(QWeb.TEMPLATES);
             if (data) {
                 this.addTemplates(data);
             }
@@ -1386,11 +1380,24 @@
                 directive.extraNames.forEach(n => (QWeb.DIRECTIVE_NAMES[n] = 1));
             }
         }
-        static register(name, Component) {
+        static registerComponent(name, Component) {
             if (QWeb.components[name]) {
                 throw new Error(`Component '${name}' has already been registered`);
             }
             QWeb.components[name] = Component;
+        }
+        /**
+         * Register globally a template.  All QWeb instances will obtain their
+         * templates from their own template map, and then, from the global static
+         * TEMPLATES property.
+         */
+        static registerTemplate(name, template) {
+            if (QWeb.TEMPLATES[name]) {
+                throw new Error(`Template '${name}' has already been registered`);
+            }
+            const qweb = new QWeb();
+            qweb.addTemplate(name, template);
+            QWeb.TEMPLATES[name] = qweb.templates[name];
         }
         /**
          * Add a template to the internal template map.  Note that it is not
@@ -1517,6 +1524,9 @@
         _compile(name, elem, parentContext) {
             const isDebug = elem.attributes.hasOwnProperty("t-debug");
             const ctx = new Context(name);
+            if (elem.tagName !== "t") {
+                ctx.shouldDefineResult = false;
+            }
             if (parentContext) {
                 ctx.templates = Object.create(parentContext.templates);
                 ctx.variables = Object.create(parentContext.variables);
@@ -1524,6 +1534,7 @@
                 ctx.parentNode = parentContext.parentNode;
                 ctx.allowMultipleRoots = true;
                 ctx.hasParentWidget = true;
+                ctx.shouldDefineResult = false;
                 ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
                 for (let v in parentContext.variables) {
                     let variable = parentContext.variables[v];
@@ -1593,6 +1604,7 @@
                     // template rendering.
                     let nodeID = ctx.generateID();
                     ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
+                    ctx.addLine(`result = vn${nodeID};`);
                     ctx.rootContext.rootNode = nodeID;
                     ctx.rootContext.parentTextNode = nodeID;
                 }
@@ -1871,8 +1883,14 @@
         key: 1
     };
     QWeb.DIRECTIVES = [];
+    QWeb.TEMPLATES = {};
+    QWeb.nextId = 1;
     // dev mode enables better error messages or more costly validations
     QWeb.dev = false;
+    // slots contains sub templates defined with t-set inside t-component nodes, and
+    // are meant to be used by the t-slot directive.
+    QWeb.slots = {};
+    QWeb.nextSlotId = 1;
 
     /**
      * Owl QWeb Directives
@@ -1927,6 +1945,7 @@
                 ctx.rootContext.rootNode = nodeID;
                 ctx.rootContext.parentTextNode = nodeID;
                 ctx.addLine(`var vn${nodeID} = {text: ${exprID}};`);
+                ctx.addLine(`result = vn${nodeID}`);
             }
         }
         else {
@@ -2066,6 +2085,7 @@
             // extract variables from nodecopy
             const tempCtx = new Context();
             tempCtx.nextID = ctx.rootContext.nextID;
+            tempCtx.allowMultipleRoots = true;
             qweb._compileNode(nodeCopy, tempCtx);
             const vars = Object.assign({}, ctx.variables, tempCtx.variables);
             ctx.rootContext.nextID = tempCtx.nextID;
@@ -2404,7 +2424,7 @@
         atNodeEncounter({ ctx, value }) {
             const slotKey = ctx.generateID();
             ctx.rootContext.shouldDefineOwner = true;
-            ctx.addLine(`const slot${slotKey} = this.slots[context.__owl__.slotId + '_' + '${value}'];`);
+            ctx.addLine(`const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`);
             ctx.addIf(`slot${slotKey}`);
             ctx.addLine(`slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`);
             ctx.closeIf();
@@ -2646,6 +2666,7 @@
             ctx.rootContext.shouldDefineParent = true;
             ctx.rootContext.shouldDefineUtils = true;
             let keepAlive = node.getAttribute("t-keepalive") ? true : false;
+            let hasDynamicProps = node.getAttribute("t-props") ? true : false;
             let async = node.getAttribute("t-asyncroot") ? true : false;
             // t-on- events and t-transition
             const events = [];
@@ -2821,7 +2842,13 @@
                     ctx.addLine(`result = vn${id};`);
                 }
             }
-            ctx.addLine(`let props${componentID} = {${propStr}};`);
+            if (hasDynamicProps) {
+                const dynamicProp = ctx.formatExpression(node.getAttribute("t-props"));
+                ctx.addLine(`let props${componentID} = Object.assign({${propStr}}, ${dynamicProp});`);
+            }
+            else {
+                ctx.addLine(`let props${componentID} = {${propStr}};`);
+            }
             ctx.addIf(`w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`);
             ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`);
             ctx.addLine(`def${defID} = w${componentID}.__owl__.renderPromise;`);
@@ -2833,7 +2860,7 @@
             ctx.addIf(`!w${componentID}`);
             // new component
             ctx.addLine(`let componentKey${componentID} = ${ctx.interpolate(value)};`);
-            ctx.addLine(`let W${componentID} = context.components && context.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`);
+            ctx.addLine(`let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`);
             // maybe only do this in dev mode...
             ctx.addLine(`if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`);
             if (QWeb.dev) {
@@ -2853,7 +2880,7 @@
                 }
                 const clone = node.cloneNode(true);
                 const slotNodes = clone.querySelectorAll("[t-set]");
-                const slotId = qweb.nextSlotId++;
+                const slotId = QWeb.nextSlotId++;
                 ctx.addLine(`w${componentID}.__owl__.slotId = ${slotId};`);
                 if (slotNodes.length) {
                     for (let i = 0, length = slotNodes.length; i < length; i++) {
@@ -2862,7 +2889,7 @@
                         const key = slotNode.getAttribute("t-set");
                         slotNode.removeAttribute("t-set");
                         const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
-                        qweb.slots[`${slotId}_${key}`] = slotFn;
+                        QWeb.slots[`${slotId}_${key}`] = slotFn;
                     }
                 }
                 if (clone.childNodes.length) {
@@ -2871,7 +2898,7 @@
                         t.appendChild(child);
                     }
                     const slotFn = qweb._compile(`slot_default_template`, t, ctx);
-                    qweb.slots[`${slotId}_default`] = slotFn;
+                    QWeb.slots[`${slotId}_default`] = slotFn;
                 }
             }
             let scopeVars = "";
@@ -3020,11 +3047,6 @@
         return result;
     }
 
-    // If a component does not define explicitely a template
-    // key, it needs to find a template with its name (or a parent's).  This is
-    // qweb dependant, so we need a place to store this information indexed by
-    // qweb instances.
-    const TEMPLATE_MAP = {};
     //------------------------------------------------------------------------------
     // Component
     //------------------------------------------------------------------------------
@@ -3430,19 +3452,17 @@
                 return Promise.resolve(h("div"));
             }
             const qweb = this.env.qweb;
-            if (!this.template) {
-                let tmap = TEMPLATE_MAP[qweb.id];
-                if (!tmap) {
-                    tmap = {};
-                    TEMPLATE_MAP[qweb.id] = tmap;
-                }
-                let p = this.constructor;
-                let name = p.name;
-                let template = tmap[name];
-                if (template) {
-                    this.template = template;
+            let p = this.constructor;
+            // console.warn(p, p.template, p._template, 'template' in p, p.hasOwnProperty('template'))
+            if (!p.hasOwnProperty("_template")) {
+                if (p.template) {
+                    p._template = p.template;
                 }
                 else {
+                    // here, the component and none of its superclasses defines a static `template`
+                    // key. So we fall back on looking for a template matching its name (or
+                    // one of its subclass).
+                    let template;
                     while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
                         p = p.__proto__;
                     }
@@ -3450,12 +3470,11 @@
                         throw new Error(`Could not find template for component "${this.constructor.name}"`);
                     }
                     else {
-                        tmap[name] = template;
-                        this.template = template;
+                        p._template = template;
                     }
                 }
             }
-            __owl__.render = qweb.render.bind(qweb, this.template);
+            __owl__.render = qweb.render.bind(qweb, p._template);
             this.__observeState();
             return this.__render(false, [], scope, vars);
         }
@@ -3583,6 +3602,9 @@
             }
         }
     }
+    Component.template = null;
+    Component._template = null;
+    Component.components = {};
     //------------------------------------------------------------------------------
     // Error handling
     //------------------------------------------------------------------------------
@@ -3800,17 +3822,37 @@
         }
     }
 
-    const LINK_TEMPLATE_NAME = "__owl__-router-link";
-    const LINK_TEMPLATE = `
-    <a  t-att-class="{'router-link-active': isActive }"
-        t-att-href="href"
-        t-on-click="navigate">
-        <t t-slot="default"/>
-    </a>`;
+    /**
+     * Owl Tags
+     *
+     * We have here a (very) small collection of tag functions:
+     *
+     * - xml
+     *
+     * The plan is to add a few other tags such as css, globalcss.
+     */
+    /**
+     * XML tag helper for defining templates.  With this, one can simply define
+     * an inline template with just the template xml:
+     * ```js
+     *   class A extends Component {
+     *     static template = xml`<div>some template</div>`;
+     *   }
+     * ```
+     */
+    function xml(strings) {
+        const name = `__template__${QWeb.nextId++}`;
+        QWeb.registerTemplate(name, strings[0]);
+        return name;
+    }
+
+    var _tags = /*#__PURE__*/Object.freeze({
+        xml: xml
+    });
+
     class Link extends Component {
         constructor() {
             super(...arguments);
-            this.template = LINK_TEMPLATE_NAME;
             this.href = this.env.router.destToPath(this.props);
         }
         async willUpdateProps(nextProps) {
@@ -3842,33 +3884,37 @@
             this.env.router.navigate(this.props);
         }
     }
+    Link.template = xml `
+    <a  t-att-class="{'router-link-active': isActive }"
+        t-att-href="href"
+        t-on-click="navigate">
+        <t t-slot="default"/>
+    </a>
+  `;
 
-    function makeDirective(env) {
-        return {
-            name: "routecomponent",
-            priority: 13,
-            atNodeEncounter({ node }) {
-                let first = true;
-                const router = env.router;
-                for (let name of router.routeIds) {
-                    const route = router.routes[name];
-                    if (route.component) {
-                        // make new t t-component element
-                        const comp = node.ownerDocument.createElement("t");
-                        comp.setAttribute("t-component", "__component__" + route.name);
-                        comp.setAttribute(first ? "t-if" : "t-elif", `env.router.currentRouteName === '${route.name}'`);
-                        first = false;
-                        for (let param of route.params) {
-                            comp.setAttribute(param, `env.router.currentParams.${param}`);
-                        }
-                        node.appendChild(comp);
-                    }
+    class RouteComponent extends Component {
+        constructor(parent, props) {
+            super(parent, props);
+            this.routes = [];
+            const router = this.env.router;
+            for (let name of router.routeIds) {
+                const route = router.routes[name];
+                if (route.component) {
+                    this.routes.push({
+                        name: route.name,
+                        component: "__component__" + route.name
+                    });
                 }
-                node.removeAttribute("t-routecomponent");
-                return false;
             }
-        };
+        }
     }
+    RouteComponent.template = xml `
+    <t t-foreach="routes" t-as="route">
+        <t t-if="env.router.currentRouteName === route.name">
+            <t t-component="{{route.component}}" t-props="env.router.currentParams"/>
+        </t>
+    </t>
+  `;
 
     const paramRegexp = /\{\{(.*?)\}\}/;
     class Router {
@@ -3886,7 +3932,7 @@
                     partialRoute.name = "__route__" + nextId++;
                 }
                 if (partialRoute.component) {
-                    QWeb.register("__component__" + partialRoute.name, partialRoute.component);
+                    QWeb.registerComponent("__component__" + partialRoute.name, partialRoute.component);
                 }
                 if (partialRoute.redirect) {
                     this.validateDestination(partialRoute.redirect);
@@ -3895,9 +3941,6 @@
                 this.routes[partialRoute.name] = partialRoute;
                 this.routeIds.push(partialRoute.name);
             }
-            // setup link and directive
-            env.qweb.addTemplate(LINK_TEMPLATE_NAME, LINK_TEMPLATE);
-            QWeb.addDirective(makeDirective(env));
         }
         //--------------------------------------------------------------------------
         // Public API
@@ -4083,9 +4126,10 @@
      * Note that dynamic values, such as a date or a commit hash are added by rollup
      */
     const core = { EventBus, Observer };
-    const router = { Router, Link };
+    const router = { Router, RouteComponent, Link };
     const store = { Store, ConnectedComponent };
     const utils = _utils;
+    const tags = _tags;
     const __info__ = {};
     Object.defineProperty(__info__, "mode", {
         get() {
@@ -4109,11 +4153,12 @@
     exports.core = core;
     exports.router = router;
     exports.store = store;
+    exports.tags = tags;
     exports.utils = utils;
 
-    exports.__info__.version = '0.20.0';
-    exports.__info__.date = '2019-09-05T12:42:15.744Z';
-    exports.__info__.hash = '9fad164';
+    exports.__info__.version = '0.21.0';
+    exports.__info__.date = '2019-09-12T12:21:59.533Z';
+    exports.__info__.hash = '14ceb38';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

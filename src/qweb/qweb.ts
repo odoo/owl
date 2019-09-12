@@ -129,7 +129,7 @@ function parseXML(xml: string): Document {
 // QWeb rendering engine
 //------------------------------------------------------------------------------
 export class QWeb extends EventBus {
-  templates: { [name: string]: Template } = {};
+  templates: { [name: string]: Template };
   static utils = UTILS;
   static components = Object.create(null);
 
@@ -140,6 +140,8 @@ export class QWeb extends EventBus {
     key: 1
   };
   static DIRECTIVES: Directive[] = [];
+
+  static TEMPLATES: { [name: string]: Template } = {};
 
   h = h;
   // dev mode enables better error messages or more costly validations
@@ -160,6 +162,7 @@ export class QWeb extends EventBus {
 
   constructor(data?: string) {
     super();
+    this.templates = Object.create(QWeb.TEMPLATES);
     if (data) {
       this.addTemplates(data);
     }
@@ -182,6 +185,20 @@ export class QWeb extends EventBus {
       throw new Error(`Component '${name}' has already been registered`);
     }
     QWeb.components[name] = Component;
+  }
+
+  /**
+   * Register globally a template.  All QWeb instances will obtain their
+   * templates from their own template map, and then, from the global static
+   * TEMPLATES property.
+   */
+  static registerTemplate(name: string, template: string) {
+    if (QWeb.TEMPLATES[name]) {
+      throw new Error(`Template '${name}' has already been registered`);
+    }
+    const qweb = new QWeb();
+    qweb.addTemplate(name, template);
+    QWeb.TEMPLATES[name] = qweb.templates[name];
   }
 
   /**

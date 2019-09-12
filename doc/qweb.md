@@ -129,6 +129,15 @@ It's API is quite simple:
   const str = qweb.renderToString("someTemplate", somecontext);
   ```
 
+- **`registerTemplate(name, template)`**: static function to register an global
+  QWeb template. This is useful for commonly used components accross the
+  application, and for making a template available to an application without
+  having a reference to the actual QWeb instance.
+
+  ```js
+  QWeb.registerTemplate('mytemplate', `<div>some template`);
+  ```
+
 - **`register(name, Component)`**: static function to register an OWL Component
   to QWeb's global registry. Globally registered Components can be used in
   templates (see the `t-component` directive). This is useful for commonly used

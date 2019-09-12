@@ -53,7 +53,6 @@ describe("RouteComponent", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>Users</span></div>");
     expect(env.qweb.templates[ROUTE_COMPONENT_TEMPLATE_NAME].fn.toString()).toMatchSnapshot();
-
   });
 
   test("can render parameterized route", async () => {

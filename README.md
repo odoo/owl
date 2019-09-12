@@ -18,20 +18,16 @@ related projects. OWL's main features are:
 
 Here is a short example to illustrate interactive components:
 
-```xml
-<templates>
-  <button t-name="Counter" t-on-click="increment">
-    Click Me! [<t t-esc="state.value"/>]
-  </button>
-  <div t-name="App">
-    <span>Hello Owl</span>
-    <Counter />
-  </div>
-</templates>
-```
-
 ```javascript
-class Counter extends owl.Component {
+import { Component, QWeb } from 'owl'
+import { xml } from 'owl/tags'
+
+class Counter extends Component {
+  static template = xml`
+    <button t-on-click="increment">
+      Click Me! [<t t-esc="state.value"/>]
+    </button>`;
+
   state = { value: 0 };
 
   increment() {
@@ -39,17 +35,22 @@ class Counter extends owl.Component {
   }
 }
 
-class App extends owl.Component {
+class App extends Component {
+  static template = xml`
+    <div>
+      <span>Hello Owl</span>
+      <Counter />
+    </div>`;
+
   static components = { Counter };
+
 }
 
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({ qweb });
+const app = new App({ qweb: new QWeb() });
 app.mount(document.body);
 ```
 
-Note that we assume here that the xml templates are available in the `TEMPLATES`
-string. More interesting examples can be found on the
+More interesting examples can be found on the
 [playground](https://odoo.github.io/owl/playground) application.
 
 ## OWL's Design Principles

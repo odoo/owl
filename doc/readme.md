@@ -19,6 +19,8 @@ owl
     store
         Store
         ConnectedComponent
+    tags
+        xml
     utils
         debounce
         escape
@@ -36,6 +38,7 @@ owl
 - [QWeb](qweb.md)
 - [Router](router.md)
 - [Store](store.md)
+- [Tags](tags.md)
 - [Utils](utils.md)
 - [Virtual DOM](vdom.md)
 

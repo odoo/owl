@@ -143,15 +143,16 @@ export class QWeb extends EventBus {
 
   static TEMPLATES: { [name: string]: Template } = {};
 
+  static nextId: number = 1;
+
   h = h;
   // dev mode enables better error messages or more costly validations
   static dev: boolean = false;
 
-
   // slots contains sub templates defined with t-set inside t-component nodes, and
   // are meant to be used by the t-slot directive.
-  slots = {};
-  nextSlotId = 1;
+  static slots = {};
+  static nextSlotId = 1;
 
   // recursiveTemplates contains sub templates called with t-call, but which
   // ends up in recursive situations.  This is very similar to the slot situation,

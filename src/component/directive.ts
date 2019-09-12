@@ -419,7 +419,7 @@ QWeb.addDirective({
 
       const clone = <Element>node.cloneNode(true);
       const slotNodes = clone.querySelectorAll("[t-set]");
-      const slotId = qweb.nextSlotId++;
+      const slotId = QWeb.nextSlotId++;
       ctx.addLine(`w${componentID}.__owl__.slotId = ${slotId};`);
       if (slotNodes.length) {
         for (let i = 0, length = slotNodes.length; i < length; i++) {
@@ -428,7 +428,7 @@ QWeb.addDirective({
           const key = slotNode.getAttribute("t-set")!;
           slotNode.removeAttribute("t-set");
           const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
-          qweb.slots[`${slotId}_${key}`] = slotFn;
+          QWeb.slots[`${slotId}_${key}`] = slotFn;
         }
       }
       if (clone.childNodes.length) {
@@ -437,7 +437,7 @@ QWeb.addDirective({
           t.appendChild(child);
         }
         const slotFn = qweb._compile(`slot_default_template`, t, ctx);
-        qweb.slots[`${slotId}_default`] = slotFn;
+        QWeb.slots[`${slotId}_default`] = slotFn;
       }
     }
 

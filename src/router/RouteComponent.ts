@@ -1,15 +1,15 @@
 import { Component } from "../component/component";
+import { xml } from "../tags";
 
-export const ROUTE_COMPONENT_TEMPLATE_NAME = "__owl__-router-component";
-export const ROUTE_COMPONENT_TEMPLATE = `
+export class RouteComponent extends Component<any, {}, {}> {
+  static template = xml`
     <t t-foreach="routes" t-as="route">
         <t t-if="env.router.currentRouteName === route.name">
             <t t-component="{{route.component}}" t-props="env.router.currentParams"/>
         </t>
-    </t>`;
+    </t>
+  `;
 
-export class RouteComponent extends Component<any, {}, {}> {
-  static template = ROUTE_COMPONENT_TEMPLATE_NAME;
   routes: any[] = [];
   constructor(parent, props) {
     super(parent, props);

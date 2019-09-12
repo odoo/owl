@@ -1,5 +1,5 @@
 import { Component } from "../../src/component/component";
-import { Link, LINK_TEMPLATE_NAME } from "../../src/router/Link";
+import { Link } from "../../src/router/Link";
 import { RouterEnv } from "../../src/router/Router";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
 import { TestRouter } from "./TestRouter";
@@ -50,7 +50,7 @@ describe("Link component", () => {
       '<div><a href="/about" class="router-link-active">About</a></div>'
     );
 
-    expect(env.qweb.templates[LINK_TEMPLATE_NAME].fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[Link.template].fn.toString()).toMatchSnapshot();
   });
 
   test("do not redirect if right clicking", async () => {

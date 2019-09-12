@@ -135,7 +135,7 @@ It's API is quite simple:
   having a reference to the actual QWeb instance.
 
   ```js
-  QWeb.registerTemplate('mytemplate', `<div>some template`);
+  QWeb.registerTemplate("mytemplate", `<div>some template`);
   ```
 
 - **`registerComponent(name, Component)`**: static function to register an OWL Component

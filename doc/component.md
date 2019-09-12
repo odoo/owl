@@ -72,7 +72,7 @@ Note that this code is written in ESNext style, so it will only run on the
 latest browsers without a transpilation step.
 
 This example show how a component should be defined: it simply subclasses the
-Component class. If no `template` key is defined, then
+Component class. If no static `template` key is defined, then
 Owl will use the component's name as template name. Here,
 a state object is defined. It is not mandatory to use the state object, but it
 is certainly encouraged. The state object is [observed](observer.md), and any
@@ -96,9 +96,6 @@ find a template with the component name (or one of its ancestor).
 
 - **`env`** (Object): the component environment, which contains a QWeb instance.
 
-- **`template`** (string, optional): if given, this is the name of the QWeb template that will render
-  the component.
-
 - **`state`** (Object): this is the location of the component's state, if there is
   any. After the willStart method, the `state` property is observed, and each
   change will cause the component to rerender itself.
@@ -113,7 +110,10 @@ find a template with the component name (or one of its ancestor).
 
 ### Static Properties
 
-- **`components`** (Object, optional): if given, this is an object that contains
+- **`template`** (string, optional): if given, this is the name of the QWeb template that will render the component. Note that there is a helper `xml` to
+  make it easy to define an inline template.
+
+* **`components`** (Object, optional): if given, this is an object that contains
   the classes of any sub components needed by the template. This is the main way
   used by Owl to be able to create sub components.
 
@@ -123,7 +123,7 @@ find a template with the component name (or one of its ancestor).
   }
   ```
 
-- **`props`** (Object, optional): if given, this is an object that describes the
+* **`props`** (Object, optional): if given, this is an object that describes the
   type and shape of the (actual) props given to the component. If Owl mode is
   `dev`, this will be used to validate the props each time the component is
   created/updated. See [Props Validation](#props-validation) for more information.
@@ -137,7 +137,7 @@ find a template with the component name (or one of its ancestor).
   }
   ```
 
-* **`defaultProps`** (Object, optional): if given, this object define default
+- **`defaultProps`** (Object, optional): if given, this object define default
   values for (top-level) props. Whenever `props` are given to the object, they
   will be altered to add default value (if missing). Note that it does not
   change the initial object, a new object will be created instead.

@@ -73,9 +73,9 @@ Let us now add the javascript to make it work, in `app.js`:
 
 ```javascript
 class ClickCounter extends owl.Component {
+  static template = "clickcounter";
   constructor() {
     super(...arguments);
-    this.template = "clickcounter";
     this.state = { value: 0 };
   }
 

@@ -125,8 +125,6 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
-let nextID = 1;
-
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
@@ -147,10 +145,6 @@ export class QWeb extends EventBus {
   // dev mode enables better error messages or more costly validations
   static dev: boolean = false;
 
-  // the id field is useful to be able to hash qweb instances.  The current
-  // use case is that component's templates are qweb dependant, and need to be
-  // able to map a qweb instance to a template name.
-  id = nextID++;
 
   // slots contains sub templates defined with t-set inside t-component nodes, and
   // are meant to be used by the t-slot directive.
@@ -326,8 +320,8 @@ export class QWeb extends EventBus {
   _compile(name: string, elem: Element, parentContext?: Context): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new Context(name);
-    if (elem.tagName !== 't') {
-        ctx.shouldDefineResult = false;
+    if (elem.tagName !== "t") {
+      ctx.shouldDefineResult = false;
     }
     if (parentContext) {
       ctx.templates = Object.create(parentContext.templates);

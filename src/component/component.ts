@@ -70,12 +70,6 @@ interface Internal<T extends Env, Props> {
   classObj: { [key: string]: boolean } | null;
 }
 
-// If a component does not define explicitely a template
-// key, it needs to find a template with its name (or a parent's).  This is
-// qweb dependant, so we need a place to store this information indexed by
-// qweb instances.
-const TEMPLATE_MAP: { [key: number]: { [name: string]: string } } = {};
-
 //------------------------------------------------------------------------------
 // Component
 //------------------------------------------------------------------------------
@@ -83,7 +77,8 @@ let nextId = 1;
 
 export class Component<T extends Env, Props extends {}, State extends {}> {
   readonly __owl__: Internal<Env, Props>;
-  template?: string;
+  static template?: string | null = null;
+  static _template?: string | null = null;
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -527,30 +522,28 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       return Promise.resolve(h("div"));
     }
     const qweb = this.env.qweb;
-    if (!this.template) {
-      let tmap = TEMPLATE_MAP[qweb.id];
-      if (!tmap) {
-        tmap = {};
-        TEMPLATE_MAP[qweb.id] = tmap;
-      }
-      let p = (<any>this).constructor;
-      let name: string = p.name;
-      let template = tmap[name];
-      if (template) {
-        this.template = template;
+    let p = (<any>this).constructor;
+    // console.warn(p, p.template, p._template, 'template' in p, p.hasOwnProperty('template'))
+    if (!p.hasOwnProperty("_template")) {
+      if (p.template) {
+        p._template = p.template;
       } else {
+        // here, the component and none of its superclasses defines a static `template`
+        // key. So we fall back on looking for a template matching its name (or
+        // one of its subclass).
+
+        let template: string;
         while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
           p = p.__proto__;
         }
         if (p === Component) {
           throw new Error(`Could not find template for component "${this.constructor.name}"`);
         } else {
-          tmap[name] = template;
-          this.template = template;
+          p._template = template;
         }
       }
     }
-    __owl__.render = qweb.render.bind(qweb, this.template);
+    __owl__.render = qweb.render.bind(qweb, p._template);
     this.__observeState();
 
     return this.__render(false, [], scope, vars);

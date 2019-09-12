@@ -1288,7 +1288,7 @@ describe("composition", () => {
         </div>`
     );
     class Parent extends Widget {
-      template = "parent";
+      static template = "parent";
       state = {
         numbers: [1, 2, 3]
       };
@@ -3003,7 +3003,7 @@ describe("can deduce template from name", () => {
 
   test("can find template of parent component, defined by template key", async () => {
     class ABC extends Widget {
-      template = "Achel";
+      static template = "Achel";
     }
     class DEF extends ABC {}
     env.qweb.addTemplate("Achel", "<span>Orval</span>");

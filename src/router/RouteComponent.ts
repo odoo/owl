@@ -9,7 +9,7 @@ export const ROUTE_COMPONENT_TEMPLATE = `
     </t>`;
 
 export class RouteComponent extends Component<any, {}, {}> {
-  template = ROUTE_COMPONENT_TEMPLATE_NAME;
+  static template = ROUTE_COMPONENT_TEMPLATE_NAME;
   routes: any[] = [];
   constructor(parent, props) {
     super(parent, props);

@@ -12,7 +12,7 @@ export const LINK_TEMPLATE = `
 type Props = Destination;
 
 export class Link<Env extends RouterEnv> extends Component<Env, Props, {}> {
-  template = LINK_TEMPLATE_NAME;
+  static template = LINK_TEMPLATE_NAME;
   href: string = this.env.router.destToPath(this.props);
 
   async willUpdateProps(nextProps) {

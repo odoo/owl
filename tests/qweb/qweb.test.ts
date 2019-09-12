@@ -11,6 +11,7 @@ import { normalize, renderToDOM, renderToString, trim, nextTick } from "../helpe
 let qweb: QWeb;
 
 beforeEach(() => {
+  QWeb.TEMPLATES = {};
   qweb = new QWeb();
 });
 
@@ -1276,5 +1277,24 @@ describe("update on event bus", () => {
     expect(fn).toBeCalledTimes(0);
     await nextTick();
     expect(fn).toBeCalledTimes(1);
+  });
+});
+
+describe("global template registration", () => {
+  test("can register template globally", () => {
+    expect.assertions(5);
+    let qweb = new QWeb();
+    try {
+      qweb.render("mytemplate");
+    } catch (e) {
+      expect(e.message).toMatch("Template mytemplate does not exist");
+    }
+    expect(qweb.templates.mytemplate).toBeUndefined();
+
+    QWeb.registerTemplate("mytemplate", "<div>global</div>");
+    expect(qweb.templates.mytemplate).toBeDefined();
+    const vnode = qweb.render("mytemplate");
+    expect(vnode.sel).toBe("div");
+    expect((vnode as any).children[0].text).toBe("global");
   });
 });

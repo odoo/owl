@@ -884,7 +884,7 @@ exports[`t-call (template calling recursive template, part 1 1`] = `
     c1.push(vn2);
     c2.push({text: \`hey\`});
     if (false) {
-        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c1, vars: {}, scope}));
+        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c1, fiber: {vars: {}, scope}}));
     }
     return vn1;
 }"
@@ -896,7 +896,7 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
     let owner = context;
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.scope);
+        Object.assign(context, extra.fiber.scope);
     let c2 = [], p2 = {key:2};
     var vn2 = h('div', p2, c2);
     c1.push(vn2);
@@ -905,7 +905,7 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
     c2.push(vn3);
     c3.push({text: \`hey\`});
     if (false) {
-        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c2, vars: {}, scope}));
+        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c2, fiber: {vars: {}, scope}}));
     }
 }"
 `;
@@ -951,7 +951,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             scope.subtree = context.subtree;
             context.subtree_value = _8[i];
             scope.subtree_value = context.subtree_value;
-            this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, vars: {_v0: context['subtree']}, scope}));
+            this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, fiber: {vars: {_v0: context['subtree']}, scope}}));
         }
     }
     return vn1;
@@ -966,8 +966,8 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     const scope = Object.create(null);
     var h = this.h;
     let c3 = extra.parentNode;
-    let _v0 = extra.vars._v0
-        Object.assign(context, extra.scope);
+    let _v0 = extra.fiber.vars._v0
+        Object.assign(context, extra.fiber.scope);
     let c4 = [], p4 = {key:4};
     var vn4 = h('div', p4, c4);
     c3.push(vn4);
@@ -997,7 +997,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
         scope.subtree = context.subtree;
         context.subtree_value = _9[i];
         scope.subtree_value = context.subtree_value;
-        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, vars: {_v0: context['subtree']}, scope}));
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
 }"
 `;
@@ -1043,7 +1043,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             scope.subtree = context.subtree;
             context.subtree_value = _8[i];
             scope.subtree_value = context.subtree_value;
-            this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, vars: {_v0: context['subtree']}, scope}));
+            this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, fiber: {vars: {_v0: context['subtree']}, scope}}));
         }
     }
     return vn1;
@@ -1058,8 +1058,8 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     const scope = Object.create(null);
     var h = this.h;
     let c3 = extra.parentNode;
-    let _v0 = extra.vars._v0
-        Object.assign(context, extra.scope);
+    let _v0 = extra.fiber.vars._v0
+        Object.assign(context, extra.fiber.scope);
     let c4 = [], p4 = {key:4};
     var vn4 = h('div', p4, c4);
     c3.push(vn4);
@@ -1089,7 +1089,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
         scope.subtree = context.subtree;
         context.subtree_value = _9[i];
         scope.subtree_value = context.subtree_value;
-        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, vars: {_v0: context['subtree']}, scope}));
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
 }"
 `;

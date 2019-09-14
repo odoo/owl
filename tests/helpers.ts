@@ -99,10 +99,10 @@ export function renderToDOM(
  * Note that the result of renderToString is guaranteed to be the same as the
  * one from QWeb.
  */
-export function renderToString(qweb: QWeb, t: string, context: EvalContext = {}): string {
-  const node = renderToDOM(qweb, t, context);
+export function renderToString(qweb: QWeb, t: string, context: EvalContext = {}, extra?: any): string {
+  const node = renderToDOM(qweb, t, context, extra);
   const result = node instanceof Text ? node.textContent! : node.outerHTML;
-  if (result !== qweb.renderToString(t, context)) {
+  if (result !== qweb.renderToString(t, context, extra)) {
     throw new Error("HTML string returned by renderToString helper does not match QWeb render");
   }
   return result;

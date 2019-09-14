@@ -637,7 +637,7 @@ describe("t-call (template calling", () => {
     `);
     const root = { val: "a", children: [{ val: "b" }, { val: "c" }] };
     const expected = "<div><div><p>a</p><div><p>b</p></div><div><p>c</p></div></div></div>";
-    expect(renderToString(qweb, "Parent", { root })).toBe(expected);
+    expect(renderToString(qweb, "Parent", { root }, {fiber: {vars: {}, scope: {}}})).toBe(expected);
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
@@ -664,7 +664,7 @@ describe("t-call (template calling", () => {
     const root = { val: "a", children: [{ val: "b", children: [{ val: "d" }] }, { val: "c" }] };
     const expected =
       "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
-    expect(renderToString(qweb, "Parent", { root })).toBe(expected);
+    expect(renderToString(qweb, "Parent", { root }, {fiber: {}})).toBe(expected);
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });

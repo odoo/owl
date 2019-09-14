@@ -137,9 +137,9 @@ describe("basic widget properties", () => {
       async willStart() {
         this.state.drinks++;
       }
-      async __render() {
+      async __render(a,b) {
         renderCalls++;
-        return super.__render();
+        return super.__render(a,b);
       }
     }
     const widget = new TestW(env);
@@ -2779,9 +2779,9 @@ describe("updating environment", () => {
   test("updating widget env does not render widget (if not mounted)", async () => {
     let n = 0;
     class TestWidget extends Widget {
-      __render() {
+      __render(a,b) {
         n++;
-        return super.__render();
+        return super.__render(a,b);
       }
     }
 
@@ -4185,9 +4185,9 @@ describe("unmounting and remounting", () => {
         <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
       `;
       state = { n: 2 };
-      __render(a, b, c, d) {
+      __render(a, b) {
         steps.push("render");
-        return super.__render(a, b, c, d);
+        return super.__render(a, b);
       }
       willPatch() {
         steps.push("willPatch");

@@ -46,10 +46,10 @@ exports[`RouteComponent can render simple cases 1`] = `
                 if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
                 w6 = new W6(parent, props6);
                 parent.__owl__.cmap[templateId7] = w6.__owl__.id;
-                def5 = w6.__prepare();
+                def5 = w6.__prepare(extra.fiber, undefined, undefined);
                 def5 = def5.then(vnode=>{if (w6.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId7, hook: {insert(vn) {let nvn=w6.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w6.destroy();}}});utils.defineProxy(vn8, pvnode);w6.__owl__.pvnode = pvnode;});
             } else {
-                def5 = def5 || w6.__updateProps(props6, extra.forceUpdate, extra.patchQueue);
+                def5 = def5 || w6.__updateProps(props6, extra.fiber, extra.patchQueue, undefined, undefined);
                 def5 = def5.then(()=>{if (w6.__owl__.isDestroyed) {return};let pvnode=w6.__owl__.pvnode;utils.defineProxy(vn8, pvnode);});
             }
             extra.promises.push(def5);

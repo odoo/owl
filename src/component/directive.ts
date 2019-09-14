@@ -441,14 +441,15 @@ QWeb.addDirective({
       }
     }
 
-    let scopeVars = "";
+    let scopeVars;
     if (hasSlots) {
-      scopeVars += ctx.scopeVars.length ? `Object.assign({}, scope)` : varDefs.length ? `{}` : "";
-      if (varDefs.length) {
-        scopeVars += `, {${varDefs.join(",")}}`;
-      }
+      let scope = ctx.scopeVars.length ? `Object.assign({}, scope)` : `{}`;
+      let vars = varDefs.length ? `{${varDefs.join(",")}}` : "undefined";
+      scopeVars = `${scope}, ${vars}`;
+    } else {
+      scopeVars = "undefined, undefined";
     }
-    ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
+    ctx.addLine(`def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     let registerCode = `c${ctx.parentNode}[_${dummyID}_index]=pvnode;`;
     if (shouldProxy) {
@@ -472,7 +473,7 @@ QWeb.addDirective({
       ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
     }
     ctx.addLine(
-      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode}${scopeVars &&
+      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.fiber, ${patchQueueCode}${scopeVars &&
         ", " + scopeVars});`
     );
     let keepAliveCode = "";

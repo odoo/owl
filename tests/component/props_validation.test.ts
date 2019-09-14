@@ -334,7 +334,7 @@ describe("default props", () => {
     const w = new TestWidget(env, { p: 1 });
     await w.mount(fixture);
     expect(fixture.innerHTML).toMatchSnapshot();
-    await w.__updateProps({});
+    await w.__updateProps({}, {force: false});
     await w.render();
     expect(w.props.p).toBe(4);
     expect(fixture.innerHTML).toMatchSnapshot();

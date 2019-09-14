@@ -1,4 +1,4 @@
-import { Component, Env } from "../component/component";
+import { Component, Env, Fiber } from "../component/component";
 
 //------------------------------------------------------------------------------
 // Connect function
@@ -47,8 +47,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
    * Need to do this here so 'deep' can be overrided by subcomponent easily
    */
   async __prepareAndRender(
-    scope?: Object,
-    vars?: any
+    fiber: Fiber
   ): ReturnType<Component<any, any, any>["__prepareAndRender"]> {
     const store = this.getStore(this.env);
     const ownProps = this.props || {};
@@ -62,7 +61,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
       prevStoreProps: this.storeProps
     });
     (this.__owl__ as any).rev = observer.rev;
-    return super.__prepareAndRender(scope, vars);
+    return super.__prepareAndRender(fiber);
   }
   /**
    * We do not use the mounted hook here for a subtle reason: we want the

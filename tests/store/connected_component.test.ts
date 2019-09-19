@@ -698,9 +698,9 @@ describe("connecting a component to store", () => {
       editTodo() {
         this.env.store.dispatch("editTodo");
       }
-      __render(f,p) {
+      __render(f) {
         renderCount++;
-        return super.__render(f,p);
+        return super.__render(f);
       }
     }
     class TodoApp extends ConnectedComponent<any, any, any> {
@@ -776,9 +776,9 @@ describe("connecting a component to store", () => {
       removeTodo() {
         this.env.store.dispatch("removeTodo");
       }
-      __render(f,p) {
+      __render(f) {
         renderCount++;
-        return super.__render(f,p);
+        return super.__render(f);
       }
     }
 
@@ -910,7 +910,7 @@ describe("connected components and default values", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
 
-    const fiber = { force: true, scope: undefined, vars: undefined }
+    const fiber = app.__createRootFiber(true);
     await app.__updateProps({ initialRecipient: "James" }, fiber);
     await app.render();
     expect(fixture.innerHTML).toBe("<div><div>Hello, James</div></div>");
@@ -998,7 +998,7 @@ describe("connected components and default values", () => {
       "<div><div><div>100Message100</div><div>101Message101</div></div></div>"
     );
 
-    const fiber = { force: true, scope: undefined, vars: undefined }
+    const fiber = app.__createRootFiber(true);
     await app.__updateProps({ threadId: 2 }, fiber);
     await app.render();
     expect(fixture.innerHTML).toBe("<div><div><div>200Message200</div></div></div>");

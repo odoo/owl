@@ -39,11 +39,13 @@ export interface Fiber {
   isCancelled: boolean;
   scope: any;
   vars: any;
-//   component: Component<any, any, any>;
-//   promises: any[];
-//   vnode?: VNode;
-//   handlers?: any;
-//   mountedHandlers?: any;
+  patchQueue: Fiber[];
+  component: Component<any, any, any>;
+  //   promises: any[];
+  vnode: VNode | null;
+  willPatchResult: any;
+  //   handlers?: any;
+  //   mountedHandlers?: any;
 }
 
 /**
@@ -301,9 +303,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
       this.__patch(vnode);
     } else if (renderBeforeRemount) {
-      const patchQueue = [];
-      await this.__render(fiber, patchQueue);
-      this.__applyPatchQueue(<any[]>patchQueue);
+      fiber.patchQueue.push(fiber);
+      await this.__render(fiber);
+      this.__applyPatchQueue(fiber);
     }
     target.appendChild(this.el!);
 
@@ -338,15 +340,15 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       return;
     }
     const fiber = this.__createRootFiber(force);
-    const patchQueue = [];
+    fiber.patchQueue.push(fiber);
 
     const renderId = ++__owl__.renderId;
-    await this.__render(fiber, patchQueue);
+    await this.__render(fiber);
 
     if (__owl__.isMounted && renderId === __owl__.renderId) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
-      this.__applyPatchQueue(<any[]>patchQueue);
+      this.__applyPatchQueue(fiber);
     }
   }
 
@@ -356,7 +358,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       scope: undefined,
       vars: undefined,
       rootFiber: null,
-      isCancelled: false
+      isCancelled: false,
+      component: this,
+      vnode: null,
+      patchQueue: [],
+      willPatchResult: null
     };
     fiber.rootFiber = fiber;
     return fiber;
@@ -366,6 +372,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     const fiber = Object.create(parent);
     fiber.scope = scope;
     fiber.vars = vars;
+    fiber.component = this;
+    fiber.vnode = null;
+    fiber.willPatchResult = null;
     return fiber;
   }
 
@@ -511,7 +520,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   async __updateProps(
     nextProps: Props,
     parentFiber: Fiber,
-    patchQueue?: any[],
     scope?: any,
     vars?: any
   ): Promise<void> {
@@ -524,7 +532,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
       const fiber = this.__createSubFiber(parentFiber, scope, vars);
-      await this.__render(fiber, patchQueue);
+      fiber.patchQueue.push(fiber);
+
+      await this.__render(fiber);
     }
   }
 
@@ -546,6 +556,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   __prepare(parentFiber: Fiber, scope: any, vars: any): Promise<VNode> {
     const __owl__ = this.__owl__;
     const fiber = this.__createSubFiber(parentFiber, scope, vars);
+
     __owl__.renderProps = this.props;
     __owl__.renderPromise = this.__prepareAndRender(fiber);
     return __owl__.renderPromise;
@@ -586,14 +597,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
     __owl__.render = qweb.render.bind(qweb, p._template);
     this.__observeState();
-    return this.__render(fiber, []);
+    return this.__render(fiber);
   }
 
-  __render(fiber: Fiber, patchQueue: any[] = []): Promise<VNode> {
+  __render(fiber: Fiber): Promise<VNode> {
     const __owl__ = this.__owl__;
     const promises: Promise<void>[] = [];
-    const patch: any[] = [this];
-    patchQueue.push(patch);
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }
@@ -603,14 +612,13 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
         promises,
         handlers: __owl__.boundHandlers,
         mountedHandlers: __owl__.mountedHandlers,
-        fiber: fiber,
-        patchQueue
+        fiber: fiber
       });
     } catch (e) {
       vnode = __owl__.vnode || h("div");
       errorHandler(e, this);
     }
-    patch.push(vnode);
+    fiber.vnode = vnode;
     if (__owl__.observer) {
       __owl__.observer.allowMutations = true;
     }
@@ -688,29 +696,30 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * Apply the given patch queue. A patch is a pair [c, vn], where c is a
-   * Component instance and vn a VNode.
+   * Apply the given patch queue from a fiber.
    *   1) Call 'willPatch' on the component of each patch
    *   2) Call '__patch' on the component of each patch
-   *   3) Call 'patched' on the component of each patch, in inverse order
+   *   3) Call 'patched' on the component of each patch, in reverse order
    */
-  __applyPatchQueue(patchQueue: any[]) {
-    let component = this;
+  __applyPatchQueue(fiber: Fiber) {
+    const patchQueue = fiber.patchQueue;
+    let component: Component<any, any, any> = this;
     try {
       const patchLen = patchQueue.length;
       for (let i = 0; i < patchLen; i++) {
-        const patch = patchQueue[i];
-        component = patch[0];
-        patch.push(patch[0].willPatch());
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        fiber.willPatchResult = component.willPatch();
       }
       for (let i = 0; i < patchLen; i++) {
-        const patch = patchQueue[i];
-        patch[0].__patch(patch[1]);
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        component.__patch(fiber.vnode);
       }
       for (let i = patchLen - 1; i >= 0; i--) {
-        const patch = patchQueue[i];
-        component = patch[0];
-        patch[0].patched(patch[2]);
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        component.patched(fiber.willPatchResult);
       }
     } catch (e) {
       errorHandler(e, component);

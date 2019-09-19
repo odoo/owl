@@ -106,9 +106,9 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     return (this.__owl__ as any).renderPromise;
   }
 
-  async __updateProps(nextProps: P, f, p, s, v) {
+  async __updateProps(nextProps: P, f, s, v) {
     this.__updateStoreProps(nextProps);
-    return super.__updateProps(nextProps, f, p, s, v);
+    return super.__updateProps(nextProps, f, s, v);
   }
 
   __updateStoreProps(nextProps): boolean {

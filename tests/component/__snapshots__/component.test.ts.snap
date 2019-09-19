@@ -30,9 +30,9 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     let _6_index = c5.length;
     c5.push(null);
     let props8 = {val:context['state'].val};
-    if (w8 && w8.__owl__.renderPromise && !w8.__owl__.vnode) {
-        if (utils.shallowEqual(props8, w8.__owl__.renderProps)) {
-            def7 = w8.__owl__.renderPromise;
+    if (w8 && w8.__owl__.currentFiber && !w8.__owl__.vnode) {
+        if (utils.shallowEqual(props8, w8.__owl__.currentFiber.props)) {
+            def7 = w8.__owl__.currentFiber.promise;
         } else {
             w8.destroy();
             w8 = false;
@@ -58,9 +58,9 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     const fiber11 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
     c5.push(w11 && w11.__owl__.pvnode || null);
     let props11 = {val:context['state'].val};
-    if (w11 && w11.__owl__.renderPromise && !w11.__owl__.vnode) {
-        if (utils.shallowEqual(props11, w11.__owl__.renderProps)) {
-            def10 = w11.__owl__.renderPromise;
+    if (w11 && w11.__owl__.currentFiber && !w11.__owl__.vnode) {
+        if (utils.shallowEqual(props11, w11.__owl__.currentFiber.props)) {
+            def10 = w11.__owl__.currentFiber.promise;
         } else {
             w11.destroy();
             w11 = false;
@@ -114,9 +114,9 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     const fiber8 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
     c5.push(w8 && w8.__owl__.pvnode || null);
     let props8 = {val:context['state'].val};
-    if (w8 && w8.__owl__.renderPromise && !w8.__owl__.vnode) {
-        if (utils.shallowEqual(props8, w8.__owl__.renderProps)) {
-            def7 = w8.__owl__.renderPromise;
+    if (w8 && w8.__owl__.currentFiber && !w8.__owl__.vnode) {
+        if (utils.shallowEqual(props8, w8.__owl__.currentFiber.props)) {
+            def7 = w8.__owl__.currentFiber.promise;
         } else {
             w8.destroy();
             w8 = false;
@@ -141,9 +141,9 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     let _9_index = c5.length;
     c5.push(null);
     let props11 = {val:context['state'].val};
-    if (w11 && w11.__owl__.renderPromise && !w11.__owl__.vnode) {
-        if (utils.shallowEqual(props11, w11.__owl__.renderProps)) {
-            def10 = w11.__owl__.renderPromise;
+    if (w11 && w11.__owl__.currentFiber && !w11.__owl__.vnode) {
+        if (utils.shallowEqual(props11, w11.__owl__.currentFiber.props)) {
+            def10 = w11.__owl__.currentFiber.promise;
         } else {
             w11.destroy();
             w11 = false;
@@ -196,9 +196,9 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     let _6_index = c5.length;
     c5.push(null);
     let props8 = {val:context['state'].val};
-    if (w8 && w8.__owl__.renderPromise && !w8.__owl__.vnode) {
-        if (utils.shallowEqual(props8, w8.__owl__.renderProps)) {
-            def7 = w8.__owl__.renderPromise;
+    if (w8 && w8.__owl__.currentFiber && !w8.__owl__.vnode) {
+        if (utils.shallowEqual(props8, w8.__owl__.currentFiber.props)) {
+            def7 = w8.__owl__.currentFiber.promise;
         } else {
             w8.destroy();
             w8 = false;
@@ -224,9 +224,9 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     const fiber11 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
     c5.push(w11 && w11.__owl__.pvnode || null);
     let props11 = {val:context['state'].val};
-    if (w11 && w11.__owl__.renderPromise && !w11.__owl__.vnode) {
-        if (utils.shallowEqual(props11, w11.__owl__.renderProps)) {
-            def10 = w11.__owl__.renderPromise;
+    if (w11 && w11.__owl__.currentFiber && !w11.__owl__.vnode) {
+        if (utils.shallowEqual(props11, w11.__owl__.currentFiber.props)) {
+            def10 = w11.__owl__.currentFiber.promise;
         } else {
             w11.destroy();
             w11 = false;
@@ -267,9 +267,9 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -312,9 +312,9 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -372,9 +372,9 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -430,9 +430,9 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -475,9 +475,9 @@ exports[`composition sub components dom state with t-keepalive is preserved 1`] 
         const fiber4 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
         c1.push(null);
         let props4 = {};
-        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-                def3 = w4.__owl__.renderPromise;
+        if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+                def3 = w4.__owl__.currentFiber.promise;
             } else {
                 w4.destroy();
                 w4 = false;
@@ -535,9 +535,9 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         let _5_index = c1.length;
         c1.push(null);
         let props7 = {};
-        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
-            if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
-                def6 = w7.__owl__.renderPromise;
+        if (w7 && w7.__owl__.currentFiber && !w7.__owl__.vnode) {
+            if (utils.shallowEqual(props7, w7.__owl__.currentFiber.props)) {
+                def6 = w7.__owl__.currentFiber.promise;
             } else {
                 w7.destroy();
                 w7 = false;
@@ -578,9 +578,9 @@ exports[`composition t-component with dynamic value 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -620,9 +620,9 @@ exports[`composition t-component with dynamic value 2 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -662,9 +662,9 @@ exports[`dynamic t-props basic use 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = Object.assign({}, context['some'].obj);
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -706,9 +706,9 @@ exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
         const fiber4 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
         c1.push(null);
         let props4 = {v:context['state'].n};
-        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-                def3 = w4.__owl__.renderPromise;
+        if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+                def3 = w4.__owl__.currentFiber.promise;
             } else {
                 w4.destroy();
                 w4 = false;
@@ -749,9 +749,9 @@ exports[`other directives with t-component t-on with handler bound to argument 1
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -791,9 +791,9 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -833,9 +833,9 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -875,9 +875,9 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -917,9 +917,9 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -959,9 +959,9 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -1001,9 +1001,9 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -1043,9 +1043,9 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -1087,9 +1087,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {flag:context['state'].flag};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -1147,9 +1147,9 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         let _5_index = c1.length;
         c1.push(null);
         let props7 = {};
-        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
-            if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
-                def6 = w7.__owl__.renderPromise;
+        if (w7 && w7.__owl__.currentFiber && !w7.__owl__.vnode) {
+            if (utils.shallowEqual(props7, w7.__owl__.currentFiber.props)) {
+                def6 = w7.__owl__.currentFiber.promise;
             } else {
                 w7.destroy();
                 w7 = false;
@@ -1371,9 +1371,9 @@ exports[`t-slot directive can define and call slots 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -1613,9 +1613,9 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         let _7_index = c6.length;
         c6.push(null);
         let props9 = {to:'/user/'+context['user'].id};
-        if (w9 && w9.__owl__.renderPromise && !w9.__owl__.vnode) {
-            if (utils.shallowEqual(props9, w9.__owl__.renderProps)) {
-                def8 = w9.__owl__.renderPromise;
+        if (w9 && w9.__owl__.currentFiber && !w9.__owl__.vnode) {
+            if (utils.shallowEqual(props9, w9.__owl__.currentFiber.props)) {
+                def8 = w9.__owl__.currentFiber.promise;
             } else {
                 w9.destroy();
                 w9 = false;
@@ -1718,9 +1718,9 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         let _8_index = c6.length;
         c6.push(null);
         let props10 = {to:'/user/'+context['user'].id};
-        if (w10 && w10.__owl__.renderPromise && !w10.__owl__.vnode) {
-            if (utils.shallowEqual(props10, w10.__owl__.renderProps)) {
-                def9 = w10.__owl__.renderPromise;
+        if (w10 && w10.__owl__.currentFiber && !w10.__owl__.vnode) {
+            if (utils.shallowEqual(props10, w10.__owl__.currentFiber.props)) {
+                def9 = w10.__owl__.currentFiber.promise;
             } else {
                 w10.destroy();
                 w10 = false;
@@ -1776,9 +1776,9 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     let _3_index = c1.length;
     c1.push(null);
     let props5 = {to:'/user/'+context['state'].user.id};
-    if (w5 && w5.__owl__.renderPromise && !w5.__owl__.vnode) {
-        if (utils.shallowEqual(props5, w5.__owl__.renderProps)) {
-            def4 = w5.__owl__.renderPromise;
+    if (w5 && w5.__owl__.currentFiber && !w5.__owl__.vnode) {
+        if (utils.shallowEqual(props5, w5.__owl__.currentFiber.props)) {
+            def4 = w5.__owl__.currentFiber.promise;
         } else {
             w5.destroy();
             w5 = false;
@@ -1830,9 +1830,9 @@ exports[`top level sub widgets basic use 1`] = `
     let vn4 = {};
     result = vn4;
     let props3 = {p:1};
-    if (w3 && w3.__owl__.renderPromise && !w3.__owl__.vnode) {
-        if (utils.shallowEqual(props3, w3.__owl__.renderProps)) {
-            def2 = w3.__owl__.renderPromise;
+    if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+        if (utils.shallowEqual(props3, w3.__owl__.currentFiber.props)) {
+            def2 = w3.__owl__.currentFiber.promise;
         } else {
             w3.destroy();
             w3 = false;
@@ -1871,9 +1871,9 @@ exports[`top level sub widgets can select a sub widget  1`] = `
         let vn4 = {};
         result = vn4;
         let props3 = {};
-        if (w3 && w3.__owl__.renderPromise && !w3.__owl__.vnode) {
-            if (utils.shallowEqual(props3, w3.__owl__.renderProps)) {
-                def2 = w3.__owl__.renderPromise;
+        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+            if (utils.shallowEqual(props3, w3.__owl__.currentFiber.props)) {
+                def2 = w3.__owl__.currentFiber.promise;
             } else {
                 w3.destroy();
                 w3 = false;
@@ -1900,9 +1900,9 @@ exports[`top level sub widgets can select a sub widget  1`] = `
         let vn8 = {};
         result = vn8;
         let props7 = {};
-        if (w7 && w7.__owl__.renderPromise && !w7.__owl__.vnode) {
-            if (utils.shallowEqual(props7, w7.__owl__.renderProps)) {
-                def6 = w7.__owl__.renderPromise;
+        if (w7 && w7.__owl__.currentFiber && !w7.__owl__.vnode) {
+            if (utils.shallowEqual(props7, w7.__owl__.currentFiber.props)) {
+                def6 = w7.__owl__.currentFiber.promise;
             } else {
                 w7.destroy();
                 w7 = false;

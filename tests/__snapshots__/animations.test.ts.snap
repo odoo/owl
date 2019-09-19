@@ -17,9 +17,9 @@ exports[`animations t-transition combined with component 1`] = `
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -63,9 +63,9 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
         let _2_index = c1.length;
         c1.push(null);
         let props4 = {};
-        if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-            if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-                def3 = w4.__owl__.renderPromise;
+        if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+            if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+                def3 = w4.__owl__.currentFiber.promise;
             } else {
                 w4.destroy();
                 w4 = false;

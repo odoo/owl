@@ -384,10 +384,12 @@ QWeb.addDirective({
       ctx.addLine(`let props${componentID} = {${propStr}};`);
     }
     ctx.addIf(
-      `w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`
+      `w${componentID} && w${componentID}.__owl__.currentFiber && !w${componentID}.__owl__.vnode`
     );
-    ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`);
-    ctx.addLine(`def${defID} = w${componentID}.__owl__.renderPromise;`);
+    ctx.addIf(
+      `utils.shallowEqual(props${componentID}, w${componentID}.__owl__.currentFiber.props)`
+    );
+    ctx.addLine(`def${defID} = w${componentID}.__owl__.currentFiber.promise;`);
     ctx.addElse();
     ctx.addLine(`w${componentID}.destroy();`);
     ctx.addLine(`w${componentID} = false;`);

@@ -32,9 +32,9 @@ exports[`RouteComponent can render simple cases 1`] = `
             let vn8 = {};
             result = vn8;
             let props6 = Object.assign({}, context['env'].router.currentParams);
-            if (w6 && w6.__owl__.renderPromise && !w6.__owl__.vnode) {
-                if (utils.shallowEqual(props6, w6.__owl__.renderProps)) {
-                    def5 = w6.__owl__.renderPromise;
+            if (w6 && w6.__owl__.currentFiber && !w6.__owl__.vnode) {
+                if (utils.shallowEqual(props6, w6.__owl__.currentFiber.props)) {
+                    def5 = w6.__owl__.currentFiber.promise;
                 } else {
                     w6.destroy();
                     w6 = false;

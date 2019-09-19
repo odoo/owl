@@ -48,9 +48,7 @@ export async function loadTemplates(url: string): Promise<string> {
   if (!result.ok) {
     throw new Error("Error while fetching xml templates");
   }
-  let templates = await result.text();
-  templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-  return templates;
+  return await result.text();
 }
 
 export function escape(str: string | number | undefined): string {

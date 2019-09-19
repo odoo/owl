@@ -98,6 +98,9 @@ const UTILS: Utils = {
 
 function parseXML(xml: string): Document {
   const parser = new DOMParser();
+
+  // we remove comments from the xml string
+  xml = xml.replace(/<!--[\s\S]*?-->/g, "");
   const doc = parser.parseFromString(xml, "text/xml");
   if (doc.getElementsByTagName("parsererror").length) {
     let msg = "Invalid XML in template.";

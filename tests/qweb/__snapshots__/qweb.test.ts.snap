@@ -768,6 +768,18 @@ exports[`static templates empty div 1`] = `
 }"
 `;
 
+exports[`static templates ignore comments 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    result = vn1;
+    c1.push({text: \`hello owl\`});
+    return vn1;
+}"
+`;
+
 exports[`static templates simple dynamic value 1`] = `
 "function anonymous(context,extra
 ) {

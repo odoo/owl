@@ -49,6 +49,12 @@ describe("static templates", () => {
     qweb.addTemplate("test", "<div><span>word</span></div>");
     expect(renderToString(qweb, "test")).toBe("<div><span>word</span></div>");
   });
+
+  test("ignore comments", () => {
+    qweb.addTemplate("test", "<div>hello <!-- comment-->owl</div>");
+    expect(renderToString(qweb, "test")).toBe("<div>hello owl</div>");
+  });
+
 });
 
 describe("error handling", () => {

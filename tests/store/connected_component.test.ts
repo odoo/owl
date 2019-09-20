@@ -910,7 +910,7 @@ describe("connected components and default values", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>Hello, John</div></div>");
 
-    const fiber = app.__createRootFiber(true);
+    const fiber = app.__createFiber(true, undefined, undefined, undefined);
     await app.__updateProps({ initialRecipient: "James" }, fiber);
     await app.render();
     expect(fixture.innerHTML).toBe("<div><div>Hello, James</div></div>");
@@ -998,7 +998,7 @@ describe("connected components and default values", () => {
       "<div><div><div>100Message100</div><div>101Message101</div></div></div>"
     );
 
-    const fiber = app.__createRootFiber(true);
+    const fiber = app.__createFiber(true, undefined, undefined, undefined);
     await app.__updateProps({ threadId: 2 }, fiber);
     await app.render();
     expect(fixture.innerHTML).toBe("<div><div><div>200Message200</div></div></div>");

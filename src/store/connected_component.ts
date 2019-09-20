@@ -1,4 +1,5 @@
 import { Component, Env, Fiber } from "../component/component";
+import { VNode } from "../vdom/index";
 
 //------------------------------------------------------------------------------
 // Connect function
@@ -46,9 +47,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
   /**
    * Need to do this here so 'deep' can be overrided by subcomponent easily
    */
-  async __prepareAndRender(
-    fiber: Fiber
-  ): ReturnType<Component<any, any, any>["__prepareAndRender"]> {
+  async __prepareAndRender(fiber: Fiber<P>): Promise<VNode> {
     const store = this.getStore(this.env);
     const ownProps = this.props || {};
     this.storeProps = (<any>this.constructor).mapStoreToProps(store.state, ownProps, store.getters);

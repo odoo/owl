@@ -334,7 +334,7 @@ describe("default props", () => {
     const w = new TestWidget(env, { p: 1 });
     await w.mount(fixture);
     expect(fixture.innerHTML).toMatchSnapshot();
-    const fiber = w.__createRootFiber(false);
+    const fiber = w.__createFiber(false, undefined, undefined, undefined);
     await w.__updateProps({}, fiber);
     await w.render();
     expect(w.props.p).toBe(4);

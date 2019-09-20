@@ -293,7 +293,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (__owl__.isMounted) {
       return;
     }
-    const fiber = this.__createRootFiber(false);
+    const fiber = this.__createFiber(false, undefined, undefined, undefined);
     if (!__owl__.vnode) {
       fiber.promise = this.__prepareAndRender(fiber);
       const vnode = await fiber.promise;
@@ -340,7 +340,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (!__owl__.isMounted) {
       return;
     }
-    const fiber = this.__createRootFiber(force);
+    const fiber = this.__createFiber(force, undefined, undefined, undefined);
     fiber.patchQueue.push(fiber);
     fiber.promise = this.__render(fiber);
     await fiber.promise;
@@ -352,35 +352,22 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
   }
 
-  __createRootFiber(force): Fiber<Props> {
+  __createFiber(force, scope, vars, parent?: Fiber<any>): Fiber<Props> {
     const fiber: Fiber<Props> = {
       force,
-      scope: undefined,
-      vars: undefined,
+      scope,
+      vars,
       rootFiber: null,
       isCancelled: false,
       component: this,
       vnode: null,
-      patchQueue: [],
+      patchQueue: parent ? parent.patchQueue : [],
       willPatchResult: null,
       props: this.props,
       promise: null
     };
-    fiber.rootFiber = fiber;
+    fiber.rootFiber = parent || fiber;
     this.__owl__.currentFiber = fiber;
-    return fiber;
-  }
-
-  __createSubFiber(parent: Fiber<Props>, scope, vars): Fiber<Props> {
-    const fiber = Object.create(parent);
-    fiber.scope = scope;
-    fiber.vars = vars;
-    fiber.component = this;
-    fiber.vnode = null;
-    fiber.willPatchResult = null;
-    this.__owl__.currentFiber = fiber;
-    fiber.props = this.props;
-    fiber.promise = null;
     return fiber;
   }
 
@@ -537,7 +524,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
-      const fiber = this.__createSubFiber(parentFiber, scope, vars);
+      const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
       fiber.patchQueue.push(fiber);
 
       await this.__render(fiber);
@@ -560,7 +547,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * parent template.
    */
   __prepare(parentFiber: Fiber<any>, scope: any, vars: any): Promise<VNode> {
-    const fiber = this.__createSubFiber(parentFiber, scope, vars);
+    const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
     fiber.promise = this.__prepareAndRender(fiber);
     return fiber.promise;
   }

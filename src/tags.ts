@@ -10,8 +10,6 @@ import { QWeb } from "./qweb/index";
  * The plan is to add a few other tags such as css, globalcss.
  */
 
-
-
 /**
  * XML tag helper for defining templates.  With this, one can simply define
  * an inline template with just the template xml:

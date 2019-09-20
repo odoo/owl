@@ -54,7 +54,6 @@ describe("static templates", () => {
     qweb.addTemplate("test", "<div>hello <!-- comment-->owl</div>");
     expect(renderToString(qweb, "test")).toBe("<div>hello owl</div>");
   });
-
 });
 
 describe("error handling", () => {
@@ -637,7 +636,9 @@ describe("t-call (template calling", () => {
     `);
     const root = { val: "a", children: [{ val: "b" }, { val: "c" }] };
     const expected = "<div><div><p>a</p><div><p>b</p></div><div><p>c</p></div></div></div>";
-    expect(renderToString(qweb, "Parent", { root })).toBe(expected);
+    expect(renderToString(qweb, "Parent", { root }, { fiber: { vars: {}, scope: {} } })).toBe(
+      expected
+    );
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
@@ -664,18 +665,17 @@ describe("t-call (template calling", () => {
     const root = { val: "a", children: [{ val: "b", children: [{ val: "d" }] }, { val: "c" }] };
     const expected =
       "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
-    expect(renderToString(qweb, "Parent", { root })).toBe(expected);
+    expect(renderToString(qweb, "Parent", { root }, { fiber: {} })).toBe(expected);
     const recursiveFn = Object.values(qweb.recursiveFns)[0];
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
 
   test("t-call, global templates", () => {
-    QWeb.registerTemplate('abcd', '<div><t t-call="john"/></div>')
+    QWeb.registerTemplate("abcd", '<div><t t-call="john"/></div>');
     qweb.addTemplate("john", `<span>desk</span>`);
     const expected = "<div><span>desk</span></div>";
     expect(trim(renderToString(qweb, "abcd"))).toBe(expected);
   });
-
 });
 
 describe("foreach", () => {

@@ -34,6 +34,28 @@ export interface Env {
 }
 
 /**
+ * Fibers are small abstractions designed to contain all the internal state
+ * associated to a "rendering work unit", relative to a specific component.
+ *
+ * A rendering will cause the creation of a fiber for each impacted components.
+ */
+export interface Fiber<Props> {
+  force: boolean;
+  rootFiber: Fiber<any> | null;
+  isCancelled: boolean;
+  scope: any;
+  vars: any;
+  patchQueue: Fiber<any>[];
+  component: Component<any, any, any>;
+  vnode: VNode | null;
+  willPatchResult: any;
+  props: Props;
+  promise: Promise<VNode> | null;
+  //   handlers?: any;
+  //   mountedHandlers?: any;
+}
+
+/**
  * This is mostly an internal detail of implementation. The Meta interface is
  * useful to typecheck and describe the internal keys used by Owl to manage the
  * component tree.
@@ -55,13 +77,7 @@ interface Internal<T extends Env, Props> {
   // the component instance back whenever the template is rerendered.
   cmap: { [key: number]: number };
 
-  renderId: number;
-
-  // the renderProps and renderPromise keys are only useful for the "prepare"
-  // step of the lifecycle of a component.  Once a component has been rendered
-  // and patched, it is no longer useful.
-  renderProps: Props | null;
-  renderPromise: Promise<VNode> | null;
+  currentFiber: Fiber<Props> | null;
 
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
@@ -169,9 +185,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       parent: p,
       children: {},
       cmap: {},
-      renderId: 1,
-      renderPromise: null,
-      renderProps: props || null,
+      currentFiber: null,
       boundHandlers: {},
       mountedHandlers: {},
       observer: null,
@@ -279,17 +293,20 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (__owl__.isMounted) {
       return;
     }
+    const fiber = this.__createFiber(false, undefined, undefined, undefined);
     if (!__owl__.vnode) {
-      const vnode = await this.__prepare();
+      fiber.promise = this.__prepareAndRender(fiber);
+      const vnode = await fiber.promise;
       if (__owl__.isDestroyed) {
         // component was destroyed before we get here...
         return;
       }
       this.__patch(vnode);
     } else if (renderBeforeRemount) {
-      const patchQueue = [];
-      await this.__render(false, patchQueue, undefined, undefined);
-      this.__applyPatchQueue(<any[]>patchQueue);
+      fiber.patchQueue.push(fiber);
+      fiber.promise = this.__render(fiber);
+      await fiber.promise;
+      this.__applyPatchQueue(fiber);
     }
     target.appendChild(this.el!);
 
@@ -323,16 +340,35 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     if (!__owl__.isMounted) {
       return;
     }
-    const patchQueue = [];
+    const fiber = this.__createFiber(force, undefined, undefined, undefined);
+    fiber.patchQueue.push(fiber);
+    fiber.promise = this.__render(fiber);
+    await fiber.promise;
 
-    const renderId = ++__owl__.renderId;
-    await this.__render(force, patchQueue, undefined, undefined);
-
-    if (__owl__.isMounted && renderId === __owl__.renderId) {
+    if (__owl__.isMounted && fiber === __owl__.currentFiber) {
       // we only update the vnode and the actual DOM if no other rendering
       // occurred between now and when the render method was initially called.
-      this.__applyPatchQueue(<any[]>patchQueue);
+      this.__applyPatchQueue(fiber);
     }
+  }
+
+  __createFiber(force, scope, vars, parent?: Fiber<any>): Fiber<Props> {
+    const fiber: Fiber<Props> = {
+      force,
+      scope,
+      vars,
+      rootFiber: null,
+      isCancelled: false,
+      component: this,
+      vnode: null,
+      patchQueue: parent ? parent.patchQueue : [],
+      willPatchResult: null,
+      props: this.props,
+      promise: null
+    };
+    fiber.rootFiber = parent ? parent.rootFiber : fiber;
+    this.__owl__.currentFiber = fiber;
+    return fiber;
   }
 
   /**
@@ -476,12 +512,11 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    */
   async __updateProps(
     nextProps: Props,
-    forceUpdate: boolean = false,
-    patchQueue?: any[],
+    parentFiber: Fiber<any>,
     scope?: any,
     vars?: any
   ): Promise<void> {
-    const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
+    const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
       const defaultProps = (<any>this.constructor).defaultProps;
       if (defaultProps) {
@@ -489,7 +524,10 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
       await this.willUpdateProps(nextProps);
       this.props = nextProps;
-      await this.__render(forceUpdate, patchQueue, scope, vars);
+      const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
+      fiber.patchQueue.push(fiber);
+
+      await this.__render(fiber);
     }
   }
 
@@ -503,14 +541,18 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     __owl__.vnode = patch(target, vnode);
   }
 
-  __prepare(scope?: Object, vars?: any): Promise<VNode> {
-    const __owl__ = this.__owl__;
-    __owl__.renderProps = this.props;
-    __owl__.renderPromise = this.__prepareAndRender(scope, vars);
-    return __owl__.renderPromise;
+  /**
+   * The __prepare method is only called by the t-component directive, when a
+   * subcomponent is created. It gets its scope and vars, if any, from the
+   * parent template.
+   */
+  __prepare(parentFiber: Fiber<any>, scope: any, vars: any): Promise<VNode> {
+    const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
+    fiber.promise = this.__prepareAndRender(fiber);
+    return fiber.promise;
   }
 
-  async __prepareAndRender(scope?: Object, vars?: any): Promise<VNode> {
+  async __prepareAndRender(fiber: Fiber<Props>): Promise<VNode> {
     try {
       await this.willStart();
     } catch (e) {
@@ -545,20 +587,12 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     }
     __owl__.render = qweb.render.bind(qweb, p._template);
     this.__observeState();
-
-    return this.__render(false, [], scope, vars);
+    return this.__render(fiber);
   }
 
-  __render(
-    force: boolean = false,
-    patchQueue: any[] = [],
-    scope?: Object,
-    vars?: any
-  ): Promise<VNode> {
+  __render(fiber: Fiber<Props>): Promise<VNode> {
     const __owl__ = this.__owl__;
     const promises: Promise<void>[] = [];
-    const patch: any[] = [this];
-    patchQueue.push(patch);
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }
@@ -568,16 +602,13 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
         promises,
         handlers: __owl__.boundHandlers,
         mountedHandlers: __owl__.mountedHandlers,
-        forceUpdate: force,
-        patchQueue,
-        scope,
-        vars
+        fiber: fiber
       });
     } catch (e) {
       vnode = __owl__.vnode || h("div");
       errorHandler(e, this);
     }
-    patch.push(vnode);
+    fiber.vnode = vnode;
     if (__owl__.observer) {
       __owl__.observer.allowMutations = true;
     }
@@ -655,29 +686,30 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * Apply the given patch queue. A patch is a pair [c, vn], where c is a
-   * Component instance and vn a VNode.
+   * Apply the given patch queue from a fiber.
    *   1) Call 'willPatch' on the component of each patch
    *   2) Call '__patch' on the component of each patch
-   *   3) Call 'patched' on the component of each patch, in inverse order
+   *   3) Call 'patched' on the component of each patch, in reverse order
    */
-  __applyPatchQueue(patchQueue: any[]) {
-    let component = this;
+  __applyPatchQueue(fiber: Fiber<Props>) {
+    const patchQueue = fiber.patchQueue;
+    let component: Component<any, any, any> = this;
     try {
       const patchLen = patchQueue.length;
       for (let i = 0; i < patchLen; i++) {
-        const patch = patchQueue[i];
-        component = patch[0];
-        patch.push(patch[0].willPatch());
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        fiber.willPatchResult = component.willPatch();
       }
       for (let i = 0; i < patchLen; i++) {
-        const patch = patchQueue[i];
-        patch[0].__patch(patch[1]);
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        component.__patch(fiber.vnode);
       }
       for (let i = patchLen - 1; i >= 0; i--) {
-        const patch = patchQueue[i];
-        component = patch[0];
-        patch[0].patched(patch[2]);
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        component.patched(fiber.willPatchResult);
       }
     } catch (e) {
       errorHandler(e, component);

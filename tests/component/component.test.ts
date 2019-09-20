@@ -137,9 +137,9 @@ describe("basic widget properties", () => {
       async willStart() {
         this.state.drinks++;
       }
-      async __render() {
+      async __render(f) {
         renderCalls++;
-        return super.__render();
+        return super.__render(f);
       }
     }
     const widget = new TestW(env);
@@ -251,7 +251,7 @@ describe("lifecycle hooks", () => {
     }
 
     class ParentWidget extends Widget {
-      static template = xml`<div><ChildWidget /></div>`
+      static template = xml`<div><ChildWidget /></div>`;
       static components = { ChildWidget };
       mounted() {
         steps.push("parent:mounted");
@@ -2143,9 +2143,9 @@ describe("random stuff/miscellaneous", () => {
       async willStart() {
         steps.push(`${this.name}:willStart`);
       }
-      __render(f, p) {
+      __render(f) {
         steps.push(`${this.name}:render`);
-        return super.__render(f, p);
+        return super.__render(f);
       }
       __patch(vnode) {
         steps.push(`${this.name}:__patch`);
@@ -2487,8 +2487,8 @@ describe("async rendering", () => {
         // __render)
         def = makeDeferred();
       }
-      async __render(f, p) {
-        const result = await super.__render(f, p);
+      async __render(f) {
+        const result = await super.__render(f);
         await def;
         return result;
       }
@@ -2779,9 +2779,9 @@ describe("updating environment", () => {
   test("updating widget env does not render widget (if not mounted)", async () => {
     let n = 0;
     class TestWidget extends Widget {
-      __render() {
+      __render(f) {
         n++;
-        return super.__render();
+        return super.__render(f);
       }
     }
 
@@ -3719,7 +3719,7 @@ describe("environment and plugins", () => {
   test("plugin works as expected", async () => {
     somePlugin(env);
     class App extends Widget {
-      static template=xml`
+      static template = xml`
         <div>
             <t t-if="env.someFlag">Red</t>
             <t t-else="1">Blue</t>
@@ -4185,9 +4185,9 @@ describe("unmounting and remounting", () => {
         <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
       `;
       state = { n: 2 };
-      __render(a, b, c, d) {
+      __render(f) {
         steps.push("render");
-        return super.__render(a, b, c, d);
+        return super.__render(f);
       }
       willPatch() {
         steps.push("willPatch");

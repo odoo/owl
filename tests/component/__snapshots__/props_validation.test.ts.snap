@@ -21,9 +21,9 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {message:1};
-    if (w4 && w4.__owl__.renderPromise && !w4.__owl__.vnode) {
-        if (utils.shallowEqual(props4, w4.__owl__.renderProps)) {
-            def3 = w4.__owl__.renderPromise;
+    if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+        if (utils.shallowEqual(props4, w4.__owl__.currentFiber.props)) {
+            def3 = w4.__owl__.currentFiber.promise;
         } else {
             w4.destroy();
             w4 = false;
@@ -36,11 +36,11 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         utils.validateProps(W4, props4)
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
-        def3 = w4.__prepare();
+        def3 = w4.__prepare(extra.fiber, undefined, undefined);
         def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         utils.validateProps(w4.constructor, props4)
-        def3 = def3 || w4.__updateProps(props4, extra.forceUpdate, extra.patchQueue);
+        def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);

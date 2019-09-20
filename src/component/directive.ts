@@ -356,8 +356,12 @@ QWeb.addDirective({
       ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     }
     let shouldProxy = false;
+    if (async || keepAlive) {
+      ctx.addLine(
+        `const fiber${componentID} = Object.assign(Object.create(extra.fiber), {patchQueue: []});`
+      );
+    }
     if (async) {
-      ctx.addLine(`const patchQueue${componentID} = [];`);
       ctx.addLine(
         `c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`
       );
@@ -380,10 +384,12 @@ QWeb.addDirective({
       ctx.addLine(`let props${componentID} = {${propStr}};`);
     }
     ctx.addIf(
-      `w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`
+      `w${componentID} && w${componentID}.__owl__.currentFiber && !w${componentID}.__owl__.vnode`
     );
-    ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`);
-    ctx.addLine(`def${defID} = w${componentID}.__owl__.renderPromise;`);
+    ctx.addIf(
+      `utils.shallowEqual(props${componentID}, w${componentID}.__owl__.currentFiber.props)`
+    );
+    ctx.addLine(`def${defID} = w${componentID}.__owl__.currentFiber.promise;`);
     ctx.addElse();
     ctx.addLine(`w${componentID}.destroy();`);
     ctx.addLine(`w${componentID} = false;`);
@@ -441,14 +447,15 @@ QWeb.addDirective({
       }
     }
 
-    let scopeVars = "";
+    let scopeVars;
     if (hasSlots) {
-      scopeVars += ctx.scopeVars.length ? `Object.assign({}, scope)` : varDefs.length ? `{}` : "";
-      if (varDefs.length) {
-        scopeVars += `, {${varDefs.join(",")}}`;
-      }
+      let scope = ctx.scopeVars.length ? `Object.assign({}, scope)` : `{}`;
+      let vars = varDefs.length ? `{${varDefs.join(",")}}` : "undefined";
+      scopeVars = `${scope}, ${vars}`;
+    } else {
+      scopeVars = "undefined, undefined";
     }
-    ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
+    ctx.addLine(`def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     let registerCode = `c${ctx.parentNode}[_${dummyID}_index]=pvnode;`;
     if (shouldProxy) {
@@ -460,19 +467,19 @@ QWeb.addDirective({
 
     ctx.addElse();
     // need to update component
-    let patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
+    let patchQueueCode = async || keepAlive ? `fiber${componentID}` : "extra.fiber";
     if (keepAlive) {
       // if we have t-keepalive="1", the component could be unmounted, but then
       // we __updateProps is called.  This is ok, but we do not want to call
       // the willPatch/patched hooks of the component in this case, so we
       // disable the patch queue
-      patchQueueCode = `w${componentID}.__owl__.isMounted ? ${patchQueueCode} : []`;
+      patchQueueCode = `w${componentID}.__owl__.isMounted ? extra.fiber : fiber${componentID}`;
     }
     if (QWeb.dev) {
       ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
     }
     ctx.addLine(
-      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode}${scopeVars &&
+      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, ${patchQueueCode}${scopeVars &&
         ", " + scopeVars});`
     );
     let keepAliveCode = "";
@@ -492,7 +499,7 @@ QWeb.addDirective({
 
     if (async) {
       ctx.addLine(
-        `def${defID}.then(w${componentID}.__applyPatchQueue.bind(w${componentID}, patchQueue${componentID}));`
+        `def${defID}.then(w${componentID}.__applyPatchQueue.bind(w${componentID}, fiber${componentID}));`
       );
     } else {
       ctx.addLine(`extra.promises.push(def${defID});`);

@@ -1,4 +1,5 @@
-import { Component, Env } from "../component/component";
+import { Component, Env, Fiber } from "../component/component";
+import { VNode } from "../vdom/index";
 
 //------------------------------------------------------------------------------
 // Connect function
@@ -46,10 +47,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
   /**
    * Need to do this here so 'deep' can be overrided by subcomponent easily
    */
-  async __prepareAndRender(
-    scope?: Object,
-    vars?: any
-  ): ReturnType<Component<any, any, any>["__prepareAndRender"]> {
+  async __prepareAndRender(fiber: Fiber<P>): Promise<VNode> {
     const store = this.getStore(this.env);
     const ownProps = this.props || {};
     this.storeProps = (<any>this.constructor).mapStoreToProps(store.state, ownProps, store.getters);
@@ -62,7 +60,7 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
       prevStoreProps: this.storeProps
     });
     (this.__owl__ as any).rev = observer.rev;
-    return super.__prepareAndRender(scope, vars);
+    return super.__prepareAndRender(fiber);
   }
   /**
    * We do not use the mounted hook here for a subtle reason: we want the
@@ -107,9 +105,9 @@ export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> 
     return (this.__owl__ as any).renderPromise;
   }
 
-  async __updateProps(nextProps: P, f, p, s, v) {
+  async __updateProps(nextProps: P, f, s, v) {
     this.__updateStoreProps(nextProps);
-    return super.__updateProps(nextProps, f, p, s, v);
+    return super.__updateProps(nextProps, f, s, v);
   }
 
   __updateStoreProps(nextProps): boolean {

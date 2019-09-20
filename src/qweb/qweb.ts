@@ -244,7 +244,7 @@ export class QWeb extends EventBus {
     this._processTemplate(elem);
     const template = {
       elem,
-      fn: function (this: QWeb, context, extra) {
+      fn: function(this: QWeb, context, extra) {
         const compiledFunction = this._compile(name, elem);
         template.fn = compiledFunction;
         return compiledFunction.call(this, context, extra);
@@ -312,8 +312,8 @@ export class QWeb extends EventBus {
    * to render a full component tree, since this is an asynchronous operation.
    * This method can only render templates without components.
    */
-  renderToString(name: string, context: EvalContext = {}): string {
-    const vnode = this.render(name, context);
+  renderToString(name: string, context: EvalContext = {}, extra?: any): string {
+    const vnode = this.render(name, context, extra);
     if (vnode.sel === undefined) {
       return vnode.text!;
     }
@@ -357,12 +357,12 @@ export class QWeb extends EventBus {
       for (let v in parentContext.variables) {
         let variable = <any>parentContext.variables[v];
         if (variable.id) {
-          ctx.addLine(`let ${variable.id} = extra.vars.${variable.id}`);
+          ctx.addLine(`let ${variable.id} = extra.fiber.vars.${variable.id}`);
         }
       }
     }
     if (parentContext) {
-      ctx.addLine("    Object.assign(context, extra.scope);");
+      ctx.addLine("    Object.assign(context, extra.fiber.scope);");
     }
     this._compileNode(elem, ctx);
 

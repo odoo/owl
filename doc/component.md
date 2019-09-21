@@ -502,6 +502,31 @@ class ParentComponent {
 }
 ```
 
+There is an even more dynamic way to use `t-component`: its value can be an
+expression evaluating to an actual component class.  In that case, this is the
+class that will be used to create the component:
+
+```js
+class A extends Component<any, any, any> {
+    static template = xml`<span>child a</span>`;
+}
+class B extends Component<any, any, any> {
+    static template = xml`<span>child b</span>`;
+}
+class App extends Component<any, any, any> {
+    static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+
+    state = { child: "a" };
+
+    get myComponent() {
+        return this.state.child === "a" ? A : B;
+    }
+}
+```
+
+In this example, the component `App` selects dynamically the concrete sub
+component class.
+
 **CSS and style:** there is some specific support to allow the parent to declare
 additional css classes or style for the sub component: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
 root component element.

@@ -1,4 +1,5 @@
 import { QWeb } from "../qweb/index";
+import { INTERP_REGEXP } from "../qweb/context";
 import { MODS_CODE } from "../qweb/extensions";
 
 //------------------------------------------------------------------------------
@@ -398,10 +399,16 @@ QWeb.addDirective({
 
     ctx.addIf(`!w${componentID}`);
     // new component
-    ctx.addLine(`let componentKey${componentID} = ${ctx.interpolate(value)};`);
+    let dynamicFallback = "";
+    if (!value.match(INTERP_REGEXP)) {
+      dynamicFallback = `|| ${ctx.formatExpression(value)}`;
+    }
+    const interpValue = ctx.interpolate(value);
+    ctx.addLine(`let componentKey${componentID} = ${interpValue};`);
     ctx.addLine(
-      `let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`
+      `let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}]${dynamicFallback};`
     );
+
     // maybe only do this in dev mode...
     ctx.addLine(
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`

@@ -920,6 +920,30 @@ describe("composition", () => {
     delete QWeb.components["WidgetB"];
   });
 
+  test("can use dynamic components (the class) if given", async () => {
+    class A extends Component<any, any, any> {
+      static template = xml`<span>child a</span>`;
+    }
+    class B extends Component<any, any, any> {
+      static template = xml`<span>child b</span>`;
+    }
+    class App extends Component<any, any, any> {
+      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+      state = {
+        child: "a"
+      };
+      get myComponent() {
+        return this.state.child === "a" ? A : B;
+      }
+    }
+    const widget = new App(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>child a</span>");
+    widget.state.child = "b";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>child b</span>");
+  });
+
   test("don't fallback to global registry if widget defined locally", async () => {
     QWeb.registerComponent("WidgetB", WidgetB); // should not use this widget
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);

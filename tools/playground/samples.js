@@ -1373,17 +1373,16 @@ class WindowManager extends owl.Component {
   currentZindex = 1;
   addWindow(name) {
     const info = this.env.windows.find(w => w.name === name);
-    const id = \`w\${this.nextId++}\`;
     this.windows.push({
-      id: id,
+      id: this.nextId++,
       title: info.title,
       width: info.defaultWidth,
       height: info.defaultHeight,
       top: 0,
       left: 0,
-      zindex: this.currentZindex++
+      zindex: this.currentZindex++,
+      component: info.component
     });
-    this.constructor.components[id] = info.component;
     this.render();
   }
   closeWindow(ev) {
@@ -1452,7 +1451,7 @@ const WMS_XML = `<templates>
        t-on-update-z-index="updateZIndex"
        t-on-set-window-position="setWindowPosition">
     <Window t-foreach="windows" t-as="w" t-key="w.id" info="w">
-      <t t-component="{{w.id}}"/>
+      <t t-component="w.component"/>
     </Window>
   </div>
 

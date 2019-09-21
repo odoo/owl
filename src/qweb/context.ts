@@ -1,5 +1,6 @@
 import { compileExpr, QWebVar } from "./expression_parser";
 
+export const INTERP_REGEXP = /\{\{.*?\}\}/g;
 //------------------------------------------------------------------------------
 // Compilation Context
 //------------------------------------------------------------------------------
@@ -163,7 +164,7 @@ export class Context {
    *   '{{x ? 'a': 'b'}}' -> (x ? 'a' : 'b')
    */
   interpolate(s: string): string {
-    let matches = s.match(/\{\{.*?\}\}/g);
+    let matches = s.match(INTERP_REGEXP);
     if (matches && matches[0].length === s.length) {
       return `(${this.formatExpression(s.slice(2, -2))})`;
     }

@@ -40,7 +40,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     }
     if (!w8) {
         let componentKey8 = \`Child\`;
-        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8];
+        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| context['Child'];
         if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
         w8 = new W8(parent, props8);
         parent.__owl__.cmap[8] = w8.__owl__.id;
@@ -68,7 +68,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     }
     if (!w11) {
         let componentKey11 = \`AsyncChild\`;
-        let W11 = context.constructor.components[componentKey11] || QWeb.components[componentKey11];
+        let W11 = context.constructor.components[componentKey11] || QWeb.components[componentKey11]|| context['AsyncChild'];
         if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
         w11 = new W11(parent, props11);
         parent.__owl__.cmap[11] = w11.__owl__.id;
@@ -124,7 +124,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     }
     if (!w8) {
         let componentKey8 = \`Child\`;
-        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8];
+        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| context['Child'];
         if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
         w8 = new W8(parent, props8);
         parent.__owl__.cmap[8] = w8.__owl__.id;
@@ -151,7 +151,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     }
     if (!w11) {
         let componentKey11 = \`AsyncChild\`;
-        let W11 = context.constructor.components[componentKey11] || QWeb.components[componentKey11];
+        let W11 = context.constructor.components[componentKey11] || QWeb.components[componentKey11]|| context['AsyncChild'];
         if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
         w11 = new W11(parent, props11);
         parent.__owl__.cmap[11] = w11.__owl__.id;
@@ -206,7 +206,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     }
     if (!w8) {
         let componentKey8 = \`Child\`;
-        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8];
+        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| context['Child'];
         if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
         w8 = new W8(parent, props8);
         parent.__owl__.cmap[8] = w8.__owl__.id;
@@ -234,7 +234,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     }
     if (!w11) {
         let componentKey11 = \`AsyncChild\`;
-        let W11 = context.constructor.components[componentKey11] || QWeb.components[componentKey11];
+        let W11 = context.constructor.components[componentKey11] || QWeb.components[componentKey11]|| context['AsyncChild'];
         if (!W11) {throw new Error('Cannot find the definition of component \\"' + componentKey11 + '\\"')}
         w11 = new W11(parent, props11);
         parent.__owl__.cmap[11] = w11.__owl__.id;
@@ -277,7 +277,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -322,7 +322,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     }
     if (!w4) {
         let componentKey4 = \`Child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -382,7 +382,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     }
     if (!w4) {
         let componentKey4 = \`Child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -440,7 +440,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -485,7 +485,7 @@ exports[`composition sub components dom state with t-keepalive is preserved 1`] 
         }
         if (!w4) {
             let componentKey4 = \`InputWidget\`;
-            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['InputWidget'];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -545,7 +545,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         }
         if (!w7) {
             let componentKey7 = \`ChildWidget\`;
-            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7];
+            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7]|| context['ChildWidget'];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
             parent.__owl__.cmap[templateId9] = w7.__owl__.id;
@@ -672,7 +672,7 @@ exports[`dynamic t-props basic use 1`] = `
     }
     if (!w4) {
         let componentKey4 = \`Child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -716,7 +716,7 @@ exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
         }
         if (!w4) {
             let componentKey4 = \`ChildWidget\`;
-            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['ChildWidget'];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
             parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -759,7 +759,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -801,7 +801,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -843,7 +843,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -885,7 +885,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -927,7 +927,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
     }
     if (!w4) {
         let componentKey4 = \`Child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -969,7 +969,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -1011,7 +1011,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -1053,7 +1053,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -1097,7 +1097,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     }
     if (!w4) {
         let componentKey4 = \`child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId6] = w4.__owl__.id;
@@ -1157,7 +1157,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         }
         if (!w7) {
             let componentKey7 = \`Child\`;
-            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7];
+            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7]|| context['Child'];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
             parent.__owl__.cmap[templateId9] = w7.__owl__.id;
@@ -1381,7 +1381,7 @@ exports[`t-slot directive can define and call slots 1`] = `
     }
     if (!w4) {
         let componentKey4 = \`Dialog\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4];
+        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Dialog'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
@@ -1623,7 +1623,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         }
         if (!w9) {
             let componentKey9 = \`Link\`;
-            let W9 = context.constructor.components[componentKey9] || QWeb.components[componentKey9];
+            let W9 = context.constructor.components[componentKey9] || QWeb.components[componentKey9]|| context['Link'];
             if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
             w9 = new W9(parent, props9);
             parent.__owl__.cmap[templateId10] = w9.__owl__.id;
@@ -1728,7 +1728,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         }
         if (!w10) {
             let componentKey10 = \`Link\`;
-            let W10 = context.constructor.components[componentKey10] || QWeb.components[componentKey10];
+            let W10 = context.constructor.components[componentKey10] || QWeb.components[componentKey10]|| context['Link'];
             if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
             w10 = new W10(parent, props10);
             parent.__owl__.cmap[templateId11] = w10.__owl__.id;
@@ -1786,7 +1786,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     }
     if (!w5) {
         let componentKey5 = \`Link\`;
-        let W5 = context.constructor.components[componentKey5] || QWeb.components[componentKey5];
+        let W5 = context.constructor.components[componentKey5] || QWeb.components[componentKey5]|| context['Link'];
         if (!W5) {throw new Error('Cannot find the definition of component \\"' + componentKey5 + '\\"')}
         w5 = new W5(parent, props5);
         parent.__owl__.cmap[5] = w5.__owl__.id;
@@ -1840,7 +1840,7 @@ exports[`top level sub widgets basic use 1`] = `
     }
     if (!w3) {
         let componentKey3 = \`Child\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3];
+        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap[3] = w3.__owl__.id;
@@ -1881,7 +1881,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
         }
         if (!w3) {
             let componentKey3 = \`Child\`;
-            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3];
+            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
             if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
             w3 = new W3(parent, props3);
             parent.__owl__.cmap[3] = w3.__owl__.id;
@@ -1910,7 +1910,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
         }
         if (!w7) {
             let componentKey7 = \`OtherChild\`;
-            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7];
+            let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7]|| context['OtherChild'];
             if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
             w7 = new W7(parent, props7);
             parent.__owl__.cmap[7] = w7.__owl__.id;

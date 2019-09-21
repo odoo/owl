@@ -19,8 +19,9 @@ import { QWeb } from "./qweb/index";
  *   }
  * ```
  */
-export function xml(strings) {
+export function xml(strings, ...args) {
   const name = `__template__${QWeb.nextId++}`;
-  QWeb.registerTemplate(name, strings[0]);
+  const value = String.raw(strings, ...args);
+  QWeb.registerTemplate(name, value);
   return name;
 }

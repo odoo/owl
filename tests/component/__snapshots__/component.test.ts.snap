@@ -1068,6 +1068,24 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
 }"
 `;
 
+exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    result = vn1;
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    var _3 = context['state'].n;
+    if (_3 || _3 === 0) {
+        c2.push({text: _3});
+    }
+    return vn1;
+}"
+`;
+
 exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 "function anonymous(context,extra
 ) {

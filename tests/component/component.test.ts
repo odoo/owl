@@ -2310,6 +2310,19 @@ describe("random stuff/miscellaneous", () => {
       "C:patched"
     ]);
   });
+
+  test("can inject values in tagged templates", async () => {
+      const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`
+      class Parent extends Widget {
+          static template = xml`<div><t t-call="${SUBTEMPLATE}"/></div>`
+          state = {n: 42};
+      }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe('<div><span>42</span></div>')
+  });
 });
 
 describe("async rendering", () => {

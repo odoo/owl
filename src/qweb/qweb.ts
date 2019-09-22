@@ -347,8 +347,8 @@ export class QWeb extends EventBus {
     if (parentContext) {
       ctx.templates = Object.create(parentContext.templates);
       ctx.variables = Object.create(parentContext.variables);
-      ctx.nextID = parentContext.parentNode! + 1;
-      ctx.parentNode = parentContext.parentNode!;
+      ctx.nextID = parentContext.nextID + 1;
+      ctx.parentNode = parentContext.parentNode || ctx.nextID++;
       ctx.allowMultipleRoots = true;
       ctx.hasParentWidget = true;
       ctx.shouldDefineResult = false;

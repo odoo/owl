@@ -1447,10 +1447,10 @@ exports[`t-slot directive can define and call slots 3`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
-    c2.push({text: \`header\`});
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c1.push(vn6);
+    c6.push({text: \`header\`});
 }"
 `;
 
@@ -1460,10 +1460,10 @@ exports[`t-slot directive can define and call slots 4`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
-    c2.push({text: \`footer\`});
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c1.push(vn6);
+    c6.push({text: \`footer\`});
 }"
 `;
 
@@ -1473,10 +1473,10 @@ exports[`t-slot directive content is the default slot 1`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
-    c2.push({text: \`sts rocks\`});
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c1.push(vn6);
+    c6.push({text: \`sts rocks\`});
 }"
 `;
 
@@ -1496,14 +1496,14 @@ exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
-    c2.push({text: \`sts\`});
-    let c3 = [], p3 = {key:3};
-    var vn3 = h('span', p3, c3);
-    c1.push(vn3);
-    c3.push({text: \`rocks\`});
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c1.push(vn6);
+    c6.push({text: \`sts\`});
+    let c7 = [], p7 = {key:7};
+    var vn7 = h('span', p7, c7);
+    c1.push(vn7);
+    c7.push({text: \`rocks\`});
 }"
 `;
 
@@ -1513,14 +1513,14 @@ exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
-    c2.push({text: \`sts\`});
-    let c3 = [], p3 = {key:3};
-    var vn3 = h('span', p3, c3);
-    c1.push(vn3);
-    c3.push({text: \`rocks\`});
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c1.push(vn6);
+    c6.push({text: \`sts\`});
+    let c7 = [], p7 = {key:7};
+    var vn7 = h('span', p7, c7);
+    c1.push(vn7);
+    c7.push({text: \`rocks\`});
 }"
 `;
 
@@ -1531,21 +1531,21 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('button', p2, c2);
-    c1.push(vn2);
+    let c10 = [], p10 = {key:10,on:{}};
+    var vn10 = h('button', p10, c10);
+    c1.push(vn10);
     if (!context['doSomething']) {
         throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'slot_footer_template'\`)
     }
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['doSomething'].bind(owner);
-    p2.on['click'] = extra.handlers['click' + 2];
-    const ref3 = \`myButton\`;
-    p2.hook = {
+    extra.handlers['click' + 10] = extra.handlers['click' + 10] || context['doSomething'].bind(owner);
+    p10.on['click'] = extra.handlers['click' + 10];
+    const ref11 = \`myButton\`;
+    p10.hook = {
       create: (_, n) => {
-        context.refs[ref3] = n.elm;
+        context.refs[ref11] = n.elm;
       },
     };
-    c2.push({text: \`do something\`});
+    c10.push({text: \`do something\`});
 }"
 `;
 
@@ -1556,15 +1556,15 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('button', p2, c2);
-    c1.push(vn2);
+    let c10 = [], p10 = {key:10,on:{}};
+    var vn10 = h('button', p10, c10);
+    c1.push(vn10);
     if (!context['doSomething']) {
         throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'slot_footer_template'\`)
     }
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['doSomething'].bind(owner);
-    p2.on['click'] = extra.handlers['click' + 2];
-    c2.push({text: \`do something\`});
+    extra.handlers['click' + 10] = extra.handlers['click' + 10] || context['doSomething'].bind(owner);
+    p10.on['click'] = extra.handlers['click' + 10];
+    c10.push({text: \`do something\`});
 }"
 `;
 
@@ -1665,9 +1665,9 @@ exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
     let c6 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
     c6.push({text: \`User \`});
-    var _7 = context['user'].name;
-    if (_7 || _7 === 0) {
-        c6.push({text: _7});
+    var _12 = context['user'].name;
+    if (_12 || _12 === 0) {
+        c6.push({text: _12});
     }
 }"
 `;

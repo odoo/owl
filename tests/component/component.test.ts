@@ -2312,16 +2312,16 @@ describe("random stuff/miscellaneous", () => {
   });
 
   test("can inject values in tagged templates", async () => {
-      const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`
-      class Parent extends Widget {
-          static template = xml`<div><t t-call="${SUBTEMPLATE}"/></div>`
-          state = {n: 42};
-      }
+    const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`;
+    class Parent extends Widget {
+      static template = xml`<div><t t-call="${SUBTEMPLATE}"/></div>`;
+      state = { n: 42 };
+    }
 
     const widget = new Parent(env);
     await widget.mount(fixture);
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
-    expect(fixture.innerHTML).toBe('<div><span>42</span></div>')
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
 });
 
@@ -3475,6 +3475,25 @@ describe("t-slot directive", () => {
     (<any>fixture.querySelector("button")).click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
+  });
+
+  test("slots and wrapper components", async () => {
+    class Link extends Component<any, any, any> {
+      static template = xml`
+        <a href="abc">
+            <t t-slot="default"/>
+        </a>`;
+    }
+
+    class A extends Component<any, any, any> {
+      static template = xml`<Link>hey</Link>`;
+      static components = { Link: Link };
+    }
+
+    const a = new A(env);
+    await a.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
   });
 });
 

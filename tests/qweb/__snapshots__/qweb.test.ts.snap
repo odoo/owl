@@ -897,15 +897,15 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('div', p2, c2);
-    c1.push(vn2);
-    let c3 = [], p3 = {key:3};
-    var vn3 = h('span', p3, c3);
-    c2.push(vn3);
-    c3.push({text: \`hey\`});
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('div', p5, c5);
+    c1.push(vn5);
+    let c6 = [], p6 = {key:6};
+    var vn6 = h('span', p6, c6);
+    c5.push(vn6);
+    c6.push({text: \`hey\`});
     if (false) {
-        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c2, fiber: {vars: {}, scope}}));
+        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c5, fiber: {vars: {}, scope}}));
     }
 }"
 `;
@@ -968,36 +968,36 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     let c3 = extra.parentNode;
     let _v0 = extra.fiber.vars._v0
         Object.assign(context, extra.fiber.scope);
-    let c4 = [], p4 = {key:4};
-    var vn4 = h('div', p4, c4);
-    c3.push(vn4);
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('p', p5, c5);
-    c4.push(vn5);
-    var _6 = _v0.val;
-    if (_6 || _6 === 0) {
-        c5.push({text: _6});
+    let c12 = [], p12 = {key:12};
+    var vn12 = h('div', p12, c12);
+    c3.push(vn12);
+    let c13 = [], p13 = {key:13};
+    var vn13 = h('p', p13, c13);
+    c12.push(vn13);
+    var _14 = _v0.val;
+    if (_14 || _14 === 0) {
+        c13.push({text: _14});
     }
-    var _7 = _v0.children||[];
-    if (!_7) { throw new Error('QWeb error: Invalid loop expression')}
-    var _8 = _9 = _7;
-    if (!(_7 instanceof Array)) {
-        _8 = Object.keys(_7);
-        _9 = Object.values(_7);
+    var _15 = _v0.children||[];
+    if (!_15) { throw new Error('QWeb error: Invalid loop expression')}
+    var _16 = _17 = _15;
+    if (!(_15 instanceof Array)) {
+        _16 = Object.keys(_15);
+        _17 = Object.values(_15);
     }
-    var _length8 = _8.length;
-    for (let i = 0; i < _length8; i++) {
+    var _length16 = _16.length;
+    for (let i = 0; i < _length16; i++) {
         context.subtree_first = i === 0;
         scope.subtree_first = context.subtree_first;
-        context.subtree_last = i === _length8 - 1;
+        context.subtree_last = i === _length16 - 1;
         scope.subtree_last = context.subtree_last;
         context.subtree_index = i;
         scope.subtree_index = context.subtree_index;
-        context.subtree = _8[i];
+        context.subtree = _16[i];
         scope.subtree = context.subtree;
-        context.subtree_value = _9[i];
+        context.subtree_value = _17[i];
         scope.subtree_value = context.subtree_value;
-        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, fiber: {vars: {_v0: context['subtree']}, scope}}));
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c12, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
 }"
 `;
@@ -1060,36 +1060,36 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     let c3 = extra.parentNode;
     let _v0 = extra.fiber.vars._v0
         Object.assign(context, extra.fiber.scope);
-    let c4 = [], p4 = {key:4};
-    var vn4 = h('div', p4, c4);
-    c3.push(vn4);
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('p', p5, c5);
-    c4.push(vn5);
-    var _6 = _v0.val;
-    if (_6 || _6 === 0) {
-        c5.push({text: _6});
+    let c12 = [], p12 = {key:12};
+    var vn12 = h('div', p12, c12);
+    c3.push(vn12);
+    let c13 = [], p13 = {key:13};
+    var vn13 = h('p', p13, c13);
+    c12.push(vn13);
+    var _14 = _v0.val;
+    if (_14 || _14 === 0) {
+        c13.push({text: _14});
     }
-    var _7 = _v0.children||[];
-    if (!_7) { throw new Error('QWeb error: Invalid loop expression')}
-    var _8 = _9 = _7;
-    if (!(_7 instanceof Array)) {
-        _8 = Object.keys(_7);
-        _9 = Object.values(_7);
+    var _15 = _v0.children||[];
+    if (!_15) { throw new Error('QWeb error: Invalid loop expression')}
+    var _16 = _17 = _15;
+    if (!(_15 instanceof Array)) {
+        _16 = Object.keys(_15);
+        _17 = Object.values(_15);
     }
-    var _length8 = _8.length;
-    for (let i = 0; i < _length8; i++) {
+    var _length16 = _16.length;
+    for (let i = 0; i < _length16; i++) {
         context.subtree_first = i === 0;
         scope.subtree_first = context.subtree_first;
-        context.subtree_last = i === _length8 - 1;
+        context.subtree_last = i === _length16 - 1;
         scope.subtree_last = context.subtree_last;
         context.subtree_index = i;
         scope.subtree_index = context.subtree_index;
-        context.subtree = _8[i];
+        context.subtree = _16[i];
         scope.subtree = context.subtree;
-        context.subtree_value = _9[i];
+        context.subtree_value = _17[i];
         scope.subtree_value = context.subtree_value;
-        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c4, fiber: {vars: {_v0: context['subtree']}, scope}}));
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c12, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
 }"
 `;

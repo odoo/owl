@@ -13,6 +13,6 @@ export class RouteComponent extends Component<any, {}, {}> {
   `;
 
   get routeComponent(): any {
-      return this.env.router.currentRoute && this.env.router.currentRoute.component;
+    return this.env.router.currentRoute && this.env.router.currentRoute.component;
   }
 }

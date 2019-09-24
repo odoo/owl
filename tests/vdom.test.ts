@@ -206,17 +206,15 @@ describe("snabbdom", function() {
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
 
       // verify that svg tag automatically gets svg namespace
-       const vnode = h("svg", [h("foreignObject", [h("div", ["I am HTML embedded in SVG"])])]);
-       // need to add namespace manually. it is usually done by the template
-       // compiler
-      addNS(vnode.data,(vnode as any).children, vnode.sel);
+      const vnode = h("svg", [h("foreignObject", [h("div", ["I am HTML embedded in SVG"])])]);
+      // need to add namespace manually. it is usually done by the template
+      // compiler
+      addNS(vnode.data, (vnode as any).children, vnode.sel);
 
-      elm = patch(vnode0, vnode)
-        .elm;
+      elm = patch(vnode0, vnode).elm;
       expect(elm.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.firstChild.namespaceURI).toBe(XHTMLNamespace);
-
     });
 
     test("receives classes in selector", function() {

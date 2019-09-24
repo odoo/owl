@@ -32,9 +32,9 @@ describe("RouteComponent", () => {
             <span t-name="Users">Users</span>
         </templates>
     `);
-    class About extends Component<any, any, any> {}
-    class Users extends Component<any, any, any> {}
-    class App extends Component<any, any, any> {
+    class About extends Component<any, any> {}
+    class Users extends Component<any, any> {}
+    class App extends Component<any, any> {
       static components = { RouteComponent };
     }
 
@@ -64,8 +64,8 @@ describe("RouteComponent", () => {
             <span t-name="Book">Book <t t-esc="props.title"/></span>
         </templates>
     `);
-    class Book extends Component<any, any, any> {}
-    class App extends Component<any, any, any> {
+    class Book extends Component<any, any> {}
+    class App extends Component<any, any> {
       static components = { RouteComponent };
     }
 
@@ -86,12 +86,12 @@ describe("RouteComponent", () => {
             <span t-name="Book">Book <t t-esc="props.title"/>|<t t-esc="incVal"/></span>
         </templates>
     `);
-    class Book extends Component<any, any, any> {
+    class Book extends Component<any, any> {
       get incVal() {
         return this.props.val + 1;
       }
     }
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { RouteComponent };
     }
 

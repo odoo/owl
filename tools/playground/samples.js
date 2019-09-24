@@ -1,7 +1,8 @@
 const COMPONENTS = `// In this example, we show how components can be defined and created.
+const { Component, useState } = owl;
 
-class Greeter extends owl.Component {
-    state = { word: 'Hello' };
+class Greeter extends Component {
+    state = useState({ word: 'Hello' });
 
     toggle() {
         this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi'
@@ -9,9 +10,9 @@ class Greeter extends owl.Component {
 }
 
 // Main root component
-class App extends owl.Component {
+class App extends Component {
     static components = { Greeter };
-    state = { name: 'World'};
+    state = useState({ name: 'World'});
 }
 
 // Application setup
@@ -45,17 +46,18 @@ const COMPONENTS_CSS = `.greeter {
 
 const ANIMATION = `// The goal of this component is to see how the t-transition directive can be
 // used to generate simple transition effects.
+const { Component, useState } = owl;
 
-class Counter extends owl.Component {
-    state = { value: 0 };
+class Counter extends Component {
+    state = useState({ value: 0 });
 
     increment() {
         this.state.value++;
     }
 }
 
-class App extends owl.Component {
-    state = { flag: false, componentFlag: false, numbers: [] };
+class App extends Component {
+    state = useState({ flag: false, componentFlag: false, numbers: [] });
     static components = { Counter };
 
     toggle(key) {
@@ -183,11 +185,12 @@ const LIFECYCLE_DEMO = `// This example shows all the possible lifecycle hooks
 // methods in the console.  Try modifying its state by clicking on it, or by
 // clicking on the two main buttons, and look into the console to see what
 // happens.
+const { Component, useState } = owl;
 
-class DemoComponent extends owl.Component {
+class DemoComponent extends Component {
     constructor() {
         super(...arguments);
-        this.state = { n: 0 };
+        this.state = useState({ n: 0 });
         console.log("constructor");
     }
     async willStart() {
@@ -213,9 +216,9 @@ class DemoComponent extends owl.Component {
     }
 }
 
-class App extends owl.Component {
+class App extends Component {
     static components = { DemoComponent };
-    state = { n: 0, flag: true };
+    state = useState({ n: 0, flag: true });
 
     increment() {
         this.state.n++;
@@ -259,12 +262,69 @@ const LIFECYCLE_CSS = `button {
     width: 250px;
 }`;
 
+const HOOKS_DEMO = `// In this example, we show how hooks can be used or defined.
+const {useState, onMounted, onWillUnmount} = owl.hooks;
+
+// We define here a custom behaviour: this hook tracks the state of the mouse
+// position
+function useMouse() {
+    const position = useState({x:0, y: 0});
+
+    function update(e) {
+        position.x = e.clientX;
+        position.y = e.clientY;
+    }
+    onMounted(() => {
+        window.addEventListener('mousemove', update);
+    });
+    onWillUnmount(() => {
+        window.removeEventListener('mousemove', update);
+    });
+
+    return position;
+}
+
+
+// Main root component
+class App extends owl.Component {
+    // simple state hook (reactive object)
+    counter = useState({ value: 0 });
+
+    // this hooks is bound to the 'mouse' property.
+    mouse = useMouse();
+
+    increment() {
+        this.counter.value++;
+    }
+}
+
+// Application setup
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({ qweb });
+app.mount(document.body);
+`;
+
+const HOOKS_DEMO_XML = `<templates>
+  <div t-name="App">
+    <button t-on-click="increment">Click! <t t-esc="counter.value"/></button>
+    <div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>
+  </div>
+</templates>
+`;
+
+const HOOKS_CSS = `button {
+    width: 120px;
+    height: 35px;
+    font-size: 16px;
+}`;
+
 const TODO_APP_STORE = `// This example is an implementation of the TodoList application, from the
 // www.todomvc.com project.  This is a non trivial application with some
 // interesting user interactions. It uses the local storage for persistence.
 //
 // In this implementation, we use the owl Store class to manage the state.  It
 // is very similar to the VueX store.
+const { Component, useState } = owl;
 
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
@@ -335,8 +395,8 @@ function makeStore() {
 //------------------------------------------------------------------------------
 // TodoItem
 //------------------------------------------------------------------------------
-class TodoItem extends owl.Component {
-    state = { isEditing: false };
+class TodoItem extends Component {
+    state = useState({ isEditing: false });
 
     removeTodo() {
         this.env.store.dispatch("removeTodo", this.props.id);
@@ -389,7 +449,7 @@ class TodoItem extends owl.Component {
 //------------------------------------------------------------------------------
 class TodoApp extends owl.store.ConnectedComponent {
     static components = { TodoItem };
-    state = { filter: "all" };
+    state = useState({ filter: "all" });
 
     static mapStoreToProps(state) {
         return {
@@ -1052,17 +1112,18 @@ const SLOTS = `// We show here how slots can be used to create generic component
 //
 // Note that the t-on-click event, defined in the App template, is executed in
 // the context of the App component, even though it is inside the Card component
+const { Component, useState } = owl;
 
-class Card extends owl.Component {
-    state = { showContent: true };
+class Card extends Component {
+    state = useState({ showContent: true });
 
     toggleDisplay() {
         this.state.showContent = !this.state.showContent;
     }
 }
 
-class Counter extends owl.Component {
-    state = {val: 1};
+class Counter extends Component {
+    state = useState({val: 1});
 
     inc() {
         this.state.val++;
@@ -1070,9 +1131,9 @@ class Counter extends owl.Component {
 }
 
 // Main root component
-class App extends owl.Component {
+class App extends Component {
     static components = {Card, Counter};
-    state = {a: 1, b: 3};
+    state = useState({a: 1, b: 3});
 
     inc(key, delta) {
         this.state[key] += delta;
@@ -1168,8 +1229,9 @@ const ASYNC_COMPONENTS = `// This example will not work if your browser does not
 // However, we don't want renderings of the other sub component to be delayed
 // because of the slow component. We use the 't-asyncroot' directive for this
 // purpose. Try removing it to see the difference.
+const { Component, useState } = owl;
 
-class SlowComponent extends owl.Component {
+class SlowComponent extends Component {
     willUpdateProps() {
         // simulate a component that needs to perform async stuff (e.g. an RPC)
         // with the updated props before re-rendering itself
@@ -1177,11 +1239,11 @@ class SlowComponent extends owl.Component {
     }
 }
 
-class NotificationList extends owl.Component {}
+class NotificationList extends Component {}
 
-class App extends owl.Component {
+class App extends Component {
     static components = {SlowComponent, NotificationList};
-    state = { value: 0, notifs: [] };
+    state = useState({ value: 0, notifs: [] });
 
     increment() {
         this.state.value++;
@@ -1250,15 +1312,16 @@ const FORM = `// This example illustrate how the t-model directive can be used t
 // data between html inputs (and select/textareas) and the state of a component.
 // Note that there are two controls with t-model="color": they are totally
 // synchronized.
+const { Component, useState } = owl;
 
-class Form extends owl.Component {
-    state = {
+class Form extends Component {
+    state = useState({
         text: "",
         othertext: "",
         number: 11,
         color: "",
         bool: false
-    };
+    });
 }
 
 // Application setup
@@ -1271,20 +1334,20 @@ const FORM_XML = `<templates>
   <div t-name="Form">
     <h1>Form</h1>
     <div>
-      Text (immediate): <input t-model="text"/>
+      Text (immediate): <input t-model="state.text"/>
     </div>
     <div>
-      Other text (lazy): <input t-model.lazy="othertext"/>
+      Other text (lazy): <input t-model.lazy="state.othertext"/>
     </div>
     <div>
-      Number: <input  t-model.number="number"/>
+      Number: <input  t-model.number="state.number"/>
     </div>
     <div>
-      Boolean: <input  type="checkbox" t-model="bool"/>
+      Boolean: <input  type="checkbox" t-model="state.bool"/>
     </div>
     <div>
       Color, with a select:
-      <select  t-model="color">
+      <select  t-model="state.color">
         <option value="">Select a color</option>
         <option value="red">Red</option>
         <option value="blue">Blue</option>
@@ -1292,8 +1355,8 @@ const FORM_XML = `<templates>
     </div>
     <div>
       Color, with radio buttons:
-        <span><input type="radio" name="color" id="red" value="red" t-model="color"/><label for="red">Red</label></span>
-        <span><input type="radio" name="color" id="blue" value="blue" t-model="color"/><label for="blue">Blue</label></span>
+        <span><input type="radio" name="color" id="red" value="red" t-model="state.color"/><label for="red">Red</label></span>
+        <span><input type="radio" name="color" id="blue" value="blue" t-model="state.color"/><label for="blue">Blue</label></span>
     </div>
     <hr/>
     <h1>State</h1>
@@ -1316,18 +1379,19 @@ const WMS = `// This example is slightly more complex than usual. We demonstrate
 // - minimal width/height
 // - better heuristic for initial window position
 // - ...
+const { Component, useState } = owl;
 
-class HelloWorld extends owl.Component {}
+class HelloWorld extends Component {}
 
-class Counter extends owl.Component {
-  state = { value: 0 };
+class Counter extends Component {
+  state = useState({ value: 0 });
 
   inc() {
     this.state.value++;
   }
 }
 
-class Window extends owl.Component {
+class Window extends Component {
   get style() {
     let { width, height, top, left, zindex } = this.props.info;
 
@@ -1366,7 +1430,7 @@ class Window extends owl.Component {
   }
 }
 
-class WindowManager extends owl.Component {
+class WindowManager extends Component {
   static components = { Window };
   windows = [];
   nextId = 1;
@@ -1406,7 +1470,7 @@ class WindowManager extends owl.Component {
   }
 }
 
-class App extends owl.Component {
+class App extends Component {
   static components = { WindowManager };
 
   addWindow(name) {
@@ -1568,6 +1632,12 @@ export const SAMPLES = [
     code: LIFECYCLE_DEMO,
     xml: LIFECYCLE_DEMO_XML,
     css: LIFECYCLE_CSS
+  },
+  {
+    description: "Hooks",
+    code: HOOKS_DEMO,
+    xml: HOOKS_DEMO_XML,
+    css: HOOKS_CSS
   },
   {
     description: "Todo List App (with store)",

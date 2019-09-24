@@ -22,7 +22,7 @@ afterEach(() => {
   QWeb.dev = dev;
 });
 
-class Widget extends Component<any, any, any> {}
+class Widget extends Component<any, any> {}
 
 //------------------------------------------------------------------------------
 // Tests

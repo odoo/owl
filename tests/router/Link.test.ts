@@ -30,7 +30,7 @@ describe("Link component", () => {
             </div>
         </templates>
     `);
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Link: Link };
     }
 
@@ -61,7 +61,7 @@ describe("Link component", () => {
             </div>
         </templates>
     `);
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Link: Link };
     }
 

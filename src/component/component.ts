@@ -11,7 +11,8 @@ import "./props_validation";
  * contains:
  *
  * - the Env interface (generic type for the environment)
- * - the Meta interface (the owl specific metadata attached to a component)
+ * - the Fiber interface (owl metadata attached to a rendering)
+ * - the Internal interface (the owl specific metadata attached to a component)
  * - the Component class
  */
 
@@ -46,7 +47,7 @@ export interface Fiber<Props> {
   scope: any;
   vars: any;
   patchQueue: Fiber<any>[];
-  component: Component<any, any, any>;
+  component: Component<any, any>;
   vnode: VNode | null;
   willPatchResult: any;
   props: Props;
@@ -70,8 +71,8 @@ interface Internal<T extends Env, Props> {
 
   // parent and children keys are obviously useful to setup the parent-children
   // relationship.
-  parent: Component<T, any, any> | null;
-  children: { [key: number]: Component<T, any, any> };
+  parent: Component<T, any> | null;
+  children: { [key: number]: Component<T, any> };
   // children mapping: from templateID to componentID. templateID identifies a
   // place in a template. The t-component directive needs it to be able to get
   // the component instance back whenever the template is rerendered.
@@ -91,10 +92,11 @@ interface Internal<T extends Env, Props> {
 //------------------------------------------------------------------------------
 let nextId = 1;
 
-export class Component<T extends Env, Props extends {}, State extends {}> {
+export class Component<T extends Env, Props extends {}> {
   readonly __owl__: Internal<Env, Props>;
   static template?: string | null = null;
   static _template?: string | null = null;
+  static _current?: any | null = null;
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -106,7 +108,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   static components = {};
 
   env: T;
-  state?: State;
   props: Props;
 
   // type of props is not easily representable in typescript...
@@ -114,7 +115,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   static defaultProps?: any;
 
   refs: {
-    [key: string]: Component<T, any, any> | HTMLElement | undefined;
+    [key: string]: Component<T, any> | HTMLElement | undefined;
   } = {};
 
   //--------------------------------------------------------------------------
@@ -140,8 +141,9 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * hand.  Other components should be created automatically by the framework (with
    * the t-component directive in a template)
    */
-  constructor(parent: Component<T, any, any> | T, props?: Props) {
+  constructor(parent: Component<T, any> | T, props?: Props) {
     const defaultProps = (<any>this.constructor).defaultProps;
+    Component._current = this;
     if (defaultProps) {
       props = this.__applyDefaultProps(props, defaultProps);
     }
@@ -151,7 +153,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
     //   Pro: but creating component (by a template) is always unsafe anyway
     this.props = <Props>props || <Props>{};
     let id: number = nextId++;
-    let p: Component<T, any, any> | null = null;
+    let p: Component<T, any> | null = null;
     if (parent instanceof Component) {
       p = parent;
       this.env = parent.env;
@@ -452,7 +454,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    * Note that it does not call the __callWillUnmount method to avoid visiting
    * all children many times.
    */
-  __destroy(parent: Component<any, any, any> | null) {
+  __destroy(parent: Component<any, any> | null) {
     const __owl__ = this.__owl__;
     const isMounted = __owl__.isMounted;
     if (isMounted) {
@@ -586,7 +588,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
       }
     }
     __owl__.render = qweb.render.bind(qweb, p._template);
-    this.__observeState();
     return this.__render(fiber);
   }
 
@@ -657,19 +658,6 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
   }
 
   /**
-   * Enable the observe feature on the state.  We only create an observer if
-   * there is some state to be observed.
-   */
-  __observeState() {
-    if (this.state) {
-      const __owl__ = this.__owl__;
-      __owl__.observer = new Observer();
-      this.state = __owl__.observer.observe(this.state);
-      __owl__.observer.notifyCB = this.render.bind(this);
-    }
-  }
-
-  /**
    * Apply default props (only top level).
    *
    * Note that this method does not modify in place the props, it returns a new
@@ -693,7 +681,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
    */
   __applyPatchQueue(fiber: Fiber<Props>) {
     const patchQueue = fiber.patchQueue;
-    let component: Component<any, any, any> = this;
+    let component: Component<any, any> = this;
     try {
       const patchLen = patchQueue.length;
       for (let i = 0; i < patchLen; i++) {
@@ -729,7 +717,7 @@ export class Component<T extends Env, Props extends {}, State extends {}> {
  * If there are no such component, we destroy everything. This is better than
  * being in a corrupted state.
  */
-function errorHandler(error: Error, component: Component<any, any, any>) {
+function errorHandler(error: Error, component: Component<any, any>) {
   let canCatch = false;
   let qweb = component.env.qweb;
   let root = component;

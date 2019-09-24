@@ -1333,5 +1333,5 @@ describe("properly support svg", () => {
     expect(renderToString(qweb, "test")).toBe(
       `<g><circle cx=\"50\" cy=\"50\" r=\"4\" stroke=\"green\" stroke-width=\"1\" fill=\"yellow\"></circle> </g>`
     );
-  });
+});
 });

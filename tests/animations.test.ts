@@ -1,5 +1,6 @@
 import { Component, Env } from "../src/component/component";
 import { QWeb } from "../src/qweb/index";
+import { useState } from "../src/hooks";
 import {
   makeDeferred,
   makeTestFixture,
@@ -36,7 +37,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-class Widget extends Component<any, any, any> {}
+class Widget extends Component<any, any> {}
 
 //------------------------------------------------------------------------------
 // Tests
@@ -106,7 +107,7 @@ describe("animations", () => {
       `<div><span t-if="!state.hide" t-transition="chimay">blue</span></div>`
     );
     class TestWidget extends Widget {
-      state = { hide: false };
+      state = useState({ hide: false });
     }
     const widget = new TestWidget(env);
 
@@ -148,7 +149,7 @@ describe("animations", () => {
       `<div><span t-ref="span" t-transition="chimay">blue</span></div>`
     );
     class TestWidget extends Widget {
-      state = { hide: false };
+      state = useState({ hide: false });
     }
     const widget = new TestWidget(env);
 
@@ -217,7 +218,7 @@ describe("animations", () => {
     class Child extends Widget {}
     class Parent extends Widget {
       static components = { Child: Child };
-      state = { display: true };
+      state = useState({ display: true });
     }
     const widget = new Parent(env);
 
@@ -269,7 +270,7 @@ describe("animations", () => {
       `<div><span t-if="state.flag" t-mounted="f" t-transition="chimay">blue</span></div>`
     );
     class TestWidget extends Widget {
-      state = { flag: false };
+      state = useState({ flag: false });
       f() {}
     }
     const widget = new TestWidget(env);
@@ -297,10 +298,8 @@ describe("animations", () => {
       </templates>`
     );
     class Parent extends Widget {
-      constructor(parent) {
-        super(parent);
-        this.state = { flag: false };
-      }
+      state = useState({ flag: false });
+
       toggle() {
         this.state.flag = !this.state.flag;
       }
@@ -357,10 +356,8 @@ describe("animations", () => {
     class Child extends Widget {}
     class Parent extends Widget {
       static components = { Child };
-      constructor(parent) {
-        super(parent);
-        this.state = { flag: false };
-      }
+      state = useState({ flag: false });
+
       toggle() {
         this.state.flag = !this.state.flag;
       }

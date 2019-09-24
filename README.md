@@ -20,6 +20,7 @@ Here is a short example to illustrate interactive components:
 ```javascript
 import { Component, QWeb } from 'owl'
 import { xml } from 'owl/tags'
+import { useState } from 'owl/hooks'
 
 class Counter extends Component {
   static template = xml`
@@ -27,7 +28,7 @@ class Counter extends Component {
       Click Me! [<t t-esc="state.value"/>]
     </button>`;
 
-  state = { value: 0 };
+  state = useState({ value: 0 });
 
   increment() {
     this.state.value++;
@@ -47,6 +48,8 @@ class App extends Component {
 const app = new App({ qweb: new QWeb() });
 app.mount(document.body);
 ```
+
+Note that the counter component is made reactive with the `useState` hook.
 
 More interesting examples can be found on the
 [playground](https://odoo.github.io/owl/playground) application.

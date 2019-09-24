@@ -564,7 +564,7 @@ type VNodeChildElement = VNode | string | number | undefined | null;
 type ArrayOrElement<T> = T | T[];
 type VNodeChildren = ArrayOrElement<VNodeChildElement>;
 
-function addNS(data: any, children: VNodes | undefined, sel: string | undefined): void {
+export function addNS(data: any, children: VNodes | undefined, sel: string | undefined): void {
   data.ns = "http://www.w3.org/2000/svg";
   if (sel !== "foreignObject" && children !== undefined) {
     for (let i = 0, iLen = children.length; i < iLen; ++i) {
@@ -611,14 +611,6 @@ export function h(sel: any, b?: any, c?: any): VNode {
       if (primitive(children[i]))
         children[i] = vnode(undefined, undefined, undefined, children[i], undefined);
     }
-  }
-  if (
-    sel[0] === "s" &&
-    sel[1] === "v" &&
-    sel[2] === "g" &&
-    (sel.length === 3 || sel[3] === "." || sel[3] === "#")
-  ) {
-    addNS(data, children, sel);
   }
   return vnode(sel, data, children, text, undefined);
 }

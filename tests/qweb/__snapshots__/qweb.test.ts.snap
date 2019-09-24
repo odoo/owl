@@ -676,6 +676,31 @@ exports[`misc global 1`] = `
 }"
 `;
 
+exports[`properly support svg add proper namespace to svg 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    var h = this.h;
+    var _1 = '100px';
+    var _2 = '90px';
+    let c3 = [], p3 = {key:3,attrs:{width: _1,height: _2}};
+    var vn3 = h('svg', p3, c3);
+    result = vn3;
+    var _4 = '50';
+    var _5 = '50';
+    var _6 = '4';
+    var _7 = 'green';
+    var _8 = '1';
+    var _9 = 'yellow';
+    let c10 = [], p10 = {key:10,attrs:{cx: _4,cy: _5,r: _6,stroke: _7,\\"stroke-width\\": _8,fill: _9}};
+    var vn10 = h('circle', p10, c10);
+    c3.push(vn10);
+    c3.push({text: \` \`});
+    utils.addNameSpace(vn3);
+    return vn3;
+}"
+`;
+
 exports[`special cases for some boolean html attributes/properties input type= checkbox, with t-att-checked 1`] = `
 "function anonymous(context,extra
 ) {

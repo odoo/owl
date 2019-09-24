@@ -2,6 +2,7 @@ import { EventBus } from "../core/event_bus";
 import { h, patch, VNode } from "../vdom/index";
 import { Context } from "./context";
 import { shallowEqual } from "../utils";
+import { addNS } from "../vdom/vdom";
 
 /**
  * Owl QWeb Engine
@@ -93,7 +94,10 @@ const UTILS: Utils = {
     }
     return expr;
   },
-  shallowEqual
+  shallowEqual,
+  addNameSpace(vnode) {
+      addNS(vnode.data, vnode.children, vnode.sel);
+  },
 };
 
 function parseXML(xml: string): Document {
@@ -537,6 +541,10 @@ export class QWeb extends EventBus {
     }
 
     this._compileChildren(node, ctx);
+    if (node.nodeName === 'svg') {
+        ctx.rootContext.shouldDefineUtils = true;
+        ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
+    }
 
     for (let { directive, value, fullName } of validDirectives) {
       if (directive.finalize) {

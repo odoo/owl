@@ -1312,3 +1312,10 @@ describe("global template registration", () => {
     expect((vnode as any).children[0].text).toBe("global");
   });
 });
+
+describe("properly support svg", () => {
+  test("add proper namespace to svg", () => {
+    qweb.addTemplate("test", `<svg width="100px" height="90px"><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/> </svg>`);
+    expect(renderToString(qweb, "test")).toBe(`<svg width=\"100px\" height=\"90px\"><circle cx=\"50\" cy=\"50\" r=\"4\" stroke=\"green\" stroke-width=\"1\" fill=\"yellow\"></circle> </svg>`);
+  });
+});

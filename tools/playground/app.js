@@ -1,5 +1,5 @@
 import { SAMPLES } from "./samples.js";
-
+const useState = owl.hooks.useState;
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
 //------------------------------------------------------------------------------
@@ -156,9 +156,9 @@ Promise.all([loadTemplates(), owl.utils.whenReady()]).then(start);
 class TabbedEditor extends owl.Component {
   constructor(parent, props) {
     super(parent, props);
-    this.state = {
+    this.state = useState({
       currentTab: props.js ? "js" : props.xml ? "xml" : "css"
-    };
+    });
     this.setTab = owl.utils.debounce(this.setTab, 250, true);
 
     this.sessions = {};
@@ -250,7 +250,7 @@ class App extends owl.Component {
     this.version = owl.__info__.version;
     this.SAMPLES = SAMPLES;
 
-    this.state = {
+    this.state = useState({
       js: SAMPLES[0].code,
       css: SAMPLES[0].css || "",
       xml: SAMPLES[0].xml || DEFAULT_XML,
@@ -259,7 +259,7 @@ class App extends owl.Component {
       splitLayout: true,
       leftPaneWidth: Math.ceil(window.innerWidth / 2),
       topPanelHeight: null
-    };
+    });
 
     this.toggleLayout = owl.utils.debounce(this.toggleLayout, 250, true);
     this.runCode = owl.utils.debounce(this.runCode, 250, true);

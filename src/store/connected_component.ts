@@ -7,7 +7,7 @@ import { VNode } from "../vdom/index";
 
 type HashFunction = (a: any, b: any) => number;
 
-export class ConnectedComponent<T extends Env, P, S> extends Component<T, P, S> {
+export class ConnectedComponent<T extends Env, P> extends Component<T, P> {
   deep: boolean = true;
   getStore(env) {
     return env.store;

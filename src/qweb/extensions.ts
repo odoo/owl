@@ -254,7 +254,7 @@ QWeb.addDirective({
     const type = node.getAttribute("type");
     let handler;
     let event = fullName.includes(".lazy") ? "change" : "input";
-    const expr = ctx.formatExpression(`state.${value}`);
+    const expr = ctx.formatExpression(value);
     if (node.tagName === "select") {
       ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
       addNodeHook("create", `n.elm.value=${expr};`);

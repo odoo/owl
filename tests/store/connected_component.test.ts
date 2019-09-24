@@ -1,6 +1,7 @@
 import { Component, Env } from "../../src/component/component";
 import { ConnectedComponent } from "../../src/store/connected_component";
 import { Store } from "../../src/store/store";
+import { useState } from "../../src/hooks";
 import { makeTestEnv, makeTestFixture, nextTick, makeDeferred } from "../helpers";
 
 describe("connecting a component to store", () => {
@@ -27,8 +28,8 @@ describe("connecting a component to store", () => {
             <span t-name="Todo"><t t-esc="props.msg"/></span>
         </templates>
     `);
-    class Todo extends Component<any, any, any> {}
-    class App extends ConnectedComponent<any, any, any> {
+    class Todo extends Component<any, any> {}
+    class App extends ConnectedComponent<any, any> {
       static components = { Todo };
       static mapStoreToProps(s) {
         return { todos: s.todos };
@@ -70,7 +71,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends ConnectedComponent<any, any, any> {
+    class App extends ConnectedComponent<any, any> {
       static mapStoreToProps(s) {
         return { todos: s.todos };
       }
@@ -111,7 +112,7 @@ describe("connecting a component to store", () => {
         <span t-name="Todo"><t t-esc="props.msg"/></span>
       </templates>
       `);
-    class Todo extends Component<any, any, any> {}
+    class Todo extends Component<any, any> {}
 
     const store = new Store({
       state: { todos: [] },
@@ -121,7 +122,7 @@ describe("connecting a component to store", () => {
         }
       }
     });
-    class App extends ConnectedComponent<any, any, any> {
+    class App extends ConnectedComponent<any, any> {
       static components = { Todo };
       static mapStoreToProps(s) {
         return { todos: s.todos };
@@ -160,7 +161,7 @@ describe("connecting a component to store", () => {
     });
     (<any>env).store = store;
 
-    class App extends ConnectedComponent<any, any, any> {
+    class App extends ConnectedComponent<any, any> {
       static mapStoreToProps(s) {
         return { value: s.value };
       }
@@ -187,7 +188,7 @@ describe("connecting a component to store", () => {
           <div t-name="Child"/>
         </templates>
     `);
-    class Child extends ConnectedComponent<any, any, any> {
+    class Child extends ConnectedComponent<any, any> {
       static mapStoreToProps(s) {
         return s;
       }
@@ -199,12 +200,12 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class Parent extends Component<any, any, any> {
+    class Parent extends Component<any, any> {
       static components = { Child };
-
+      state: any;
       constructor(env: Env) {
         super(env);
-        this.state = { child: true };
+        this.state = useState({ child: true });
       }
     }
 
@@ -240,14 +241,14 @@ describe("connecting a component to store", () => {
           </div>
         </templates>
     `);
-    class TodoItem extends ConnectedComponent<any, any, any> {
+    class TodoItem extends ConnectedComponent<any, any> {
       static mapStoreToProps(state, props) {
         const todo = state.todos.find(t => t.id === props.id);
         return todo;
       }
     }
 
-    class TodoList extends ConnectedComponent<any, any, any> {
+    class TodoList extends ConnectedComponent<any, any> {
       static components = { TodoItem };
       static mapStoreToProps(state) {
         return { todos: state.todos };
@@ -294,7 +295,7 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class TodoItem extends ConnectedComponent<any, any, any> {
+    class TodoItem extends ConnectedComponent<any, any> {
       static mapStoreToProps(state, props, getters) {
         const todo = state.todos.find(t => t.id === props.id);
         return {
@@ -304,7 +305,7 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class TodoList extends ConnectedComponent<any, any, any> {
+    class TodoList extends ConnectedComponent<any, any> {
       static components = { TodoItem };
       static mapStoreToProps(state) {
         return { todos: state.todos };
@@ -330,15 +331,15 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class Beer extends ConnectedComponent<any, any, any> {
+    class Beer extends ConnectedComponent<any, any> {
       static mapStoreToProps(state, props) {
         return state.beers[props.id];
       }
     }
 
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Beer };
-      state = { beerId: 1 };
+      state = useState({ beerId: 1 });
     }
 
     const state = { beers: { 1: { name: "jupiler" }, 2: { name: "kwak" } } };
@@ -363,7 +364,7 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class App extends ConnectedComponent<any, any, any> {
+    class App extends ConnectedComponent<any, any> {
       static mapStoreToProps(state) {
         return { beers: state.beers, otherKey: 1 };
       }
@@ -403,7 +404,7 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class Beer extends ConnectedComponent<any, any, any> {
+    class Beer extends ConnectedComponent<any, any> {
       static mapStoreToProps(state, props) {
         return {
           selected: state.beers[props.id],
@@ -413,9 +414,9 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Beer };
-      state = { beerId: 0 };
+      state = useState({ beerId: 0 });
     }
 
     const actions = {
@@ -470,7 +471,7 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class Beer extends ConnectedComponent<any, any, any> {
+    class Beer extends ConnectedComponent<any, any> {
       static mapStoreToProps(storeState, props) {
         return {
           selected: storeState.beers[props.id],
@@ -480,9 +481,9 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Beer };
-      state = { beerId: 0 };
+      state = useState({ beerId: 0 });
     }
 
     const actions = {
@@ -559,13 +560,13 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class Child extends ConnectedComponent<any, any, any> {
+    class Child extends ConnectedComponent<any, any> {
       static mapStoreToProps(s, props) {
         steps.push("child");
         return { msg: s.msg[props.key] };
       }
     }
-    class Parent extends ConnectedComponent<any, any, any> {
+    class Parent extends ConnectedComponent<any, any> {
       static components = { Child };
       static mapStoreToProps(s) {
         steps.push("parent");
@@ -608,13 +609,13 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class Child extends ConnectedComponent<any, any, any> {
+    class Child extends ConnectedComponent<any, any> {
       static mapStoreToProps(s, props) {
         steps.push("child");
         return { msg: s.messages[props.someId] };
       }
     }
-    class Parent extends ConnectedComponent<any, any, any> {
+    class Parent extends ConnectedComponent<any, any> {
       static components = { Child };
       static mapStoreToProps(s) {
         steps.push("parent");
@@ -686,7 +687,7 @@ describe("connecting a component to store", () => {
     let renderCount = 0;
     let fCount = 0;
 
-    class TodoItem extends ConnectedComponent<any, any, any> {
+    class TodoItem extends ConnectedComponent<any, any> {
       state = { isEditing: false };
       static mapStoreToProps(state, ownProps) {
         fCount++;
@@ -703,7 +704,7 @@ describe("connecting a component to store", () => {
         return super.__render(f);
       }
     }
-    class TodoApp extends ConnectedComponent<any, any, any> {
+    class TodoApp extends ConnectedComponent<any, any> {
       static components = { TodoItem };
       static mapStoreToProps(state) {
         return {
@@ -764,7 +765,7 @@ describe("connecting a component to store", () => {
     let renderCount = 0;
     let fCount = 0;
 
-    class TodoItem extends ConnectedComponent<any, any, any> {
+    class TodoItem extends ConnectedComponent<any, any> {
       state = { isEditing: false };
 
       static mapStoreToProps(state, ownProps) {
@@ -782,7 +783,7 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class TodoApp extends ConnectedComponent<any, any, any> {
+    class TodoApp extends ConnectedComponent<any, any> {
       static components = { TodoItem };
       static mapStoreToProps(state) {
         return {
@@ -817,7 +818,7 @@ describe("connecting a component to store", () => {
         </templates>
     `);
 
-    class App extends ConnectedComponent<any, any, any> {
+    class App extends ConnectedComponent<any, any> {
       static mapStoreToProps(s) {
         return { msg: s.msg };
       }
@@ -871,11 +872,11 @@ describe("connected components and default values", () => {
         </templates>
     `);
 
-    class Greeter extends ConnectedComponent<any, any, any> {
+    class Greeter extends ConnectedComponent<any, any> {
       static defaultProps = { recipient: "John" };
     }
 
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Greeter };
     }
 
@@ -895,11 +896,11 @@ describe("connected components and default values", () => {
         </templates>
     `);
 
-    class Greeter extends ConnectedComponent<any, any, any> {
+    class Greeter extends ConnectedComponent<any, any> {
       static defaultProps = { recipient: "John" };
     }
 
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Greeter };
     }
 
@@ -936,7 +937,7 @@ describe("connected components and default values", () => {
         </templates>
     `);
 
-    class Message extends ConnectedComponent<any, any, any> {
+    class Message extends ConnectedComponent<any, any> {
       static defaultProps = { showId: true };
       static mapStoreToProps = function(state, ownProps) {
         return {
@@ -945,7 +946,7 @@ describe("connected components and default values", () => {
       };
     }
 
-    class Thread extends ConnectedComponent<any, any, any> {
+    class Thread extends ConnectedComponent<any, any> {
       static components = { Message };
       static defaultProps = { showMessages: true };
       static mapStoreToProps = function(state, ownProps) {
@@ -956,7 +957,7 @@ describe("connected components and default values", () => {
       };
     }
 
-    class App extends Component<any, any, any> {
+    class App extends Component<any, any> {
       static components = { Thread };
       static defaultProps = { threadId: 1 };
     }
@@ -1018,15 +1019,15 @@ describe("connected components and default values", () => {
           <div t-name="Child"><t t-esc="storeProps.val"/></div>
         </templates>
     `);
-    class Child extends ConnectedComponent<any, any, any> {
+    class Child extends ConnectedComponent<any, any> {
       static mapStoreToProps(s) {
         return s;
       }
     }
 
-    class Parent extends Component<any, any, any> {
+    class Parent extends Component<any, any> {
       static components = { Child };
-      state = { child: true };
+      state = useState({ child: true });
     }
 
     class TestStore extends Store {
@@ -1062,7 +1063,7 @@ describe("connected components and default values", () => {
       </templates>
     `);
 
-    class App extends ConnectedComponent<any, any, any> {
+    class App extends ConnectedComponent<any, any> {
       static mapStoreToProps = function(state) {
         return {
           counter: state.counter
@@ -1143,14 +1144,14 @@ describe("various scenarios", () => {
             </div>
         </templates>
     `);
-    class Attachment extends ConnectedComponent<any, any, any> {
+    class Attachment extends ConnectedComponent<any, any> {
       static mapStoreToProps(state, ownProps) {
         return {
           name: state.attachments[ownProps.id].name
         };
       }
     }
-    class Message extends ConnectedComponent<any, any, any> {
+    class Message extends ConnectedComponent<any, any> {
       static mapStoreToProps(state) {
         return {
           attachmentIds: state.messages[10].attachmentIds

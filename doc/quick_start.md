@@ -72,11 +72,13 @@ Here are a few steps that we may take to get started:
 Let us now add the javascript to make it work, in `app.js`:
 
 ```javascript
+const useState = owl.hooks.useState;
+
 class ClickCounter extends owl.Component {
   static template = "clickcounter";
   constructor() {
     super(...arguments);
-    this.state = { value: 0 };
+    this.state = useState({ value: 0 });
   }
 
   increment() {

@@ -1239,6 +1239,30 @@ exports[`t-model directive basic use, on an input 1`] = `
 }"
 `;
 
+exports[`t-model directive basic use, on another key in component 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    result = vn1;
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('input', p2, c2);
+    c1.push(vn2);
+    p2.props = {value: context['some'].text};
+    extra.handlers['input' + 2] = extra.handlers['input' + 2] || ((ev) => {context['some'].text = ev.target.value});
+    p2.on['input'] = extra.handlers['input' + 2];
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    var _4 = context['some'].text;
+    if (_4 || _4 === 0) {
+        c3.push({text: _4});
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-model directive on a select 1`] = `
 "function anonymous(context,extra
 ) {

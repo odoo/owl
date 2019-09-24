@@ -9,9 +9,14 @@ build applications. Here is a complete representation of its content:
 owl
     Component
     QWeb
+    useState
     core
         EventBus
         Observer
+    hooks
+        onMounted
+        onWillUnmount
+        useState
     router
         Link
         RouteComponent
@@ -29,11 +34,14 @@ owl
         whenReady
 ```
 
+Note that for convenience, the `useState` hook is also exported at the root of the `owl` object.
+
 ## Reference
 
 - [Animations](animations.md)
 - [Component](component.md)
 - [Event Bus](event_bus.md)
+- [Hooks](hooks.md)
 - [Observer](observer.md)
 - [QWeb](qweb.md)
 - [Router](router.md)

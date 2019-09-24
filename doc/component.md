@@ -45,16 +45,16 @@ exclusively done by a [QWeb](qweb.md) template (which needs to be preloaded in Q
 Rendering a component generates a virtual dom representation
 of the component, which is then patched to the DOM, in order to apply the changes in an efficient way.
 
-OWL components observe their states, and rerender themselves whenever it is
-changed. This is done by an [observer](observer.md).
 
 ## Example
 
 Let us have a look at a simple component:
 
 ```javascript
+const { useState } = owl.hooks;
+
 class ClickCounter extends owl.Component {
-  state = { value: 0 };
+  state = useState({ value: 0 });
 
   increment() {
     this.state.value++;
@@ -74,9 +74,27 @@ latest browsers without a transpilation step.
 This example show how a component should be defined: it simply subclasses the
 Component class. If no static `template` key is defined, then
 Owl will use the component's name as template name. Here,
-a state object is defined. It is not mandatory to use the state object, but it
-is certainly encouraged. The state object is [observed](observer.md), and any
-change to it will cause a rerendering.
+a state object is defined, by using the `useState` hook. It is not mandatory to use the state object, but it is certainly encouraged. The result of the `useState` call is
+[observed](observer.md), and any change to it will cause a rerendering.
+
+## Reactive system
+
+OWL components can be made reactive by observing some part of their state. See the [hooks](hooks.md) section for more details.
+
+The main idea is that the `useState` hook generate a proxy version of an object
+(this is done by an [observer](observer.md)), which allows the component to
+react to any change.
+
+```javascript
+const { useState } = owl.hooks;
+
+class SomeComponent extends owl.Component {
+  state = useState({ a: 0, b: 1 });
+}
+```
+
+Note that there is an important limitation: hooks need to be called in the
+constructor.
 
 ## Reference
 
@@ -95,10 +113,6 @@ find a template with the component name (or one of its ancestor).
   component is not mounted.
 
 - **`env`** (Object): the component environment, which contains a QWeb instance.
-
-- **`state`** (Object): this is the location of the component's state, if there is
-  any. After the willStart method, the `state` property is observed, and each
-  change will cause the component to rerender itself.
 
 - **`props`** (Object): this is an object given (in the constructor) by the parent
   to configure the component. It can be dynamically changed later by the parent,
@@ -236,7 +250,7 @@ component.
 ```javascript
   constructor(parent, props) {
     super(parent, props);
-    this.state = {someValue: true};
+    this.state = useState({someValue: true});
     this.template = 'mytemplate';
   }
 ```
@@ -246,7 +260,7 @@ implemented in most cases:
 
 ```javascript
 class ClickCounter extends owl.Component {
-  state = { value: 0 };
+  state = useState({ value: 0 });
 
   ...
 }
@@ -271,9 +285,6 @@ At this point, the component is not yet rendered. Note that a slow `willStart` m
 interface. Therefore, some care should be made to make this method as
 fast as possible.
 
-After the `willStart` method is completed, the state will be observed with a
-new `Observer`. Then, the component will be rendered by `QWeb`.
-
 #### `mounted()`
 
 `mounted` is called each time a component is attached to the
@@ -287,10 +298,9 @@ always be unmounted at some point in the future.
 The mounted method will be called recursively on each of its children. First,
 the parent, then all its children.
 
-Note that the state is now observed. It is however allowed (but not encouraged)
-to modify the state in the `mounted` hook. Doing so will cause a rerender,
-which will not be perceptible by the user, but will slightly slow down the
-component.
+It is allowed (but not encouraged) to modify the state in the `mounted` hook.
+Doing so will cause a rerender, which will not be perceptible by the user, but
+will slightly slow down the component.
 
 #### `willUpdateProps(nextProps)`
 
@@ -315,7 +325,7 @@ It is not called on the initial render. This is useful to read some
 information from the DOM. For example, the current position of the
 scrollbar.
 
-Note that modifying the state object is not allowed here. This method is called just
+Note that modifying the state is not allowed here. This method is called just
 before an actual DOM patch, and is only intended to be used to save some local
 DOM state. Also, it will not be called if the component is not in the DOM (this can
 happen with components with `t-keepalive`).
@@ -397,9 +407,9 @@ easy to test a component.
 Updating the environment is not as simple as changing a component's state: its
 content is not observed, so updates will not be reflected immediately in the
 user interface. There is however a mechanism to force root widgets to rerender
-themselves whenever the environment is modified: one only needs to trigger the
-`update` event on the QWeb instance. For example, a responsive environment
-could be programmed like this:
+themselves whenever the environment is modified: one only needs to call the
+`forceUpdate` method on the QWeb instance. For example, a responsive environment
+could be done like this:
 
 ```js
 function setupResponsivePlugin(env) {
@@ -408,7 +418,7 @@ function setupResponsivePlugin(env) {
   const updateEnv = owl.utils.debounce(() => {
     if (env.isMobile !== isMobile()) {
       env.isMobile = !env.isMobile;
-      env.qweb.trigger("update");
+      env.qweb.forceUpdate();
     }
   }, 15);
   window.addEventListener("resize", updateEnv);
@@ -442,7 +452,8 @@ dynamic. If it is necessary to give a string, this can be done by quoting it:
 `someString="'somevalue'"`.
 
 Note that the rendering context for the template is the component itself. This means
-that the template can access `state`, `props`, `env`, or any methods defined in the component.
+that the template can access `state` (if it exists), `props`, `env`, or any
+methods defined in the component.
 
 ```xml
 <div t-name="ParentComponent">
@@ -453,7 +464,7 @@ that the template can access `state`, `props`, `env`, or any methods defined in 
 ```js
 class ParentComponent {
   static components = { ChildComponent };
-  state = { val: 4 };
+  state = useState({ val: 4 });
 }
 ```
 
@@ -642,7 +653,7 @@ form!). A possible way to do this is to do it by hand:
 
 ```js
 class Form extends owl.Component {
-  state = { text: "" };
+  state = useState({ text: "" });
 
   _updateInputValue(event) {
     this.state.text = event.target.value;
@@ -662,8 +673,9 @@ plumbing code is slightly different if you need to interact with a checkbox,
 or with radio buttons, or with select tags.
 
 To help with this situation, Owl has a builtin directive `t-model`: its value
-is the (top-level) name in the state object. With the `t-model` directive, we
-can write a shorter code, equivalent to the previous example:
+should be an observed value in the component (usually `state.someValue`). With
+the `t-model` directive, we can write a shorter code, equivalent to the previous
+example:
 
 ```js
 class Form extends owl.Component {
@@ -673,7 +685,7 @@ class Form extends owl.Component {
 
 ```xml
 <div>
-  <input t-model="text" />
+  <input t-model="state.text" />
   <span t-esc="state.text" />
 </div>
 ```
@@ -683,11 +695,11 @@ The `t-model` directive works with `<input>`, `<input type="checkbox">`,
 
 ```xml
 <div>
-    <div>Text in an input: <input t-model="someVal"/></div>
-    <div>Textarea: <textarea t-model="otherVal"/></div>
-    <div>Boolean value: <input type="checkbox" t-model="someFlag"/></div>
+    <div>Text in an input: <input t-model="state.someVal"/></div>
+    <div>Textarea: <textarea t-model="state.otherVal"/></div>
+    <div>Boolean value: <input type="checkbox" t-model="state.someFlag"/></div>
     <div>Selection:
-        <select t-model="color">
+        <select t-model="state.color">
             <option value="">Select a color</option>
             <option value="red">Red</option>
             <option value="blue">Blue</option>
@@ -696,11 +708,11 @@ The `t-model` directive works with `<input>`, `<input type="checkbox">`,
     <div>
         Selection with radio buttons:
         <span>
-            <input type="radio" name="color" id="red" value="red" t-model="color"/>
+            <input type="radio" name="color" id="red" value="red" t-model="state.color"/>
             <label for="red">Red</label>
         </span>
         <span>
-            <input type="radio" name="color" id="blue" value="blue" t-model="color" />
+            <input type="radio" name="color" id="blue" value="blue" t-model="state.color" />
             <label for="blue">Blue</label>
         </span>
     </div>
@@ -718,7 +730,7 @@ Like event handling, the `t-model` directive accepts some modifiers:
 For example:
 
 ```xml
-<input t-model.lazy="someVal" />
+<input t-model.lazy="state.someVal" />
 ```
 
 These modifiers can be combined. For instance, `t-model.lazy.number` will only
@@ -1117,8 +1129,8 @@ For example, here is how we could implement an `ErrorBoundary` component:
 ```
 
 ```js
-class ErrorBoundary extends Widget {
-  state = { error: false };
+class ErrorBoundary extends Component {
+  state = useState({ error: false });
 
   catchError() {
     this.state.error = true;

@@ -1092,14 +1092,14 @@ describe("t-ref", () => {
   test("can get a ref on a node", () => {
     qweb.addTemplate("test", `<div><span t-ref="myspan"/></div>`);
     let refs: any = {};
-    renderToDOM(qweb, "test", { refs });
+    renderToDOM(qweb, "test", { __owl__: { refs } });
     expect(refs.myspan.tagName).toBe("SPAN");
   });
 
   test("can get a dynamic ref on a node", () => {
     qweb.addTemplate("test", `<div><span t-ref="myspan{{id}}"/></div>`);
     let refs: any = {};
-    renderToDOM(qweb, "test", { refs, id: 3 });
+    renderToDOM(qweb, "test", { id: 3, __owl__: { refs } });
     expect(refs.myspan3.tagName).toBe("SPAN");
   });
 
@@ -1114,7 +1114,7 @@ describe("t-ref", () => {
       </div>`
     );
     let refs: any = {};
-    renderToDOM(qweb, "test", { refs, items: [1, 2, 3] });
+    renderToDOM(qweb, "test", { items: [1, 2, 3], __owl__: { refs } });
     expect(Object.keys(refs)).toEqual(["1", "2", "3"]);
   });
 });
@@ -1333,5 +1333,5 @@ describe("properly support svg", () => {
     expect(renderToString(qweb, "test")).toBe(
       `<g><circle cx=\"50\" cy=\"50\" r=\"4\" stroke=\"green\" stroke-width=\"1\" fill=\"yellow\"></circle> </g>`
     );
-});
+  });
 });

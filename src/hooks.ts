@@ -9,8 +9,8 @@ import { Observer } from "./core/observer";
  * - useState (reactive state)
  * - onMounted
  * - onWillUnmount
+ * - useRef
  */
-
 
 /**
  * useState hook
@@ -20,7 +20,7 @@ import { Observer } from "./core/observer";
  * trigger a rerendering of the current component.
  */
 export function useState<T>(state: T): T {
-  const component: Component<any,any> = Component._current;
+  const component: Component<any, any> = Component._current;
   const __owl__ = component.__owl__;
   if (!__owl__.observer) {
     __owl__.observer = new Observer();
@@ -34,7 +34,7 @@ export function useState<T>(state: T): T {
  * mounted.  Note that the component mounted method is called first.
  */
 export function onMounted(cb) {
-  const component = Component._current;
+  const component: Component<any, any> = Component._current;
   const current = component.mounted;
   component.mounted = function() {
     current.call(component);
@@ -47,10 +47,35 @@ export function onMounted(cb) {
  * willUnmounted.  Note that the component mounted method is called last.
  */
 export function onWillUnmount(cb) {
-  const component = Component._current;
+  const component: Component<any, any> = Component._current;
   const current = component.willUnmount;
   component.willUnmount = function() {
     cb();
     current.call(component);
+  };
+}
+
+/**
+ * useRef hook
+ *
+ * The purpose of this hook is to allow components to get a reference to a sub
+ * html node or component.
+ */
+interface Ref {
+  el: HTMLElement | null;
+  comp: Component<any, any> | null;
+}
+
+export function useRef(name: string): Ref {
+  const __owl__ = Component._current.__owl__;
+  return {
+    get el(): HTMLElement | null {
+      const val = __owl__.refs && __owl__.refs[name];
+      return val instanceof HTMLElement ? val : null;
+    },
+    get comp(): Component<any, any> | null {
+      const val = __owl__.refs && __owl__.refs[name];
+      return val instanceof Component ? val : null;
+    }
   };
 }

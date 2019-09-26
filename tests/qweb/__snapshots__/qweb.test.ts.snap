@@ -1915,6 +1915,7 @@ exports[`t-raw variable 1`] = `
 exports[`t-ref can get a dynamic ref on a node 1`] = `
 "function anonymous(context,extra
 ) {
+    context.__owl__.refs = context.__owl__.refs || {};
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
@@ -1925,7 +1926,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
     const ref3 = \`myspan\${context['id']}\`;
     p2.hook = {
       create: (_, n) => {
-        context.refs[ref3] = n.elm;
+        context.__owl__.refs[ref3] = n.elm;
       },
     };
     return vn1;
@@ -1935,6 +1936,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(context,extra
 ) {
+    context.__owl__.refs = context.__owl__.refs || {};
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
@@ -1945,7 +1947,7 @@ exports[`t-ref can get a ref on a node 1`] = `
     const ref3 = \`myspan\`;
     p2.hook = {
       create: (_, n) => {
-        context.refs[ref3] = n.elm;
+        context.__owl__.refs[ref3] = n.elm;
       },
     };
     return vn1;
@@ -1955,6 +1957,7 @@ exports[`t-ref can get a ref on a node 1`] = `
 exports[`t-ref refs in a loop 1`] = `
 "function anonymous(context,extra
 ) {
+    context.__owl__.refs = context.__owl__.refs || {};
     context = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
@@ -1981,7 +1984,7 @@ exports[`t-ref refs in a loop 1`] = `
         const ref6 = (context['item']);
         p5.hook = {
           create: (_, n) => {
-            context.refs[ref6] = n.elm;
+            context.__owl__.refs[ref6] = n.elm;
           },
         };
         var _7 = context['item'];

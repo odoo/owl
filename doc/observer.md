@@ -11,10 +11,10 @@ For example, this code will display `update` in the console:
 ```javascript
 const observer = new owl.Observer();
 observer.notifyCB = () => console.log("update");
-const obj = observer.observe( { a: { b: 1 } });
+const obj = observer.observe({ a: { b: 1 } });
 
 obj.a.b = 2;
 ```
 
-The observer is implemented with the native `Proxy` object.  Note that this
+The observer is implemented with the native `Proxy` object. Note that this
 means that it will not work on older browsers.

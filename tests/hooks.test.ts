@@ -1,6 +1,6 @@
 import { makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component, Env } from "../src/component/component";
-import { useState, onMounted, onWillUnmount } from "../src/hooks";
+import { useState, onMounted, onWillUnmount, useRef } from "../src/hooks";
 import { xml } from "../src/tags";
 
 //------------------------------------------------------------------------------
@@ -128,5 +128,23 @@ describe("hooks", () => {
       "hook:willunmount2",
       "hook:willunmount1"
     ]);
+  });
+
+  test("useRef hook", async () => {
+    class Counter extends Component<any, any> {
+      static template = xml`<div><button t-ref="button"><t t-esc="value"/></button></div>`;
+      button = useRef("button");
+      value = 0;
+      increment() {
+        this.value++;
+        (this.button.el as HTMLButtonElement).innerHTML = String(this.value);
+      }
+    }
+    const counter = new Counter(env);
+    await counter.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><button>0</button></div>");
+    counter.increment();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>1</button></div>");
   });
 });

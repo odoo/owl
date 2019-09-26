@@ -17,6 +17,7 @@ owl
         onMounted
         onWillUnmount
         useState
+        useRef
     router
         Link
         RouteComponent

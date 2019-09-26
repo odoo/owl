@@ -61,9 +61,8 @@ useful to compare various performance metrics on some tasks.
 
 If you want to have `xml` syntax highlighting while using the `xml` helper which
 helps you define inline templates, there is a VS Code addon `Comment tagged template`
-which, if installed, does exactly that.  To enable it, you need to add a comment,
+which, if installed, does exactly that. To enable it, you need to add a comment,
 like this:
-
 
 ```js
 // -----------------------------------------------------------------------------
@@ -79,9 +78,9 @@ const TEMPLATE = xml/* xml */ `
 // CODE
 // -----------------------------------------------------------------------------
 class MyComponent extends Component {
-    static template = TEMPLATE;
-    static components = { Sidebar, Content };
+  static template = TEMPLATE;
+  static components = { Sidebar, Content };
 
-    // rest of component...
+  // rest of component...
 }
 ```

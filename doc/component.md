@@ -47,7 +47,6 @@ exclusively done by a [QWeb](qweb.md) template (which needs to be preloaded in Q
 Rendering a component generates a virtual dom representation
 of the component, which is then patched to the DOM, in order to apply the changes in an efficient way.
 
-
 ## Example
 
 Let us have a look at a simple component:
@@ -78,7 +77,6 @@ Component class. If no static `template` key is defined, then
 Owl will use the component's name as template name. Here,
 a state object is defined, by using the `useState` hook. It is not mandatory to use the state object, but it is certainly encouraged. The result of the `useState` call is
 [observed](observer.md), and any change to it will cause a rerendering.
-
 
 ## Reference
 
@@ -121,9 +119,6 @@ constructor.
   to configure the component. It can be dynamically changed later by the parent,
   in some case. Note that `props` are owned by the parent, not by the component.
   As such, it should not ever be modified by the component!!
-
-- **`refs`** (Object): the `refs` object contains all references to sub DOM nodes
-  or sub components defined by a `t-ref` directive in the component's template.
 
 ### Static Properties
 
@@ -517,24 +512,24 @@ class ParentComponent {
 ```
 
 There is an even more dynamic way to use `t-component`: its value can be an
-expression evaluating to an actual component class.  In that case, this is the
+expression evaluating to an actual component class. In that case, this is the
 class that will be used to create the component:
 
 ```js
 class A extends Component<any, any, any> {
-    static template = xml`<span>child a</span>`;
+  static template = xml`<span>child a</span>`;
 }
 class B extends Component<any, any, any> {
-    static template = xml`<span>child b</span>`;
+  static template = xml`<span>child b</span>`;
 }
 class App extends Component<any, any, any> {
-    static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+  static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
 
-    state = { child: "a" };
+  state = { child: "a" };
 
-    get myComponent() {
-        return this.state.child === "a" ? A : B;
-    }
+  get myComponent() {
+    return this.state.child === "a" ? A : B;
+  }
 }
 ```
 
@@ -967,43 +962,59 @@ Examples:
 
 ### References
 
-The `t-ref` directive helps a component keep reference to some inside part of it.
-Like the `t-on` directive, it can work either on a DOM node, or on a component:
+The `useRef` hook is useful when we need a way to interact with some inside part
+of a component, rendered by Owl. It can work either on a DOM node, or on a component,
+tagged by the `t-ref` directive. See the [hooks section](hooks.md#useref) for
+more detail.
+
+As a short example, here is how we could set the focus on a given input:
 
 ```xml
 <div>
-    <div t-ref="someDiv"/>
-    <SubComponent t-ref="someComponent"/>
+    <input t-ref="input"/>
+    <button t-on-click="focusInput">Click</button>
 </div>
 ```
 
-In this example, the component will be able to access the `div` and the component
-inside the special `refs` variable:
-
 ```js
-this.refs.someDiv;
-this.refs.someComponent;
+import { useRef } from "owl/hooks";
+
+class SomeComponent extends Component {
+  inputRef = useRef("input");
+
+  focusInput() {
+    this.inputRef.el.focus();
+  }
+}
 ```
 
-This is useful for various usecases: for example, integrating with an external
-library that needs to render itself inside an actual DOM node. Or for calling
-some method on a sub component.
-
-Note: if used on a component, the reference will be set in the `refs`
-variable between `willPatch` and `patched`.
-
-The `t-ref` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](qweb.md#dynamic-attributes) and
-`t-component` directives). For example, if we have
-`id` set to 44 in the rendering context,
+The `useRef` hook can also be used to get a reference to an instance of a sub
+component rendered by Owl. In that case, we need to access it with the `comp`
+property instead of `el`:
 
 ```xml
-<div t-ref="component_{{id}}"/>
+<div>
+    <SubComponent t-ref="sub"/>
+    <button t-on-click="doSomething">Click</button>
+</div>
 ```
 
 ```js
-this.refs.component_44;
+import { useRef } from "owl/hooks";
+
+class SomeComponent extends Component {
+  static components = { SubComponent };
+  subRef = useRef("sub");
+
+  doSomething() {
+    this.subRef.comp.doSomeThingElse();
+  }
+}
 ```
+
+Note that these two examples uses the suffix `ref` to name the reference. This
+is not mandatory, but it is a useful convention, so we do not forget to access
+it with the `el` or `comp` suffix.
 
 ### Slots
 
@@ -1163,19 +1174,19 @@ env.qweb.on("error", null, function(error) {
 
 ### Functional Components
 
-Owl does not exactly have functional components.  However, there is an extremely
+Owl does not exactly have functional components. However, there is an extremely
 close alternative: calling sub templates.
 
 A stateless functional component in react is usually some kind of function that
 maps props to a virtual dom (often with `jsx`). So, basically, almost like a
-template rendered with `props`.  In Owl, this can be done by
+template rendered with `props`. In Owl, this can be done by
 simply defining a template, that will access the `props` object:
 
 ```js
 const Welcome = xml`<h1>Hello, {props.name}</h1>`;
 
 class MyComponent extends Component {
-    static template = xml`
+  static template = xml`
         <div>
             <t t-call=${Welcome}/>
             <div>something</div>

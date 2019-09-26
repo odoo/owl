@@ -20,6 +20,7 @@ export class Context {
   shouldDefineParent: boolean = false;
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
+  shouldDefineRefs: boolean = false;
   shouldDefineResult: boolean = true;
   shouldProtectContext: boolean = false;
   shouldTrackScope: boolean = false;
@@ -61,6 +62,9 @@ export class Context {
     }
     if (this.shouldDefineResult) {
       this.code.unshift("    let result;");
+    }
+    if (this.shouldDefineRefs) {
+      this.code.unshift("    context.__owl__.refs = context.__owl__.refs || {};");
     }
     if (this.shouldDefineOwner) {
       // this is necessary to prevent some directives (t-forach for ex) to

@@ -1,5 +1,5 @@
 import { SAMPLES } from "./samples.js";
-const useState = owl.hooks.useState;
+const {useState, useRef} = owl.hooks;
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
 //------------------------------------------------------------------------------
@@ -163,11 +163,11 @@ class TabbedEditor extends owl.Component {
 
     this.sessions = {};
     this._setupSessions(props);
-    this.editor = null;
+    this.editorNode = useRef("editor");
   }
 
   mounted() {
-    this.editor = this.editor || ace.edit(this.refs.editor);
+    this.editor = this.editor || ace.edit(this.editorNode.el);
 
     this.editor.setValue(this.props[this.state.currentTab], -1);
     this.editor.setFontSize("12px");
@@ -264,13 +264,14 @@ class App extends owl.Component {
     this.toggleLayout = owl.utils.debounce(this.toggleLayout, 250, true);
     this.runCode = owl.utils.debounce(this.runCode, 250, true);
     this.downloadCode = owl.utils.debounce(this.downloadCode, 250, true);
+    this.content = useRef("content");
   }
 
   displayError(error) {
     this.state.error = error;
     if (error) {
       setTimeout(() => {
-        this.refs.content.innerHTML = "";
+        this.content.el.innerHTML = "";
       });
       return;
     }
@@ -296,8 +297,8 @@ class App extends owl.Component {
     } else {
       this.state.error = false;
     }
-    this.refs.content.innerHTML = "";
-    this.refs.content.appendChild(subiframe);
+    this.content.el.innerHTML = "";
+    this.content.el.appendChild(subiframe);
   }
 
   setSample(ev) {

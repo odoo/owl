@@ -79,9 +79,10 @@ QWeb.addDirective({
   name: "ref",
   priority: 95,
   atNodeCreation({ ctx, value, addNodeHook }) {
+    ctx.rootContext.shouldDefineRefs = true;
     const refKey = `ref${ctx.generateID()}`;
     ctx.addLine(`const ${refKey} = ${ctx.interpolate(value)};`);
-    addNodeHook("create", `context.refs[${refKey}] = n.elm;`);
+    addNodeHook("create", `context.__owl__.refs[${refKey}] = n.elm;`);
   }
 });
 

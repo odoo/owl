@@ -263,9 +263,10 @@ QWeb.addDirective({
     let refExpr = "";
     let refKey: string = "";
     if (ref) {
+      ctx.rootContext.shouldDefineRefs = true;
       refKey = `ref${ctx.generateID()}`;
       ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
-      refExpr = `context.refs[${refKey}] = w${componentID};`;
+      refExpr = `context.__owl__.refs[${refKey}] = w${componentID};`;
     }
     let transitionsInsertCode = "";
     if (transition) {
@@ -273,7 +274,7 @@ QWeb.addDirective({
     }
     let finalizeComponentCode = `w${componentID}.${keepAlive ? "unmount" : "destroy"}();`;
     if (ref && !keepAlive) {
-      finalizeComponentCode += `delete context.refs[${refKey}];`;
+      finalizeComponentCode += `delete context.__owl__.refs[${refKey}];`;
     }
     if (transition) {
       finalizeComponentCode = `let finalize = () => {

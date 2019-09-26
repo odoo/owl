@@ -325,6 +325,7 @@ const TODO_APP_STORE = `// This example is an implementation of the TodoList app
 // In this implementation, we use the owl Store class to manage the state.  It
 // is very similar to the VueX store.
 const { Component, useState } = owl;
+const { useRef } = owl.hooks;
 
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
@@ -397,6 +398,7 @@ function makeStore() {
 //------------------------------------------------------------------------------
 class TodoItem extends Component {
     state = useState({ isEditing: false });
+    inputRef = useRef("input");
 
     removeTodo() {
         this.env.store.dispatch("removeTodo", this.props.id);
@@ -411,9 +413,9 @@ class TodoItem extends Component {
     }
 
     focusInput() {
-        this.refs.input.value = "";
-        this.refs.input.focus();
-        this.refs.input.value = this.props.title;
+        this.inputRef.el.value = "";
+        this.inputRef.el.focus();
+        this.inputRef.el.value = this.props.title;
     }
 
     handleKeyup(ev) {
@@ -1380,6 +1382,7 @@ const WMS = `// This example is slightly more complex than usual. We demonstrate
 // - better heuristic for initial window position
 // - ...
 const { Component, useState } = owl;
+const { useRef } = owl.hooks;
 
 class HelloWorld extends Component {}
 
@@ -1392,14 +1395,17 @@ class Counter extends Component {
 }
 
 class Window extends Component {
+
   get style() {
     let { width, height, top, left, zindex } = this.props.info;
 
     return \`width: \${width}px;height: \${height}px;top:\${top}px;left:\${left}px;z-index:\${zindex}\`;
   }
+
   close() {
     this.trigger("close-window", { id: this.props.info.id });
   }
+
   startDragAndDrop(ev) {
     this.updateZIndex();
     this.el.classList.add('dragging');
@@ -1425,6 +1431,7 @@ class Window extends Component {
       self.trigger("set-window-position", options);
     }
   }
+
   updateZIndex() {
     this.trigger("update-z-index", { id: this.props.info.id });
   }
@@ -1435,20 +1442,26 @@ class WindowManager extends Component {
   windows = [];
   nextId = 1;
   currentZindex = 1;
+  nextLeft = 0;
+  nextTop = 0;
+
   addWindow(name) {
     const info = this.env.windows.find(w => w.name === name);
+    this.nextLeft = this.nextLeft + 30;
+    this.nextTop = this.nextTop + 30;
     this.windows.push({
       id: this.nextId++,
       title: info.title,
       width: info.defaultWidth,
       height: info.defaultHeight,
-      top: 0,
-      left: 0,
+      top: this.nextTop,
+      left: this.nextLeft,
       zindex: this.currentZindex++,
       component: info.component
     });
     this.render();
   }
+
   closeWindow(ev) {
     const id = ev.detail.id;
     delete this.constructor.components[id];
@@ -1456,12 +1469,14 @@ class WindowManager extends Component {
     this.windows.splice(index, 1);
     this.render();
   }
+
   setWindowPosition(ev) {
     const id = ev.detail.id;
     const w = this.windows.find(w => w.id === id);
     w.top = ev.detail.top;
     w.left = ev.detail.left;
   }
+
   updateZIndex(ev) {
     const id = ev.detail.id;
     const w = this.windows.find(w => w.id === id);
@@ -1472,9 +1487,10 @@ class WindowManager extends Component {
 
 class App extends Component {
   static components = { WindowManager };
+  wmRef = useRef("wm");
 
   addWindow(name) {
-    this.refs.wm.addWindow(name);
+    this.wmRef.comp.addWindow(name);
   }
 }
 

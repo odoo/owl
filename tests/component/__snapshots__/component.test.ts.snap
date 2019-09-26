@@ -299,6 +299,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    context.__owl__.refs = context.__owl__.refs || {};
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
@@ -327,7 +328,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.__owl__.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.__owl__.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -359,6 +360,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
+    context.__owl__.refs = context.__owl__.refs || {};
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
@@ -387,7 +389,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){}};let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;context.__owl__.refs[ref5] = w4;},remove() {},destroy(vn) {w4.destroy();delete context.__owl__.refs[ref5];}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -1552,6 +1554,7 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
+    context.__owl__.refs = context.__owl__.refs || {};
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
@@ -1566,7 +1569,7 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     const ref11 = \`myButton\`;
     p10.hook = {
       create: (_, n) => {
-        context.refs[ref11] = n.elm;
+        context.__owl__.refs[ref11] = n.elm;
       },
     };
     c10.push({text: \`do something\`});

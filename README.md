@@ -48,7 +48,7 @@ const app = new App({ qweb: new QWeb() });
 app.mount(document.body);
 ```
 
-Note that the counter component is made reactive with the `useState` hook.
+Note that the counter component is made reactive with the [`useState` hook](doc/hooks.md#usestate).
 
 More interesting examples can be found on the
 [playground](https://odoo.github.io/owl/playground) application.

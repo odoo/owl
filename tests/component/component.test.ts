@@ -1,7 +1,7 @@
 import { Component, Env } from "../../src/component/component";
 import { QWeb } from "../../src/qweb/qweb";
 import { xml } from "../../src/tags";
-import { useState } from "../../src/hooks";
+import { useState, useRef } from "../../src/hooks";
 import { EventBus } from "../../src/core/event_bus";
 import {
   makeDeferred,
@@ -989,13 +989,15 @@ describe("composition", () => {
   });
 
   test("t-refs on widget are components", async () => {
-    env.qweb.addTemplate("WidgetC", `<div>Hello<t t-ref="mywidgetb" t-component="b"/></div>`);
     class WidgetC extends Widget {
-      static components = { b: WidgetB };
+      static template = xml`<div>Hello<WidgetB t-ref="mywidgetb" /></div>`;
+      static components = { WidgetB };
+      widget = useRef("mywidgetb");
     }
+
     const widget = new WidgetC(env);
     await widget.mount(fixture);
-    expect(widget.refs.mywidgetb instanceof WidgetB).toBe(true);
+    expect(widget.widget.comp).toBeInstanceOf(WidgetB);
   });
 
   test("t-refs are bound at proper timing", async () => {
@@ -1008,11 +1010,12 @@ describe("composition", () => {
       `;
       static components = { Widget };
       state = useState({ list: <any>[] });
+      child = useRef("child");
       willPatch() {
-        expect(this.refs.child).toBeUndefined();
+        expect(this.child.comp).toBeNull();
       }
       patched() {
-        expect(this.refs.child).not.toBeUndefined();
+        expect(this.child.comp).not.toBeNull();
       }
     }
 
@@ -1035,29 +1038,31 @@ describe("composition", () => {
     class ParentWidget extends Widget {
       static components = { Widget };
       state = useState({ child1: true, child2: false });
+      child1 = useRef("child1");
+      child2 = useRef("child2");
       count = 0;
       mounted() {
-        expect(this.refs.child1).toBeDefined();
-        expect(this.refs.child2).toBeUndefined();
+        expect(this.child1.comp).toBeDefined();
+        expect(this.child2.comp).toBeNull();
       }
       willPatch() {
         if (this.count === 0) {
-          expect(this.refs.child1).toBeDefined();
-          expect(this.refs.child2).toBeUndefined();
+          expect(this.child1.comp).toBeDefined();
+          expect(this.child2.comp).toBeNull();
         }
         if (this.count === 1) {
-          expect(this.refs.child1).toBeDefined();
-          expect(this.refs.child2).toBeDefined();
+          expect(this.child1.comp).toBeDefined();
+          expect(this.child2.comp).toBeDefined();
         }
       }
       patched() {
         if (this.count === 0) {
-          expect(this.refs.child1).toBeDefined();
-          expect(this.refs.child2).toBeDefined();
+          expect(this.child1.comp).toBeDefined();
+          expect(this.child2.comp).toBeDefined();
         }
         if (this.count === 1) {
-          expect(this.refs.child1).toBeUndefined();
-          expect(this.refs.child2).toBeDefined();
+          expect(this.child1.comp).toBeNull();
+          expect(this.child2.comp).toBeDefined();
         }
         this.count++;
       }
@@ -1095,12 +1100,19 @@ describe("composition", () => {
       </div>`
     );
     class ParentWidget extends Widget {
-      state = useState({ items: [1, 2, 3] });
       static components = { Child: Widget };
+      elem1 = useRef("1");
+      elem2 = useRef("2");
+      elem3 = useRef("3");
+      elem4 = useRef("4");
+      state = useState({ items: [1, 2, 3] });
     }
     const parent = new ParentWidget(env);
     await parent.mount(fixture);
-    expect(Object.keys(parent.refs)).toEqual(["1", "2", "3"]);
+    expect(parent.elem1.comp).toBeDefined();
+    expect(parent.elem2.comp).toBeDefined();
+    expect(parent.elem3.comp).toBeDefined();
+    expect(parent.elem4.comp).toBeNull();
   });
 
   test("parent's elm for a children === children's elm, even after rerender", async () => {
@@ -1217,36 +1229,37 @@ describe("composition", () => {
   });
 
   test("sub widget with t-ref and t-keepalive", async () => {
-    env.qweb.addTemplates(`
-      <templates>
-        <div t-name="ParentWidget">
-          <t t-if="state.ok"><ChildWidget t-ref="child" t-keepalive="1"/></t>
-        </div>
-        <span t-name="ChildWidget">Hello</span>
-      </templates>`);
-    class ChildWidget extends Widget {}
+    class ChildWidget extends Widget {
+      static template = xml`<span>Hello</span>`;
+    }
     class ParentWidget extends Widget {
-      state = useState({ ok: true });
+      static template = xml`
+            <div>
+                <t t-if="state.ok"><ChildWidget t-ref="child" t-keepalive="1"/></t>
+            </div>
+        `;
       static components = { ChildWidget };
+      state = useState({ ok: true });
+      child = useRef("child");
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
     let child = children(widget)[0];
 
     expect(fixture.innerHTML).toBe("<div><span>Hello</span></div>");
-    expect(widget.refs.child).toEqual(child);
+    expect(widget.child.comp).toEqual(child);
 
     widget.state.ok = false;
     await nextTick();
 
     expect(fixture.innerHTML).toBe("<div></div>");
-    expect(widget.refs.child).toEqual(child);
+    expect(widget.child.comp).toEqual(child);
 
     widget.state.ok = true;
     await nextTick();
 
     expect(fixture.innerHTML).toBe("<div><span>Hello</span></div>");
-    expect(widget.refs.child).toEqual(child);
+    expect(widget.child.comp).toEqual(child);
   });
 
   test("sub components rendered in a loop", async () => {
@@ -1582,6 +1595,7 @@ describe("class and style attributes with t-component", () => {
     class ParentWidget extends Widget {
       static components = { Child };
       state = useState({ b: true });
+      child = useRef("child");
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1593,7 +1607,7 @@ describe("class and style attributes with t-component", () => {
     await nextTick();
     expect(span.className).toBe("c d a");
 
-    (<any>widget.refs.child).state.d = false;
+    (widget.child.comp as Child).state.d = false;
     await nextTick();
     expect(span.className).toBe("c a");
 
@@ -1601,7 +1615,7 @@ describe("class and style attributes with t-component", () => {
     await nextTick();
     expect(span.className).toBe("c a b");
 
-    (<any>widget.refs.child).state.d = true;
+    (widget.child.comp as Child).state.d = true;
     await nextTick();
     expect(span.className).toBe("c a b d");
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
@@ -1623,6 +1637,7 @@ describe("class and style attributes with t-component", () => {
     class ParentWidget extends Widget {
       static components = { Child };
       state = useState({ b: true });
+      child = useRef("child");
     }
     const widget = new ParentWidget(env);
     await widget.mount(fixture);
@@ -1634,7 +1649,7 @@ describe("class and style attributes with t-component", () => {
     await nextTick();
     expect(span.className).toBe("c d a");
 
-    (<any>widget.refs.child).state.d = false;
+    (widget.child.comp as Child).state.d = false;
     await nextTick();
     expect(span.className).toBe("c a");
 
@@ -1642,7 +1657,7 @@ describe("class and style attributes with t-component", () => {
     await nextTick();
     expect(span.className).toBe("c a b");
 
-    (<any>widget.refs.child).state.d = true;
+    (widget.child.comp as Child).state.d = true;
     await nextTick();
     expect(span.className).toBe("c a b d");
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
@@ -3000,12 +3015,13 @@ describe("t-mounted directive", () => {
   test("combined with a t-ref", async () => {
     env.qweb.addTemplate("TestWidget", `<div><input t-ref="input" t-mounted="f"/></div>`);
     class TestWidget extends Widget {
+      input = useRef("input");
       f() {}
     }
     const widget = new TestWidget(env);
     widget.f = jest.fn();
     await widget.mount(fixture);
-    expect(widget.refs.input).toBeDefined();
+    expect(widget.input.el).toBeDefined();
     expect(widget.f).toHaveBeenCalledTimes(1);
   });
 });
@@ -3233,21 +3249,21 @@ describe("t-slot directive", () => {
   });
 
   test("refs are properly bound in slots", async () => {
-    env.qweb.addTemplates(`
-        <templates>
-          <div t-name="Parent">
+    class Dialog extends Widget {
+      static template = xml`<span><t t-slot="footer"/></span>`;
+    }
+    class Parent extends Widget {
+      static template = xml`
+          <div>
             <span class="counter"><t t-esc="state.val"/></span>
             <Dialog>
               <t t-set="footer"><button t-ref="myButton" t-on-click="doSomething">do something</button></t>
             </Dialog>
           </div>
-          <span t-name="Dialog"><t t-slot="footer"/></span>
-        </templates>
-    `);
-    class Dialog extends Widget {}
-    class Parent extends Widget {
+        `;
       static components = { Dialog };
       state = useState({ val: 0 });
+      button = useRef("myButton");
       doSomething() {
         this.state.val++;
       }
@@ -3259,7 +3275,7 @@ describe("t-slot directive", () => {
       '<div><span class="counter">0</span><span><button>do something</button></span></div>'
     );
 
-    (<any>parent.refs.myButton).click();
+    parent.button.el!.click();
     await nextTick();
 
     expect(fixture.innerHTML).toBe(

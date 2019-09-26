@@ -1,6 +1,6 @@
 import { Component, Env } from "../src/component/component";
 import { QWeb } from "../src/qweb/index";
-import { useState } from "../src/hooks";
+import { useState, useRef } from "../src/hooks";
 import {
   makeDeferred,
   makeTestFixture,
@@ -150,6 +150,7 @@ describe("animations", () => {
     );
     class TestWidget extends Widget {
       state = useState({ hide: false });
+      span = useRef("span");
     }
     const widget = new TestWidget(env);
 
@@ -164,7 +165,7 @@ describe("animations", () => {
     });
     await widget.mount(fixture);
     spanNode = widget.el!.children[0];
-    expect(widget.refs.span).toBe(spanNode);
+    expect(widget.span.el).toBe(spanNode);
     expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
     await def; // wait for the mocked repaint to be done
     spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition

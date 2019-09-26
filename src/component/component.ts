@@ -85,6 +85,7 @@ interface Internal<T extends Env, Props> {
   render: CompiledTemplate | null;
   mountedHandlers: { [key: number]: Function };
   classObj: { [key: string]: boolean } | null;
+  refs: { [key: string]: Component<T, any> | HTMLElement | undefined } | null;
 }
 
 //------------------------------------------------------------------------------
@@ -97,6 +98,9 @@ export class Component<T extends Env, Props extends {}> {
   static template?: string | null = null;
   static _template?: string | null = null;
   static _current?: any | null = null;
+  static components = {};
+  static props?: any;
+  static defaultProps?: any;
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -105,18 +109,9 @@ export class Component<T extends Env, Props extends {}> {
   get el(): HTMLElement | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
   }
-  static components = {};
 
   env: T;
   props: Props;
-
-  // type of props is not easily representable in typescript...
-  static props?: any;
-  static defaultProps?: any;
-
-  refs: {
-    [key: string]: Component<T, any> | HTMLElement | undefined;
-  } = {};
 
   //--------------------------------------------------------------------------
   // Lifecycle
@@ -192,7 +187,8 @@ export class Component<T extends Env, Props extends {}> {
       mountedHandlers: {},
       observer: null,
       render: null,
-      classObj: null
+      classObj: null,
+      refs: null
     };
   }
 

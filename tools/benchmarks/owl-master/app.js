@@ -1,6 +1,6 @@
 import { buildData, startMeasure, stopMeasure, formatNumber } from "../shared/utils.js";
 
-const useState = owl.hooks.useState;
+const { useState, useRef } = owl.hooks;
 //------------------------------------------------------------------------------
 // Likes Counter Widget
 //------------------------------------------------------------------------------
@@ -34,6 +34,7 @@ class Message extends owl.Component {
 class App extends owl.Component {
   static components = { Message };
   state = useState({ messages: [], multipleFlag: false, clearAfterFlag: false });
+  logRef = useRef("log");
 
   mounted() {
     this.log(`Benchmarking Owl v${owl.__info__.version} (build date: ${owl.__info__.date})`);
@@ -130,12 +131,12 @@ class App extends owl.Component {
       div.classList.add("bold");
     }
     div.textContent = `> ${str}`;
-    this.refs.log.appendChild(div);
-    this.refs.log.scrollTop = this.refs.log.scrollHeight;
+    this.logRef.el.appendChild(div);
+    this.logRef.el.scrollTop = this.logRef.el.scrollHeight;
   }
 
   clearLog() {
-    this.refs.log.innerHTML = "";
+    this.logRef.el.innerHTML = "";
   }
 }
 

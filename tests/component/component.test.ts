@@ -4418,3 +4418,28 @@ describe("dynamic t-props", () => {
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
   });
 });
+
+describe("support svg components", () => {
+  test("add proper namespace to svg", async () => {
+    class GComp extends Widget {
+      static template = xml`
+        <g>
+            <circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/>
+        </g>`;
+    }
+
+    class Svg extends Widget {
+      static template = xml`
+        <svg>
+            <GComp/>
+        </svg>`;
+      static components = { GComp };
+    }
+    const widget = new Svg(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<svg><g><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"></circle></g></svg>'
+    );
+  });
+});

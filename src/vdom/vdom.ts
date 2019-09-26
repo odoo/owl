@@ -568,9 +568,13 @@ export function addNS(data: any, children: VNodes | undefined, sel: string | und
   data.ns = "http://www.w3.org/2000/svg";
   if (sel !== "foreignObject" && children !== undefined) {
     for (let i = 0, iLen = children.length; i < iLen; ++i) {
-      let childData = children[i].data;
+      const child = children[i];
+      if (child === null) {
+        continue;
+      }
+      let childData = child.data;
       if (childData !== undefined) {
-        addNS(childData, (children[i] as VNode).children as VNodes, children[i].sel);
+        addNS(childData, (child as VNode).children as VNodes, child.sel);
       }
     }
   }

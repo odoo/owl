@@ -1,5 +1,5 @@
 import { h, patch } from "../src/vdom";
-import { init } from "../src/vdom/vdom";
+import { init, addNS } from "../src/vdom/vdom";
 
 function map(list, fn) {
   var ret: any[] = [];
@@ -206,19 +206,17 @@ describe("snabbdom", function() {
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
 
       // verify that svg tag automatically gets svg namespace
-      elm = patch(vnode0, h("svg", [h("foreignObject", [h("div", ["I am HTML embedded in SVG"])])]))
+       const vnode = h("svg", [h("foreignObject", [h("div", ["I am HTML embedded in SVG"])])]);
+       // need to add namespace manually. it is usually done by the template
+       // compiler
+      addNS(vnode.data,(vnode as any).children, vnode.sel);
+
+      elm = patch(vnode0, vnode)
         .elm;
       expect(elm.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.firstChild.namespaceURI).toBe(XHTMLNamespace);
 
-      // verify that svg tag with extra selectors gets svg namespace
-      elm = patch(vnode0, h("svg#some-id")).elm;
-      expect(elm.namespaceURI).toBe(SVGNamespace);
-
-      // verify that non-svg tag beginning with 'svg' does NOT get namespace
-      elm = patch(vnode0, h("svg-custom-el")).elm;
-      expect(elm.namespaceURI).not.toBe(SVGNamespace);
     });
 
     test("receives classes in selector", function() {

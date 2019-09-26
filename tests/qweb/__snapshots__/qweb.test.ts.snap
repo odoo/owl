@@ -676,6 +676,29 @@ exports[`misc global 1`] = `
 }"
 `;
 
+exports[`properly support svg add proper namespace to g tags 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('g', p1, c1);
+    result = vn1;
+    var _2 = '50';
+    var _3 = '50';
+    var _4 = '4';
+    var _5 = 'green';
+    var _6 = '1';
+    var _7 = 'yellow';
+    let c8 = [], p8 = {key:8,attrs:{cx: _2,cy: _3,r: _4,stroke: _5,\\"stroke-width\\": _6,fill: _7}};
+    var vn8 = h('circle', p8, c8);
+    c1.push(vn8);
+    c1.push({text: \` \`});
+    utils.addNameSpace(vn1);
+    return vn1;
+}"
+`;
+
 exports[`properly support svg add proper namespace to svg 1`] = `
 "function anonymous(context,extra
 ) {

@@ -96,8 +96,8 @@ const UTILS: Utils = {
   },
   shallowEqual,
   addNameSpace(vnode) {
-      addNS(vnode.data, vnode.children, vnode.sel);
-  },
+    addNS(vnode.data, vnode.children, vnode.sel);
+  }
 };
 
 function parseXML(xml: string): Document {
@@ -541,9 +541,16 @@ export class QWeb extends EventBus {
     }
 
     this._compileChildren(node, ctx);
-    if (node.nodeName === 'svg') {
-        ctx.rootContext.shouldDefineUtils = true;
-        ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
+    // svg support
+    // we hadd svg namespace if it is a svg or if it is a g, but only if it is
+    // the root node.  This is the easiest way to support svg sub components:
+    // they need to have a g tag as root. Otherwise, we would need a complete
+    // list of allowed svg tags.
+    const shouldAddNS =
+      node.nodeName === "svg" || (node.nodeName === "g" && ctx.rootNode === ctx.parentNode);
+    if (shouldAddNS) {
+      ctx.rootContext.shouldDefineUtils = true;
+      ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
     }
 
     for (let { directive, value, fullName } of validDirectives) {

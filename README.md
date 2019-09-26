@@ -18,9 +18,8 @@ the [Odoo](https://www.odoo.com/) Web Client. OWL's main features are:
 Here is a short example to illustrate interactive components:
 
 ```javascript
-import { Component, QWeb } from 'owl'
+import { Component, QWeb, useState } from 'owl'
 import { xml } from 'owl/tags'
-import { useState } from 'owl/hooks'
 
 class Counter extends Component {
   static template = xml`

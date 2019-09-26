@@ -56,3 +56,32 @@ Note: This is more an internal tool, useful for people working on Owl.
 The benchmarks application is a very small application, implemented in different
 frameworks, and in different versions of Owl. This is a simple internal tool,
 useful to compare various performance metrics on some tasks.
+
+## Single File Component
+
+If you want to have `xml` syntax highlighting while using the `xml` helper which
+helps you define inline templates, there is a VS Code addon `Comment tagged template`
+which, if installed, does exactly that.  To enable it, you need to add a comment,
+like this:
+
+
+```js
+// -----------------------------------------------------------------------------
+// TEMPLATE
+// -----------------------------------------------------------------------------
+const TEMPLATE = xml/* xml */ `
+	<div class="main two-columns">
+		<Sidebar/>
+		<Content />
+	</div>`;
+
+// -----------------------------------------------------------------------------
+// CODE
+// -----------------------------------------------------------------------------
+class MyComponent extends Component {
+    static template = TEMPLATE;
+    static components = { Sidebar, Content };
+
+    // rest of component...
+}
+```

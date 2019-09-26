@@ -5,6 +5,7 @@
 - [Overview](#overview)
 - [Example](#example)
 - [Reference](#reference)
+  - [Reactive System](#reactive-system)
   - [Properties](#properties)
   - [Static Properties](#static-properties)
   - [Methods](#methods)
@@ -22,6 +23,7 @@
   - [Slots](#slots)
   - [Asynchronous Rendering](#asynchronous-rendering)
   - [Error Handling](#error-handling)
+  - [Functional Components](#functional-components)
 
 ## Overview
 
@@ -77,7 +79,19 @@ Owl will use the component's name as template name. Here,
 a state object is defined, by using the `useState` hook. It is not mandatory to use the state object, but it is certainly encouraged. The result of the `useState` call is
 [observed](observer.md), and any change to it will cause a rerendering.
 
-## Reactive system
+
+## Reference
+
+An Owl component is a small class which represent a component or some UI element.
+It exists in the context of an environment (`env`), which is propagated from a
+parent to its children. The environment needs to have a QWeb instance, which
+will be used to render the component template.
+
+Be aware that the name of the component may be significant: if a component does
+not define a `template` key, then Owl will lookup in QWeb to
+find a template with the component name (or one of its ancestor).
+
+### Reactive system
 
 OWL components can be made reactive by observing some part of their state. See the [hooks](hooks.md) section for more details.
 
@@ -95,17 +109,6 @@ class SomeComponent extends owl.Component {
 
 Note that there is an important limitation: hooks need to be called in the
 constructor.
-
-## Reference
-
-An Owl component is a small class which represent a component or some UI element.
-It exists in the context of an environment (`env`), which is propagated from a
-parent to its children. The environment needs to have a QWeb instance, which
-will be used to render the component template.
-
-Be aware that the name of the component may be significant: if a component does
-not define a `template` key, then Owl will lookup in QWeb to
-find a template with the component name (or one of its ancestor).
 
 ### Properties
 
@@ -1157,3 +1160,30 @@ env.qweb.on("error", null, function(error) {
   // react to the error
 });
 ```
+
+### Functional Components
+
+Owl does not exactly have functional components.  However, there is an extremely
+close alternative: calling sub templates.
+
+A stateless functional component in react is usually some kind of function that
+maps props to a virtual dom (often with `jsx`). So, basically, almost like a
+template rendered with `props`.  In Owl, this can be done by
+simply defining a template, that will access the `props` object:
+
+```js
+const Welcome = xml`<h1>Hello, {props.name}</h1>`;
+
+class MyComponent extends Component {
+    static template = xml`
+        <div>
+            <t t-call=${Welcome}/>
+            <div>something</div>
+        </div>
+    `;
+}
+```
+
+The way this works is that sub templates are inlined, and have access to the
+ambient context. They can therefore access `props`, and any other part of the
+caller component.

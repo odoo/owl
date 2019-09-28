@@ -61,6 +61,8 @@ describe("hooks", () => {
     }
     const component = new MyComponent(env);
     await component.mount(fixture);
+    expect(component).not.toHaveProperty("mounted");
+    expect(component).not.toHaveProperty("willUnmount");
     expect(fixture.innerHTML).toBe("<div>hey</div>");
     expect(steps).toEqual(["mounted"]);
     component.unmount();

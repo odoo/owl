@@ -84,6 +84,7 @@ interface Internal<T extends Env, Props> {
   observer: Observer | null;
   render: CompiledTemplate | null;
   mountedHandlers: { [key: number]: Function };
+  willUnmountCB: Function | null;
   classObj: { [key: string]: boolean } | null;
   refs: { [key: string]: Component<T, any> | HTMLElement | undefined } | null;
 }
@@ -185,6 +186,7 @@ export class Component<T extends Env, Props extends {}> {
       currentFiber: null,
       boundHandlers: {},
       mountedHandlers: {},
+      willUnmountCB: null,
       observer: null,
       render: null,
       classObj: null,
@@ -481,19 +483,22 @@ export class Component<T extends Env, Props extends {}> {
     }
     __owl__.isMounted = true;
     const handlers = __owl__.mountedHandlers;
-    for (let key in handlers) {
-      handlers[key]();
-    }
     try {
       this.mounted();
+      for (let key in handlers) {
+        handlers[key]();
+      }
     } catch (e) {
       errorHandler(e, this);
     }
   }
 
   __callWillUnmount() {
-    this.willUnmount();
     const __owl__ = this.__owl__;
+    if (__owl__.willUnmountCB) {
+      __owl__.willUnmountCB();
+    }
+    this.willUnmount();
     __owl__.isMounted = false;
     const children = __owl__.children;
     for (let id in children) {

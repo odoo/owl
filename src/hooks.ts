@@ -33,13 +33,11 @@ export function useState<T>(state: T): T {
  * Mounted hook. The callback will be called when the current component is
  * mounted.  Note that the component mounted method is called first.
  */
+let nextID = 1;
+
 export function onMounted(cb) {
   const component: Component<any, any> = Component._current;
-  const current = component.mounted;
-  component.mounted = function() {
-    current.call(component);
-    cb();
-  };
+  component.__owl__.mountedHandlers[`h${nextID++}`] = cb;
 }
 
 /**
@@ -48,11 +46,15 @@ export function onMounted(cb) {
  */
 export function onWillUnmount(cb) {
   const component: Component<any, any> = Component._current;
-  const current = component.willUnmount;
-  component.willUnmount = function() {
-    cb();
-    current.call(component);
-  };
+  if (component.__owl__.willUnmountCB) {
+    const current = component.__owl__.willUnmountCB;
+    component.__owl__.willUnmountCB = function() {
+      cb.call(component);
+      current.call(component);
+    };
+  } else {
+    component.__owl__.willUnmountCB = cb;
+  }
 }
 
 /**

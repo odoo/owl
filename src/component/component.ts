@@ -49,7 +49,6 @@ export interface Fiber<Props> {
   patchQueue: Fiber<any>[];
   component: Component<any, any>;
   vnode: VNode | null;
-  willPatchResult: any;
   props: Props;
   promise: Promise<VNode> | null;
   //   handlers?: any;
@@ -85,6 +84,8 @@ interface Internal<T extends Env, Props> {
   render: CompiledTemplate | null;
   mountedHandlers: { [key: number]: Function };
   willUnmountCB: Function | null;
+  willPatchCB: Function | null;
+  patchedCB: Function | null;
   classObj: { [key: string]: boolean } | null;
   refs: { [key: string]: Component<T, any> | HTMLElement | undefined } | null;
 }
@@ -187,6 +188,8 @@ export class Component<T extends Env, Props extends {}> {
       boundHandlers: {},
       mountedHandlers: {},
       willUnmountCB: null,
+      willPatchCB: null,
+      patchedCB: null,
       observer: null,
       render: null,
       classObj: null,
@@ -237,8 +240,6 @@ export class Component<T extends Env, Props extends {}> {
    * It is not called on the initial render.  This is useful to get some
    * information which are in the DOM.  For example, the current position of the
    * scrollbar
-   *
-   * The return value of willPatch will be given to the patched function.
    */
   willPatch(): any {}
 
@@ -254,10 +255,8 @@ export class Component<T extends Env, Props extends {}> {
    * One need to be careful, because updates here will cause rerender, which in
    * turn will cause other calls to updated. So, we need to be particularly
    * careful at avoiding endless cycles.
-   *
-   * The snapshot parameter is the result of the call to willPatch.
    */
-  patched(snapshot: any) {}
+  patched() {}
 
   /**
    * willUnmount is a hook that is called each time just before a component is
@@ -362,7 +361,6 @@ export class Component<T extends Env, Props extends {}> {
       component: this,
       vnode: null,
       patchQueue: parent ? parent.patchQueue : [],
-      willPatchResult: null,
       props: this.props,
       promise: null
     };
@@ -686,9 +684,11 @@ export class Component<T extends Env, Props extends {}> {
     try {
       const patchLen = patchQueue.length;
       for (let i = 0; i < patchLen; i++) {
-        const fiber = patchQueue[i];
-        component = fiber.component;
-        fiber.willPatchResult = component.willPatch();
+        component = patchQueue[i].component;
+        if (component.__owl__.willPatchCB) {
+          component.__owl__.willPatchCB();
+        }
+        component.willPatch();
       }
       for (let i = 0; i < patchLen; i++) {
         const fiber = patchQueue[i];
@@ -696,9 +696,11 @@ export class Component<T extends Env, Props extends {}> {
         component.__patch(fiber.vnode);
       }
       for (let i = patchLen - 1; i >= 0; i--) {
-        const fiber = patchQueue[i];
-        component = fiber.component;
-        component.patched(fiber.willPatchResult);
+        component = patchQueue[i].component;
+        component.patched();
+        if (component.__owl__.patchedCB) {
+          component.__owl__.patchedCB();
+        }
       }
     } catch (e) {
       errorHandler(e, component);

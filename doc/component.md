@@ -329,9 +329,6 @@ before an actual DOM patch, and is only intended to be used to save some local
 DOM state. Also, it will not be called if the component is not in the DOM (this can
 happen with components with `t-keepalive`).
 
-The return value of this method will be given as the first argument of the
-corresponding `patched` call.
-
 #### `patched(snapshot)`
 
 This hook is called whenever a component did actually update its DOM (most
@@ -341,8 +338,6 @@ This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
 component was patched. Note that this hook will not be called if the compoent is
 not in the DOM (this can happen with components with `t-keepalive`).
-
-The `snapshot` parameter is the result of the previous `willPatch` call.
 
 Updating the compoent state in this hook is possible, but not encouraged.
 One need to be careful, because updates here will cause rerender, which in
@@ -1219,7 +1214,7 @@ class Node extends Component {
             </t>
         </g>
     `;
-    static components = { Node };
+  static components = { Node };
 }
 
 class RootNode extends Component {
@@ -1230,12 +1225,12 @@ class RootNode extends Component {
     `;
   static components = { Node };
   graph = {
-      label: "a",
-      children: [
-          {label: "b"},
-          {label: "c", children: [{label: "d"}, {label: "e"}]},
-          {label: "f", children: [{label: "g"}]},
-      ]
+    label: "a",
+    children: [
+      { label: "b" },
+      { label: "c", children: [{ label: "d" }, { label: "e" }] },
+      { label: "f", children: [{ label: "g" }] }
+    ]
   };
 }
 ```

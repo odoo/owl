@@ -1,6 +1,6 @@
 import { makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component, Env } from "../src/component/component";
-import { useState, onMounted, onWillUnmount, useRef } from "../src/hooks";
+import { useState, onMounted, onWillUnmount, useRef, onPatched, onWillPatch } from "../src/hooks";
 import { xml } from "../src/tags";
 
 //------------------------------------------------------------------------------
@@ -148,5 +148,172 @@ describe("hooks", () => {
     counter.increment();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button>1</button></div>");
+  });
+
+  test("can use onPatched, onWillPatch", async () => {
+    const steps: string[] = [];
+    function useMyHook() {
+      onWillPatch(() => {
+        steps.push("willPatch");
+      });
+      onPatched(() => {
+        steps.push("patched");
+      });
+    }
+
+    class MyComponent extends Component<any, any> {
+      static template = xml`<div><t t-if="state.flag">hey</t></div>`;
+      state = useState({ flag: true });
+
+      constructor(env) {
+        super(env);
+        useMyHook();
+      }
+    }
+
+    const component = new MyComponent(env);
+    await component.mount(fixture);
+    expect(component).not.toHaveProperty("patched");
+    expect(component).not.toHaveProperty("willPatch");
+    expect(steps).toEqual([]);
+
+    expect(fixture.innerHTML).toBe("<div>hey</div>");
+    component.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    expect(steps).toEqual(["willPatch", "patched"]);
+  });
+
+  test("patched, willPatch, onPatched, onWillPatch order", async () => {
+    const steps: string[] = [];
+    function useMyHook() {
+      onPatched(() => {
+        steps.push("hook:patched");
+      });
+      onWillPatch(() => {
+        steps.push("hook:willPatch");
+      });
+    }
+    class MyComponent extends Component<any, any> {
+      static template = xml`<div><t t-if="state.flag">hey</t></div>`;
+      state = useState({ flag: true });
+
+      constructor(env) {
+        super(env);
+        useMyHook();
+      }
+      willPatch() {
+        steps.push("comp:willPatch");
+      }
+      patched() {
+        steps.push("comp:patched");
+      }
+    }
+    const component = new MyComponent(env);
+    await component.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>hey</div>");
+    component.state.flag = false;
+    await nextTick();
+
+    expect(steps).toEqual(["hook:willPatch", "comp:willPatch", "comp:patched", "hook:patched"]);
+  });
+
+  test("two different call to willPatch/patched should work", async () => {
+    const steps: string[] = [];
+    function useMyHook(i) {
+      onPatched(() => {
+        steps.push("hook:patched" + i);
+      });
+      onWillPatch(() => {
+        steps.push("hook:willPatch" + i);
+      });
+    }
+    class MyComponent extends Component<any, any> {
+      static template = xml`<div>hey<t t-esc="state.value"/></div>`;
+      state = useState({ value: 1 });
+      constructor(env) {
+        super(env);
+        useMyHook(1);
+        useMyHook(2);
+      }
+    }
+    const component = new MyComponent(env);
+    await component.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>hey1</div>");
+    component.state.value++;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>hey2</div>");
+
+    expect(steps).toEqual([
+      "hook:willPatch2",
+      "hook:willPatch1",
+      "hook:patched1",
+      "hook:patched2"
+    ]);
+  });
+
+  describe("autofocus hook", () => {
+    function useAutofocus(name) {
+      let ref = useRef(name);
+      let isInDom = false;
+      function updateFocus() {
+        if (!isInDom && ref.el) {
+          isInDom = true;
+          ref.el.focus();
+        } else if (isInDom && !ref.el) {
+          isInDom = false;
+        }
+      }
+      onPatched(updateFocus);
+      onMounted(updateFocus);
+    }
+
+    test("simple input", async () => {
+      class SomeComponent extends Component<any, any> {
+        static template = xml`
+            <div>
+                <input t-ref="input1"/>
+                <input t-ref="input2"/>
+            </div>`;
+
+        constructor(env) {
+          super(env);
+          useAutofocus("input2");
+        }
+      }
+
+      const component = new SomeComponent(env);
+      await component.mount(fixture);
+      expect(fixture.innerHTML).toBe("<div><input><input></div>");
+      const input2 = fixture.querySelectorAll("input")[1];
+      expect(input2).toBe(document.activeElement);
+    });
+
+    test("input in a t-if", async () => {
+      class SomeComponent extends Component<any, any> {
+        static template = xml`
+            <div>
+                <input t-ref="input1"/>
+                <t t-if="state.flag"><input t-ref="input2"/></t>
+            </div>`;
+
+        state = useState({ flag: false });
+        constructor(env) {
+          super(env);
+          useAutofocus("input2");
+        }
+      }
+
+      const component = new SomeComponent(env);
+      await component.mount(fixture);
+      expect(fixture.innerHTML).toBe("<div><input></div>");
+      expect(document.activeElement).toBe(document.body);
+
+      component.state.flag = true;
+      await nextTick();
+      const input2 = fixture.querySelectorAll("input")[1];
+      expect(input2).toBe(document.activeElement);
+    });
   });
 });

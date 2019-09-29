@@ -725,10 +725,8 @@ describe("lifecycle hooks", () => {
       state = useState({ n: 1 });
       willPatch() {
         steps.push("parent:willPatch");
-        return "leffe";
       }
-      patched(snapshot) {
-        expect(snapshot).toBe("leffe");
+      patched() {
         steps.push("parent:patched");
       }
     }

@@ -40,23 +40,35 @@ export function onMounted(cb) {
   component.__owl__.mountedHandlers[`h${nextID++}`] = cb;
 }
 
+function makeLifecycleHook(method: string, reverse: boolean = false) {
+  return function(cb) {
+    const component: Component<any, any> = Component._current;
+    if (component.__owl__[method]) {
+      const current = component.__owl__[method];
+      if (reverse) {
+        component.__owl__[method] = function() {
+          current.call(component);
+          cb.call(component);
+        };
+      } else {
+        component.__owl__[method] = function() {
+          cb.call(component);
+          current.call(component);
+        };
+      }
+    } else {
+      component.__owl__[method] = cb;
+    }
+  };
+}
+
 /**
  * willUnmount hook. The callback will be called when the current component is
  * willUnmounted.  Note that the component mounted method is called last.
  */
-export function onWillUnmount(cb) {
-  const component: Component<any, any> = Component._current;
-  if (component.__owl__.willUnmountCB) {
-    const current = component.__owl__.willUnmountCB;
-    component.__owl__.willUnmountCB = function() {
-      cb.call(component);
-      current.call(component);
-    };
-  } else {
-    component.__owl__.willUnmountCB = cb;
-  }
-}
-
+export const onWillUnmount = makeLifecycleHook("willUnmountCB");
+export const onWillPatch = makeLifecycleHook("willPatchCB");
+export const onPatched = makeLifecycleHook("patchedCB", true);
 /**
  * useRef hook
  *

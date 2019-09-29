@@ -3,7 +3,8 @@
 ## Content
 
 - [Overview](#overview)
-- [Example](#example)
+- [Example: Mouse Position](#example-mouse-position)
+- [Example: Autofocus](#example-autofocus)
 - [Reference](#reference)
   - [One Rule](#one-rule)
   - [`useState`](#usestate)
@@ -28,7 +29,7 @@ Hooks works beautifully with Owl components: they solve the problems mentioned
 above, and in particular, they are the perfect way to make your component
 reactive.
 
-## Example
+## Example: mouse position
 
 Here is the classical example of a non trivial hook to track the mouse position.
 
@@ -57,9 +58,9 @@ function useMouse() {
 // Main root component
 class App extends owl.Component {
   static template = xml`
-      <div t-name="App">
-        <div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>
-      </div>`;
+    <div t-name="App">
+      <div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>
+    </div>`;
 
   // this hooks is bound to the 'mouse' property.
   mouse = useMouse();
@@ -68,6 +69,49 @@ class App extends owl.Component {
 
 Note that we use the prefix `use` for hooks, just like in React. This is just
 a convention.
+
+## Example: autofocus
+
+Hooks can be combined to create the desired effect. For example, the following
+hook combines the `useRef` hook with the `onPatched` and `onMounted` functions
+to create an easy way to focus an input whenever it appears in the DOM:
+
+```js
+function useAutofocus(name) {
+  let ref = useRef(name);
+  let isInDom = false;
+  function updateFocus() {
+    if (!isInDom && ref.el) {
+      isInDom = true;
+      ref.el.focus();
+    } else if (isInDom && !ref.el) {
+      isInDom = false;
+    }
+  }
+  onPatched(updateFocus);
+  onMounted(updateFocus);
+}
+```
+
+This hook takes the name of a valid `t-ref` directive, which should be present
+in the template. It then checks whenever the component is mounted or patched if
+the reference is not valid, and in this case, it will focus the node element.
+This hook can be used like this:
+
+```js
+class SomeComponent extends Component {
+  static template = xml`
+    <div>
+        <input />
+        <input t-ref="myinput"/>
+    </div>`;
+
+  constructor(...args) {
+    super(...args);
+    useAutofocus("myinput");
+  }
+}
+```
 
 ## Reference
 
@@ -79,21 +123,21 @@ constructor (or in class fields):
 ```js
 // ok
 class SomeComponent extends Component {
-  state = useState({value: 0});
+  state = useState({ value: 0 });
 }
 
 // also ok
 class SomeComponent extends Component {
   constructor(...args) {
     super(...args);
-    this.state = useState({value: 0});
+    this.state = useState({ value: 0 });
   }
 }
 
 // not ok: this is executed after the constructor is called
 class SomeComponent extends Component {
   async willStart() {
-    this.state = useState({value: 0});
+    this.state = useState({ value: 0 });
   }
 }
 ```

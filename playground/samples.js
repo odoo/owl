@@ -5,7 +5,7 @@ class Greeter extends Component {
     state = useState({ word: 'Hello' });
 
     toggle() {
-        this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi'
+        this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi';
     }
 }
 

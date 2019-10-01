@@ -4268,7 +4268,7 @@
     exports.utils = utils;
 
     exports.__info__.version = '0.22.0';
-    exports.__info__.date = '2019-10-01T19:05:23.486Z';
+    exports.__info__.date = '2019-10-01T19:32:47.287Z';
     exports.__info__.hash = 'b859fcb';
     exports.__info__.url = 'https://github.com/odoo/owl';
 

@@ -53,16 +53,17 @@
         <h2>Example</h2>
         <div class="row">
           <section class="column">
-<pre><code class="javascript">class Counter extends owl.Component {
-  state = { value: 0 };
+<pre><code class="javascript">import { Component, QWeb, useState } from "owl";
+
+class Counter extends Component {
+  state = useState({ value: 0 });
 
   increment() {
     this.state.value++;
   }
 }
 
-const qweb = new owl.QWeb(TEMPLATES);
-const counter = new Counter({ qweb });
+const counter = new Counter({ qweb: new QWeb() });
 counter.mount(document.body);</code></pre>
           </section>
           <section class="column">

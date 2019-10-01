@@ -385,6 +385,7 @@
         return result;
     }
 
+    const INTERP_REGEXP = /\{\{.*?\}\}/g;
     //------------------------------------------------------------------------------
     // Compilation Context
     //------------------------------------------------------------------------------
@@ -402,6 +403,7 @@
             this.shouldDefineParent = false;
             this.shouldDefineQWeb = false;
             this.shouldDefineUtils = false;
+            this.shouldDefineRefs = false;
             this.shouldDefineResult = true;
             this.shouldProtectContext = false;
             this.shouldTrackScope = false;
@@ -438,6 +440,9 @@
             }
             if (this.shouldDefineResult) {
                 this.code.unshift("    let result;");
+            }
+            if (this.shouldDefineRefs) {
+                this.code.unshift("    context.__owl__.refs = context.__owl__.refs || {};");
             }
             if (this.shouldDefineOwner) {
                 // this is necessary to prevent some directives (t-forach for ex) to
@@ -528,7 +533,7 @@
          *   '{{x ? 'a': 'b'}}' -> (x ? 'a' : 'b')
          */
         interpolate(s) {
-            let matches = s.match(/\{\{.*?\}\}/g);
+            let matches = s.match(INTERP_REGEXP);
             if (matches && matches[0].length === s.length) {
                 return `(${this.formatExpression(s.slice(2, -2))})`;
             }
@@ -1133,9 +1138,13 @@
         data.ns = "http://www.w3.org/2000/svg";
         if (sel !== "foreignObject" && children !== undefined) {
             for (let i = 0, iLen = children.length; i < iLen; ++i) {
-                let childData = children[i].data;
+                const child = children[i];
+                if (child === null) {
+                    continue;
+                }
+                let childData = child.data;
                 if (childData !== undefined) {
-                    addNS(childData, children[i].children, children[i].sel);
+                    addNS(childData, child.children, child.sel);
                 }
             }
         }
@@ -1173,12 +1182,6 @@
                 if (primitive(children[i]))
                     children[i] = vnode(undefined, undefined, undefined, children[i], undefined);
             }
-        }
-        if (sel[0] === "s" &&
-            sel[1] === "v" &&
-            sel[2] === "g" &&
-            (sel.length === 3 || sel[3] === "." || sel[3] === "#")) {
-            addNS(data, children, sel);
         }
         return vnode(sel, data, children, text, undefined);
     }
@@ -1232,9 +1235,7 @@
         if (!result.ok) {
             throw new Error("Error while fetching xml templates");
         }
-        let templates = await result.text();
-        templates = templates.replace(/<!--[\s\S]*?-->/g, "");
-        return templates;
+        return await result.text();
     }
     function escape(str) {
         if (str === undefined) {
@@ -1322,10 +1323,15 @@
             }
             return expr;
         },
-        shallowEqual
+        shallowEqual,
+        addNameSpace(vnode) {
+            addNS(vnode.data, vnode.children, vnode.sel);
+        }
     };
     function parseXML(xml) {
         const parser = new DOMParser();
+        // we remove comments from the xml string
+        xml = xml.replace(/<!--[\s\S]*?-->/g, "");
         const doc = parser.parseFromString(xml, "text/xml");
         if (doc.getElementsByTagName("parsererror").length) {
             let msg = "Invalid XML in template.";
@@ -1436,7 +1442,7 @@
             this._processTemplate(elem);
             const template = {
                 elem,
-                fn: (context, extra) => {
+                fn: function (context, extra) {
                     const compiledFunction = this._compile(name, elem);
                     template.fn = compiledFunction;
                     return compiledFunction.call(this, context, extra);
@@ -1497,8 +1503,8 @@
          * to render a full component tree, since this is an asynchronous operation.
          * This method can only render templates without components.
          */
-        renderToString(name, context = {}) {
-            const vnode = this.render(name, context);
+        renderToString(name, context = {}, extra) {
+            const vnode = this.render(name, context, extra);
             if (vnode.sel === undefined) {
                 return vnode.text;
             }
@@ -1530,8 +1536,8 @@
             if (parentContext) {
                 ctx.templates = Object.create(parentContext.templates);
                 ctx.variables = Object.create(parentContext.variables);
-                ctx.nextID = parentContext.parentNode + 1;
-                ctx.parentNode = parentContext.parentNode;
+                ctx.nextID = parentContext.nextID + 1;
+                ctx.parentNode = parentContext.parentNode || ctx.nextID++;
                 ctx.allowMultipleRoots = true;
                 ctx.hasParentWidget = true;
                 ctx.shouldDefineResult = false;
@@ -1539,12 +1545,12 @@
                 for (let v in parentContext.variables) {
                     let variable = parentContext.variables[v];
                     if (variable.id) {
-                        ctx.addLine(`let ${variable.id} = extra.vars.${variable.id}`);
+                        ctx.addLine(`let ${variable.id} = extra.fiber.vars.${variable.id}`);
                     }
                 }
             }
             if (parentContext) {
-                ctx.addLine("    Object.assign(context, extra.scope);");
+                ctx.addLine("    Object.assign(context, extra.fiber.scope);");
             }
             this._compileNode(elem, ctx);
             if (!parentContext) {
@@ -1702,6 +1708,16 @@
                 ctx = ctx.subContext("inPreTag", true);
             }
             this._compileChildren(node, ctx);
+            // svg support
+            // we hadd svg namespace if it is a svg or if it is a g, but only if it is
+            // the root node.  This is the easiest way to support svg sub components:
+            // they need to have a g tag as root. Otherwise, we would need a complete
+            // list of allowed svg tags.
+            const shouldAddNS = node.nodeName === "svg" || (node.nodeName === "g" && ctx.rootNode === ctx.parentNode);
+            if (shouldAddNS) {
+                ctx.rootContext.shouldDefineUtils = true;
+                ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
+            }
             for (let { directive, value, fullName } of validDirectives) {
                 if (directive.finalize) {
                     directive.finalize({ node, qweb: this, ctx, fullName, value });
@@ -2125,7 +2141,7 @@
                         .join(",");
                     varCode = `{${content}}`;
                 }
-                ctx.addLine(`this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: ${varCode}, scope}));`);
+                ctx.addLine(`this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, fiber: {vars: ${varCode}, scope}}));`);
                 return true;
             }
             templateMap[subTemplate] = true;
@@ -2298,9 +2314,10 @@
         name: "ref",
         priority: 95,
         atNodeCreation({ ctx, value, addNodeHook }) {
+            ctx.rootContext.shouldDefineRefs = true;
             const refKey = `ref${ctx.generateID()}`;
             ctx.addLine(`const ${refKey} = ${ctx.interpolate(value)};`);
-            addNodeHook("create", `context.refs[${refKey}] = n.elm;`);
+            addNodeHook("create", `context.__owl__.refs[${refKey}] = n.elm;`);
         }
     });
     //------------------------------------------------------------------------------
@@ -2445,7 +2462,7 @@
             const type = node.getAttribute("type");
             let handler;
             let event = fullName.includes(".lazy") ? "change" : "input";
-            const expr = ctx.formatExpression(`state.${value}`);
+            const expr = ctx.formatExpression(value);
             if (node.tagName === "select") {
                 ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
                 addNodeHook("create", `n.elm.value=${expr};`);
@@ -2732,9 +2749,10 @@
             let refExpr = "";
             let refKey = "";
             if (ref) {
+                ctx.rootContext.shouldDefineRefs = true;
                 refKey = `ref${ctx.generateID()}`;
                 ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
-                refExpr = `context.refs[${refKey}] = w${componentID};`;
+                refExpr = `context.__owl__.refs[${refKey}] = w${componentID};`;
             }
             let transitionsInsertCode = "";
             if (transition) {
@@ -2742,7 +2760,7 @@
             }
             let finalizeComponentCode = `w${componentID}.${keepAlive ? "unmount" : "destroy"}();`;
             if (ref && !keepAlive) {
-                finalizeComponentCode += `delete context.refs[${refKey}];`;
+                finalizeComponentCode += `delete context.__owl__.refs[${refKey}];`;
             }
             if (transition) {
                 finalizeComponentCode = `let finalize = () => {
@@ -2825,8 +2843,10 @@
                 ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
             }
             let shouldProxy = false;
+            if (async || keepAlive) {
+                ctx.addLine(`const fiber${componentID} = Object.assign(Object.create(extra.fiber), {patchQueue: []});`);
+            }
             if (async) {
-                ctx.addLine(`const patchQueue${componentID} = [];`);
                 ctx.addLine(`c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`);
             }
             else {
@@ -2849,9 +2869,9 @@
             else {
                 ctx.addLine(`let props${componentID} = {${propStr}};`);
             }
-            ctx.addIf(`w${componentID} && w${componentID}.__owl__.renderPromise && !w${componentID}.__owl__.vnode`);
-            ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.renderProps)`);
-            ctx.addLine(`def${defID} = w${componentID}.__owl__.renderPromise;`);
+            ctx.addIf(`w${componentID} && w${componentID}.__owl__.currentFiber && !w${componentID}.__owl__.vnode`);
+            ctx.addIf(`utils.shallowEqual(props${componentID}, w${componentID}.__owl__.currentFiber.props)`);
+            ctx.addLine(`def${defID} = w${componentID}.__owl__.currentFiber.promise;`);
             ctx.addElse();
             ctx.addLine(`w${componentID}.destroy();`);
             ctx.addLine(`w${componentID} = false;`);
@@ -2859,8 +2879,13 @@
             ctx.closeIf();
             ctx.addIf(`!w${componentID}`);
             // new component
-            ctx.addLine(`let componentKey${componentID} = ${ctx.interpolate(value)};`);
-            ctx.addLine(`let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`);
+            let dynamicFallback = "";
+            if (!value.match(INTERP_REGEXP)) {
+                dynamicFallback = `|| ${ctx.formatExpression(value)}`;
+            }
+            const interpValue = ctx.interpolate(value);
+            ctx.addLine(`let componentKey${componentID} = ${interpValue};`);
+            ctx.addLine(`let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}]${dynamicFallback};`);
             // maybe only do this in dev mode...
             ctx.addLine(`if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`);
             if (QWeb.dev) {
@@ -2901,14 +2926,16 @@
                     QWeb.slots[`${slotId}_default`] = slotFn;
                 }
             }
-            let scopeVars = "";
+            let scopeVars;
             if (hasSlots) {
-                scopeVars += ctx.scopeVars.length ? `Object.assign({}, scope)` : varDefs.length ? `{}` : "";
-                if (varDefs.length) {
-                    scopeVars += `, {${varDefs.join(",")}}`;
-                }
+                let scope = ctx.scopeVars.length ? `Object.assign({}, scope)` : `{}`;
+                let vars = varDefs.length ? `{${varDefs.join(",")}}` : "undefined";
+                scopeVars = `${scope}, ${vars}`;
             }
-            ctx.addLine(`def${defID} = w${componentID}.__prepare(${scopeVars});`);
+            else {
+                scopeVars = "undefined, undefined";
+            }
+            ctx.addLine(`def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
             let registerCode = `c${ctx.parentNode}[_${dummyID}_index]=pvnode;`;
             if (shouldProxy) {
@@ -2917,18 +2944,18 @@
             ctx.addLine(`def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             // need to update component
-            let patchQueueCode = async ? `patchQueue${componentID}` : "extra.patchQueue";
+            let patchQueueCode = async || keepAlive ? `fiber${componentID}` : "extra.fiber";
             if (keepAlive) {
                 // if we have t-keepalive="1", the component could be unmounted, but then
                 // we __updateProps is called.  This is ok, but we do not want to call
                 // the willPatch/patched hooks of the component in this case, so we
                 // disable the patch queue
-                patchQueueCode = `w${componentID}.__owl__.isMounted ? ${patchQueueCode} : []`;
+                patchQueueCode = `w${componentID}.__owl__.isMounted ? extra.fiber : fiber${componentID}`;
             }
             if (QWeb.dev) {
                 ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
             }
-            ctx.addLine(`def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, extra.forceUpdate, ${patchQueueCode}${scopeVars &&
+            ctx.addLine(`def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, ${patchQueueCode}${scopeVars &&
             ", " + scopeVars});`);
             let keepAliveCode = "";
             if (keepAlive) {
@@ -2940,7 +2967,7 @@
                 ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
             }
             if (async) {
-                ctx.addLine(`def${defID}.then(w${componentID}.__applyPatchQueue.bind(w${componentID}, patchQueue${componentID}));`);
+                ctx.addLine(`def${defID}.then(w${componentID}.__applyPatchQueue.bind(w${componentID}, fiber${componentID}));`);
             }
             else {
                 ctx.addLine(`extra.promises.push(def${defID});`);
@@ -3075,8 +3102,8 @@
          * the t-component directive in a template)
          */
         constructor(parent, props) {
-            this.refs = {};
             const defaultProps = this.constructor.defaultProps;
+            Component._current = this;
             if (defaultProps) {
                 props = this.__applyDefaultProps(props, defaultProps);
             }
@@ -3121,14 +3148,14 @@
                 parent: p,
                 children: {},
                 cmap: {},
-                renderId: 1,
-                renderPromise: null,
-                renderProps: props || null,
+                currentFiber: null,
                 boundHandlers: {},
                 mountedHandlers: {},
+                willUnmountCB: null,
                 observer: null,
                 render: null,
-                classObj: null
+                classObj: null,
+                refs: null
             };
         }
         /**
@@ -3229,8 +3256,10 @@
             if (__owl__.isMounted) {
                 return;
             }
+            const fiber = this.__createFiber(false, undefined, undefined, undefined);
             if (!__owl__.vnode) {
-                const vnode = await this.__prepare();
+                fiber.promise = this.__prepareAndRender(fiber);
+                const vnode = await fiber.promise;
                 if (__owl__.isDestroyed) {
                     // component was destroyed before we get here...
                     return;
@@ -3238,9 +3267,10 @@
                 this.__patch(vnode);
             }
             else if (renderBeforeRemount) {
-                const patchQueue = [];
-                await this.__render(false, patchQueue, undefined, undefined);
-                this.__applyPatchQueue(patchQueue);
+                fiber.patchQueue.push(fiber);
+                fiber.promise = this.__render(fiber);
+                await fiber.promise;
+                this.__applyPatchQueue(fiber);
             }
             target.appendChild(this.el);
             if (document.body.contains(target)) {
@@ -3271,14 +3301,33 @@
             if (!__owl__.isMounted) {
                 return;
             }
-            const patchQueue = [];
-            const renderId = ++__owl__.renderId;
-            await this.__render(force, patchQueue, undefined, undefined);
-            if (__owl__.isMounted && renderId === __owl__.renderId) {
+            const fiber = this.__createFiber(force, undefined, undefined, undefined);
+            fiber.patchQueue.push(fiber);
+            fiber.promise = this.__render(fiber);
+            await fiber.promise;
+            if (__owl__.isMounted && fiber === __owl__.currentFiber) {
                 // we only update the vnode and the actual DOM if no other rendering
                 // occurred between now and when the render method was initially called.
-                this.__applyPatchQueue(patchQueue);
+                this.__applyPatchQueue(fiber);
             }
+        }
+        __createFiber(force, scope, vars, parent) {
+            const fiber = {
+                force,
+                scope,
+                vars,
+                rootFiber: null,
+                isCancelled: false,
+                component: this,
+                vnode: null,
+                patchQueue: parent ? parent.patchQueue : [],
+                willPatchResult: null,
+                props: this.props,
+                promise: null
+            };
+            fiber.rootFiber = parent ? parent.rootFiber : fiber;
+            this.__owl__.currentFiber = fiber;
+            return fiber;
         }
         /**
          * Destroy the component.  This operation is quite complex:
@@ -3386,19 +3435,22 @@
             }
             __owl__.isMounted = true;
             const handlers = __owl__.mountedHandlers;
-            for (let key in handlers) {
-                handlers[key]();
-            }
             try {
                 this.mounted();
+                for (let key in handlers) {
+                    handlers[key]();
+                }
             }
             catch (e) {
                 errorHandler(e, this);
             }
         }
         __callWillUnmount() {
-            this.willUnmount();
             const __owl__ = this.__owl__;
+            if (__owl__.willUnmountCB) {
+                __owl__.willUnmountCB();
+            }
+            this.willUnmount();
             __owl__.isMounted = false;
             const children = __owl__.children;
             for (let id in children) {
@@ -3412,8 +3464,8 @@
          * The __updateProps method is called by the t-component directive whenever
          * it updates a component (so, when the parent template is rerendered).
          */
-        async __updateProps(nextProps, forceUpdate = false, patchQueue, scope, vars) {
-            const shouldUpdate = forceUpdate || this.shouldUpdate(nextProps);
+        async __updateProps(nextProps, parentFiber, scope, vars) {
+            const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
             if (shouldUpdate) {
                 const defaultProps = this.constructor.defaultProps;
                 if (defaultProps) {
@@ -3421,7 +3473,9 @@
                 }
                 await this.willUpdateProps(nextProps);
                 this.props = nextProps;
-                await this.__render(forceUpdate, patchQueue, scope, vars);
+                const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
+                fiber.patchQueue.push(fiber);
+                await this.__render(fiber);
             }
         }
         /**
@@ -3433,13 +3487,17 @@
             const target = __owl__.vnode || document.createElement(vnode.sel);
             __owl__.vnode = patch(target, vnode);
         }
-        __prepare(scope, vars) {
-            const __owl__ = this.__owl__;
-            __owl__.renderProps = this.props;
-            __owl__.renderPromise = this.__prepareAndRender(scope, vars);
-            return __owl__.renderPromise;
+        /**
+         * The __prepare method is only called by the t-component directive, when a
+         * subcomponent is created. It gets its scope and vars, if any, from the
+         * parent template.
+         */
+        __prepare(parentFiber, scope, vars) {
+            const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
+            fiber.promise = this.__prepareAndRender(fiber);
+            return fiber.promise;
         }
-        async __prepareAndRender(scope, vars) {
+        async __prepareAndRender(fiber) {
             try {
                 await this.willStart();
             }
@@ -3475,14 +3533,11 @@
                 }
             }
             __owl__.render = qweb.render.bind(qweb, p._template);
-            this.__observeState();
-            return this.__render(false, [], scope, vars);
+            return this.__render(fiber);
         }
-        __render(force = false, patchQueue = [], scope, vars) {
+        __render(fiber) {
             const __owl__ = this.__owl__;
             const promises = [];
-            const patch = [this];
-            patchQueue.push(patch);
             if (__owl__.observer) {
                 __owl__.observer.allowMutations = false;
             }
@@ -3492,17 +3547,14 @@
                     promises,
                     handlers: __owl__.boundHandlers,
                     mountedHandlers: __owl__.mountedHandlers,
-                    forceUpdate: force,
-                    patchQueue,
-                    scope,
-                    vars
+                    fiber: fiber
                 });
             }
             catch (e) {
                 vnode = __owl__.vnode || h("div");
                 errorHandler(e, this);
             }
-            patch.push(vnode);
+            fiber.vnode = vnode;
             if (__owl__.observer) {
                 __owl__.observer.allowMutations = true;
             }
@@ -3545,18 +3597,6 @@
             }
         }
         /**
-         * Enable the observe feature on the state.  We only create an observer if
-         * there is some state to be observed.
-         */
-        __observeState() {
-            if (this.state) {
-                const __owl__ = this.__owl__;
-                __owl__.observer = new Observer();
-                this.state = __owl__.observer.observe(this.state);
-                __owl__.observer.notifyCB = this.render.bind(this);
-            }
-        }
-        /**
          * Apply default props (only top level).
          *
          * Note that this method does not modify in place the props, it returns a new
@@ -3572,29 +3612,30 @@
             return props;
         }
         /**
-         * Apply the given patch queue. A patch is a pair [c, vn], where c is a
-         * Component instance and vn a VNode.
+         * Apply the given patch queue from a fiber.
          *   1) Call 'willPatch' on the component of each patch
          *   2) Call '__patch' on the component of each patch
-         *   3) Call 'patched' on the component of each patch, in inverse order
+         *   3) Call 'patched' on the component of each patch, in reverse order
          */
-        __applyPatchQueue(patchQueue) {
+        __applyPatchQueue(fiber) {
+            const patchQueue = fiber.patchQueue;
             let component = this;
             try {
                 const patchLen = patchQueue.length;
                 for (let i = 0; i < patchLen; i++) {
-                    const patch = patchQueue[i];
-                    component = patch[0];
-                    patch.push(patch[0].willPatch());
+                    const fiber = patchQueue[i];
+                    component = fiber.component;
+                    fiber.willPatchResult = component.willPatch();
                 }
                 for (let i = 0; i < patchLen; i++) {
-                    const patch = patchQueue[i];
-                    patch[0].__patch(patch[1]);
+                    const fiber = patchQueue[i];
+                    component = fiber.component;
+                    component.__patch(fiber.vnode);
                 }
                 for (let i = patchLen - 1; i >= 0; i--) {
-                    const patch = patchQueue[i];
-                    component = patch[0];
-                    patch[0].patched(patch[2]);
+                    const fiber = patchQueue[i];
+                    component = fiber.component;
+                    component.patched(fiber.willPatchResult);
                 }
             }
             catch (e) {
@@ -3604,6 +3645,7 @@
     }
     Component.template = null;
     Component._template = null;
+    Component._current = null;
     Component.components = {};
     //------------------------------------------------------------------------------
     // Error handling
@@ -3675,7 +3717,7 @@
         /**
          * Need to do this here so 'deep' can be overrided by subcomponent easily
          */
-        async __prepareAndRender(scope, vars) {
+        async __prepareAndRender(fiber) {
             const store = this.getStore(this.env);
             const ownProps = this.props || {};
             this.storeProps = this.constructor.mapStoreToProps(store.state, ownProps, store.getters);
@@ -3688,7 +3730,7 @@
                 prevStoreProps: this.storeProps
             });
             this.__owl__.rev = observer.rev;
-            return super.__prepareAndRender(scope, vars);
+            return super.__prepareAndRender(fiber);
         }
         /**
          * We do not use the mounted hook here for a subtle reason: we want the
@@ -3730,9 +3772,9 @@
             this.__owl__.renderPromise = super.render(force);
             return this.__owl__.renderPromise;
         }
-        async __updateProps(nextProps, f, p, s, v) {
+        async __updateProps(nextProps, f, s, v) {
             this.__updateStoreProps(nextProps);
-            return super.__updateProps(nextProps, f, p, s, v);
+            return super.__updateProps(nextProps, f, s, v);
         }
         __updateStoreProps(nextProps) {
             const __owl__ = this.__owl__;
@@ -3840,14 +3882,88 @@
      *   }
      * ```
      */
-    function xml(strings) {
+    function xml(strings, ...args) {
         const name = `__template__${QWeb.nextId++}`;
-        QWeb.registerTemplate(name, strings[0]);
+        const value = String.raw(strings, ...args);
+        QWeb.registerTemplate(name, value);
         return name;
     }
 
     var _tags = /*#__PURE__*/Object.freeze({
         xml: xml
+    });
+
+    /**
+     * Owl Hook System
+     *
+     * This file introduces the concept of hooks, similar to React or Vue hooks.
+     * We have currently an implementation of:
+     * - useState (reactive state)
+     * - onMounted
+     * - onWillUnmount
+     * - useRef
+     */
+    /**
+     * useState hook
+     *
+     * This is the main way a component can be made reactive.  The useState hook
+     * will return an observed object (or array).  Changes to that value will then
+     * trigger a rerendering of the current component.
+     */
+    function useState(state) {
+        const component = Component._current;
+        const __owl__ = component.__owl__;
+        if (!__owl__.observer) {
+            __owl__.observer = new Observer();
+            __owl__.observer.notifyCB = component.render.bind(component);
+        }
+        return __owl__.observer.observe(state);
+    }
+    /**
+     * Mounted hook. The callback will be called when the current component is
+     * mounted.  Note that the component mounted method is called first.
+     */
+    let nextID = 1;
+    function onMounted(cb) {
+        const component = Component._current;
+        component.__owl__.mountedHandlers[`h${nextID++}`] = cb;
+    }
+    /**
+     * willUnmount hook. The callback will be called when the current component is
+     * willUnmounted.  Note that the component mounted method is called last.
+     */
+    function onWillUnmount(cb) {
+        const component = Component._current;
+        if (component.__owl__.willUnmountCB) {
+            const current = component.__owl__.willUnmountCB;
+            component.__owl__.willUnmountCB = function () {
+                cb.call(component);
+                current.call(component);
+            };
+        }
+        else {
+            component.__owl__.willUnmountCB = cb;
+        }
+    }
+    function useRef(name) {
+        const __owl__ = Component._current.__owl__;
+        return {
+            get el() {
+                const val = __owl__.refs && __owl__.refs[name];
+                return val instanceof HTMLElement ? val : null;
+            },
+            get comp() {
+                const val = __owl__.refs && __owl__.refs[name];
+                return val instanceof Component ? val : null;
+            }
+        };
+    }
+
+    var _hooks = /*#__PURE__*/Object.freeze({
+        useState: useState,
+        onMounted: onMounted,
+        onWillUnmount: onWillUnmount,
+        useRef: useRef
     });
 
     class Link extends Component {
@@ -3893,26 +4009,17 @@
   `;
 
     class RouteComponent extends Component {
-        constructor(parent, props) {
-            super(parent, props);
-            this.routes = [];
-            const router = this.env.router;
-            for (let name of router.routeIds) {
-                const route = router.routes[name];
-                if (route.component) {
-                    this.routes.push({
-                        name: route.name,
-                        component: "__component__" + route.name
-                    });
-                }
-            }
+        get routeComponent() {
+            return this.env.router.currentRoute && this.env.router.currentRoute.component;
         }
     }
     RouteComponent.template = xml `
-    <t t-foreach="routes" t-as="route">
-        <t t-if="env.router.currentRouteName === route.name">
-            <t t-component="{{route.component}}" t-props="env.router.currentParams"/>
-        </t>
+    <t>
+        <t
+            t-if="routeComponent"
+            t-component="routeComponent"
+            t-key="env.router.currentRouteName"
+            t-props="env.router.currentParams" />
     </t>
   `;
 
@@ -4125,11 +4232,13 @@
      *
      * Note that dynamic values, such as a date or a commit hash are added by rollup
      */
+    const useState$1 = useState;
     const core = { EventBus, Observer };
     const router = { Router, RouteComponent, Link };
     const store = { Store, ConnectedComponent };
     const utils = _utils;
     const tags = _tags;
+    const hooks$1 = _hooks;
     const __info__ = {};
     Object.defineProperty(__info__, "mode", {
         get() {
@@ -4151,14 +4260,16 @@
     exports.QWeb = QWeb;
     exports.__info__ = __info__;
     exports.core = core;
+    exports.hooks = hooks$1;
     exports.router = router;
     exports.store = store;
     exports.tags = tags;
+    exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '0.21.0';
-    exports.__info__.date = '2019-09-12T12:21:59.533Z';
-    exports.__info__.hash = '14ceb38';
+    exports.__info__.version = '0.22.0';
+    exports.__info__.date = '2019-10-01T19:05:23.486Z';
+    exports.__info__.hash = 'b859fcb';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

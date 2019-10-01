@@ -173,8 +173,10 @@ body {
 }
 
 .right-pane .note {
-  font-size: 20px;
+  font-size: 18px;
+  text-align: left;
   margin-top: 20px;
+  padding: 5%;
 }
 
 .right-pane .error {

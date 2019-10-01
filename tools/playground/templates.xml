@@ -45,7 +45,11 @@
           <div>🦉 Odoo Web Library 🦉</div>
           <div>v<t t-esc="version"/></div>
           <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
-          <div class="note">Note: these examples require a recent browser to work without a transpilation step. </div>
+          <div class="note">
+            <p>Note: these examples are using recent features of Javascript, and require a recent browser to work without a transpilation step!
+              For example, it makes use of class fields and class static fields. These examples should work in a recent Chrome version.
+            </p>
+          </div>
         </div>
         <div t-if="state.error" class="error">
           <h3>Error</h3>

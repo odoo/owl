@@ -24,6 +24,7 @@
   - [Asynchronous Rendering](#asynchronous-rendering)
   - [Error Handling](#error-handling)
   - [Functional Components](#functional-components)
+  - [SVG components](#svg-components)
 
 ## Overview
 
@@ -1198,3 +1199,52 @@ class MyComponent extends Component {
 The way this works is that sub templates are inlined, and have access to the
 ambient context. They can therefore access `props`, and any other part of the
 caller component.
+
+### SVG Components
+
+Owl components can be used to generate dynamic SVG graphs:
+
+```js
+class Node extends Component {
+  static template = xml`
+        <g>
+            <circle t-att-cx="props.x" t-att-cy="props.y" r="4" fill="black"/>
+            <text t-att-x="props.x - 5" t-att-y="props.y + 18"><t t-esc="props.node.label"/></text>
+            <t t-set="childx" t-value="props.x + 100"/>
+            <t t-set="height" t-value="props.height/(props.node.children || []).length"/>
+            <t t-foreach="props.node.children || []" t-as="child">
+                <t t-set="childy" t-value="props.y + child_index*height"/>
+                <line t-att-x1="props.x" t-att-y1="props.y" t-att-x2="childx" t-att-y2="childy" stroke="black" />
+                <Node x="childx" y="childy" node="child" height="height"/>
+            </t>
+        </g>
+    `;
+    static components = { Node };
+}
+
+class RootNode extends Component {
+  static template = xml`
+        <svg height="180">
+            <Node node="graph" x="10" y="20" height="180"/>
+        </svg>
+    `;
+  static components = { Node };
+  graph = {
+      label: "a",
+      children: [
+          {label: "b"},
+          {label: "c", children: [{label: "d"}, {label: "e"}]},
+          {label: "f", children: [{label: "g"}]},
+      ]
+  };
+}
+```
+
+This `RootNode` component will then display a live SVG representation of the
+graph described by the `graph` property. Note that there is a recursive structure
+here: the `Node` component uses itself as a subcomponent.
+
+Note that since SVG needs to be handled in a specific way (its namespace needs
+to be properly set), there is a small constraint for Owl components: if an owl
+component is supposed to be a part of an svg graph, then its root node needs to
+be a `g` tag, so Owl can properly set the namespace.

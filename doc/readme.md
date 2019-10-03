@@ -16,6 +16,8 @@ owl
     hooks
         onMounted
         onWillUnmount
+        onWillPatch
+        onPatched
         useState
         useRef
     router

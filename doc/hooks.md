@@ -10,6 +10,8 @@
   - [`useState`](#usestate)
   - [`onMounted`](#onmounted)
   - [`onWillUnmount`](#onwillunmount)
+  - [`onWillPatch`](#onwillpatch)
+  - [`onPatched`](#onpatched)
   - [`useRef`](#useref)
 
 ## Overview
@@ -169,15 +171,28 @@ class Counter extends owl.Component {
 
 ### `onMounted`
 
-`onMounted` is not an hook, but is a building block designed to help make useful
-hooks. `onMounted` register a callback, which will be called when the component
+`onMounted` is not an user hook, but is a building block designed to help make useful
+abstractions. `onMounted` registers a callback, which will be called when the component
 is mounted (see example on top of this page).
 
 ### `onWillUnmount`
 
-`onWillUnmount` is not an hook, but is a building block designed to help make useful
-hooks. `onWillUnmount` register a callback, which will be called when the component
+`onWillUnmount` is not an user hook, but is a building block designed to help make useful
+abstractions. `onWillUnmount` registers a callback, which will be called when the component
 is unmounted (see example on top of this page).
+
+
+### `onWillPatch`
+
+`onWillPatch` is not an user hook, but is a building block designed to help make useful
+abstractions. `onWillPatch` registers a callback, which will be called just
+before the component patched.
+
+### `onPatched`
+
+`onPatched` is not an user hook, but is a building block designed to help make useful
+abstractions. `onPatched` registers a callback, which will be called just
+after the component patched.
 
 ### `useRef`
 

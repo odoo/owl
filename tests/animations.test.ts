@@ -5,7 +5,6 @@ import {
   makeDeferred,
   makeTestFixture,
   makeTestEnv,
-  nextTick,
   patchNextFrame,
   renderToDOM,
   unpatchNextFrame
@@ -263,28 +262,6 @@ describe("animations", () => {
     await def; // wait for the mocked repaint to be done
     spanNode.dispatchEvent(new Event("transitionend")); // mock end of css transition
     expect(fixture.innerHTML).toBe("<div></div>");
-  });
-
-  test("t-transition combined with t-mounted", async () => {
-    env.qweb.addTemplate(
-      "TestWidget",
-      `<div><span t-if="state.flag" t-mounted="f" t-transition="chimay">blue</span></div>`
-    );
-    class TestWidget extends Widget {
-      state = useState({ flag: false });
-      f() {}
-    }
-    const widget = new TestWidget(env);
-    widget.f = jest.fn();
-    await widget.mount(fixture);
-
-    patchNextFrame(cb => cb());
-    expect(widget.f).toHaveBeenCalledTimes(0);
-
-    widget.state.flag = true;
-    await nextTick();
-    expect(widget.f).toHaveBeenCalledTimes(1);
-    unpatchNextFrame();
   });
 
   test("t-transition, remove and re-add before transitionend", async () => {

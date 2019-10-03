@@ -29,17 +29,6 @@ export function useState<T>(state: T): T {
   return __owl__.observer.observe(state);
 }
 
-/**
- * Mounted hook. The callback will be called when the current component is
- * mounted.  Note that the component mounted method is called first.
- */
-let nextID = 1;
-
-export function onMounted(cb) {
-  const component: Component<any, any> = Component._current;
-  component.__owl__.mountedHandlers[`h${nextID++}`] = cb;
-}
-
 function makeLifecycleHook(method: string, reverse: boolean = false) {
   return function(cb) {
     const component: Component<any, any> = Component._current;
@@ -66,6 +55,7 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
  * willUnmount hook. The callback will be called when the current component is
  * willUnmounted.  Note that the component mounted method is called last.
  */
+export const onMounted = makeLifecycleHook("mountedCB", true);
 export const onWillUnmount = makeLifecycleHook("willUnmountCB");
 export const onWillPatch = makeLifecycleHook("willPatchCB");
 export const onPatched = makeLifecycleHook("patchedCB", true);

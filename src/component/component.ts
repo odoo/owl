@@ -82,7 +82,7 @@ interface Internal<T extends Env, Props> {
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
   render: CompiledTemplate | null;
-  mountedHandlers: { [key: number]: Function };
+  mountedCB: Function | null;
   willUnmountCB: Function | null;
   willPatchCB: Function | null;
   patchedCB: Function | null;
@@ -186,7 +186,7 @@ export class Component<T extends Env, Props extends {}> {
       cmap: {},
       currentFiber: null,
       boundHandlers: {},
-      mountedHandlers: {},
+      mountedCB: null,
       willUnmountCB: null,
       willPatchCB: null,
       patchedCB: null,
@@ -480,11 +480,10 @@ export class Component<T extends Env, Props extends {}> {
       }
     }
     __owl__.isMounted = true;
-    const handlers = __owl__.mountedHandlers;
     try {
       this.mounted();
-      for (let key in handlers) {
-        handlers[key]();
+      if (__owl__.mountedCB) {
+          __owl__.mountedCB()
       }
     } catch (e) {
       errorHandler(e, this);
@@ -601,7 +600,6 @@ export class Component<T extends Env, Props extends {}> {
       vnode = __owl__.render!(this, {
         promises,
         handlers: __owl__.boundHandlers,
-        mountedHandlers: __owl__.mountedHandlers,
         fiber: fiber
       });
     } catch (e) {

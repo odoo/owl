@@ -16,7 +16,6 @@
   - [Event Handling](#event-handling)
   - [Form Input Bindings](#form-input-bindings)
   - [`t-key` Directive](#t-key-directive)
-  - [`t-mounted` Directive](#t-mounted-directive)
   - [Semantics](#semantics)
   - [Props Validation](#props-validation)
   - [References](#references)
@@ -755,24 +754,6 @@ There are three main use cases:
 
 - _animations_: give a different identity to a component. Ex: thread id with
   animations on add/remove message.
-
-### `t-mounted` Directive
-
-The `t-mounted` directive allows to register a callback to execute whenever the node
-is inserted into the DOM.
-
-```xml
-<div><input t-ref="someInput" t-mounted="focusMe"/></div>
-```
-
-```js
-class MyComponent extends owl.Component {
-    ...
-    focusMe() {
-        this.refs.someInput.focus();
-    }
-}
-```
 
 ### Semantics
 

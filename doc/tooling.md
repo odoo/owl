@@ -6,6 +6,7 @@
 - [Development Mode](#development-mode)
 - [Playground](#playground)
 - [Benchmarks](#benchmarks)
+- [Single File Component](#single-file-component)
 
 ## Overview
 

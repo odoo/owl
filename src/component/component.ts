@@ -351,24 +351,6 @@ export class Component<T extends Env, Props extends {}> {
     }
   }
 
-  __createFiber(force, scope, vars, parent?: Fiber<any>): Fiber<Props> {
-    const fiber: Fiber<Props> = {
-      force,
-      scope,
-      vars,
-      rootFiber: null,
-      isCancelled: false,
-      component: this,
-      vnode: null,
-      patchQueue: parent ? parent.patchQueue : [],
-      props: this.props,
-      promise: null
-    };
-    fiber.rootFiber = parent ? parent.rootFiber : fiber;
-    this.__owl__.currentFiber = fiber;
-    return fiber;
-  }
-
   /**
    * Destroy the component.  This operation is quite complex:
    *  - it recursively destroy all children
@@ -438,6 +420,27 @@ export class Component<T extends Env, Props extends {}> {
   //--------------------------------------------------------------------------
   // Private
   //--------------------------------------------------------------------------
+
+  /**
+   * This method is a helper to create a fiber element.
+   */
+  __createFiber(force, scope, vars, parent?: Fiber<any>): Fiber<Props> {
+    const fiber: Fiber<Props> = {
+      force,
+      scope,
+      vars,
+      rootFiber: null,
+      isCancelled: false,
+      component: this,
+      vnode: null,
+      patchQueue: parent ? parent.patchQueue : [],
+      props: this.props,
+      promise: null
+    };
+    fiber.rootFiber = parent ? parent.rootFiber : fiber;
+    this.__owl__.currentFiber = fiber;
+    return fiber;
+  }
 
   /**
    * Private helper to perform a full destroy, from the point of view of an Owl

@@ -13,6 +13,7 @@
   - [`onWillPatch`](#onwillpatch)
   - [`onPatched`](#onpatched)
   - [`useRef`](#useref)
+  - [`useSubEnv`](#useSubEnv)
 
 ## Overview
 
@@ -246,3 +247,29 @@ this.ref2 = useRef("component_2");
 
 References are only guaranteed to be active while the parent component is mounted.
 If this is not the case, accessing `el` or `comp` on it will return `null`.
+
+### `useSubEnv`
+
+The environment is sometimes useful to share some common information between
+all components.  But sometimes, we want to *scope* that knowledge to a subtree.
+
+For example, if we have a form view component, maybe we would like to make some
+`model` object available to all sub component, but not to the whole application.
+This is where the `useSubEnv` hook may be useful: it let a component add some
+information to the environment in a way that only the component and its children
+can access it:
+
+```js
+class FormComponent extends Component {
+  constructor(...args) {
+    super(...args);
+    const model = makeModel();
+    useSubEnv({ model });
+  }
+}
+```
+
+The `useSubEnv` takes one argument: an object which contains some key/value that
+will be added to the parent environment. Note that it will extend, not replace
+the parent environment.  And of course, the parent environment will not be
+affected.

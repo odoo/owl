@@ -12,9 +12,11 @@ import { Observer } from "./core/observer";
  * - useRef
  */
 
+// -----------------------------------------------------------------------------
+// useState
+// -----------------------------------------------------------------------------
+
 /**
- * useState hook
- *
  * This is the main way a component can be made reactive.  The useState hook
  * will return an observed object (or array).  Changes to that value will then
  * trigger a rerendering of the current component.
@@ -29,6 +31,9 @@ export function useState<T>(state: T): T {
   return __owl__.observer.observe(state);
 }
 
+// -----------------------------------------------------------------------------
+// Life cycle hooks
+// -----------------------------------------------------------------------------
 function makeLifecycleHook(method: string, reverse: boolean = false) {
   return function(cb) {
     const component: Component<any, any> = Component._current;
@@ -51,17 +56,16 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
   };
 }
 
-/**
- * willUnmount hook. The callback will be called when the current component is
- * willUnmounted.  Note that the component mounted method is called last.
- */
 export const onMounted = makeLifecycleHook("mountedCB", true);
 export const onWillUnmount = makeLifecycleHook("willUnmountCB");
 export const onWillPatch = makeLifecycleHook("willPatchCB");
 export const onPatched = makeLifecycleHook("patchedCB", true);
+
+// -----------------------------------------------------------------------------
+// useRef
+// -----------------------------------------------------------------------------
+
 /**
- * useRef hook
- *
  * The purpose of this hook is to allow components to get a reference to a sub
  * html node or component.
  */
@@ -82,4 +86,19 @@ export function useRef(name: string): Ref {
       return val instanceof Component ? val : null;
     }
   };
+}
+
+// -----------------------------------------------------------------------------
+// useSubEnv
+// -----------------------------------------------------------------------------
+
+
+/**
+ * This hook is a simple way to let components use a sub environment.  Note that
+ * like for all hooks, it is important that this is only called in the
+ * constructor method.
+ */
+export function useSubEnv(nextEnv) {
+  const component = Component._current;
+  component.env = Object.assign(Object.create(component.env), nextEnv);
 }

@@ -381,26 +381,6 @@ export class Component<T extends Env, Props extends {}> {
   }
 
   /**
-   * This method is the correct way to update the environment of a component. Doing
-   * this will cause a full rerender of the component and its children, so this is
-   * an operation that should not be done frequently.
-   *
-   * A good usecase for updating the environment would be to update some mostly
-   * static config keys, such as a boolean to determine if we are in mobile
-   * mode or not.
-   */
-  async updateEnv(nextEnv: Partial<T>): Promise<void> {
-    const __owl__ = this.__owl__;
-    if (__owl__.parent && __owl__.parent.env === this.env) {
-      this.env = Object.create(this.env);
-    }
-    Object.assign(this.env, nextEnv);
-    if (__owl__.isMounted) {
-      await this.render(true);
-    }
-  }
-
-  /**
    * Emit a custom event of type 'eventType' with the given 'payload' on the
    * component's el, if it exists. However, note that the event will only bubble
    * up to the parent DOM nodes. Thus, it must be called between mounted() and

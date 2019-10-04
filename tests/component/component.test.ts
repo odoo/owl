@@ -625,24 +625,6 @@ describe("lifecycle hooks", () => {
     expect(n).toBe(1);
   });
 
-  test("patched hook is called after updateEnv", async () => {
-    let n = 0;
-
-    class TestWidget extends Widget {
-      state = useState({ a: 1 });
-
-      patched() {
-        n++;
-      }
-    }
-    const widget = new TestWidget(env);
-    await widget.mount(fixture);
-    expect(n).toBe(0);
-
-    await widget.updateEnv({ isMobile: true });
-    expect(n).toBe(1);
-  });
-
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
     class TestWidget extends Widget {
@@ -2812,107 +2794,6 @@ describe("async rendering", () => {
     fixture.querySelector("button")!.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
-  });
-});
-
-describe("updating environment", () => {
-  test("can update widget env", async () => {
-    const widget = new Widget(env);
-    expect(widget.env).toBe(env);
-    await widget.updateEnv(<any>{ somekey: 4 });
-    expect(widget.env).toBe(env);
-    expect((<any>widget).env.somekey).toBe(4);
-  });
-
-  test("updating widget env does not render widget (if not mounted)", async () => {
-    let n = 0;
-    class TestWidget extends Widget {
-      __render(f) {
-        n++;
-        return super.__render(f);
-      }
-    }
-
-    const widget = new TestWidget(env);
-    expect(n).toBe(0);
-    await widget.updateEnv(<any>{ somekey: 4 });
-    expect(n).toBe(0);
-    await widget.mount(fixture);
-    expect(n).toBe(1);
-    await widget.updateEnv(<any>{ somekey: 5 });
-    expect(n).toBe(2);
-    widget.unmount();
-    expect(n).toBe(2);
-    await widget.updateEnv(<any>{ somekey: 5 });
-    expect(n).toBe(2);
-  });
-
-  test("updating child env does not modify parent env", async () => {
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
-    class ParentWidget extends Widget {
-      static components = { child: Widget };
-    }
-    const parent = new ParentWidget(env);
-    await parent.mount(fixture);
-    const child = children(parent)[0];
-    expect(child.env).toBe(parent.env);
-    await child.updateEnv(<any>{ somekey: 4 });
-    expect(child.env).not.toBe(parent.env);
-    expect((<any>parent).env.somekey).toBeUndefined();
-  });
-
-  test("updating parent env does modify child env", async () => {
-    env.qweb.addTemplate("ParentWidget", `<div><t t-component="child"/></div>`);
-    class ParentWidget extends Widget {
-      static components = { child: Widget };
-    }
-    const parent = new ParentWidget(env);
-    await parent.mount(fixture);
-    const child = children(parent)[0];
-    expect(child.env.somekey).toBeUndefined();
-    await parent.updateEnv({ somekey: 4 });
-    expect(child.env.somekey).toBe(4);
-  });
-
-  test("updating parent env does modify child env, part 2", async () => {
-    env.qweb.addTemplate("ParentWidget", `<div><Child/></div>`);
-    class ParentWidget extends Widget {
-      static components = { Child: Widget };
-    }
-    const parent = new ParentWidget(env);
-    await parent.mount(fixture);
-    const child = children(parent)[0];
-    expect(child.env.somekey).toBeUndefined();
-    await child.updateEnv({ somekey: 4 });
-    await parent.updateEnv({ someotherkey: 4 });
-    expect(child.env.someotherkey).toBe(4);
-  });
-
-  test("updating env force a rerender", async () => {
-    env.qweb.addTemplate("TestWidget", `<div><t t-esc="env.someKey"/></div>`);
-    class TestWidget extends Widget {}
-    (<any>env).someKey = "hey";
-    const widget = new TestWidget(env);
-    await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div>hey</div>");
-    await widget.updateEnv(<any>{ someKey: "rerendered" });
-    expect(fixture.innerHTML).toBe("<div>rerendered</div>");
-  });
-
-  test("updating env force rerendering children", async () => {
-    env.qweb.addTemplate("Parent", `<div><Child /></div>`);
-    class Child extends Widget {}
-    class Parent extends Widget {
-      static components = { Child };
-    }
-    env.qweb.addTemplate("Child", `<div><t t-esc="env.someKey"/></div>`);
-    (<any>env).someKey = "hey";
-    const widget = new Parent(env);
-    await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
-    await widget.updateEnv(<any>{ someKey: "rerendered" });
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div>rerendered</div></div>");
   });
 });
 

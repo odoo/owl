@@ -20,6 +20,7 @@ owl
         onPatched
         useState
         useRef
+        useSubEnv
     router
         Link
         RouteComponent

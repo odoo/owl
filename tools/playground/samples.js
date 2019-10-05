@@ -1625,6 +1625,135 @@ const WMS_CSS = `body {
     font-size: 20px;
 }`;
 
+const MONKEYPATCH = `
+// In this example, we show a possible way components can be monkey patched.
+// This involves the functions patch/unpatch, which modifies the prototype of a
+// class (not only an owl component). Sadly, the patch code cannot make use of
+// the syntactic sugar that JS engines provides to classes, so it needs to use
+// the "this._super()" syntax instead of the standard "super.someMethod()".
+
+//--------------------------------------------------------------------------
+// Patching Code
+//--------------------------------------------------------------------------
+const patchMap = new WeakMap();
+
+function patch(C, patchName, patch) {
+    let metadata = patchMap.get(C.prototype);
+    if (!metadata) {
+        metadata = {
+          origMethods: {},
+          patches: {},
+          current: []
+        };
+        patchMap.set(C.prototype, metadata);
+    }
+  const proto = C.prototype;
+  if (metadata.patches[patchName]) {
+    throw new Error(\`Patch [\${patchName}] already exists\`);
+  }
+  metadata.patches[patchName] = patch;
+  applyPatch(proto, patch);
+  metadata.current.push(patchName);
+
+  function applyPatch(proto, patch) {
+    Object.keys(patch).forEach(function(methodName) {
+      const method = patch[methodName];
+      if (typeof method === "function") {
+        const original = proto[methodName];
+        if (!(methodName in metadata.origMethods)) {
+          metadata.origMethods[methodName] = original;
+        }
+        proto[methodName] = function(...args) {
+          this._super = original;
+          return method.call(this, ...args);
+        };
+      }
+    });
+  }
+}
+
+// we define here an unpatch function.  This is mostly useful if we want to
+// remove a patch.  For example, for testing purposes
+function unpatch(C, patchName) {
+  const proto = C.prototype;
+  let metadata = patchMap.get(proto);
+  if (!metdata) {
+    return;
+  }
+  patchMap.delete(proto);
+
+  // reset to original
+  for (let k in metadata.origMethods) {
+    proto[k] = metadata.origMethods[k];
+  }
+
+  // apply other patches
+  for (let name of metadata.current) {
+    if (name !== patchName) {
+      patch(C, name, metadata.patches[name]);
+    }
+  }
+}
+
+
+//--------------------------------------------------------------------------
+// Components
+//--------------------------------------------------------------------------
+const { Component, useState } = owl;
+
+class Counter extends Component {
+    state = useState({ value: 0 });
+
+    increment() {
+        this.state.value++;
+    }
+}
+
+// Main root component
+class App extends Component {
+    static components = { Counter };
+}
+
+//--------------------------------------------------------------------------
+// Patching code
+//--------------------------------------------------------------------------
+
+// In an Odoo application, this code would be located in another odoo module,
+// to customize some behaviour in an existing class/component
+patch(Counter, "double_value", {
+    increment() {
+        this._super();
+        this.state.value = 2 * this.state.value;
+    }
+});
+
+//--------------------------------------------------------------------------
+// Application setup
+//--------------------------------------------------------------------------
+const qweb = new owl.QWeb(TEMPLATES);
+const app = new App({ qweb });
+app.mount(document.body);
+`;
+
+const MONKEYPATCH_XML = `
+<templates>
+  <button t-name="Counter"  t-on-click="increment">
+    Click [<t t-esc="state.value"/>]
+  </button>
+
+  <div t-name="App">
+    <Counter />
+  </div>
+</templates>
+`;
+
+const MONKEYPATCH_CSS = `
+button {
+    font-size: 20px;
+    width: 100px;
+    height: 50px;
+}`;
+
 export const SAMPLES = [
   {
     description: "Components",
@@ -1684,5 +1813,10 @@ export const SAMPLES = [
     code: ASYNC_COMPONENTS,
     xml: ASYNC_COMPONENTS_XML,
     css: ASYNC_COMPONENTS_CSS
+  }, {
+      description: "Monkey patching components",
+      code: MONKEYPATCH,
+      xml: MONKEYPATCH_XML,
+      css: MONKEYPATCH_CSS
   }
 ];

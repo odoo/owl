@@ -195,11 +195,6 @@ We explain here all the public methods of the `Component` class.
   always return true. This is an optimization, similar to React's `shouldComponentUpdate`. Most of the time, this should not be used, but it
   can be useful if we are handling large number of components.
 
-- **`updateEnv(nextEnv)`**: update the environment of a component and all its
-  children. This forces a complete rerender. For example, this could be useful
-  if we have a `isMobile` key in the environment, to decide if we want a mobile
-  interface or a destkop one.
-
 - **`destroy()`**. As its name suggests, this method will remove the component,
   and perform all necessary cleanup, such as unmounting the component, its children,
   removing the parent/children relationship. This method should almost never be

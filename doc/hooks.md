@@ -13,7 +13,7 @@
   - [`onWillPatch`](#onwillpatch)
   - [`onPatched`](#onpatched)
   - [`useRef`](#useref)
-  - [`useSubEnv`](#useSubEnv)
+  - [`useSubEnv`](#usesubenv)
 
 ## Overview
 

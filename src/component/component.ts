@@ -81,7 +81,7 @@ interface Internal<T extends Env, Props> {
 
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
-  render: CompiledTemplate | null;
+  render: CompiledTemplate;
   mountedCB: Function | null;
   willUnmountCB: Function | null;
   willPatchCB: Function | null;
@@ -176,6 +176,8 @@ export class Component<T extends Env, Props extends {}> {
         }
       });
     }
+    const qweb = this.env.qweb;
+
     this.__owl__ = {
       id: id,
       vnode: null,
@@ -191,7 +193,7 @@ export class Component<T extends Env, Props extends {}> {
       willPatchCB: null,
       patchedCB: null,
       observer: null,
-      render: null,
+      render: qweb.render.bind(qweb, this.__getTemplate(qweb)),
       classObj: null,
       refs: null
     };
@@ -538,18 +540,7 @@ export class Component<T extends Env, Props extends {}> {
     return fiber.promise;
   }
 
-  async __prepareAndRender(fiber: Fiber<Props>): Promise<VNode> {
-    try {
-      await this.willStart();
-    } catch (e) {
-      errorHandler(e, this);
-      return Promise.resolve(h("div"));
-    }
-    const __owl__ = this.__owl__;
-    if (__owl__.isDestroyed) {
-      return Promise.resolve(h("div"));
-    }
-    const qweb = this.env.qweb;
+  __getTemplate(qweb: QWeb): string {
     let p = (<any>this).constructor;
     // console.warn(p, p.template, p._template, 'template' in p, p.hasOwnProperty('template'))
     if (!p.hasOwnProperty("_template")) {
@@ -571,7 +562,19 @@ export class Component<T extends Env, Props extends {}> {
         }
       }
     }
-    __owl__.render = qweb.render.bind(qweb, p._template);
+    return p._template;
+  }
+  async __prepareAndRender(fiber: Fiber<Props>): Promise<VNode> {
+    try {
+      await this.willStart();
+    } catch (e) {
+      errorHandler(e, this);
+      return Promise.resolve(h("div"));
+    }
+    const __owl__ = this.__owl__;
+    if (__owl__.isDestroyed) {
+      return Promise.resolve(h("div"));
+    }
     return this.__render(fiber);
   }
 

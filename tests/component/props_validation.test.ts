@@ -1,6 +1,7 @@
 import { Component, Env } from "../../src/component/component";
 import { makeTestFixture, makeTestEnv } from "../helpers";
 import { QWeb } from "../../src/qweb";
+import { xml } from "../../src/tags";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -31,6 +32,7 @@ describe("props validation", () => {
   test("validation is only done in dev mode", async () => {
     class TestWidget extends Widget {
       static props = ["message"];
+      static template = xml`<div>hey</div>`;
     }
 
     QWeb.dev = true;
@@ -48,6 +50,7 @@ describe("props validation", () => {
   test("props: list of strings", async () => {
     class TestWidget extends Widget {
       static props = ["message"];
+      static template = xml`<div>hey</div>`;
     }
 
     expect(() => {
@@ -67,6 +70,7 @@ describe("props validation", () => {
 
     for (let test of Tests) {
       let TestWidget = class extends Widget {
+        static template = xml`<div>hey</div>`;
         static props = { p: test.type };
       };
 
@@ -96,6 +100,7 @@ describe("props validation", () => {
 
     for (let test of Tests) {
       let TestWidget = class extends Widget {
+        static template = xml`<div>hey</div>`;
         static props = { p: { type: test.type } };
       };
 
@@ -115,6 +120,7 @@ describe("props validation", () => {
 
   test("can validate a prop with multiple types", async () => {
     let TestWidget = class extends Widget {
+      static template = xml`<div>hey</div>`;
       static props = { p: [String, Boolean] };
     };
 
@@ -130,6 +136,7 @@ describe("props validation", () => {
 
   test("can validate an optional props", async () => {
     let TestWidget = class extends Widget {
+      static template = xml`<div>hey</div>`;
       static props = { p: { type: String, optional: true } };
     };
 
@@ -145,6 +152,7 @@ describe("props validation", () => {
 
   test("can validate an array with given primitive type", async () => {
     let TestWidget = class extends Widget {
+      static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: String } };
     };
 
@@ -164,6 +172,7 @@ describe("props validation", () => {
 
   test("can validate an array with multiple sub element types", async () => {
     let TestWidget = class extends Widget {
+      static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: [String, Boolean] } };
     };
 
@@ -180,6 +189,7 @@ describe("props validation", () => {
 
   test("can validate an object with simple shape", async () => {
     let TestWidget = class extends Widget {
+      static template = xml`<div>hey</div>`;
       static props = {
         p: { type: Object, shape: { id: Number, url: String } }
       };
@@ -201,6 +211,7 @@ describe("props validation", () => {
 
   test("can validate recursively complicated prop def", async () => {
     let TestWidget = class extends Widget {
+      static template = xml`<div>hey</div>`;
       static props = {
         p: {
           type: Object,
@@ -316,6 +327,7 @@ describe("default props", () => {
   test("can set default values", async () => {
     class TestWidget extends Widget {
       static defaultProps = { p: 4 };
+      static template = xml`<div>hey</div>`;
     }
 
     const w = new TestWidget(env, {});

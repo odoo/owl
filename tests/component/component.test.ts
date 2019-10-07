@@ -89,9 +89,8 @@ describe("basic widget properties", () => {
   test("crashes if it cannot find a template", async () => {
     expect.assertions(1);
     class SomeWidget extends Component<any, any> {}
-    const widget = new SomeWidget(env);
     try {
-      await widget.mount(fixture);
+      new SomeWidget(env);
     } catch (e) {
       expect(e.message).toBe('Could not find template for component "SomeWidget"');
     }

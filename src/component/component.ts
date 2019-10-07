@@ -437,6 +437,9 @@ export class Component<T extends Env, Props extends {}> {
     const __owl__ = this.__owl__;
     const isMounted = __owl__.isMounted;
     if (isMounted) {
+      if (__owl__.willUnmountCB) {
+        __owl__.willUnmountCB();
+      }
       this.willUnmount();
       __owl__.isMounted = false;
     }
@@ -466,7 +469,7 @@ export class Component<T extends Env, Props extends {}> {
     try {
       this.mounted();
       if (__owl__.mountedCB) {
-          __owl__.mountedCB()
+        __owl__.mountedCB();
       }
     } catch (e) {
       errorHandler(e, this);

@@ -78,6 +78,40 @@ describe("hooks", () => {
     expect(steps).toEqual(["mounted", "willunmount"]);
   });
 
+  test("can use onMounted, onWillUnmount, part 2", async () => {
+    const steps: string[] = [];
+    function useMyHook() {
+      onMounted(() => {
+        steps.push("mounted");
+      });
+      onWillUnmount(() => {
+        steps.push("willunmount");
+      });
+    }
+    class MyComponent extends Component<any, any> {
+      static template = xml`<div>hey</div>`;
+      constructor(env) {
+        super(env);
+        useMyHook();
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><MyComponent t-if="state.flag"/></div>`;
+      static components = { MyComponent };
+      state = useState({ flag: true });
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
+    expect(steps).toEqual(["mounted"]);
+
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(steps).toEqual(["mounted", "willunmount"]);
+  });
+
   test("mounted, willUnmount, onMounted, onWillUnmount order", async () => {
     const steps: string[] = [];
     function useMyHook() {
@@ -106,6 +140,46 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div>hey</div>");
     component.unmount();
     expect(fixture.innerHTML).toBe("");
+    expect(steps).toEqual(["comp:mounted", "hook:mounted", "hook:willunmount", "comp:willunmount"]);
+  });
+
+  test("mounted, willUnmount, onMounted, onWillUnmount order, part 2", async () => {
+    const steps: string[] = [];
+    function useMyHook() {
+      onMounted(() => {
+        steps.push("hook:mounted");
+      });
+      onWillUnmount(() => {
+        steps.push("hook:willunmount");
+      });
+    }
+    class MyComponent extends Component<any, any> {
+      static template = xml`<div>hey</div>`;
+      constructor(env) {
+        super(env);
+        useMyHook();
+      }
+      mounted() {
+        steps.push("comp:mounted");
+      }
+      willUnmount() {
+        steps.push("comp:willunmount");
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><MyComponent t-if="state.flag"/></div>`;
+      static components = { MyComponent };
+      state = useState({ flag: true });
+    }
+
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
     expect(steps).toEqual(["comp:mounted", "hook:mounted", "hook:willunmount", "comp:willunmount"]);
   });
 
@@ -346,7 +420,7 @@ describe("hooks", () => {
 
     class Parent extends Component<any, any> {
       static template = xml`<div><t t-esc="env.val"/><Child/></div>`;
-      static components = { Child}
+      static components = { Child };
       constructor(env) {
         super(env);
         useSubEnv({ val: 3 });
@@ -354,6 +428,6 @@ describe("hooks", () => {
     }
     const component = new Parent(env);
     await component.mount(fixture);
-    expect(fixture.innerHTML).toBe( "<div>3<div>5</div></div>");
+    expect(fixture.innerHTML).toBe("<div>3<div>5</div></div>");
   });
 });

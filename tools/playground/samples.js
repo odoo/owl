@@ -318,6 +318,66 @@ const HOOKS_CSS = `button {
     font-size: 16px;
 }`;
 
+const CONTEXT_JS = `// In this example, we show how components can use the Context and 'useContext'
+// hook to share information between them.
+const { Component, Context } = owl;
+const { useContext } = owl.hooks;
+
+class ToolbarButton extends Component {
+    theme = useContext(this.env.themeContext);
+
+    get style () {
+        const theme = this.theme;
+        return \`background-color: \${theme.background}; color: \${theme.foreground}\`;
+    }
+}
+
+class Toolbar extends Component {
+    static components = { ToolbarButton };
+}
+
+// Main root component
+class App extends Component {
+    static components = { Toolbar };
+
+    toggleTheme() {
+        const { background, foreground } = this.env.themeContext.state;
+        this.env.themeContext.state.background = foreground;
+        this.env.themeContext.state.foreground = background;
+    }
+}
+
+// Application setup
+const themeContext = new Context({
+   background: '#000',
+   foreground: '#fff',
+});
+const env = {
+    qweb: new owl.QWeb(TEMPLATES),
+    themeContext: themeContext,
+};
+const app = new App(env);
+app.mount(document.body);
+`;
+
+const CONTEXT_XML = `<templates>
+  <button t-name="ToolbarButton" t-att-style="style">
+    <t t-esc="props.name"/>
+  </button>
+
+  <div t-name="Toolbar">
+    <ToolbarButton name="'A'"/>
+    <ToolbarButton name="'B'"/>
+    <ToolbarButton name="'C'"/>
+  </div>
+
+  <div t-name="App">
+    <button t-on-click="toggleTheme">Toggle Mode</button>
+    <Toolbar/>
+  </div>
+</templates>
+`;
+
 const TODO_APP_STORE = `// This example is an implementation of the TodoList application, from the
 // www.todomvc.com project.  This is a non trivial application with some
 // interesting user interactions. It uses the local storage for persistence.
@@ -1654,6 +1714,11 @@ export const SAMPLES = [
     code: HOOKS_DEMO,
     xml: HOOKS_DEMO_XML,
     css: HOOKS_CSS
+  },
+  {
+    description: "Context",
+    code: CONTEXT_JS,
+    xml: CONTEXT_XML,
   },
   {
     description: "Todo List App (with store)",

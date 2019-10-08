@@ -8,6 +8,7 @@ build applications. Here is a complete representation of its content:
 ```
 owl
     Component
+    Context
     QWeb
     useState
     core
@@ -18,6 +19,7 @@ owl
         onWillUnmount
         onWillPatch
         onPatched
+        useContext
         useState
         useRef
         useSubEnv
@@ -44,6 +46,7 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 
 - [Animations](animations.md)
 - [Component](component.md)
+- [Context](context.md)
 - [Event Bus](event_bus.md)
 - [Hooks](hooks.md)
 - [Observer](observer.md)

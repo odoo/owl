@@ -12,6 +12,7 @@ import { Store } from "./store/store";
 import * as _utils from "./utils";
 import * as _tags from "./tags";
 import * as _hooks from "./hooks";
+import * as _context from "./Context";
 import { Link } from "./router/Link";
 import { RouteComponent } from "./router/RouteComponent";
 import { Router } from "./router/Router";
@@ -19,13 +20,14 @@ import { Router } from "./router/Router";
 export { Component } from "./component/component";
 export { QWeb };
 
+export const Context = _context.Context;
 export const useState = _hooks.useState;
 export const core = { EventBus, Observer };
 export const router = { Router, RouteComponent, Link };
 export const store = { Store, ConnectedComponent };
 export const utils = _utils;
 export const tags = _tags;
-export const hooks = _hooks;
+export const hooks = Object.assign({}, _hooks, { useContext: _context.useContext });
 export const __info__ = {};
 
 Object.defineProperty(__info__, "mode", {

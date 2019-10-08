@@ -12,6 +12,7 @@
   - [`onWillUnmount`](#onwillunmount)
   - [`onWillPatch`](#onwillpatch)
   - [`onPatched`](#onpatched)
+  - [`useContext`](#usecontext)
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
 
@@ -182,7 +183,6 @@ is mounted (see example on top of this page).
 abstractions. `onWillUnmount` registers a callback, which will be called when the component
 is unmounted (see example on top of this page).
 
-
 ### `onWillPatch`
 
 `onWillPatch` is not an user hook, but is a building block designed to help make useful
@@ -194,6 +194,10 @@ before the component patched.
 `onPatched` is not an user hook, but is a building block designed to help make useful
 abstractions. `onPatched` registers a callback, which will be called just
 after the component patched.
+
+### `useContext`
+
+See [`useContext`](context.md#usecontext) for reference documentation.
 
 ### `useRef`
 
@@ -251,7 +255,7 @@ If this is not the case, accessing `el` or `comp` on it will return `null`.
 ### `useSubEnv`
 
 The environment is sometimes useful to share some common information between
-all components.  But sometimes, we want to *scope* that knowledge to a subtree.
+all components. But sometimes, we want to _scope_ that knowledge to a subtree.
 
 For example, if we have a form view component, maybe we would like to make some
 `model` object available to all sub component, but not to the whole application.
@@ -271,5 +275,5 @@ class FormComponent extends Component {
 
 The `useSubEnv` takes one argument: an object which contains some key/value that
 will be added to the parent environment. Note that it will extend, not replace
-the parent environment.  And of course, the parent environment will not be
+the parent environment. And of course, the parent environment will not be
 affected.

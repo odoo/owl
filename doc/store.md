@@ -21,8 +21,9 @@ in various parts of the user interface, and then, it is not obvious which
 component should own which part of the state.
 
 Owl's solution to this issue is a centralized store. It is a class that owns
-some state, and let the developer update it in a structured way, with `actions`.
-Owl components can then connect to the store, and will be updated if necessary.
+some (or all) state, and let the developer update it in a structured way, with
+`actions`. Owl components can then connect to the store, and will be updated if
+necessary.
 
 Note: Owl store is inspired by React Redux and VueX.
 
@@ -47,7 +48,7 @@ const state = {
 };
 
 const store = new owl.Store({ state, actions });
-store.on("update", () => console.log(store.state));
+store.on("update", null, () => console.log(store.state));
 
 // updating the state
 store.dispatch("addTodo", "fix all bugs");

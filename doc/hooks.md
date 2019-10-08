@@ -15,6 +15,9 @@
   - [`useContext`](#usecontext)
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
+  - [`useStore`](#usestore)
+  - [`useDispatch`](#usedispatch)
+  - [`useGetters`](#usegetters)
   - [Making customized hooks](#making-customized-hooks)
 
 ## Overview
@@ -282,6 +285,21 @@ The `useSubEnv` takes one argument: an object which contains some key/value that
 will be added to the parent environment. Note that it will extend, not replace
 the parent environment. And of course, the parent environment will not be
 affected.
+
+### `useStore`
+
+The `useStore` hook is the entry point for a component to connect to the store.
+See the [store documentation](store.md) for more information.
+
+### `useDispatch`
+
+The `useDispatch` hook is the way for components to get a reference to the store
+`dispatch` function. See the [store documentation](store.md) for more information.
+
+### `useGetters`
+
+The `useGetters` hook is the way for components to get a reference to the store
+getters. See the [store documentation](store.md) for more information.
 
 ### Making customized hooks
 

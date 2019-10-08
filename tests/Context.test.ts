@@ -99,6 +99,7 @@ describe("Context", () => {
     expect(steps).toEqual(["child"]);
     testContext.state.a = 3;
     await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>32</span></div>");
     expect(steps).toEqual(["child", "child"]);
   });
 

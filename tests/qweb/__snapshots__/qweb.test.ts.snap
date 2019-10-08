@@ -1764,6 +1764,49 @@ exports[`t-on t-on with prevent and/or stop modifiers 1`] = `
 }"
 `;
 
+exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    context = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    result = vn1;
+    var _2 = context['projects'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    var _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    var _length3 = _3.length;
+    for (let i = 0; i < _length3; i++) {
+        context.project_first = i === 0;
+        context.project_last = i === _length3 - 1;
+        context.project_index = i;
+        context.project = _3[i];
+        context.project_value = _4[i];
+        var _5 = '#';
+        const nodeKey6 = context['project']
+        let c6 = [], p6 = {key:nodeKey6,attrs:{href: _5},on:{}};
+        var vn6 = h('a', p6, c6);
+        c1.push(vn6);
+        if (!context['onEdit']) {
+            throw new Error('Missing handler \\\\'' + 'onEdit' + \`\\\\' when evaluating template 'test'\`)
+        }
+        const handler7 = context['onEdit'].bind(owner, context['project'].id);
+        p6.on['click'] = function (e) {e.preventDefault();handler7(e);};
+        c6.push({text: \` Edit \`});
+        var _8 = context['project'].name;
+        if (_8 || _8 === 0) {
+            c6.push({text: _8});
+        }
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-on t-on with self and prevent modifiers (order matters) 1`] = `
 "function anonymous(context,extra
 ) {

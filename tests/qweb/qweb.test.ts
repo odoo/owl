@@ -1086,6 +1086,38 @@ describe("t-on", () => {
 
     expect(steps).toEqual([true, true]);
   });
+
+  test("t-on with prevent modifier in t-foreach", async () => {
+    expect.assertions(5);
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-foreach="projects" t-as="project">
+          <a href="#" t-key="project" t-on-click.prevent="onEdit(project.id)">
+            Edit <t t-esc="project.name"/>
+          </a>
+        </t>
+      </div>`
+    );
+    const steps:string[] = [];
+    const owner = {
+      projects: [{id: 1, name: 'Project 1'}, {id: 2, name: 'Project 2'}],
+
+      onEdit(projectId, ev) {
+        expect(ev.defaultPrevented).toBe(true);
+        steps.push(projectId);
+      },
+    };
+
+    const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(node.outerHTML).toBe(`<div><a href="#"> Edit Project 1</a><a href="#"> Edit Project 2</a></div>`);
+
+    const links = node.querySelectorAll("a")!;
+    links[0].click();
+    links[1].click();
+
+    expect(steps).toEqual([1, 2]);
+  });
 });
 
 describe("t-ref", () => {

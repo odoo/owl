@@ -60,6 +60,10 @@ export class Context extends EventBus {
  */
 export function useContext(ctx: Context): any {
   const component: Component<any, any> = Component.current!;
+  return useContextWithCB(ctx, component, component.render.bind(component));
+}
+
+export function useContextWithCB(ctx: Context, component, method): any {
   const __owl__ = component.__owl__;
   const id = __owl__.id;
   const mapping = ctx.mapping;
@@ -75,7 +79,7 @@ export function useContext(ctx: Context): any {
   ctx.on("update", component, async contextId => {
     if (mapping[id] < contextId) {
       mapping[id] = contextId;
-      await component.render();
+      await method();
     }
   });
   onWillUnmount(() => {

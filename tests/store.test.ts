@@ -1,6 +1,6 @@
-import { Env } from "../../src/component/component";
-import { Store, Getter } from "../../src/store/store";
-import { nextTick, nextMicroTick } from "../helpers";
+import { Env } from "../src/component/component";
+import { Store, Getter } from "../src/store";
+import { nextTick, nextMicroTick } from "./helpers";
 
 describe("basic use", () => {
   test("dispatch an action", () => {

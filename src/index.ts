@@ -7,8 +7,7 @@
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
 import { QWeb } from "./qweb/index";
-import { ConnectedComponent } from "./store/connected_component";
-import { Store } from "./store/store";
+import * as _store from "./Store";
 import * as _utils from "./utils";
 import * as _tags from "./tags";
 import * as _hooks from "./hooks";
@@ -24,10 +23,15 @@ export const Context = _context.Context;
 export const useState = _hooks.useState;
 export const core = { EventBus, Observer };
 export const router = { Router, RouteComponent, Link };
-export const store = { Store, ConnectedComponent };
+export const Store = _store.Store;
 export const utils = _utils;
 export const tags = _tags;
-export const hooks = Object.assign({}, _hooks, { useContext: _context.useContext });
+export const hooks = Object.assign({}, _hooks, {
+  useContext: _context.useContext,
+  useDispatch: _store.useDispatch,
+  useGetters: _store.useGetters,
+  useStore: _store.useStore
+});
 export const __info__ = {};
 
 Object.defineProperty(__info__, "mode", {

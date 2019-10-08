@@ -49,25 +49,35 @@ QWeb.addDirective({
     );
     ctx.closeIf();
     let params = extraArgs ? `owner, ${ctx.formatExpression(extraArgs)}` : "owner";
-    let handler;
     if (mods.length > 0) {
-      handler = `function (e) {`;
+      let handler = `function (e) {`;
       handler += mods
         .map(function(mod) {
           return MODS_CODE[mod];
         })
         .join("");
-      handler += `context['${handlerName}'].call(${params}, e);}`;
+      if (!extraArgs) {
+        handler += `context['${handlerName}'].call(${params}, e);}`;
+        ctx.addLine(
+          `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
+        );
+        ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
+      } else {
+        const handlerKey = `handler${ctx.generateID()}`;
+        ctx.addLine(`const ${handlerKey} = context['${handlerName}'].bind(${params});`);
+        handler += `${handlerKey}(e);}`;
+        ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
+      }
     } else {
-      handler = `context['${handlerName}'].bind(${params})`;
-    }
-    if (extraArgs) {
-      ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
-    } else {
-      ctx.addLine(
-        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
-      );
-      ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
+      const handler = `context['${handlerName}'].bind(${params})`;
+      if (extraArgs) {
+        ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
+      } else {
+        ctx.addLine(
+          `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
+        );
+        ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
+      }
     }
   }
 });
@@ -197,7 +207,9 @@ QWeb.addDirective({
     );
     ctx.addIf(`slot${slotKey}`);
     ctx.addLine(
-      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`
+      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
+        ctx.parentNode
+      }, vars: extra.vars, parent: owner}));`
     );
     ctx.closeIf();
     return true;

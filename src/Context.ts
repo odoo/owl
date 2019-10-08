@@ -1,0 +1,86 @@
+import { Component } from "./component/component";
+import { Observer } from "./core/observer";
+import { EventBus } from "./core/event_bus";
+import { onWillUnmount } from "./hooks";
+
+/**
+ * The `Context` object provides a way to share data between an arbitrary number
+ * of component. Usually, data is passed from a parent to its children component,
+ * but when we have to deal with some mostly global information, this can be
+ * annoying, since each component will need to pass the information to each
+ * children, even though some or most of them will not use the information.
+ *
+ * With a `Context` object, each component can subscribe (with the `useContext`
+ * hook) to its state, and will be updated whenever the context state is updated.
+ */
+export class Context extends EventBus {
+  state: any;
+  observer: Observer;
+  id: number = 1;
+  // mapping from component id to last observed context id
+  mapping: { [componentId: number]: number } = {};
+
+  constructor(state: Object = {}) {
+    super();
+    this.observer = new Observer();
+    this.observer.notifyCB = this.__notifyComponents.bind(this);
+    this.state = this.observer.observe(state);
+  }
+
+  /**
+   * Instead of using trigger to emit an update event, we actually implement
+   * our own function to do that.  The reason is that we need to be smarter than
+   * a simple trigger function: we need to wait for parent components to be
+   * done before doing children components.  The reason is that if an update
+   * as an effect of destroying a children, we do not want to call the
+   * mapStoreToProps function of the child, nor rendering it.
+   *
+   * This method is not optimal if we have a bunch of asynchronous components:
+   * we wait sequentially for each component to be completed before updating the
+   * next.  However, the only things that matters is that children are updated
+   * after their parents.  So, this could be optimized by being smarter, and
+   * updating all widgets concurrently, except for parents/children.
+   */
+  async __notifyComponents() {
+    const id = ++this.id;
+    const subs = this.subscriptions.update || [];
+    for (let i = 0, iLen = subs.length; i < iLen; i++) {
+      const sub = subs[i];
+      const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
+      if (shouldCallback) {
+        await sub.callback.call(sub.owner, id);
+      }
+    }
+  }
+}
+
+/**
+ * The`useContext` hook is the normal way for a component to register themselve
+ * to context state changes. The `useContext` method returns the context state
+ */
+export function useContext(ctx: Context): any {
+  const component: Component<any, any> = Component._current;
+  const __owl__ = component.__owl__;
+  const id = __owl__.id;
+  const mapping = ctx.mapping;
+  if (id in mapping) {
+    return ctx.state;
+  }
+  mapping[id] = 0;
+  const renderFn = __owl__.render;
+  __owl__.render = function(comp, params) {
+    mapping[id] = ctx.id;
+    return renderFn(comp, params);
+  };
+  ctx.on("update", component, async contextId => {
+    if (mapping[id] < contextId) {
+      mapping[id] = contextId;
+      await component.render();
+    }
+  });
+  onWillUnmount(() => {
+    ctx.off("update", component);
+    delete mapping[id];
+  });
+  return ctx.state;
+}

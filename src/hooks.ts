@@ -35,25 +35,33 @@ export function useState<T>(state: T): T {
 // Life cycle hooks
 // -----------------------------------------------------------------------------
 function makeLifecycleHook(method: string, reverse: boolean = false) {
-  return function(cb) {
-    const component: Component<any, any> = Component._current;
-    if (component.__owl__[method]) {
-      const current = component.__owl__[method];
-      if (reverse) {
+  if (reverse) {
+    return function(cb) {
+      const component: Component<any, any> = Component._current;
+      if (component.__owl__[method]) {
+        const current = component.__owl__[method];
         component.__owl__[method] = function() {
           current.call(component);
           cb.call(component);
         };
       } else {
+        component.__owl__[method] = cb;
+      }
+    };
+  } else {
+    return function(cb) {
+      const component: Component<any, any> = Component._current;
+      if (component.__owl__[method]) {
+        const current = component.__owl__[method];
         component.__owl__[method] = function() {
           cb.call(component);
           current.call(component);
         };
+      } else {
+        component.__owl__[method] = cb;
       }
-    } else {
-      component.__owl__[method] = cb;
-    }
-  };
+    };
+  }
 }
 
 export const onMounted = makeLifecycleHook("mountedCB", true);

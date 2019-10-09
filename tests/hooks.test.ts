@@ -7,6 +7,8 @@ import {
   useRef,
   onPatched,
   onWillPatch,
+  onWillStart,
+  onWillUpdateProps,
   useSubEnv
 } from "../src/hooks";
 import { xml } from "../src/tags";
@@ -430,4 +432,43 @@ describe("hooks", () => {
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>3<div>5</div></div>");
   });
+
+  test("can use onWillStart, onWillUpdateProps", async () => {
+    const steps: string[] = [];
+    function useMyHook() {
+      onWillStart(() => {
+        steps.push("onWillStart");
+      });
+      onWillUpdateProps(nextProps => {
+          expect(nextProps).toEqual({value: 2});
+        steps.push("onWillUpdateProps");
+      });
+    }
+    class MyComponent extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.value"/></span>`;
+      constructor(parent, props) {
+        super(parent, props);
+        useMyHook();
+      }
+    }
+    class App extends Component<any, any> {
+      static template = xml`<div><MyComponent value="state.value"/></div>`;
+      static components = { MyComponent };
+      state = useState({ value: 1});
+    }
+
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(app).not.toHaveProperty("willStart");
+    expect(app).not.toHaveProperty("willUpdateProps");
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    expect(steps).toEqual(["onWillStart"]);
+
+    app.state.value = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
+    expect(steps).toEqual(["onWillStart", "onWillUpdateProps"]);
+  });
+
+
 });

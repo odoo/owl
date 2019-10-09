@@ -86,6 +86,8 @@ interface Internal<T extends Env, Props> {
   willUnmountCB: Function | null;
   willPatchCB: Function | null;
   patchedCB: Function | null;
+  willStartCB: Function | null;
+  willUpdatePropsCB: Function | null;
   classObj: { [key: string]: boolean } | null;
   refs: { [key: string]: Component<T, any> | HTMLElement | undefined } | null;
 }
@@ -192,6 +194,8 @@ export class Component<T extends Env, Props extends {}> {
       willUnmountCB: null,
       willPatchCB: null,
       patchedCB: null,
+      willStartCB: null,
+      willUpdatePropsCB: null,
       observer: null,
       render: qweb.render.bind(qweb, this.__getTemplate(qweb)),
       classObj: null,
@@ -510,7 +514,10 @@ export class Component<T extends Env, Props extends {}> {
       if (defaultProps) {
         nextProps = this.__applyDefaultProps(nextProps, defaultProps);
       }
-      await this.willUpdateProps(nextProps);
+      await Promise.all([
+        this.willUpdateProps(nextProps),
+        this.__owl__.willUpdatePropsCB && this.__owl__.willUpdatePropsCB(nextProps)
+      ]);
       this.props = nextProps;
       const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
       fiber.patchQueue.push(fiber);
@@ -566,7 +573,7 @@ export class Component<T extends Env, Props extends {}> {
   }
   async __prepareAndRender(fiber: Fiber<Props>): Promise<VNode> {
     try {
-      await this.willStart();
+      await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
     } catch (e) {
       errorHandler(e, this);
       return Promise.resolve(h("div"));

@@ -64,10 +64,27 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
   }
 }
 
+function makeAsyncHook(method: string) {
+  return function(cb) {
+    const component: Component<any, any> = Component._current;
+    if (component.__owl__[method]) {
+      const current = component.__owl__[method];
+      component.__owl__[method] = function(...args) {
+        return Promise.all[(current.call(component, ...args), cb.call(component, ...args))];
+      };
+    } else {
+      component.__owl__[method] = cb;
+    }
+  };
+}
+
 export const onMounted = makeLifecycleHook("mountedCB", true);
 export const onWillUnmount = makeLifecycleHook("willUnmountCB");
 export const onWillPatch = makeLifecycleHook("willPatchCB");
 export const onPatched = makeLifecycleHook("patchedCB", true);
+
+export const onWillStart = makeAsyncHook("willStartCB");
+export const onWillUpdateProps = makeAsyncHook("willUpdatePropsCB");
 
 // -----------------------------------------------------------------------------
 // useRef
@@ -99,7 +116,6 @@ export function useRef(name: string): Ref {
 // -----------------------------------------------------------------------------
 // useSubEnv
 // -----------------------------------------------------------------------------
-
 
 /**
  * This hook is a simple way to let components use a sub environment.  Note that

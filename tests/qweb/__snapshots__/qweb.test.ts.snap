@@ -1911,6 +1911,9 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
       create: (_, n) => {
         context.__owl__.refs[ref3] = n.elm;
       },
+      destroy: () => {
+        delete context.__owl__.refs[ref3];
+      },
     };
     return vn1;
 }"
@@ -1930,6 +1933,9 @@ exports[`t-ref can get a ref on a node 1`] = `
     p2.hook = {
       create: (_, n) => {
         context.__owl__.refs[ref3] = n.elm;
+      },
+      destroy: () => {
+        delete context.__owl__.refs[ref3];
       },
     };
     return vn1;
@@ -1966,6 +1972,9 @@ exports[`t-ref refs in a loop 1`] = `
         p5.hook = {
           create: (_, n) => {
             context.__owl__.refs[ref6] = n.elm;
+          },
+          destroy: () => {
+            delete context.__owl__.refs[ref6];
           },
         };
         var _7 = context['item'];

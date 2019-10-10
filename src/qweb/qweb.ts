@@ -69,7 +69,8 @@ const whitespaceRE = /\s+/g;
 const NODE_HOOKS_PARAMS = {
   create: "(_, n)",
   insert: "vn",
-  remove: "(vn, rm)"
+  remove: "(vn, rm)",
+  destroy: "()"
 };
 
 interface Utils {

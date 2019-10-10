@@ -93,6 +93,7 @@ QWeb.addDirective({
     const refKey = `ref${ctx.generateID()}`;
     ctx.addLine(`const ${refKey} = ${ctx.interpolate(value)};`);
     addNodeHook("create", `context.__owl__.refs[${refKey}] = n.elm;`);
+    addNodeHook("destroy", `delete context.__owl__.refs[${refKey}];`);
   }
 });
 

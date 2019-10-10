@@ -234,6 +234,27 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div><button>1</button></div>");
   });
 
+  test("useRef hook is null if ref is removed ", async () => {
+    expect.assertions(4);
+    class TestRef extends Component<any, any> {
+      static template = xml`<div><span t-if="state.flag" t-ref="span">owl</span></div>`;
+      spanRef = useRef("span");
+      state = useState({ flag: true });
+      willPatch() {
+        expect(this.spanRef.el).not.toBeNull();
+      }
+      patched() {
+        expect(this.spanRef.el).toBeNull();
+      }
+    }
+    const component = new TestRef(env);
+    await component.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>owl</span></div>");
+    component.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+  });
+
   test("can use onPatched, onWillPatch", async () => {
     const steps: string[] = [];
     function useMyHook() {

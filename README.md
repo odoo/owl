@@ -87,7 +87,11 @@ find some more information [here](doc/comparison.md).
 
 ## Documentation
 
-The complete documentation can be found [here](doc/readme.md). The most important sections are:
+A complete documentation for Owl can be found here:
+
+- [Main documentation page](doc/readme.md).
+
+The most important sections are:
 
 - [Quick Start](doc/quick_start.md)
 - [Component](doc/component.md)

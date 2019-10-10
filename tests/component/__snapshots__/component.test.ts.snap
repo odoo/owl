@@ -1536,6 +1536,9 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
       create: (_, n) => {
         context.__owl__.refs[ref11] = n.elm;
       },
+      destroy: () => {
+        delete context.__owl__.refs[ref11];
+      },
     };
     c10.push({text: \`do something\`});
 }"

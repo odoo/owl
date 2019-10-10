@@ -1,6 +1,6 @@
 import { makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component, Env } from "../src/component/component";
-import { Context, useContext } from "../src/context";
+import { Context, useContext } from "../src/Context";
 import { xml } from "../src/tags";
 import { useState } from "../src/hooks";
 

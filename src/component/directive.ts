@@ -1,5 +1,5 @@
 import { QWeb } from "../qweb/index";
-import { INTERP_REGEXP } from "../qweb/context";
+import { INTERP_REGEXP } from "../qweb/compilation_context";
 import { MODS_CODE } from "../qweb/extensions";
 
 //------------------------------------------------------------------------------

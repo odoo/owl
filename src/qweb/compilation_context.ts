@@ -5,7 +5,7 @@ export const INTERP_REGEXP = /\{\{.*?\}\}/g;
 // Compilation Context
 //------------------------------------------------------------------------------
 
-export class Context {
+export class CompilationContext {
   nextID: number = 1;
   code: string[] = [];
   variables: { [key: string]: QWebVar } = {};
@@ -14,7 +14,7 @@ export class Context {
   parentTextNode: number | null = null;
   rootNode: number | null = null;
   indentLevel: number = 0;
-  rootContext: Context;
+  rootContext: CompilationContext;
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
   shouldDefineParent: boolean = false;
@@ -87,7 +87,7 @@ export class Context {
     return this.code;
   }
 
-  withParent(node: number): Context {
+  withParent(node: number): CompilationContext {
     if (
       !this.allowMultipleRoots &&
       this === this.rootContext &&
@@ -104,7 +104,7 @@ export class Context {
     return this.subContext("parentNode", node);
   }
 
-  subContext(key: keyof Context, value: any): Context {
+  subContext(key: keyof CompilationContext, value: any): CompilationContext {
     const newContext = Object.create(this);
     newContext[key] = value;
     return newContext;

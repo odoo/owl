@@ -1,6 +1,6 @@
 import { EventBus } from "../core/event_bus";
 import { h, patch, VNode } from "../vdom/index";
-import { Context } from "./context";
+import { CompilationContext } from "./compilation_context";
 import { shallowEqual } from "../utils";
 import { addNS } from "../vdom/vdom";
 
@@ -36,7 +36,7 @@ interface Template {
 interface CompilationInfo {
   node: Element;
   qweb: QWeb;
-  ctx: Context;
+  ctx: CompilationContext;
   fullName: string;
   value: string;
 }
@@ -343,9 +343,9 @@ export class QWeb extends EventBus {
     });
   }
 
-  _compile(name: string, elem: Element, parentContext?: Context): CompiledTemplate {
+  _compile(name: string, elem: Element, parentContext?: CompilationContext): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
-    const ctx = new Context(name);
+    const ctx = new CompilationContext(name);
     if (elem.tagName !== "t") {
       ctx.shouldDefineResult = false;
     }
@@ -410,7 +410,7 @@ export class QWeb extends EventBus {
    * Generate code from an xml node
    *
    */
-  _compileNode(node: ChildNode, ctx: Context) {
+  _compileNode(node: ChildNode, ctx: CompilationContext) {
     if (!(node instanceof Element)) {
       // this is a text node, there are no directive to apply
       let text = node.textContent!;
@@ -569,7 +569,7 @@ export class QWeb extends EventBus {
     }
   }
 
-  _compileGenericNode(node: ChildNode, ctx: Context, withHandlers: boolean = true): number {
+  _compileGenericNode(node: ChildNode, ctx: CompilationContext, withHandlers: boolean = true): number {
     // nodeType 1 is generic tag
     if (node.nodeType !== 1) {
       throw new Error("unsupported node type");
@@ -732,7 +732,7 @@ export class QWeb extends EventBus {
     return nodeID;
   }
 
-  _compileChildren(node: ChildNode, ctx: Context) {
+  _compileChildren(node: ChildNode, ctx: CompilationContext) {
     if (node.childNodes.length > 0) {
       for (let child of Array.from(node.childNodes)) {
         this._compileNode(child, ctx);

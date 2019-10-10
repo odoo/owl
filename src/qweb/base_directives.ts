@@ -1,4 +1,4 @@
-import { Context } from "./context";
+import { CompilationContext } from "./compilation_context";
 import { QWebExprVar } from "./expression_parser";
 import { QWeb } from "./qweb";
 import { htmlToVDOM } from "../vdom/html_to_vdom";
@@ -28,7 +28,7 @@ QWeb.utils.getFragment = function(str: string): DocumentFragment {
 
 QWeb.utils.htmlToVDOM = htmlToVDOM;
 
-function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
+function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: CompilationContext) {
   if (value === "0" && ctx.caller) {
     qweb._compileNode(ctx.caller, ctx);
     return;
@@ -187,7 +187,7 @@ QWeb.addDirective({
     nodeCopy.removeAttribute("t-call");
 
     // extract variables from nodecopy
-    const tempCtx = new Context();
+    const tempCtx = new CompilationContext();
     tempCtx.nextID = ctx.rootContext.nextID;
     tempCtx.allowMultipleRoots = true;
     qweb._compileNode(nodeCopy, tempCtx);

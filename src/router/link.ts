@@ -1,6 +1,6 @@
 import { Component } from "../component/component";
 import { xml } from "../tags";
-import { Destination, RouterEnv } from "./Router";
+import { Destination, RouterEnv } from "./router";
 
 type Props = Destination;
 

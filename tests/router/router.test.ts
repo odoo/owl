@@ -1,6 +1,6 @@
-import { Destination, RouterEnv, Route } from "../../src/router/Router";
+import { Destination, RouterEnv, Route } from "../../src/router/router";
 import { makeTestEnv, nextTick } from "../helpers";
-import { TestRouter } from "./TestRouter";
+import { TestRouter } from "./test_router";
 
 let env: RouterEnv;
 let router: TestRouter | null = null;

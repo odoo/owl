@@ -449,8 +449,6 @@ export class QWeb extends EventBus {
       fullName: string;
     }[] = [];
 
-    let withHandlers = false;
-
     // maybe this is not optimal: we iterate on all attributes here, and again
     // just after for each directive.
     for (let i = 0; i < attributes.length; i++) {
@@ -460,11 +458,21 @@ export class QWeb extends EventBus {
         if (!(dName in QWeb.DIRECTIVE_NAMES)) {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
+        if (node.tagName !== 't' && (attrName === 't-esc' || attrName === 't-raw')) {
+          const tNode = document.createElement('t');
+          tNode.setAttribute(attrName, node.getAttribute(attrName)!);
+          for (let child of Array.from(node.childNodes)) {
+            tNode.appendChild(child);
+          }
+          node.appendChild(tNode);
+          node.removeAttribute(attrName);
+        }
       }
     }
 
     const DIR_N = QWeb.DIRECTIVES.length;
     const ATTR_N = attributes.length;
+    let withHandlers = false;
     for (let i = 0; i < DIR_N; i++) {
       let directive = QWeb.DIRECTIVES[i];
       let fullName;

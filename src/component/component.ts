@@ -549,7 +549,6 @@ export class Component<T extends Env, Props extends {}> {
 
   __getTemplate(qweb: QWeb): string {
     let p = (<any>this).constructor;
-    // console.warn(p, p.template, p._template, 'template' in p, p.hasOwnProperty('template'))
     if (!p.hasOwnProperty("_template")) {
       if (p.template) {
         p._template = p.template;

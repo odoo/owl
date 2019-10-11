@@ -10,7 +10,6 @@ exports[`Link component can render simple cases 1`] = `
     var _2 = context['href'];
     let c3 = [], p3 = {key:3,attrs:{href: _2},class:_1,on:{}};
     var vn3 = h('a', p3, c3);
-    result = vn3;
     if (!context['navigate']) {
         throw new Error('Missing handler \\\\'' + 'navigate' + \`\\\\' when evaluating template '__template__1'\`)
     }

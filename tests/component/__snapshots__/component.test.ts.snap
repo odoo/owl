@@ -10,7 +10,6 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -93,7 +92,6 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -176,7 +174,6 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
@@ -259,7 +256,6 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     const _5 = context['state'].style;
@@ -303,7 +299,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     const ref5 = \`child\`;
@@ -348,7 +343,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
     Object.assign(_2, utils.toObj({d:context['state'].d}))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('span', p3, c3);
-    result = vn3;
     return vn3;
 }"
 `;
@@ -364,7 +358,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     const ref5 = \`child\`;
@@ -409,7 +402,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
     Object.assign(_2, utils.toObj(context['state'].d?'d':''))
     let c3 = [], p3 = {key:3,class:_2};
     var vn3 = h('span', p3, c3);
-    result = vn3;
     return vn3;
 }"
 `;
@@ -424,7 +416,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let _5 = {a:context['state'].a,b:context['state'].b};
@@ -468,7 +459,6 @@ exports[`composition sub components dom state with t-keepalive is preserved 1`] 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     if (context['state'].ok) {
         //COMPONENT
         let def3;
@@ -514,7 +504,6 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     var _2 = context['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -573,7 +562,6 @@ exports[`composition t-component with dynamic value 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -615,7 +603,6 @@ exports[`composition t-component with dynamic value 2 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -657,7 +644,6 @@ exports[`dynamic t-props basic use 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -699,7 +685,6 @@ exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     if (context['state'].flag) {
         //COMPONENT
         let def3;
@@ -744,7 +729,6 @@ exports[`other directives with t-component t-on with handler bound to argument 1
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -786,7 +770,6 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -828,7 +811,6 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -870,7 +852,6 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -912,7 +893,6 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -954,7 +934,6 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -996,7 +975,6 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -1038,7 +1016,6 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -1076,7 +1053,6 @@ exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('span', p2, c2);
     c1.push(vn2);
@@ -1098,7 +1074,6 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let key5 = 'key' + 'somestring';
     let def3;
@@ -1143,7 +1118,6 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     var _2 = context['props'].items;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
@@ -1199,7 +1173,6 @@ exports[`t-model directive .lazy modifier 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1223,7 +1196,6 @@ exports[`t-model directive basic use, on an input 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1247,7 +1219,6 @@ exports[`t-model directive basic use, on another key in component 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1271,7 +1242,6 @@ exports[`t-model directive on a select 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('select', p2, c2);
     c1.push(vn2);
@@ -1316,7 +1286,6 @@ exports[`t-model directive on a sub state key 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('input', p2, c2);
     c1.push(vn2);
@@ -1340,7 +1309,6 @@ exports[`t-model directive on an input type=radio 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     var _2 = 'radio';
     var _3 = 'one';
     var _4 = 'One';
@@ -1377,7 +1345,6 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     var _2 = 'checkbox';
     let c3 = [], p3 = {key:3,attrs:{type: _2},on:{}};
     var vn3 = h('input', p3, c3);
@@ -1408,7 +1375,6 @@ exports[`t-slot directive can define and call slots 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -1448,7 +1414,6 @@ exports[`t-slot directive can define and call slots 2`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('div', p2, c2);
     c1.push(vn2);
@@ -1603,7 +1568,6 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
     var _1 = context['props'].to;
     let c2 = [], p2 = {key:2,attrs:{href: _1}};
     var vn2 = h('a', p2, c2);
-    result = vn2;
     const slot3 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot3) {
         slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
@@ -1624,7 +1588,6 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('u', p2, c2);
     c1.push(vn2);
@@ -1707,7 +1670,6 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
     var _1 = context['props'].to;
     let c2 = [], p2 = {key:2,attrs:{href: _1}};
     var vn2 = h('a', p2, c2);
-    result = vn2;
     const slot3 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot3) {
         slot3.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c2, vars: extra.vars, parent: owner}));
@@ -1728,7 +1690,6 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     let c2 = [], p2 = {key:2};
     var vn2 = h('u', p2, c2);
     c1.push(vn2);
@@ -1813,7 +1774,6 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     var _2 = 'User '+context['state'].user.name;
     //COMPONENT
     let def4;

@@ -55,7 +55,9 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
       ctx.rootContext.rootNode = nodeID;
       ctx.rootContext.parentTextNode = nodeID;
       ctx.addLine(`var vn${nodeID} = {text: ${exprID}};`);
-      ctx.addLine(`result = vn${nodeID}`);
+      if (ctx.rootContext.shouldDefineResult) {
+        ctx.addLine(`result = vn${nodeID}`);
+      }
     }
   } else {
     let fragID = ctx.generateID();

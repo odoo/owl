@@ -614,7 +614,7 @@ exports[`misc global 1`] = `
         context.value_index = i;
         context.value = _3[i];
         context.value_value = _4[i];
-        let c5 = [], p5 = {key:5,on:{}};
+        let c5 = [], p5 = {key:5};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
         var _6 = context['value'];
@@ -624,12 +624,12 @@ exports[`misc global 1`] = `
         {
             let _11 = 'bbb';
             var _13 = 'agüero';
-            let c14 = [], p14 = {key:14,attrs:{\\"falló\\": _13},on:{}};
-            var vn14 = h('Año', p14, c14);
+            let c14 = [], p14 = {key:14,attrs:{\\"falló\\": _13}};
+            var vn14 = h('año', p14, c14);
             c1.push(vn14);
             {
                 let _15 = 'aaa';
-                let c16 = [], p16 = {key:16,on:{}};
+                let c16 = [], p16 = {key:16};
                 var vn16 = h('span', p16, c16);
                 c14.push(vn16);
                 if (_15 || _15 === 0) {
@@ -638,7 +638,7 @@ exports[`misc global 1`] = `
                     c16.push({text: \`foo default\`});
                 }
             }
-            let c17 = [], p17 = {key:17,on:{}};
+            let c17 = [], p17 = {key:17};
             var vn17 = h('span', p17, c17);
             c14.push(vn17);
             var _18 = context['foo'];
@@ -648,7 +648,7 @@ exports[`misc global 1`] = `
                 c17.push({text: \`foo default\`});
             }
             var _19 = 'bbb';
-            let c20 = [], p20 = {key:20,on:{}};
+            let c20 = [], p20 = {key:20};
             var vn20 = h('span', p20, c20);
             c14.push(vn20);
             if (_19 || _19 === 0) {
@@ -658,7 +658,7 @@ exports[`misc global 1`] = `
             }
         }
     }
-    let c21 = [], p21 = {key:21,on:{}};
+    let c21 = [], p21 = {key:21};
     var vn21 = h('div', p21, c21);
     c1.push(vn21);
     var _22 = context['toto'];
@@ -1256,7 +1256,7 @@ exports[`t-esc escaping on a node 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.h;
-    let c1 = [], p1 = {key:1,on:{}};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     result = vn1;
     var _2 = 'ok';
@@ -1271,7 +1271,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.h;
-    let c1 = [], p1 = {key:1,on:{}};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     result = vn1;
     var _2 = 'ok';
@@ -1288,7 +1288,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.h;
-    let c1 = [], p1 = {key:1,on:{}};
+    let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     result = vn1;
     var _2 = context['var'];
@@ -1697,6 +1697,59 @@ exports[`t-on handler is bound to proper owner 1`] = `
     extra.handlers['click' + 1] = extra.handlers['click' + 1] || context['add'].bind(owner);
     p1.on['click'] = extra.handlers['click' + 1];
     c1.push({text: \`Click\`});
+    return vn1;
+}"
+`;
+
+exports[`t-on t-on combined with t-esc 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    result = vn1;
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['onClick']) {
+        throw new Error('Missing handler \\\\'' + 'onClick' + \`\\\\' when evaluating template 'test'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['onClick'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    var _3 = context['text'];
+    if (_3 || _3 === 0) {
+        c2.push({text: _3});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-on t-on combined with t-raw 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    if (!context['onClick']) {
+        throw new Error('Missing handler \\\\'' + 'onClick' + \`\\\\' when evaluating template 'test'\`)
+    }
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['onClick'].bind(owner);
+    p2.on['click'] = extra.handlers['click' + 2];
+    var _3 = context['html'];
+    if (_3 || _3 === 0) {
+        var frag4 = utils.getFragment(_3)
+        var p5 = {hook: {
+          insert: n => n.elm.parentNode.replaceChild(frag4, n.elm),
+        }};
+        var vn5 = h('div', p5)
+        c2.push(vn5);
+    }
     return vn1;
 }"
 `;

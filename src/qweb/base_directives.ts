@@ -80,11 +80,6 @@ QWeb.addDirective({
   name: "esc",
   priority: 70,
   atNodeEncounter({ node, qweb, ctx }): boolean {
-    if (node.nodeName !== "t") {
-      let nodeID = qweb._compileGenericNode(node, ctx);
-      ctx = ctx.withParent(nodeID);
-      ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
-    }
     let value = ctx.getValue(node.getAttribute("t-esc")!);
     compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
     return true;
@@ -95,11 +90,6 @@ QWeb.addDirective({
   name: "raw",
   priority: 80,
   atNodeEncounter({ node, qweb, ctx }): boolean {
-    if (node.nodeName !== "t") {
-      let nodeID = qweb._compileGenericNode(node, ctx);
-      ctx = ctx.withParent(nodeID);
-      ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
-    }
     let value = ctx.getValue(node.getAttribute("t-raw")!);
     compileValueNode(value, node, qweb, ctx);
     return true;

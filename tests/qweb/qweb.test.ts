@@ -778,7 +778,7 @@ describe("foreach", () => {
 
 describe("misc", () => {
   test("global", () => {
-    qweb.addTemplate("_callee-asc", `<Año t-att-falló="'agüero'" t-raw="0"/>`);
+    qweb.addTemplate("_callee-asc", `<año t-att-falló="'agüero'" t-raw="0"/>`);
     qweb.addTemplate("_callee-uses-foo", `<span t-esc="foo">foo default</span>`);
     qweb.addTemplate("_callee-asc-toto", `<div t-raw="toto">toto default</div>`);
     qweb.addTemplate(
@@ -1117,6 +1117,44 @@ describe("t-on", () => {
     links[1].click();
 
     expect(steps).toEqual([1, 2]);
+  });
+
+  test("t-on combined with t-esc", async () => {
+    expect.assertions(3);
+    qweb.addTemplate("test", `<div><button t-on-click="onClick" t-esc="text"/></div>`);
+    const steps:string[] = [];
+    const owner = {
+      text: 'Click here',
+      onClick() {
+        steps.push('onClick');
+      },
+    };
+
+    const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(node.outerHTML).toBe(`<div><button>Click here</button></div>`);
+
+    node.querySelector("button")!.click();
+
+    expect(steps).toEqual(['onClick']);
+  });
+
+  test("t-on combined with t-raw", async () => {
+    expect.assertions(3);
+    qweb.addTemplate("test", `<div><button t-on-click="onClick" t-raw="html"/></div>`);
+    const steps:string[] = [];
+    const owner = {
+      html: 'Click <b>here</b>',
+      onClick() {
+        steps.push('onClick');
+      },
+    };
+
+    const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(node.outerHTML).toBe(`<div><button>Click <b>here</b></button></div>`);
+
+    node.querySelector("button")!.click();
+
+    expect(steps).toEqual(['onClick']);
   });
 });
 

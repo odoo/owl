@@ -1,8 +1,8 @@
 import { Component } from "../../src/component/component";
-import { Link } from "../../src/router/Link";
-import { RouterEnv } from "../../src/router/Router";
+import { Link } from "../../src/router/link";
+import { RouterEnv } from "../../src/router/router";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
-import { TestRouter } from "./TestRouter";
+import { TestRouter } from "./test_router";
 
 describe("Link component", () => {
   let fixture: HTMLElement;

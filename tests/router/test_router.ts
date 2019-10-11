@@ -1,4 +1,4 @@
-import { Router } from "../../src/router/Router";
+import { Router } from "../../src/router/router";
 import { QWeb } from "../../src/qweb/index";
 
 export class TestRouter extends Router {

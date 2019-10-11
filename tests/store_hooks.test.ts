@@ -1,5 +1,5 @@
 import { Component, Env } from "../src/component/component";
-import { Store, useStore, useDispatch, useGetters } from "../src/Store";
+import { Store, useStore, useDispatch, useGetters } from "../src/store";
 import { useState } from "../src/hooks";
 import { xml } from "../src/tags";
 import { shallowEqual } from "../src/utils";

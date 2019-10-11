@@ -1,8 +1,8 @@
 import { Component } from "../../src/component/component";
-import { RouterEnv } from "../../src/router/Router";
-import { RouteComponent } from "../../src/router/RouteComponent";
+import { RouterEnv } from "../../src/router/router";
+import { RouteComponent } from "../../src/router/route_component";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
-import { TestRouter } from "./TestRouter";
+import { TestRouter } from "./test_router";
 
 describe("RouteComponent", () => {
   let fixture: HTMLElement;

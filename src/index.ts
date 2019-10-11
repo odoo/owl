@@ -7,14 +7,14 @@
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
 import { QWeb } from "./qweb/index";
-import * as _store from "./Store";
+import * as _store from "./store";
 import * as _utils from "./utils";
 import * as _tags from "./tags";
 import * as _hooks from "./hooks";
-import * as _context from "./Context";
-import { Link } from "./router/Link";
-import { RouteComponent } from "./router/RouteComponent";
-import { Router } from "./router/Router";
+import * as _context from "./context";
+import { Link } from "./router/link";
+import { RouteComponent } from "./router/route_component";
+import { Router } from "./router/router";
 
 export { Component } from "./component/component";
 export { QWeb };

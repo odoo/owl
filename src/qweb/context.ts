@@ -98,7 +98,7 @@ export class Context {
     if (!this.rootContext.rootNode) {
       this.rootContext.rootNode = node;
     }
-    if (!this.parentNode) {
+    if (!this.parentNode && this.rootContext.shouldDefineResult) {
       this.addLine(`result = vn${node};`);
     }
     return this.subContext("parentNode", node);

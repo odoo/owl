@@ -10,7 +10,6 @@ exports[`animations t-transition combined with component 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     //COMPONENT
     let def3;
     let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
@@ -55,7 +54,6 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    result = vn1;
     if (context['state'].display) {
         //COMPONENT
         let def3;
@@ -99,7 +97,6 @@ exports[`animations t-transition with no delay/duration 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    result = vn1;
     p1.hook = {
       insert: vn => {
         utils.transitionInsert(vn, 'jupiler');
@@ -120,7 +117,6 @@ exports[`animations t-transition, on a simple node (insert) 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
-    result = vn1;
     p1.hook = {
       insert: vn => {
         utils.transitionInsert(vn, 'chimay');

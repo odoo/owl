@@ -1,4 +1,5 @@
 import { h, patch } from "../src/vdom";
+import { htmlToVDOM } from "../src/vdom/html_to_vdom";
 import { init, addNS } from "../src/vdom/vdom";
 
 function map(list, fn) {
@@ -1102,5 +1103,54 @@ describe("snabbdom", function() {
       patch(vnode1, vnode2);
       expect(result).toHaveLength(0);
     });
+  });
+});
+
+//------------------------------------------------------------------------------
+// Html to vdom
+//------------------------------------------------------------------------------
+describe("html to vdom", function() {
+  let elm, vnode0;
+  beforeEach(function() {
+    elm = document.createElement("div");
+    vnode0 = elm;
+  });
+
+  test("empty strings return empty list", function() {
+    expect(htmlToVDOM("")).toEqual([]);
+  });
+
+  test("just text", function() {
+    const nodeList = htmlToVDOM("simple text");
+    expect(nodeList).toHaveLength(1);
+    expect(nodeList[0]).toEqual({ text: "simple text" });
+  });
+
+  test("empty tag", function() {
+    const nodeList = htmlToVDOM("<span></span>");
+    expect(nodeList).toHaveLength(1);
+    elm = patch(vnode0, nodeList[0]).elm;
+    expect(elm.outerHTML).toEqual("<span></span>");
+  });
+
+  test("tag with text", function() {
+    const nodeList = htmlToVDOM("<span>abc</span>");
+    expect(nodeList).toHaveLength(1);
+    elm = patch(vnode0, nodeList[0]).elm;
+    expect(elm.outerHTML).toEqual("<span>abc</span>");
+  });
+
+  test("tag with attribute", function() {
+    const nodeList = htmlToVDOM(`<span a="1" b="2">abc</span>`);
+    expect(nodeList).toHaveLength(1);
+    elm = patch(vnode0, nodeList[0]).elm;
+    expect(elm.outerHTML).toEqual(`<span a="1" b="2">abc</span>`);
+  });
+
+  test("misc", function() {
+    const nodeList = htmlToVDOM(`<span a="1" b="2">abc<div>1</div></span>`);
+    expect(nodeList).toHaveLength(1);
+    elm = patch(vnode0, nodeList[0]).elm;
+    expect(elm.outerHTML).toEqual(`<span a="1" b="2">abc<div>1</div></span>`);
   });
 });

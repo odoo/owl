@@ -4293,3 +4293,39 @@ describe("support svg components", () => {
     );
   });
 });
+
+describe("t-raw in components", () => {
+  test("update properly on state changes", async () => {
+    class TestW extends Widget {
+      static template = xml`<div><t t-raw="state.value"/></div>`;
+      state = useState({ value: "<b>content</b>" });
+    }
+    const widget = new TestW(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><b>content</b></div>");
+
+    widget.state.value = "<span>other content</span>";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>other content</span></div>");
+  });
+
+  test("can render list of t-raw ", async () => {
+    class TestW extends Widget {
+      static template = xml`
+        <div>
+            <t t-foreach="state.items" t-as="item">
+            <t t-esc="item"/>
+            <t t-raw="item"/>
+            </t>
+        </div>`;
+      state = useState({ items: ["<b>one</b>", "<b>two</b>", "<b>tree</b>"] });
+    }
+    const widget = new TestW(env);
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
+    );
+  });
+});

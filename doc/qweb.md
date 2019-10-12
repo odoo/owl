@@ -285,6 +285,11 @@ rendered with the value `value` set to `<span>foo</span>` in the rendering conte
 <p><span>foo</span></p>
 ```
 
+Note that since the content of the expression is not known beforehand, the `t-raw`
+directive has to parse the html (and convert it to a virtual dom structure) for
+each rendering. So, it will be much slower than a regular template. It is
+therefore advised to limit the use of `t-raw` whenever possible.
+
 ### Setting Variables
 
 QWeb allows creating variables from within the template, to memoize a computation (to use it multiple times), give a piece of data a clearer name, ...

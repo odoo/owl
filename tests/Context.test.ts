@@ -96,10 +96,10 @@ describe("Context", () => {
     const parent = new Parent(env);
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>12</span></div>");
-    expect(steps).toEqual(['child']);
+    expect(steps).toEqual(["child"]);
     testContext.state.a = 3;
     await nextTick();
-    expect(steps).toEqual(['child', 'child']);
+    expect(steps).toEqual(["child", "child"]);
   });
 
   test("parent and children subscribed to same context", async () => {

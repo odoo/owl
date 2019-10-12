@@ -1,6 +1,7 @@
 import { Context } from "./context";
 import { QWebExprVar } from "./expression_parser";
 import { QWeb } from "./qweb";
+import { htmlToVDOM } from "../vdom/html_to_vdom";
 
 /**
  * Owl QWeb Directives
@@ -24,6 +25,8 @@ QWeb.utils.getFragment = function(str: string): DocumentFragment {
   temp.innerHTML = str;
   return temp.content;
 };
+
+QWeb.utils.htmlToVDOM = htmlToVDOM;
 
 function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
   if (value === "0" && ctx.caller) {
@@ -60,15 +63,8 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Context) {
       }
     }
   } else {
-    let fragID = ctx.generateID();
     ctx.rootContext.shouldDefineUtils = true;
-    ctx.addLine(`var frag${fragID} = utils.getFragment(${exprID})`);
-    let tempNodeID = ctx.generateID();
-    ctx.addLine(`var p${tempNodeID} = {hook: {`);
-    ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
-    ctx.addLine(`}};`);
-    ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
-    ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
+    ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
   }
   if (node.childNodes.length) {
     ctx.addElse();

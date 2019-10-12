@@ -630,12 +630,7 @@ exports[`misc global 1`] = `
     c1.push(vn21);
     var _22 = context['toto'];
     if (_22 || _22 === 0) {
-        var frag23 = utils.getFragment(_22)
-        var p24 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag23, n.elm),
-        }};
-        var vn24 = h('div', p24)
-        c21.push(vn24);
+        c21.push(...utils.htmlToVDOM(_22));
     } else {
         c21.push({text: \`toto default\`});
     }
@@ -1670,12 +1665,7 @@ exports[`t-on t-on combined with t-raw 1`] = `
     p2.on['click'] = extra.handlers['click' + 2];
     var _3 = context['html'];
     if (_3 || _3 === 0) {
-        var frag4 = utils.getFragment(_3)
-        var p5 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag4, n.elm),
-        }};
-        var vn5 = h('div', p5)
-        c2.push(vn5);
+        c2.push(...utils.htmlToVDOM(_3));
     }
     return vn1;
 }"
@@ -1851,12 +1841,7 @@ exports[`t-raw literal 1`] = `
     var vn1 = h('span', p1, c1);
     var _2 = 'ok';
     if (_2 || _2 === 0) {
-        var frag3 = utils.getFragment(_2)
-        var p4 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
-        }};
-        var vn4 = h('div', p4)
-        c1.push(vn4);
+        c1.push(...utils.htmlToVDOM(_2));
     }
     return vn1;
 }"
@@ -1871,12 +1856,7 @@ exports[`t-raw not escaping 1`] = `
     var vn1 = h('div', p1, c1);
     var _2 = context['var'];
     if (_2 || _2 === 0) {
-        var frag3 = utils.getFragment(_2)
-        var p4 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
-        }};
-        var vn4 = h('div', p4)
-        c1.push(vn4);
+        c1.push(...utils.htmlToVDOM(_2));
     }
     return vn1;
 }"
@@ -1895,12 +1875,7 @@ exports[`t-raw t-raw and another sibling node 1`] = `
     c2.push({text: \`hello\`});
     var _3 = context['var'];
     if (_3 || _3 === 0) {
-        var frag4 = utils.getFragment(_3)
-        var p5 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag4, n.elm),
-        }};
-        var vn5 = h('div', p5)
-        c1.push(vn5);
+        c1.push(...utils.htmlToVDOM(_3));
     }
     return vn1;
 }"
@@ -1915,12 +1890,7 @@ exports[`t-raw variable 1`] = `
     var vn1 = h('span', p1, c1);
     var _2 = context['var'];
     if (_2 || _2 === 0) {
-        var frag3 = utils.getFragment(_2)
-        var p4 = {hook: {
-          insert: n => n.elm.parentNode.replaceChild(frag3, n.elm),
-        }};
-        var vn4 = h('div', p4)
-        c1.push(vn4);
+        c1.push(...utils.htmlToVDOM(_2));
     }
     return vn1;
 }"

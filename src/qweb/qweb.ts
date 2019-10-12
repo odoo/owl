@@ -458,8 +458,8 @@ export class QWeb extends EventBus {
         if (!(dName in QWeb.DIRECTIVE_NAMES)) {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
-        if (node.tagName !== 't' && (attrName === 't-esc' || attrName === 't-raw')) {
-          const tNode = document.createElement('t');
+        if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
+          const tNode = document.createElement("t");
           tNode.setAttribute(attrName, node.getAttribute(attrName)!);
           for (let child of Array.from(node.childNodes)) {
             tNode.appendChild(child);

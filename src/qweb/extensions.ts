@@ -207,9 +207,7 @@ QWeb.addDirective({
     );
     ctx.addIf(`slot${slotKey}`);
     ctx.addLine(
-      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${
-        ctx.parentNode
-      }, vars: extra.vars, parent: owner}));`
+      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`
     );
     ctx.closeIf();
     return true;

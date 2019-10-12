@@ -1099,18 +1099,20 @@ describe("t-on", () => {
         </t>
       </div>`
     );
-    const steps:string[] = [];
+    const steps: string[] = [];
     const owner = {
-      projects: [{id: 1, name: 'Project 1'}, {id: 2, name: 'Project 2'}],
+      projects: [{ id: 1, name: "Project 1" }, { id: 2, name: "Project 2" }],
 
       onEdit(projectId, ev) {
         expect(ev.defaultPrevented).toBe(true);
         steps.push(projectId);
-      },
+      }
     };
 
     const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
-    expect(node.outerHTML).toBe(`<div><a href="#"> Edit Project 1</a><a href="#"> Edit Project 2</a></div>`);
+    expect(node.outerHTML).toBe(
+      `<div><a href="#"> Edit Project 1</a><a href="#"> Edit Project 2</a></div>`
+    );
 
     const links = node.querySelectorAll("a")!;
     links[0].click();
@@ -1122,12 +1124,12 @@ describe("t-on", () => {
   test("t-on combined with t-esc", async () => {
     expect.assertions(3);
     qweb.addTemplate("test", `<div><button t-on-click="onClick" t-esc="text"/></div>`);
-    const steps:string[] = [];
+    const steps: string[] = [];
     const owner = {
-      text: 'Click here',
+      text: "Click here",
       onClick() {
-        steps.push('onClick');
-      },
+        steps.push("onClick");
+      }
     };
 
     const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
@@ -1135,18 +1137,18 @@ describe("t-on", () => {
 
     node.querySelector("button")!.click();
 
-    expect(steps).toEqual(['onClick']);
+    expect(steps).toEqual(["onClick"]);
   });
 
   test("t-on combined with t-raw", async () => {
     expect.assertions(3);
     qweb.addTemplate("test", `<div><button t-on-click="onClick" t-raw="html"/></div>`);
-    const steps:string[] = [];
+    const steps: string[] = [];
     const owner = {
-      html: 'Click <b>here</b>',
+      html: "Click <b>here</b>",
       onClick() {
-        steps.push('onClick');
-      },
+        steps.push("onClick");
+      }
     };
 
     const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
@@ -1154,7 +1156,7 @@ describe("t-on", () => {
 
     node.querySelector("button")!.click();
 
-    expect(steps).toEqual(['onClick']);
+    expect(steps).toEqual(["onClick"]);
   });
 });
 

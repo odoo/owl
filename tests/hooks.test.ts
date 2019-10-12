@@ -440,7 +440,7 @@ describe("hooks", () => {
         steps.push("onWillStart");
       });
       onWillUpdateProps(nextProps => {
-          expect(nextProps).toEqual({value: 2});
+        expect(nextProps).toEqual({ value: 2 });
         steps.push("onWillUpdateProps");
       });
     }
@@ -454,7 +454,7 @@ describe("hooks", () => {
     class App extends Component<any, any> {
       static template = xml`<div><MyComponent value="state.value"/></div>`;
       static components = { MyComponent };
-      state = useState({ value: 1});
+      state = useState({ value: 1 });
     }
 
     const app = new App(env);
@@ -469,6 +469,4 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
     expect(steps).toEqual(["onWillStart", "onWillUpdateProps"]);
   });
-
-
 });

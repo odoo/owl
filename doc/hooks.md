@@ -15,6 +15,7 @@
   - [`useContext`](#usecontext)
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
+  - [Making customized hooks](#making-customized-hooks)
 
 ## Overview
 
@@ -145,6 +146,10 @@ class SomeComponent extends Component {
   }
 }
 ```
+
+Hooks can get a reference to the currently being defined component with the
+`Component.current` static property. This is why they need to be called in the
+constructor.
 
 ### `useState`
 
@@ -277,3 +282,68 @@ The `useSubEnv` takes one argument: an object which contains some key/value that
 will be added to the parent environment. Note that it will extend, not replace
 the parent environment. And of course, the parent environment will not be
 affected.
+
+### Making customized hooks
+
+Hooks are a wonderful way to organize the code of a complex component by feature
+instead of by lifecycle methods.  They are like mixins, except that they can be
+easily composed together.
+
+But, like every good things in life, hooks should be used with moderation. They are
+not the solution to every problem.
+
+- they may be overkill: if your component needs to perform some action specific
+  to him (so, the specific code does not need to be shared), there is nothing
+  wrong with a simple class method:
+
+  ```js
+  // maybe overkill
+  class A extends Component {
+    constructor(...args) {
+        super(...args);
+        useMySpecificHook()
+    }
+  }
+
+  // ok
+  class B extends Component {
+    constructor(...args) {
+        super(...args);
+        this.performSpecificTask()
+    }
+  }
+  ```
+
+  Note that the second solution is easier to extend in sub components.
+
+- they may be harder to test: if a customized hook inject some external side
+  effect dependency, then it is harder to test without doing some non obvious
+  manipulation.  For example, assume that we want to give a reference to a
+  router in a `useRouter` hook. We could do this:
+
+  ```js
+  const router = new Router(...);
+
+  function useRouter() {
+      return router;
+  }
+  ```
+
+  As you can see, this does not *hook* into the internal of the component. It
+  simply returns a global object, which is difficult to mock.
+
+  A better way would be to do something like this: get the reference from the
+  environment.
+
+  ```js
+  function useRouter() {
+      return Component.current.env.router;
+  }
+  ```
+
+  This means that we give control to the application developer to create the
+  router, which is good, so they can set it up, subclass it, ... And then, to
+  test our components, we can just add a mock router in the environment.
+
+Note: the code above makes use of the `Component.current` property. This is the
+way hooks are able to get a reference to the component currently being created.

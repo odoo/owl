@@ -22,7 +22,7 @@ import { Observer } from "./core/observer";
  * trigger a rerendering of the current component.
  */
 export function useState<T>(state: T): T {
-  const component: Component<any, any> = Component._current;
+  const component: Component<any, any> = Component.current!;
   const __owl__ = component.__owl__;
   if (!__owl__.observer) {
     __owl__.observer = new Observer();
@@ -37,7 +37,7 @@ export function useState<T>(state: T): T {
 function makeLifecycleHook(method: string, reverse: boolean = false) {
   if (reverse) {
     return function(cb) {
-      const component: Component<any, any> = Component._current;
+      const component: Component<any, any> = Component.current!;
       if (component.__owl__[method]) {
         const current = component.__owl__[method];
         component.__owl__[method] = function() {
@@ -50,7 +50,7 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
     };
   } else {
     return function(cb) {
-      const component: Component<any, any> = Component._current;
+      const component: Component<any, any> = Component.current!;
       if (component.__owl__[method]) {
         const current = component.__owl__[method];
         component.__owl__[method] = function() {
@@ -66,7 +66,7 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
 
 function makeAsyncHook(method: string) {
   return function(cb) {
-    const component: Component<any, any> = Component._current;
+    const component: Component<any, any> = Component.current!;
     if (component.__owl__[method]) {
       const current = component.__owl__[method];
       component.__owl__[method] = function(...args) {
@@ -100,7 +100,7 @@ interface Ref {
 }
 
 export function useRef(name: string): Ref {
-  const __owl__ = Component._current.__owl__;
+  const __owl__ = Component.current!.__owl__;
   return {
     get el(): HTMLElement | null {
       const val = __owl__.refs && __owl__.refs[name];
@@ -123,6 +123,6 @@ export function useRef(name: string): Ref {
  * constructor method.
  */
 export function useSubEnv(nextEnv) {
-  const component = Component._current;
+  const component = Component.current!;
   component.env = Object.assign(Object.create(component.env), nextEnv);
 }

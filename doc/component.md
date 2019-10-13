@@ -162,6 +162,11 @@ constructor.
   }
   ```
 
+There is another static property defined on the `Component` class: `current`.
+This property is set to the currently being defined component (in the constructor).
+This is the way [hooks](hooks.md) are able to get a reference to the target
+component.
+
 ### Methods
 
 We explain here all the public methods of the `Component` class.

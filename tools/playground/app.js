@@ -179,7 +179,7 @@ function deleteLocalSample() {
 
 function useSamples() {
   const samples = loadSamples();
-  const component = owl.Component._current;
+  const component = owl.Component.current;
   let interval;
 
   onMounted(() => {

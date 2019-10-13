@@ -59,7 +59,7 @@ export class Context extends EventBus {
  * to context state changes. The `useContext` method returns the context state
  */
 export function useContext(ctx: Context): any {
-  const component: Component<any, any> = Component._current;
+  const component: Component<any, any> = Component.current!;
   const __owl__ = component.__owl__;
   const id = __owl__.id;
   const mapping = ctx.mapping;

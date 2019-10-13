@@ -101,7 +101,7 @@ export class Component<T extends Env, Props extends {}> {
   readonly __owl__: Internal<Env, Props>;
   static template?: string | null = null;
   static _template?: string | null = null;
-  static _current?: any | null = null;
+  static current: Component<any,any> | null = null;
   static components = {};
   static props?: any;
   static defaultProps?: any;
@@ -142,7 +142,7 @@ export class Component<T extends Env, Props extends {}> {
    */
   constructor(parent: Component<T, any> | T, props?: Props) {
     const defaultProps = (<any>this.constructor).defaultProps;
-    Component._current = this;
+    Component.current = this;
     if (defaultProps) {
       props = this.__applyDefaultProps(props, defaultProps);
     }

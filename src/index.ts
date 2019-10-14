@@ -7,6 +7,7 @@
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
 import { QWeb } from "./qweb/index";
+import { config } from "./config";
 import * as _store from "./store";
 import * as _utils from "./utils";
 import * as _tags from "./tags";
@@ -19,6 +20,7 @@ import { Router } from "./router/router";
 
 export { Component } from "./component/component";
 export { QWeb };
+export { config };
 
 export const Context = _context.Context;
 export const useState = _hooks.useState;
@@ -35,20 +37,3 @@ export const hooks = Object.assign({}, _hooks, {
   useStore: _store.useStore
 });
 export const __info__ = {};
-
-Object.defineProperty(__info__, "mode", {
-  get() {
-    return QWeb.dev ? "dev" : "prod";
-  },
-  set(mode: string) {
-    QWeb.dev = mode === "dev";
-    if (QWeb.dev) {
-      const url = `https://github.com/odoo/owl/blob/master/doc/tooling.md#development-mode`;
-      console.warn(
-        `Owl is running in 'dev' mode.  This is not suitable for production use. See ${url} for more information.`
-      );
-    } else {
-      console.log(`Owl is now running in 'prod' mode.`);
-    }
-  }
-});

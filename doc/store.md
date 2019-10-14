@@ -9,6 +9,7 @@
   - [Actions](#actions)
   - [Getters](#getters)
   - [Connecting a Component](#connecting-a-component)
+  - [`useStore`](#usestore)
   - [Semantics](#semantics)
   - [Good Practices](#good-practices)
 
@@ -111,6 +112,14 @@ const actions = {
 };
 ```
 
+The first argument to an action method is an object with four keys:
+- `state`: the current state of the store content,
+- `dispatch`: a function that can be used to dispatch other actions,
+- `getters`: an object containing all getters defined in the store
+- `env`: the current environment. This is useful sometimes, in particular if
+  an action needs to apply some side effects (such as performing an rpc), and
+  the `rpc` method is located in the environment.
+
 Actions are called with the `dispatch` method on the store, and can receive an
 arbitrary number of arguments.
 
@@ -196,76 +205,66 @@ is a string or a number.
 
 ### Connecting a Component
 
-At some point, we need a way to access the state in the store from a component.
-By default, an Owl `Component` is not connected to any store. To do that, we
-need to create a component inheriting from `OwlComponent`:
+At some point, we need a way to interact with the store from a component. This
+can be done with the help of the three store hooks:
+
+- `useStore` to subscribe a component to some part of the store state,
+- `useDispatch` to get a reference to a dispatch function
+- `useGetters` to get a reference to the getters defined in the store.
+
+
+Assume we have this store:
 
 ```javascript
 const actions = {
   increment({ state }, val) {
-    state.counter += val;
+    state.counter.value += val;
   }
 };
 
 const state = {
-  counter: 0
+  counter: {value: 0}
 };
 const store = new owl.Store({ state, actions });
+```
 
-class Counter extends owl.ConnectedComponent {
-  static mapStoreToProps(state) {
-    return {
-      value: state.counter
-    };
-  }
-  increment() {
-    this.env.store.dispatch("increment");
-  }
+A counter component can then select this value and dispatch an action like this:
+
+```js
+class Counter extends Component {
+  counter = useStore(state => state.counter);
+  dispatch = useDispatch();
 }
 
 const counter = new Counter({ store, qweb });
 ```
 
 ```xml
-<button t-name="Counter" t-on-click="increment">
-  Click Me! [<t t-esc="props.value"/>]
-</button>
-```
-
-The `ConnectedComponent` class can be configured with the following fields:
-
-- `mapStoreToProps`: a function that extracts the `props` of the Component
-  from the `state` of the `Store` and returns them as a dict.
-- `getStore`: a function that takes the `env` in arguments and returns an
-  instance of `Store` to connect to (if not given, connects to `env.store`)
-- `hashFunction`: the function to use to detect changes in the state (if not
-  given, generates a function that uses revision numbers, incremented at
-  each state change)
-- `deep` (boolean): [only useful if no hashFunction is given] if `false`, only watch
-  for top level state changes (`true` by default)
-
-Note that the class `ConnectedComponent` has a `dispatch` method. This means
-that the previous example could be simplified like this:
-
-```javascript
-class Counter extends owl.ConnectedComponent {
-  static mapStoreToProps(state) {
-    return {
-      value: state.counter
-    };
-  }
-}
-```
-
-```xml
 <button t-name="Counter" t-on-click="dispatch('increment')">
-  Click Me! [<t t-esc="props.value"/>]
+  Click Me! [<t t-esc="counter.value"/>]
 </button>
 ```
+
+### `useStore``
+
+The `useStore` hook is used to select some part of the store state. It accepts
+two arguments:
+
+- a selector function, which takes the store state as first argument (and the
+  component props as second argument) and returns
+  an object or an array (which will be then observed)
+- optionally, an object with a `store` key (if we want to override the default
+  store) and an equality function (if we want to specialize the comparison)
+
+
+If the `useStore` callback selects a sub part of the store state, the component
+will only be rerendered whenever this part of the state changes. Otherwise, it
+will perform a strict equality check and updates the component every time this
+check fails.
 
 ### Semantics
 
-The `Store` and the `ConnectedComponent` try to be smart and to optimize as much
+The `Store` class and the `useStore` hook try to be smart and to optimize as much
 as possible the rendering and update process. What is important to know is:
 
 - components are always updated in the order of their creation (so, parent
@@ -283,8 +282,9 @@ as possible the rendering and update process. What is important to know is:
 - avoid asynchronous components as much as possible. Asynchronous components
   lead to situations where parts of the UI is not updated immediately.
 - do not be afraid to connect many components, parent or children if needed. For
-  example, a `MessageList` component could get a list of ids in its `mapStoreToProps` and a `Message` component could get the data of its own
+  example, a `MessageList` component could get a list of ids in its `useStore`
+  call and a `Message` component could get the data of its own
   message
-- since the `mapStoreToProps` function is called for each connected component,
+- since the `useStore` function is called for each connected component,
   for each state update, it is important to make sure that these functions are
   as fast as possible.

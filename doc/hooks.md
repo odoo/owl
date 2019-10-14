@@ -12,6 +12,8 @@
   - [`onWillUnmount`](#onwillunmount)
   - [`onWillPatch`](#onwillpatch)
   - [`onPatched`](#onpatched)
+  - [`onWillStart`](#onwillstart)
+  - [`onWillUpdateProps`](#onwillupdateprops)
   - [`useContext`](#usecontext)
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
@@ -202,6 +204,59 @@ before the component patched.
 `onPatched` is not an user hook, but is a building block designed to help make useful
 abstractions. `onPatched` registers a callback, which will be called just
 after the component patched.
+
+### `onWillStart`
+
+`onWillStart` is an asynchronous hook. This means that the function registered
+in the hook will be run just before the component is first rendered and can return a
+promise, to express the fact that it is an asynchronous operation.
+
+Note that if there are more than one `onWillStart` registered callback, then they
+will all be run in parallel.
+
+It can be used to load some initial data. For example, the following hook will
+automatically load some data from the server, and return an object that will
+be ready whenever the component is rendered:
+
+```js
+function useLoader() {
+    const component = Component.current;
+    const record = useState({});
+    onWillStart(async () => {
+        const recordId = component.props.id;
+        Object.assign(record, await fetchSomeRecord(recordId));
+    });
+    return record;
+}
+```
+
+Note that this example does not update the record value whenever props are
+updated.  For that situation, we need to use the `onWillUpdateProps` hook.
+
+### `onWillUpdateProps`
+
+Just like `onWillStart`, `onWillUpdateProps` is an asynchronous hook. It is
+designed to be run whenever the component props are updated. This could be
+useful to perform some asynchronous task such as fetching updated data.
+
+```js
+function useLoader() {
+    const component = Component.current;
+    const record = useState({});
+
+    async function updateRecord(id) {
+        Object.assign(record, await fetchSomeRecord(id));
+    }
+
+    onWillStart(() => updateRecord(component.props.id));
+    onWillUpdateProps(nextProps => updateRecord(nextProps.id));
+
+    return record;
+}
+```
+
+Note that if there are more than one `onWillUpdateProps` registered callback,
+then they will all be run in parallel.
 
 ### `useContext`
 

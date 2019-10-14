@@ -40,6 +40,11 @@ export class Context extends EventBus {
    * next.  However, the only things that matters is that children are updated
    * after their parents.  So, this could be optimized by being smarter, and
    * updating all widgets concurrently, except for parents/children.
+   *
+   * A potential cheap way to improve this situation is to keep track of the
+   * depth of a component in the component tree. A root component has a depth of
+   * 1, then its children of 2 and so on... Then, we can update all components
+   * with the same depth in parallel.
    */
   async __notifyComponents() {
     const id = ++this.id;

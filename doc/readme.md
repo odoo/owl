@@ -16,10 +16,12 @@ owl
         EventBus
         Observer
     hooks
+        onWillStart
         onMounted
-        onWillUnmount
+        onWillUpdateProps
         onWillPatch
         onPatched
+        onWillUnmount
         useContext
         useState
         useRef

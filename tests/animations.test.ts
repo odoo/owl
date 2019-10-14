@@ -1,4 +1,5 @@
 import { Component, Env } from "../src/component/component";
+import { config } from "../src/config";
 import { QWeb } from "../src/qweb/index";
 import { useState, useRef } from "../src/hooks";
 import {
@@ -29,6 +30,7 @@ let cssEl: HTMLElement;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
+  config.env = env;
   qweb = new QWeb();
 });
 
@@ -108,7 +110,7 @@ describe("animations", () => {
     class TestWidget extends Widget {
       state = useState({ hide: false });
     }
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
 
     // insert widget into the DOM
     let def = makeDeferred();
@@ -151,7 +153,7 @@ describe("animations", () => {
       state = useState({ hide: false });
       span = useRef("span");
     }
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
 
     // insert widget into the DOM
     let def = makeDeferred();
@@ -180,7 +182,7 @@ describe("animations", () => {
     class Parent extends Widget {
       static components = { Child: Child };
     }
-    const widget = new Parent(env);
+    const widget = new Parent();
 
     let def = makeDeferred();
     var spanNode;
@@ -220,7 +222,7 @@ describe("animations", () => {
       static components = { Child: Child };
       state = useState({ display: true });
     }
-    const widget = new Parent(env);
+    const widget = new Parent();
 
     let def = makeDeferred();
     var spanNode;
@@ -283,7 +285,7 @@ describe("animations", () => {
       }
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     let button = widget.el!.querySelector("button");
 
@@ -341,7 +343,7 @@ describe("animations", () => {
       }
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     let button = widget.el!.querySelector("button");
 

@@ -1,6 +1,7 @@
 import { makeDeferred, makeTestEnv, makeTestFixture, nextTick } from "./helpers";
-import { Component, Env } from "../src/component/component";
+import { Component } from "../src/component/component";
 import { Context, useContext } from "../src/context";
+import { config } from "../src/config";
 import { xml } from "../src/tags";
 import { useState } from "../src/hooks";
 
@@ -11,14 +12,13 @@ import { useState } from "../src/hooks";
 // We create before each test:
 // - fixture: a div, appended to the DOM, intended to be the target of dom
 //   manipulations.  Note that it is removed after each test.
-// - env: a WEnv, necessary to create new components
+// - a test env, necessary to create components, that is set as env
 
 let fixture: HTMLElement;
-let env: Env;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  env = makeTestEnv();
+  config.env = makeTestEnv();
 });
 
 afterEach(() => {
@@ -37,7 +37,7 @@ describe("Context", () => {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
       contextObj = useContext(testContext);
     }
-    const test = new Test(env);
+    const test = new Test();
     await test.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>123</div>");
   });
@@ -49,7 +49,7 @@ describe("Context", () => {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
       contextObj = useContext(testContext);
     }
-    const test = new Test(env);
+    const test = new Test();
     await test.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>123</div>");
     test.contextObj.value = 321;
@@ -68,7 +68,7 @@ describe("Context", () => {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.state.value = 321;
@@ -95,7 +95,7 @@ describe("Context", () => {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.state.value = 321;
@@ -139,7 +139,7 @@ describe("Context", () => {
       static components = { Child, Parent };
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe(
       "<div><span><p>123</p></span><div><span><p>123</p></span><span><p>123</p></span></div></div>"
@@ -175,7 +175,7 @@ describe("Context", () => {
       static template = xml`<div><Child /></div>`;
       static components = { Child };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>12</span></div>");
     expect(steps).toEqual(["child"]);
@@ -206,7 +206,7 @@ describe("Context", () => {
         return super.__render(fiber);
       }
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span>321</div>");
     expect(steps).toEqual(["parent", "child"]);
@@ -240,7 +240,7 @@ describe("Context", () => {
         return super.__render(fiber);
       }
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
     expect(steps).toEqual(["parent", "child"]);
@@ -284,7 +284,7 @@ describe("Context", () => {
       context = useContext(testContext);
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");

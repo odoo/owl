@@ -1,6 +1,7 @@
 import { Component, Env } from "../../src/component/component";
 import { makeTestFixture, makeTestEnv, nextTick } from "../helpers";
 import { useState } from "../../src/hooks";
+import { config } from "../../src/config";
 import { QWeb } from "../../src/qweb";
 import { xml } from "../../src/tags";
 
@@ -15,6 +16,7 @@ let dev: boolean = false;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
+  config.env = env;
   dev = QWeb.dev;
   QWeb.dev = true;
 });
@@ -38,13 +40,13 @@ describe("props validation", () => {
 
     QWeb.dev = true;
     expect(() => {
-      new TestWidget(env);
+      new TestWidget();
     }).toThrow();
 
     QWeb.dev = false;
 
     expect(() => {
-      new TestWidget(env);
+      new TestWidget();
     }).not.toThrow();
   });
 
@@ -55,7 +57,7 @@ describe("props validation", () => {
     }
 
     expect(() => {
-      new TestWidget(env);
+      new TestWidget();
     }).toThrow("Missing props 'message' (component 'TestWidget')");
   });
 
@@ -76,15 +78,15 @@ describe("props validation", () => {
       };
 
       expect(() => {
-        new TestWidget(env);
+        new TestWidget();
       }).toThrow("Missing props 'p'");
 
       expect(() => {
-        new TestWidget(env, { p: test.ok });
+        new TestWidget(undefined, { p: test.ok });
       }).not.toThrow();
 
       expect(() => {
-        new TestWidget(env, { p: test.ko });
+        new TestWidget(undefined, { p: test.ko });
       }).toThrow("Props 'p' of invalid type in component");
     }
   });
@@ -106,15 +108,15 @@ describe("props validation", () => {
       };
 
       expect(() => {
-        new TestWidget(env);
+        new TestWidget();
       }).toThrow("Missing props 'p'");
 
       expect(() => {
-        new TestWidget(env, { p: test.ok });
+        new TestWidget(undefined, { p: test.ok });
       }).not.toThrow();
 
       expect(() => {
-        new TestWidget(env, { p: test.ko });
+        new TestWidget(undefined, { p: test.ko });
       }).toThrow("Props 'p' of invalid type in component");
     }
   });
@@ -126,12 +128,12 @@ describe("props validation", () => {
     };
 
     expect(() => {
-      new TestWidget(env, { p: "string" });
-      new TestWidget(env, { p: true });
+      new TestWidget(undefined, { p: "string" });
+      new TestWidget(undefined, { p: true });
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: 1 });
+      new TestWidget(undefined, { p: 1 });
     }).toThrow("Props 'p' of invalid type in component");
   });
 
@@ -142,12 +144,12 @@ describe("props validation", () => {
     };
 
     expect(() => {
-      new TestWidget(env, { p: "hey" });
-      new TestWidget(env, {});
+      new TestWidget(undefined, { p: "hey" });
+      new TestWidget(undefined, {});
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: 1 });
+      new TestWidget(undefined, { p: 1 });
     }).toThrow();
   });
 
@@ -158,16 +160,16 @@ describe("props validation", () => {
     };
 
     expect(() => {
-      new TestWidget(env, { p: [] });
-      new TestWidget(env, { p: ["string"] });
+      new TestWidget(undefined, { p: [] });
+      new TestWidget(undefined, { p: ["string"] });
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: [1] });
+      new TestWidget(undefined, { p: [1] });
     }).toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: ["string", 1] });
+      new TestWidget(undefined, { p: ["string", 1] });
     }).toThrow();
   });
 
@@ -178,13 +180,13 @@ describe("props validation", () => {
     };
 
     expect(() => {
-      new TestWidget(env, { p: [] });
-      new TestWidget(env, { p: ["string"] });
-      new TestWidget(env, { p: [false, true, "string"] });
+      new TestWidget(undefined, { p: [] });
+      new TestWidget(undefined, { p: ["string"] });
+      new TestWidget(undefined, { p: [false, true, "string"] });
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: [true, 1] });
+      new TestWidget(undefined, { p: [true, 1] });
     }).toThrow();
   });
 
@@ -197,16 +199,16 @@ describe("props validation", () => {
     };
 
     expect(() => {
-      new TestWidget(env, { p: { id: 1, url: "url" } });
-      new TestWidget(env, { p: { id: 1, url: "url", extra: true } });
+      new TestWidget(undefined, { p: { id: 1, url: "url" } });
+      new TestWidget(undefined, { p: { id: 1, url: "url", extra: true } });
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: { id: "1", url: "url" } });
+      new TestWidget(undefined, { p: { id: "1", url: "url" } });
     }).toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: { id: 1 } });
+      new TestWidget(undefined, { p: { id: 1 } });
     }).toThrow();
   });
 
@@ -225,12 +227,12 @@ describe("props validation", () => {
     };
 
     expect(() => {
-      new TestWidget(env, { p: { id: 1, url: true } });
-      new TestWidget(env, { p: { id: 1, url: [12] } });
+      new TestWidget(undefined, { p: { id: 1, url: true } });
+      new TestWidget(undefined, { p: { id: 1, url: [12] } });
     }).not.toThrow();
 
     expect(() => {
-      new TestWidget(env, { p: { id: 1, url: [12, true] } });
+      new TestWidget(undefined, { p: { id: 1, url: [12, true] } });
     }).toThrow();
   });
 
@@ -249,7 +251,7 @@ describe("props validation", () => {
     class App extends Widget {
       static components = { Child };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     // need to make sure there are 2 call to update props. one at component
@@ -334,7 +336,7 @@ describe("props validation", () => {
       static components = { TestWidget };
     }
 
-    const w = new App(env, {});
+    const w = new App(undefined, {});
     let error;
     try {
       await w.mount(fixture);
@@ -365,7 +367,7 @@ describe("props validation", () => {
       state: any = useState({ p: 1 });
     }
 
-    const w = new Parent(env);
+    const w = new Parent();
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
 
@@ -387,7 +389,7 @@ describe("props validation", () => {
       state: any = useState({ p: 1 });
     }
 
-    const w = new Parent(env);
+    const w = new Parent();
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
 
@@ -404,7 +406,7 @@ describe("default props", () => {
       static template = xml`<div>hey</div>`;
     }
 
-    const w = new TestWidget(env, {});
+    const w = new TestWidget(undefined, {});
     expect(w.props.p).toBe(4);
   });
 
@@ -419,7 +421,7 @@ describe("default props", () => {
       state: any = useState({ p: 1 });
     }
 
-    const w = new Parent(env);
+    const w = new Parent();
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
 
@@ -440,7 +442,7 @@ describe("default props", () => {
       static components = { TestWidget };
     }
 
-    const w = new App(env, {});
+    const w = new App(undefined, {});
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });

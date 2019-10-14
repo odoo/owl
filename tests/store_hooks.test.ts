@@ -1,4 +1,5 @@
 import { Component, Env } from "../src/component/component";
+import { config } from "../src/config";
 import { Store, useStore, useDispatch, useGetters } from "../src/store";
 import { useState } from "../src/hooks";
 import { xml } from "../src/tags";
@@ -12,6 +13,7 @@ describe("connecting a component to store", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = makeTestEnv();
+    config.env = env;
   });
 
   afterEach(() => {
@@ -37,7 +39,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -69,7 +71,7 @@ describe("connecting a component to store", () => {
     App.prototype.__render = jest.fn(App.prototype.__render);
 
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>1</span><span>2</span></div>");
@@ -101,7 +103,7 @@ describe("connecting a component to store", () => {
     App.prototype.__render = jest.fn(App.prototype.__render);
 
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -134,7 +136,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>0</div>");
@@ -163,7 +165,7 @@ describe("connecting a component to store", () => {
     App.prototype.__render = jest.fn(App.prototype.__render);
 
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>0</div>");
@@ -198,7 +200,7 @@ describe("connecting a component to store", () => {
       todos = useStore(state => state.todos, { store });
     }
 
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -228,7 +230,7 @@ describe("connecting a component to store", () => {
       storeState = useStore(state => state);
       dispatch = useDispatch();
     }
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><button>Inc</button><span>1</span></div>");
@@ -257,7 +259,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
@@ -294,7 +296,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new TodoList(env);
+    const app = new TodoList();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
@@ -347,7 +349,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new TodoList(env);
+    const app = new TodoList();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe(
@@ -370,7 +372,7 @@ describe("connecting a component to store", () => {
     const state = { beers: { 1: { name: "jupiler" }, 2: { name: "kwak" } } };
     const store = new Store({ state });
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
@@ -401,7 +403,7 @@ describe("connecting a component to store", () => {
     const store = new Store({ state, actions });
     (<any>env).store = store;
 
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
@@ -446,7 +448,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
@@ -513,7 +515,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>taster:aaron</span></div></div>");
@@ -588,7 +590,7 @@ describe("connecting a component to store", () => {
 
     const store = new Store({ state, actions });
     (<any>env).store = store;
-    const app = new Parent(env);
+    const app = new Parent();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>a</span></div>");
@@ -639,7 +641,7 @@ describe("connecting a component to store", () => {
 
     const store = new Store({ state, actions });
     (<any>env).store = store;
-    const app = new Parent(env);
+    const app = new Parent();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
@@ -713,7 +715,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new TodoApp(env);
+    const app = new TodoApp();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe(
@@ -787,7 +789,7 @@ describe("connecting a component to store", () => {
     }
 
     (<any>env).store = store;
-    const app = new TodoApp(env);
+    const app = new TodoApp();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe(
@@ -833,7 +835,7 @@ describe("connecting a component to store", () => {
 
     const store = new Store({ state, actions });
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>a</div>");
@@ -870,7 +872,7 @@ describe("connecting a component to store", () => {
     }
     const store = new TestStore({ state: { val: 1 } });
     (<any>env).store = store;
-    const parent = new Parent(env);
+    const parent = new Parent();
 
     await parent.mount(fixture);
     expect(steps).toEqual(["on:update"]);
@@ -901,7 +903,7 @@ describe("connecting a component to store", () => {
 
     const store = new Store({ state, actions });
     (<any>env).store = store;
-    const app = new App(env);
+    const app = new App();
 
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>0</div>");
@@ -920,6 +922,7 @@ describe("various scenarios", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = makeTestEnv();
+    config.env = env;
   });
 
   afterEach(() => {
@@ -978,7 +981,8 @@ describe("various scenarios", () => {
     }
 
     (<any>env).store = store;
-    const message = new Message(env);
+    const message = new Message();
+
     await message.mount(fixture);
 
     expect(fixture.innerHTML).toMatchSnapshot();

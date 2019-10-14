@@ -1,8 +1,9 @@
 import { AsyncRoot } from "../../src/misc/async_root";
+import { config } from "../../src/config";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeDeferred, makeTestFixture, makeTestEnv, nextTick } from "../helpers";
-import { Env, Component } from "../../src/component/component";
+import { Component } from "../../src/component/component";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -11,14 +12,13 @@ import { Env, Component } from "../../src/component/component";
 // We create before each test:
 // - fixture: a div, appended to the DOM, intended to be the target of dom
 //   manipulations.  Note that it is removed after each test.
-// - env: a WEnv, necessary to create new components
+// - a test env, necessary to create components, that is set as env
 
 let fixture: HTMLElement;
-let env: Env;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  env = makeTestEnv();
+  config.env = makeTestEnv();
 });
 
 afterEach(() => {
@@ -55,7 +55,7 @@ describe("Asyncroot", () => {
       }
     }
 
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0</span><span>0</span>");
@@ -103,7 +103,7 @@ describe("Asyncroot", () => {
       }
     }
 
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0</span><span>0</span>");
@@ -158,7 +158,7 @@ describe("Asyncroot", () => {
       }
     }
 
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>0/0</span><span>0/0</span>");

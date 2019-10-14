@@ -145,10 +145,10 @@ class App extends owl.Component {
 //------------------------------------------------------------------------------
 async function start() {
   const templates = await owl.utils.loadFile("templates.xml");
-  const env = {
+  owl.config.env = {
     qweb: new owl.QWeb({ templates })
   };
-  const app = new App(env);
+  const app = new App();
   app.mount(document.body);
 }
 

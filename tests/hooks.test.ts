@@ -1,5 +1,6 @@
 import { makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component, Env } from "../src/component/component";
+import { config } from "../src/config";
 import {
   useState,
   onMounted,
@@ -28,6 +29,7 @@ let env: Env;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
+  config.env = env;
 });
 
 afterEach(() => {
@@ -44,7 +46,7 @@ describe("hooks", () => {
       static template = xml`<div><t t-esc="counter.value"/></div>`;
       counter = useState({ value: 42 });
     }
-    const counter = new Counter(env);
+    const counter = new Counter();
     await counter.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>42</div>");
     counter.counter.value = 3;
@@ -64,12 +66,12 @@ describe("hooks", () => {
     }
     class MyComponent extends Component<any, any> {
       static template = xml`<div>hey</div>`;
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useMyHook();
       }
     }
-    const component = new MyComponent(env);
+    const component = new MyComponent();
     await component.mount(fixture);
     expect(component).not.toHaveProperty("mounted");
     expect(component).not.toHaveProperty("willUnmount");
@@ -92,8 +94,8 @@ describe("hooks", () => {
     }
     class MyComponent extends Component<any, any> {
       static template = xml`<div>hey</div>`;
-      constructor(env) {
-        super(env);
+      constructor(parent, props) {
+        super(parent, props);
         useMyHook();
       }
     }
@@ -103,7 +105,7 @@ describe("hooks", () => {
       static components = { MyComponent };
       state = useState({ flag: true });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
     expect(steps).toEqual(["mounted"]);
@@ -126,8 +128,8 @@ describe("hooks", () => {
     }
     class MyComponent extends Component<any, any> {
       static template = xml`<div>hey</div>`;
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useMyHook();
       }
       mounted() {
@@ -137,7 +139,7 @@ describe("hooks", () => {
         steps.push("comp:willunmount");
       }
     }
-    const component = new MyComponent(env);
+    const component = new MyComponent();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>hey</div>");
     component.unmount();
@@ -157,8 +159,8 @@ describe("hooks", () => {
     }
     class MyComponent extends Component<any, any> {
       static template = xml`<div>hey</div>`;
-      constructor(env) {
-        super(env);
+      constructor(parent, props) {
+        super(parent, props);
         useMyHook();
       }
       mounted() {
@@ -175,7 +177,7 @@ describe("hooks", () => {
       state = useState({ flag: true });
     }
 
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
     parent.state.flag = false;
@@ -197,13 +199,13 @@ describe("hooks", () => {
     }
     class MyComponent extends Component<any, any> {
       static template = xml`<div>hey</div>`;
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useMyHook(1);
         useMyHook(2);
       }
     }
-    const component = new MyComponent(env);
+    const component = new MyComponent();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>hey</div>");
     component.unmount();
@@ -226,7 +228,7 @@ describe("hooks", () => {
         (this.button.el as HTMLButtonElement).innerHTML = String(this.value);
       }
     }
-    const counter = new Counter(env);
+    const counter = new Counter();
     await counter.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><button>0</button></div>");
     counter.increment();
@@ -247,7 +249,7 @@ describe("hooks", () => {
         expect(this.spanRef.el).toBeNull();
       }
     }
-    const component = new TestRef(env);
+    const component = new TestRef();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>owl</span></div>");
     component.state.flag = false;
@@ -270,13 +272,13 @@ describe("hooks", () => {
       static template = xml`<div><t t-if="state.flag">hey</t></div>`;
       state = useState({ flag: true });
 
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useMyHook();
       }
     }
 
-    const component = new MyComponent(env);
+    const component = new MyComponent();
     await component.mount(fixture);
     expect(component).not.toHaveProperty("patched");
     expect(component).not.toHaveProperty("willPatch");
@@ -304,8 +306,8 @@ describe("hooks", () => {
       static template = xml`<div><t t-if="state.flag">hey</t></div>`;
       state = useState({ flag: true });
 
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useMyHook();
       }
       willPatch() {
@@ -315,7 +317,7 @@ describe("hooks", () => {
         steps.push("comp:patched");
       }
     }
-    const component = new MyComponent(env);
+    const component = new MyComponent();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>hey</div>");
     component.state.flag = false;
@@ -337,13 +339,13 @@ describe("hooks", () => {
     class MyComponent extends Component<any, any> {
       static template = xml`<div>hey<t t-esc="state.value"/></div>`;
       state = useState({ value: 1 });
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useMyHook(1);
         useMyHook(2);
       }
     }
-    const component = new MyComponent(env);
+    const component = new MyComponent();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>hey1</div>");
     component.state.value++;
@@ -377,13 +379,13 @@ describe("hooks", () => {
                 <input t-ref="input2"/>
             </div>`;
 
-        constructor(env) {
-          super(env);
+        constructor() {
+          super();
           useAutofocus("input2");
         }
       }
 
-      const component = new SomeComponent(env);
+      const component = new SomeComponent();
       await component.mount(fixture);
       expect(fixture.innerHTML).toBe("<div><input><input></div>");
       const input2 = fixture.querySelectorAll("input")[1];
@@ -399,13 +401,13 @@ describe("hooks", () => {
             </div>`;
 
         state = useState({ flag: false });
-        constructor(env) {
-          super(env);
+        constructor() {
+          super();
           useAutofocus("input2");
         }
       }
 
-      const component = new SomeComponent(env);
+      const component = new SomeComponent();
       await component.mount(fixture);
       expect(fixture.innerHTML).toBe("<div><input></div>");
       expect(document.activeElement).toBe(document.body);
@@ -420,12 +422,12 @@ describe("hooks", () => {
   test("can use sub env", async () => {
     class TestComponent extends Component<any, any> {
       static template = xml`<div><t t-esc="env.val"/></div>`;
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useSubEnv({ val: 3 });
       }
     }
-    const component = new TestComponent(env);
+    const component = new TestComponent();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
     expect(env).not.toHaveProperty("val");
@@ -435,8 +437,8 @@ describe("hooks", () => {
   test("parent and child env", async () => {
     class Child extends Component<any, any> {
       static template = xml`<div><t t-esc="env.val"/></div>`;
-      constructor(env) {
-        super(env);
+      constructor(parent, props) {
+        super(parent, props);
         useSubEnv({ val: 5 });
       }
     }
@@ -444,12 +446,12 @@ describe("hooks", () => {
     class Parent extends Component<any, any> {
       static template = xml`<div><t t-esc="env.val"/><Child/></div>`;
       static components = { Child };
-      constructor(env) {
-        super(env);
+      constructor() {
+        super();
         useSubEnv({ val: 3 });
       }
     }
-    const component = new Parent(env);
+    const component = new Parent();
     await component.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>3<div>5</div></div>");
   });
@@ -478,7 +480,7 @@ describe("hooks", () => {
       state = useState({ value: 1 });
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(app).not.toHaveProperty("willStart");
     expect(app).not.toHaveProperty("willUpdateProps");

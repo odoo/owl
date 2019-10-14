@@ -1,4 +1,5 @@
 import { Component } from "../../src/component/component";
+import { config } from "../../src/config";
 import { Link } from "../../src/router/link";
 import { RouterEnv } from "../../src/router/router";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
@@ -12,6 +13,7 @@ describe("Link component", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = <RouterEnv>makeTestEnv();
+    config.env = env;
   });
 
   afterEach(() => {
@@ -38,7 +40,7 @@ describe("Link component", () => {
 
     router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ to: "users" });
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe('<div><a href="/about">About</a></div>');
 
@@ -69,7 +71,7 @@ describe("Link component", () => {
 
     router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ to: "users" });
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
 
     expect(window.location.pathname).toBe("/users");

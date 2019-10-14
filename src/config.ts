@@ -1,17 +1,20 @@
 import { QWeb } from "./qweb/index";
+import { Env } from "./component/component";
 
 /**
  * This file creates and exports the OWL 'config' object, with keys:
  *  - 'mode': 'prod' or 'dev',
+ *  - 'env': the environment to use in root components.
  */
 
 interface Config {
+  env: Env;
   mode: string;
 }
 
-const _config:Partial<Config> = {};
+export const config = {} as Config;
 
-Object.defineProperty(_config, "mode", {
+Object.defineProperty(config, "mode", {
   get() {
     return QWeb.dev ? "dev" : "prod";
   },
@@ -28,4 +31,18 @@ Object.defineProperty(_config, "mode", {
   },
 });
 
-export const config:Config = _config as Config;
+let env:Env;
+Object.defineProperty(config, "env", {
+  get() {
+    if (!env) {
+      env = {} as Env;
+    }
+    if (!env.qweb) {
+      env.qweb = new QWeb();
+    }
+    return env;
+  },
+  set(newEnv: Env) {
+    env = newEnv;
+  },
+});

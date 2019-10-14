@@ -1,6 +1,7 @@
 import { Observer } from "../core/observer";
 import { CompiledTemplate, QWeb } from "../qweb/index";
 import { h, patch, VNode } from "../vdom/index";
+import { config } from "../config";
 import "./directive";
 import { Fiber } from "./fiber";
 import "./props_validation";
@@ -106,25 +107,14 @@ export class Component<T extends Env, Props extends {}> {
   /**
    * Creates an instance of Component.
    *
-   * The root component of a component tree needs an environment:
-   *
-   * ```javascript
-   *   const root = new RootComponent(env, props);
-   * ```
-   *
-   * Every other component simply needs a reference to its parent:
-   *
-   * ```javascript
-   *   const child = new SomeComponent(parent, props);
-   * ```
-   *
    * Note that most of the time, only the root component needs to be created by
    * hand.  Other components should be created automatically by the framework (with
    * the t-component directive in a template)
    */
-  constructor(parent: Component<T, any> | T, props?: Props) {
-    const defaultProps = (<any>this.constructor).defaultProps;
+  constructor(parent?: Component<T, any>, props?: Props) {
     Component.current = this;
+
+    const defaultProps = (<any>this.constructor).defaultProps;
     if (defaultProps) {
       props = this.__applyDefaultProps(props, defaultProps);
     }
@@ -136,17 +126,18 @@ export class Component<T extends Env, Props extends {}> {
     if (QWeb.dev) {
       QWeb.utils.validateProps(this.constructor, this.props);
     }
-    let id: number = nextId++;
+
+    const id: number = nextId++;
+
     let depth;
-    let p: Component<T, any> | null = null;
-    if (parent instanceof Component) {
-      p = parent;
+    if (parent) {
       this.env = parent.env;
       const __powl__ = parent.__owl__;
       __powl__.children[id] = this;
       depth = __powl__.depth + 1;
     } else {
-      this.env = parent;
+      // we are the root component
+      this.env = config.env as T;
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {
           this.render(true);
@@ -162,6 +153,7 @@ export class Component<T extends Env, Props extends {}> {
       });
       depth = 0;
     }
+
     const qweb = this.env.qweb;
 
     this.__owl__ = {
@@ -171,7 +163,7 @@ export class Component<T extends Env, Props extends {}> {
       pvnode: null,
       isMounted: false,
       isDestroyed: false,
-      parent: p,
+      parent: parent || null,
       children: {},
       cmap: {},
       currentFiber: null,

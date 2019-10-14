@@ -1,4 +1,5 @@
 import { Component } from "../../src/component/component";
+import { config } from "../../src/config";
 import { RouterEnv } from "../../src/router/router";
 import { RouteComponent } from "../../src/router/route_component";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
@@ -12,6 +13,7 @@ describe("RouteComponent", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = <RouterEnv>makeTestEnv();
+    config.env = env;
   });
 
   afterEach(() => {
@@ -45,7 +47,7 @@ describe("RouteComponent", () => {
 
     router = new TestRouter(env, routes, { mode: "history" });
     await router.navigate({ to: "about" });
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>About</span></div>");
 
@@ -72,7 +74,7 @@ describe("RouteComponent", () => {
     const routes = [{ name: "book", path: "/book/{{title}}", component: Book }];
     router = new TestRouter(env, routes, { mode: "history" });
     await router.navigate({ to: "book", params: { title: "1984" } });
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984</span></div>");
   });
@@ -98,7 +100,7 @@ describe("RouteComponent", () => {
     const routes = [{ name: "book", path: "/book/{{title}}/{{val.number}}", component: Book }];
     router = new TestRouter(env, routes, { mode: "history" });
     await router.navigate({ to: "book", params: { title: "1984", val: "123" } });
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984|124</span></div>");
   });

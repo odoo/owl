@@ -3,6 +3,7 @@ import { QWeb } from "../../src/qweb/qweb";
 import { xml } from "../../src/tags";
 import { useState, useRef } from "../../src/hooks";
 import { EventBus } from "../../src/core/event_bus";
+import { config } from "../../src/config";
 import {
   makeDeferred,
   makeTestFixture,
@@ -35,6 +36,7 @@ beforeEach(() => {
   );
   env.qweb.addTemplate("WidgetA", `<div>Hello<t t-component="b"/></div>`);
   env.qweb.addTemplate("WidgetB", `<div>world</div>`);
+  config.env = env;
 });
 
 afterEach(() => {
@@ -71,12 +73,12 @@ class WidgetA extends Widget {
 
 describe("basic widget properties", () => {
   test("props is properly defined", async () => {
-    const widget = new Widget(env);
+    const widget = new Widget();
     expect(widget.props).toEqual({});
   });
 
   test("has no el after creation", async () => {
-    const widget = new Widget(env);
+    const widget = new Widget();
     expect(widget.el).toBe(null);
   });
 
@@ -84,7 +86,7 @@ describe("basic widget properties", () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`<div>content</div>`;
     }
-    const widget = new SomeWidget(env);
+    const widget = new SomeWidget();
     widget.mount(fixture);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>content</div>");
@@ -94,14 +96,14 @@ describe("basic widget properties", () => {
     expect.assertions(1);
     class SomeWidget extends Component<any, any> {}
     try {
-      new SomeWidget(env);
+      new SomeWidget();
     } catch (e) {
       expect(e.message).toBe('Could not find template for component "SomeWidget"');
     }
   });
 
   test("can be clicked on and updated", async () => {
-    const counter = new Counter(env);
+    const counter = new Counter();
     counter.mount(fixture);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
@@ -112,7 +114,7 @@ describe("basic widget properties", () => {
   });
 
   test("cannot be clicked on and updated if not in DOM", async () => {
-    const counter = new Counter(env);
+    const counter = new Counter();
     const target = document.createElement("div");
     await counter.mount(target);
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
@@ -129,7 +131,7 @@ describe("basic widget properties", () => {
         <div style="font-weight:bold;" class="some-class">world</div>
       `;
     }
-    const widget = new StyledWidget(env);
+    const widget = new StyledWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
   });
@@ -152,7 +154,7 @@ describe("basic widget properties", () => {
         steps.push("patched");
       }
     }
-    const widget = new TestW(env);
+    const widget = new TestW();
     await widget.mount(fixture);
     expect(steps).toEqual(["__render", "mounted"]);
   });
@@ -181,7 +183,7 @@ describe("basic widget properties", () => {
       static components = { TestW };
       static template = xml`<div><TestW t-if="state.flag"/></div>`;
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -198,7 +200,7 @@ describe("basic widget properties", () => {
       static template = xml`<div><t t-esc="state.drinks"/></div>`;
       state = { drinks: 1 };
     }
-    const widget = new TestW(env);
+    const widget = new TestW();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>1</div>");
 
@@ -211,12 +213,12 @@ describe("basic widget properties", () => {
   });
 
   test("keeps a reference to env", async () => {
-    const widget = new Widget(env);
+    const widget = new Widget();
     expect(widget.env).toBe(env);
   });
 
   test("do not remove previously rendered dom if not necessary", async () => {
-    const widget = new Widget(env);
+    const widget = new Widget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div></div>`);
     widget.el!.appendChild(document.createElement("span"));
@@ -242,7 +244,7 @@ describe("basic widget properties", () => {
       static components = { Child };
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
   });
@@ -267,7 +269,7 @@ describe("basic widget properties", () => {
       state = { s: [{ blips: ["a1", "a2"] }, { blips: ["b1"] }] };
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>a1</div><div>a2</div><div>b1</div></div>");
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
@@ -288,7 +290,7 @@ describe("basic widget properties", () => {
       static components = { Child };
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>1</span></div><div><span>2</span></div></div>");
   });
@@ -302,7 +304,7 @@ describe("lifecycle hooks", () => {
         willstart = true;
       }
     }
-    const widget = new HookWidget(env);
+    const widget = new HookWidget();
     await widget.mount(fixture);
     expect(willstart).toBe(true);
   });
@@ -314,7 +316,7 @@ describe("lifecycle hooks", () => {
         mounted = true;
       }
     }
-    const widget = new HookWidget(env);
+    const widget = new HookWidget();
     const target = document.createElement("div");
     await widget.mount(target);
     expect(mounted).toBe(false);
@@ -327,7 +329,7 @@ describe("lifecycle hooks", () => {
         mounted = true;
       }
     }
-    const widget = new HookWidget(env);
+    const widget = new HookWidget();
     await widget.mount(fixture);
     expect(mounted).toBe(true);
   });
@@ -344,7 +346,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(ok).toBe(true);
   });
@@ -366,7 +368,7 @@ describe("lifecycle hooks", () => {
         steps.push("parent:mounted");
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(steps).toEqual(["child:mounted", "parent:mounted"]);
   });
@@ -405,7 +407,7 @@ describe("lifecycle hooks", () => {
         steps.push("parent:willUnmount");
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(steps).toEqual(["parent:mounted"]);
     widget.state.flag = true;
@@ -457,7 +459,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(steps).toEqual([]);
     widget.state.n = 2;
@@ -503,7 +505,7 @@ describe("lifecycle hooks", () => {
       state = useState({ ok: false });
       static components = { child: ChildWidget };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(steps).toEqual([]);
     widget.state.ok = true;
@@ -529,7 +531,7 @@ describe("lifecycle hooks", () => {
         expect(this.el).toBeTruthy();
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture); // wait for ParentWidget
     await nextTick(); // wait for ChildWidget
   });
@@ -562,7 +564,7 @@ describe("lifecycle hooks", () => {
       state = useState({ ok: true });
     }
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(steps).toEqual(["init", "willstart", "mounted"]);
     widget.state.ok = false;
@@ -598,7 +600,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>0</span></div></div>");
     widget.increment();
@@ -631,7 +633,7 @@ describe("lifecycle hooks", () => {
     class ParentWidget extends Widget {
       static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
-      constructor(parent) {
+      constructor(parent?) {
         super(parent);
         steps.push("p init");
       }
@@ -646,7 +648,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     widget.destroy();
     expect(steps).toEqual([
@@ -675,7 +677,7 @@ describe("lifecycle hooks", () => {
       static components = { Child: HookWidget };
     }
     env.qweb.addTemplate("HookWidget", '<span><t t-esc="props.n"/></span>');
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<span><span>1</span></span>");
     widget.state.n = 2;
@@ -696,7 +698,7 @@ describe("lifecycle hooks", () => {
         n++;
       }
     }
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
     expect(n).toBe(0);
 
@@ -723,7 +725,7 @@ describe("lifecycle hooks", () => {
       static components = { Child: TestWidget };
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(n).toBe(0);
 
@@ -746,7 +748,7 @@ describe("lifecycle hooks", () => {
       state = useState({ val: 42 });
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>42</div></div>");
     widget.state.val = 123;
@@ -782,7 +784,7 @@ describe("lifecycle hooks", () => {
       static components = { child: ChildWidget };
       state = useState({ flag: false });
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(created).toBe(false);
     expect(mounted).toBe(false);
@@ -820,7 +822,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(steps).toEqual([]);
     widget.state.n = 2;
@@ -864,7 +866,7 @@ describe("lifecycle hooks", () => {
       state = useState({ n: 1, flag: true });
     }
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     expect(env.qweb.templates[ParentWidget.template].fn.toString()).toMatchSnapshot();
@@ -880,7 +882,7 @@ describe("lifecycle hooks", () => {
 
 describe("destroy method", () => {
   test("destroy remove the widget from the DOM", async () => {
-    const widget = new Widget(env);
+    const widget = new Widget();
     await widget.mount(fixture);
     expect(document.contains(widget.el)).toBe(true);
     widget.destroy();
@@ -890,7 +892,7 @@ describe("destroy method", () => {
   });
 
   test("destroying a parent also destroys its children", async () => {
-    const parent = new WidgetA(env);
+    const parent = new WidgetA();
     await parent.mount(fixture);
 
     const child = children(parent)[0];
@@ -901,7 +903,7 @@ describe("destroy method", () => {
   });
 
   test("destroy remove the parent/children link", async () => {
-    const parent = new WidgetA(env);
+    const parent = new WidgetA();
     await parent.mount(fixture);
 
     const child = children(parent)[0];
@@ -921,7 +923,7 @@ describe("destroy method", () => {
       }
     }
     expect(fixture.innerHTML).toBe("");
-    const widget = new DelayedWidget(env);
+    const widget = new DelayedWidget();
     widget.mount(fixture);
     expect(widget.__owl__.isMounted).toBe(false);
     expect(widget.__owl__.isDestroyed).toBe(false);
@@ -977,7 +979,7 @@ describe("destroy method", () => {
       }
     }
 
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span><button>click</button></span></div>");
     fixture.querySelector("button")!.click();
@@ -988,7 +990,7 @@ describe("destroy method", () => {
 
 describe("composition", () => {
   test("a widget with a sub widget", async () => {
-    const widget = new WidgetA(env);
+    const widget = new WidgetA();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hello<div>world</div></div>");
     expect(children(widget)[0].__owl__.parent).toBe(widget);
@@ -998,7 +1000,7 @@ describe("composition", () => {
     QWeb.registerComponent("WidgetB", WidgetB);
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
     class ParentWidget extends Widget {}
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
     delete QWeb.components["WidgetB"];
@@ -1020,7 +1022,7 @@ describe("composition", () => {
         return this.state.child === "a" ? A : B;
       }
     }
-    const widget = new App(env);
+    const widget = new App();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>child a</span>");
     widget.state.child = "b";
@@ -1044,7 +1046,7 @@ describe("composition", () => {
         return this.state.child === "a" ? A : B;
       }
     }
-    const widget = new App(env);
+    const widget = new App();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>child a</span>");
     widget.state.child = "b";
@@ -1060,7 +1062,7 @@ describe("composition", () => {
     class ParentWidget extends Widget {
       static components = { WidgetB: AnotherWidgetB };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Belgium</span></div>");
     delete QWeb.components["WidgetB"];
@@ -1076,7 +1078,7 @@ describe("composition", () => {
     class P extends Widget {
       static components = { C };
     }
-    const parent = new P(env);
+    const parent = new P();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   });
@@ -1089,7 +1091,7 @@ describe("composition", () => {
     class Parent extends Widget {
       static components = { SomeWidget: Widget };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     let error;
     try {
       await parent.mount(fixture);
@@ -1109,7 +1111,7 @@ describe("composition", () => {
       widget = useRef("mywidgetb");
     }
 
-    const widget = new WidgetC(env);
+    const widget = new WidgetC();
     await widget.mount(fixture);
     expect(widget.widget.comp).toBeInstanceOf(WidgetB);
   });
@@ -1133,7 +1135,7 @@ describe("composition", () => {
       }
     }
 
-    const parent = new ParentWidget(env);
+    const parent = new ParentWidget();
     await parent.mount(fixture);
     parent.state.list.push(1);
     await nextTick();
@@ -1182,7 +1184,7 @@ describe("composition", () => {
       }
     }
 
-    const parent = new ParentWidget(env);
+    const parent = new ParentWidget();
     await parent.mount(fixture);
     parent.state.child2 = true;
     await nextTick();
@@ -1195,7 +1197,7 @@ describe("composition", () => {
     class ParentWidget extends Widget {
       static components = { Counter };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>0<button>Inc</button></div></div>");
     const button = fixture.getElementsByTagName("button")[0];
@@ -1221,7 +1223,7 @@ describe("composition", () => {
       elem4 = useRef("4");
       state = useState({ items: [1, 2, 3] });
     }
-    const parent = new ParentWidget(env);
+    const parent = new ParentWidget();
     await parent.mount(fixture);
     expect(parent.elem1.comp).toBeDefined();
     expect(parent.elem2.comp).toBeDefined();
@@ -1230,7 +1232,7 @@ describe("composition", () => {
   });
 
   test("parent's elm for a children === children's elm, even after rerender", async () => {
-    const widget = new WidgetA(env);
+    const widget = new WidgetA();
     await widget.mount(fixture);
 
     expect((<any>widget.__owl__.vnode!.children![1]).elm).toBe(
@@ -1243,7 +1245,7 @@ describe("composition", () => {
   });
 
   test("parent env is propagated to child components", async () => {
-    const widget = new WidgetA(env);
+    const widget = new WidgetA();
     await widget.mount(fixture);
 
     expect(children(widget)[0].env).toBe(env);
@@ -1254,7 +1256,7 @@ describe("composition", () => {
     class ParentWidget extends Widget {
       static components = { Counter };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
@@ -1270,7 +1272,7 @@ describe("composition", () => {
       state = useState({ ok: true });
       static components = { Counter };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
@@ -1294,7 +1296,7 @@ describe("composition", () => {
       state = useState({ ok: true });
       static components = { Counter };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     const button = fixture.getElementsByTagName("button")[0];
     await button.click();
@@ -1325,7 +1327,7 @@ describe("composition", () => {
       static components = { InputWidget };
     }
     env.qweb.addTemplate("InputWidget", "<input/>");
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     const input = fixture.getElementsByTagName("input")[0];
     input.value = "test";
@@ -1356,7 +1358,7 @@ describe("composition", () => {
       state = useState({ ok: true });
       child = useRef("child");
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     let child = children(widget)[0];
 
@@ -1395,7 +1397,7 @@ describe("composition", () => {
       });
       static components = { ChildWidget };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(normalize(fixture.innerHTML)).toBe(
       normalize(`
@@ -1435,7 +1437,7 @@ describe("composition", () => {
       });
       static components = { ChildWidget };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     parent.state.numbers = [1, 3];
     await nextTick();
@@ -1467,7 +1469,7 @@ describe("composition", () => {
       static components = { ChildWidget };
       state = useState({ flag: false });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     const child = children(parent)[0];
     expect(normalize(fixture.innerHTML)).toBe(
@@ -1513,7 +1515,7 @@ describe("composition", () => {
       static components = { SubWidget };
       state = useState({ blips: [{ a: "a", id: 1 }, { b: "b", id: 2 }, { c: "c", id: 4 }] });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe(
       "<div><div><span>asdf</span></div><div><span>asdf</span></div><div><span>asdf</span></div></div>"
@@ -1545,7 +1547,7 @@ describe("composition", () => {
       static components = { SubWidget };
       state = useState({ blips: [{ a: "a", id: 1 }] });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
   });
@@ -1556,7 +1558,7 @@ describe("composition", () => {
       static components = { WidgetB };
       state = useState({ widget: "WidgetB" });
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
@@ -1568,7 +1570,7 @@ describe("composition", () => {
       static components = { WidgetB };
       state = useState({ widget: "B" });
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
@@ -1597,7 +1599,7 @@ describe("composition", () => {
       });
       static components = { ChildWidget };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(normalize(fixture.innerHTML)).toBe(
       "<div><span>1</span><span>2</span><span>3</span></div>"
@@ -1630,7 +1632,7 @@ describe("props evaluation ", () => {
 
     env.qweb.addTemplate("Child", `<span><t t-esc="state.someval"/></span>`);
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
@@ -1646,7 +1648,7 @@ describe("props evaluation ", () => {
         return `hello ${this.props.name}`;
       }
     }
-    const widget = new Parent(env, { name: "aaron" });
+    const widget = new Parent(undefined, { name: "aaron" });
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>hello aaron</span></div>");
   });
@@ -1672,7 +1674,7 @@ describe("props evaluation ", () => {
         </span>`
     );
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(normalize(fixture.innerHTML)).toBe("<div><span>42</span></div>");
   });
@@ -1687,7 +1689,7 @@ describe("class and style attributes with t-component", () => {
       static template = xml`<div><Child class="a b"/></div>`;
       static components = { Child };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
   });
@@ -1701,7 +1703,7 @@ describe("class and style attributes with t-component", () => {
       static components = { Child };
       state = useState({ a: true, b: false });
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
     expect(QWeb.TEMPLATES[ParentWidget.template].fn.toString());
@@ -1724,7 +1726,7 @@ describe("class and style attributes with t-component", () => {
       static components = { Child };
     }
     env.qweb.addTemplate("Child", `<div/>`);
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div class="a b c d"></div></div>`);
   });
@@ -1746,7 +1748,7 @@ describe("class and style attributes with t-component", () => {
       state = useState({ b: true });
       child = useRef("child");
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     const span = fixture.querySelector("span")!;
@@ -1788,7 +1790,7 @@ describe("class and style attributes with t-component", () => {
       state = useState({ b: true });
       child = useRef("child");
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     const span = fixture.querySelector("span")!;
@@ -1826,7 +1828,7 @@ describe("class and style attributes with t-component", () => {
       }
     }
 
-    const widget = new App(env);
+    const widget = new App();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe('<div class="c user"></div>');
@@ -1848,7 +1850,7 @@ describe("class and style attributes with t-component", () => {
     class ParentWidget extends Widget {
       static components = { child: Widget };
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div><div style="font-weight: bold;"></div></div>`);
   });
@@ -1865,7 +1867,7 @@ describe("class and style attributes with t-component", () => {
       static components = { child: Widget };
       state = useState({ style: "font-size: 20px" });
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
@@ -1896,7 +1898,7 @@ describe("other directives with t-component", () => {
         this.n++;
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     let child = children(widget)[0];
     expect(widget.n).toBe(0);
@@ -1922,7 +1924,7 @@ describe("other directives with t-component", () => {
         expect(ev.detail).toBe(43);
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     let child = children(widget)[0];
     child.trigger("ev", 43);
@@ -1944,7 +1946,7 @@ describe("other directives with t-component", () => {
         expect(ev.detail).toBe(43);
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     let child = children(widget)[0];
     child.trigger("ev", 43);
@@ -1966,7 +1968,7 @@ describe("other directives with t-component", () => {
         expect(ev.detail).toBe(43);
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     let child = children(widget)[0];
     child.trigger("ev", 43);
@@ -1988,7 +1990,7 @@ describe("other directives with t-component", () => {
         expect(ev.detail).toBe(43);
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     let child = children(widget)[0];
     child.trigger("ev", 43);
@@ -2023,7 +2025,7 @@ describe("other directives with t-component", () => {
         expect(ev.cancelBubble).toBe(true);
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     const child = children(widget)[0];
@@ -2056,7 +2058,7 @@ describe("other directives with t-component", () => {
         steps.push("onEv2");
       }
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     const child = children(widget)[0];
@@ -2088,7 +2090,7 @@ describe("other directives with t-component", () => {
       static components = { child: Child };
       onEv() {}
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     (<HTMLElement>fixture).addEventListener("ev", function(e) {
       steps.push(e.defaultPrevented);
@@ -2120,7 +2122,7 @@ describe("other directives with t-component", () => {
       static components = { Child };
       onEv() {}
     }
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     (<HTMLElement>fixture).addEventListener("ev", function(e) {
       steps.push(e.defaultPrevented);
@@ -2151,7 +2153,7 @@ describe("other directives with t-component", () => {
         return () => {};
       }
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
@@ -2176,7 +2178,7 @@ describe("other directives with t-component", () => {
       static components = { Child };
       state = useState({ counter: 0 });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
@@ -2204,7 +2206,7 @@ describe("other directives with t-component", () => {
         expect(ev.defaultPrevented).toBe(true);
       }
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     let componentB = children(children(parent)[0])[0];
@@ -2222,7 +2224,7 @@ describe("other directives with t-component", () => {
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
@@ -2252,7 +2254,7 @@ describe("other directives with t-component", () => {
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
@@ -2278,7 +2280,7 @@ describe("other directives with t-component", () => {
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
@@ -2304,7 +2306,7 @@ describe("other directives with t-component", () => {
     }
     env.qweb.addTemplate("Child", "<span>hey</span>");
 
-    const widget = new ParentWidget(env);
+    const widget = new ParentWidget();
     await widget.mount(fixture);
 
     expect(normalize(fixture.innerHTML)).toBe("<div><div>somediv</div></div>");
@@ -2327,7 +2329,7 @@ describe("random stuff/miscellaneous", () => {
     class Test extends Widget {
       static components = { widget: Widget };
     }
-    const widget = new Test(env);
+    const widget = new Test();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
   });
@@ -2354,7 +2356,7 @@ describe("random stuff/miscellaneous", () => {
       }
     }
 
-    const widget = new ParentWidget(env, { items });
+    const widget = new ParentWidget(undefined, { items });
     await widget.mount(fixture);
     children(widget)[0].trigger("ev", 43);
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
@@ -2373,7 +2375,7 @@ describe("random stuff/miscellaneous", () => {
 
     env.qweb.addTemplate("Child", `<span>abc<t t-if="props.flag">def</t></span>`);
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>abc</span></div>");
     widget.state.flag = true;
@@ -2394,7 +2396,7 @@ describe("random stuff/miscellaneous", () => {
 
     env.qweb.addTemplate("Child", `<span>abc<t t-if="props.flag">def</t></span>`);
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
   });
@@ -2498,7 +2500,7 @@ describe("random stuff/miscellaneous", () => {
       name = "A";
     }
 
-    const a = new A(env);
+    const a = new A();
     await a.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
     expect(steps).toEqual([
@@ -2559,7 +2561,7 @@ describe("random stuff/miscellaneous", () => {
       state = useState({ n: 42 });
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
@@ -2574,7 +2576,7 @@ describe("async rendering", () => {
         return def;
       }
     }
-    const w = new W(env);
+    const w = new W();
     w.mount(fixture);
     expect(w.__owl__.isDestroyed).toBe(false);
     expect(w.__owl__.isMounted).toBe(false);
@@ -2604,7 +2606,7 @@ describe("async rendering", () => {
       state = useState({ val: 1 });
     }
 
-    const w = new W(env);
+    const w = new W();
     await w.mount(fixture);
     expect(n).toBe(0);
     w.state.val = 2;
@@ -2651,7 +2653,7 @@ describe("async rendering", () => {
       static components = { ChildA, ChildB };
       state = useState({ flagA: false, flagB: false });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
     parent.state.flagA = true;
@@ -2696,7 +2698,7 @@ describe("async rendering", () => {
       static components = { ChildA, ChildB };
       state = useState({ valA: 1, valB: 2, flagB: false });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
     parent.state.valA = 2;
@@ -2739,7 +2741,7 @@ describe("async rendering", () => {
       static components = { ChildA, ChildB };
       state = useState({ valA: 1, valB: 2, flagB: false });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
     parent.state.valA = 2;
@@ -2774,7 +2776,7 @@ describe("async rendering", () => {
       static components = { ChildA };
       state = useState({ valA: 1 });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     parent.state.valA = 2;
@@ -2809,7 +2811,7 @@ describe("async rendering", () => {
       static components = { ChildA };
       state = useState({ valA: 1 });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     parent.state.valA = 2;
@@ -2853,7 +2855,7 @@ describe("async rendering", () => {
             </div>
         </templates>`);
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe(
       "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
@@ -2885,7 +2887,7 @@ describe("async rendering", () => {
       static components = { Child };
       state = useState({ flag: true, val: "Framboise Lindemans" });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
 
@@ -2938,7 +2940,7 @@ describe("async rendering", () => {
       static components = { ChildA, ChildB };
       state = useState({ valA: 1, valB: 2, flag: false });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(destroyCount).toBe(0);
@@ -2973,7 +2975,7 @@ describe("async rendering", () => {
       }
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
     fixture.querySelector("button")!.click();
@@ -3013,7 +3015,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
@@ -3065,7 +3067,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
@@ -3115,7 +3117,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
@@ -3179,7 +3181,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
@@ -3249,7 +3251,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
@@ -3298,7 +3300,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
@@ -3343,7 +3345,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
@@ -3386,7 +3388,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
@@ -3419,7 +3421,7 @@ describe("async rendering", () => {
       state = useState({ fromA: 1 });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
@@ -3482,7 +3484,7 @@ describe("async rendering", () => {
       state = useState({ fromA: "a1" });
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
@@ -3507,7 +3509,7 @@ describe("widget and observable state", () => {
       static template = xml`<div><t t-esc="state.drink"/></div>`;
       state = useState({ drink: "water" });
     }
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div>water</div>");
@@ -3531,7 +3533,7 @@ describe("widget and observable state", () => {
       state = useState({ obj: { coffee: 1 } });
       static components = { Child };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     let error;
     try {
       await parent.mount(fixture);
@@ -3549,7 +3551,7 @@ describe("can deduce template from name", () => {
   test("can find template if name of component", async () => {
     class ABC extends Widget {}
     env.qweb.addTemplate("ABC", "<span>Orval</span>");
-    const abc = new ABC(env);
+    const abc = new ABC();
     await abc.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Orval</span>");
   });
@@ -3558,7 +3560,7 @@ describe("can deduce template from name", () => {
     class ABC extends Widget {}
     class DEF extends ABC {}
     env.qweb.addTemplate("ABC", "<span>Orval</span>");
-    const def = new DEF(env);
+    const def = new DEF();
     await def.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Orval</span>");
   });
@@ -3569,7 +3571,7 @@ describe("can deduce template from name", () => {
     }
     class DEF extends ABC {}
     env.qweb.addTemplate("Achel", "<span>Orval</span>");
-    const def = new DEF(env);
+    const def = new DEF();
     await def.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Orval</span>");
   });
@@ -3579,11 +3581,12 @@ describe("can deduce template from name", () => {
     env.qweb.addTemplate("ABC", "<span>Rochefort 8</span>");
     env2.qweb.addTemplate("ABC", "<span>Rochefort 10</span>");
     class ABC extends Widget {}
-    const abc = new ABC(env);
+    const abc = new ABC();
     await abc.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Rochefort 8</span>");
     abc.destroy();
-    const abc2 = new ABC(env2);
+    config.env = env2;
+    const abc2 = new ABC();
     await abc2.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Rochefort 10</span>");
   });
@@ -3609,7 +3612,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -3641,7 +3644,7 @@ describe("t-slot directive", () => {
         this.state.val++;
       }
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -3677,7 +3680,7 @@ describe("t-slot directive", () => {
       static components = { Link };
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -3716,7 +3719,7 @@ describe("t-slot directive", () => {
       static components = { Link };
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -3753,7 +3756,7 @@ describe("t-slot directive", () => {
       static components = { Link };
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
@@ -3787,7 +3790,7 @@ describe("t-slot directive", () => {
         this.state.val++;
       }
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -3818,7 +3821,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
@@ -3838,7 +3841,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
@@ -3863,7 +3866,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
@@ -3886,7 +3889,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
@@ -3910,7 +3913,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
@@ -3934,7 +3937,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Dialog };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(console.log).toHaveBeenCalledTimes(0);
     console.log = consoleLog;
@@ -3957,7 +3960,7 @@ describe("t-slot directive", () => {
     class Parent extends Widget {
       static components = { Child, GrandChild };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><div>Grand Child</div></div></div>");
@@ -4001,7 +4004,7 @@ describe("t-slot directive", () => {
         this.state.val++;
       }
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><button>Inc[4]</button><div><div> SC:4</div></div></div>");
@@ -4023,7 +4026,7 @@ describe("t-slot directive", () => {
       static components = { Link: Link };
     }
 
-    const a = new A(env);
+    const a = new A();
     await a.mount(fixture);
 
     expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
@@ -4045,7 +4048,7 @@ describe("t-slot directive", () => {
       static components = { SlotComponent, Child };
       state = useState({ value: 3 });
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
 
@@ -4067,7 +4070,7 @@ describe("t-model directive", () => {
         </div>`;
       state = useState({ text: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
@@ -4090,7 +4093,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Widget {
       some = useState({ text: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
@@ -4116,7 +4119,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Widget {
       state = useState({ flag: false });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe('<div><input type="checkbox"><span>no</span></div>');
@@ -4144,7 +4147,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Widget {
       state = useState({ text: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><textarea></textarea><span></span></div>");
@@ -4167,7 +4170,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Widget {
       state = useState({ choice: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -4207,7 +4210,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Widget {
       state = useState({ color: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -4240,7 +4243,7 @@ describe("t-model directive", () => {
       `;
       state = useState({ color: "red" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
     const select = fixture.querySelector("select")!;
     expect(select.value).toBe("red");
@@ -4256,7 +4259,7 @@ describe("t-model directive", () => {
       `;
       state = useState({ something: { text: "" } });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
@@ -4278,7 +4281,7 @@ describe("t-model directive", () => {
       `;
       state = useState({ text: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
@@ -4306,7 +4309,7 @@ describe("t-model directive", () => {
       `;
       state = useState({ text: "" });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
 
     const input = fixture.querySelector("input")!;
@@ -4325,7 +4328,7 @@ describe("t-model directive", () => {
       `;
       state = useState({ number: 0 });
     }
-    const comp = new SomeComponent(env);
+    const comp = new SomeComponent();
     await comp.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><input><span>0</span></div>");
 
@@ -4364,7 +4367,7 @@ describe("environment and plugins", () => {
       `;
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div>Red</div>");
@@ -4413,7 +4416,7 @@ describe("component error handling (catchError)", () => {
       state = useState({ flag: false });
       static components = { ErrorBoundary, ErrorComponent };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><div>hey</div></div></div>");
     app.state.flag = true;
@@ -4450,7 +4453,7 @@ describe("component error handling (catchError)", () => {
         }
       }
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
     app.state.flag = true;
@@ -4492,7 +4495,7 @@ describe("component error handling (catchError)", () => {
         </div>`;
       static components = { ErrorBoundary, ErrorComponent };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     await nextTick();
     await nextTick();
@@ -4536,7 +4539,7 @@ describe("component error handling (catchError)", () => {
     class App extends Widget {
       static components = { ErrorBoundary, ErrorComponent };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     await nextTick();
     await nextTick();
@@ -4575,7 +4578,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`<div><ErrorBoundary><ErrorComponent /></ErrorBoundary></div>`;
       static components = { ErrorBoundary, ErrorComponent };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     await nextTick();
     await nextTick();
@@ -4615,7 +4618,7 @@ describe("component error handling (catchError)", () => {
     class App extends Widget {
       static components = { ErrorBoundary, ErrorComponent };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     await nextTick();
     await nextTick();
@@ -4654,7 +4657,7 @@ describe("component error handling (catchError)", () => {
       state = useState({ message: "abc" });
       static components = { ErrorBoundary, ErrorComponent };
     }
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>abc</span><div><div>abc</div></div></div>");
     app.state.message = "def";
@@ -4674,7 +4677,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
 
-    const app = new App(env);
+    const app = new App();
     let error;
     try {
       await app.mount(fixture);
@@ -4700,7 +4703,7 @@ describe("component error handling (catchError)", () => {
       static components = { Child };
     }
 
-    const app = new App(env);
+    const app = new App();
     let error;
     try {
       await app.mount(fixture);
@@ -4723,7 +4726,7 @@ describe("component error handling (catchError)", () => {
       flag = false;
     }
 
-    const app = new App(env);
+    const app = new App();
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
     app.flag = true;
@@ -4751,7 +4754,7 @@ describe("component error handling (catchError)", () => {
 
     let error;
     try {
-      const parent = new Parent(env);
+      const parent = new Parent();
       await parent.mount(fixture);
     } catch (e) {
       error = e;
@@ -4774,7 +4777,7 @@ describe("top level sub widgets", () => {
     class Parent extends Widget {
       static components = { Child };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>child1</span>");
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
@@ -4797,7 +4800,7 @@ describe("top level sub widgets", () => {
     class Parent extends Widget {
       static components = { Child };
     }
-    const parent = new Parent(env);
+    const parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<span><button>click</button>child1</span>");
     const button = fixture.querySelector("button")!;
@@ -4823,12 +4826,12 @@ describe("top level sub widgets", () => {
       static components = { Child, OtherChild };
     }
     (<any>env).flag = true;
-    let parent = new Parent(env);
+    let parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
     parent.destroy();
     (<any>env).flag = false;
-    parent = new Parent(env);
+    parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
 
@@ -4852,7 +4855,7 @@ describe("top level sub widgets", () => {
       state = useState({ flag: true });
       static components = { Child, OtherChild };
     }
-    let parent = new Parent(env);
+    let parent = new Parent();
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
     parent.state.flag = false;
@@ -4873,7 +4876,7 @@ describe("top level sub widgets", () => {
       static components = { ComponentB };
     }
 
-    const component = new ComponentA(env);
+    const component = new ComponentA();
     await component.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>Hello</span></div>");
@@ -4899,7 +4902,7 @@ describe("unmounting and remounting", () => {
       }
     }
 
-    const w = new MyWidget(env);
+    const w = new MyWidget();
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
     expect(steps).toEqual(["willstart", "mounted"]);
@@ -4928,7 +4931,7 @@ describe("unmounting and remounting", () => {
       }
     }
 
-    const w = new MyWidget(env);
+    const w = new MyWidget();
     await w.mount(fixture);
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
@@ -4969,7 +4972,7 @@ describe("unmounting and remounting", () => {
       state = useState({ val: 1, flag: true });
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(steps).toEqual(["render"]);
     expect(fixture.innerHTML).toBe("<div><span>12</span></div>");
@@ -4990,7 +4993,7 @@ describe("unmounting and remounting", () => {
       }
     }
 
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>1</div>");
     widget.unmount();
@@ -5014,7 +5017,7 @@ describe("dynamic root nodes", () => {
       `;
     }
 
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>hey</span>");
@@ -5030,7 +5033,7 @@ describe("dynamic root nodes", () => {
       `;
     }
 
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div>abc</div>");
@@ -5047,7 +5050,7 @@ describe("dynamic root nodes", () => {
       state = useState({ flag: true });
     }
 
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>hey</span>");
@@ -5075,7 +5078,7 @@ describe("dynamic root nodes", () => {
       state = useState({ flag: true });
     }
 
-    const widget = new TestWidget(env);
+    const widget = new TestWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>hey</span>");
@@ -5113,7 +5116,7 @@ describe("dynamic t-props", () => {
       some = { obj: { a: 1, b: 2 } };
     }
 
-    const widget = new Parent(env);
+    const widget = new Parent();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
@@ -5137,7 +5140,7 @@ describe("support svg components", () => {
         </svg>`;
       static components = { GComp };
     }
-    const widget = new Svg(env);
+    const widget = new Svg();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -5152,7 +5155,7 @@ describe("t-raw in components", () => {
       static template = xml`<div><t t-raw="state.value"/></div>`;
       state = useState({ value: "<b>content</b>" });
     }
-    const widget = new TestW(env);
+    const widget = new TestW();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><b>content</b></div>");
@@ -5173,7 +5176,7 @@ describe("t-raw in components", () => {
         </div>`;
       state = useState({ items: ["<b>one</b>", "<b>two</b>", "<b>tree</b>"] });
     }
-    const widget = new TestW(env);
+    const widget = new TestW();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe(

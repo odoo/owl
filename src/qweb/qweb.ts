@@ -104,8 +104,6 @@ const UTILS: Utils = {
 function parseXML(xml: string): Document {
   const parser = new DOMParser();
 
-  // we remove comments from the xml string
-  xml = xml.replace(/<!--[\s\S]*?-->/g, "");
   const doc = parser.parseFromString(xml, "text/xml");
   if (doc.getElementsByTagName("parsererror").length) {
     let msg = "Invalid XML in template.";
@@ -421,7 +419,11 @@ export class QWeb extends EventBus {
         text = text.replace(whitespaceRE, " ");
       }
       if (ctx.parentNode) {
-        ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
+        if (node.nodeType === 3) {
+          ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
+        } else if (node.nodeType === 8) {
+          ctx.addLine(`c${ctx.parentNode}.push(h('!', \`${text}\`));`);
+        }
       } else if (ctx.parentTextNode) {
         ctx.addLine(`vn${ctx.parentTextNode}.text += \`${text}\`;`);
       } else {
@@ -569,7 +571,11 @@ export class QWeb extends EventBus {
     }
   }
 
-  _compileGenericNode(node: ChildNode, ctx: CompilationContext, withHandlers: boolean = true): number {
+  _compileGenericNode(
+    node: ChildNode,
+    ctx: CompilationContext,
+    withHandlers: boolean = true
+  ): number {
     // nodeType 1 is generic tag
     if (node.nodeType !== 1) {
       throw new Error("unsupported node type");

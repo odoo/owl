@@ -771,13 +771,15 @@ exports[`static templates empty div 1`] = `
 }"
 `;
 
-exports[`static templates ignore comments 1`] = `
+exports[`static templates properly handle comments 1`] = `
 "function anonymous(context,extra
 ) {
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    c1.push({text: \`hello owl\`});
+    c1.push({text: \`hello \`});
+    c1.push(h('!', \` comment\`));
+    c1.push({text: \`owl\`});
     return vn1;
 }"
 `;

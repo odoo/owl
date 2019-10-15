@@ -101,7 +101,7 @@ export class Component<T extends Env, Props extends {}> {
   readonly __owl__: Internal<Env, Props>;
   static template?: string | null = null;
   static _template?: string | null = null;
-  static current: Component<any,any> | null = null;
+  static current: Component<any, any> | null = null;
   static components = {};
   static props?: any;
   static defaultProps?: any;

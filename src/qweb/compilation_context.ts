@@ -24,7 +24,7 @@ export class CompilationContext {
   shouldDefineResult: boolean = true;
   shouldProtectContext: boolean = false;
   shouldTrackScope: boolean = false;
-  inLoop: boolean = false;
+  loopNumber: number = 0;
   inPreTag: boolean = false;
   templateName: string;
   allowMultipleRoots: boolean = false;

@@ -243,21 +243,19 @@ QWeb.addDirective({
       ctx.addLine(`let key${keyID} = 'key' + ${key};`);
     }
     ctx.addLine(`let def${defID};`);
-    let templateID = key
-      ? `key${keyID}`
-      : ctx.inLoop
-      ? ctx.currentKey
-        ? `String(${ctx.currentKey} + '_k_' + i + '_c_' + ${componentID} )`
-        : `String(-${componentID} - i)`
-      : String(componentID);
-    if (ctx.allowMultipleRoots) {
-      templateID = `"_slot_${templateID}"`;
+
+    let locationExpr = `\`__${ctx.generateID()}__`;
+    for (let i = 0; i < ctx.loopNumber - 1; i++) {
+      locationExpr += `\${i${i + 1}}__`;
     }
-    if (key || ctx.inLoop) {
-      let id = ctx.generateID();
-      ctx.addLine(`let templateId${id} = ${templateID};`);
-      templateID = `templateId${id}`;
+    if (key || ctx.currentKey) {
+      const k = key ? `key${keyID}` : ctx.currentKey;
+      ctx.addLine(`let templateId${componentID} = ${locationExpr}\` + ${k};`);
+    } else {
+      locationExpr += ctx.loopNumber ? `\${i${ctx.loopNumber}}__\`` : "`";
+      ctx.addLine(`let templateId${componentID} = ${locationExpr};`);
     }
+    const templateId = `templateId${componentID}`;
 
     let ref = node.getAttribute("t-ref");
     let refExpr = "";
@@ -320,7 +318,7 @@ QWeb.addDirective({
         .map(function([eventName, mods, handlerName, extraArgs]) {
           let params = "owner";
           if (extraArgs) {
-            if (ctx.inLoop) {
+            if (ctx.loopNumber) {
               let argId = ctx.generateID();
               // we need to evaluate the arguments now, because the handler will
               // be set asynchronously later when the widget is ready, and the
@@ -352,7 +350,7 @@ QWeb.addDirective({
     }
 
     ctx.addLine(
-      `let w${componentID} = ${templateID} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateID}]] : false;`
+      `let w${componentID} = ${templateId} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateId}]] : false;`
     );
     if (ctx.parentNode) {
       ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
@@ -418,7 +416,7 @@ QWeb.addDirective({
       ctx.addLine(`utils.validateProps(W${componentID}, props${componentID})`);
     }
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
-    ctx.addLine(`parent.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
+    ctx.addLine(`parent.__owl__.cmap[${templateId}] = w${componentID}.__owl__.id;`);
 
     // SLOTS
     const varDefs: string[] = [];
@@ -470,7 +468,7 @@ QWeb.addDirective({
       registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
     }
     ctx.addLine(
-      `def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`
+      `def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateId}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`
     );
 
     ctx.addElse();

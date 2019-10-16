@@ -1,5 +1,5 @@
 import { SAMPLES } from "./samples.js";
-const {useState, useRef} = owl.hooks;
+const { useState, useRef, onMounted, onWillUnmount } = owl.hooks;
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
 //------------------------------------------------------------------------------
@@ -151,19 +151,65 @@ Promise.all([loadTemplates(), owl.utils.whenReady()]).then(start);
 }
 
 //------------------------------------------------------------------------------
+// SAMPLES
+//------------------------------------------------------------------------------
+function loadSamples() {
+  let result = SAMPLES.slice();
+  const localSample = localStorage.getItem("owl-playground-local-sample");
+  if (localSample) {
+    const { js, css, xml } = JSON.parse(localSample);
+    result.unshift({
+      description: "Local Storage Code",
+      code: js,
+      xml,
+      css
+    });
+  }
+  return result;
+}
+
+function saveLocalSample(js, css, xml) {
+  const str = JSON.stringify({ js, css, xml });
+  localStorage.setItem("owl-playground-local-sample", str);
+}
+
+function deleteLocalSample() {
+  localStorage.removeItem("owl-playground-local-sample");
+}
+
+function useSamples() {
+  const samples = loadSamples();
+  const component = owl.Component.current;
+  let interval;
+
+  onMounted(() => {
+    const state = component.state;
+    interval = setInterval(() => {
+      if (component.isDirty) {
+        saveLocalSample(state.js, state.css, state.xml);
+      }
+    }, 1000);
+  });
+  onWillUnmount(() => {
+    clearInterval(interval);
+  });
+  return samples;
+}
+//------------------------------------------------------------------------------
 // Tabbed editor
 //------------------------------------------------------------------------------
 class TabbedEditor extends owl.Component {
   constructor(parent, props) {
     super(parent, props);
     this.state = useState({
-      currentTab: props.js ? "js" : props.xml ? "xml" : "css"
+      currentTab: props.js !== false ? "js" : props.xml ? "xml" : "css"
     });
     this.setTab = owl.utils.debounce(this.setTab, 250, true);
 
     this.sessions = {};
     this._setupSessions(props);
     this.editorNode = useRef("editor");
+    this._updateCode = this._updateCode.bind(this);
   }
 
   mounted() {
@@ -175,18 +221,14 @@ class TabbedEditor extends owl.Component {
     this.editor.setSession(this.sessions[this.state.currentTab]);
     const tabSize = this.state.currentTab === "xml" ? 2 : 4;
     this.editor.session.setOption("tabSize", tabSize);
-    this.editor.on("blur", () => {
-      const editorValue = this.editor.getValue();
-      const propsValue = this.props[this.state.currentTab];
-      if (editorValue !== propsValue) {
-        this.trigger("updateCode", {
-          type: this.state.currentTab,
-          value: editorValue
-        });
-      }
-    });
+    this.editor.on("blur", this._updateCode);
+    this.interval = setInterval(this._updateCode, 3000);
   }
 
+  willUnmount() {
+    clearInterval(this.interval);
+    this.editor.off("blur", this._updateCode);
+  }
   willUpdateProps(nextProps) {
     this._setupSessions(nextProps);
   }
@@ -195,13 +237,15 @@ class TabbedEditor extends owl.Component {
     const session = this.sessions[this.state.currentTab];
     let content = this.props[this.state.currentTab];
     if (content === false) {
-      const tab = this.props.js ? "js" : this.props.xml ? "xml" : "css";
+      const tab = this.props.js !== false ? "js" : this.props.xml ? "xml" : "css";
       content = this.props[tab];
       this.state.currentTab = tab;
     }
-    session.setValue(content, -1);
-    this.editor.setSession(session);
-    this.editor.resize();
+    if (this.editor.getValue() !== content) {
+      session.setValue(content, -1);
+      this.editor.setSession(session);
+      this.editor.resize();
+    }
   }
 
   setTab(tab) {
@@ -230,13 +274,24 @@ class TabbedEditor extends owl.Component {
 
   _setupSessions(props) {
     for (let tab of ["js", "xml", "css"]) {
-      if (props[tab] && !this.sessions[tab]) {
+      if (props[tab] !== false && !this.sessions[tab]) {
         this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
         this.sessions[tab].setOption("useWorker", false);
         const tabSize = tab === "xml" ? 2 : 4;
         this.sessions[tab].setOption("tabSize", tabSize);
         this.sessions[tab].setUndoManager(new ace.UndoManager());
       }
+    }
+  }
+
+  _updateCode() {
+    const editorValue = this.editor.getValue();
+    const propsValue = this.props[this.state.currentTab];
+    if (editorValue !== propsValue) {
+      this.trigger("updateCode", {
+        type: this.state.currentTab,
+        value: editorValue
+      });
     }
   }
 }
@@ -248,12 +303,13 @@ class App extends owl.Component {
   constructor(...args) {
     super(...args);
     this.version = owl.__info__.version;
-    this.SAMPLES = SAMPLES;
+    this.SAMPLES = useSamples();
+    this.isDirty = false;
 
     this.state = useState({
-      js: SAMPLES[0].code,
-      css: SAMPLES[0].css || "",
-      xml: SAMPLES[0].xml || DEFAULT_XML,
+      js: this.SAMPLES[0].code,
+      css: this.SAMPLES[0].css || "",
+      xml: this.SAMPLES[0].xml || DEFAULT_XML,
       error: false,
       displayWelcome: true,
       splitLayout: true,
@@ -302,10 +358,12 @@ class App extends owl.Component {
   }
 
   setSample(ev) {
-    const sample = SAMPLES.find(s => s.description === ev.target.value);
+    const sample = this.SAMPLES.find(s => s.description === ev.target.value);
     this.state.js = sample.code;
     this.state.css = sample.css || "";
     this.state.xml = sample.xml || DEFAULT_XML;
+    deleteLocalSample();
+    this.isDirty = false;
   }
 
   get leftPaneStyle() {
@@ -338,7 +396,10 @@ class App extends owl.Component {
     });
   }
   updateCode(ev) {
-    this.state[ev.detail.type] = ev.detail.value;
+    if (this.state[ev.detail.type] !== ev.detail.value) {
+      this.state[ev.detail.type] = ev.detail.value;
+      this.isDirty = true;
+    }
   }
   toggleLayout() {
     this.state.splitLayout = !this.state.splitLayout;
@@ -362,7 +423,6 @@ class App extends owl.Component {
   }
 }
 App.components = { TabbedEditor };
-
 
 //------------------------------------------------------------------------------
 // Application initialization

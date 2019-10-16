@@ -318,6 +318,66 @@ const HOOKS_CSS = `button {
     font-size: 16px;
 }`;
 
+const CONTEXT_JS = `// In this example, we show how components can use the Context and 'useContext'
+// hook to share information between them.
+const { Component, Context } = owl;
+const { useContext } = owl.hooks;
+
+class ToolbarButton extends Component {
+    theme = useContext(this.env.themeContext);
+
+    get style () {
+        const theme = this.theme;
+        return \`background-color: \${theme.background}; color: \${theme.foreground}\`;
+    }
+}
+
+class Toolbar extends Component {
+    static components = { ToolbarButton };
+}
+
+// Main root component
+class App extends Component {
+    static components = { Toolbar };
+
+    toggleTheme() {
+        const { background, foreground } = this.env.themeContext.state;
+        this.env.themeContext.state.background = foreground;
+        this.env.themeContext.state.foreground = background;
+    }
+}
+
+// Application setup
+const themeContext = new Context({
+   background: '#000',
+   foreground: '#fff',
+});
+const env = {
+    qweb: new owl.QWeb(TEMPLATES),
+    themeContext: themeContext,
+};
+const app = new App(env);
+app.mount(document.body);
+`;
+
+const CONTEXT_XML = `<templates>
+  <button t-name="ToolbarButton" t-att-style="style">
+    <t t-esc="props.name"/>
+  </button>
+
+  <div t-name="Toolbar">
+    <ToolbarButton name="'A'"/>
+    <ToolbarButton name="'B'"/>
+    <ToolbarButton name="'C'"/>
+  </div>
+
+  <div t-name="App">
+    <button t-on-click="toggleTheme">Toggle Mode</button>
+    <Toolbar/>
+  </div>
+</templates>
+`;
+
 const TODO_APP_STORE = `// This example is an implementation of the TodoList application, from the
 // www.todomvc.com project.  This is a non trivial application with some
 // interesting user interactions. It uses the local storage for persistence.
@@ -325,97 +385,92 @@ const TODO_APP_STORE = `// This example is an implementation of the TodoList app
 // In this implementation, we use the owl Store class to manage the state.  It
 // is very similar to the VueX store.
 const { Component, useState } = owl;
-const { useRef } = owl.hooks;
+const { useRef, useStore, useDispatch, onPatched, onMounted } = owl.hooks;
 
+//------------------------------------------------------------------------------
+// Constants, helpers
+//------------------------------------------------------------------------------
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
 const LOCALSTORAGE_KEY = "todomvc";
 
+function useAutofocus(name) {
+  let ref = useRef(name);
+  let isInDom = false;
+  function updateFocus() {
+    if (!isInDom && ref.el) {
+      isInDom = true;
+      const current = ref.el.value;
+      ref.el.value = "";
+      ref.el.focus();
+      ref.el.value = current;
+    } else if (isInDom && !ref.el) {
+      isInDom = false;
+    }
+  }
+  onPatched(updateFocus);
+  onMounted(updateFocus);
+}
+
 //------------------------------------------------------------------------------
-// Store Definition
+// Store
 //------------------------------------------------------------------------------
+const initialState = { todos: [], nextId: 1};
+
 const actions = {
     addTodo({ state }, title) {
-        state.todos.push({
+        const todo = {
             id: state.nextId++,
             title,
             completed: false
-        });
+        }
+        state.todos.push(todo);
     },
     removeTodo({ state }, id) {
         const index = state.todos.findIndex(t => t.id === id);
         state.todos.splice(index, 1);
     },
-    toggleTodo({ state, dispatch }, id) {
+    updateTodo({state, dispatch}, {id, title}) {
+        const value = title.trim();
+        if (!value) {
+            dispatch('removeTodo', id);
+        } else {
+            const todo = state.todos.find(t => t.id === id);
+            todo.title = value;
+        }
+    },
+    toggleTodo({ state }, id) {
         const todo = state.todos.find(t => t.id === id);
-        dispatch("editTodo", { id, completed: !todo.completed });
+        todo.completed = !todo.completed;
     },
     clearCompleted({ state, dispatch }) {
-        state.todos
-            .filter(todo => todo.completed)
-            .forEach(todo => {
+        for (let todo of state.todos) {
+            if (todo.completed) {
                 dispatch("removeTodo", todo.id);
-            });
+            }
+        }
     },
     toggleAll({ state, dispatch }, completed) {
-        state.todos.forEach(todo => {
-            dispatch("editTodo", {
-                id: todo.id,
-                completed
-            });
-        });
-    },
-    editTodo({ state }, { id, title, completed }) {
-        const todo = state.todos.find(t => t.id === id);
-        if (title !== undefined) {
-            todo.title = title;
-        }
-        if (completed !== undefined) {
+        for (let todo of state.todos) {
             todo.completed = completed;
         }
-    }
+    },
 };
-
-function saveState(state) {
-    const str = JSON.stringify(state);
-    window.localStorage.setItem(LOCALSTORAGE_KEY, str);
-}
-
-function loadState() {
-    const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
-    return localState ? JSON.parse(localState) : { todos: [], nextId: 1};
-}
-
-function makeStore() {
-    const state = loadState();
-    const store = new owl.store.Store({ state, actions });
-    store.on("update", null, () => saveState(store.state));
-    return store;
-}
 
 //------------------------------------------------------------------------------
 // TodoItem
 //------------------------------------------------------------------------------
 class TodoItem extends Component {
     state = useState({ isEditing: false });
-    inputRef = useRef("input");
+    dispatch = useDispatch();
 
-    removeTodo() {
-        this.env.store.dispatch("removeTodo", this.props.id);
+    constructor(...args) {
+        super(...args);
+        useAutofocus("input");
     }
 
-    toggleTodo() {
-        this.env.store.dispatch("toggleTodo", this.props.id);
-    }
-
-    async editTodo() {
+    editTodo() {
         this.state.isEditing = true;
-    }
-
-    focusInput() {
-        this.inputRef.el.value = "";
-        this.inputRef.el.focus();
-        this.inputRef.el.value = this.props.title;
     }
 
     handleKeyup(ev) {
@@ -433,48 +488,34 @@ class TodoItem extends Component {
     }
 
     updateTitle(title) {
-        const value = title.trim();
-        if (!value) {
-            this.removeTodo(this.props.id);
-        } else {
-            this.env.store.dispatch("editTodo", {
-                id: this.props.id,
-                title: value
-            });
-            this.state.isEditing = false;
-        }
+        this.dispatch("updateTodo", {title, id: this.props.id});
+        this.state.isEditing = false;
     }
 }
 
 //------------------------------------------------------------------------------
 // TodoApp
 //------------------------------------------------------------------------------
-class TodoApp extends owl.store.ConnectedComponent {
+class TodoApp extends Component {
     static components = { TodoItem };
     state = useState({ filter: "all" });
+    todos = useStore(state => state.todos);
+    dispatch = useDispatch();
 
-    static mapStoreToProps(state) {
-        return {
-            todos: state.todos
-        };
-    }
     get visibleTodos() {
-        let todos = this.storeProps.todos;
-        if (this.state.filter === "active") {
-            todos = todos.filter(t => !t.completed);
+        switch (this.state.filter) {
+            case "active": return this.todos.filter(t => !t.completed);
+            case "completed": return this.todos.filter(t => t.completed);
+            case "all": return this.todos;
         }
-        if (this.state.filter === "completed") {
-            todos = todos.filter(t => t.completed);
-        }
-        return todos;
     }
 
     get allChecked() {
-        return this.storeProps.todos.every(todo => todo.completed);
+        return this.todos.every(todo => todo.completed);
     }
 
     get remaining() {
-        return this.storeProps.todos.filter(todo => !todo.completed).length;
+        return this.todos.filter(todo => !todo.completed).length;
     }
 
     get remainingText() {
@@ -500,12 +541,25 @@ class TodoApp extends owl.store.ConnectedComponent {
 //------------------------------------------------------------------------------
 // App Initialization
 //------------------------------------------------------------------------------
-const store = makeStore();
-const qweb = new owl.QWeb(TEMPLATES);
-const env = {
-    qweb,
-    store,
-};
+function saveState(state) {
+    const str = JSON.stringify(state);
+    window.localStorage.setItem(LOCALSTORAGE_KEY, str);
+}
+
+function loadState() {
+    const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
+    return localState ? JSON.parse(localState) : initialState;
+}
+
+function makeEnv() {
+    const state = loadState();
+    const store = new owl.Store({ state, actions });
+    store.on("update", null, () => saveState(store.state));
+    const qweb = new owl.QWeb(TEMPLATES);
+    return { qweb, store };
+}
+
+const env = makeEnv();
 const app = new TodoApp(env);
 app.mount(document.body);
 `;
@@ -516,7 +570,7 @@ const TODO_APP_STORE_XML = `<templates>
       <h1>todos</h1>
       <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
     </header>
-    <section class="main" t-if="storeProps.todos.length">
+    <section class="main" t-if="todos.length">
       <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="dispatch('toggleAll', !allChecked)"/>
       <label for="toggle-all"></label>
       <ul class="todo-list">
@@ -525,7 +579,7 @@ const TODO_APP_STORE_XML = `<templates>
         </t>
       </ul>
     </section>
-    <footer class="footer" t-if="storeProps.todos.length">
+    <footer class="footer" t-if="todos.length">
       <span class="todo-count">
         <strong>
             <t t-esc="remaining"/>
@@ -543,7 +597,7 @@ const TODO_APP_STORE_XML = `<templates>
           <a t-on-click="setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
         </li>
       </ul>
-      <button class="clear-completed" t-if="storeProps.todos.length gt remaining" t-on-click="dispatch('clearCompleted')">
+      <button class="clear-completed" t-if="todos.length gt remaining" t-on-click="dispatch('clearCompleted')">
         Clear completed
       </button>
     </footer>
@@ -551,13 +605,13 @@ const TODO_APP_STORE_XML = `<templates>
 
   <li t-name="TodoItem" class="todo" t-att-class="{completed: props.completed, editing: state.isEditing}">
     <div class="view">
-      <input class="toggle" type="checkbox" t-on-change="toggleTodo" t-att-checked="props.completed"/>
+      <input class="toggle" type="checkbox" t-on-change="dispatch('toggleTodo', props.id)" t-att-checked="props.completed"/>
       <label t-on-dblclick="editTodo">
         <t t-esc="props.title"/>
       </label>
-      <button class="destroy" t-on-click="removeTodo"></button>
+      <button class="destroy" t-on-click="dispatch('removeTodo', props.id)"></button>
     </div>
-    <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-mounted="focusInput" t-on-blur="handleBlur"/>
+    <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-on-blur="handleBlur"/>
   </li>
 </templates>`;
 
@@ -1654,6 +1708,11 @@ export const SAMPLES = [
     code: HOOKS_DEMO,
     xml: HOOKS_DEMO_XML,
     css: HOOKS_CSS
+  },
+  {
+    description: "Context",
+    code: CONTEXT_JS,
+    xml: CONTEXT_XML,
   },
   {
     description: "Todo List App (with store)",

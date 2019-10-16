@@ -389,7 +389,7 @@
     //------------------------------------------------------------------------------
     // Compilation Context
     //------------------------------------------------------------------------------
-    class Context {
+    class CompilationContext {
         constructor(name) {
             this.nextID = 1;
             this.code = [];
@@ -474,7 +474,7 @@
             if (!this.rootContext.rootNode) {
                 this.rootContext.rootNode = node;
             }
-            if (!this.parentNode) {
+            if (!this.parentNode && this.rootContext.shouldDefineResult) {
                 this.addLine(`result = vn${node};`);
             }
             return this.subContext("parentNode", node);
@@ -1305,7 +1305,8 @@
     const NODE_HOOKS_PARAMS = {
         create: "(_, n)",
         insert: "vn",
-        remove: "(vn, rm)"
+        remove: "(vn, rm)",
+        destroy: "()"
     };
     const UTILS = {
         toObj(expr) {
@@ -1330,8 +1331,6 @@
     };
     function parseXML(xml) {
         const parser = new DOMParser();
-        // we remove comments from the xml string
-        xml = xml.replace(/<!--[\s\S]*?-->/g, "");
         const doc = parser.parseFromString(xml, "text/xml");
         if (doc.getElementsByTagName("parsererror").length) {
             let msg = "Invalid XML in template.";
@@ -1529,7 +1528,7 @@
         }
         _compile(name, elem, parentContext) {
             const isDebug = elem.attributes.hasOwnProperty("t-debug");
-            const ctx = new Context(name);
+            const ctx = new CompilationContext(name);
             if (elem.tagName !== "t") {
                 ctx.shouldDefineResult = false;
             }
@@ -1600,7 +1599,12 @@
                     text = text.replace(whitespaceRE, " ");
                 }
                 if (ctx.parentNode) {
-                    ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
+                    if (node.nodeType === 3) {
+                        ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
+                    }
+                    else if (node.nodeType === 8) {
+                        ctx.addLine(`c${ctx.parentNode}.push(h('!', \`${text}\`));`);
+                    }
                 }
                 else if (ctx.parentTextNode) {
                     ctx.addLine(`vn${ctx.parentTextNode}.text += \`${text}\`;`);
@@ -1624,7 +1628,6 @@
             }
             const attributes = node.attributes;
             const validDirectives = [];
-            let withHandlers = false;
             // maybe this is not optimal: we iterate on all attributes here, and again
             // just after for each directive.
             for (let i = 0; i < attributes.length; i++) {
@@ -1634,10 +1637,20 @@
                     if (!(dName in QWeb.DIRECTIVE_NAMES)) {
                         throw new Error(`Unknown QWeb directive: '${attrName}'`);
                     }
+                    if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
+                        const tNode = document.createElement("t");
+                        tNode.setAttribute(attrName, node.getAttribute(attrName));
+                        for (let child of Array.from(node.childNodes)) {
+                            tNode.appendChild(child);
+                        }
+                        node.appendChild(tNode);
+                        node.removeAttribute(attrName);
+                    }
                 }
             }
             const DIR_N = QWeb.DIRECTIVES.length;
             const ATTR_N = attributes.length;
+            let withHandlers = false;
             for (let i = 0; i < DIR_N; i++) {
                 let directive = QWeb.DIRECTIVES[i];
                 let fullName;
@@ -1908,6 +1921,32 @@
     QWeb.slots = {};
     QWeb.nextSlotId = 1;
 
+    const parser = new DOMParser();
+    function htmlToVDOM(html) {
+        const doc = parser.parseFromString(html, "text/html");
+        const result = [];
+        for (let child of doc.body.childNodes) {
+            result.push(htmlToVNode(child));
+        }
+        return result;
+    }
+    function htmlToVNode(node) {
+        if (!(node instanceof Element)) {
+            return { text: node.textContent };
+        }
+        const attrs = {};
+        for (let attr of node.attributes) {
+            attrs[attr.name] = attr.textContent;
+        }
+        const children = [];
+        if (node.hasChildNodes) {
+            for (let c of node.childNodes) {
+                children.push(htmlToVNode(c));
+            }
+        }
+        return h(node.tagName, { attrs }, children);
+    }
+
     /**
      * Owl QWeb Directives
      *
@@ -1929,6 +1968,7 @@
         temp.innerHTML = str;
         return temp.content;
     };
+    QWeb.utils.htmlToVDOM = htmlToVDOM;
     function compileValueNode(value, node, qweb, ctx) {
         if (value === "0" && ctx.caller) {
             qweb._compileNode(ctx.caller, ctx);
@@ -1961,19 +2001,14 @@
                 ctx.rootContext.rootNode = nodeID;
                 ctx.rootContext.parentTextNode = nodeID;
                 ctx.addLine(`var vn${nodeID} = {text: ${exprID}};`);
-                ctx.addLine(`result = vn${nodeID}`);
+                if (ctx.rootContext.shouldDefineResult) {
+                    ctx.addLine(`result = vn${nodeID}`);
+                }
             }
         }
         else {
-            let fragID = ctx.generateID();
             ctx.rootContext.shouldDefineUtils = true;
-            ctx.addLine(`var frag${fragID} = utils.getFragment(${exprID})`);
-            let tempNodeID = ctx.generateID();
-            ctx.addLine(`var p${tempNodeID} = {hook: {`);
-            ctx.addLine(`  insert: n => n.elm.parentNode.replaceChild(frag${fragID}, n.elm),`);
-            ctx.addLine(`}};`);
-            ctx.addLine(`var vn${tempNodeID} = h('div', p${tempNodeID})`);
-            ctx.addLine(`c${ctx.parentNode}.push(vn${tempNodeID});`);
+            ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
         }
         if (node.childNodes.length) {
             ctx.addElse();
@@ -1985,11 +2020,6 @@
         name: "esc",
         priority: 70,
         atNodeEncounter({ node, qweb, ctx }) {
-            if (node.nodeName !== "t") {
-                let nodeID = qweb._compileGenericNode(node, ctx);
-                ctx = ctx.withParent(nodeID);
-                ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
-            }
             let value = ctx.getValue(node.getAttribute("t-esc"));
             compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
             return true;
@@ -1999,11 +2029,6 @@
         name: "raw",
         priority: 80,
         atNodeEncounter({ node, qweb, ctx }) {
-            if (node.nodeName !== "t") {
-                let nodeID = qweb._compileGenericNode(node, ctx);
-                ctx = ctx.withParent(nodeID);
-                ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
-            }
             let value = ctx.getValue(node.getAttribute("t-raw"));
             compileValueNode(value, node, qweb, ctx);
             return true;
@@ -2099,7 +2124,7 @@
             const nodeCopy = node.cloneNode(true);
             nodeCopy.removeAttribute("t-call");
             // extract variables from nodecopy
-            const tempCtx = new Context();
+            const tempCtx = new CompilationContext();
             tempCtx.nextID = ctx.rootContext.nextID;
             tempCtx.allowMultipleRoots = true;
             qweb._compileNode(nodeCopy, tempCtx);
@@ -2285,25 +2310,34 @@
             ctx.addLine(`throw new Error('Missing handler \\'' + '${handlerName}' + \`\\' when evaluating template '${ctx.templateName.replace(/`/g, "'")}'\`)`);
             ctx.closeIf();
             let params = extraArgs ? `owner, ${ctx.formatExpression(extraArgs)}` : "owner";
-            let handler;
             if (mods.length > 0) {
-                handler = `function (e) {`;
+                let handler = `function (e) {`;
                 handler += mods
                     .map(function (mod) {
                     return MODS_CODE[mod];
                 })
                     .join("");
-                handler += `context['${handlerName}'].call(${params}, e);}`;
+                if (!extraArgs) {
+                    handler += `context['${handlerName}'].call(${params}, e);}`;
+                    ctx.addLine(`extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`);
+                    ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
+                }
+                else {
+                    const handlerKey = `handler${ctx.generateID()}`;
+                    ctx.addLine(`const ${handlerKey} = context['${handlerName}'].bind(${params});`);
+                    handler += `${handlerKey}(e);}`;
+                    ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
+                }
             }
             else {
-                handler = `context['${handlerName}'].bind(${params})`;
-            }
-            if (extraArgs) {
-                ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
-            }
-            else {
-                ctx.addLine(`extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`);
-                ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
+                const handler = `context['${handlerName}'].bind(${params})`;
+                if (extraArgs) {
+                    ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
+                }
+                else {
+                    ctx.addLine(`extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`);
+                    ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
+                }
             }
         }
     });
@@ -2318,6 +2352,7 @@
             const refKey = `ref${ctx.generateID()}`;
             ctx.addLine(`const ${refKey} = ${ctx.interpolate(value)};`);
             addNodeHook("create", `context.__owl__.refs[${refKey}] = n.elm;`);
+            addNodeHook("destroy", `delete context.__owl__.refs[${refKey}];`);
         }
     });
     //------------------------------------------------------------------------------
@@ -2406,33 +2441,6 @@
         }
     });
     //------------------------------------------------------------------------------
-    // t-mounted
-    //------------------------------------------------------------------------------
-    QWeb.addDirective({
-        name: "mounted",
-        priority: 97,
-        atNodeCreation({ ctx, fullName, value, nodeID, addNodeHook }) {
-            ctx.rootContext.shouldDefineOwner = true;
-            const eventName = fullName.slice(5);
-            if (!eventName) {
-                throw new Error("Missing event name with t-on directive");
-            }
-            let extraArgs;
-            let handler = value.replace(/\(.*\)/, function (args) {
-                extraArgs = args.slice(1, -1);
-                return "";
-            });
-            let error = `(function () {throw new Error('Missing handler \\'' + '${handler}' + \`\\' when evaluating template '${ctx.templateName.replace(/`/g, "'")}'\`)})()`;
-            if (extraArgs) {
-                ctx.addLine(`extra.mountedHandlers[${nodeID}] = (context['${handler}'] || ${error}).bind(owner, ${ctx.formatExpression(extraArgs)});`);
-            }
-            else {
-                ctx.addLine(`extra.mountedHandlers[${nodeID}] = extra.mountedHandlers[${nodeID}] || (context['${handler}'] || ${error}).bind(owner);`);
-            }
-            addNodeHook("insert", `if (context.__owl__.isMounted) { extra.mountedHandlers[${nodeID}](); }`);
-        }
-    });
-    //------------------------------------------------------------------------------
     // t-slot
     //------------------------------------------------------------------------------
     QWeb.addDirective({
@@ -2443,7 +2451,18 @@
             ctx.rootContext.shouldDefineOwner = true;
             ctx.addLine(`const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`);
             ctx.addIf(`slot${slotKey}`);
-            ctx.addLine(`slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: extra.vars, parent: owner}));`);
+            let parentNode = `c${ctx.parentNode}`;
+            if (!ctx.parentNode) {
+                ctx.rootContext.shouldDefineResult = true;
+                ctx.rootContext.shouldDefineUtils = true;
+                parentNode = `children${ctx.nextID++}`;
+                ctx.addLine(`let ${parentNode}= []`);
+                ctx.addLine(`result = {}`);
+            }
+            ctx.addLine(`slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, vars: extra.vars, parent: owner}));`);
+            if (!ctx.parentNode) {
+                ctx.addLine(`Promise.all(extra.promises).then(() => utils.defineProxy(result, ${parentNode}[0]))`);
+            }
             ctx.closeIf();
             return true;
         }
@@ -3103,7 +3122,7 @@
          */
         constructor(parent, props) {
             const defaultProps = this.constructor.defaultProps;
-            Component._current = this;
+            Component.current = this;
             if (defaultProps) {
                 props = this.__applyDefaultProps(props, defaultProps);
             }
@@ -3140,6 +3159,7 @@
                     }
                 });
             }
+            const qweb = this.env.qweb;
             this.__owl__ = {
                 id: id,
                 vnode: null,
@@ -3150,10 +3170,14 @@
                 cmap: {},
                 currentFiber: null,
                 boundHandlers: {},
-                mountedHandlers: {},
+                mountedCB: null,
                 willUnmountCB: null,
+                willPatchCB: null,
+                patchedCB: null,
+                willStartCB: null,
+                willUpdatePropsCB: null,
                 observer: null,
-                render: null,
+                render: qweb.render.bind(qweb, this.__getTemplate(qweb)),
                 classObj: null,
                 refs: null
             };
@@ -3205,8 +3229,6 @@
          * It is not called on the initial render.  This is useful to get some
          * information which are in the DOM.  For example, the current position of the
          * scrollbar
-         *
-         * The return value of willPatch will be given to the patched function.
          */
         willPatch() { }
         /**
@@ -3221,10 +3243,8 @@
          * One need to be careful, because updates here will cause rerender, which in
          * turn will cause other calls to updated. So, we need to be particularly
          * careful at avoiding endless cycles.
-         *
-         * The snapshot parameter is the result of the call to willPatch.
          */
-        patched(snapshot) { }
+        patched() { }
         /**
          * willUnmount is a hook that is called each time just before a component is
          * unmounted from the DOM. This is a good place to remove some listeners, for
@@ -3311,24 +3331,6 @@
                 this.__applyPatchQueue(fiber);
             }
         }
-        __createFiber(force, scope, vars, parent) {
-            const fiber = {
-                force,
-                scope,
-                vars,
-                rootFiber: null,
-                isCancelled: false,
-                component: this,
-                vnode: null,
-                patchQueue: parent ? parent.patchQueue : [],
-                willPatchResult: null,
-                props: this.props,
-                promise: null
-            };
-            fiber.rootFiber = parent ? parent.rootFiber : fiber;
-            this.__owl__.currentFiber = fiber;
-            return fiber;
-        }
         /**
          * Destroy the component.  This operation is quite complex:
          *  - it recursively destroy all children
@@ -3357,25 +3359,6 @@
             return true;
         }
         /**
-         * This method is the correct way to update the environment of a component. Doing
-         * this will cause a full rerender of the component and its children, so this is
-         * an operation that should not be done frequently.
-         *
-         * A good usecase for updating the environment would be to update some mostly
-         * static config keys, such as a boolean to determine if we are in mobile
-         * mode or not.
-         */
-        async updateEnv(nextEnv) {
-            const __owl__ = this.__owl__;
-            if (__owl__.parent && __owl__.parent.env === this.env) {
-                this.env = Object.create(this.env);
-            }
-            Object.assign(this.env, nextEnv);
-            if (__owl__.isMounted) {
-                await this.render(true);
-            }
-        }
-        /**
          * Emit a custom event of type 'eventType' with the given 'payload' on the
          * component's el, if it exists. However, note that the event will only bubble
          * up to the parent DOM nodes. Thus, it must be called between mounted() and
@@ -3395,6 +3378,26 @@
         // Private
         //--------------------------------------------------------------------------
         /**
+         * This method is a helper to create a fiber element.
+         */
+        __createFiber(force, scope, vars, parent) {
+            const fiber = {
+                force,
+                scope,
+                vars,
+                rootFiber: null,
+                isCancelled: false,
+                component: this,
+                vnode: null,
+                patchQueue: parent ? parent.patchQueue : [],
+                props: this.props,
+                promise: null
+            };
+            fiber.rootFiber = parent ? parent.rootFiber : fiber;
+            this.__owl__.currentFiber = fiber;
+            return fiber;
+        }
+        /**
          * Private helper to perform a full destroy, from the point of view of an Owl
          * component. It does not remove the el (this is done only once on the top
          * level destroyed component, for performance reasons).
@@ -3409,6 +3412,9 @@
             const __owl__ = this.__owl__;
             const isMounted = __owl__.isMounted;
             if (isMounted) {
+                if (__owl__.willUnmountCB) {
+                    __owl__.willUnmountCB();
+                }
                 this.willUnmount();
                 __owl__.isMounted = false;
             }
@@ -3434,11 +3440,10 @@
                 }
             }
             __owl__.isMounted = true;
-            const handlers = __owl__.mountedHandlers;
             try {
                 this.mounted();
-                for (let key in handlers) {
-                    handlers[key]();
+                if (__owl__.mountedCB) {
+                    __owl__.mountedCB();
                 }
             }
             catch (e) {
@@ -3471,7 +3476,10 @@
                 if (defaultProps) {
                     nextProps = this.__applyDefaultProps(nextProps, defaultProps);
                 }
-                await this.willUpdateProps(nextProps);
+                await Promise.all([
+                    this.willUpdateProps(nextProps),
+                    this.__owl__.willUpdatePropsCB && this.__owl__.willUpdatePropsCB(nextProps)
+                ]);
                 this.props = nextProps;
                 const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
                 fiber.patchQueue.push(fiber);
@@ -3497,21 +3505,8 @@
             fiber.promise = this.__prepareAndRender(fiber);
             return fiber.promise;
         }
-        async __prepareAndRender(fiber) {
-            try {
-                await this.willStart();
-            }
-            catch (e) {
-                errorHandler(e, this);
-                return Promise.resolve(h("div"));
-            }
-            const __owl__ = this.__owl__;
-            if (__owl__.isDestroyed) {
-                return Promise.resolve(h("div"));
-            }
-            const qweb = this.env.qweb;
+        __getTemplate(qweb) {
             let p = this.constructor;
-            // console.warn(p, p.template, p._template, 'template' in p, p.hasOwnProperty('template'))
             if (!p.hasOwnProperty("_template")) {
                 if (p.template) {
                     p._template = p.template;
@@ -3532,7 +3527,20 @@
                     }
                 }
             }
-            __owl__.render = qweb.render.bind(qweb, p._template);
+            return p._template;
+        }
+        async __prepareAndRender(fiber) {
+            try {
+                await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
+            }
+            catch (e) {
+                errorHandler(e, this);
+                return Promise.resolve(h("div"));
+            }
+            const __owl__ = this.__owl__;
+            if (__owl__.isDestroyed) {
+                return Promise.resolve(h("div"));
+            }
             return this.__render(fiber);
         }
         __render(fiber) {
@@ -3546,7 +3554,6 @@
                 vnode = __owl__.render(this, {
                     promises,
                     handlers: __owl__.boundHandlers,
-                    mountedHandlers: __owl__.mountedHandlers,
                     fiber: fiber
                 });
             }
@@ -3623,9 +3630,11 @@
             try {
                 const patchLen = patchQueue.length;
                 for (let i = 0; i < patchLen; i++) {
-                    const fiber = patchQueue[i];
-                    component = fiber.component;
-                    fiber.willPatchResult = component.willPatch();
+                    component = patchQueue[i].component;
+                    if (component.__owl__.willPatchCB) {
+                        component.__owl__.willPatchCB();
+                    }
+                    component.willPatch();
                 }
                 for (let i = 0; i < patchLen; i++) {
                     const fiber = patchQueue[i];
@@ -3633,9 +3642,11 @@
                     component.__patch(fiber.vnode);
                 }
                 for (let i = patchLen - 1; i >= 0; i--) {
-                    const fiber = patchQueue[i];
-                    component = fiber.component;
-                    component.patched(fiber.willPatchResult);
+                    component = patchQueue[i].component;
+                    component.patched();
+                    if (component.__owl__.patchedCB) {
+                        component.__owl__.patchedCB();
+                    }
                 }
             }
             catch (e) {
@@ -3645,7 +3656,7 @@
     }
     Component.template = null;
     Component._template = null;
-    Component._current = null;
+    Component.current = null;
     Component.components = {};
     //------------------------------------------------------------------------------
     // Error handling
@@ -3679,143 +3690,218 @@
         }
     }
 
-    class ConnectedComponent extends Component {
-        constructor() {
-            super(...arguments);
-            this.deep = true;
-            this.hashFunction = (storeProps, options) => {
-                const revFn = this.__owl__.revFn;
-                const rev = revFn(storeProps);
-                if (rev > 0) {
-                    return rev;
+    /**
+     * Owl Hook System
+     *
+     * This file introduces the concept of hooks, similar to React or Vue hooks.
+     * We have currently an implementation of:
+     * - useState (reactive state)
+     * - onMounted
+     * - onWillUnmount
+     * - useRef
+     */
+    // -----------------------------------------------------------------------------
+    // useState
+    // -----------------------------------------------------------------------------
+    /**
+     * This is the main way a component can be made reactive.  The useState hook
+     * will return an observed object (or array).  Changes to that value will then
+     * trigger a rerendering of the current component.
+     */
+    function useState(state) {
+        const component = Component.current;
+        const __owl__ = component.__owl__;
+        if (!__owl__.observer) {
+            __owl__.observer = new Observer();
+            __owl__.observer.notifyCB = component.render.bind(component);
+        }
+        return __owl__.observer.observe(state);
+    }
+    // -----------------------------------------------------------------------------
+    // Life cycle hooks
+    // -----------------------------------------------------------------------------
+    function makeLifecycleHook(method, reverse = false) {
+        if (reverse) {
+            return function (cb) {
+                const component = Component.current;
+                if (component.__owl__[method]) {
+                    const current = component.__owl__[method];
+                    component.__owl__[method] = function () {
+                        current.call(component);
+                        cb.call(component);
+                    };
                 }
-                let hash = 0;
-                for (let key in storeProps) {
-                    const val = storeProps[key];
-                    const hashVal = revFn(val);
-                    if (hashVal === 0) {
-                        if (val !== options.prevStoreProps[key]) {
-                            options.didChange = true;
-                        }
-                    }
-                    else {
-                        hash += hashVal;
-                    }
+                else {
+                    component.__owl__[method] = cb;
                 }
-                return hash;
             };
         }
-        getStore(env) {
-            return env.store;
-        }
-        static mapStoreToProps(storeState, ownProps, getters) {
-            return {};
-        }
-        dispatch(name, ...payload) {
-            return this.__owl__.store.dispatch(name, ...payload);
-        }
-        /**
-         * Need to do this here so 'deep' can be overrided by subcomponent easily
-         */
-        async __prepareAndRender(fiber) {
-            const store = this.getStore(this.env);
-            const ownProps = this.props || {};
-            this.storeProps = this.constructor.mapStoreToProps(store.state, ownProps, store.getters);
-            const observer = store.observer;
-            const revFn = this.deep ? observer.deepRevNumber : observer.revNumber;
-            this.__owl__.store = store;
-            this.__owl__.ownProps = this.props;
-            this.__owl__.revFn = revFn.bind(observer);
-            this.__owl__.storeHash = this.hashFunction(this.storeProps, {
-                prevStoreProps: this.storeProps
-            });
-            this.__owl__.rev = observer.rev;
-            return super.__prepareAndRender(fiber);
-        }
-        /**
-         * We do not use the mounted hook here for a subtle reason: we want the
-         * updates to be called for the parents before the children.  However,
-         * if we use the mounted hook, this will be done in the reverse order.
-         */
-        __callMounted() {
-            this.__owl__.store.on("update", this, this.__checkUpdate);
-            super.__callMounted();
-        }
-        __callWillUnmount() {
-            this.__owl__.store.off("update", this);
-            super.__callWillUnmount();
-        }
-        __destroy(parent) {
-            this.__owl__.store.off("update", this);
-            super.__destroy(parent);
-        }
-        async render(force = false) {
-            this.__updateStoreProps(this.props);
-            // this is quite technical, so this deserves some explanation.
-            // When we have a connected component, it can be updated for 3 reasons:
-            // - some internal state changes (this will go through this method)
-            // - some props changes (if a parent is changed and need to rerender itself)
-            // - a store update
-            //
-            // It is possible (with connected component and parent) to have the following
-            // situation: the parent component is rendered first (from its state change),
-            // then immediately after, it is rendered (from store update). Then, if the
-            // __checkUpdate method is immediately over, the children component will
-            // be rendered again by the store update, even though it is supposed to be
-            // destroyed by the first rendering.
-            //
-            // So, the solution is to keep the information that there is a current
-            // rendering occuring with the same store state, the same props, and return
-            // that in the __checkUpdate method.  To do this, we use the renderPromise
-            // deferred, which is not used by the component system once the
-            // component is ready, so we can use it for our own purpose.
-            this.__owl__.renderPromise = super.render(force);
-            return this.__owl__.renderPromise;
-        }
-        async __updateProps(nextProps, f, s, v) {
-            this.__updateStoreProps(nextProps);
-            return super.__updateProps(nextProps, f, s, v);
-        }
-        __updateStoreProps(nextProps) {
-            const __owl__ = this.__owl__;
-            const store = __owl__.store;
-            const observer = store.observer;
-            if (observer.rev === __owl__.rev && nextProps === __owl__.ownProps) {
-                return false;
-            }
-            const storeProps = this.constructor.mapStoreToProps(store.state, nextProps, store.getters);
-            const options = { prevStoreProps: this.storeProps, didChange: false };
-            const storeHash = this.hashFunction(storeProps, options);
-            this.storeProps = storeProps;
-            let didChange = options.didChange;
-            if (storeHash !== __owl__.storeHash) {
-                __owl__.storeHash = storeHash;
-                didChange = true;
-            }
-            __owl__.rev = store.observer.rev;
-            __owl__.ownProps = nextProps;
-            return didChange;
-        }
-        async __checkUpdate() {
-            const didChange = this.__updateStoreProps(this.props);
-            if (didChange) {
-                return this.render();
-            }
-            // see note in render method
-            return this.__owl__.renderPromise;
+        else {
+            return function (cb) {
+                const component = Component.current;
+                if (component.__owl__[method]) {
+                    const current = component.__owl__[method];
+                    component.__owl__[method] = function () {
+                        cb.call(component);
+                        current.call(component);
+                    };
+                }
+                else {
+                    component.__owl__[method] = cb;
+                }
+            };
         }
     }
+    function makeAsyncHook(method) {
+        return function (cb) {
+            const component = Component.current;
+            if (component.__owl__[method]) {
+                const current = component.__owl__[method];
+                component.__owl__[method] = function (...args) {
+                    return Promise.all[(current.call(component, ...args), cb.call(component, ...args))];
+                };
+            }
+            else {
+                component.__owl__[method] = cb;
+            }
+        };
+    }
+    const onMounted = makeLifecycleHook("mountedCB", true);
+    const onWillUnmount = makeLifecycleHook("willUnmountCB");
+    const onWillPatch = makeLifecycleHook("willPatchCB");
+    const onPatched = makeLifecycleHook("patchedCB", true);
+    const onWillStart = makeAsyncHook("willStartCB");
+    const onWillUpdateProps = makeAsyncHook("willUpdatePropsCB");
+    function useRef(name) {
+        const __owl__ = Component.current.__owl__;
+        return {
+            get el() {
+                const val = __owl__.refs && __owl__.refs[name];
+                return val instanceof HTMLElement ? val : null;
+            },
+            get comp() {
+                const val = __owl__.refs && __owl__.refs[name];
+                return val instanceof Component ? val : null;
+            }
+        };
+    }
+    // -----------------------------------------------------------------------------
+    // useSubEnv
+    // -----------------------------------------------------------------------------
+    /**
+     * This hook is a simple way to let components use a sub environment.  Note that
+     * like for all hooks, it is important that this is only called in the
+     * constructor method.
+     */
+    function useSubEnv(nextEnv) {
+        const component = Component.current;
+        component.env = Object.assign(Object.create(component.env), nextEnv);
+    }
 
-    class Store extends EventBus {
-        constructor(config, options = {}) {
+    var _hooks = /*#__PURE__*/Object.freeze({
+        useState: useState,
+        onMounted: onMounted,
+        onWillUnmount: onWillUnmount,
+        onWillPatch: onWillPatch,
+        onPatched: onPatched,
+        onWillStart: onWillStart,
+        onWillUpdateProps: onWillUpdateProps,
+        useRef: useRef,
+        useSubEnv: useSubEnv
+    });
+
+    /**
+     * The `Context` object provides a way to share data between an arbitrary number
+     * of component. Usually, data is passed from a parent to its children component,
+     * but when we have to deal with some mostly global information, this can be
+     * annoying, since each component will need to pass the information to each
+     * children, even though some or most of them will not use the information.
+     *
+     * With a `Context` object, each component can subscribe (with the `useContext`
+     * hook) to its state, and will be updated whenever the context state is updated.
+     */
+    class Context extends EventBus {
+        constructor(state = {}) {
             super();
-            this.debug = options.debug || false;
-            this.actions = config.actions;
-            this.env = config.env;
+            this.id = 1;
+            // mapping from component id to last observed context id
+            this.mapping = {};
             this.observer = new Observer();
             this.observer.notifyCB = this.__notifyComponents.bind(this);
-            this.state = this.observer.observe(config.state || {});
+            this.state = this.observer.observe(state);
+        }
+        /**
+         * Instead of using trigger to emit an update event, we actually implement
+         * our own function to do that.  The reason is that we need to be smarter than
+         * a simple trigger function: we need to wait for parent components to be
+         * done before doing children components.  The reason is that if an update
+         * as an effect of destroying a children, we do not want to call the
+         * mapStoreToProps function of the child, nor rendering it.
+         *
+         * This method is not optimal if we have a bunch of asynchronous components:
+         * we wait sequentially for each component to be completed before updating the
+         * next.  However, the only things that matters is that children are updated
+         * after their parents.  So, this could be optimized by being smarter, and
+         * updating all widgets concurrently, except for parents/children.
+         *
+         * A potential cheap way to improve this situation is to keep track of the
+         * depth of a component in the component tree. A root component has a depth of
+         * 1, then its children of 2 and so on... Then, we can update all components
+         * with the same depth in parallel.
+         */
+        async __notifyComponents() {
+            const id = ++this.id;
+            const subs = this.subscriptions.update || [];
+            for (let i = 0, iLen = subs.length; i < iLen; i++) {
+                const sub = subs[i];
+                const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
+                if (shouldCallback) {
+                    await sub.callback.call(sub.owner, id);
+                }
+            }
+        }
+    }
+    /**
+     * The`useContext` hook is the normal way for a component to register themselve
+     * to context state changes. The `useContext` method returns the context state
+     */
+    function useContext(ctx) {
+        const component = Component.current;
+        return useContextWithCB(ctx, component, component.render.bind(component));
+    }
+    function useContextWithCB(ctx, component, method) {
+        const __owl__ = component.__owl__;
+        const id = __owl__.id;
+        const mapping = ctx.mapping;
+        if (id in mapping) {
+            return ctx.state;
+        }
+        mapping[id] = 0;
+        const renderFn = __owl__.render;
+        __owl__.render = function (comp, params) {
+            mapping[id] = ctx.id;
+            return renderFn(comp, params);
+        };
+        ctx.on("update", component, async (contextId) => {
+            if (mapping[id] < contextId) {
+                mapping[id] = contextId;
+                await method();
+            }
+        });
+        onWillUnmount(() => {
+            ctx.off("update", component);
+            delete mapping[id];
+        });
+        return ctx.state;
+    }
+
+    class Store extends Context {
+        constructor(config) {
+            super(config.state);
+            this.actions = config.actions;
+            this.env = config.env;
             this.getters = {};
+            this.updateFunctions = [];
             if (config.getters) {
                 const firstArg = {
                     state: this.state,
@@ -3838,30 +3924,61 @@
             }, ...payload);
             return result;
         }
-        /**
-         * Instead of using trigger to emit an update event, we actually implement
-         * our own function to do that.  The reason is that we need to be smarter than
-         * a simple trigger function: we need to wait for parent components to be
-         * done before doing children components.  The reason is that if an update
-         * as an effect of destroying a children, we do not want to call the
-         * mapStoreToProps function of the child, nor rendering it.
-         *
-         * This method is not optimal if we have a bunch of asynchronous components:
-         * we wait sequentially for each component to be completed before updating the
-         * next.  However, the only things that matters is that children are updated
-         * after their parents.  So, this could be optimized by being smarter, and
-         * updating all widgets concurrently, except for parents/children.
-         */
-        async __notifyComponents() {
-            const subs = this.subscriptions.update || [];
-            for (let i = 0, iLen = subs.length; i < iLen; i++) {
-                const sub = subs[i];
-                const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
-                if (shouldCallback) {
-                    await sub.callback.call(sub.owner);
-                }
-            }
+    }
+    const isStrictEqual = (a, b) => a === b;
+    function useStore(selector, options = {}) {
+        const component = Component.current;
+        const store = options.store || component.env.store;
+        let result = selector(store.state, component.props);
+        const hashFn = store.observer.deepRevNumber.bind(store.observer);
+        let revNumber = hashFn(result) || result;
+        const isEqual = options.isEqual || isStrictEqual;
+        if (!store.updateFunctions[component.__owl__.id]) {
+            store.updateFunctions[component.__owl__.id] = [];
         }
+        const updateFunctions = store.updateFunctions[component.__owl__.id];
+        updateFunctions.push(function () {
+            const oldResult = result;
+            result = selector(store.state, component.props);
+            const newRevNumber = hashFn(result);
+            if ((newRevNumber > 0 && revNumber !== newRevNumber) ||
+                (newRevNumber === 0 && !isEqual(oldResult, result))) {
+                revNumber = newRevNumber;
+                return true;
+            }
+            return false;
+        });
+        useContextWithCB(store, component, function () {
+            let shouldRender = false;
+            updateFunctions.forEach(function (updateFn) {
+                shouldRender = updateFn() || shouldRender;
+            });
+            if (shouldRender) {
+                return component.render();
+            }
+        });
+        onWillUpdateProps(props => {
+            // FIXME: only do that if not keepalive + do it in destroy in that case
+            delete store.updateFunctions[component.__owl__.id];
+            result = selector(store.state, props);
+        });
+        return new Proxy(result, {
+            get(target, k) {
+                return result[k];
+            },
+            set(target, k, v) {
+                result[k] = v;
+                return true;
+            }
+        });
+    }
+    function useDispatch(store) {
+        store = store || Component.current.env.store;
+        return store.dispatch.bind(store);
+    }
+    function useGetters(store) {
+        store = store || Component.current.env.store;
+        return store.getters;
     }
 
     /**
@@ -3891,79 +4008,6 @@
 
     var _tags = /*#__PURE__*/Object.freeze({
         xml: xml
-    });
-
-    /**
-     * Owl Hook System
-     *
-     * This file introduces the concept of hooks, similar to React or Vue hooks.
-     * We have currently an implementation of:
-     * - useState (reactive state)
-     * - onMounted
-     * - onWillUnmount
-     * - useRef
-     */
-    /**
-     * useState hook
-     *
-     * This is the main way a component can be made reactive.  The useState hook
-     * will return an observed object (or array).  Changes to that value will then
-     * trigger a rerendering of the current component.
-     */
-    function useState(state) {
-        const component = Component._current;
-        const __owl__ = component.__owl__;
-        if (!__owl__.observer) {
-            __owl__.observer = new Observer();
-            __owl__.observer.notifyCB = component.render.bind(component);
-        }
-        return __owl__.observer.observe(state);
-    }
-    /**
-     * Mounted hook. The callback will be called when the current component is
-     * mounted.  Note that the component mounted method is called first.
-     */
-    let nextID = 1;
-    function onMounted(cb) {
-        const component = Component._current;
-        component.__owl__.mountedHandlers[`h${nextID++}`] = cb;
-    }
-    /**
-     * willUnmount hook. The callback will be called when the current component is
-     * willUnmounted.  Note that the component mounted method is called last.
-     */
-    function onWillUnmount(cb) {
-        const component = Component._current;
-        if (component.__owl__.willUnmountCB) {
-            const current = component.__owl__.willUnmountCB;
-            component.__owl__.willUnmountCB = function () {
-                cb.call(component);
-                current.call(component);
-            };
-        }
-        else {
-            component.__owl__.willUnmountCB = cb;
-        }
-    }
-    function useRef(name) {
-        const __owl__ = Component._current.__owl__;
-        return {
-            get el() {
-                const val = __owl__.refs && __owl__.refs[name];
-                return val instanceof HTMLElement ? val : null;
-            },
-            get comp() {
-                const val = __owl__.refs && __owl__.refs[name];
-                return val instanceof Component ? val : null;
-            }
-        };
-    }
-
-    var _hooks = /*#__PURE__*/Object.freeze({
-        useState: useState,
-        onMounted: onMounted,
-        onWillUnmount: onWillUnmount,
-        useRef: useRef
     });
 
     class Link extends Component {
@@ -4232,13 +4276,19 @@
      *
      * Note that dynamic values, such as a date or a commit hash are added by rollup
      */
+    const Context$1 = Context;
     const useState$1 = useState;
     const core = { EventBus, Observer };
     const router = { Router, RouteComponent, Link };
-    const store = { Store, ConnectedComponent };
+    const Store$1 = Store;
     const utils = _utils;
     const tags = _tags;
-    const hooks$1 = _hooks;
+    const hooks$1 = Object.assign({}, _hooks, {
+        useContext: useContext,
+        useDispatch: useDispatch,
+        useGetters: useGetters,
+        useStore: useStore
+    });
     const __info__ = {};
     Object.defineProperty(__info__, "mode", {
         get() {
@@ -4257,19 +4307,20 @@
     });
 
     exports.Component = Component;
+    exports.Context = Context$1;
     exports.QWeb = QWeb;
+    exports.Store = Store$1;
     exports.__info__ = __info__;
     exports.core = core;
     exports.hooks = hooks$1;
     exports.router = router;
-    exports.store = store;
     exports.tags = tags;
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '0.22.0';
-    exports.__info__.date = '2019-10-01T19:32:47.287Z';
-    exports.__info__.hash = 'b859fcb';
+    exports.__info__.version = '0.23.0';
+    exports.__info__.date = '2019-10-16T20:31:22.370Z';
+    exports.__info__.hash = '9e65b06';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

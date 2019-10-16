@@ -1823,6 +1823,24 @@ exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
 }"
 `;
 
+exports[`t-slot directive template can just return a slot 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let owner = context;
+    let result;
+    var h = this.h;
+    const slot1 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot1) {
+        let children2= []
+        result = {}
+        slot1.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: children2, vars: extra.vars, parent: owner}));
+        Promise.all(extra.promises).then(() => utils.defineProxy(result, children2[0]))
+    }
+    return result;
+}"
+`;
+
 exports[`top level sub widgets basic use 1`] = `
 "function anonymous(context,extra
 ) {

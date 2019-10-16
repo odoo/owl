@@ -3322,6 +3322,34 @@ describe("t-slot directive", () => {
 
     expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
   });
+
+  test("template can just return a slot", async () => {
+    class Child extends Widget {
+      static template = xml`<span><t t-esc="props.value"/></span>`;
+    }
+    class SlotComponent extends Widget {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Widget {
+      static template = xml`
+        <div>
+            <SlotComponent><Child value="state.value"/></SlotComponent>
+        </div>`;
+      static components = { SlotComponent, Child };
+      state = useState({ value: 3 });
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+
+    expect(QWeb.TEMPLATES[SlotComponent.template].fn.toString()).toMatchSnapshot();
+
+    parent.state.value = 5;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>5</span></div>");
+  });
 });
 
 describe("t-model directive", () => {

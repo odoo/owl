@@ -16,7 +16,8 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     var vn1 = h('div', p1, c1);
     //COMPONENT
     let def3;
-    let w4 = 4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[4]] : false;
+    let templateId4 = \`__5__\`;
+    let w4 = templateId4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId4]] : false;
     let _2_index = c1.length;
     c1.push(null);
     let props4 = {message:1};
@@ -34,9 +35,9 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         utils.validateProps(W4, props4)
         w4 = new W4(parent, props4);
-        parent.__owl__.cmap[4] = w4.__owl__.id;
+        parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: 4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         utils.validateProps(w4.constructor, props4)
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);

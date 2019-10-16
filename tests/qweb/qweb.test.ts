@@ -749,6 +749,23 @@ describe("foreach", () => {
     expect(Object.keys(context).length).toBe(0);
   });
 
+  test("t-foreach in t-forach", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-foreach="numbers" t-as="number">
+          <t t-foreach="letters" t-as="letter">
+            [<t t-esc="number"/><t t-esc="letter"/>]
+          </t>
+        </t>
+      </div>`
+    );
+    const context = { numbers: [1, 2, 3], letters: ["a", "b"] };
+    expect(renderToString(qweb, "test", context)).toBe(
+      "<div> [1a]  [1b]  [2a]  [2b]  [3a]  [3b] </div>"
+    );
+  });
+
   test("throws error if invalid loop expression", () => {
     qweb.addTemplate(
       "test",

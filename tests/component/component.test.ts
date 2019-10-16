@@ -182,6 +182,52 @@ describe("basic widget properties", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
   });
+
+  test("reconciliation alg works for t-foreach in t-foreach", async () => {
+    const warn = console.warn;
+    console.warn = () => {};
+    class Child extends Component<any, any> {
+      static template = xml`<div><t t-esc="props.blip"/></div>`;
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+            <t t-foreach="state.s" t-as="section">
+                <t t-foreach="section.blips" t-as="blip">
+                  <Child blip="blip"/>
+                </t>
+            </t>
+        </div>`;
+      static components = { Child };
+      state = { s: [{ blips: ["a1", "a2"] }, { blips: ["b1"] }] };
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>a1</div><div>a2</div><div>b1</div></div>");
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+    console.warn = warn;
+  });
+
+  test("same t-keys in two different places", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.blip"/></span>`;
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+            <div><Child t-key="1" blip="'1'"/></div>
+            <div><Child t-key="1" blip="'2'"/></div>
+        </div>`;
+      static components = { Child };
+    }
+
+    const widget = new Parent(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>1</span></div><div><span>2</span></div></div>");
+  });
 });
 
 describe("lifecycle hooks", () => {

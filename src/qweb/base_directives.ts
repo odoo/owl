@@ -275,7 +275,7 @@ QWeb.addDirective({
   priority: 10,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldProtectContext = true;
-    ctx = ctx.subContext("inLoop", true);
+    ctx = ctx.subContext("loopNumber", ctx.loopNumber + 1);
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
@@ -289,13 +289,14 @@ QWeb.addDirective({
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
     ctx.closeIf();
     ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
-    ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
+    const loopVar = `i${ctx.loopNumber}`;
+    ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);
     ctx.indent();
-    ctx.addToScope(name + "_first", "i === 0");
-    ctx.addToScope(name + "_last", `i === _length${keysID} - 1`);
-    ctx.addToScope(name + "_index", "i");
-    ctx.addToScope(name, `_${keysID}[i]`);
-    ctx.addToScope(name + "_value", `_${valuesID}[i]`);
+    ctx.addToScope(name + "_first", `${loopVar} === 0`);
+    ctx.addToScope(name + "_last", `${loopVar} === _length${keysID} - 1`);
+    ctx.addToScope(name + "_index", loopVar);
+    ctx.addToScope(name, `_${keysID}[${loopVar}]`);
+    ctx.addToScope(name + "_value", `_${valuesID}[${loopVar}]`);
     const nodeCopy = <Element>node.cloneNode(true);
     let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
     if (!shouldWarn && node.tagName === "t") {

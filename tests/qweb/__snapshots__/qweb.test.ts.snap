@@ -325,12 +325,12 @@ exports[`foreach does not pollute the rendering context 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.item_first = i === 0;
-        context.item_last = i === _length3 - 1;
-        context.item_index = i;
-        context.item = _3[i];
-        context.item_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.item_first = i1 === 0;
+        context.item_last = i1 === _length3 - 1;
+        context.item_index = i1;
+        context.item = _3[i1];
+        context.item_value = _4[i1];
         var _5 = context['item'];
         if (_5 || _5 === 0) {
             c1.push({text: _5});
@@ -355,12 +355,12 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.item_first = i === 0;
-        context.item_last = i === _length3 - 1;
-        context.item_index = i;
-        context.item = _3[i];
-        context.item_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.item_first = i1 === 0;
+        context.item_last = i1 === _length3 - 1;
+        context.item_index = i1;
+        context.item = _3[i1];
+        context.item_value = _4[i1];
         const nodeKey5 = context['item']
         let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('span', p5, c5);
@@ -389,12 +389,12 @@ exports[`foreach iterate on items 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.item_first = i === 0;
-        context.item_last = i === _length3 - 1;
-        context.item_index = i;
-        context.item = _3[i];
-        context.item_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.item_first = i1 === 0;
+        context.item_last = i1 === _length3 - 1;
+        context.item_index = i1;
+        context.item = _3[i1];
+        context.item_value = _4[i1];
         c1.push({text: \` [\`});
         var _5 = context['item_index'];
         if (_5 || _5 === 0) {
@@ -431,12 +431,12 @@ exports[`foreach iterate, dict param 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.item_first = i === 0;
-        context.item_last = i === _length3 - 1;
-        context.item_index = i;
-        context.item = _3[i];
-        context.item_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.item_first = i1 === 0;
+        context.item_last = i1 === _length3 - 1;
+        context.item_index = i1;
+        context.item = _3[i1];
+        context.item_value = _4[i1];
         c1.push({text: \` [\`});
         var _5 = context['item_index'];
         if (_5 || _5 === 0) {
@@ -473,12 +473,12 @@ exports[`foreach iterate, position 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.elem_first = i === 0;
-        context.elem_last = i === _length3 - 1;
-        context.elem_index = i;
-        context.elem = _3[i];
-        context.elem_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.elem_first = i1 === 0;
+        context.elem_last = i1 === _length3 - 1;
+        context.elem_index = i1;
+        context.elem = _3[i1];
+        context.elem_value = _4[i1];
         c1.push({text: \` -\`});
         if (context['elem_first']) {
             c1.push({text: \` first\`});
@@ -492,6 +492,57 @@ exports[`foreach iterate, position 1`] = `
             c1.push({text: _5});
         }
         c1.push({text: \`) \`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`foreach t-foreach in t-forach 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['numbers'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    var _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    var _length3 = _3.length;
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.number_first = i1 === 0;
+        context.number_last = i1 === _length3 - 1;
+        context.number_index = i1;
+        context.number = _3[i1];
+        context.number_value = _4[i1];
+        var _5 = context['letters'];
+        if (!_5) { throw new Error('QWeb error: Invalid loop expression')}
+        var _6 = _7 = _5;
+        if (!(_5 instanceof Array)) {
+            _6 = Object.keys(_5);
+            _7 = Object.values(_5);
+        }
+        var _length6 = _6.length;
+        for (let i2 = 0; i2 < _length6; i2++) {
+            context.letter_first = i2 === 0;
+            context.letter_last = i2 === _length6 - 1;
+            context.letter_index = i2;
+            context.letter = _6[i2];
+            context.letter_value = _7[i2];
+            c1.push({text: \` [\`});
+            var _8 = context['number'];
+            if (_8 || _8 === 0) {
+                c1.push({text: _8});
+            }
+            var _9 = context['letter'];
+            if (_9 || _9 === 0) {
+                c1.push({text: _9});
+            }
+            c1.push({text: \`] \`});
+        }
     }
     return vn1;
 }"
@@ -512,12 +563,12 @@ exports[`foreach warn if no key in some case 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.item_first = i === 0;
-        context.item_last = i === _length3 - 1;
-        context.item_index = i;
-        context.item = _3[i];
-        context.item_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.item_first = i1 === 0;
+        context.item_last = i1 === _length3 - 1;
+        context.item_index = i1;
+        context.item = _3[i1];
+        context.item_value = _4[i1];
         let c5 = [], p5 = {key:5};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
@@ -575,12 +626,12 @@ exports[`misc global 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.value_first = i === 0;
-        context.value_last = i === _length3 - 1;
-        context.value_index = i;
-        context.value = _3[i];
-        context.value_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.value_first = i1 === 0;
+        context.value_last = i1 === _length3 - 1;
+        context.value_index = i1;
+        context.value = _3[i1];
+        context.value_value = _4[i1];
         let c5 = [], p5 = {key:5};
         var vn5 = h('span', p5, c5);
         c1.push(vn5);
@@ -940,16 +991,16 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             _8 = Object.values(_6);
         }
         var _length7 = _7.length;
-        for (let i = 0; i < _length7; i++) {
-            context.subtree_first = i === 0;
+        for (let i1 = 0; i1 < _length7; i1++) {
+            context.subtree_first = i1 === 0;
             scope.subtree_first = context.subtree_first;
-            context.subtree_last = i === _length7 - 1;
+            context.subtree_last = i1 === _length7 - 1;
             scope.subtree_last = context.subtree_last;
-            context.subtree_index = i;
+            context.subtree_index = i1;
             scope.subtree_index = context.subtree_index;
-            context.subtree = _7[i];
+            context.subtree = _7[i1];
             scope.subtree = context.subtree;
-            context.subtree_value = _8[i];
+            context.subtree_value = _8[i1];
             scope.subtree_value = context.subtree_value;
             this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, fiber: {vars: {_v0: context['subtree']}, scope}}));
         }
@@ -986,16 +1037,16 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
         _17 = Object.values(_15);
     }
     var _length16 = _16.length;
-    for (let i = 0; i < _length16; i++) {
-        context.subtree_first = i === 0;
+    for (let i1 = 0; i1 < _length16; i1++) {
+        context.subtree_first = i1 === 0;
         scope.subtree_first = context.subtree_first;
-        context.subtree_last = i === _length16 - 1;
+        context.subtree_last = i1 === _length16 - 1;
         scope.subtree_last = context.subtree_last;
-        context.subtree_index = i;
+        context.subtree_index = i1;
         scope.subtree_index = context.subtree_index;
-        context.subtree = _16[i];
+        context.subtree = _16[i1];
         scope.subtree = context.subtree;
-        context.subtree_value = _17[i];
+        context.subtree_value = _17[i1];
         scope.subtree_value = context.subtree_value;
         this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c12, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
@@ -1031,16 +1082,16 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             _8 = Object.values(_6);
         }
         var _length7 = _7.length;
-        for (let i = 0; i < _length7; i++) {
-            context.subtree_first = i === 0;
+        for (let i1 = 0; i1 < _length7; i1++) {
+            context.subtree_first = i1 === 0;
             scope.subtree_first = context.subtree_first;
-            context.subtree_last = i === _length7 - 1;
+            context.subtree_last = i1 === _length7 - 1;
             scope.subtree_last = context.subtree_last;
-            context.subtree_index = i;
+            context.subtree_index = i1;
             scope.subtree_index = context.subtree_index;
-            context.subtree = _7[i];
+            context.subtree = _7[i1];
             scope.subtree = context.subtree;
-            context.subtree_value = _8[i];
+            context.subtree_value = _8[i1];
             scope.subtree_value = context.subtree_value;
             this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c3, fiber: {vars: {_v0: context['subtree']}, scope}}));
         }
@@ -1077,16 +1128,16 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
         _17 = Object.values(_15);
     }
     var _length16 = _16.length;
-    for (let i = 0; i < _length16; i++) {
-        context.subtree_first = i === 0;
+    for (let i1 = 0; i1 < _length16; i1++) {
+        context.subtree_first = i1 === 0;
         scope.subtree_first = context.subtree_first;
-        context.subtree_last = i === _length16 - 1;
+        context.subtree_last = i1 === _length16 - 1;
         scope.subtree_last = context.subtree_last;
-        context.subtree_index = i;
+        context.subtree_index = i1;
         scope.subtree_index = context.subtree_index;
-        context.subtree = _16[i];
+        context.subtree = _16[i1];
         scope.subtree = context.subtree;
-        context.subtree_value = _17[i];
+        context.subtree_value = _17[i1];
         scope.subtree_value = context.subtree_value;
         this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c12, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
@@ -1446,12 +1497,12 @@ exports[`t-key t-key directive in a list 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.beer_first = i === 0;
-        context.beer_last = i === _length3 - 1;
-        context.beer_index = i;
-        context.beer = _3[i];
-        context.beer_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.beer_first = i1 === 0;
+        context.beer_last = i1 === _length3 - 1;
+        context.beer_index = i1;
+        context.beer = _3[i1];
+        context.beer_value = _4[i1];
         const nodeKey5 = context['beer'].id
         let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('li', p5, c5);
@@ -1548,12 +1599,12 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.action_first = i === 0;
-        context.action_last = i === _length3 - 1;
-        context.action_index = i;
-        context.action = _3[i];
-        context.action_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.action_first = i1 === 0;
+        context.action_last = i1 === _length3 - 1;
+        context.action_index = i1;
+        context.action = _3[i1];
+        context.action_value = _4[i1];
         const nodeKey5 = context['action_index']
         let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('li', p5, c5);
@@ -1750,12 +1801,12 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.project_first = i === 0;
-        context.project_last = i === _length3 - 1;
-        context.project_index = i;
-        context.project = _3[i];
-        context.project_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.project_first = i1 === 0;
+        context.project_last = i1 === _length3 - 1;
+        context.project_index = i1;
+        context.project = _3[i1];
+        context.project_value = _4[i1];
         var _5 = '#';
         const nodeKey6 = context['project']
         let c6 = [], p6 = {key:nodeKey6,attrs:{href: _5},on:{}};
@@ -1960,12 +2011,12 @@ exports[`t-ref refs in a loop 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    for (let i = 0; i < _length3; i++) {
-        context.item_first = i === 0;
-        context.item_last = i === _length3 - 1;
-        context.item_index = i;
-        context.item = _3[i];
-        context.item_value = _4[i];
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.item_first = i1 === 0;
+        context.item_last = i1 === _length3 - 1;
+        context.item_index = i1;
+        context.item = _3[i1];
+        context.item_value = _4[i1];
         const nodeKey5 = context['item']
         let c5 = [], p5 = {key:nodeKey5};
         var vn5 = h('div', p5, c5);
@@ -2126,12 +2177,12 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         _5 = Object.values(_3);
     }
     var _length4 = _4.length;
-    for (let i = 0; i < _length4; i++) {
-        context.elem_first = i === 0;
-        context.elem_last = i === _length4 - 1;
-        context.elem_index = i;
-        context.elem = _4[i];
-        context.elem_value = _5[i];
+    for (let i1 = 0; i1 < _length4; i1++) {
+        context.elem_first = i1 === 0;
+        context.elem_last = i1 === _length4 - 1;
+        context.elem_index = i1;
+        context.elem = _4[i1];
+        context.elem_value = _5[i1];
         const nodeKey6 = context['elem_index']
         let c6 = [], p6 = {key:nodeKey6};
         var vn6 = h('div', p6, c6);

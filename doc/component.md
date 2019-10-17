@@ -1138,7 +1138,7 @@ Here are a few tips on how to work with asynchronous components:
    synchronous renderings
 3. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
-   second, and only once (see `owl.utils.loadJS`)
+   second, and only once (see [`owl.utils.loadJS`](utils.md#loadjs))
 4. For all the other cases, the `t-asyncroot` directive (to use alongside
    `t-component`) is there to help you. When this directive is met, a new rendering
    sub tree is created, such that the rendering of that component (and its

@@ -34,7 +34,7 @@ still some issues.
 
 ## Example
 
-To use the Owl router, there are some steps that needs to be done:
+To use the Owl router, there are some steps that need to be done:
 
 - declare some routes
 - create a router
@@ -77,7 +77,7 @@ because it needs to apply the potential navigation guards on the current route
 
 ### Route definition
 
-A route need to be defined as an object with the following keys:
+A route needs to be defined as an object with the following keys:
 
 - `name` (optional): a (unique) string useful to identify the current route. If not
   given, it will be assigned an automatic name,
@@ -133,7 +133,7 @@ router.navigate({ to: "USER", params: { id: 51 } });
 Navigation guards are very useful to be able to execute some business logic/
 perform some actions or redirect to other routes whenever the application is
 entering a new route. For example, the following guard checks if there is an
-authenticated user, and if it is not the case, redirect to the sign in route.
+authenticated user, and if it is not the case, redirects to the sign in route.
 
 ```js
 async function protectRoute({ env, to }) {
@@ -162,7 +162,7 @@ to the currently active route (if any):
 
 ### `Link`
 
-The `Link` component is a Owl component which render as a `<a>` tag with any
+The `Link` component is a Owl component which renders as a `<a>` tag with any
 content. It will compute the proper href from its props, and allow Owl to
 properly navigate to a given url if clicked on it.
 

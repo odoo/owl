@@ -11,9 +11,9 @@ class Greeter extends Component {
 
 // Main root component
 class App extends Component {
-    static components = { Greeter };
     state = useState({ name: 'World'});
 }
+App.components = { Greeter };
 
 // Application setup
 // Note that the xml templates are injected into the global TEMPLATES variable.
@@ -58,7 +58,6 @@ class Counter extends Component {
 
 class App extends Component {
     state = useState({ flag: false, componentFlag: false, numbers: [] });
-    static components = { Counter };
 
     toggle(key) {
         this.state[key] = !this.state[key];
@@ -68,8 +67,8 @@ class App extends Component {
         const n = this.state.numbers.length + 1;
         this.state.numbers.push(n);
     }
-
 }
+App.components = { Counter };
 
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({qweb});
@@ -217,7 +216,6 @@ class DemoComponent extends Component {
 }
 
 class App extends Component {
-    static components = { DemoComponent };
     state = useState({ n: 0, flag: true });
 
     increment() {
@@ -228,6 +226,7 @@ class App extends Component {
         this.state.flag = !this.state.flag;
     }
 }
+App.components = { DemoComponent };
 
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
@@ -332,20 +331,18 @@ class ToolbarButton extends Component {
     }
 }
 
-class Toolbar extends Component {
-    static components = { ToolbarButton };
-}
+class Toolbar extends Component {}
+Toolbar.components = { ToolbarButton };
 
 // Main root component
 class App extends Component {
-    static components = { Toolbar };
-
     toggleTheme() {
         const { background, foreground } = this.env.themeContext.state;
         this.env.themeContext.state.background = foreground;
         this.env.themeContext.state.foreground = background;
     }
 }
+App.components = { Toolbar };
 
 // Application setup
 const themeContext = new Context({
@@ -497,7 +494,6 @@ class TodoItem extends Component {
 // TodoApp
 //------------------------------------------------------------------------------
 class TodoApp extends Component {
-    static components = { TodoItem };
     state = useState({ filter: "all" });
     todos = useStore(state => state.todos);
     dispatch = useDispatch();
@@ -537,6 +533,7 @@ class TodoApp extends Component {
         this.state.filter = filter;
     }
 }
+TodoApp.components = { TodoItem };
 
 //------------------------------------------------------------------------------
 // App Initialization
@@ -1014,23 +1011,20 @@ class Navbar extends owl.Component {}
 
 class MobileSearchView extends owl.Component {}
 
-class ControlPanel extends owl.Component {
-    static components = { MobileSearchView };
-}
+class ControlPanel extends owl.Component {}
+ControlPanel.components = { MobileSearchView };
 
 class AdvancedComponent extends owl.Component {}
 
-class FormView extends owl.Component {
-    static components = { AdvancedComponent };
-}
+class FormView extends owl.Component {}
+FormView.components = { AdvancedComponent };
 
 class Chatter extends owl.Component {
     messages = Array.from(Array(100).keys());
 }
 
-class App extends owl.Component {
-    static components = { Navbar, ControlPanel, FormView, Chatter };
-}
+class App extends owl.Component {}
+App.components = { Navbar, ControlPanel, FormView, Chatter };
 
 //------------------------------------------------------------------------------
 // Responsive plugin
@@ -1188,13 +1182,13 @@ class Counter extends Component {
 
 // Main root component
 class App extends Component {
-    static components = {Card, Counter};
     state = useState({a: 1, b: 3});
 
     inc(key, delta) {
         this.state[key] += delta;
     }
 }
+App.components = {Card, Counter};
 
 // Application setup
 const qweb = new owl.QWeb(TEMPLATES);
@@ -1298,7 +1292,6 @@ class SlowComponent extends Component {
 class NotificationList extends Component {}
 
 class App extends Component {
-    static components = {SlowComponent, NotificationList};
     state = useState({ value: 0, notifs: [] });
 
     increment() {
@@ -1311,6 +1304,7 @@ class App extends Component {
         }, 3000);
     }
 }
+App.components = {SlowComponent, NotificationList};
 
 const qweb = new owl.QWeb(TEMPLATES);
 const app = new App({ qweb });
@@ -1492,7 +1486,6 @@ class Window extends Component {
 }
 
 class WindowManager extends Component {
-  static components = { Window };
   windows = [];
   nextId = 1;
   currentZindex = 1;
@@ -1538,15 +1531,16 @@ class WindowManager extends Component {
     ev.target.style["z-index"] = w.zindex;
   }
 }
+WindowManager.components = { Window };
 
 class App extends Component {
-  static components = { WindowManager };
   wmRef = useRef("wm");
 
   addWindow(name) {
     this.wmRef.comp.addWindow(name);
   }
 }
+App.components = { WindowManager };
 
 const qweb = new owl.QWeb(TEMPLATES);
 const windows = [

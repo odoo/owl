@@ -29,7 +29,7 @@
 
 OWL components are the building blocks for user interface. They are designed to be:
 
-1. **declarative:** the user interface should be described in term of the state
+1. **declarative:** the user interface should be described in terms of the state
    of the application, not as a sequence of imperative steps.
 
 2. **composable:** each component can seamlessly be created in a parent component by
@@ -72,7 +72,7 @@ class ClickCounter extends owl.Component {
 Note that this code is written in ESNext style, so it will only run on the
 latest browsers without a transpilation step.
 
-This example show how a component should be defined: it simply subclasses the
+This example shows how a component should be defined: it simply subclasses the
 Component class. If no static `template` key is defined, then
 Owl will use the component's name as template name. Here,
 a state object is defined, by using the `useState` hook. It is not mandatory to use the state object, but it is certainly encouraged. The result of the `useState` call is
@@ -80,33 +80,86 @@ a state object is defined, by using the `useState` hook. It is not mandatory to 
 
 ## Reference
 
-An Owl component is a small class which represent a component or some UI element.
+An Owl component is a small class which represents a component or some UI element.
 It exists in the context of an environment (`env`), which is propagated from a
 parent to its children. The environment needs to have a QWeb instance, which
 will be used to render the component template.
 
 Be aware that the name of the component may be significant: if a component does
 not define a `template` key, then Owl will lookup in QWeb to
-find a template with the component name (or one of its ancestor).
+find a template with the component name (or one of its ancestors).
 
 ### Reactive system
 
-OWL components can be made reactive by observing some part of their state. See the [hooks](hooks.md) section for more details.
+OWL components are normal javascript classes.  So, changing a component internal
+state does nothing more:
 
-The main idea is that the `useState` hook generate a proxy version of an object
-(this is done by an [observer](observer.md)), which allows the component to
-react to any change.
+```js
+class Counter extends Component {
+    static template = xml`<div t-on-click="increment"><t t-esc="state.value"/></div>`;
+    state = {value: 0};
 
-```javascript
-const { useState } = owl.hooks;
-
-class SomeComponent extends owl.Component {
-  state = useState({ a: 0, b: 1 });
+    increment() {
+        this.state.value++;
+    }
 }
 ```
 
-Note that there is an important limitation: hooks need to be called in the
-constructor.
+Clicking on the `Counter` component defined above will call the `increment`
+method, but it will not rerender the component.  To fix that, one could add an
+explicit call to `render` in `increment`:
+
+```js
+    increment() {
+        this.state.value++;
+        this.render();
+    }
+```
+
+However, it may be simple in this case, but it quickly become cumbersome, as a
+component get more complex, and its internal state is modified by more than one
+method.
+
+A better way is to use the reactive system: by using the `useState` hook (see the
+[hooks](hooks.md) section for more details), one can make Owl react to state
+changes.  The `useState` hook generates a proxy version of an object
+(this is done by an [observer](observer.md)), which allows the component to
+react to any change. So, the `Counter` example above can be improved like this:
+
+```js
+const { useState } = owl.hooks;
+
+class Counter extends Component {
+    static template = xml`<div t-on-click="increment"><t t-esc="state.value"/></div>`;
+    state = useState({value: 0});
+
+    increment() {
+        this.state.value++;
+    }
+}
+```
+
+Obviously, we can call the `useState` hook more than once:
+```js
+const { useState } = owl.hooks;
+
+class Counter extends Component {
+    static template = xml`
+      <div>
+        <span t-on-click="increment(counter1)"><t t-esc="counter1.value"/></span>
+        <span t-on-click="increment(counter2)"><t t-esc="counter2.value"/></span>
+      </div>`;
+    counter1 = useState({value: 0});
+    counter2 = useState({value: 0});
+
+    increment(counter) {
+        counter.value++;
+    }
+}
+```
+
+Note that hooks are subject to one important [rule](hooks.md#one-rule): they need
+to be called in the constructor.
 
 ### Properties
 
@@ -115,10 +168,23 @@ constructor.
 
 - **`env`** (Object): the component environment, which contains a QWeb instance.
 
-- **`props`** (Object): this is an object given (in the constructor) by the parent
-  to configure the component. It can be dynamically changed later by the parent,
-  in some case. Note that `props` are owned by the parent, not by the component.
-  As such, it should not ever be modified by the component!!
+- **`props`** (Object): this is an object containing all the properties given by
+  the parent to a child component.  For example, in the following situation,
+  the parent component gives a `user` and a `color` value to the `ChildComponent`.
+
+  ```xml
+    <div>
+      <ChildComponent user="state.user" color="color">
+    </div>
+  ```
+
+  Note that `props` are owned by the parent, not by the component.
+  As such, it should not ever be modified by the component (otherwise you risk
+  unintended effects, since the parent may not be aware of the change)!!
+
+  The `props` can be modified dynamically by the parent.  In that case, the
+  component will go through the following lifecycle methods: `willUpdateProps`,
+  `willPatch` and `patched`.
 
 ### Static Properties
 
@@ -182,7 +248,7 @@ We explain here all the public methods of the `Component` class.
   we know that its state (or something in the environment, or ...) has changed.
   In that case, it should simply set to `true`.
 
-- **`unmount()`**: in case a component need to be detached/removed from the DOM, this
+- **`unmount()`**: in case a component needs to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more
   useful to the underlying component system.
 
@@ -338,7 +404,7 @@ with the DOM (for example, through an external library) whenever the
 component was patched. Note that this hook will not be called if the compoent is
 not in the DOM (this can happen with components with `t-keepalive`).
 
-Updating the compoent state in this hook is possible, but not encouraged.
+Updating the component state in this hook is possible, but not encouraged.
 One need to be careful, because updates here will cause rerender, which in
 turn will cause other calls to patched. So, we need to be particularly
 careful at avoiding endless cycles.

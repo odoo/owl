@@ -30,7 +30,7 @@ btn {
 }
 ```
 
-will produce a nice flash effect whenever the user click (or activate with the
+will produce a nice flash effect whenever the user clicks (or activates with the
 keyboard) the button.
 
 ## CSS Transitions
@@ -47,7 +47,7 @@ the lifetime of a node. Since this is not easy to do by hand, Owl `t-transition`
 directive is there to help.
 
 Whenever a node has a `t-transition` directive, with a `name` value, the following
-will happen:
+sequence of events will happen:
 
 At node insertion:
 
@@ -91,6 +91,5 @@ The `t-transition` directive can be applied on a node element or on a component.
 
 Notes:
 
-- more information on animations are available [here](animations.md).
-- Owl does not support more than one transition on a single node, so the
-  `t-transition` expression must be a single value (i.e. no space allowed)
+Owl does not support more than one transition on a single node, so the
+`t-transition` expression must be a single value (i.e. no space allowed).

@@ -17,12 +17,12 @@
 
 Managing the state in an application is not an easy task. In some cases, the
 state of an application can be part of the component tree, in a natural way.
-However, there are situations where some part of the state need to be displayed
+However, there are situations where some parts of the state need to be displayed
 in various parts of the user interface, and then, it is not obvious which
 component should own which part of the state.
 
 Owl's solution to this issue is a centralized store. It is a class that owns
-some (or all) state, and let the developer update it in a structured way, with
+some (or all) state, and lets the developer update it in a structured way, with
 `actions`. Owl components can then connect to the store, and will be updated if
 necessary.
 
@@ -38,14 +38,14 @@ const actions = {
     state.todos.push({
       id: state.nextId++,
       message,
-      isCompleted: false
+      isCompleted: false,
     });
   }
 };
 
 const state = {
   todos: [],
-  nextId: 1
+  nextId: 1,
 };
 
 const store = new owl.Store({ state, actions });
@@ -115,7 +115,7 @@ const actions = {
 The first argument to an action method is an object with four keys:
 - `state`: the current state of the store content,
 - `dispatch`: a function that can be used to dispatch other actions,
-- `getters`: an object containing all getters defined in the store
+- `getters`: an object containing all getters defined in the store,
 - `env`: the current environment. This is useful sometimes, in particular if
   an action needs to apply some side effects (such as performing an rpc), and
   the `rpc` method is located in the environment.
@@ -132,7 +132,7 @@ call.
 
 Also, it is important to be aware that we need to be careful with asynchronous
 logic. Each state change will potentially trigger a rerendering, so we need to
-make sure that we do not have a partial corrupted state. Here is an example that
+make sure that we do not have a partially corrupted state. Here is an example that
 is likely not a good idea:
 
 ```javascript
@@ -185,7 +185,7 @@ transform the data contained in the store.
 const getters = {
   getPost({ state }, id) {
     const post = state.posts.find(p => p.id === id);
-    const author = state.authors.find(a => (a.id = post.id));
+    const author = state.authors.find(a => a.id === post.id);
     return {
       id,
       author,
@@ -209,7 +209,7 @@ At some point, we need a way to interact with the store from a component. This
 can be done with the help of the three store hooks:
 
 - `useStore` to subscribe a component to some part of the store state,
-- `useDispatch` to get a reference to a dispatch function
+- `useDispatch` to get a reference to a dispatch function,
 - `useGetters` to get a reference to the getters defined in the store.
 
 
@@ -252,14 +252,14 @@ two arguments:
 
 - a selector function, which takes the store state as first argument (and the
   component props as second argument) and returns
-  an object or an array (which will be then observed)
+  an object or an array (which will be then observed),
 - optionally, an object with a `store` key (if we want to override the default
-  store) and an equality function (if we want to specialize the comparison)
+  store) and an equality function (if we want to specialize the comparison).
 
 
 If the `useStore` callback selects a sub part of the store state, the component
 will only be rerendered whenever this part of the state changes. Otherwise, it
-will perform a strict equality check and updates the component every time this
+will perform a strict equality check and will update the component every time this
 check fails.
 
 ### Semantics
@@ -268,23 +268,23 @@ The `Store` class and the `useStore` hook try to be smart and to optimize as muc
 as possible the rendering and update process. What is important to know is:
 
 - components are always updated in the order of their creation (so, parent
-  before children)
-- they are updated only if they are in the DOM
+  before children),
+- they are updated only if they are in the DOM,
 - if a parent is asynchronous, the system will wait for it to complete its
-  update before updating other components.
+  update before updating other components,
 - in general, updates are not coordinated. This is not a problem for synchronous
   components, but if there are many asynchronous components, this could lead to
-  a situation where some part of the UI is updated and other parts of the UI is
+  a situation where some part of the UI is updated and some other part of the UI is
   not updated.
 
 ### Good Practices
 
 - avoid asynchronous components as much as possible. Asynchronous components
-  lead to situations where parts of the UI is not updated immediately.
+  lead to situations where parts of the UI is not updated immediately,
 - do not be afraid to connect many components, parent or children if needed. For
   example, a `MessageList` component could get a list of ids in its `useStore`
   call and a `Message` component could get the data of its own
-  message
+  message,
 - since the `useStore` function is called for each connected component,
   for each state update, it is important to make sure that these functions are
   as fast as possible.

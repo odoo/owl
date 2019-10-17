@@ -55,7 +55,7 @@ To build an application (or a sub-part of an application), we need two things:
 
 - an environment: it is the global context in which we are working. It needs to
   contain a QWeb instance (preloaded with templates), and anything else that we
-  need. In practice, it could context some user session information, some
+  need. In practice, it could be used to contain some user session information, some
   configuration keys (for example, isMobile = true/false if we are in mobile mode).
 
 - a description of the user interface: there should be a root component, which can
@@ -76,10 +76,7 @@ const useState = owl.hooks.useState;
 
 class ClickCounter extends owl.Component {
   static template = "clickcounter";
-  constructor() {
-    super(...arguments);
-    this.state = useState({ value: 0 });
-  }
+  state = useState({ value: 0 });
 
   increment() {
     this.state.value++;

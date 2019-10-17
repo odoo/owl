@@ -39,7 +39,8 @@ owl
         debounce
         escape
         loadJS
-        loadTemplates
+        loadFile
+        shallowEqual
         whenReady
 ```
 

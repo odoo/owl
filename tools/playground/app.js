@@ -127,7 +127,7 @@ async function makeApp(js, css, xml) {
   const JS = `
 async function loadTemplates() {
   try {
-    return owl.utils.loadTemplates('app.xml');
+    return owl.utils.loadFile('app.xml');
   } catch(e) {
     console.error(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
   }
@@ -430,7 +430,7 @@ App.components = { TabbedEditor };
 async function start() {
   document.title = `${document.title} (v${owl.__info__.version})`;
   const [templates] = await Promise.all([
-    owl.utils.loadTemplates("templates.xml"),
+    owl.utils.loadFile("templates.xml"),
     owl.utils.whenReady()
   ]);
   const qweb = new owl.QWeb(templates);

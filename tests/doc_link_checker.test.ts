@@ -13,7 +13,8 @@ const HEADING_REGEXP = /\n(#+\s*)(.*)/g;
 function getFiles(): string[] {
   const DOCFILES = fs.readdirSync("doc").map(f => `doc/${f}`);
   const MAINREADME = "README.md";
-  return DOCFILES.concat(MAINREADME);
+  DOCFILES.push('roadmap.md', MAINREADME)
+  return DOCFILES;
 }
 
 test("All markdown links work", () => {

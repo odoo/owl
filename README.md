@@ -20,6 +20,9 @@ virtual dom, integrates beautifully with hooks, and the rendering is asynchronou
 **Try it online!** An online playground is available at [https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground) to let you experiment with the Owl framework. There
 are some code examples to showcase some interesting features.
 
+Owl is currently mostly stable.  Possible future changes are explained in the
+[roadmap](roadmap.md).
+
 ## Example
 
 Here is a short example to illustrate interactive components:

@@ -7,7 +7,7 @@ functions are all available in the `owl.utils` namespace.
 
 - [`whenReady`](#whenready): executing code when DOM is ready
 - [`loadJS`](#loadjs): loading script files
-- [`loadTemplates`](#loadtemplates): loading xml files
+- [`loadFile`](#loadfile): loading a file (useful for templates)
 - [`escape`](#escape): sanitizing strings
 - [`debounce`](#debounce): limiting rate of function calls
 - [`shallowEqual`](#shallowequal): shallow object comparison
@@ -20,7 +20,7 @@ not ready yet, resolved directly otherwise). If called with a callback as
 argument, it executes it as soon as the DOM ready (or directly).
 
 ```js
-Promise.all([loadTemplates(), owl.utils.whenReady()]).then(function([templates]) {
+Promise.all([loadFile('templates.xml'), owl.utils.whenReady()]).then(function([templates]) {
   const qweb = new owl.QWeb(templates);
   const app = new App({ qweb });
   app.mount(document.body);
@@ -39,11 +39,12 @@ owl.utils.whenReady(function() {
 
 ## `loadJS`
 
-`loadJS` takes a url (string) for a javascript resource, and loads it. It returns
-a promise, so the caller can properly reacts when it is ready. Also, it is smart:
-it maintains a list of urls previously loaded (or currently being loaded), and
-prevent doing twice the work.
+`loadJS` takes a url (string) for a javascript resource, and loads it (by adding
+a script tag in the document head). It returns a promise, so the caller can
+properly reacts when it is ready. Also, it is smart: it maintains a list of urls
+previously loaded (or currently being loaded), and prevent doing twice the work.
 
+For example, it is useful for lazy loading external libraries:
 ```js
 class MyComponent extends owl.Component {
   willStart() {
@@ -52,19 +53,22 @@ class MyComponent extends owl.Component {
 }
 ```
 
-## `loadTemplates`
+## `loadFile`
 
-`loadTemplates` is a helper function to fetch a template file.  It simply
-performs a `GET` request and return the resulting string in a promise. For
-example:
+`loadFile` is a helper function to fetch a file.  It simply
+performs a `GET` request and returns the resulting string in a promise. The
+initial usecase for this function is to load a template file. For example:
 
 ```js
 async function makeEnv() {
-  const templates = await owl.utils.loadTemplates("templates.xml");
+  const templates = await owl.utils.loadFile("templates.xml");
   const qweb = new owl.QWeb(templates);
   return { qweb };
 }
 ```
+
+Note that unlike `loadJS`, this function returns the content of the file as a
+string. It does not add a `script` tag or any other side effect.
 
 ## `escape`
 

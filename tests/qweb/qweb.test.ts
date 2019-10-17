@@ -79,7 +79,7 @@ describe("error handling", () => {
     expect(() => qweb.addTemplate("test", "<div/>")).toThrow("already defined");
   });
 
-  test("loadTemplates throw if parser error", () => {
+  test("addTemplates throw if parser error", () => {
     expect(() => {
       qweb.addTemplates("<templates><abc>></templates>");
     }).toThrow("Invalid XML in template");

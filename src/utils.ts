@@ -5,7 +5,7 @@
  *
  * - whenReady
  * - loadJS
- * - loadTemplates
+ * - loadFile
  * - escape
  * - debounce
  */
@@ -43,7 +43,7 @@ export function loadJS(url: string): Promise<void> {
   return promise;
 }
 
-export async function loadTemplates(url: string): Promise<string> {
+export async function loadFile(url: string): Promise<string> {
   const result = await fetch(url);
   if (!result.ok) {
     throw new Error("Error while fetching xml templates");

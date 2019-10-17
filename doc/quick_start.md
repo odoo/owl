@@ -87,7 +87,7 @@ class ClickCounter extends owl.Component {
 // Application initialization
 //------------------------------------------------------------------------------
 async function start() {
-  const templates = await owl.utils.loadTemplates("templates.xml");
+  const templates = await owl.utils.loadFile("templates.xml");
   const env = {
     qweb: new owl.QWeb(templates)
   };

@@ -209,17 +209,19 @@ QWeb.addDirective({
     ctx.addIf(`slot${slotKey}`);
     let parentNode = `c${ctx.parentNode}`;
     if (!ctx.parentNode) {
-        ctx.rootContext.shouldDefineResult = true;
-        ctx.rootContext.shouldDefineUtils = true;
-        parentNode = `children${ctx.nextID++}`;
-        ctx.addLine(`let ${parentNode}= []`);
-        ctx.addLine(`result = {}`);
+      ctx.rootContext.shouldDefineResult = true;
+      ctx.rootContext.shouldDefineUtils = true;
+      parentNode = `children${ctx.nextID++}`;
+      ctx.addLine(`let ${parentNode}= []`);
+      ctx.addLine(`result = {}`);
     }
     ctx.addLine(
       `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, vars: extra.vars, parent: owner}));`
     );
     if (!ctx.parentNode) {
-        ctx.addLine(`Promise.all(extra.promises).then(() => utils.defineProxy(result, ${parentNode}[0]))`);
+      ctx.addLine(
+        `Promise.all(extra.promises).then(() => utils.defineProxy(result, ${parentNode}[0]))`
+      );
     }
     ctx.closeIf();
     return true;

@@ -20,7 +20,7 @@
 
 ## Overview
 
-[QWeb](https://www.odoo.com/documentation/12.0/reference/qweb.html) is the primary templating engine used by Odoo. It is based on the XML format, and used
+[QWeb](https://www.odoo.com/documentation/13.0/reference/qweb.html) is the primary templating engine used by Odoo. It is based on the XML format, and used
 mostly to generate HTML. In OWL, QWeb templates are compiled into functions that
 generate a virtual dom representation of the HTML.
 
@@ -33,7 +33,7 @@ To avoid element rendering, a placeholder element `<t>` is also available, which
     <span t-if="somecondition">Some string</span>
     <ul t-else="1">
         <li t-foreach="messages" t-as="message">
-            <t t-esc="message">
+            <t t-esc="message"/>
         </li>
     </ul>
 </div>
@@ -85,7 +85,7 @@ instantiated:
 const qweb = new owl.QWeb();
 ```
 
-It's API is quite simple:
+Its API is quite simple:
 
 - **`constructor(data)`**: constructor. Takes an optional string to add initial
   templates (see `addTemplates` for more information on format of the string).
@@ -100,7 +100,8 @@ It's API is quite simple:
   qweb.addTemplate("mytemplate", "<div>hello</div>");
   ```
 
-  If the optional `allowDuplicate` is set to `true`, then `QWeb` will simply return whenever a template is added for a second time. Otherwise, `QWeb` will crash.
+  If the optional `allowDuplicate` is set to `true`, then `QWeb` will simply
+  ignore templates added for a second time. Otherwise, `QWeb` will crash.
 
 - **`addTemplates(xmlStr)`**: add a list of templates (identified by `t-name`
   attribute).
@@ -128,13 +129,13 @@ It's API is quite simple:
   const str = qweb.renderToString("someTemplate", somecontext);
   ```
 
-- **`registerTemplate(name, template)`**: static function to register an global
+- **`registerTemplate(name, template)`**: static function to register a global
   QWeb template. This is useful for commonly used components accross the
   application, and for making a template available to an application without
   having a reference to the actual QWeb instance.
 
   ```js
-  QWeb.registerTemplate("mytemplate", `<div>some template`);
+  QWeb.registerTemplate("mytemplate", `<div>some template</div>`);
   ```
 
 - **`registerComponent(name, Component)`**: static function to register an OWL Component
@@ -154,7 +155,7 @@ It's API is quite simple:
 
 In some way, a `QWeb` instance is the core of an Owl application. It is the only
 mandatory element of an [environment](component.md#environment). As such, it
-has an extra responsability: it can act as an event bus for internal communication
+has an extra responsibility: it can act as an event bus for internal communication
 between Owl classes. This is the reason why `QWeb` actually extends [EventBus](event_bus.md).
 
 ## Reference
@@ -165,7 +166,7 @@ specific extensions are documented in various other parts of the documentation.
 
 ### White Spaces
 
-White spaces in a templates are handled in a special way:
+White spaces in a template are handled in a special way:
 
 - consecutive whitespaces are always condensed to a single whitespace
 - if a whitespace-only text node contains a linebreak, it is ignored
@@ -207,7 +208,7 @@ component). For example, `a + b.c(d)` will be converted into:
 context["a"] + context["b"].c(context["d"]);
 ```
 
-It is useful to explain the various rules that applies on these expressions:
+It is useful to explain the various rules that apply on these expressions:
 
 1. it should be a simple expression which returns a value. It cannot be a statement.
 
@@ -531,4 +532,4 @@ will stop execution if the browser dev tools are open.
 <t t-log="foo"/>
 ```
 
-will print 42 to the console
+will print 42 to the console.

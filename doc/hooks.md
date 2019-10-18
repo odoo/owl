@@ -35,7 +35,7 @@ Owl hooks serve the same purpose, except that they work for class components
 there seems to be the misconception that hooks are in opposition to class. This
 is clearly not true, as shown by Owl hooks).
 
-Hooks works beautifully with Owl components: they solve the problems mentioned
+Hooks work beautifully with Owl components: they solve the problems mentioned
 above, and in particular, they are the perfect way to make your component
 reactive.
 
@@ -127,7 +127,7 @@ class SomeComponent extends Component {
 
 ### One rule
 
-There is only one rule: every hook for a component have to be called in the
+There is only one rule: every hook for a component has to be called in the
 constructor (or in class fields):
 
 ```js
@@ -152,14 +152,14 @@ class SomeComponent extends Component {
 }
 ```
 
-Hooks can get a reference to the currently being defined component with the
-`Component.current` static property. This is why they need to be called in the
-constructor.
+In a hook, the `Component.current` static property is the reference to the
+component instance that is currently being created. Hooks need to be called in
+the constructor to ensure that this reference is properly set.
 
 ### `useState`
 
-The `useState` hook is certainly the most important hooks for Owl components:
-this is what enables component to be reactive, to react to state change.
+The `useState` hook is certainly the most important hook for Owl components:
+this is what allows a component to be reactive, to react to state change.
 
 The `useState` hook has to be given an object or an array, and will return
 an observed version of it (using a `Proxy`).
@@ -183,25 +183,25 @@ class Counter extends owl.Component {
 
 ### `onMounted`
 
-`onMounted` is not an user hook, but is a building block designed to help make useful
+`onMounted` is not a user hook, but is a building block designed to help make useful
 abstractions. `onMounted` registers a callback, which will be called when the component
 is mounted (see example on top of this page).
 
 ### `onWillUnmount`
 
-`onWillUnmount` is not an user hook, but is a building block designed to help make useful
+`onWillUnmount` is not a user hook, but is a building block designed to help make useful
 abstractions. `onWillUnmount` registers a callback, which will be called when the component
 is unmounted (see example on top of this page).
 
 ### `onWillPatch`
 
-`onWillPatch` is not an user hook, but is a building block designed to help make useful
+`onWillPatch` is not a user hook, but is a building block designed to help make useful
 abstractions. `onWillPatch` registers a callback, which will be called just
 before the component patched.
 
 ### `onPatched`
 
-`onPatched` is not an user hook, but is a building block designed to help make useful
+`onPatched` is not a user hook, but is a building block designed to help make useful
 abstractions. `onPatched` registers a callback, which will be called just
 after the component patched.
 
@@ -305,7 +305,7 @@ The `t-ref` directive also accepts dynamic values with string interpolation
 <div t-ref="component_{{someCondition ? '1' : '2'}}"/>
 ```
 
-Here, the references needs to be set like this:
+Here, the references need to be set like this:
 
 ```js
 this.ref1 = useRef("component_1");
@@ -321,8 +321,8 @@ The environment is sometimes useful to share some common information between
 all components. But sometimes, we want to _scope_ that knowledge to a subtree.
 
 For example, if we have a form view component, maybe we would like to make some
-`model` object available to all sub component, but not to the whole application.
-This is where the `useSubEnv` hook may be useful: it let a component add some
+`model` object available to all sub components, but not to the whole application.
+This is where the `useSubEnv` hook may be useful: it lets a component add some
 information to the environment in a way that only the component and its children
 can access it:
 
@@ -366,7 +366,7 @@ But, like every good things in life, hooks should be used with moderation. They 
 not the solution to every problem.
 
 - they may be overkill: if your component needs to perform some action specific
-  to him (so, the specific code does not need to be shared), there is nothing
+  to itself (so, the specific code does not need to be shared), there is nothing
   wrong with a simple class method:
 
   ```js
@@ -389,7 +389,7 @@ not the solution to every problem.
 
   Note that the second solution is easier to extend in sub components.
 
-- they may be harder to test: if a customized hook inject some external side
+- they may be harder to test: if a customized hook injects some external side
   effect dependency, then it is harder to test without doing some non obvious
   manipulation.  For example, assume that we want to give a reference to a
   router in a `useRouter` hook. We could do this:

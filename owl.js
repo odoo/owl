@@ -1195,7 +1195,7 @@
      *
      * - whenReady
      * - loadJS
-     * - loadTemplates
+     * - loadFile
      * - escape
      * - debounce
      */
@@ -1230,7 +1230,7 @@
         loadedScripts[url] = promise;
         return promise;
     }
-    async function loadTemplates(url) {
+    async function loadFile(url) {
         const result = await fetch(url);
         if (!result.ok) {
             throw new Error("Error while fetching xml templates");
@@ -1290,7 +1290,7 @@
     var _utils = /*#__PURE__*/Object.freeze({
         whenReady: whenReady,
         loadJS: loadJS,
-        loadTemplates: loadTemplates,
+        loadFile: loadFile,
         escape: escape,
         debounce: debounce,
         shallowEqual: shallowEqual
@@ -4319,8 +4319,8 @@
     exports.utils = utils;
 
     exports.__info__.version = '0.23.0';
-    exports.__info__.date = '2019-10-16T20:31:22.370Z';
-    exports.__info__.hash = '9e65b06';
+    exports.__info__.date = '2019-10-18T14:02:51.841Z';
+    exports.__info__.hash = '1bb4577';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

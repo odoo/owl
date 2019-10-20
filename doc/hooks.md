@@ -220,18 +220,18 @@ be ready whenever the component is rendered:
 
 ```js
 function useLoader() {
-    const component = Component.current;
-    const record = useState({});
-    onWillStart(async () => {
-        const recordId = component.props.id;
-        Object.assign(record, await fetchSomeRecord(recordId));
-    });
-    return record;
+  const component = Component.current;
+  const record = useState({});
+  onWillStart(async () => {
+    const recordId = component.props.id;
+    Object.assign(record, await fetchSomeRecord(recordId));
+  });
+  return record;
 }
 ```
 
 Note that this example does not update the record value whenever props are
-updated.  For that situation, we need to use the `onWillUpdateProps` hook.
+updated. For that situation, we need to use the `onWillUpdateProps` hook.
 
 ### `onWillUpdateProps`
 
@@ -241,17 +241,17 @@ useful to perform some asynchronous task such as fetching updated data.
 
 ```js
 function useLoader() {
-    const component = Component.current;
-    const record = useState({});
+  const component = Component.current;
+  const record = useState({});
 
-    async function updateRecord(id) {
-        Object.assign(record, await fetchSomeRecord(id));
-    }
+  async function updateRecord(id) {
+    Object.assign(record, await fetchSomeRecord(id));
+  }
 
-    onWillStart(() => updateRecord(component.props.id));
-    onWillUpdateProps(nextProps => updateRecord(nextProps.id));
+  onWillStart(() => updateRecord(component.props.id));
+  onWillUpdateProps(nextProps => updateRecord(nextProps.id));
 
-    return record;
+  return record;
 }
 ```
 
@@ -359,7 +359,7 @@ getters. See the [store documentation](store.md) for more information.
 ### Making customized hooks
 
 Hooks are a wonderful way to organize the code of a complex component by feature
-instead of by lifecycle methods.  They are like mixins, except that they can be
+instead of by lifecycle methods. They are like mixins, except that they can be
 easily composed together.
 
 But, like every good things in life, hooks should be used with moderation. They are
@@ -373,16 +373,16 @@ not the solution to every problem.
   // maybe overkill
   class A extends Component {
     constructor(...args) {
-        super(...args);
-        useMySpecificHook()
+      super(...args);
+      useMySpecificHook();
     }
   }
 
   // ok
   class B extends Component {
     constructor(...args) {
-        super(...args);
-        this.performSpecificTask()
+      super(...args);
+      this.performSpecificTask();
     }
   }
   ```
@@ -391,7 +391,7 @@ not the solution to every problem.
 
 - they may be harder to test: if a customized hook injects some external side
   effect dependency, then it is harder to test without doing some non obvious
-  manipulation.  For example, assume that we want to give a reference to a
+  manipulation. For example, assume that we want to give a reference to a
   router in a `useRouter` hook. We could do this:
 
   ```js
@@ -402,7 +402,7 @@ not the solution to every problem.
   }
   ```
 
-  As you can see, this does not *hook* into the internal of the component. It
+  As you can see, this does not _hook_ into the internal of the component. It
   simply returns a global object, which is difficult to mock.
 
   A better way would be to do something like this: get the reference from the
@@ -410,7 +410,7 @@ not the solution to every problem.
 
   ```js
   function useRouter() {
-      return Component.current.env.router;
+    return Component.current.env.router;
   }
   ```
 

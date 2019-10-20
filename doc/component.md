@@ -91,22 +91,22 @@ find a template with the component name (or one of its ancestors).
 
 ### Reactive system
 
-OWL components are normal javascript classes.  So, changing a component internal
+OWL components are normal javascript classes. So, changing a component internal
 state does nothing more:
 
 ```js
 class Counter extends Component {
-    static template = xml`<div t-on-click="increment"><t t-esc="state.value"/></div>`;
-    state = {value: 0};
+  static template = xml`<div t-on-click="increment"><t t-esc="state.value"/></div>`;
+  state = { value: 0 };
 
-    increment() {
-        this.state.value++;
-    }
+  increment() {
+    this.state.value++;
+  }
 }
 ```
 
 Clicking on the `Counter` component defined above will call the `increment`
-method, but it will not rerender the component.  To fix that, one could add an
+method, but it will not rerender the component. To fix that, one could add an
 explicit call to `render` in `increment`:
 
 ```js
@@ -122,7 +122,7 @@ method.
 
 A better way is to use the reactive system: by using the `useState` hook (see the
 [hooks](hooks.md) section for more details), one can make Owl react to state
-changes.  The `useState` hook generates a proxy version of an object
+changes. The `useState` hook generates a proxy version of an object
 (this is done by an [observer](observer.md)), which allows the component to
 react to any change. So, the `Counter` example above can be improved like this:
 
@@ -130,31 +130,32 @@ react to any change. So, the `Counter` example above can be improved like this:
 const { useState } = owl.hooks;
 
 class Counter extends Component {
-    static template = xml`<div t-on-click="increment"><t t-esc="state.value"/></div>`;
-    state = useState({value: 0});
+  static template = xml`<div t-on-click="increment"><t t-esc="state.value"/></div>`;
+  state = useState({ value: 0 });
 
-    increment() {
-        this.state.value++;
-    }
+  increment() {
+    this.state.value++;
+  }
 }
 ```
 
 Obviously, we can call the `useState` hook more than once:
+
 ```js
 const { useState } = owl.hooks;
 
 class Counter extends Component {
-    static template = xml`
+  static template = xml`
       <div>
         <span t-on-click="increment(counter1)"><t t-esc="counter1.value"/></span>
         <span t-on-click="increment(counter2)"><t t-esc="counter2.value"/></span>
       </div>`;
-    counter1 = useState({value: 0});
-    counter2 = useState({value: 0});
+  counter1 = useState({ value: 0 });
+  counter2 = useState({ value: 0 });
 
-    increment(counter) {
-        counter.value++;
-    }
+  increment(counter) {
+    counter.value++;
+  }
 }
 ```
 
@@ -169,7 +170,7 @@ to be called in the constructor.
 - **`env`** (Object): the component environment, which contains a QWeb instance.
 
 - **`props`** (Object): this is an object containing all the properties given by
-  the parent to a child component.  For example, in the following situation,
+  the parent to a child component. For example, in the following situation,
   the parent component gives a `user` and a `color` value to the `ChildComponent`.
 
   ```xml
@@ -182,7 +183,7 @@ to be called in the constructor.
   As such, it should not ever be modified by the component (otherwise you risk
   unintended effects, since the parent may not be aware of the change)!!
 
-  The `props` can be modified dynamically by the parent.  In that case, the
+  The `props` can be modified dynamically by the parent. In that case, the
   component will go through the following lifecycle methods: `willUpdateProps`,
   `willPatch` and `patched`.
 
@@ -405,8 +406,8 @@ component was patched. Note that this hook will not be called if the compoent is
 not in the DOM (this can happen with components with `t-keepalive`).
 
 Updating the component state in this hook is possible, but not encouraged.
-One need to be careful, because updates here will cause rerender, which in
-turn will cause other calls to patched. So, we need to be particularly
+One needs to be careful, because updates here will create an additional rendering, which in
+turn will cause other calls to the `patched` method. So, we need to be particularly
 careful at avoiding endless cycles.
 
 #### `willUnmount()`
@@ -429,7 +430,7 @@ This is the opposite method of `mounted`.
 
 The `catchError` method is useful when we need to intercept and properly react
 to (rendering) errors that occur in some sub components. See the section on
-[error handling](#error-handling)
+[error handling](#error-handling).
 
 ### Root Component
 
@@ -783,7 +784,7 @@ Like event handling, the `t-model` directive accepts some modifiers:
 | Modifier  | Description                                                          |
 | --------- | -------------------------------------------------------------------- |
 | `.lazy`   | update the value on the `change` event (default is on `input` event) |
-| `.number` | tries to parse the value to a number (using `parseFloat`)            |
+| `.number` | try to parse the value to a number (using `parseFloat`)              |
 | `.trim`   | trim the resulting value                                             |
 
 For example:
@@ -799,9 +800,10 @@ Note: the online playground has an example to show how it works.
 
 ### `t-key` Directive
 
-Even though Owl tries to be as declarative as possible, some DOM state is still
-locked inside the DOM: for example, the scrolling state, the current user selection,
-the focused element or the state of an input. This is why we use a virtual dom
+Even though Owl tries to be as declarative as possible, the DOM does not fully
+expose its state declaratively in the DOM tree. For example, the scrolling state,
+the current user selection, the focused element or the state of an input are not
+set as attribute in the DOM tree. This is why we use a virtual dom
 algorithm to keep the actual DOM node as much as possible. However, this is
 sometimes not enough, and we need to help Owl decide if an element is actually
 the same, or is different. The `t-key` directive is used to give an identity to an element.
@@ -913,7 +915,7 @@ Here is what Owl will do:
 As an application becomes complex, it may be quite unsafe to define props in an informal way. This leads to two issues:
 
 - hard to tell how a component should be used, by looking at its code.
-- unsafe, it is easy to send wrong props into a component, either by refactoring a component, or one of its parent.
+- unsafe, it is easy to send wrong props into a component, either by refactoring a component, or one of its parents.
 
 A props type system would solve both issues, by describing the types and shapes
 of the props. Here is how it works in Owl:
@@ -1169,7 +1171,7 @@ from lifecycle hooks): the `catchError` hook.
 
 Whenever the `catchError` lifecycle hook is implemented, all errors coming from
 sub components rendering and/or lifecycle method calls will be caught and given
-to the `catchError` method. This allow us to properly handle the error, and to
+to the `catchError` method. This allows us to properly handle the error, and to
 not break the application.
 
 For example, here is how we could implement an `ErrorBoundary` component:

@@ -44,7 +44,6 @@ owl
         whenReady
 ```
 
-
 Note that for convenience, the `useState` hook is also exported at the root of the `owl` object.
 
 ## Reference

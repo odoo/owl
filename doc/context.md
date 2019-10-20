@@ -11,7 +11,7 @@
 ## Overview
 
 The `Context` object provides a way to share data between an arbitrary number
-of component. Usually, data is passed from a parent to its children component,
+of components. Usually, data is passed from a parent to its children component,
 but when we have to deal with some mostly global information, this can be
 annoying, since each component will need to pass the information to each children,
 even though some or most of them will not use the information.

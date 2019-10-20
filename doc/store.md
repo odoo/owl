@@ -38,14 +38,14 @@ const actions = {
     state.todos.push({
       id: state.nextId++,
       message,
-      isCompleted: false,
+      isCompleted: false
     });
   }
 };
 
 const state = {
   todos: [],
-  nextId: 1,
+  nextId: 1
 };
 
 const store = new owl.Store({ state, actions });
@@ -113,6 +113,7 @@ const actions = {
 ```
 
 The first argument to an action method is an object with four keys:
+
 - `state`: the current state of the store content,
 - `dispatch`: a function that can be used to dispatch other actions,
 - `getters`: an object containing all getters defined in the store,
@@ -200,8 +201,7 @@ const post = store.getters.getPost(id);
 
 Getters take _at most_ one argument.
 
-Note that getters are cached if they don't take any argument, or their argument
-is a string or a number.
+Note that getters are not cached.
 
 ### Connecting a Component
 
@@ -211,7 +211,6 @@ can be done with the help of the three store hooks:
 - `useStore` to subscribe a component to some part of the store state,
 - `useDispatch` to get a reference to a dispatch function,
 - `useGetters` to get a reference to the getters defined in the store.
-
 
 Assume we have this store:
 
@@ -223,7 +222,7 @@ const actions = {
 };
 
 const state = {
-  counter: {value: 0}
+  counter: { value: 0 }
 };
 const store = new owl.Store({ state, actions });
 ```
@@ -255,7 +254,6 @@ two arguments:
   an object or an array (which will be then observed),
 - optionally, an object with a `store` key (if we want to override the default
   store) and an equality function (if we want to specialize the comparison).
-
 
 If the `useStore` callback selects a sub part of the store state, the component
 will only be rerendered whenever this part of the state changes. Otherwise, it

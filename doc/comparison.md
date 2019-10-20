@@ -3,7 +3,7 @@
 OWL, React and Vue have the same main feature: they allow developers to build
 declarative user interfaces. To do that, all these frameworks uses a virtual dom. However, there are still obviously many differences.
 
-In this page, we try to highlight some of these differences. Obviously, some
+In this page, we try to highlight some of these differences. Obviously, a lot of
 effort was done to be fair. However, if you disagree with some of the points
 discussed, feel free to open an issue/submit a PR to correct this text.
 
@@ -16,6 +16,7 @@ discussed, feel free to open an issue/submit a PR to correct this text.
 - [Asynchronous rendering](#asynchronous-rendering)
 - [Reactiveness](#reactiveness)
 - [State Management](#state-management)
+- [Hooks](#hooks)
 
 ## Size
 
@@ -26,8 +27,13 @@ than React and Vue. Also, jQuery is not the same kind of framework, but it is in
 | ------------------------ | ------------------------ |
 | OWL                      | 16kb                     |
 | Vue + VueX               | 30kb                     |
+| Vue + VueX + Vue Router  | 39kb                     |
 | React + ReactDOM + Redux | 40kb                     |
 | jQuery                   | 30kb                     |
+
+Note that those comparisons are not entirely fair, because we do not compare
+the same exact set of features. For example, VueX and Vue Router support more
+advanced use cases.
 
 ## Class Based
 
@@ -40,6 +46,17 @@ contrast, Owl has only one mechanism: class-based components. We believe that Ow
 components are fast enough for all our usecases, and making it as simple as
 possible for developers is more valuable (for us).
 
+Also, functions or class based components are more than just syntax. Functions
+comes with a mindset of composition and class are about inheritance. Clearly,
+both of these are important mechanisms for reusing code. Also, one does not
+exclude the other.
+
+It certainly looks like the world of UI frameworks is moving toward composition,
+for many very good reasons. Owl is still good at composition (for example,
+Owl supports slots, which is the primary mechanism to make generic reusable
+components). But it can also use inheritance (and this is very important since
+templates can also be inherited with `xpaths` transformations).
+
 ## Tooling/Build step
 
 OWL is designed to be easy to use in a standalone way. For various reasons,
@@ -50,12 +67,22 @@ be used by simply adding a script tag to a page.
 <script src="owl.min.js" />
 ```
 
-In comparison, React encourages using JSX,
-which necessitate a build step, and most Vue applications uses single file
-components, which also necessitate a build step.
+In comparison, React encourages using JSX, which necessitate a build step, and
+most Vue applications uses single file components, which also necessitate a build step.
 
 On the flipside, external tooling may make it harder to use in some case, but it
 also brings a lot of benefits. And React/Vue have both a large ecosystem.
+
+Note that since Owl is not dependant on any external tool nor libraries, it is
+very easy to integrate into any build toolchain. Also, since we cannot rely on
+additional tools, we made a lot of effort to make the most of the web platform.
+
+For example, Owl uses the standard `xml` parser that comes with every browser.
+Because of that, Owl did not have to write its own template parser. Another
+example is the [`xml`](tags.md#xml-tag) tag helper function, which makes use of
+native template literals to allow in a natural way to write `xml` templates
+directly in the javascript code. This can be easily integrated with editor
+plugins to have autocompletion inside the template.
 
 ## Templating
 
@@ -79,7 +106,8 @@ into javascript functions. Note that Vue has a separate build which includes the
 template compiler.
 
 In contrast, most React applications do not use a templating language, but write
-some JSX code, which is precompiled into plain JavaScript by a build step.
+some JSX code, which is precompiled into plain JavaScript by a build step. This
+example is done with the (kind of outdated) React class system:
 
 ```jsx
 class Clock extends React.Component {
@@ -97,6 +125,20 @@ class Clock extends React.Component {
 This has the advantage of having the full power of Javascript, but is less
 structured than a template language. Note that the tooling is quite impressive:
 there is a syntax highlighter for jsx here on github!
+
+By comparison, here is the equivalent Owl component, written with the
+[`xml`](tags.md#xml-tag) tag helper:
+
+```js
+class Clock extends Component {
+  static template = xml`
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {props.date.toLocaleTimeString()}.</h2>
+      </div>
+    `;
+}
+```
 
 ## Asynchronous Rendering
 
@@ -127,12 +169,14 @@ This may be dangerous (to stop the rendering waiting for the network), but it is
 extremely powerful as well, as demonstrated by the Odoo Web Client.
 
 Lazy loading static libraries can obviously be done with React/Vue, but it is
-more convoluted.
+more convoluted. For example, in Vue, you need to use a dynamic import keyword
+that needs to be transpiled at build time in order for the component to be loaded
+asynchronously (see [the documentation](https://vuejs.org/v2/guide/components-dynamic-async.html#Async-Components)).
 
 ## Reactiveness
 
 React has a simple model: whenever the state changes, it is
-replaced with a new state (via the setState method). Then, the DOM is patched.
+replaced with a new state (via the `setState` method). Then, the DOM is patched.
 This is simple, efficient, and a little bit awkward to write.
 
 Vue is a little bit different: it replace magically the properties in the state
@@ -207,30 +251,94 @@ keeps track of who get data, and retrigger a render when it was changed.
 Owl store is a little bit like a mix of redux and vuex: it has actions (but not
 mutations), and like VueX, it keeps track of the state changes. However, it does
 not notify a component when the state changes. Instead, components need to connect
-to the store like in redux, by inheriting the `ConnectedComponent` class.
+to the store like in redux, with the `useStore` hook (see the [store documentation](store.md#connecting-a-component)).
 
 ```javascript
 const actions = {
   increment({ state }, val) {
-    state.counter += val;
+    state.counter.value += val;
   }
 };
 
 const state = {
-  counter: 0
+  counter: { value: 0 }
 };
 const store = new owl.Store({ state, actions });
 
-class Counter extends owl.ConnectedComponent {
-  static mapStoreToProps(state) {
-    return {
-      value: state.counter
-    };
-  }
-  increment() {
-    this.env.store.dispatch("increment");
-  }
+class Counter extends Component {
+  static template = xml`
+      <button t-name="Counter" t-on-click="dispatch('increment')">
+        Click Me! [<t t-esc="counter.value"/>]
+      </button>`;
+  counter = useStore(state => state.counter);
+  dispatch = useDispatch();
 }
 
 const counter = new Counter({ store, qweb });
 ```
+
+## Hooks
+
+[Hooks](https://reactjs.org/docs/hooks-intro.html#motivation) recently took over
+the React world. They solve a lot of seemingly unconnected problems: attach
+reusable behavior to a component, in a composable way, extract stateful logic
+from a component or reuse stateful logic between component, without changing your
+component hierarchy.
+
+Here is an example of the React `useState` hook:
+
+```js
+import React, { useState } from "react";
+
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+}
+```
+
+Because of the way React designed the hooks API, they only work for functional
+components. But in that case, they really are powerful. Every major React library
+is in the process of redesigning their API with hooks (for example,
+[Redux](https://react-redux.js.org/next/api/hooks)).
+
+Vue 2 does not have hooks, but the Vue project is working on its next version,
+which will feature its new [composition API](https://vue-composition-api-rfc.netlify.com/).
+This work is based on the new ideas introduced by React hooks.
+
+From the way React and Vue introduce their hooks, it may look like hooks are not
+compatible with class components. However, this is not the case, as shown by
+Owl [hooks](hooks.md). They are inspired by both React and Vue. For example,
+the `useState` hook is named after React, but its API is closer to the `reactive`
+Vue hook.
+
+Here is what the `Counter` example above look like in Owl:
+
+```js
+import { Component, Owl } from "owl";
+import { xml } from "owl/tags";
+
+class Example extends Component {
+  static template = xml`
+      <div>
+        <p>You clicked {count.value} times</p>
+        <button t-on-click="increment">Click me</button>
+      </div>`;
+
+  count = useState({ value: 0 });
+
+  increment() {
+    this.state.value++;
+  }
+}
+```
+
+Since the Owl framework had hooks from early in its life, its main APIs
+are designed to be interacted with hooks from the start. For example, the
+`Context` and `Store` abstractions.

@@ -54,6 +54,10 @@ interface FileData {
 }
 
 function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
+  if (link.link.startsWith('http')) {
+    // no check on external links
+    return true;
+  }
   const parts = link.link.split("#");
   const currentParts = current.name.split("/");
   const path = currentParts.length > 1 ? currentParts[0] + "/" : "";

@@ -412,9 +412,6 @@ QWeb.addDirective({
     ctx.addLine(
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
-    if (QWeb.dev) {
-      ctx.addLine(`utils.validateProps(W${componentID}, props${componentID})`);
-    }
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
     ctx.addLine(`parent.__owl__.cmap[${templateId}] = w${componentID}.__owl__.id;`);
 

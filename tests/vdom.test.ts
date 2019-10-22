@@ -185,20 +185,6 @@ describe("snabbdom", function() {
       expect(elm.tagName).toBe("DIV");
     });
 
-    test("has different tag and id", function() {
-      let elm: any = document.createElement("div");
-      vnode0.appendChild(elm);
-      const vnode1 = h("span#id");
-      elm = patch(elm, vnode1).elm;
-      expect(elm.tagName).toBe("SPAN");
-      expect(elm.id).toBe("id");
-    });
-
-    test("has id", function() {
-      elm = patch(vnode0, h("div", [h("div#unique")])).elm;
-      expect(elm.firstChild.id).toBe("unique");
-    });
-
     test("has correct namespace", function() {
       const SVGNamespace = "http://www.w3.org/2000/svg";
       const XHTMLNamespace = "http://www.w3.org/1999/xhtml";
@@ -216,20 +202,6 @@ describe("snabbdom", function() {
       expect(elm.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.namespaceURI).toBe(SVGNamespace);
       expect(elm.firstChild.firstChild.namespaceURI).toBe(XHTMLNamespace);
-    });
-
-    test("receives classes in selector", function() {
-      elm = patch(vnode0, h("div", [h("i.am.a.class")])).elm;
-      expect(elm.firstChild.classList.contains("am")).toBeTruthy();
-      expect(elm.firstChild.classList.contains("a")).toBeTruthy();
-      expect(elm.firstChild.classList.contains("class")).toBeTruthy();
-    });
-
-    test("receives classes in selector when namespaced", function() {
-      elm = patch(vnode0, h("svg", [h("g.am.a.class.too")])).elm;
-      expect(elm.firstChild.classList.contains("am")).toBeTruthy();
-      expect(elm.firstChild.classList.contains("a")).toBeTruthy();
-      expect(elm.firstChild.classList.contains("class")).toBeTruthy();
     });
 
     test("can create elements with text content", function() {
@@ -268,26 +240,6 @@ describe("snabbdom", function() {
   });
 
   describe("patching an element", function() {
-    test("changes the elements classes", function() {
-      const vnode1 = h("i.i.am.horse");
-      const vnode2 = h("i.i.am");
-      patch(vnode0, vnode1);
-      elm = patch(vnode1, vnode2).elm;
-      expect(elm.classList.contains("i")).toBeTruthy();
-      expect(elm.classList.contains("am")).toBeTruthy();
-      expect(!elm.classList.contains("horse")).toBeTruthy();
-    });
-
-    test("removes missing classes", function() {
-      const vnode1 = h("i.i.am.horse");
-      const vnode2 = h("i.i.am");
-      patch(vnode0, vnode1);
-      elm = patch(vnode1, vnode2).elm;
-      expect(elm.classList.contains("i")).toBeTruthy();
-      expect(elm.classList.contains("am")).toBeTruthy();
-      expect(!elm.classList.contains("horse")).toBeTruthy();
-    });
-
     test("changes an elements props", function() {
       const vnode1 = h("a", { props: { src: "http://other/" } });
       const vnode2 = h("a", { props: { src: "http://localhost/" } });

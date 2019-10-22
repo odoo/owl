@@ -176,18 +176,10 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       }
       vnode.elm = api.createComment(vnode.text as string);
     } else if (sel !== undefined) {
-      // Parse selector
-      const hashIdx = sel.indexOf("#");
-      const dotIdx = sel.indexOf(".", hashIdx);
-      const hash = hashIdx > 0 ? hashIdx : sel.length;
-      const dot = dotIdx > 0 ? dotIdx : sel.length;
-      const tag = hashIdx !== -1 || dotIdx !== -1 ? sel.slice(0, Math.min(hash, dot)) : sel;
       const elm = (vnode.elm =
         isDef(data) && isDef((i = (data as VNodeData).ns))
-          ? api.createElementNS(i, tag)
-          : api.createElement(tag));
-      if (hash < dot) elm.setAttribute("id", sel.slice(hash + 1, dot));
-      if (dotIdx > 0) elm.setAttribute("class", sel.slice(dot + 1).replace(/\./g, " "));
+          ? api.createElementNS(i, sel)
+          : api.createElement(sel));
       for (i = 0, iLen = cbs.create.length; i < iLen; ++i) cbs.create[i](emptyNode, vnode);
       if (array(children)) {
         for (i = 0, iLen = children.length; i < iLen; ++i) {

@@ -304,6 +304,38 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>hoegaarden</span></div>");
   });
 
+  test("useStore receives getters as third argument", async () => {
+    const state = { todos: [{ id: 1, text: "jupiler" }] };
+    const getters = {
+      text({ state }, id) {
+        return state.todos.find(todo => todo.id === id).text;
+      }
+    };
+    const store = new Store({ state, getters });
+
+    class TodoItem extends Component<any, any> {
+      static template = xml`<span><t t-esc="storeProps.text"/></span>`;
+      storeProps = useStore((state, props, getters) => {
+        return { text: getters.text(props.id), };
+      });
+    }
+
+    class TodoList extends Component<any, any> {
+      static template = xml`
+        <div>
+          <TodoItem t-foreach="todos" t-as="todo" id="todo.id" t-key="todo.id"/>
+        </div>`;
+      static components = { TodoItem };
+      todos = useStore(state => state.todos);
+    }
+
+    (<any>env).store = store;
+    const app = new TodoList(env);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
+  });
+
   test("can call useGetters to receive store getters", async () => {
     const state = {
       importantID: 1,

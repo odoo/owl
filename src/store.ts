@@ -84,7 +84,7 @@ const isStrictEqual = (a, b) => a === b;
 export function useStore(selector, options: SelectorOptions = {}): any {
   const component: Component<any, any> = Component.current!;
   const store = options.store || (component.env.store as Store);
-  let result = selector(store.state, component.props);
+  let result = selector(store.state, component.props, store.getters);
   const hashFn = store.observer.deepRevNumber.bind(store.observer);
   let revNumber = hashFn(result) || result;
   const isEqual = options.isEqual || isStrictEqual;
@@ -94,7 +94,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   const updateFunctions = store.updateFunctions[component.__owl__.id];
   updateFunctions.push(function(): boolean {
     const oldResult = result;
-    result = selector(store!.state, component.props);
+    result = selector(store!.state, component.props, store.getters);
     const newRevNumber = hashFn(result);
     if (
       (newRevNumber > 0 && revNumber !== newRevNumber) ||
@@ -118,7 +118,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   onWillUpdateProps(props => {
     // FIXME: only do that if not keepalive + do it in destroy in that case
     delete store.updateFunctions[component.__owl__.id];
-    result = selector(store.state, props);
+    result = selector(store.state, props, store.getters);
   });
   return new Proxy(result, {
     get(target, k) {

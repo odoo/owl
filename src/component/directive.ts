@@ -511,10 +511,6 @@ QWeb.addDirective({
       ctx.addLine(`extra.promises.push(def${defID});`);
     }
 
-    if (node.hasAttribute("t-if") || node.hasAttribute("t-else") || node.hasAttribute("t-elif")) {
-      ctx.closeIf();
-    }
-
     return true;
   }
 });

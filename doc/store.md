@@ -10,6 +10,8 @@
   - [Getters](#getters)
   - [Connecting a Component](#connecting-a-component)
   - [`useStore`](#usestore)
+  - [`useDispatch`](#usedispatch)
+  - [`useGetters`](#usegetters)
   - [Semantics](#semantics)
   - [Good Practices](#good-practices)
 
@@ -208,9 +210,9 @@ Note that getters are not cached.
 At some point, we need a way to interact with the store from a component. This
 can be done with the help of the three store hooks:
 
-- `useStore` to subscribe a component to some part of the store state,
-- `useDispatch` to get a reference to a dispatch function,
-- `useGetters` to get a reference to the getters defined in the store.
+- [`useStore`](#usestore) to subscribe a component to some part of the store state,
+- [`useDispatch`](#usedispatch) to get a reference to a dispatch function,
+- [`useGetters`](#usegetters) to get a reference to the getters defined in the store.
 
 Assume we have this store:
 
@@ -244,7 +246,7 @@ const counter = new Counter({ store, qweb });
 </button>
 ```
 
-### `useStore``
+### `useStore`
 
 The `useStore` hook is used to select some part of the store state. It accepts
 two arguments:
@@ -259,6 +261,38 @@ If the `useStore` callback selects a sub part of the store state, the component
 will only be rerendered whenever this part of the state changes. Otherwise, it
 will perform a strict equality check and will update the component every time this
 check fails.
+
+### `useDispatch`
+
+The `useDispatch` hook is useful when a component needs to be able to dispatch
+actions. It takes an optional argument, which is a store. If not given, it will
+use the store in the environment.
+
+Note that a component does not need to be connected in any other way to the store.
+For example:
+
+```js
+class DoSomethingButton extends Component {
+  static template = xml`<button t-on-click="dispatch('something')">Click</button>`;
+  dispatch = useDispatch();
+}
+```
+
+### `useGetters`
+
+The `useGetters` hook is useful when a component needs to be able to use the
+getters defined in a store. It takes an optional argument, which is a store. If
+not given, it will use the store in the environment.
+
+Note that a component does not need to be connected in any other way to the store.
+For example:
+
+```js
+class InfoButton extends Component {
+  static template = xml`<span><t t-esc="getters.somevalue()"></span>`;
+  getters = useGetters();
+}
+```
 
 ### Semantics
 

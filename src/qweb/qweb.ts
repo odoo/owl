@@ -452,6 +452,8 @@ export class QWeb extends EventBus {
       fullName: string;
     }[] = [];
 
+    const finalizers: typeof validDirectives = [];
+
     // maybe this is not optimal: we iterate on all attributes here, and again
     // just after for each directive.
     for (let i = 0; i < attributes.length; i++) {
@@ -496,7 +498,11 @@ export class QWeb extends EventBus {
         }
       }
     }
+
     for (let { directive, value, fullName } of validDirectives) {
+      if (directive.finalize) {
+        finalizers.push({ directive, value, fullName });
+      }
       if (directive.atNodeEncounter) {
         const isDone = directive.atNodeEncounter({
           node,
@@ -506,6 +512,9 @@ export class QWeb extends EventBus {
           value
         });
         if (isDone) {
+          for (let { directive, value, fullName } of finalizers) {
+            directive.finalize!({ node, qweb: this, ctx, fullName, value });
+          }
           return;
         }
       }
@@ -564,10 +573,8 @@ export class QWeb extends EventBus {
       ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
     }
 
-    for (let { directive, value, fullName } of validDirectives) {
-      if (directive.finalize) {
-        directive.finalize({ node, qweb: this, ctx, fullName, value });
-      }
+    for (let { directive, value, fullName } of finalizers) {
+      directive.finalize!({ node, qweb: this, ctx, fullName, value });
     }
   }
 

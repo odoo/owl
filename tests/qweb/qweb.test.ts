@@ -328,6 +328,16 @@ describe("t-if", () => {
     };
     expect(normalize(renderToString(qweb, "test", context))).toBe("<div>andormgtnlt</div>");
   });
+
+  test("t-esc with t-if", () => {
+    qweb.addTemplate("test", `<div><t t-if="true" t-esc="'x'"/></div>`);
+    expect(renderToString(qweb, "test")).toBe("<div>x</div>");
+  });
+
+  test("t-esc with t-elif", () => {
+    qweb.addTemplate("test", `<div><t t-if="false">abc</t><t t-else="1" t-esc="'x'"/></div>`);
+    expect(renderToString(qweb, "test")).toBe("<div>x</div>");
+  });
 });
 
 describe("attributes", () => {

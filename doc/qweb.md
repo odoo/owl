@@ -390,12 +390,23 @@ If an expression evaluates to a falsy value, it will not be set at all:
 <div t-att-foo="false"/>  <!-- result: <div></div> -->
 ```
 
-There is another way to format a string attribute: the `t-attf-` directive. With
-it, you get string interpolation:
+It is sometimes convenient to format an attribute with string interpolation. In
+that case, the `t-attf-` directive can be used. It is useful when we need to mix
+literal and dynamic elements, such as css classes.
 
 ```xml
 <div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
+```
+
+If we need completely dynamic attribute names, then there is an additional
+directive: `t-att`, which takes either an object (with keys mapping to their
+values) or a pair `[key, value]`. For example:
+
+```xml
+<div t-att="{'a': 1, 'b': 2}"/> <!-- result: <div a="1" b="2"></div> -->
+
+<div t-att="['a', 'b']"/> <!-- <div a="b"></div> -->
 ```
 
 ### Loops

@@ -33,7 +33,6 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         let componentKey4 = \`Child\`;
         let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Child'];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
-        utils.validateProps(W4, props4)
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);

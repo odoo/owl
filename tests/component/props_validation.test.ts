@@ -352,4 +352,22 @@ describe("default props", () => {
     expect(w.props.p).toBe(4);
     expect(fixture.innerHTML).toMatchSnapshot();
   });
+
+  test("can set default required boolean values", async () => {
+    class TestWidget extends Widget {
+      static props = ["p", "q"];
+      static defaultProps = { p: true, q: false };
+      static template = xml`<span><t t-if="props.p">hey</t><t t-if="!props.q">hey</t></span>`;
+    }
+
+    class App extends Widget {
+        static template = xml`<div><TestWidget/></div>`;
+        static components = { TestWidget };
+    }
+
+    const w = new App(env, {});
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe('<div><span>heyhey</span></div>')
+  });
+
 });

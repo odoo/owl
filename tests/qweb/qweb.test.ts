@@ -338,6 +338,17 @@ describe("t-if", () => {
     qweb.addTemplate("test", `<div><t t-if="false">abc</t><t t-else="1" t-esc="'x'"/></div>`);
     expect(renderToString(qweb, "test")).toBe("<div>x</div>");
   });
+
+  test("t-set, then t-if", () => {
+    qweb.addTemplate("test", `
+      <div>
+        <t t-set="title" t-value="'test'"/>
+        <t t-if="title"><t t-esc="title"/></t>
+      </div>`);
+    const result = renderToString(qweb, "test");
+    const expected = `<div>test</div>`;
+    expect(result).toBe(expected);
+  });
 });
 
 describe("attributes", () => {

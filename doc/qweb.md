@@ -461,16 +461,16 @@ the context of the `t-foreach`, the value is copied at the end of the foreach
 into the global context.
 
 ```xml
-<t t-set="existing_variable" t-value="False"/>
+<t t-set="existing_variable" t-value="false"/>
 <!-- existing_variable now False -->
 
 <p t-foreach="Array(3)" t-as="i">
-    <t t-set="existing_variable" t-value="True"/>
-    <t t-set="new_variable" t-value="True"/>
-    <!-- existing_variable and new_variable now True -->
+    <t t-set="existing_variable" t-value="true"/>
+    <t t-set="new_variable" t-value="true"/>
+    <!-- existing_variable and new_variable now true -->
 </p>
 
-<!-- existing_variable always True -->
+<!-- existing_variable always true -->
 <!-- new_variable undefined -->
 ```
 

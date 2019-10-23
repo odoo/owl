@@ -1502,6 +1502,22 @@ exports[`t-if t-esc with t-if 1`] = `
 }"
 `;
 
+exports[`t-if t-set, then t-if 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 'test';
+    if ('test') {
+        if (_2 || _2 === 0) {
+            c1.push({text: _2});
+        }
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-key can use t-key directive on a node 1`] = `
 "function anonymous(context,extra
 ) {

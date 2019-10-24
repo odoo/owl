@@ -1,5 +1,4 @@
-import { Component } from "./component/component";
-import { scheduler } from "./component/scheduler";
+import { Component, scheduler } from "./component/component";
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
 import { onWillUnmount } from "./hooks";
@@ -70,7 +69,7 @@ export function useContext(ctx: Context): any {
   return useContextWithCB(ctx, component, component.render.bind(component));
 }
 
-export function useContextWithCB(ctx: Context, component, method): any {
+export function useContextWithCB(ctx: Context, component: Component<any, any>, method): any {
   const __owl__ = component.__owl__;
   const id = __owl__.id;
   const mapping = ctx.mapping;
@@ -78,8 +77,8 @@ export function useContextWithCB(ctx: Context, component, method): any {
     return ctx.state;
   }
   mapping[id] = 0;
-  const renderFn = __owl__.render;
-  __owl__.render = function(comp, params) {
+  const renderFn = __owl__.renderFn;
+  __owl__.renderFn = function(comp, params) {
     mapping[id] = ctx.id;
     return renderFn(comp, params);
   };

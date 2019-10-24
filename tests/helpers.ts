@@ -1,19 +1,15 @@
-import { Env } from "../src/component/component";
+import { Env, scheduler } from "../src/component/component";
 import { EvalContext, QWeb } from "../src/qweb/qweb";
 import { patch } from "../src/vdom";
 import "../src/qweb/base_directives";
 import "../src/qweb/extensions";
 import "../src/component/directive";
 
-// modifies scheduler to make it easier to test components
-// let current;
-// scheduler.requestAnimationFrame = function(callback: FrameRequestCallback) {
-//   if (current) {
-//     throw new Error("should not schedule 2 callbacks!");
-//   }
-//   current = callback;
-//   return 1;
-// };
+// modifies scheduler to make it faster to test components
+scheduler.requestAnimationFrame = function(callback: FrameRequestCallback) {
+  setTimeout(callback, 1);
+  return 1;
+};
 
 // Some static cleanup
 let nextSlotId;
@@ -22,7 +18,6 @@ let nextId;
 let TEMPLATES;
 
 beforeEach(() => {
-  // current = null;
   nextSlotId = QWeb.nextSlotId;
   slots = Object.assign({}, QWeb.slots);
   nextId = QWeb.nextId;
@@ -30,7 +25,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  // current = null;
   QWeb.nextSlotId = nextSlotId;
   QWeb.slots = slots;
   QWeb.nextId = nextId;
@@ -41,22 +35,10 @@ afterEach(() => {
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
 }
-// export async function nextTick(): Promise<void> {
-//   await Promise.resolve();
-//   let max = 1000;
-//   while (current && max > 0) {
-//     const cb = current;
-//     console.warn('next');
-//     current = null;
-//     cb();
-//     max--;
-//     await Promise.resolve();
-//   }
-// }
 
 export async function nextTick(): Promise<void> {
-  return new Promise(function (resolve) {
-    setTimeout(() => requestAnimationFrame(() => resolve()));
+  return new Promise(function(resolve) {
+    setTimeout(() => scheduler.requestAnimationFrame(() => resolve()));
   });
 }
 

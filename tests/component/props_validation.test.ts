@@ -363,13 +363,12 @@ describe("default props", () => {
     }
 
     class App extends Widget {
-        static template = xml`<div><TestWidget/></div>`;
-        static components = { TestWidget };
+      static template = xml`<div><TestWidget/></div>`;
+      static components = { TestWidget };
     }
 
     const w = new App(env, {});
     await w.mount(fixture);
-    expect(fixture.innerHTML).toBe('<div><span>heyhey</span></div>')
+    expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });
-
 });

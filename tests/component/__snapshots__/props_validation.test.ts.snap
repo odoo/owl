@@ -12,7 +12,6 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
-    let def2;
     let templateId3 = \`__4__\`;
     let w3 = templateId3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId3]] : false;
     let props3 = {message:1};
@@ -20,25 +19,25 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         w3.destroy();
         w3 = false;
     }
-    if (!w3) {
+    if (w3) {
+        utils.validateProps(w3.constructor, props3)
+        w3.__updateProps(props3, extra.fiber, undefined, undefined, sibling);
+        let pvnode = w3.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
         let componentKey3 = \`Child\`;
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap[templateId3] = w3.__owl__.id;
-        def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
+        let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
         let pvnode = h('dummy', {key: templateId3, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});
         const fiber = w3.__owl__.currentFiber;
         def2.then(function () {if (w3.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
-    } else {
-        utils.validateProps(w3.constructor, props3)
-        def2 = def2 || w3.__updateProps(props3, extra.fiber, undefined, undefined, sibling);
-        let pvnode = w3.__owl__.pvnode;
-        c1.push(pvnode);
     }
-    sibling = w3.__owl__.currentFiber;
+    sibling = w3.__owl__.currentFiber || sibling;
     return vn1;
 }"
 `;

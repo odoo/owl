@@ -240,7 +240,6 @@ QWeb.addDirective({
       // want to evaluate it only once)
       ctx.addLine(`let key${keyID} = 'key' + ${key};`);
     }
-    ctx.addLine(`let def${defID};`);
 
     let locationExpr = `\`__${ctx.generateID()}__`;
     for (let i = 0; i < ctx.loopNumber - 1; i++) {
@@ -376,7 +375,69 @@ QWeb.addDirective({
     ctx.addLine(`w${componentID} = false;`);
     ctx.closeIf();
 
-    ctx.addIf(`!w${componentID}`);
+    let registerCode = "";
+    if (shouldProxy) {
+      registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
+    }
+
+    // SLOTS
+    const varDefs: string[] = [];
+    const hasSlots = node.childNodes.length;
+    if (hasSlots) {
+      ctx.rootContext.shouldTrackScope = true;
+      for (let v of Object.values(ctx.variables)) {
+        if (v["id"]) {
+          varDefs.push(v["id"]);
+        }
+      }
+    }
+
+    let scopeVars;
+    if (hasSlots) {
+      let scope = ctx.scopeVars.length ? `Object.assign({}, scope)` : `{}`;
+      let vars = varDefs.length ? `{${varDefs.join(",")}}` : "undefined";
+      scopeVars = `${scope}, ${vars}`;
+    } else {
+      scopeVars = "undefined, undefined";
+    }
+
+    ctx.addIf(`w${componentID}`);
+
+    // need to update component
+    let patchQueueCode = keepAlive ? `fiber${componentID}` : "extra.fiber";
+    if (keepAlive) {
+      // if we have t-keepalive="1", the component could be unmounted, but then
+      // we __updateProps is called.  This is ok, but we do not want to call
+      // the willPatch/patched hooks of the component in this case, so we
+      // disable the patch queue
+      patchQueueCode = `w${componentID}.__owl__.isMounted ? extra.fiber : fiber${componentID}`;
+    }
+    if (QWeb.dev) {
+      ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
+    }
+    let styleCode = "";
+    if (tattStyle) {
+      styleCode = `.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`;
+    }
+    ctx.addLine(
+      `w${componentID}.__updateProps(props${componentID}, ${patchQueueCode}${scopeVars &&
+        ", " + scopeVars}, sibling)${styleCode};`
+    );
+    ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
+    let keepAliveCode = "";
+    if (keepAlive) {
+      keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}.__remount();};`;
+      ctx.addLine(keepAliveCode);
+    }
+    if (registerCode) {
+      ctx.addLine(registerCode);
+    }
+    if (ctx.parentNode) {
+      ctx.addLine(`c${ctx.parentNode}.push(pvnode);`);
+    }
+
+    ctx.addElse();
+
     // new component
     let dynamicFallback = "";
     if (!value.match(INTERP_REGEXP)) {
@@ -395,17 +456,7 @@ QWeb.addDirective({
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
     ctx.addLine(`parent.__owl__.cmap[${templateId}] = w${componentID}.__owl__.id;`);
 
-    // SLOTS
-    const varDefs: string[] = [];
-    const hasSlots = node.childNodes.length;
     if (hasSlots) {
-      ctx.rootContext.shouldTrackScope = true;
-      for (let v of Object.values(ctx.variables)) {
-        if (v["id"]) {
-          varDefs.push(v["id"]);
-        }
-      }
-
       const clone = <Element>node.cloneNode(true);
       const slotNodes = clone.querySelectorAll("[t-set]");
       const slotId = QWeb.nextSlotId++;
@@ -430,20 +481,8 @@ QWeb.addDirective({
       }
     }
 
-    let scopeVars;
-    if (hasSlots) {
-      let scope = ctx.scopeVars.length ? `Object.assign({}, scope)` : `{}`;
-      let vars = varDefs.length ? `{${varDefs.join(",")}}` : "undefined";
-      scopeVars = `${scope}, ${vars}`;
-    } else {
-      scopeVars = "undefined, undefined";
-    }
-    ctx.addLine(`def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
+    ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
-    let registerCode = "";
-    if (shouldProxy) {
-      registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
-    }
     ctx.addLine(
       `let pvnode = h('dummy', {key: ${templateId}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
     );
@@ -459,47 +498,13 @@ QWeb.addDirective({
     }
     ctx.addLine(`w${componentID}.__owl__.pvnode = pvnode;`);
 
-    ctx.addElse();
-    // need to update component
-    let patchQueueCode = keepAlive ? `fiber${componentID}` : "extra.fiber";
-    if (keepAlive) {
-      // if we have t-keepalive="1", the component could be unmounted, but then
-      // we __updateProps is called.  This is ok, but we do not want to call
-      // the willPatch/patched hooks of the component in this case, so we
-      // disable the patch queue
-      patchQueueCode = `w${componentID}.__owl__.isMounted ? extra.fiber : fiber${componentID}`;
-    }
-    if (QWeb.dev) {
-      ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
-    }
-    ctx.addLine(
-      `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, ${patchQueueCode}${scopeVars &&
-        ", " + scopeVars}, sibling);`
-    );
-    ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
-    let keepAliveCode = "";
-    if (keepAlive) {
-      keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}.__remount();};`;
-      ctx.addLine(keepAliveCode);
-    }
-    if (registerCode) {
-      ctx.addLine(registerCode);
-    }
-    if (ctx.parentNode) {
-      ctx.addLine(`c${ctx.parentNode}.push(pvnode);`);
-    }
-    if (tattStyle) {
-      ctx.addLine(
-        `def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`
-      );
-    }
     ctx.closeIf();
 
     if (classObj) {
       ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
     }
 
-    ctx.addLine(`sibling = w${componentID}.__owl__.currentFiber;`);
+    ctx.addLine(`sibling = w${componentID}.__owl__.currentFiber || sibling;`);
 
     return true;
   }

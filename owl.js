@@ -407,7 +407,7 @@
             this.shouldDefineResult = true;
             this.shouldProtectContext = false;
             this.shouldTrackScope = false;
-            this.inLoop = false;
+            this.loopNumber = 0;
             this.inPreTag = false;
             this.allowMultipleRoots = false;
             this.hasParentWidget = false;
@@ -1288,6 +1288,7 @@
     }
 
     var _utils = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         whenReady: whenReady,
         loadJS: loadJS,
         loadFile: loadFile,
@@ -1628,6 +1629,7 @@
             }
             const attributes = node.attributes;
             const validDirectives = [];
+            const finalizers = [];
             // maybe this is not optimal: we iterate on all attributes here, and again
             // just after for each directive.
             for (let i = 0; i < attributes.length; i++) {
@@ -1670,6 +1672,9 @@
                 }
             }
             for (let { directive, value, fullName } of validDirectives) {
+                if (directive.finalize) {
+                    finalizers.push({ directive, value, fullName });
+                }
                 if (directive.atNodeEncounter) {
                     const isDone = directive.atNodeEncounter({
                         node,
@@ -1679,6 +1684,9 @@
                         value
                     });
                     if (isDone) {
+                        for (let { directive, value, fullName } of finalizers) {
+                            directive.finalize({ node, qweb: this, ctx, fullName, value });
+                        }
                         return;
                     }
                 }
@@ -1731,10 +1739,8 @@
                 ctx.rootContext.shouldDefineUtils = true;
                 ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
             }
-            for (let { directive, value, fullName } of validDirectives) {
-                if (directive.finalize) {
-                    directive.finalize({ node, qweb: this, ctx, fullName, value });
-                }
+            for (let { directive, value, fullName } of finalizers) {
+                directive.finalize({ node, qweb: this, ctx, fullName, value });
             }
         }
         _compileGenericNode(node, ctx, withHandlers = true) {
@@ -1797,7 +1803,7 @@
                 if (name.startsWith("t-att-")) {
                     let attName = name.slice(6);
                     const v = ctx.getValue(value);
-                    let formattedValue = v.id || ctx.formatExpression(v);
+                    let formattedValue = typeof v === 'string' ? ctx.formatExpression(v) : v.id;
                     if (attName === "class") {
                         ctx.rootContext.shouldDefineUtils = true;
                         formattedValue = `utils.toObj(${formattedValue})`;
@@ -2074,7 +2080,7 @@
         priority: 20,
         atNodeEncounter({ node, ctx }) {
             let cond = ctx.getValue(node.getAttribute("t-if"));
-            ctx.addIf(`${ctx.formatExpression(cond)}`);
+            ctx.addIf(`${ctx.formatExpression(typeof cond === 'string' ? cond : cond.expr)}`);
             return false;
         },
         finalize({ ctx }) {
@@ -2086,7 +2092,7 @@
         priority: 30,
         atNodeEncounter({ node, ctx }) {
             let cond = ctx.getValue(node.getAttribute("t-elif"));
-            ctx.addLine(`else if (${ctx.formatExpression(cond)}) {`);
+            ctx.addLine(`else if (${ctx.formatExpression(typeof cond === 'string' ? cond : cond.expr)}) {`);
             ctx.indent();
             return false;
         },
@@ -2188,9 +2194,6 @@
                 ctx.dedent();
                 ctx.addLine("}");
             }
-            if (node.hasAttribute("t-if") || node.hasAttribute("t-else") || node.hasAttribute("t-elif")) {
-                ctx.closeIf();
-            }
             return true;
         }
     });
@@ -2203,7 +2206,7 @@
         priority: 10,
         atNodeEncounter({ node, qweb, ctx }) {
             ctx.rootContext.shouldProtectContext = true;
-            ctx = ctx.subContext("inLoop", true);
+            ctx = ctx.subContext("loopNumber", ctx.loopNumber + 1);
             const elems = node.getAttribute("t-foreach");
             const name = node.getAttribute("t-as");
             let arrayID = ctx.generateID();
@@ -2217,13 +2220,14 @@
             ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
             ctx.closeIf();
             ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
-            ctx.addLine(`for (let i = 0; i < _length${keysID}; i++) {`);
+            const loopVar = `i${ctx.loopNumber}`;
+            ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);
             ctx.indent();
-            ctx.addToScope(name + "_first", "i === 0");
-            ctx.addToScope(name + "_last", `i === _length${keysID} - 1`);
-            ctx.addToScope(name + "_index", "i");
-            ctx.addToScope(name, `_${keysID}[i]`);
-            ctx.addToScope(name + "_value", `_${valuesID}[i]`);
+            ctx.addToScope(name + "_first", `${loopVar} === 0`);
+            ctx.addToScope(name + "_last", `${loopVar} === _length${keysID} - 1`);
+            ctx.addToScope(name + "_index", loopVar);
+            ctx.addToScope(name, `_${keysID}[${loopVar}]`);
+            ctx.addToScope(name + "_value", `_${valuesID}[${loopVar}]`);
             const nodeCopy = node.cloneNode(true);
             let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
             if (!shouldWarn && node.tagName === "t") {
@@ -2749,21 +2753,19 @@
                 ctx.addLine(`let key${keyID} = 'key' + ${key};`);
             }
             ctx.addLine(`let def${defID};`);
-            let templateID = key
-                ? `key${keyID}`
-                : ctx.inLoop
-                    ? ctx.currentKey
-                        ? `String(${ctx.currentKey} + '_k_' + i + '_c_' + ${componentID} )`
-                        : `String(-${componentID} - i)`
-                    : String(componentID);
-            if (ctx.allowMultipleRoots) {
-                templateID = `"_slot_${templateID}"`;
+            let locationExpr = `\`__${ctx.generateID()}__`;
+            for (let i = 0; i < ctx.loopNumber - 1; i++) {
+                locationExpr += `\${i${i + 1}}__`;
             }
-            if (key || ctx.inLoop) {
-                let id = ctx.generateID();
-                ctx.addLine(`let templateId${id} = ${templateID};`);
-                templateID = `templateId${id}`;
+            if (key || ctx.currentKey) {
+                const k = key ? `key${keyID}` : ctx.currentKey;
+                ctx.addLine(`let templateId${componentID} = ${locationExpr}\` + ${k};`);
             }
+            else {
+                locationExpr += ctx.loopNumber ? `\${i${ctx.loopNumber}}__\`` : "`";
+                ctx.addLine(`let templateId${componentID} = ${locationExpr};`);
+            }
+            const templateId = `templateId${componentID}`;
             let ref = node.getAttribute("t-ref");
             let refExpr = "";
             let refKey = "";
@@ -2825,7 +2827,7 @@
                     .map(function ([eventName, mods, handlerName, extraArgs]) {
                     let params = "owner";
                     if (extraArgs) {
-                        if (ctx.inLoop) {
+                        if (ctx.loopNumber) {
                             let argId = ctx.generateID();
                             // we need to evaluate the arguments now, because the handler will
                             // be set asynchronously later when the widget is ready, and the
@@ -2857,7 +2859,7 @@
                 const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
                 createHook = `vnode.data.hook = {create(_, vn){${styleCode}${eventsCode}}};`;
             }
-            ctx.addLine(`let w${componentID} = ${templateID} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateID}]] : false;`);
+            ctx.addLine(`let w${componentID} = ${templateId} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateId}]] : false;`);
             if (ctx.parentNode) {
                 ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
             }
@@ -2907,11 +2909,8 @@
             ctx.addLine(`let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}]${dynamicFallback};`);
             // maybe only do this in dev mode...
             ctx.addLine(`if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`);
-            if (QWeb.dev) {
-                ctx.addLine(`utils.validateProps(W${componentID}, props${componentID})`);
-            }
             ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
-            ctx.addLine(`parent.__owl__.cmap[${templateID}] = w${componentID}.__owl__.id;`);
+            ctx.addLine(`parent.__owl__.cmap[${templateId}] = w${componentID}.__owl__.id;`);
             // SLOTS
             const varDefs = [];
             const hasSlots = node.childNodes.length;
@@ -2960,7 +2959,7 @@
             if (shouldProxy) {
                 registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
             }
-            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateID}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
+            ctx.addLine(`def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateId}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`);
             ctx.addElse();
             // need to update component
             let patchQueueCode = async || keepAlive ? `fiber${componentID}` : "extra.fiber";
@@ -2990,9 +2989,6 @@
             }
             else {
                 ctx.addLine(`extra.promises.push(def${defID});`);
-            }
-            if (node.hasAttribute("t-if") || node.hasAttribute("t-else") || node.hasAttribute("t-elif")) {
-                ctx.closeIf();
             }
             return true;
         }
@@ -3799,6 +3795,7 @@
     }
 
     var _hooks = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         useState: useState,
         onMounted: onMounted,
         onWillUnmount: onWillUnmount,
@@ -4007,6 +4004,7 @@
     }
 
     var _tags = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         xml: xml
     });
 
@@ -4319,8 +4317,8 @@
     exports.utils = utils;
 
     exports.__info__.version = '0.23.0';
-    exports.__info__.date = '2019-10-18T14:02:51.841Z';
-    exports.__info__.hash = '1bb4577';
+    exports.__info__.date = '2019-10-24T07:34:00.585Z';
+    exports.__info__.hash = 'a3317ab';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

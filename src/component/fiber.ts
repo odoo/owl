@@ -1,16 +1,45 @@
 import { VNode } from "../vdom/index";
 import { Component } from "./component";
+
 /**
+ * Owl Fiber Class
+ *
  * Fibers are small abstractions designed to contain all the internal state
- * associated to a "rendering work unit", relative to a specific component.
+ * associated with a "rendering work unit", relative to a specific component.
  *
  * A rendering will cause the creation of a fiber for each impacted components.
+ *
+ * Fibers capture all that necessary information, which is critical to owl
+ * asynchronous rendering pipeline. Fibers can be cancelled, can be in different
+ * states and in general determine the state of the rendering.
  */
+
 export class Fiber {
+  // The force attribute determines if a rendering should bypass the `shouldUpdate`
+  // method potentially implemented by a component. It is usually set to false.
   force: boolean;
+
+  // isCancelled means that the rendering corresponding to this fiber and its
+  // children is cancelled. No extra work should be done.
   isCancelled: boolean = false;
+
+  // the fibers corresponding to component updates (updateProps) need to call
+  // the willPatch and patched hooks from the corresponding component. However,
+  // fibers corresponding to a new component do not need to do that. So, the
+  // shouldPatch hook is the boolean that we check whenever we need to apply
+  // a patch.
   shouldPatch: boolean = true;
+
+  // isRendered is the last state of a fiber. If true, this means that it has
+  // been rendered and is inert (so, it should not be taken into account when
+  // counting the number of active fibers).
   isRendered: boolean = false;
+
+  // the counter number is a critical information. It is only necessary for a
+  // root fiber.  For that fiber, this number counts the number of active sub
+  // fibers.  When that number reaches 0, the fiber can be applied by the
+  // scheduler.
+  counter: number = 0;
 
   scope: any;
   vars: any;
@@ -24,8 +53,6 @@ export class Fiber {
   sibling: Fiber | null = null;
   parent: Fiber | null = null;
 
-  counter: number = 0;
-
   constructor(parent: Fiber | null, component: Component<any, any>, props, scope, vars, force) {
     this.force = force;
     this.scope = scope;
@@ -38,7 +65,7 @@ export class Fiber {
 
     let oldFiber = component.__owl__.currentFiber;
     if (oldFiber && !oldFiber.isCancelled) {
-      this.__remapFiber(oldFiber);
+      this._remapFiber(oldFiber);
     }
 
     this.root.counter++;
@@ -46,7 +73,13 @@ export class Fiber {
     component.__owl__.currentFiber = this;
   }
 
-  __remapFiber(oldFiber: Fiber) {
+  /**
+   * In some cases, a rendering initiated at some component can detect that it
+   * should be part of a larger rendering initiated somewhere up the component
+   * tree.  In that case, it needs to cancel the previous rendering and
+   * remap itself as a part of the current parent rendering.
+   */
+  _remapFiber(oldFiber: Fiber) {
     oldFiber.cancel();
     if (oldFiber === oldFiber.root) {
       oldFiber.root.counter++;
@@ -75,7 +108,7 @@ export class Fiber {
    * This function has been taken from
    * https://medium.com/react-in-depth/the-how-and-why-on-reacts-usage-of-linked-list-in-fiber-67f1014d0eb7
    */
-  __walk(doWork: (f: Fiber) => Fiber | null) {
+  _walk(doWork: (f: Fiber) => Fiber | null) {
     let root = this;
     let current: Fiber = this;
     while (true) {
@@ -103,7 +136,7 @@ export class Fiber {
    *   2) Call '__patch' on the component of each patch
    *   3) Call 'patched' on the component of each patch, in reverse order
    */
-  __applyPatchQueue() {
+  patchComponents() {
     const patchQueue: Fiber[] = [];
     const doWork: (Fiber) => Fiber | null = function(f) {
       if (f.shouldPatch) {
@@ -111,7 +144,7 @@ export class Fiber {
       }
       return f.child;
     };
-    this.__walk(doWork);
+    this._walk(doWork);
     let component: Component<any, any> = this.component;
     this.shouldPatch = false;
     const patchLen = patchQueue.length;
@@ -149,8 +182,11 @@ export class Fiber {
     this.shouldPatch = true;
   }
 
+  /**
+   * Cancel a fiber and all its children.
+   */
   cancel() {
-    this.__walk(f => {
+    this._walk(f => {
       if (!f.isRendered) {
         f.root.counter--;
       }

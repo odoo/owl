@@ -193,6 +193,23 @@ describe("basic widget properties", () => {
     expect(steps).toEqual(["__render", "mounted"]);
   });
 
+  test("render method wait until rendering is done", async () => {
+    class TestW extends Component<any, any> {
+      static template = xml`<div><t t-esc="state.drinks"/></div>`;
+      state = { drinks: 1 };
+    }
+    const widget = new TestW(env);
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    widget.state.drinks = 2;
+
+    const renderPromise = widget.render();
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+    await renderPromise;
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+  });
+
   test("keeps a reference to env", async () => {
     const widget = new Widget(env);
     expect(widget.env).toBe(env);
@@ -1553,6 +1570,44 @@ describe("composition", () => {
     expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
   });
+
+  test("sub components, loops, and shouldUpdate", async () => {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+      shouldUpdate(nextProps) {
+        if (nextProps.val === 12) {
+          return false;
+        }
+        return true;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+          <div>
+            <t t-foreach="state.records" t-as="record">
+              <ChildWidget t-key="record.id" val="record.val"/>
+            </t>
+          </div>`;
+      state = useState({
+        records: [{ id: 1, val: 1 }, { id: 2, val: 2 }, { id: 3, val: 3 }]
+      });
+      static components = { ChildWidget };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(normalize(fixture.innerHTML)).toBe(
+      "<div><span>1</span><span>2</span><span>3</span></div>"
+    );
+
+    parent.state.records[0].val = 11;
+    parent.state.records[1].val = 12;
+    parent.state.records[2].val = 13;
+    await nextTick();
+    expect(normalize(fixture.innerHTML)).toBe(
+      "<div><span>11</span><span>2</span><span>13</span></div>"
+    );
+  });
 });
 
 describe("props evaluation ", () => {
@@ -2707,7 +2762,7 @@ describe("async rendering", () => {
         return defs[index++];
       }
       patched() {
-        steps.push('patched');
+        steps.push("patched");
       }
     }
 
@@ -2730,7 +2785,45 @@ describe("async rendering", () => {
     defs[1].resolve();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-    expect(steps).toEqual(['patched']);
+    expect(steps).toEqual(["patched"]);
+  });
+
+  test("update a sub-component twice in the same frame, 2", async () => {
+    const steps: string[] = [];
+    class ChildA extends Component<any, any> {
+      static template = xml`<span><t t-esc="val()"/></span>`;
+      patched() {
+        steps.push("patched");
+      }
+      val() {
+        steps.push("render");
+        return this.props.val;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><ChildA val="state.valA"/></div>`;
+      static components = { ChildA };
+      state = useState({ valA: 1 });
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    parent.state.valA = 2;
+    await nextMicroTick();
+    expect(steps).toEqual(["render"]);
+    await nextMicroTick();
+    expect(steps).toEqual(["render", "render"]);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    parent.state.valA = 3;
+    await nextMicroTick();
+    expect(steps).toEqual(["render", "render"]);
+    await nextMicroTick();
+    expect(steps).toEqual(["render", "render", "render"]);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+    expect(steps).toEqual(["render", "render", "render", "patched"]);
   });
 
   test("components in a node in a t-foreach ", async () => {

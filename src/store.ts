@@ -104,11 +104,11 @@ export function useStore(selector, options: SelectorOptions = {}): any {
       return true;
     }
     return false;
-  })
+  });
 
   useContextWithCB(store, component, function(): Promise<void> | void {
     let shouldRender = false;
-    updateFunctions.forEach(function (updateFn) {
+    updateFunctions.forEach(function(updateFn) {
       shouldRender = updateFn() || shouldRender;
     });
     if (shouldRender) {

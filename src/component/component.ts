@@ -1,10 +1,10 @@
 import { Observer } from "../core/observer";
 import { CompiledTemplate, QWeb } from "../qweb/index";
 import { h, patch, VNode } from "../vdom/index";
-import { Fiber } from "./fiber";
-import { scheduler } from "./scheduler";
 import "./directive";
+import { Fiber } from "./fiber";
 import "./props_validation";
+import { Scheduler } from "./scheduler";
 
 /**
  * Owl Component System
@@ -20,6 +20,8 @@ import "./props_validation";
 //------------------------------------------------------------------------------
 // Types/helpers
 //------------------------------------------------------------------------------
+const raf = window.requestAnimationFrame.bind(window);
+export const scheduler = new Scheduler(raf);
 
 /**
  * An Env (environment) is an object that will be (mostly) shared between all
@@ -62,7 +64,7 @@ interface Internal<T extends Env, Props> {
 
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
-  render: CompiledTemplate;
+  renderFn: CompiledTemplate;
   mountedCB: Function | null;
   willUnmountCB: Function | null;
   willPatchCB: Function | null;
@@ -179,7 +181,7 @@ export class Component<T extends Env, Props extends {}> {
       willStartCB: null,
       willUpdatePropsCB: null,
       observer: null,
-      render: qweb.render.bind(qweb, this.__getTemplate(qweb)),
+      renderFn: qweb.render.bind(qweb, this.__getTemplate(qweb)),
       classObj: null,
       refs: null
     };
@@ -280,41 +282,31 @@ export class Component<T extends Env, Props extends {}> {
     if (__owl__.isMounted) {
       return Promise.resolve();
     }
-    const fiber = new Fiber(null, this, this.props, undefined, undefined, false);
-    if (!__owl__.vnode) {
-      this.__prepareAndRender(fiber);
-      return new Promise(resolve => {
-        scheduler.addFiber(fiber, () => {
-          if (!__owl__.isDestroyed) {
-            this.__patch(fiber.vnode);
-            target.appendChild(this.el!);
-            if (document.body.contains(target)) {
-              this.__callMounted();
-            }
-          }
-          resolve();
-        });
-      });
-    } else if (renderBeforeRemount) {
-      this.__render(fiber);
-      return new Promise(resolve => {
-        scheduler.addFiber(fiber, () => {
-          if (!__owl__.isDestroyed) {
-            this.__patch(fiber.vnode);
-            target.appendChild(this.el!);
-            if (document.body.contains(target)) {
-              this.__callMounted();
-            }
-          }
-          resolve();
-        });
-      });
-    } else {
+    if (__owl__.vnode && !renderBeforeRemount) {
       target.appendChild(this.el!);
       if (document.body.contains(target)) {
         this.__callMounted();
       }
+      return;
     }
+    const fiber = new Fiber(null, this, this.props, undefined, undefined, false);
+    if (!__owl__.vnode) {
+      this.__prepareAndRender(fiber);
+    } else {
+      this.__render(fiber);
+    }
+    return new Promise(resolve => {
+      scheduler.addFiber(fiber, () => {
+        if (!__owl__.isDestroyed) {
+          this.__patch(fiber.vnode);
+          target.appendChild(this.el!);
+          if (document.body.contains(target)) {
+            this.__callMounted();
+          }
+        }
+        resolve();
+      });
+    });
   }
 
   /**
@@ -350,7 +342,7 @@ export class Component<T extends Env, Props extends {}> {
     return new Promise(resolve => {
       scheduler.addFiber(fiber.root, () => {
         if (__owl__.isMounted && fiber === fiber.root) {
-          fiber.__applyPatchQueue();
+          fiber.patchComponents();
         }
         resolve();
       });
@@ -588,7 +580,7 @@ export class Component<T extends Env, Props extends {}> {
     }
     let vnode;
     try {
-      vnode = __owl__.render!(this, {
+      vnode = __owl__.renderFn!(this, {
         handlers: __owl__.boundHandlers,
         fiber: fiber
       });
@@ -674,7 +666,7 @@ Fiber.prototype.handleError = function(error) {
  * If there are no such component, we destroy everything. This is better than
  * being in a corrupted state.
  */
-export function errorHandler(error: Error, fiber: Fiber) {
+function errorHandler(error: Error, fiber: Fiber) {
   let canCatch = false;
   let component = fiber.component;
   let qweb = component.env.qweb;

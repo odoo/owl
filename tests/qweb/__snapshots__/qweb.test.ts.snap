@@ -1502,6 +1502,30 @@ exports[`t-if t-esc with t-if 1`] = `
 }"
 `;
 
+exports[`t-if t-set, then t-elif, part 3 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = false;
+    var _3 = _2;
+    if (_3) {
+        let c4 = [], p4 = {key:4};
+        var vn4 = h('span', p4, c4);
+        c1.push(vn4);
+        c4.push({text: \`AAA\`});
+    }
+        else if (!_3) {
+            let c5 = [], p5 = {key:5};
+            var vn5 = h('span', p5, c5);
+            c1.push(vn5);
+            c5.push({text: \`BBB\`});
+        }
+    return vn1;
+}"
+`;
+
 exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1509,10 +1533,28 @@ exports[`t-if t-set, then t-if 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     var _2 = 'test';
-    if ('test') {
+    if (_2) {
         if (_2 || _2 === 0) {
             c1.push({text: _2});
         }
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-if t-set, then t-if, part 2 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = true;
+    var _3 = _2;
+    if (_3) {
+        let c4 = [], p4 = {key:4};
+        var vn4 = h('span', p4, c4);
+        c1.push(vn4);
+        c4.push({text: \`COUCOU\`});
     }
     return vn1;
 }"

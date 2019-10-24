@@ -133,7 +133,7 @@ QWeb.addDirective({
   priority: 20,
   atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-if")!);
-    ctx.addIf(`${ctx.formatExpression(typeof cond === 'string' ? cond : cond.expr)}`);
+    ctx.addIf(typeof cond === 'string' ? ctx.formatExpression(cond) : cond.id);
     return false;
   },
   finalize({ ctx }) {
@@ -146,7 +146,7 @@ QWeb.addDirective({
   priority: 30,
   atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-elif")!);
-    ctx.addLine(`else if (${ctx.formatExpression(typeof cond === 'string' ? cond : cond.expr)}) {`);
+    ctx.addLine(`else if (${typeof cond === 'string' ? ctx.formatExpression(cond) : cond.id}) {`);
     ctx.indent();
     return false;
   },

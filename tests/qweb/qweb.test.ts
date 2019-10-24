@@ -349,6 +349,32 @@ describe("t-if", () => {
     const expected = `<div>test</div>`;
     expect(result).toBe(expected);
   });
+
+  test("t-set, then t-if, part 2", () => {
+    qweb.addTemplate("test", `
+        <div>
+            <t t-set="y" t-value="true"/>
+            <t t-set="x" t-value="y"/>
+            <span t-if="x">COUCOU</span>
+        </div>`);
+    const result = renderToString(qweb, "test");
+    const expected = `<div><span>COUCOU</span></div>`;
+    expect(result).toBe(expected);
+  });
+
+  test("t-set, then t-elif, part 3", () => {
+    qweb.addTemplate("test", `
+        <div>
+            <t t-set="y" t-value="false"/>
+            <t t-set="x" t-value="y"/>
+            <span t-if="x">AAA</span>
+            <span t-elif="!x">BBB</span>
+        </div>`);
+    const result = renderToString(qweb, "test");
+    const expected = `<div><span>BBB</span></div>`;
+    expect(result).toBe(expected);
+  });
+
 });
 
 describe("attributes", () => {

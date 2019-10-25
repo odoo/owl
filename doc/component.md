@@ -1164,8 +1164,8 @@ Here are a few tips on how to work with asynchronous components:
 3. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
    second, and only once (see [`owl.utils.loadJS`](utils.md#loadjs))
-4. For all the other cases, the `t-asyncroot` directive (to use alongside
-   `t-component`) is there to help you. When this directive is met, a new rendering
+4. For all the other cases, the [`AsyncRoot`](misc.md#asyncroot) component is there to help you. When
+   this component is met, a new rendering
    sub tree is created, such that the rendering of that component (and its
    children) is not tied to the rendering of the rest of the interface. It can
    be used on an asynchronous component, to prevent it from delaying the
@@ -1177,7 +1177,9 @@ Here are a few tips on how to work with asynchronous components:
    ```xml
    <div t-name="ParentComponent">
      <SyncChild />
-     <AsyncChild t-asyncroot="1"/>
+     <AsyncRoot>
+        <AsyncChild/>
+     </AsyncRoot>
    </div>
    ```
 

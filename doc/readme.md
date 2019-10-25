@@ -29,6 +29,8 @@ owl
         useStore
         useDispatch
         useGetters
+    misc
+        AsyncRoot
     router
         Link
         RouteComponent
@@ -53,6 +55,7 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 - [Context](context.md)
 - [Event Bus](event_bus.md)
 - [Hooks](hooks.md)
+- [Misc](misc.md)
 - [Observer](observer.md)
 - [QWeb](qweb.md)
 - [Router](router.md)

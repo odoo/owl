@@ -186,7 +186,7 @@ QWeb.utils.defineProxy = function defineProxy(target, source) {
 
 QWeb.addDirective({
   name: "component",
-  extraNames: ["props", "keepalive", "asyncroot"],
+  extraNames: ["props", "keepalive"],
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.addLine("//COMPONENT");
@@ -196,7 +196,6 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineUtils = true;
     let keepAlive = node.getAttribute("t-keepalive") ? true : false;
     let hasDynamicProps = node.getAttribute("t-props") ? true : false;
-    let async = node.getAttribute("t-asyncroot") ? true : false;
 
     // t-on- events and t-transition
     const events: [string, string[], string, string][] = [];
@@ -355,26 +354,20 @@ QWeb.addDirective({
       ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
     }
     let shouldProxy = false;
-    if (async || keepAlive) {
+    if (keepAlive) {
       ctx.addLine(
         `const fiber${componentID} = Object.assign(Object.create(extra.fiber), {patchQueue: []});`
       );
     }
-    if (async) {
-      ctx.addLine(
-        `c${ctx.parentNode}.push(w${componentID} && w${componentID}.__owl__.pvnode || null);`
-      );
+    if (ctx.parentNode) {
+      ctx.addLine(`c${ctx.parentNode}.push(null);`);
     } else {
-      if (ctx.parentNode) {
-        ctx.addLine(`c${ctx.parentNode}.push(null);`);
-      } else {
-        let id = ctx.generateID();
-        ctx.rootContext.rootNode = id;
-        shouldProxy = true;
-        ctx.rootContext.shouldDefineResult = true;
-        ctx.addLine(`let vn${id} = {};`);
-        ctx.addLine(`result = vn${id};`);
-      }
+      let id = ctx.generateID();
+      ctx.rootContext.rootNode = id;
+      shouldProxy = true;
+      ctx.rootContext.shouldDefineResult = true;
+      ctx.addLine(`let vn${id} = {};`);
+      ctx.addLine(`result = vn${id};`);
     }
     if (hasDynamicProps) {
       const dynamicProp = ctx.formatExpression(node.getAttribute("t-props")!);
@@ -469,7 +462,7 @@ QWeb.addDirective({
 
     ctx.addElse();
     // need to update component
-    let patchQueueCode = async || keepAlive ? `fiber${componentID}` : "extra.fiber";
+    let patchQueueCode = keepAlive ? `fiber${componentID}` : "extra.fiber";
     if (keepAlive) {
       // if we have t-keepalive="1", the component could be unmounted, but then
       // we __updateProps is called.  This is ok, but we do not want to call
@@ -499,13 +492,7 @@ QWeb.addDirective({
       ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
     }
 
-    if (async) {
-      ctx.addLine(
-        `def${defID}.then(w${componentID}.__applyPatchQueue.bind(w${componentID}, fiber${componentID}));`
-      );
-    } else {
-      ctx.addLine(`extra.promises.push(def${defID});`);
-    }
+    ctx.addLine(`extra.promises.push(def${defID});`);
 
     return true;
   }

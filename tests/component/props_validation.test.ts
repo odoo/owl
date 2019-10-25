@@ -1,5 +1,6 @@
 import { Component, Env } from "../../src/component/component";
-import { makeTestFixture, makeTestEnv } from "../helpers";
+import { makeTestFixture, makeTestEnv, nextTick } from "../helpers";
+import { useState } from "../../src/hooks";
 import { QWeb } from "../../src/qweb";
 import { xml } from "../../src/tags";
 
@@ -336,21 +337,22 @@ describe("default props", () => {
 
   test("default values are also set whenever component is updated", async () => {
     class TestWidget extends Widget {
+      static template = xml`<div><t t-esc="props.p"/></div>`;
       static defaultProps = { p: 4 };
     }
-    env.qweb.addTemplates(`
-        <templates>
-            <div t-name="TestWidget"><t t-esc="props.p"/></div>
-        </templates>`);
+    class Parent extends Widget {
+      static template = xml`<div><TestWidget p="state.p"/></div>`;
+      static components = { TestWidget };
+      state: any = useState({ p: 1 });
+    }
 
-    const w = new TestWidget(env, { p: 1 });
+    const w = new Parent(env);
     await w.mount(fixture);
-    expect(fixture.innerHTML).toMatchSnapshot();
-    const fiber = w.__createFiber(false, undefined, undefined, undefined);
-    await w.__updateProps({}, fiber);
-    await w.render();
-    expect(w.props.p).toBe(4);
-    expect(fixture.innerHTML).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+
+    w.state.p = undefined;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
   test("can set default required boolean values", async () => {

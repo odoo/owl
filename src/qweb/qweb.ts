@@ -645,7 +645,7 @@ export class QWeb extends EventBus {
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
         const v = ctx.getValue(value);
-        let formattedValue = typeof v === 'string' ? ctx.formatExpression(v) : v.id;
+        let formattedValue = typeof v === "string" ? ctx.formatExpression(v) : v.id;
 
         if (attName === "class") {
           ctx.rootContext.shouldDefineUtils = true;

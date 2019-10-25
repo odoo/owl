@@ -207,9 +207,7 @@ QWeb.addDirective({
       `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, vars: extra.vars, parent: owner}));`
     );
     if (!ctx.parentNode) {
-      ctx.addLine(
-        `Promise.all(extra.promises).then(() => utils.defineProxy(result, ${parentNode}[0]))`
-      );
+      ctx.addLine(`utils.defineProxy(result, ${parentNode}[0]);`);
     }
     ctx.closeIf();
     return true;

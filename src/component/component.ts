@@ -1,6 +1,8 @@
 import { Observer } from "../core/observer";
 import { CompiledTemplate, QWeb } from "../qweb/index";
 import { h, patch, VNode } from "../vdom/index";
+import { Fiber } from "./fiber";
+import { scheduler } from "./scheduler";
 import "./directive";
 import "./props_validation";
 
@@ -11,7 +13,6 @@ import "./props_validation";
  * contains:
  *
  * - the Env interface (generic type for the environment)
- * - the Fiber interface (owl metadata attached to a rendering)
  * - the Internal interface (the owl specific metadata attached to a component)
  * - the Component class
  */
@@ -35,27 +36,6 @@ export interface Env {
 }
 
 /**
- * Fibers are small abstractions designed to contain all the internal state
- * associated to a "rendering work unit", relative to a specific component.
- *
- * A rendering will cause the creation of a fiber for each impacted components.
- */
-export interface Fiber<Props> {
-  force: boolean;
-  rootFiber: Fiber<any> | null;
-  isCancelled: boolean;
-  scope: any;
-  vars: any;
-  patchQueue: Fiber<any>[];
-  component: Component<any, any>;
-  vnode: VNode | null;
-  props: Props;
-  promise: Promise<VNode> | null;
-  //   handlers?: any;
-  //   mountedHandlers?: any;
-}
-
-/**
  * This is mostly an internal detail of implementation. The Meta interface is
  * useful to typecheck and describe the internal keys used by Owl to manage the
  * component tree.
@@ -65,6 +45,7 @@ interface Internal<T extends Env, Props> {
   // relationships
   readonly id: number;
   vnode: VNode | null;
+  pvnode: VNode | null;
   isMounted: boolean;
   isDestroyed: boolean;
 
@@ -77,7 +58,7 @@ interface Internal<T extends Env, Props> {
   // the component instance back whenever the template is rerendered.
   cmap: { [key: number]: number };
 
-  currentFiber: Fiber<Props> | null;
+  currentFiber: Fiber | null;
 
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
@@ -183,6 +164,7 @@ export class Component<T extends Env, Props extends {}> {
     this.__owl__ = {
       id: id,
       vnode: null,
+      pvnode: null,
       isMounted: false,
       isDestroyed: false,
       parent: p,
@@ -296,27 +278,42 @@ export class Component<T extends Env, Props extends {}> {
   async mount(target: HTMLElement, renderBeforeRemount: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
     if (__owl__.isMounted) {
-      return;
+      return Promise.resolve();
     }
-    const fiber = this.__createFiber(false, undefined, undefined, undefined);
+    const fiber = new Fiber(null, this, this.props, undefined, undefined, false);
     if (!__owl__.vnode) {
-      fiber.promise = this.__prepareAndRender(fiber);
-      const vnode = await fiber.promise;
-      if (__owl__.isDestroyed) {
-        // component was destroyed before we get here...
-        return;
-      }
-      this.__patch(vnode);
+      this.__prepareAndRender(fiber);
+      return new Promise(resolve => {
+        scheduler.addFiber(fiber, () => {
+          if (!__owl__.isDestroyed) {
+            this.__patch(fiber.vnode);
+            target.appendChild(this.el!);
+            if (document.body.contains(target)) {
+              this.__callMounted();
+            }
+          }
+          resolve();
+        });
+      });
     } else if (renderBeforeRemount) {
-      fiber.patchQueue.push(fiber);
-      fiber.promise = this.__render(fiber);
-      await fiber.promise;
-      this.__applyPatchQueue(fiber);
-    }
-    target.appendChild(this.el!);
-
-    if (document.body.contains(target)) {
-      this.__callMounted();
+      this.__render(fiber);
+      return new Promise(resolve => {
+        scheduler.addFiber(fiber, () => {
+          if (!__owl__.isDestroyed) {
+            this.__patch(fiber.vnode);
+            target.appendChild(this.el!);
+            if (document.body.contains(target)) {
+              this.__callMounted();
+            }
+          }
+          resolve();
+        });
+      });
+    } else {
+      target.appendChild(this.el!);
+      if (document.body.contains(target)) {
+        this.__callMounted();
+      }
     }
   }
 
@@ -342,19 +339,22 @@ export class Component<T extends Env, Props extends {}> {
    */
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
-    if (!__owl__.isMounted) {
+    if (
+      (!__owl__.isMounted && !__owl__.currentFiber) ||
+      (__owl__.currentFiber && !__owl__.currentFiber.isRendered)
+    ) {
       return;
     }
-    const fiber = this.__createFiber(force, undefined, undefined, undefined);
-    fiber.patchQueue.push(fiber);
-    fiber.promise = this.__render(fiber);
-    await fiber.promise;
-
-    if (__owl__.isMounted && fiber === __owl__.currentFiber) {
-      // we only update the vnode and the actual DOM if no other rendering
-      // occurred between now and when the render method was initially called.
-      this.__applyPatchQueue(fiber);
-    }
+    const fiber = new Fiber(null, this, this.props, undefined, undefined, force);
+    this.__render(fiber);
+    return new Promise(resolve => {
+      scheduler.addFiber(fiber.root, () => {
+        if (__owl__.isMounted && fiber === fiber.root) {
+          fiber.__applyPatchQueue();
+        }
+        resolve();
+      });
+    });
   }
 
   /**
@@ -408,27 +408,6 @@ export class Component<T extends Env, Props extends {}> {
   //--------------------------------------------------------------------------
 
   /**
-   * This method is a helper to create a fiber element.
-   */
-  __createFiber(force, scope, vars, parent?: Fiber<any>): Fiber<Props> {
-    const fiber: Fiber<Props> = {
-      force,
-      scope,
-      vars,
-      rootFiber: null,
-      isCancelled: false,
-      component: this,
-      vnode: null,
-      patchQueue: parent ? parent.patchQueue : [],
-      props: this.props,
-      promise: null
-    };
-    fiber.rootFiber = parent ? parent.rootFiber : fiber;
-    this.__owl__.currentFiber = fiber;
-    return fiber;
-  }
-
-  /**
    * Private helper to perform a full destroy, from the point of view of an Owl
    * component. It does not remove the el (this is done only once on the top
    * level destroyed component, for performance reasons).
@@ -478,7 +457,7 @@ export class Component<T extends Env, Props extends {}> {
         __owl__.mountedCB();
       }
     } catch (e) {
-      errorHandler(e, this);
+      console.error(e); // TODO : add a test
     }
   }
 
@@ -504,25 +483,35 @@ export class Component<T extends Env, Props extends {}> {
    */
   async __updateProps(
     nextProps: Props,
-    parentFiber: Fiber<any>,
-    scope?: any,
-    vars?: any
+    parentFiber: Fiber,
+    scope: any,
+    vars: any,
+    previousSibling?: Fiber | null
   ): Promise<void> {
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
+      const __owl__ = this.__owl__;
+      const fiber = new Fiber(parentFiber, this, this.props, scope, vars, parentFiber.force);
+      if (!parentFiber.child) {
+        parentFiber.child = fiber;
+      } else {
+        previousSibling!.sibling = fiber;
+      }
+
       const defaultProps = (<any>this.constructor).defaultProps;
       if (defaultProps) {
         nextProps = this.__applyDefaultProps(nextProps, defaultProps);
       }
       await Promise.all([
         this.willUpdateProps(nextProps),
-        this.__owl__.willUpdatePropsCB && this.__owl__.willUpdatePropsCB(nextProps)
+        __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps)
       ]);
+      if (fiber.isCancelled) {
+        return;
+      }
       this.props = nextProps;
-      const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
-      fiber.patchQueue.push(fiber);
 
-      await this.__render(fiber);
+      this.__render(fiber);
     }
   }
 
@@ -534,6 +523,7 @@ export class Component<T extends Env, Props extends {}> {
     const __owl__ = this.__owl__;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
     __owl__.vnode = patch(target, vnode);
+    __owl__.currentFiber = null;
   }
 
   /**
@@ -541,10 +531,15 @@ export class Component<T extends Env, Props extends {}> {
    * subcomponent is created. It gets its scope and vars, if any, from the
    * parent template.
    */
-  __prepare(parentFiber: Fiber<any>, scope: any, vars: any): Promise<VNode> {
-    const fiber = this.__createFiber(parentFiber.force, scope, vars, parentFiber);
-    fiber.promise = this.__prepareAndRender(fiber);
-    return fiber.promise;
+  __prepare(parentFiber: Fiber, scope: any, vars: any, previousSibling?: Fiber | null) {
+    const fiber = new Fiber(parentFiber, this, this.props, scope, vars, parentFiber.force);
+    fiber.shouldPatch = false;
+    if (!parentFiber.child) {
+      parentFiber.child = fiber;
+    } else {
+      previousSibling!.sibling = fiber;
+    }
+    return this.__prepareAndRender(fiber);
   }
 
   __getTemplate(qweb: QWeb): string {
@@ -570,68 +565,66 @@ export class Component<T extends Env, Props extends {}> {
     }
     return p._template;
   }
-  async __prepareAndRender(fiber: Fiber<Props>): Promise<VNode> {
+  async __prepareAndRender(fiber: Fiber) {
     try {
       await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
     } catch (e) {
-      errorHandler(e, this);
-      return Promise.resolve(h("div"));
+      errorHandler(e, fiber);
+      fiber.vnode = h("div"); // -> we render this div at the end
+      return Promise.resolve();
     }
-    const __owl__ = this.__owl__;
-    if (__owl__.isDestroyed) {
-      return Promise.resolve(h("div"));
+    if (this.__owl__.isDestroyed) {
+      return Promise.resolve();
     }
-    return this.__render(fiber);
+    if (!fiber.isCancelled) {
+      this.__render(fiber);
+    }
   }
 
-  __render(fiber: Fiber<Props>): Promise<VNode> {
+  __render(fiber: Fiber) {
     const __owl__ = this.__owl__;
-    const promises: Promise<void>[] = [];
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }
     let vnode;
     try {
       vnode = __owl__.render!(this, {
-        promises,
         handlers: __owl__.boundHandlers,
         fiber: fiber
       });
     } catch (e) {
       vnode = __owl__.vnode || h("div");
-      errorHandler(e, this);
+      errorHandler(e, fiber);
     }
     fiber.vnode = vnode;
     if (__owl__.observer) {
       __owl__.observer.allowMutations = true;
     }
 
-    // this part is critical for the patching process to be done correctly. The
-    // tricky part is that a child component can be rerendered on its own, which
-    // will update its own vnode representation without the knowledge of the
-    // parent component.  With this, we make sure that the parent component will be
-    // able to patch itself properly after
-    vnode.key = __owl__.id;
-
-    // we applly here the class information described on the component by the
+    // we apply here the class information described on the component by the
     // template (so, something like <MyComponent class="..."/>) to the actual
     // root vnode
     if (__owl__.classObj) {
       vnode.data.class = Object.assign(vnode.data.class || {}, __owl__.classObj);
     }
-
-    return Promise.all(promises).then(() => vnode);
+    fiber.root.counter--;
+    fiber.isRendered = true;
   }
 
   /**
    * Only called by qweb t-component directive
    */
-  __mount(vnode: VNode, elm: HTMLElement): VNode {
+  __mount(fiber: Fiber, elm: HTMLElement): VNode {
+    if (fiber !== this.__owl__.currentFiber) {
+      fiber = this.__owl__.currentFiber!; // TODO: check if we can remove fiber arg
+    }
+    const vnode = fiber.vnode!;
     const __owl__ = this.__owl__;
     if (__owl__.classObj) {
       (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
     }
     __owl__.vnode = patch(elm, vnode);
+    __owl__.currentFiber = null;
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this.__callMounted();
     }
@@ -664,47 +657,15 @@ export class Component<T extends Env, Props extends {}> {
     }
     return <Props>props;
   }
-
-  /**
-   * Apply the given patch queue from a fiber.
-   *   1) Call 'willPatch' on the component of each patch
-   *   2) Call '__patch' on the component of each patch
-   *   3) Call 'patched' on the component of each patch, in reverse order
-   */
-  __applyPatchQueue(fiber: Fiber<Props>) {
-    const patchQueue = fiber.patchQueue;
-    let component: Component<any, any> = this;
-    try {
-      const patchLen = patchQueue.length;
-      for (let i = 0; i < patchLen; i++) {
-        component = patchQueue[i].component;
-        if (component.__owl__.willPatchCB) {
-          component.__owl__.willPatchCB();
-        }
-        component.willPatch();
-      }
-      for (let i = 0; i < patchLen; i++) {
-        const fiber = patchQueue[i];
-        component = fiber.component;
-        component.__patch(fiber.vnode);
-      }
-      for (let i = patchLen - 1; i >= 0; i--) {
-        component = patchQueue[i].component;
-        component.patched();
-        if (component.__owl__.patchedCB) {
-          component.__owl__.patchedCB();
-        }
-      }
-    } catch (e) {
-      errorHandler(e, component);
-    }
-  }
 }
 
 //------------------------------------------------------------------------------
 // Error handling
 //------------------------------------------------------------------------------
 
+Fiber.prototype.handleError = function(error) {
+  errorHandler(error, this);
+};
 /**
  * This is the global error handler for errors occurring in Owl main lifecycle
  * methods.  Caught errors are triggered on the QWeb instance, and are
@@ -713,8 +674,9 @@ export class Component<T extends Env, Props extends {}> {
  * If there are no such component, we destroy everything. This is better than
  * being in a corrupted state.
  */
-function errorHandler(error: Error, component: Component<any, any>) {
+export function errorHandler(error: Error, fiber: Fiber) {
   let canCatch = false;
+  let component = fiber.component;
   let qweb = component.env.qweb;
   let root = component;
   while (component && !(canCatch = component.catchError !== Component.prototype.catchError)) {
@@ -722,7 +684,6 @@ function errorHandler(error: Error, component: Component<any, any>) {
     component = component.__owl__.parent!;
   }
   console.error(error);
-  // we trigger error on QWeb so it can be logged/handled
   qweb.trigger("error", error);
 
   if (canCatch) {

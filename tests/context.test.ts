@@ -1,4 +1,4 @@
-import { makeTestEnv, makeTestFixture, nextTick } from "./helpers";
+import { makeDeferred, makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component, Env } from "../src/component/component";
 import { Context, useContext } from "../src/context";
 import { xml } from "../src/tags";
@@ -172,5 +172,53 @@ describe("Context", () => {
     // we make sure we do not have any pending subscriptions to the 'update'
     // event
     expect(testContext.subscriptions.update.length).toBe(0);
+  });
+
+  test.skip("concurrent renderings", async () => {
+    const testContext = new Context({ x: { n: 1 }, key: "x" });
+    const def = makeDeferred();
+    let stateC;
+    class ComponentC extends Component<any, any> {
+      static template = xml`<span><t t-esc="context[props.key].n"/><t t-esc="state.x"/></span>`;
+      context = useContext(testContext);
+      state = useState({ x: "a" });
+
+      constructor(parent, props) {
+        super(parent, props);
+        stateC = this.state;
+      }
+    }
+    class ComponentB extends Component<any, any> {
+      static components = { ComponentC };
+      static template = xml`<p><ComponentC key="props.key"/></p>`;
+
+      willUpdateProps() {
+        return def;
+      }
+    }
+    class ComponentA extends Component<any, any> {
+      static components = { ComponentB };
+      static template = xml`<div><ComponentB key="context.key"/></div>`;
+      context = useContext(testContext);
+    }
+
+    const component = new ComponentA(env);
+    await component.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
+    testContext.state.key = "y";
+    testContext.state.y = 2;
+    delete testContext.state.x;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
+    stateC.x = "b";
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
+    def.resolve();
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
   });
 });

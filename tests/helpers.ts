@@ -5,6 +5,16 @@ import "../src/qweb/base_directives";
 import "../src/qweb/extensions";
 import "../src/component/directive";
 
+// modifies scheduler to make it easier to test components
+// let current;
+// scheduler.requestAnimationFrame = function(callback: FrameRequestCallback) {
+//   if (current) {
+//     throw new Error("should not schedule 2 callbacks!");
+//   }
+//   current = callback;
+//   return 1;
+// };
+
 // Some static cleanup
 let nextSlotId;
 let slots;
@@ -12,6 +22,7 @@ let nextId;
 let TEMPLATES;
 
 beforeEach(() => {
+  // current = null;
   nextSlotId = QWeb.nextSlotId;
   slots = Object.assign({}, QWeb.slots);
   nextId = QWeb.nextId;
@@ -19,6 +30,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // current = null;
   QWeb.nextSlotId = nextSlotId;
   QWeb.slots = slots;
   QWeb.nextId = nextId;
@@ -29,9 +41,23 @@ afterEach(() => {
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
 }
+// export async function nextTick(): Promise<void> {
+//   await Promise.resolve();
+//   let max = 1000;
+//   while (current && max > 0) {
+//     const cb = current;
+//     console.warn('next');
+//     current = null;
+//     cb();
+//     max--;
+//     await Promise.resolve();
+//   }
+// }
 
-export function nextTick(): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve));
+export async function nextTick(): Promise<void> {
+  return new Promise(function (resolve) {
+    setTimeout(() => requestAnimationFrame(() => resolve()));
+  });
 }
 
 export function makeTestFixture() {

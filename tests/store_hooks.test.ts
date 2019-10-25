@@ -51,8 +51,8 @@ describe("connecting a component to store", () => {
     const state = { a: 1, b: 2 };
     const actions = {
       doSomething({ state }) {
-          state.a = 2;
-          state.b = 3;
+        state.a = 2;
+        state.b = 3;
       }
     };
     const store = new Store({ state, actions });
@@ -63,8 +63,8 @@ describe("connecting a component to store", () => {
                 <span t-esc="a.value"/>
                 <span t-esc="b.value"/>
             </div>`;
-      a = useStore(state => ({value: state.a}));
-      b = useStore(state => ({value: state.b}));
+      a = useStore(state => ({ value: state.a }));
+      b = useStore(state => ({ value: state.b }));
     }
     App.prototype.__render = jest.fn(App.prototype.__render);
 
@@ -79,7 +79,7 @@ describe("connecting a component to store", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>2</span><span>3</span></div>");
     expect(App.prototype.__render).toBeCalledTimes(2);
- });
+  });
 
   test("useStore: do not re-render if not changed", async () => {
     let nextId = 1;

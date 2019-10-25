@@ -44,15 +44,17 @@ export function startMeasure(descr) {
 export function stopMeasure(cb) {
   let last = lastMeasure;
   if (lastMeasure) {
-    window.setTimeout(function() {
-      lastMeasure = null;
-      const stop = performance.now();
-      const delta = stop - startTime;
-      const msg = `[${last}] took  ${formatNumber(delta)}ms`;
-      console.log(msg);
-      if (cb) {
-        cb({ msg, delta });
-      }
-    }, 0);
+      window.requestAnimationFrame(() => {
+        window.setTimeout(function() {
+        lastMeasure = null;
+        const stop = performance.now();
+        const delta = stop - startTime;
+        const msg = `[${last}] took  ${formatNumber(delta)}ms`;
+        console.log(msg);
+        if (cb) {
+            cb({ msg, delta });
+        }
+        }, 0);
+      });
   }
 }

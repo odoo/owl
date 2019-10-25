@@ -174,7 +174,7 @@ describe("Context", () => {
     expect(testContext.subscriptions.update.length).toBe(0);
   });
 
-  test.skip("concurrent renderings", async () => {
+  test("concurrent renderings", async () => {
     const testContext = new Context({ x: { n: 1 }, key: "x" });
     const def = makeDeferred();
     let stateC;
@@ -207,7 +207,7 @@ describe("Context", () => {
 
     expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
     testContext.state.key = "y";
-    testContext.state.y = 2;
+    testContext.state.y = {n: 2};
     delete testContext.state.x;
     await nextTick();
 
@@ -219,6 +219,6 @@ describe("Context", () => {
     def.resolve();
     await nextTick();
 
-    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
+    expect(fixture.innerHTML).toBe("<div><p><span>2b</span></p></div>");
   });
 });

@@ -17,7 +17,7 @@ App.components = { Greeter };
 
 // Application setup
 // Note that the xml templates are injected into the global TEMPLATES variable.
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const app = new App({ qweb });
 app.mount(document.body);
 `;
@@ -70,7 +70,7 @@ class App extends Component {
 }
 App.components = { Counter };
 
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const app = new App({qweb});
 app.mount(document.body);
 `;
@@ -228,7 +228,7 @@ class App extends Component {
 }
 App.components = { DemoComponent };
 
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const app = new App({ qweb });
 app.mount(document.body);
 `;
@@ -298,7 +298,7 @@ class App extends owl.Component {
 }
 
 // Application setup
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const app = new App({ qweb });
 app.mount(document.body);
 `;
@@ -350,7 +350,7 @@ const themeContext = new Context({
    foreground: '#fff',
 });
 const env = {
-    qweb: new owl.QWeb(TEMPLATES),
+    qweb: new owl.QWeb({ templates: TEMPLATES}),
     themeContext: themeContext,
 };
 const app = new App(env);
@@ -548,7 +548,7 @@ function makeEnv() {
     const state = loadState();
     const store = new owl.Store({ state, actions });
     store.on("update", null, () => saveState(store.state));
-    const qweb = new owl.QWeb(TEMPLATES);
+    const qweb = new owl.QWeb({ templates: TEMPLATES});
     return { qweb, store };
 }
 
@@ -1041,7 +1041,7 @@ function setupResponsivePlugin(env) {
 // Application Startup
 //------------------------------------------------------------------------------
 const env = {
-    qweb: new owl.QWeb(TEMPLATES),
+    qweb: new owl.QWeb({ templates: TEMPLATES}),
 };
 setupResponsivePlugin(env);
 
@@ -1187,7 +1187,7 @@ class App extends Component {
 App.components = {Card, Counter};
 
 // Application setup
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const app = new App({ qweb });
 app.mount(document.body);`;
 
@@ -1303,7 +1303,7 @@ class App extends Component {
 }
 App.components = {SlowComponent, NotificationList};
 
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const app = new App({ qweb });
 app.mount(document.body);
 `;
@@ -1373,7 +1373,7 @@ class Form extends Component {
 }
 
 // Application setup
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const form = new Form({ qweb });
 form.mount(document.body);
 `;
@@ -1540,7 +1540,7 @@ class App extends Component {
 }
 App.components = { WindowManager };
 
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES});
 const windows = [
   {
     name: "Hello",

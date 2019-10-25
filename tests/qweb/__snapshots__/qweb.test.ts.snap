@@ -2415,6 +2415,73 @@ exports[`t-set value priority 1`] = `
 }"
 `;
 
+exports[`translation support can translate node content 1`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    c1.push({text: \`mot\`});
+    return vn1;
+}"
+`;
+
+exports[`translation support does not translate node content if disabled 1`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`mot\`});
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`word\`});
+    return vn1;
+}"
+`;
+
+exports[`translation support some attributes are translated 1`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = 'mot';
+    let c3 = [], p3 = {key:3,attrs:{label: _2}};
+    var vn3 = h('p', p3, c3);
+    c1.push(vn3);
+    c3.push({text: \`mot\`});
+    var _4 = 'mot';
+    let c5 = [], p5 = {key:5,attrs:{title: _4}};
+    var vn5 = h('p', p5, c5);
+    c1.push(vn5);
+    c5.push({text: \`mot\`});
+    var _6 = 'mot';
+    let c7 = [], p7 = {key:7,attrs:{placeholder: _6}};
+    var vn7 = h('p', p7, c7);
+    c1.push(vn7);
+    c7.push({text: \`mot\`});
+    var _8 = 'mot';
+    let c9 = [], p9 = {key:9,attrs:{alt: _8}};
+    var vn9 = h('p', p9, c9);
+    c1.push(vn9);
+    c9.push({text: \`mot\`});
+    var _10 = 'word';
+    let c11 = [], p11 = {key:11,attrs:{something: _10}};
+    var vn11 = h('p', p11, c11);
+    c1.push(vn11);
+    c11.push({text: \`mot\`});
+    return vn1;
+}"
+`;
+
 exports[`whitespace handling consecutives whitespaces are condensed into a single space 1`] = `
 "function anonymous(context,extra
 ) {

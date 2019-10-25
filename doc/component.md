@@ -441,7 +441,7 @@ of an Owl application has to be created manually:
 ```js
 class App extends owl.Component { ... }
 
-const qweb = new owl.QWeb(TEMPLATES);
+const qweb = new owl.QWeb({ templates: TEMPLATES });
 const env = { qweb: qweb };
 const app = new App(env);
 app.mount(document.body);

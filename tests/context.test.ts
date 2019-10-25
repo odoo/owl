@@ -207,7 +207,7 @@ describe("Context", () => {
 
     expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
     testContext.state.key = "y";
-    testContext.state.y = {n: 2};
+    testContext.state.y = { n: 2 };
     delete testContext.state.x;
     await nextTick();
 

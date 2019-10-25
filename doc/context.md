@@ -29,7 +29,7 @@ context, and add it to the environment:
 ```js
 const deviceContext = new Context({ isMobile: true });
 const env = {
-  qweb: new QWeb(TEMPLATES),
+  qweb: new QWeb({ templates: TEMPLATES }),
   deviceContext
 };
 ```

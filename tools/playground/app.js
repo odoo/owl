@@ -435,7 +435,7 @@ async function start() {
     owl.utils.loadFile("templates.xml"),
     owl.utils.whenReady()
   ]);
-  const qweb = new owl.QWeb(templates);
+  const qweb = new owl.QWeb({ templates });
   const app = new App({ qweb });
   app.mount(document.body);
 }

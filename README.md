@@ -190,6 +190,12 @@ class Counter extends Component {
 }
 ```
 
+Note that the `t-on-click` handler can even be replaced by an inline statement:
+
+```xml
+    <button t-on-click="state.value++">
+```
+
 **Props:** sub components often needs some information from their parents. This
 is done by adding the required information to the template. This will then be
 accessible by the sub component in the `props` object. Note that there is an

@@ -1,8 +1,8 @@
 import { Component } from "./component/component";
-import { Observer } from "./core/observer";
+import { scheduler } from "./component/scheduler";
 import { EventBus } from "./core/event_bus";
+import { Observer } from "./core/observer";
 import { onWillUnmount } from "./hooks";
-
 /**
  * The `Context` object provides a way to share data between an arbitrary number
  * of component. Usually, data is passed from a parent to its children component,
@@ -53,7 +53,9 @@ export class Context extends EventBus {
       const sub = subs[i];
       const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
       if (shouldCallback) {
-        await sub.callback.call(sub.owner, id);
+        const render = sub.callback.call(sub.owner, id);
+        scheduler.flush();
+        await render;
       }
     }
   }

@@ -13,7 +13,7 @@ const HEADING_REGEXP = /\n(#+\s*)(.*)/g;
 function getFiles(): string[] {
   const DOCFILES = fs.readdirSync("doc").map(f => `doc/${f}`);
   const MAINREADME = "README.md";
-  DOCFILES.push('roadmap.md', MAINREADME)
+  DOCFILES.push("roadmap.md", MAINREADME);
   return DOCFILES;
 }
 
@@ -54,7 +54,7 @@ interface FileData {
 }
 
 function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
-  if (link.link.startsWith('http')) {
+  if (link.link.startsWith("http")) {
     // no check on external links
     return true;
   }

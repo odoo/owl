@@ -557,13 +557,15 @@ type ArrayOrElement<T> = T | T[];
 type VNodeChildren = ArrayOrElement<VNodeChildElement>;
 
 export function addNS(data: any, children: VNodes | undefined, sel: string | undefined): void {
+  if (sel === "dummy") {
+    // we do not need to add the namespace on dummy elements, they come from a
+    // subcomponent, which will handle the namespace itself
+    return;
+  }
   data.ns = "http://www.w3.org/2000/svg";
   if (sel !== "foreignObject" && children !== undefined) {
     for (let i = 0, iLen = children.length; i < iLen; ++i) {
       const child = children[i];
-      if (child === null) {
-        continue;
-      }
       let childData = child.data;
       if (childData !== undefined) {
         addNS(childData, (child as VNode).children as VNodes, child.sel);

@@ -1273,9 +1273,10 @@ const ASYNC_COMPONENTS = `// This example will not work if your browser does not
 
 // In this example, we have 2 sub components, one of them being async (slow).
 // However, we don't want renderings of the other sub component to be delayed
-// because of the slow component. We use the 't-asyncroot' directive for this
+// because of the slow component. We use the AsyncRoot component for this
 // purpose. Try removing it to see the difference.
 const { Component, useState } = owl;
+const { AsyncRoot } = owl.misc;
 
 class SlowComponent extends Component {
     willUpdateProps() {
@@ -1311,9 +1312,10 @@ const ASYNC_COMPONENTS_XML = `<templates>
   <div t-name="App" class="app">
     <button t-on-click="increment">Increment</button>
     <SlowComponent value="state.value"/>
-    <NotificationList t-asyncroot="1" notifications="state.notifs"/>
+    <AsyncRoot>
+      <NotificationList notifications="state.notifs"/>
+    </AsyncRoot>
   </div>
-
   <div t-name="SlowComponent" class="value" >
     Current value: <t t-esc="props.value"/>
   </div>

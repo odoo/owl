@@ -232,7 +232,6 @@ QWeb.addDirective({
     let propStr = Object.keys(props)
       .map(k => k + ":" + props[k])
       .join(",");
-    let dummyID = ctx.generateID();
     let defID = ctx.generateID();
     let componentID = ctx.generateID();
     let keyID = key && ctx.generateID();
@@ -350,18 +349,13 @@ QWeb.addDirective({
     ctx.addLine(
       `let w${componentID} = ${templateId} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateId}]] : false;`
     );
-    if (ctx.parentNode) {
-      ctx.addLine(`let _${dummyID}_index = c${ctx.parentNode}.length;`);
-    }
-    let shouldProxy = false;
+    let shouldProxy = !ctx.parentNode;
     if (keepAlive) {
       ctx.addLine(
         `const fiber${componentID} = Object.assign(Object.create(extra.fiber), {patchQueue: []});`
       );
     }
-    if (ctx.parentNode) {
-      ctx.addLine(`c${ctx.parentNode}.push(null);`);
-    } else {
+    if (shouldProxy) {
       let id = ctx.generateID();
       ctx.rootContext.rootNode = id;
       shouldProxy = true;
@@ -378,14 +372,8 @@ QWeb.addDirective({
     ctx.addIf(
       `w${componentID} && w${componentID}.__owl__.currentFiber && !w${componentID}.__owl__.vnode`
     );
-    ctx.addIf(
-      `utils.shallowEqual(props${componentID}, w${componentID}.__owl__.currentFiber.props)`
-    );
-    ctx.addLine(`def${defID} = w${componentID}.__owl__.currentFiber.promise;`);
-    ctx.addElse();
     ctx.addLine(`w${componentID}.destroy();`);
     ctx.addLine(`w${componentID} = false;`);
-    ctx.closeIf();
     ctx.closeIf();
 
     ctx.addIf(`!w${componentID}`);
@@ -450,15 +438,26 @@ QWeb.addDirective({
     } else {
       scopeVars = "undefined, undefined";
     }
-    ctx.addLine(`def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
+    ctx.addLine(`def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
-    let registerCode = `c${ctx.parentNode}[_${dummyID}_index]=pvnode;`;
+    let registerCode = "";
     if (shouldProxy) {
       registerCode = `utils.defineProxy(vn${ctx.rootNode}, pvnode);`;
     }
     ctx.addLine(
-      `def${defID} = def${defID}.then(vnode=>{if (w${componentID}.__owl__.isDestroyed){return}${createHook}let pvnode=h(vnode.sel, {key: ${templateId}, hook: {insert(vn) {let nvn=w${componentID}.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});${registerCode}w${componentID}.__owl__.pvnode = pvnode;});`
+      `let pvnode = h('dummy', {key: ${templateId}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
     );
+    ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
+    ctx.addLine(
+      `def${defID}.then(function () {if (w${componentID}.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
+    );
+    if (registerCode) {
+      ctx.addLine(registerCode);
+    }
+    if (ctx.parentNode) {
+      ctx.addLine(`c${ctx.parentNode}.push(pvnode);`);
+    }
+    ctx.addLine(`w${componentID}.__owl__.pvnode = pvnode;`);
 
     ctx.addElse();
     // need to update component
@@ -475,24 +474,32 @@ QWeb.addDirective({
     }
     ctx.addLine(
       `def${defID} = def${defID} || w${componentID}.__updateProps(props${componentID}, ${patchQueueCode}${scopeVars &&
-        ", " + scopeVars});`
+        ", " + scopeVars}, sibling);`
     );
+    ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
     let keepAliveCode = "";
     if (keepAlive) {
       keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}.__remount();};`;
+      ctx.addLine(keepAliveCode);
     }
-    ctx.addLine(
-      `def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};${
-        tattStyle ? `w${componentID}.el.style=${tattStyle};` : ""
-      }let pvnode=w${componentID}.__owl__.pvnode;${keepAliveCode}${registerCode}});`
-    );
+    if (registerCode) {
+      ctx.addLine(registerCode);
+    }
+    if (ctx.parentNode) {
+      ctx.addLine(`c${ctx.parentNode}.push(pvnode);`);
+    }
+    if (tattStyle) {
+      ctx.addLine(
+        `def${defID} = def${defID}.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`
+      );
+    }
     ctx.closeIf();
 
     if (classObj) {
       ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
     }
 
-    ctx.addLine(`extra.promises.push(def${defID});`);
+    ctx.addLine(`sibling = w${componentID}.__owl__.currentFiber;`);
 
     return true;
   }

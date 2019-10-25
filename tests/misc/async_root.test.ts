@@ -178,7 +178,7 @@ describe("Asyncroot", () => {
 
     children[1]!.click();
     await nextTick();
-    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1/1</span><span>1/0</span>");
+    expect(fixture.querySelector(".children")!.innerHTML).toBe("<span>1/1</span><span>0/0</span>");
 
     // finalize first re-rendering (coming from the props update)
     def.resolve();

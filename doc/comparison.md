@@ -25,7 +25,7 @@ than React and Vue. Also, jQuery is not the same kind of framework, but it is in
 
 | Framework                | Size (minified, gzipped) |
 | ------------------------ | ------------------------ |
-| OWL                      | 16kb                     |
+| OWL                      | 18kb                     |
 | Vue + VueX               | 30kb                     |
 | Vue + VueX + Vue Router  | 39kb                     |
 | React + ReactDOM + Redux | 40kb                     |

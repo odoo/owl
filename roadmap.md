@@ -1,6 +1,6 @@
 # 🦉 OWL Roadmap 🦉
 
-- Current version: 0.23.0
+- Current version: 0.24.0
 - Status: mostly stable
 
 This roadmap is only an attempt at predicting Owl's future.  Everything may
@@ -10,9 +10,8 @@ change!
 
 We plan to complete the following tasks:
 
-- make owl asynchronous rendering rock solid (issue #330),
 - improve API for root widgets (issue #306),
-- replace `t-keepalive`, `t-asyncroot` and maybe `t-transition` by components (issue #295).
+- replace `t-keepalive`, and maybe `t-transition` by components (issue #295).
 
 ### November 2019
 

@@ -85,13 +85,6 @@ describe("error handling", () => {
     }).toThrow("Invalid XML in template");
   });
 
-  test("nice error when t-on-directive is evaluated with a missing handler", () => {
-    qweb.addTemplate("templatename", `<div t-on-click="somemethod"></div>`);
-    expect(() => qweb.render("templatename", {}, { handlers: [] })).toThrow(
-      "Missing handler 'somemethod' when evaluating template 'templatename'"
-    );
-  });
-
   test("nice error when t-on is evaluated with a missing event", () => {
     qweb.addTemplate("templatename", `<div t-on="somemethod"></div>`);
     expect(() => qweb.render("templatename", { someMethod() {} }, { handlers: [] })).toThrow(
@@ -340,41 +333,49 @@ describe("t-if", () => {
   });
 
   test("t-set, then t-if", () => {
-    qweb.addTemplate("test", `
+    qweb.addTemplate(
+      "test",
+      `
       <div>
         <t t-set="title" t-value="'test'"/>
         <t t-if="title"><t t-esc="title"/></t>
-      </div>`);
+      </div>`
+    );
     const result = renderToString(qweb, "test");
     const expected = `<div>test</div>`;
     expect(result).toBe(expected);
   });
 
   test("t-set, then t-if, part 2", () => {
-    qweb.addTemplate("test", `
+    qweb.addTemplate(
+      "test",
+      `
         <div>
             <t t-set="y" t-value="true"/>
             <t t-set="x" t-value="y"/>
             <span t-if="x">COUCOU</span>
-        </div>`);
+        </div>`
+    );
     const result = renderToString(qweb, "test");
     const expected = `<div><span>COUCOU</span></div>`;
     expect(result).toBe(expected);
   });
 
   test("t-set, then t-elif, part 3", () => {
-    qweb.addTemplate("test", `
+    qweb.addTemplate(
+      "test",
+      `
         <div>
             <t t-set="y" t-value="false"/>
             <t t-set="x" t-value="y"/>
             <span t-if="x">AAA</span>
             <span t-elif="!x">BBB</span>
-        </div>`);
+        </div>`
+    );
     const result = renderToString(qweb, "test");
     const expected = `<div><span>BBB</span></div>`;
     expect(result).toBe(expected);
   });
-
 });
 
 describe("attributes", () => {
@@ -1037,6 +1038,33 @@ describe("t-on", () => {
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     (<HTMLElement>node).click();
+  });
+
+  test("t-on with inline statement", () => {
+    qweb.addTemplate("test", `<button t-on-click="state.counter++">Click</button>`);
+    let owner = {
+      state: {
+        counter: 0,
+      },
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(owner.state.counter).toBe(0);
+    (<HTMLElement>node).click();
+    expect(owner.state.counter).toBe(1);
+  });
+
+  test("t-on with inline statement (function call)", () => {
+    qweb.addTemplate("test", `<button t-on-click="state.incrementCounter(2)">Click</button>`);
+    let owner = {
+      state: {
+        counter: 0,
+        incrementCounter: (inc) => { owner.state.counter += inc; },
+      },
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(owner.state.counter).toBe(0);
+    (<HTMLElement>node).click();
+    expect(owner.state.counter).toBe(2);
   });
 
   test("t-on with prevent and/or stop modifiers", async () => {

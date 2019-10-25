@@ -40,44 +40,27 @@ QWeb.addDirective({
       extraArgs = args.slice(1, -1);
       return "";
     });
-    ctx.addIf(`!context['${handlerName}']`);
-    ctx.addLine(
-      `throw new Error('Missing handler \\'' + '${handlerName}' + \`\\' when evaluating template '${ctx.templateName.replace(
-        /`/g,
-        "'"
-      )}'\`)`
-    );
-    ctx.closeIf();
     let params = extraArgs ? `owner, ${ctx.formatExpression(extraArgs)}` : "owner";
-    if (mods.length > 0) {
-      let handler = `function (e) {`;
-      handler += mods
-        .map(function(mod) {
-          return MODS_CODE[mod];
-        })
-        .join("");
-      if (!extraArgs) {
-        handler += `context['${handlerName}'].call(${params}, e);}`;
-        ctx.addLine(
-          `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
-        );
-        ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
-      } else {
-        const handlerKey = `handler${ctx.generateID()}`;
-        ctx.addLine(`const ${handlerKey} = context['${handlerName}'].bind(${params});`);
-        handler += `${handlerKey}(e);}`;
-        ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
-      }
+    let handler = `function (e) {`;
+    handler += mods
+      .map(function(mod) {
+        return MODS_CODE[mod];
+      })
+      .join("");
+    if (!extraArgs) {
+      handler += `const fn = context['${handlerName}'];`;
+      handler += `if (fn) { fn.call(${params}, e); } else { context.${handlerName}; }`;
+      handler += `}`;
+      ctx.addLine(
+        `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
+      );
+      ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
     } else {
-      const handler = `context['${handlerName}'].bind(${params})`;
-      if (extraArgs) {
-        ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
-      } else {
-        ctx.addLine(
-          `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
-        );
-        ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
-      }
+      const handlerKey = `handler${ctx.generateID()}`;
+      ctx.addLine(`const ${handlerKey} = context['${handlerName}'] && context['${handlerName}'].bind(${params});`);
+      handler += `if (${handlerKey}) { ${handlerKey}(e); } else { context.${value}; }`;
+      handler += `}`;
+      ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
     }
   }
 });

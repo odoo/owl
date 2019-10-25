@@ -209,11 +209,11 @@ QWeb.addDirective({
       if (name.startsWith("t-on-")) {
         const [eventName, ...mods] = name.slice(5).split(".");
         let extraArgs;
-        let handlerName = value.replace(/\(.*\)/, function(args) {
+        let handlerValue = value.replace(/\(.*\)/, function(args) {
           extraArgs = args.slice(1, -1);
           return "";
         });
-        events.push([eventName, mods, handlerName, extraArgs]);
+        events.push([eventName, mods, handlerValue, extraArgs]);
       } else if (name === "t-transition") {
         transition = value;
       } else if (!name.startsWith("t-")) {
@@ -315,7 +315,7 @@ QWeb.addDirective({
         }
       }
       let eventsCode = events
-        .map(function([eventName, mods, handlerName, extraArgs]) {
+        .map(function([eventName, mods, handlerValue, extraArgs]) {
           let params = "owner";
           if (extraArgs) {
             if (ctx.loopNumber) {
@@ -329,18 +329,15 @@ QWeb.addDirective({
               params = `owner, ${ctx.formatExpression(extraArgs)}`;
             }
           }
-          let handler;
-          if (mods.length > 0) {
-            handler = `function (e) {`;
-            handler += mods
-              .map(function(mod) {
-                return T_COMPONENT_MODS_CODE[mod];
-              })
-              .join("");
-            handler += `owner['${handlerName}'].call(${params}, e);}`;
-          } else {
-            handler = `owner['${handlerName}'].bind(${params})`;
-          }
+          let handler = `function (e) {`;
+          handler += mods
+            .map(function(mod) {
+              return T_COMPONENT_MODS_CODE[mod];
+            })
+            .join("");
+          handler += `const fn = owner['${handlerValue}'];`;
+          handler += `if (fn) { fn.call(${params}, e); } else { owner.${handlerValue}; }`;
+          handler += `}`;
           return `vn.elm.addEventListener('${eventName}', ${handler});`;
         })
         .join("");

@@ -1789,6 +1789,22 @@ exports[`t-on t-on combined with t-raw 1`] = `
 }"
 `;
 
+exports[`t-on t-on with empty handler (only modifiers) 1`] = `
+"function anonymous(context,extra
+) {
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    var vn2 = h('button', p2, c2);
+    c1.push(vn2);
+    p2.on['click'] = function (e) {e.preventDefault();};
+    c2.push({text: \`Button\`});
+    return vn1;
+}"
+`;
+
 exports[`t-on t-on with inline statement (function call) 1`] = `
 "function anonymous(context,extra
 ) {

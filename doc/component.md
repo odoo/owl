@@ -719,6 +719,15 @@ the order may matter. For instance `t-on-click.prevent.self` will prevent all
 clicks while `t-on-click.self.prevent` will only prevent clicks on the element
 itself.
 
+Finally, empty handlers are tolerated as they could be defined only to apply
+modifiers. For example,
+
+```xml
+<button t-on-click.stop="">Do something</button>
+```
+
+This will simply stop the propagation of the event.
+
 ### Form Input Bindings
 
 It is very common to need to be able to read the value out of an html `input` (or

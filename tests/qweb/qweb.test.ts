@@ -1213,6 +1213,24 @@ describe("t-on", () => {
     expect(steps).toEqual([1, 2]);
   });
 
+  test("t-on with empty handler (only modifiers)", () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <button t-on-click.prevent="">Button</button>
+      </div>`
+    );
+    const node = renderToDOM(qweb, "test", {}, { handlers: [] });
+
+    node.addEventListener('click', (e) => {
+      expect(e.defaultPrevented).toBe(true);
+    });
+
+    const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+    button.click();
+  });
+
   test("t-on combined with t-esc", async () => {
     expect.assertions(3);
     qweb.addTemplate("test", `<div><button t-on-click="onClick" t-esc="text"/></div>`);

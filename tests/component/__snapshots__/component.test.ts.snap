@@ -13,10 +13,7 @@ exports[`async rendering delayed component with t-asyncroot directive 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    if (!context['updateApp']) {
-        throw new Error('Missing handler \\\\'' + 'updateApp' + \`\\\\' when evaluating template 'Parent'\`)
-    }
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {const fn = context['updateApp'];if (fn) { fn.call(owner, e); } else { context.updateApp; }};
     p2.on['click'] = extra.handlers['click' + 2];
     c2.push({text: \`Update App State\`});
     let _4 = {'children':true};
@@ -97,10 +94,7 @@ exports[`async rendering fast component with t-asyncroot directive 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    if (!context['updateApp']) {
-        throw new Error('Missing handler \\\\'' + 'updateApp' + \`\\\\' when evaluating template 'Parent'\`)
-    }
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {const fn = context['updateApp'];if (fn) { fn.call(owner, e); } else { context.updateApp; }};
     p2.on['click'] = extra.handlers['click' + 2];
     c2.push({text: \`Update App State\`});
     let _4 = {'children':true};
@@ -181,10 +175,7 @@ exports[`async rendering t-component with t-asyncroot directive: mixed re-render
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    if (!context['updateApp']) {
-        throw new Error('Missing handler \\\\'' + 'updateApp' + \`\\\\' when evaluating template 'Parent'\`)
-    }
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || context['updateApp'].bind(owner);
+    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {const fn = context['updateApp'];if (fn) { fn.call(owner, e); } else { context.updateApp; }};
     p2.on['click'] = extra.handlers['click' + 2];
     c2.push({text: \`Update App State\`});
     let _4 = {'children':true};
@@ -807,6 +798,52 @@ exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
 }"
 `;
 
+exports[`other directives with t-component t-on with getter as handler 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['state'].counter;
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    }
+    //COMPONENT
+    let def4;
+    let templateId5 = \`__6__\`;
+    let w5 = templateId5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId5]] : false;
+    let _3_index = c1.length;
+    c1.push(null);
+    let props5 = {};
+    if (w5 && w5.__owl__.currentFiber && !w5.__owl__.vnode) {
+        if (utils.shallowEqual(props5, w5.__owl__.currentFiber.props)) {
+            def4 = w5.__owl__.currentFiber.promise;
+        } else {
+            w5.destroy();
+            w5 = false;
+        }
+    }
+    if (!w5) {
+        let componentKey5 = \`Child\`;
+        let W5 = context.constructor.components[componentKey5] || QWeb.components[componentKey5]|| context['Child'];
+        if (!W5) {throw new Error('Cannot find the definition of component \\"' + componentKey5 + '\\"')}
+        w5 = new W5(parent, props5);
+        parent.__owl__.cmap[templateId5] = w5.__owl__.id;
+        def4 = w5.__prepare(extra.fiber, undefined, undefined);
+        def4 = def4.then(vnode=>{if (w5.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['handler'];if (fn) { fn.call(owner, e); } else { owner.handler; }});}};let pvnode=h(vnode.sel, {key: templateId5, hook: {insert(vn) {let nvn=w5.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w5.destroy();}}});c1[_3_index]=pvnode;w5.__owl__.pvnode = pvnode;});
+    } else {
+        def4 = def4 || w5.__updateProps(props5, extra.fiber, undefined, undefined);
+        def4 = def4.then(()=>{if (w5.__owl__.isDestroyed) {return};let pvnode=w5.__owl__.pvnode;c1[_3_index]=pvnode;});
+    }
+    extra.promises.push(def4);
+    return vn1;
+}"
+`;
+
 exports[`other directives with t-component t-on with handler bound to argument 1`] = `
 "function anonymous(context,extra
 ) {
@@ -839,7 +876,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, 3));}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['onEv'];if (fn) { fn.call(owner, 3, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -881,7 +918,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['onEv'];if (fn) { fn.call(owner, {}, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -923,7 +960,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {}));}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['onEv'];if (fn) { fn.call(owner, {}, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -965,12 +1002,58 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, {val:3}));}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['onEv'];if (fn) { fn.call(owner, {val:3}, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
     }
     extra.promises.push(def3);
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-on with inline statement 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['state'].counter;
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    }
+    //COMPONENT
+    let def4;
+    let templateId5 = \`__6__\`;
+    let w5 = templateId5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId5]] : false;
+    let _3_index = c1.length;
+    c1.push(null);
+    let props5 = {};
+    if (w5 && w5.__owl__.currentFiber && !w5.__owl__.vnode) {
+        if (utils.shallowEqual(props5, w5.__owl__.currentFiber.props)) {
+            def4 = w5.__owl__.currentFiber.promise;
+        } else {
+            w5.destroy();
+            w5 = false;
+        }
+    }
+    if (!w5) {
+        let componentKey5 = \`Child\`;
+        let W5 = context.constructor.components[componentKey5] || QWeb.components[componentKey5]|| context['Child'];
+        if (!W5) {throw new Error('Cannot find the definition of component \\"' + componentKey5 + '\\"')}
+        w5 = new W5(parent, props5);
+        parent.__owl__.cmap[templateId5] = w5.__owl__.id;
+        def4 = w5.__prepare(extra.fiber, undefined, undefined);
+        def4 = def4.then(vnode=>{if (w5.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['state.counter++'];if (fn) { fn.call(owner, e); } else { owner.state.counter++; }});}};let pvnode=h(vnode.sel, {key: templateId5, hook: {insert(vn) {let nvn=w5.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w5.destroy();}}});c1[_3_index]=pvnode;w5.__owl__.pvnode = pvnode;});
+    } else {
+        def4 = def4 || w5.__updateProps(props5, extra.fiber, undefined, undefined);
+        def4 = def4.then(()=>{if (w5.__owl__.isDestroyed) {return};let pvnode=w5.__owl__.pvnode;c1[_3_index]=pvnode;});
+    }
+    extra.promises.push(def4);
     return vn1;
 }"
 `;
@@ -1007,7 +1090,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {e.preventDefault();if (e.target !== vn.elm) {return}owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {e.preventDefault();if (e.target !== vn.elm) {return}const fn = owner['onEv'];if (fn) { fn.call(owner, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -1049,7 +1132,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (e.target !== vn.elm) {return}e.preventDefault();owner['onEv'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (e.target !== vn.elm) {return}e.preventDefault();const fn = owner['onEv'];if (fn) { fn.call(owner, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -1091,7 +1174,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', owner['onEv1'].bind(owner));vn.elm.addEventListener('ev-2', function (e) {if (e.target !== vn.elm) {return}owner['onEv2'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {const fn = owner['onEv1'];if (fn) { fn.call(owner, e); } else { owner.onEv1; }});vn.elm.addEventListener('ev-2', function (e) {if (e.target !== vn.elm) {return}const fn = owner['onEv2'];if (fn) { fn.call(owner, e); } else { owner.onEv2; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -1133,7 +1216,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         w4 = new W4(parent, props4);
         parent.__owl__.cmap[templateId4] = w4.__owl__.id;
         def3 = w4.__prepare(extra.fiber, undefined, undefined);
-        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {e.stopPropagation();owner['onEv1'].call(owner, e);});vn.elm.addEventListener('ev-2', function (e) {e.preventDefault();owner['onEv2'].call(owner, e);});vn.elm.addEventListener('ev-3', function (e) {e.stopPropagation();e.preventDefault();owner['onEv3'].call(owner, e);});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
+        def3 = def3.then(vnode=>{if (w4.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {e.stopPropagation();const fn = owner['onEv1'];if (fn) { fn.call(owner, e); } else { owner.onEv1; }});vn.elm.addEventListener('ev-2', function (e) {e.preventDefault();const fn = owner['onEv2'];if (fn) { fn.call(owner, e); } else { owner.onEv2; }});vn.elm.addEventListener('ev-3', function (e) {e.stopPropagation();e.preventDefault();const fn = owner['onEv3'];if (fn) { fn.call(owner, e); } else { owner.onEv3; }});}};let pvnode=h(vnode.sel, {key: templateId4, hook: {insert(vn) {let nvn=w4.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});c1[_2_index]=pvnode;w4.__owl__.pvnode = pvnode;});
     } else {
         def3 = def3 || w4.__updateProps(props4, extra.fiber, undefined, undefined);
         def3 = def3.then(()=>{if (w4.__owl__.isDestroyed) {return};let pvnode=w4.__owl__.pvnode;c1[_2_index]=pvnode;});
@@ -1252,7 +1335,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
             w7 = new W7(parent, props7);
             parent.__owl__.cmap[templateId7] = w7.__owl__.id;
             def6 = w7.__prepare(extra.fiber, undefined, undefined);
-            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', owner['onEv'].bind(owner, arg10));}};let pvnode=h(vnode.sel, {key: templateId7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
+            def6 = def6.then(vnode=>{if (w7.__owl__.isDestroyed){return}vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {const fn = owner['onEv'];if (fn) { fn.call(owner, arg10, e); } else { owner.onEv; }});}};let pvnode=h(vnode.sel, {key: templateId7, hook: {insert(vn) {let nvn=w7.__mount(vnode, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w7.destroy();}}});c1[_5_index]=pvnode;w7.__owl__.pvnode = pvnode;});
         } else {
             def6 = def6 || w7.__updateProps(props7, extra.fiber, undefined, undefined);
             def6 = def6.then(()=>{if (w7.__owl__.isDestroyed) {return};let pvnode=w7.__owl__.pvnode;c1[_5_index]=pvnode;});
@@ -1623,10 +1706,7 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     let c11 = [], p11 = {key:11,on:{}};
     var vn11 = h('button', p11, c11);
     c1.push(vn11);
-    if (!context['doSomething']) {
-        throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'slot_footer_template'\`)
-    }
-    extra.handlers['click' + 11] = extra.handlers['click' + 11] || context['doSomething'].bind(owner);
+    extra.handlers['click' + 11] = extra.handlers['click' + 11] || function (e) {const fn = context['doSomething'];if (fn) { fn.call(owner, e); } else { context.doSomething; }};
     p11.on['click'] = extra.handlers['click' + 11];
     const ref12 = \`myButton\`;
     p11.hook = {
@@ -1651,10 +1731,7 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
     let c11 = [], p11 = {key:11,on:{}};
     var vn11 = h('button', p11, c11);
     c1.push(vn11);
-    if (!context['doSomething']) {
-        throw new Error('Missing handler \\\\'' + 'doSomething' + \`\\\\' when evaluating template 'slot_footer_template'\`)
-    }
-    extra.handlers['click' + 11] = extra.handlers['click' + 11] || context['doSomething'].bind(owner);
+    extra.handlers['click' + 11] = extra.handlers['click' + 11] || function (e) {const fn = context['doSomething'];if (fn) { fn.call(owner, e); } else { context.doSomething; }};
     p11.on['click'] = extra.handlers['click' + 11];
     c11.push({text: \`do something\`});
 }"

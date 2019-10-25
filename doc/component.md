@@ -677,6 +677,29 @@ to event `menu-loaded` will receive the payload in its `someMethod` handler
 
 By convention, we use KebabCase for the name of _business_ events.
 
+
+The `t-on` directive allows to prebind some arguments. For example,
+
+```xml
+<button t-on-click="someMethod(expr)">Do something</button>
+```
+
+Here, `expr` is a valid Owl expression, so it could be `true` or some variable
+from the rendering context.
+
+One can also directly specify inline statements. For example,
+
+```xml
+<button t-on-click="state.counter++">Increment counter</button>
+```
+
+Here, `state` must be defined in the rendering context (typically the component)
+as it will be translated to:
+```js
+button.addEventListener("click", () => { component.state.counter++; });
+```
+
+
 In order to remove the DOM event details from the event handlers (like calls to
 `event.preventDefault`) and let them focus on data logic, _modifiers_ can be
 specified as additional suffixes of the `t-on` directive.
@@ -695,15 +718,6 @@ Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
 the order may matter. For instance `t-on-click.prevent.self` will prevent all
 clicks while `t-on-click.self.prevent` will only prevent clicks on the element
 itself.
-
-The `t-on` directive also allows to prebind some arguments. For example,
-
-```xml
-<button t-on-click="someMethod(expr)">Do something</button>
-```
-
-Here, `expr` is a valid Owl expression, so it could be `true` or some variable
-from the rendering context.
 
 ### Form Input Bindings
 

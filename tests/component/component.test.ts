@@ -2010,6 +2010,60 @@ describe("other directives with t-component", () => {
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
   });
 
+  test("t-on with getter as handler", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span></span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-esc="state.counter"/>
+          <Child t-on-ev="handler"/>
+        </div>`;
+      static components = { Child };
+      state = useState({counter: 0});
+      get handler() {
+        this.state.counter++;
+        return () => {};
+      }
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe('<div>0<span></span></div>');
+
+    let child = children(parent)[0];
+    child.trigger("ev");
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div>1<span></span></div>');
+  });
+
+  test("t-on with inline statement", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span></span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-esc="state.counter"/>
+          <Child t-on-ev="state.counter++"/>
+        </div>`;
+      static components = { Child };
+      state = useState({counter: 0});
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe('<div>0<span></span></div>');
+
+    let child = children(parent)[0];
+    child.trigger("ev");
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div>1<span></span></div>');
+  });
+
   test("t-if works with t-component", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" t-if="state.flag"/></div>`);
     class Child extends Widget {}

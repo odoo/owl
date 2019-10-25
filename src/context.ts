@@ -15,7 +15,7 @@ import { onWillUnmount } from "./hooks";
 export class Context extends EventBus {
   state: any;
   observer: Observer;
-  id: number = 1;
+  rev: number = 1;
   // mapping from component id to last observed context id
   mapping: { [componentId: number]: number } = {};
 
@@ -46,13 +46,13 @@ export class Context extends EventBus {
    * with the same depth in parallel.
    */
   async __notifyComponents() {
-    const id = ++this.id;
+    const rev = ++this.rev;
     const subs = this.subscriptions.update || [];
     for (let i = 0, iLen = subs.length; i < iLen; i++) {
       const sub = subs[i];
       const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
       if (shouldCallback) {
-        const render = sub.callback.call(sub.owner, id);
+        const render = sub.callback.call(sub.owner, rev);
         scheduler.flush();
         await render;
       }
@@ -76,15 +76,30 @@ export function useContextWithCB(ctx: Context, component: Component<any, any>, m
   if (id in mapping) {
     return ctx.state;
   }
+  if (!__owl__.observer) {
+    __owl__.observer = new Observer();
+    __owl__.observer.notifyCB = component.render.bind(component);
+  }
+  const currentCB = __owl__.observer.notifyCB;
+  __owl__.observer.notifyCB = function () {
+      if (ctx.rev > mapping[id]) {
+          // in this case, the context has been updated since we were rendering
+          // last, and we do not need to render here with the observer. A
+          // rendering is coming anyway, with the correct props.
+          return;
+      }
+      currentCB();
+  }
+
   mapping[id] = 0;
   const renderFn = __owl__.renderFn;
   __owl__.renderFn = function(comp, params) {
-    mapping[id] = ctx.id;
+    mapping[id] = ctx.rev;
     return renderFn(comp, params);
   };
-  ctx.on("update", component, async contextId => {
-    if (mapping[id] < contextId) {
-      mapping[id] = contextId;
+  ctx.on("update", component, async contextRev => {
+    if (mapping[id] < contextRev) {
+      mapping[id] = contextRev;
       await method();
     }
   });

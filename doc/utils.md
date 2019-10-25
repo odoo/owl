@@ -20,7 +20,7 @@ argument, it executes it as soon as the DOM ready (or directly).
 
 ```js
 Promise.all([loadFile("templates.xml"), owl.utils.whenReady()]).then(function([templates]) {
-  const qweb = new owl.QWeb(templates);
+  const qweb = new owl.QWeb({ templates });
   const app = new App({ qweb });
   app.mount(document.body);
 });
@@ -62,7 +62,7 @@ initial usecase for this function is to load a template file. For example:
 ```js
 async function makeEnv() {
   const templates = await owl.utils.loadFile("templates.xml");
-  const qweb = new owl.QWeb(templates);
+  const qweb = new owl.QWeb({ templates });
   return { qweb };
 }
 ```

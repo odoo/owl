@@ -57,11 +57,18 @@ export interface Directive {
   finalize?(info: CompilationInfo): void;
 }
 
+interface QWebConfig {
+  templates?: string;
+  translateFn?(text: string): string;
+}
+
 //------------------------------------------------------------------------------
 // Const/global stuff/helpers
 //------------------------------------------------------------------------------
 
 const DISABLED_TAGS = ["input", "textarea", "button", "select", "option", "optgroup"];
+
+const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
 
 const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
@@ -134,6 +141,7 @@ function parseXML(xml: string): Document {
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
+
 export class QWeb extends EventBus {
   templates: { [name: string]: Template };
   static utils = UTILS;
@@ -143,7 +151,8 @@ export class QWeb extends EventBus {
     name: 1,
     att: 1,
     attf: 1,
-    key: 1
+    key: 1,
+    translation: 1
   };
   static DIRECTIVES: Directive[] = [];
 
@@ -166,12 +175,16 @@ export class QWeb extends EventBus {
   recursiveFns = {};
 
   isUpdating: boolean = false;
+  translateFn?: QWebConfig["translateFn"];
 
-  constructor(data?: string) {
+  constructor(config: QWebConfig = {}) {
     super();
     this.templates = Object.create(QWeb.TEMPLATES);
-    if (data) {
-      this.addTemplates(data);
+    if (config.templates) {
+      this.addTemplates(config.templates);
+    }
+    if (config.translateFn) {
+      this.translateFn = config.translateFn;
     }
   }
 
@@ -418,6 +431,11 @@ export class QWeb extends EventBus {
         }
         text = text.replace(whitespaceRE, " ");
       }
+      if (this.translateFn) {
+        if ((node.parentNode as any).getAttribute("t-translation") !== "off") {
+          text = this.translateFn(text);
+        }
+      }
       if (ctx.parentNode) {
         if (node.nodeType === 3) {
           ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
@@ -617,7 +635,11 @@ export class QWeb extends EventBus {
 
     for (let i = 0; i < attributes.length; i++) {
       let name = attributes[i].name;
-      const value = attributes[i].textContent!;
+      let value = attributes[i].textContent!;
+
+      if (this.translateFn && TRANSLATABLE_ATTRS.includes(name)) {
+        value = this.translateFn(value);
+      }
 
       // regular attributes
       if (!name.startsWith("t-") && !(<Element>node).getAttribute("t-attf-" + name)) {

@@ -1305,12 +1305,12 @@ describe("t-ref", () => {
 
 describe("loading templates", () => {
   test("can initialize qweb with a string", () => {
-    const data = `
+    const templates = `
       <?xml version="1.0" encoding="UTF-8"?>
       <templates id="template" xml:space="preserve">
         <div t-name="hey">jupiler</div>
       </templates>`;
-    const qweb = new QWeb(data);
+    const qweb = new QWeb({ templates });
     expect(renderToString(qweb, "hey")).toBe("<div>jupiler</div>");
   });
 
@@ -1516,6 +1516,57 @@ describe("properly support svg", () => {
     );
     expect(renderToString(qweb, "test")).toBe(
       `<g><circle cx=\"50\" cy=\"50\" r=\"4\" stroke=\"green\" stroke-width=\"1\" fill=\"yellow\"></circle> </g>`
+    );
+  });
+});
+
+describe("translation support", () => {
+  test("can translate node content", () => {
+    const translations = {
+      word: "mot"
+    };
+    const translateFn = expr => translations[expr] || expr;
+    const qweb = new QWeb({ translateFn });
+    qweb.addTemplate("test", "<div>word</div>");
+    expect(renderToString(qweb, "test")).toBe("<div>mot</div>");
+  });
+
+  test("does not translate node content if disabled", () => {
+    const translations = {
+      word: "mot"
+    };
+    const translateFn = expr => translations[expr] || expr;
+    const qweb = new QWeb({ translateFn });
+    qweb.addTemplate(
+      "test",
+      `
+      <div>
+        <span>word</span>
+        <span t-translation="off">word</span>
+      </div>`
+    );
+    expect(renderToString(qweb, "test")).toBe("<div><span>mot</span><span>word</span></div>");
+  });
+
+  test("some attributes are translated", () => {
+    const translations = {
+      word: "mot"
+    };
+    const translateFn = expr => translations[expr] || expr;
+    const qweb = new QWeb({ translateFn });
+    qweb.addTemplate(
+      "test",
+      `
+      <div>
+        <p label="word">word</p>
+        <p title="word">word</p>
+        <p placeholder="word">word</p>
+        <p alt="word">word</p>
+        <p something="word">word</p>
+      </div>`
+    );
+    expect(renderToString(qweb, "test")).toBe(
+      '<div><p label="mot">mot</p><p title="mot">mot</p><p placeholder="mot">mot</p><p alt="mot">mot</p><p something="word">mot</p></div>'
     );
   });
 });

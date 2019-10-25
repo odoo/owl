@@ -16,6 +16,7 @@
   - [Dynamic Attributes](#dynamic-attributes)
   - [Loops](#loops)
   - [Rendering Sub Templates](#rendering-sub-templates)
+  - [Translations](#translations)
   - [Debugging](#debugging)
 
 ## Overview
@@ -60,6 +61,7 @@ We present here a list of all standard QWeb directives:
 | `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                    |
 | `t-call`                       | [Rendering sub templates](#rendering-sub-templates)          |
 | `t-debug`, `t-log`             | [Debugging](#debugging)                                      |
+| `t-translation`                | [Disabling the translation of a node](#translations)         |
 | `t-name`                       | [Defining a template (not really a directive)](#qweb-engine) |
 
 The component system in Owl requires additional directives, to express various
@@ -87,11 +89,14 @@ const qweb = new owl.QWeb();
 
 Its API is quite simple:
 
-- **`constructor(data)`**: constructor. Takes an optional string to add initial
-  templates (see `addTemplates` for more information on format of the string).
+- **`constructor(config)`**: constructor. Takes an optional configuration object
+  with an optional `templates` string to add initial
+  templates (see `addTemplates` for more information on format of the string)
+  and an optional `translateFn` translate function (see the section on
+  [translations](#translations)).
 
   ```js
-  const qweb = new owl.QWeb(TEMPLATES);
+  const qweb = new owl.QWeb({ templates: TEMPLATES, translateFn: _t });
   ```
 
 - **`addTemplate(name, xmlStr, allowDuplicate)`**: add a specific template.
@@ -201,7 +206,7 @@ root nodes.
 ### Expression Evaluation
 
 QWeb expressions are strings that will be processed at compile time. Each variable in
-the javascript expression will be replaced by a lookup in the context (so, the
+the javascript expression will be replaced with a lookup in the context (so, the
 component). For example, `a + b.c(d)` will be converted into:
 
 ```js
@@ -234,14 +239,14 @@ It is useful to explain the various rules that apply on these expressions:
 3. it can use a few special operators to avoid using symbols such as `<`, `>`,
    `&` or `|`. This is useful to make sure that we still write valid XML.
 
-   | Word  | will be replaced by |
-   | ----- | ------------------- |
-   | `and` | `&&`                |
-   | `or`  | `\|\|`              |
-   | `gt`  | `>`                 |
-   | `gte` | `>=`                |
-   | `lt`  | `<`                 |
-   | `lte` | `<=`                |
+   | Word  | replaced with |
+   | ----- | ------------- |
+   | `and` | `&&`          |
+   | `or`  | `\|\|`        |
+   | `gt`  | `>`           |
+   | `gte` | `>=`          |
+   | `lt`  | `<`           |
+   | `lte` | `<=`          |
 
    So, one can write this:
 
@@ -443,7 +448,7 @@ is equivalent to the previous example.
 or an object (the current item will be the current key).
 
 In addition to the name passed via t-as, `t-foreach` provides a few other
-variables for various data points (note: `$as` will be replaced by the name
+variables for various data points (note: `$as` will be replaced with the name
 passed to `t-as`):
 
 - `$as_value`: the current iteration value, identical to `$as` for lists and
@@ -521,6 +526,53 @@ will result in :
     <em>content</em>
 </div>
 ```
+
+### Translations
+
+If properly setup, Owl QWeb engine can translate all rendered templates. To do
+so, it needs a translate function, which takes a string and returns a string.
+
+For example:
+
+```js
+const translations = {
+  hello: "bonjour",
+  yes: "oui",
+  no: "non"
+};
+const translateFn = str => translations[str] || str;
+
+const qweb = new QWeb({ translateFn });
+```
+
+Once setup, all rendered templates will be translated using `translateFn`:
+
+- each text node will be replaced with its translation,
+- each of the following attribute values will be translated as well: `title`,
+  `placeholder`, `label` and `alt`,
+- translating text nodes can be disabled with the special attribute `t-translation`,
+  if its value is `off`.
+
+So, with the above `translateFn`, the following templates:
+
+```xml
+<div>hello</div>
+<div t-translation="off">hello</div>
+<div>Are you sure?</div>
+<input placeholder="hello" other="yes"/>
+```
+
+will be rendered as:
+
+```xml
+<div>bonjour</div>
+<div>hello</div>
+<div>Are you sure?</div>
+<input placeholder="bonjour" other="yes"/>
+```
+
+Note that the translation is done during the compilation of the template, not
+when it is rendered.
 
 ### Debugging
 

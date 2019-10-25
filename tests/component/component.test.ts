@@ -2064,6 +2064,31 @@ describe("other directives with t-component", () => {
     expect(fixture.innerHTML).toBe('<div>1<span></span></div>');
   });
 
+  test("t-on with no handler (only modifiers)", async () => {
+    expect.assertions(2);
+    class ComponentB extends Component<any, any> {
+      static template = xml`<span></span>`;
+    }
+    class ComponentA extends Component<any, any> {
+      static template = xml`<p><ComponentB t-on-ev.prevent=""/></p>`;
+      static components = { ComponentB };
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><ComponentA t-on-ev="onEv"/></div>`;
+      static components = { ComponentA };
+      onEv(ev) {
+        expect(ev.defaultPrevented).toBe(true);
+      }
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+
+    let componentB = children(children(parent)[0])[0];
+    componentB.trigger("ev");
+
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+  });
+
   test("t-if works with t-component", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" t-if="state.flag"/></div>`);
     class Child extends Widget {}

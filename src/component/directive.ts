@@ -335,8 +335,10 @@ QWeb.addDirective({
               return T_COMPONENT_MODS_CODE[mod];
             })
             .join("");
-          handler += `const fn = owner['${handlerValue}'];`;
-          handler += `if (fn) { fn.call(${params}, e); } else { owner.${handlerValue}; }`;
+          if (handlerValue) {
+            handler += `const fn = owner['${handlerValue}'];`;
+            handler += `if (fn) { fn.call(${params}, e); } else { owner.${handlerValue}; }`;
+          }
           handler += `}`;
           return `vn.elm.addEventListener('${eventName}', ${handler});`;
         })

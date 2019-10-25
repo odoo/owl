@@ -97,6 +97,13 @@ The `Router` constructor takes three arguments:
 - an optional object (with the only key `mode` which can be `history` (default
   value) or `hash`).
 
+`history` will use the browser [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API) as the mechanism to manage URL.\
+Example: `https://yourdomain.tld/my_custom_route`.\
+For this mechanism to work, you need a way to configure your web server accordingly.
+
+`hash` will manipulate the hash of the URL.\
+Example: `https://yourdomain.tld/index.html#/my_custom_route`.
+
 ```js
 const ROUTES = [...];
 const router = new owl.router.Router(env, ROUTES, {mode: 'history'});

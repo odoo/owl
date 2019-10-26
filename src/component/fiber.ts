@@ -53,6 +53,8 @@ export class Fiber {
   sibling: Fiber | null = null;
   parent: Fiber | null = null;
 
+  error?: Error;
+
   constructor(parent: Fiber | null, component: Component<any, any>, props, scope, vars, force) {
     this.force = force;
     this.scope = scope;
@@ -212,14 +214,15 @@ export class Fiber {
       root = component;
       component = component.__owl__.parent!;
     }
-    console.error(error);
     qweb.trigger("error", error);
 
     if (canCatch) {
       setTimeout(() => {
+        console.error(error);
         component.catchError!(error);
       });
     } else {
+      this.root.error = error;
       root.destroy();
     }
   }

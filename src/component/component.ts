@@ -266,7 +266,7 @@ export class Component<T extends Env, Props extends {}> {
    * It needs to be implemented by a component that is designed to handle the
    * error properly.
    */
-  catchError?(error?: Error):void;
+  catchError?(error?: Error): void;
 
   //--------------------------------------------------------------------------
   // Public
@@ -298,8 +298,12 @@ export class Component<T extends Env, Props extends {}> {
     } else {
       this.__render(fiber);
     }
-    return new Promise(resolve => {
-      scheduler.addFiber(fiber, () => {
+    return new Promise((resolve, reject) => {
+      scheduler.addFiber(fiber, err => {
+        if (err) {
+          reject(err);
+          return;
+        }
         if (!__owl__.isDestroyed) {
           this.__patch(fiber.vnode);
           target.appendChild(this.el!);
@@ -342,8 +346,12 @@ export class Component<T extends Env, Props extends {}> {
     }
     const fiber = new Fiber(null, this, this.props, undefined, undefined, force);
     this.__render(fiber);
-    return new Promise(resolve => {
-      scheduler.addFiber(fiber.root, () => {
+    return new Promise((resolve, reject) => {
+      scheduler.addFiber(fiber.root, err => {
+        if (err) {
+          reject(err);
+          return;
+        }
         if (__owl__.isMounted && fiber === fiber.root) {
           fiber.patchComponents();
         }

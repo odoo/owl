@@ -195,5 +195,32 @@ export class Fiber {
     });
   }
 
-  handleError(e: Error) {}
+  /**
+   * This is the global error handler for errors occurring in Owl main lifecycle
+   * methods.  Caught errors are triggered on the QWeb instance, and are
+   * potentially given to some parent component which implements `catchError`.
+   *
+   * If there are no such component, we destroy everything. This is better than
+   * being in a corrupted state.
+   */
+  handleError(error: Error) {
+    let canCatch = false;
+    let component = this.component;
+    let qweb = component.env.qweb;
+    let root = component;
+    while (component && !(canCatch = !!component.catchError)) {
+      root = component;
+      component = component.__owl__.parent!;
+    }
+    console.error(error);
+    qweb.trigger("error", error);
+
+    if (canCatch) {
+      setTimeout(() => {
+        component.catchError!(error);
+      });
+    } else {
+      root.destroy();
+    }
+  }
 }

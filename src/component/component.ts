@@ -262,8 +262,11 @@ export class Component<T extends Env, Props extends {}> {
   /**
    * catchError is a method called whenever some error happens in the rendering or
    * lifecycle hooks of a child.
+   *
+   * It needs to be implemented by a component that is designed to handle the
+   * error properly.
    */
-  catchError(error: Error): void {}
+  catchError?(error?: Error):void;
 
   //--------------------------------------------------------------------------
   // Public
@@ -561,7 +564,7 @@ export class Component<T extends Env, Props extends {}> {
     try {
       await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
     } catch (e) {
-      errorHandler(e, fiber);
+      fiber.handleError(e);
       fiber.vnode = h("div"); // -> we render this div at the end
       return Promise.resolve();
     }
@@ -586,7 +589,7 @@ export class Component<T extends Env, Props extends {}> {
       });
     } catch (e) {
       vnode = __owl__.vnode || h("div");
-      errorHandler(e, fiber);
+      fiber.handleError(e);
     }
     fiber.vnode = vnode;
     if (__owl__.observer) {
@@ -648,41 +651,5 @@ export class Component<T extends Env, Props extends {}> {
       }
     }
     return <Props>props;
-  }
-}
-
-//------------------------------------------------------------------------------
-// Error handling
-//------------------------------------------------------------------------------
-
-Fiber.prototype.handleError = function(error) {
-  errorHandler(error, this);
-};
-/**
- * This is the global error handler for errors occurring in Owl main lifecycle
- * methods.  Caught errors are triggered on the QWeb instance, and are
- * potentially given to some parent component which implements `catchError`.
- *
- * If there are no such component, we destroy everything. This is better than
- * being in a corrupted state.
- */
-function errorHandler(error: Error, fiber: Fiber) {
-  let canCatch = false;
-  let component = fiber.component;
-  let qweb = component.env.qweb;
-  let root = component;
-  while (component && !(canCatch = component.catchError !== Component.prototype.catchError)) {
-    root = component;
-    component = component.__owl__.parent!;
-  }
-  console.error(error);
-  qweb.trigger("error", error);
-
-  if (canCatch) {
-    setTimeout(() => {
-      component.catchError(error);
-    });
-  } else {
-    root.destroy();
   }
 }

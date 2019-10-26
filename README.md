@@ -28,20 +28,16 @@ Owl is currently mostly stable.  Possible future changes are explained in the
 Here is a short example to illustrate interactive components:
 
 ```javascript
-import { Component, QWeb, useState } from "owl";
-import { xml } from "owl/tags";
+const { Component, QWeb, useState } = owl;
+const { xml } = owl.tags;
 
 class Counter extends Component {
   static template = xml`
-    <button t-on-click="increment">
+    <button t-on-click="state.value++">
       Click Me! [<t t-esc="state.value"/>]
     </button>`;
 
   state = useState({ value: 0 });
-
-  increment() {
-    this.state.value++;
-  }
 }
 
 class App extends Component {
@@ -58,8 +54,8 @@ const app = new App({ qweb: new QWeb() });
 app.mount(document.body);
 ```
 
-Note that the counter component is made reactive with the [`useState`](doc/hooks.md#usestate)
-hook. Also, all examples here uses the `xml` helper to define inline templates.
+Note that the counter component is made reactive with the [`useState` hook](doc/hooks.md#usestate).
+Also, all examples here uses the [`xml` helper](doc/tags.md#xml-tag) to define inline templates.
 But this is not mandatory, many applications will load templates separately.
 
 More interesting examples can be found on the
@@ -132,7 +128,7 @@ Owl components in an application are used to define a (dynamic) tree of componen
 ```
 
 **Environment:** the root component is special: it is created with an environment,
-which should contain a `QWeb` instance. The environment is then automatically
+which should contain a [`QWeb` instance](doc/qweb.md). The environment is then automatically
 propagated to each sub components (and accessible in the `this.env` property).
 
 ```js

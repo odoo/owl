@@ -21,7 +21,7 @@ QWeb.utils.validateProps = function(Widget, props: Object) {
         // optional prop
         break;
       }
-      if (!props[propName]) {
+      if (!(propName in props)) {
         throw new Error(`Missing props '${propsDef[i]}' (component '${Widget.name}')`);
       }
     }

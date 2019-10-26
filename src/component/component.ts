@@ -134,6 +134,9 @@ export class Component<T extends Env, Props extends {}> {
     //   Con: this is not really safe
     //   Pro: but creating component (by a template) is always unsafe anyway
     this.props = <Props>props || <Props>{};
+    if (QWeb.dev) {
+      QWeb.utils.validateProps(this.constructor, this.props);
+    }
     let id: number = nextId++;
     let p: Component<T, any> | null = null;
     if (parent instanceof Component) {
@@ -142,11 +145,6 @@ export class Component<T extends Env, Props extends {}> {
       parent.__owl__.children[id] = this;
     } else {
       this.env = parent;
-      if (QWeb.dev) {
-        // we only validate props for root widgets here.  "Regular" widget
-        // props are validated by the t-component directive
-        QWeb.utils.validateProps(this.constructor, this.props);
-      }
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {
           this.render(true);

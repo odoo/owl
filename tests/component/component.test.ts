@@ -2142,7 +2142,7 @@ describe("other directives with t-component", () => {
           <Child t-on-ev="handler"/>
         </div>`;
       static components = { Child };
-      state = useState({counter: 0});
+      state = useState({ counter: 0 });
       get handler() {
         this.state.counter++;
         return () => {};
@@ -2152,12 +2152,12 @@ describe("other directives with t-component", () => {
     await parent.mount(fixture);
 
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
-    expect(fixture.innerHTML).toBe('<div>0<span></span></div>');
+    expect(fixture.innerHTML).toBe("<div>0<span></span></div>");
 
     let child = children(parent)[0];
     child.trigger("ev");
     await nextTick();
-    expect(fixture.innerHTML).toBe('<div>1<span></span></div>');
+    expect(fixture.innerHTML).toBe("<div>1<span></span></div>");
   });
 
   test("t-on with inline statement", async () => {
@@ -2171,18 +2171,18 @@ describe("other directives with t-component", () => {
           <Child t-on-ev="state.counter++"/>
         </div>`;
       static components = { Child };
-      state = useState({counter: 0});
+      state = useState({ counter: 0 });
     }
     const parent = new Parent(env);
     await parent.mount(fixture);
 
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
-    expect(fixture.innerHTML).toBe('<div>0<span></span></div>');
+    expect(fixture.innerHTML).toBe("<div>0<span></span></div>");
 
     let child = children(parent)[0];
     child.trigger("ev");
     await nextTick();
-    expect(fixture.innerHTML).toBe('<div>1<span></span></div>');
+    expect(fixture.innerHTML).toBe("<div>1<span></span></div>");
   });
 
   test("t-on with no handler (only modifiers)", async () => {

@@ -1044,8 +1044,8 @@ describe("t-on", () => {
     qweb.addTemplate("test", `<button t-on-click="state.counter++">Click</button>`);
     let owner = {
       state: {
-        counter: 0,
-      },
+        counter: 0
+      }
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     expect(owner.state.counter).toBe(0);
@@ -1058,8 +1058,10 @@ describe("t-on", () => {
     let owner = {
       state: {
         counter: 0,
-        incrementCounter: (inc) => { owner.state.counter += inc; },
-      },
+        incrementCounter: inc => {
+          owner.state.counter += inc;
+        }
+      }
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     expect(owner.state.counter).toBe(0);
@@ -1223,7 +1225,7 @@ describe("t-on", () => {
     );
     const node = renderToDOM(qweb, "test", {}, { handlers: [] });
 
-    node.addEventListener('click', (e) => {
+    node.addEventListener("click", e => {
       expect(e.defaultPrevented).toBe(true);
     });
 

@@ -1,8 +1,15 @@
 # 🦉 Tags 🦉
 
+## Content
+
+- [Overview](#overview)
+- [`xml` tag](#xml-tag)
+
+## Overview
+
 Tags are very small helpers to make it easy to write inline templates. There is
 only one currently available tag: `xml`, but we plan to add other tags later,
-such as a `css` tag, which will be used to write single file components.
+such as a `css` tag, which will be used to write [single file components](tooling.md#single-file-component).
 
 ## XML tag
 
@@ -31,8 +38,8 @@ With tags, this process is slightly simplified. The name is uniquely generated,
 and the template is automatically registered:
 
 ```js
-import { Component } from 'owl'
-import { xml } from 'owl/tags'
+const { Component } = owl;
+const { xml } = owl.tags;
 
 class MyComponent extends Component {
     static template = xml`

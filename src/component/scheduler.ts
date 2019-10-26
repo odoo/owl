@@ -13,7 +13,7 @@ import { Fiber } from "./fiber";
 
 interface Task {
   fiber: Fiber;
-  callback: () => void;
+  callback: (err?: Error) => void;
 }
 
 export class Scheduler {
@@ -45,7 +45,7 @@ export class Scheduler {
         return false;
       }
       if (task.fiber.counter === 0) {
-        task.callback();
+        task.callback(task.fiber.error);
         return false;
       }
       return true;

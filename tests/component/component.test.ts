@@ -1090,12 +1090,15 @@ describe("composition", () => {
       static components = { SomeWidget: Widget };
     }
     const parent = new Parent(env);
-    await parent.mount(fixture);
-
-    expect(console.error).toBeCalledTimes(1);
-    expect((<any>console.error).mock.calls[0][0].message).toMatch(
-      'Cannot find the definition of component "SomeMispelledWidget"'
-    );
+    let error;
+    try {
+      await parent.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe('Cannot find the definition of component "SomeMispelledWidget"');
+    expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
 
@@ -3466,12 +3469,15 @@ describe("widget and observable state", () => {
       static components = { Child };
     }
     const parent = new Parent(env);
-    await parent.mount(fixture);
-
-    expect(console.error).toBeCalledTimes(1);
-    expect((<any>console.error).mock.calls[0][0].message).toMatch(
-      'Observed state cannot be changed here! (key: "coffee", val: "2")'
-    );
+    let error;
+    try {
+      await parent.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
+    expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
 });
@@ -4359,22 +4365,27 @@ describe("component error handling (catchError)", () => {
   });
 
   test("no component catching error lead to full app destruction", async () => {
+      expect.assertions(6)
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
     console.error = jest.fn();
-    env.qweb.addTemplates(`
-      <templates>
-        <div t-name="ErrorComponent">hey<t t-esc="props.flag and state.this.will.crash"/>
-        </div>
-        <div t-name="App">
-            <ErrorComponent flag="state.flag"/>
-        </div>
-      </templates>`);
-    class ErrorComponent extends Widget {}
+
+    class ErrorComponent extends Widget {
+      static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
+    }
+
     class App extends Widget {
-      state = useState({ flag: false });
+      static template = xml`<div><ErrorComponent flag="state.flag"/></div>`;
       static components = { ErrorComponent };
+      state = useState({ flag: false });
+      async render() {
+        try {
+          await super.render();
+        } catch (e) {
+          expect(e.message).toBe("Cannot read property 'this' of undefined");
+        }
+      }
     }
     const app = new App(env);
     await app.mount(fixture);
@@ -4385,7 +4396,7 @@ describe("component error handling (catchError)", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("");
 
-    expect(console.error).toBeCalledTimes(1);
+    expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
     expect(app.__owl__.isDestroyed).toBe(true);
     expect(handler).toBeCalledTimes(1);
@@ -4585,6 +4596,80 @@ describe("component error handling (catchError)", () => {
     await nextTick();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+  });
+
+  test("a rendering error will reject the mount promise", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn(() => {});
+    // we do not catch error in willPatch anymore
+    class App extends Component<any, any> {
+      static template = xml`<div><t t-esc="this.will.crash"/></div>`;
+    }
+
+    const app = new App(env);
+    let error;
+    try {
+      await app.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
+  test("a rendering error in a sub component will reject the mount promise", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn(() => {});
+    // we do not catch error in willPatch anymore
+    class Child extends Component<any, any> {
+      static template = xml`<div><t t-esc="this.will.crash"/></div>`;
+    }
+    class App extends Component<any, any> {
+      static template = xml`<div><Child/></div>`;
+      static components = { Child };
+    }
+
+    const app = new App(env);
+    let error;
+    try {
+      await app.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
+  test("a rendering error will reject the render promise", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn(() => {});
+    // we do not catch error in willPatch anymore
+    class App extends Component<any, any> {
+      static template = xml`<div><t t-if="flag" t-esc="this.will.crash"/></div>`;
+      flag = false;
+    }
+
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
+    app.flag = true;
+    let error;
+    try {
+      await app.render();
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
   });
 });
 

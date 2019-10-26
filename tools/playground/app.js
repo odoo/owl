@@ -90,7 +90,7 @@ function makeCodeIframe(js, css, xml, errorHandler) {
     owlScript.addEventListener("load", () => {
       const script = doc.createElement("script");
       script.type = "text/javascript";
-      const content = `owl.__info__.mode = 'dev';\nwindow.TEMPLATES = \`${sanitizedXML}\`\n${js}`;
+      const content = `owl.__info__.mode = 'dev';\nwindow.TEMPLATES = \`${sanitizedXML}\`;\n${js}`;
       script.innerHTML = content;
       iframe.contentWindow.addEventListener("error", errorHandler);
       iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);

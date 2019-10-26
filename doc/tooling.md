@@ -60,12 +60,21 @@ useful to compare various performance metrics on some tasks.
 
 ## Single File Component
 
-If you want to have `xml` syntax highlighting while using the `xml` helper which
-helps you define inline templates, there is a VS Code addon `Comment tagged template`
-which, if installed, does exactly that. To enable it, you need to add a comment,
-like this:
+It is very useful to group code by feature instead of by type of file. It makes
+it easier to scale application to larger size.
+
+To do so, Owl currently has a small helper that makes it easy to define a
+template inside a javascript (or typescript) file: the [`xml`](tags.md#xml-tag)
+helper. With this, a template is automatically registered to [QWeb](qweb.md).
+
+This means that the template and the javascript code can be defined in the same
+file. It is not currently possible to add css to the same file, but Owl may
+get a `css` tag helper later.
 
 ```js
+const { Component } = owl;
+const { xml } = owl.tags;
+
 // -----------------------------------------------------------------------------
 // TEMPLATE
 // -----------------------------------------------------------------------------
@@ -85,3 +94,8 @@ class MyComponent extends Component {
   // rest of component...
 }
 ```
+
+Note that the above example has an inline xml comment, just after the `xml` call.
+This is useful for some editor plugins, such as the VS Code addon
+`Comment tagged template`, which, if installed, add syntax highlighting to the
+content of the template string.

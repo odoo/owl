@@ -677,7 +677,6 @@ to event `menu-loaded` will receive the payload in its `someMethod` handler
 
 By convention, we use KebabCase for the name of _business_ events.
 
-
 The `t-on` directive allows to prebind some arguments. For example,
 
 ```xml
@@ -695,10 +694,12 @@ One can also directly specify inline statements. For example,
 
 Here, `state` must be defined in the rendering context (typically the component)
 as it will be translated to:
-```js
-button.addEventListener("click", () => { component.state.counter++; });
-```
 
+```js
+button.addEventListener("click", () => {
+  component.state.counter++;
+});
+```
 
 In order to remove the DOM event details from the event handlers (like calls to
 `event.preventDefault`) and let them focus on data logic, _modifiers_ can be

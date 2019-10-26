@@ -322,6 +322,28 @@ describe("props validation", () => {
       QWeb.utils.validateProps(TestWidget, { message: null });
     }).toThrow();
   });
+
+  test("can set default required boolean values", async () => {
+    class TestWidget extends Widget {
+      static props = ["p"];
+      static template = xml`<span><t t-if="props.p">hey</t></span>`;
+    }
+
+    class App extends Widget {
+      static template = xml`<div><TestWidget/></div>`;
+      static components = { TestWidget };
+    }
+
+    const w = new App(env, {});
+    let error;
+    try {
+      await w.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Missing props 'p' (component 'TestWidget')");
+  });
 });
 
 describe("default props", () => {

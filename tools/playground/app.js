@@ -429,6 +429,8 @@ App.components = { TabbedEditor };
 //------------------------------------------------------------------------------
 async function start() {
   document.title = `${document.title} (v${owl.__info__.version})`;
+  const commit = `https://github.com/odoo/owl/commit/${owl.__info__.hash}`;
+  console.info(`This application is using Owl built with the following commit:`, commit);
   const [templates] = await Promise.all([
     owl.utils.loadFile("templates.xml"),
     owl.utils.whenReady()

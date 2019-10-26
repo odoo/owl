@@ -148,7 +148,6 @@ export class Fiber {
     };
     this._walk(doWork);
     let component: Component<any, any> = this.component;
-    this.shouldPatch = false;
     const patchLen = patchQueue.length;
     try {
       for (let i = 0; i < patchLen; i++) {
@@ -161,14 +160,10 @@ export class Fiber {
     } catch (e) {
       console.error(e);
     }
-    try {
-      for (let i = 0; i < patchLen; i++) {
-        const fiber = patchQueue[i];
-        component = fiber.component;
-        component.__patch(fiber.vnode);
-      }
-    } catch (e) {
-      this.handleError(e);
+    for (let i = 0; i < patchLen; i++) {
+      const fiber = patchQueue[i];
+      component = fiber.component;
+      component.__patch(fiber.vnode);
     }
     try {
       for (let i = patchLen - 1; i >= 0; i--) {
@@ -181,7 +176,6 @@ export class Fiber {
     } catch (e) {
       console.error(e);
     }
-    this.shouldPatch = true;
   }
 
   /**

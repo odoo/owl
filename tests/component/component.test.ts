@@ -4365,7 +4365,7 @@ describe("component error handling (catchError)", () => {
   });
 
   test("no component catching error lead to full app destruction", async () => {
-      expect.assertions(6)
+    expect.assertions(6);
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
@@ -4562,6 +4562,8 @@ describe("component error handling (catchError)", () => {
 
   test.skip("can catch an error in the willPatch call", async () => {
     // we do not catch error in willPatch anymore
+    const consoleError = console.error;
+    console.error = jest.fn();
     class ErrorComponent extends Widget {
       static template = xml`<div><t t-esc="props.message"/></div>`;
       willPatch() {
@@ -4583,6 +4585,7 @@ describe("component error handling (catchError)", () => {
     class App extends Widget {
       static template = xml`
         <div>
+            <span><t t-esc="state.message"/></span>
           <ErrorBoundary><ErrorComponent message="state.message" /></ErrorBoundary>
         </div>`;
       state = useState({ message: "abc" });
@@ -4590,12 +4593,14 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App(env);
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div><div>abc</div></div></div>");
+    expect(fixture.innerHTML).toBe("<div><span>abc</span><div><div>abc</div></div></div>");
     app.state.message = "def";
     await nextTick();
     await nextTick();
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+    expect(fixture.innerHTML).toBe("<div><span>def</span><div>Error handled</div></div>");
+    expect(console.error).toHaveBeenCalledTimes(1);
+    console.error = consoleError;
   });
 
   test("a rendering error will reject the mount promise", async () => {

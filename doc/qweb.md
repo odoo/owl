@@ -479,6 +479,20 @@ into the global context.
 <!-- new_variable undefined -->
 ```
 
+Owl QWeb is used as the template engine for components. Components are frequently
+updated, and reuse as much of the previous DOM as possible. Loops offer a specific
+problem for this usecase: how does the template engine know if two rows have
+been swapped, or if the content of these rows was changed? To help Owl with that,
+there is an additional directive: [`t-key`](component.md#t-key-directive).
+
+```xml
+<p t-foreach="state.things" t-as="thing" t-key="thing.id">
+    <t t-esc="thing.content"/>
+</p>
+```
+
+If there is no `t-key` directive, Owl will use the index as a default key.
+
 ### Rendering Sub Templates
 
 QWeb templates can be used for top level rendering, but they can also be used

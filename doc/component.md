@@ -370,8 +370,8 @@ will slightly slow down the component.
 #### `willUpdateProps(nextProps)`
 
 The willUpdateProps is an asynchronous hook, called just before new props
-are set. This is useful if the component needs some asynchronous task
-performed, depending on the props (for example, assuming that the props are
+are set. This is useful if the component needs to perform an asynchronous task,
+depending on the props (for example, assuming that the props are
 some record Id, fetching the record data).
 
 ```javascript
@@ -386,7 +386,7 @@ and performs a similar job).
 #### `willPatch()`
 
 The willPatch hook is called just before the DOM patching process starts.
-It is not called on the initial render. This is useful to read some
+It is not called on the initial render. This is useful to read
 information from the DOM. For example, the current position of the
 scrollbar.
 
@@ -413,7 +413,7 @@ careful at avoiding endless cycles.
 #### `willUnmount()`
 
 willUnmount is a hook that is called each time just before a component is unmounted from
-the DOM. This is a good place to remove some listeners, for example.
+the DOM. This is a good place to remove listeners, for example.
 
 ```javascript
   mounted() {
@@ -539,7 +539,7 @@ constructor. This will be assigned to the `props` variable, which can be accesse
 on the component (and also, in the template). Whenever the state is updated, then
 the sub component will also be updated automatically.
 
-Note that there are some restrictions on prop names: `class`, `style` and any
+Note that there are restrictions on valid prop names: `class`, `style` and any
 string which starts with `t-` are not allowed.
 
 It is not common, but sometimes we need a dynamic component name and/or dynamic props. In this case,
@@ -598,7 +598,7 @@ class App extends Component<any, any, any> {
 In this example, the component `App` selects dynamically the concrete sub
 component class.
 
-**CSS and style:** there is some specific support to allow the parent to declare
+**CSS and style:** Owl allows the parent to declare
 additional css classes or style for the sub component: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
 root component element.
 
@@ -611,7 +611,7 @@ root component element.
 Warning: there is a small caveat with dynamic class attributes: since Owl needs
 to be able to add/remove proper classes whenever necessary, it needs to be aware
 of the possible classes. Otherwise, it will not be able to make the difference
-between a valid css class added by the component, or some custom code, and a
+between a valid css class added by the component, or other custom code, and a
 class that need to be removed. This is why we only support the explicit syntax
 with a class object:
 
@@ -621,7 +621,7 @@ with a class object:
 
 ### Event Handling
 
-In a component's template, it is useful to be able to register handlers on some
+In a component's template, it is useful to be able to register handlers on DOM
 elements to some specific events. This is what makes a template _alive_. There
 are four different use cases.
 
@@ -677,7 +677,7 @@ to event `menu-loaded` will receive the payload in its `someMethod` handler
 
 By convention, we use KebabCase for the name of _business_ events.
 
-The `t-on` directive allows to prebind some arguments. For example,
+The `t-on` directive allows to prebind its arguments. For example,
 
 ```xml
 <button t-on-click="someMethod(expr)">Do something</button>
@@ -803,7 +803,7 @@ The `t-model` directive works with `<input>`, `<input type="checkbox">`,
 </div>
 ```
 
-Like event handling, the `t-model` directive accepts some modifiers:
+Like event handling, the `t-model` directive accepts the following modifiers:
 
 | Modifier  | Description                                                          |
 | --------- | -------------------------------------------------------------------- |
@@ -828,24 +828,63 @@ Even though Owl tries to be as declarative as possible, the DOM does not fully
 expose its state declaratively in the DOM tree. For example, the scrolling state,
 the current user selection, the focused element or the state of an input are not
 set as attribute in the DOM tree. This is why we use a virtual dom
-algorithm to keep the actual DOM node as much as possible. However, this is
-sometimes not enough, and we need to help Owl decide if an element is actually
-the same, or is different. The `t-key` directive is used to give an identity to an element.
+algorithm to keep the actual DOM node as much as possible.
 
-There are three main use cases:
+However, in some situations, this is not enough, and we need to help Owl decide
+if an element is actually the same, or is a different element with the same
+properties.
 
-- _elements in a list_:
+Consider the following situation: we have a list of two items `[{text: "a"}, {text: "b"}]`
+and we render them in this template:
 
-  ```xml
-    <span t-foreach="todos" t-as="todo" t-key="todo.id">
-        <t t-esc="todo.text" />
-    </span>
-  ```
+```xml
+<p t-foreach="items" t-as="item"><t t-esc="item.text"/></p>
+```
 
-- _`t-if`/`t-else`_
+The result will be two `<p>` tags with text `a` and `b`. Now, if we swap them,
+and rerender the template, Owl needs to know what the intent is:
 
-- _animations_: give a different identity to a component. Ex: thread id with
-  animations on add/remove message.
+- should Owl actually swap the DOM nodes,
+- or should it keep the DOM nodes, but with an updated text content?
+
+This might look trivial, but it actually matters. These two possibilities lead
+to different results in some cases. For example, if the user selected the text
+of the first `p`, swapping them will keep the selection while updating the
+text content will not.
+
+There are many other cases where this is important: `input` tags with their
+value, css classes and animations, scroll position...
+
+So, the `t-key` directive is used to give an identity to an element. It allows
+Owl to understand if different elements of a list are actually different or not.
+
+The above example could be modified by adding an ID: `[{id: 1, text: "a"}, {id: 2, text: "b"}]`.
+Then, the template could look like this:
+
+```xml
+<p t-foreach="items" t-as="item" t-key="item.id"><t t-esc="item.text"/></p>
+```
+
+The `t-key` directive is useful for lists (`t-foreach`). A key should be
+a unique number or string (objects will not work: they will be cast to the
+`"[object Object]"` string, which is obviously not unique).
+
+Also, the key can be set on a `t` tag or on its children. The following variations
+are all equivalent:
+
+```xml
+<p t-foreach="items" t-as="item" t-key="item.id">
+  <t t-esc="item.text"/>
+</p>
+
+<t t-foreach="items" t-as="item" t-key="item.id">
+  <p t-esc="item.text"/>
+</t>
+
+<t t-foreach="items" t-as="item">
+  <p t-key="item.id" t-esc="item.text"/>
+</t>
+```
 
 ### Semantics
 

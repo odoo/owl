@@ -181,6 +181,9 @@ class Counter extends owl.Component {
 }
 ```
 
+It is important to remember that `useState` only works with objects or arrays. It
+is necessary, since Owl needs to react to a change in state.
+
 ### `onMounted`
 
 `onMounted` is not a user hook, but is a building block designed to help make useful

@@ -387,13 +387,13 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         context.item_index = i1;
         context.item = _3[i1];
         context.item_value = _4[i1];
-        const nodeKey5 = context['item']
-        let c5 = [], p5 = {key:nodeKey5};
-        var vn5 = h('span', p5, c5);
-        c1.push(vn5);
-        var _6 = context['item'];
-        if (_6 || _6 === 0) {
-            c5.push({text: _6});
+        const nodeKey5 = context['item'];
+        let c6 = [], p6 = {key:nodeKey5};
+        var vn6 = h('span', p6, c6);
+        c1.push(vn6);
+        var _7 = context['item'];
+        if (_7 || _7 === 0) {
+            c6.push({text: _7});
         }
     }
     return vn1;
@@ -1643,14 +1643,14 @@ exports[`t-key can use t-key directive on a node 1`] = `
 ) {
     let sibling = null;
     var h = this.h;
-    const nodeKey1 = context['beer'].id
-    let c1 = [], p1 = {key:nodeKey1};
-    var vn1 = h('div', p1, c1);
-    var _2 = context['beer'].name;
-    if (_2 || _2 === 0) {
-        c1.push({text: _2});
+    const nodeKey1 = context['beer'].id;
+    let c2 = [], p2 = {key:nodeKey1};
+    var vn2 = h('div', p2, c2);
+    var _3 = context['beer'].name;
+    if (_3 || _3 === 0) {
+        c2.push({text: _3});
     }
-    return vn1;
+    return vn2;
 }"
 `;
 
@@ -1676,13 +1676,13 @@ exports[`t-key t-key directive in a list 1`] = `
         context.beer_index = i1;
         context.beer = _3[i1];
         context.beer_value = _4[i1];
-        const nodeKey5 = context['beer'].id
-        let c5 = [], p5 = {key:nodeKey5};
-        var vn5 = h('li', p5, c5);
-        c1.push(vn5);
-        var _6 = context['beer'].name;
-        if (_6 || _6 === 0) {
-            c5.push({text: _6});
+        const nodeKey5 = context['beer'].id;
+        let c6 = [], p6 = {key:nodeKey5};
+        var vn6 = h('li', p6, c6);
+        c1.push(vn6);
+        var _7 = context['beer'].name;
+        if (_7 || _7 === 0) {
+            c6.push({text: _7});
         }
     }
     return vn1;
@@ -1774,16 +1774,16 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         context.action_index = i1;
         context.action = _3[i1];
         context.action_value = _4[i1];
-        const nodeKey5 = context['action_index']
-        let c5 = [], p5 = {key:nodeKey5};
-        var vn5 = h('li', p5, c5);
-        c1.push(vn5);
-        let c6 = [], p6 = {key:6,on:{}};
-        var vn6 = h('a', p6, c6);
-        c5.push(vn6);
-        const handler7 = context['activate'] && context['activate'].bind(owner, context['action']);
-        p6.on['click'] = function (e) {if (handler7) { handler7(e); } else { context.activate(action); }};
-        c6.push({text: \`link\`});
+        const nodeKey5 = context['action_index'];
+        let c6 = [], p6 = {key:nodeKey5};
+        var vn6 = h('li', p6, c6);
+        c1.push(vn6);
+        let c7 = [], p7 = {key:nodeKey5,on:{}};
+        var vn7 = h('a', p7, c7);
+        c6.push(vn7);
+        const handler8 = context['activate'] && context['activate'].bind(owner, context['action']);
+        p7.on['click'] = function (e) {if (handler8) { handler8(e); } else { context.activate(action); }};
+        c7.push({text: \`link\`});
     }
     return vn1;
 }"
@@ -2000,17 +2000,17 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
         context.project_index = i1;
         context.project = _3[i1];
         context.project_value = _4[i1];
-        var _5 = '#';
-        const nodeKey6 = context['project']
-        let c6 = [], p6 = {key:nodeKey6,attrs:{href: _5},on:{}};
-        var vn6 = h('a', p6, c6);
-        c1.push(vn6);
-        const handler7 = context['onEdit'] && context['onEdit'].bind(owner, context['project'].id);
-        p6.on['click'] = function (e) {e.preventDefault();if (handler7) { handler7(e); } else { context.onEdit(project.id); }};
-        c6.push({text: \` Edit \`});
-        var _8 = context['project'].name;
-        if (_8 || _8 === 0) {
-            c6.push({text: _8});
+        const nodeKey5 = context['project'];
+        var _6 = '#';
+        let c7 = [], p7 = {key:nodeKey5,attrs:{href: _6},on:{}};
+        var vn7 = h('a', p7, c7);
+        c1.push(vn7);
+        const handler8 = context['onEdit'] && context['onEdit'].bind(owner, context['project'].id);
+        p7.on['click'] = function (e) {e.preventDefault();if (handler8) { handler8(e); } else { context.onEdit(project.id); }};
+        c7.push({text: \` Edit \`});
+        var _9 = context['project'].name;
+        if (_9 || _9 === 0) {
+            c7.push({text: _9});
         }
     }
     return vn1;
@@ -2207,22 +2207,22 @@ exports[`t-ref refs in a loop 1`] = `
         context.item_index = i1;
         context.item = _3[i1];
         context.item_value = _4[i1];
-        const nodeKey5 = context['item']
-        let c5 = [], p5 = {key:nodeKey5};
-        var vn5 = h('div', p5, c5);
-        c1.push(vn5);
-        const ref6 = (context['item']);
-        p5.hook = {
+        const nodeKey5 = context['item'];
+        let c6 = [], p6 = {key:nodeKey5};
+        var vn6 = h('div', p6, c6);
+        c1.push(vn6);
+        const ref7 = (context['item']);
+        p6.hook = {
           create: (_, n) => {
-            context.__owl__.refs[ref6] = n.elm;
+            context.__owl__.refs[ref7] = n.elm;
           },
           destroy: () => {
-            delete context.__owl__.refs[ref6];
+            delete context.__owl__.refs[ref7];
           },
         };
-        var _7 = context['item'];
-        if (_7 || _7 === 0) {
-            c5.push({text: _7});
+        var _8 = context['item'];
+        if (_8 || _8 === 0) {
+            c6.push({text: _8});
         }
     }
     return vn1;
@@ -2383,16 +2383,16 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         context.elem_index = i1;
         context.elem = _4[i1];
         context.elem_value = _5[i1];
-        const nodeKey6 = context['elem_index']
-        let c6 = [], p6 = {key:nodeKey6};
-        var vn6 = h('div', p6, c6);
-        c1.push(vn6);
-        let c7 = [], p7 = {key:7};
-        var vn7 = h('span', p7, c7);
-        c6.push(vn7);
-        c7.push({text: \`v\`});
+        const nodeKey6 = context['elem_index'];
+        let c7 = [], p7 = {key:nodeKey6};
+        var vn7 = h('div', p7, c7);
+        c1.push(vn7);
+        let c8 = [], p8 = {key:nodeKey6};
+        var vn8 = h('span', p8, c8);
+        c7.push(vn8);
+        c8.push({text: \`v\`});
         if (_2 || _2 === 0) {
-            c7.push({text: _2});
+            c8.push({text: _2});
         }
         _2 = context['elem']
     }

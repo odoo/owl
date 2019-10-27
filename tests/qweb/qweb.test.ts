@@ -1,5 +1,6 @@
 import { QWeb } from "../../src/qweb/index";
-import { normalize, renderToDOM, renderToString, trim, nextTick } from "../helpers";
+import { nextTick, normalize, renderToDOM, renderToString, trim } from "../helpers";
+import { patch } from "../../src/vdom";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -837,6 +838,9 @@ describe("foreach", () => {
     );
     renderToString(qweb, "test");
     expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(console.warn).toHaveBeenCalledWith(
+      "Directive t-foreach should always be used with a t-key! (in template: 'test')"
+    );
     console.warn = consoleWarn;
   });
 });
@@ -1568,5 +1572,35 @@ describe("translation support", () => {
     expect(renderToString(qweb, "test")).toBe(
       '<div><p label="mot">mot</p><p title="mot">mot</p><p placeholder="mot">mot</p><p alt="mot">mot</p><p something="word">mot</p></div>'
     );
+  });
+});
+
+describe("t-key tests", () => {
+  test("t-key on t-foreach", async () => {
+    qweb.addTemplate(
+      "test",
+      `
+        <div>
+          <t t-foreach="things" t-as="thing" t-key="thing">
+            <span/>
+          </t>
+        </div>`
+    );
+
+    let vnode = qweb.render("test", { things: [1, 2] });
+    vnode = patch(document.createElement("div"), vnode);
+    let elm = vnode.elm as HTMLElement;
+
+    expect(elm.outerHTML).toBe("<div><span></span><span></span></div>");
+
+    const first = elm.querySelectorAll("span")[0];
+    const second = elm.querySelectorAll("span")[1];
+
+    patch(vnode, qweb.render("test", { things: [2, 1] }));
+
+    expect(elm.outerHTML).toBe("<div><span></span><span></span></div>");
+
+    expect(first).toBe(elm.querySelectorAll("span")[1]);
+    expect(second).toBe(elm.querySelectorAll("span")[0]);
   });
 });

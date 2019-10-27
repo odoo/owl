@@ -151,7 +151,6 @@ export class QWeb extends EventBus {
     name: 1,
     att: 1,
     attf: 1,
-    key: 1,
     translation: 1
   };
   static DIRECTIVES: Directive[] = [];
@@ -725,14 +724,7 @@ export class QWeb extends EventBus {
       }
     }
     let nodeID = ctx.generateID();
-    let nodeKey: any = (<Element>node).getAttribute("t-key");
-    if (nodeKey) {
-      ctx.addLine(`const nodeKey${nodeID} = ${ctx.formatExpression(nodeKey)}`);
-      nodeKey = `nodeKey${nodeID}`;
-      ctx.lastNodeKey = nodeKey;
-    } else {
-      nodeKey = nodeID;
-    }
+    let nodeKey = ctx.lastNodeKey || nodeID;
     const parts = [`key:${nodeKey}`];
     if (attrs.length + tattrs.length > 0) {
       parts.push(`attrs:{${attrs.join(",")}}`);

@@ -262,6 +262,10 @@ will only be rerendered whenever this part of the state changes. Otherwise, it
 will perform a strict equality check and will update the component every time this
 check fails.
 
+Also, it may not be obvious, but it is crucial to remember that the selector
+function should return an object or an array.  The reason is that it needs to be
+observed, otherwise the component would not be able to react to changes.
+
 ### `useDispatch`
 
 The `useDispatch` hook is useful when a component needs to be able to dispatch

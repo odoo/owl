@@ -148,7 +148,7 @@ export class Router {
   //--------------------------------------------------------------------------
 
   private setUrlFromPath(path: string) {
-    const separator = this.mode === "hash" ? "/" : "";
+    const separator = this.mode === "hash" ? location.pathname : "";
     const url = location.origin + separator + path;
     if (url !== window.location.href) {
       window.history.pushState({}, path, url);

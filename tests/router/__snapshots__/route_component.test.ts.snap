@@ -11,35 +11,35 @@ exports[`RouteComponent can render simple cases 1`] = `
     let result;
     var h = this.h;
     if (context['routeComponent']) {
+        const nodeKey1 = context['env'].router.currentRouteName;
         //COMPONENT
-        let key3 = 'key' + context['env'].router.currentRouteName;
-        let templateId2 = \`__4__\` + key3;
-        let w2 = templateId2 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId2]] : false;
+        let templateId3 = \`__4__\` + nodeKey1;
+        let w3 = templateId3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId3]] : false;
         let vn5 = {};
         result = vn5;
-        let props2 = Object.assign({}, context['env'].router.currentParams);
-        if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
-            w2.destroy();
-            w2 = false;
+        let props3 = Object.assign({}, context['env'].router.currentParams);
+        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+            w3.destroy();
+            w3 = false;
         }
-        if (w2) {
-            w2.__updateProps(props2, extra.fiber, undefined, undefined, sibling);
-            let pvnode = w2.__owl__.pvnode;
+        if (w3) {
+            w3.__updateProps(props3, extra.fiber, undefined, undefined, sibling);
+            let pvnode = w3.__owl__.pvnode;
             utils.defineProxy(vn5, pvnode);
         } else {
-            let componentKey2 = \`routeComponent\`;
-            let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['routeComponent'];
-            if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
-            w2 = new W2(parent, props2);
-            parent.__owl__.cmap[templateId2] = w2.__owl__.id;
-            let def1 = w2.__prepare(extra.fiber, undefined, undefined, sibling);
-            let pvnode = h('dummy', {key: templateId2, hook: {insert(vn) { let nvn=w2.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w2.destroy();}}});
-            const fiber = w2.__owl__.currentFiber;
-            def1.then(function () {if (w2.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            let componentKey3 = \`routeComponent\`;
+            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['routeComponent'];
+            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+            w3 = new W3(parent, props3);
+            parent.__owl__.cmap[templateId3] = w3.__owl__.id;
+            let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
+            let pvnode = h('dummy', {key: templateId3, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});
+            const fiber = w3.__owl__.currentFiber;
+            def2.then(function () {if (w3.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             utils.defineProxy(vn5, pvnode);
-            w2.__owl__.pvnode = pvnode;
+            w3.__owl__.pvnode = pvnode;
         }
-        sibling = w2.__owl__.currentFiber || sibling;
+        sibling = w3.__owl__.currentFiber || sibling;
     }
     return result;
 }"

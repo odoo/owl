@@ -294,25 +294,17 @@ QWeb.addDirective({
     ctx.addToScope(name, `_${keysID}[${loopVar}]`);
     ctx.addToScope(name + "_value", `_${valuesID}[${loopVar}]`);
     const nodeCopy = <Element>node.cloneNode(true);
-    let shouldWarn = nodeCopy.tagName !== "t" && !nodeCopy.hasAttribute("t-key");
-    if (!shouldWarn && node.tagName === "t") {
-      if (node.hasAttribute("t-component") && !node.hasAttribute("t-key")) {
-        shouldWarn = true;
-      }
-      if (
-        !shouldWarn &&
-        node.children.length === 1 &&
-        node.children[0].tagName !== "t" &&
-        !node.children[0].hasAttribute("t-key")
-      ) {
-        shouldWarn = true;
-      }
-    }
+    let shouldWarn =
+      !nodeCopy.hasAttribute("t-key") &&
+      node.children.length === 1 &&
+      node.children[0].tagName !== "t" &&
+      !node.children[0].hasAttribute("t-key");
     if (shouldWarn) {
       console.warn(
         `Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`
       );
     }
+
     nodeCopy.removeAttribute("t-foreach");
     qweb._compileNode(nodeCopy, ctx);
     ctx.dedent();

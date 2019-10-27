@@ -223,30 +223,19 @@ QWeb.addDirective({
       }
     }
 
-    let key = node.getAttribute("t-key");
-    if (key) {
-      key = ctx.formatExpression(key);
-    }
-
     // computing the props string representing the props object
     let propStr = Object.keys(props)
       .map(k => k + ":" + props[k])
       .join(",");
     let defID = ctx.generateID();
     let componentID = ctx.generateID();
-    let keyID = key && ctx.generateID();
-    if (key) {
-      // we bind a variable to the key (could be a complex expression, so we
-      // want to evaluate it only once)
-      ctx.addLine(`let key${keyID} = 'key' + ${key};`);
-    }
 
     let locationExpr = `\`__${ctx.generateID()}__`;
     for (let i = 0; i < ctx.loopNumber - 1; i++) {
       locationExpr += `\${i${i + 1}}__`;
     }
-    if (key || ctx.currentKey) {
-      const k = key ? `key${keyID}` : ctx.currentKey;
+    if (ctx.lastNodeKey || ctx.currentKey) {
+      const k = ctx.lastNodeKey || ctx.currentKey;
       ctx.addLine(`let templateId${componentID} = ${locationExpr}\` + ${k};`);
     } else {
       locationExpr += ctx.loopNumber ? `\${i${ctx.loopNumber}}__\`` : "`";

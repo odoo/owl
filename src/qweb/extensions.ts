@@ -261,3 +261,16 @@ QWeb.addDirective({
     ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers['${event}' + ${nodeID}];`);
   }
 });
+
+//------------------------------------------------------------------------------
+// t-key
+//------------------------------------------------------------------------------
+QWeb.addDirective({
+  name: "key",
+  priority: 45,
+  atNodeEncounter({ ctx, value }) {
+    let id = ctx.generateID();
+    ctx.addLine(`const nodeKey${id} = ${ctx.formatExpression(value)};`);
+    ctx.lastNodeKey = `nodeKey${id}`;
+  }
+});

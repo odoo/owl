@@ -412,9 +412,6 @@ QWeb.addDirective({
       // disable the patch queue
       patchQueueCode = `w${componentID}.__owl__.isMounted ? extra.fiber : fiber${componentID}`;
     }
-    if (QWeb.dev) {
-      ctx.addLine(`utils.validateProps(w${componentID}.constructor, props${componentID})`);
-    }
     let styleCode = "";
     if (tattStyle) {
       styleCode = `.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`;

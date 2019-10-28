@@ -503,6 +503,9 @@ export class Component<T extends Env, Props extends {}> {
       if (defaultProps) {
         nextProps = this.__applyDefaultProps(nextProps, defaultProps);
       }
+      if (QWeb.dev) {
+        QWeb.utils.validateProps(this.constructor, nextProps);
+      }
       await Promise.all([
         this.willUpdateProps(nextProps),
         __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps)

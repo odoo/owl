@@ -62,7 +62,6 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 - [Store](reference/store.md)
 - [Tags](reference/tags.md)
 - [Utils](reference/utils.md)
-- [Virtual DOM](architecture/vdom.md)
 
 ## Learning Resources
 
@@ -73,3 +72,11 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 - [Comparison with React/Vue](comparison.md)
 - [Tooling](tooling.md)
 - [Templates to start Owl applications (external link)](https://github.com/ged-odoo/owl-templates)
+
+## Architecture
+
+This section explains in more detail the inner workings of Owl. It is more
+useful for people working on Owl code.
+
+- [Virtual DOM](architecture/vdom.md)
+- [Rendering](architecture/rendering.md)

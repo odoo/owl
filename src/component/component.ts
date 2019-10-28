@@ -46,6 +46,7 @@ interface Internal<T extends Env, Props> {
   // each component has a unique id, useful mostly to handle parent/child
   // relationships
   readonly id: number;
+  depth: number;
   vnode: VNode | null;
   pvnode: VNode | null;
   isMounted: boolean;
@@ -138,11 +139,14 @@ export class Component<T extends Env, Props extends {}> {
       QWeb.utils.validateProps(this.constructor, this.props);
     }
     let id: number = nextId++;
+    let depth;
     let p: Component<T, any> | null = null;
     if (parent instanceof Component) {
       p = parent;
       this.env = parent.env;
-      parent.__owl__.children[id] = this;
+      const __powl__ = parent.__owl__;
+      __powl__.children[id] = this;
+      depth = __powl__.depth + 1;
     } else {
       this.env = parent;
       this.env.qweb.on("update", this, () => {
@@ -158,11 +162,13 @@ export class Component<T extends Env, Props extends {}> {
           this.env.qweb.off("update", this);
         }
       });
+      depth = 0;
     }
     const qweb = this.env.qweb;
 
     this.__owl__ = {
       id: id,
+      depth: depth,
       vnode: null,
       pvnode: null,
       isMounted: false,

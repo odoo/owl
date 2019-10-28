@@ -12,6 +12,28 @@ import { onWillUnmount } from "./hooks";
  * With a `Context` object, each component can subscribe (with the `useContext`
  * hook) to its state, and will be updated whenever the context state is updated.
  */
+
+function partitionBy<T>(arr: T[], fn: (t: T) => boolean) {
+  let lastGroup: T[] | false = false;
+  let lastValue;
+  return arr.reduce((acc: T[][], cur) => {
+    let curVal = fn(cur);
+    if (lastGroup) {
+      if (curVal === lastValue) {
+        lastGroup.push(cur);
+      } else {
+        lastGroup = false;
+      }
+    }
+    if (!lastGroup) {
+      lastGroup = [cur];
+      acc.push(lastGroup);
+    }
+    lastValue = curVal;
+    return acc;
+  }, []);
+}
+
 export class Context extends EventBus {
   state: any;
   observer: Observer;
@@ -24,38 +46,47 @@ export class Context extends EventBus {
     this.observer = new Observer();
     this.observer.notifyCB = this.__notifyComponents.bind(this);
     this.state = this.observer.observe(state);
+    this.subscriptions.update = [];
   }
 
   /**
    * Instead of using trigger to emit an update event, we actually implement
    * our own function to do that.  The reason is that we need to be smarter than
    * a simple trigger function: we need to wait for parent components to be
-   * done before doing children components.  The reason is that if an update
-   * as an effect of destroying a children, we do not want to call the
-   * mapStoreToProps function of the child, nor rendering it.
+   * done before doing children components.  More precisely, if an update
+   * as an effect of destroying a children, we do not want to call any code
+   * from the child, and certainly not render it.
    *
-   * This method is not optimal if we have a bunch of asynchronous components:
-   * we wait sequentially for each component to be completed before updating the
-   * next.  However, the only things that matters is that children are updated
-   * after their parents.  So, this could be optimized by being smarter, and
-   * updating all widgets concurrently, except for parents/children.
+   * This method implements a simple grouping algorithm by depth. If we have
+   * connected components of depths [2, 4,4,4,4, 3,8,8], the Context will notify
+   * them in the following groups: [2], [4,4,4,4], [3], [8,8]. Each group will
+   * be updated sequentially, but each components in a given group will be done in
+   * parallel.
    *
-   * A potential cheap way to improve this situation is to keep track of the
-   * depth of a component in the component tree. A root component has a depth of
-   * 1, then its children of 2 and so on... Then, we can update all components
-   * with the same depth in parallel.
+   * This is a very simple algorithm, but it avoids checking if a given
+   * component is a child of another.
    */
   async __notifyComponents() {
     const rev = ++this.rev;
-    const subs = this.subscriptions.update || [];
-    for (let i = 0, iLen = subs.length; i < iLen; i++) {
-      const sub = subs[i];
-      const shouldCallback = sub.owner ? sub.owner.__owl__.isMounted : true;
-      if (shouldCallback) {
-        const render = sub.callback.call(sub.owner, rev);
-        scheduler.flush();
-        await render;
-      }
+    const subscriptions = this.subscriptions.update;
+    const groups = partitionBy(subscriptions, s => (s.owner ? s.owner.__owl__.depth : -1));
+    for (let group of groups) {
+      const proms = Promise.all(
+        group.map(sub => {
+          if (sub.owner ? sub.owner.__owl__.isMounted : true) {
+            return sub.callback.call(sub.owner, rev);
+          }
+        })
+      );
+      // at this point, each component in the current group has registered a
+      // top level fiber in the scheduler. It could happen that rendering these
+      // components is done (if they have no children).  This is why we manually
+      // flush the scheduler.  This will force the scheduler to check
+      // immediately if they are done, which will cause their rendering
+      // promise to resolve earlier, which means that there is a chance of
+      // processing the next group in the same frame.
+      scheduler.flush();
+      await proms;
     }
   }
 }

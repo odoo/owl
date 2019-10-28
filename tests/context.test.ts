@@ -76,6 +76,88 @@ describe("Context", () => {
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
+  test("two async components are updated in parallel", async () => {
+    const testContext = new Context({ value: 123 });
+    const def = makeDeferred();
+    const steps: string[] = [];
+
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="contextObj.value"/></span>`;
+      contextObj = useContext(testContext);
+      async render() {
+        steps.push("render");
+        await def;
+        return super.render();
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child /><Child /></div>`;
+      static components = { Child };
+    }
+    const parent = new Parent(env);
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
+    testContext.state.value = 321;
+    await nextTick();
+    expect(steps).toEqual(["render", "render"]);
+    expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
+    def.resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
+  });
+
+  test("two async components on two levels are updated in parallel", async () => {
+    const testContext = new Context({ value: 123 });
+    const def = makeDeferred();
+    const steps: string[] = [];
+
+    class SlowComp extends Component<any, any> {
+      static template = xml`<p><t t-esc="props.value"/></p>`;
+      willUpdateProps() {
+        return def;
+      }
+    }
+    class Child extends Component<any, any> {
+      static template = xml`<span><SlowComp value="contextObj.value"/></span>`;
+      static components = { SlowComp };
+      contextObj = useContext(testContext);
+
+      render() {
+        steps.push("render");
+        return super.render();
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child /><Child /></div>`;
+      static components = { Child };
+    }
+
+    class App extends Component<any, any> {
+      static template = xml`<div><Child /><Parent /></div>`;
+      static components = { Child, Parent };
+    }
+
+    const app = new App(env);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><span><p>123</p></span><div><span><p>123</p></span><span><p>123</p></span></div></div>"
+    );
+    testContext.state.value = 321;
+    await nextTick();
+    expect(steps).toEqual(["render"]);
+    expect(fixture.innerHTML).toBe(
+      "<div><span><p>123</p></span><div><span><p>123</p></span><span><p>123</p></span></div></div>"
+    );
+    def.resolve();
+    await nextTick();
+    expect(steps).toEqual(["render", "render", "render"]);
+    expect(fixture.innerHTML).toBe(
+      "<div><span><p>321</p></span><div><span><p>321</p></span><span><p>321</p></span></div></div>"
+    );
+  });
+
   test("one components can subscribe twice to same context", async () => {
     const testContext = new Context({ a: 1, b: 2 });
     const steps: string[] = [];

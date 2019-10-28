@@ -354,7 +354,7 @@ describe("props validation", () => {
       async __updateProps() {
         try {
           await Component.prototype.__updateProps.apply(this, arguments);
-        } catch(e) {
+        } catch (e) {
           error = e;
         }
       }

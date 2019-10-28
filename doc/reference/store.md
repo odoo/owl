@@ -263,7 +263,7 @@ will perform a strict equality check and will update the component every time th
 check fails.
 
 Also, it may not be obvious, but it is crucial to remember that the selector
-function should return an object or an array.  The reason is that it needs to be
+function should return an object or an array. The reason is that it needs to be
 observed, otherwise the component would not be able to react to changes.
 
 ### `useDispatch`

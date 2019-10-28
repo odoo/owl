@@ -54,13 +54,12 @@ describe("router miscellaneous", () => {
   });
 
   test("navigate in hash mode preserve location", async () => {
-    router = new TestRouter(env, [{ name: "users", path: "/users/{{id}}" }], {mode: "hash"});
-    window.history.pushState({}, "title", window.location.origin + '/test.html');
+    router = new TestRouter(env, [{ name: "users", path: "/users/{{id}}" }], { mode: "hash" });
+    window.history.pushState({}, "title", window.location.origin + "/test.html");
     expect(window.location.href).toBe("http://localhost/test.html");
     await router.navigate({ to: "users", params: { id: 3 } });
     expect(window.location.href).toBe("http://localhost/test.html#/users/3");
   });
-
 });
 
 describe("routeToPath", () => {

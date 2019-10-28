@@ -6,36 +6,9 @@
  */
 import * as fs from "fs";
 
-const LINK_REGEXP = /\[([^\[]+)\]\(([^\)]+)\)/g;
-const HEADING_REGEXP = /\n(#+\s*)(.*)/g;
-
-// files to be checked
-function getFiles(): string[] {
-  const DOCFILES = fs.readdirSync("doc").map(f => `doc/${f}`);
-  const MAINREADME = "README.md";
-  DOCFILES.push("roadmap.md", MAINREADME);
-  return DOCFILES;
-}
-
-test("All markdown links work", () => {
-  let linkNumber = 0;
-  let invalidLinkNumber = 0;
-  const files = getFiles();
-  const data = readDocData(files);
-  for (let file of data) {
-    for (let link of file.links) {
-      // DEBUG: uncomment next line
-      // console.warn(`Checking "${link.name}" in "${file.name}"`);
-      linkNumber++;
-      if (!isLinkValid(link, file, data)) {
-        console.warn(`Invalid Link: "${link.name}" in "${file.name}"`);
-        invalidLinkNumber++;
-      }
-    }
-  }
-  expect(invalidLinkNumber).toBe(0);
-  expect(linkNumber).toBeGreaterThan(10);
-});
+//--------------------------------------------------------------------------
+// Helpers
+//--------------------------------------------------------------------------
 
 interface MarkDownLink {
   name: string;
@@ -49,38 +22,130 @@ interface MarkDownSection {
 
 interface FileData {
   name: string;
+  path: string[];
+  fullName: string
   links: MarkDownLink[];
   sections: MarkDownSection[];
 }
 
-function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
+const LINK_REGEXP = /\[([^\[]+)\]\(([^\)]+)\)/g;
+const HEADING_REGEXP = /\n(#+\s*)(.*)/g;
+
+
+
+export function addMardownData(fileData): void {
+    const sep = fileData.path.length > 0 ? '/' : '';
+    const fullName = fileData.path.join('/') + sep + fileData.name;
+    const content = fs.readFileSync(fullName, { encoding: "utf8" });
+    let m;
+    // get links info
+    do {
+      m = LINK_REGEXP.exec(content);
+      if (m) {
+        fileData.links.push({ name: m[0], link: m[2] });
+      }
+    } while (m);
+    // get sections info
+    do {
+      m = HEADING_REGEXP.exec(content);
+      if (m) {
+        fileData.sections.push({ name: m[0], slug: slugify(m[2]) });
+      }
+    } while (m);
+}
+
+
+/**
+ * Returns a list of FileData corresponding to all files that need to be
+ * validated.
+ */
+function getFiles(path: string[] = []): FileData[] {
+  if (path.length === 0) {
+    const baseFiles: FileData[] = [
+      { name: "README.md", path: [], links: [], sections: [], fullName: "README.md" },
+      { name: "roadmap.md", path: [], links: [], sections: [], fullName: "roadmap.md" }
+    ];
+    const rest = getFiles(["doc"]);
+    const result = baseFiles.concat(rest);
+    result.forEach(addMardownData);
+    return result;
+  }
+  const files = fs.readdirSync(path.join("/"), { withFileTypes: true }).map(f => {
+    if (f.isDirectory()) {
+      return getFiles(path.concat(f.name));
+    }
+    const fullName = path.join('/') + (path.length > 0 ? '/' : '') + f.name;
+    return [
+      {
+        name: f.name,
+        path,
+        links: [],
+        sections: [],
+        fullName
+      }
+    ];
+  });
+  return Array.prototype.concat(...files);
+}
+
+const LOCAL_FILES = ['LICENSE'];
+export function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
   if (link.link.startsWith("http")) {
     // no check on external links
     return true;
   }
-  const parts = link.link.split("#");
-  const currentParts = current.name.split("/");
-  const path = currentParts.length > 1 ? currentParts[0] + "/" : "";
-  const fullName = path + parts[0];
-  if (parts.length === 1) {
-    // no # in url
-    if (parts[0].endsWith(".md")) {
-      // it is a local md file
-      if (!files.find(f => f.name === fullName)) {
+    // Step 1: extract path, name, hash
+    //      path = ['doc', 'architecture]
+    //      name = 'rendering.md'
+    //      hash = 'blabla' (or '' if no hash)
+
+    const parts = link.link.split('#');
+    const hash = parts[1] || '';
+    let name;
+    let path;
+    if (parts[0]) {
+        let temp = parts[0].split('/');
+        name = temp[temp.length - 1];
+        temp.splice(-1);
+        path = current.path.slice();
+        for (let elem of temp) {
+            if (elem === '..') {
+                path.splice(-1);
+             } else if (elem !== '.') {
+                 path.push(elem);
+             }
+        }
+    } else {
+        // there are no file name, so this is a relative link to the current file
+        name = current.name;
+        path = current.path;
+    }
+
+    // Step 2: build normalized link file name
+    const linkFullName = path.join('/') + (path.length > 0 ? '/' : '') + name;
+
+    // Step 3: check link name against white list of local files
+    if (LOCAL_FILES.includes(linkFullName)) {
+        return true;
+    }
+
+    // Step 4: check if there is a matching file
+    let target: FileData | undefined = files.find(f => f.fullName === linkFullName);
+    if (!target) {
         return false;
-      }
     }
-  } else {
-    const file = parts[0] === "" ? current : files.find(f => f.name === fullName);
-    if (!file) {
-      return false;
+
+    // Step 5: if necessary, check if there is a corresponding link inside the target
+    // link name
+    if (hash) {
+        if (!target.sections.find(s => s.slug === hash)) {
+            return false;
+        }
     }
-    if (!file.sections.find(s => s.slug === parts[1])) {
-      return false;
-    }
-  }
-  return true;
+
+    return true;
 }
+
 // adapted from https://medium.com/@mhagemann/the-ultimate-way-to-slugify-a-url-string-in-javascript-b8e4a0d849e1
 function slugify(str) {
   const a = "àáäâãåăæçèéëêǵḧìíïîḿńǹñòóöôœøṕŕßśșțùúüûǘẃẍÿź·_,:;";
@@ -99,33 +164,25 @@ function slugify(str) {
     .replace(/-+$/, ""); // Trim - from end of text
 }
 
-function readDocData(files: string[]): FileData[] {
-  const result: FileData[] = [];
 
-  for (let file of files) {
-    const fileData: FileData = {
-      name: file,
-      links: [],
-      sections: []
-    };
-    const content = fs.readFileSync(file, { encoding: "utf8" });
-    let m;
-    // get links info
-    do {
-      m = LINK_REGEXP.exec(content);
-      if (m) {
-        fileData.links.push({ name: m[0], link: m[2] });
-      }
-    } while (m);
-    // get sections info
-    do {
-      m = HEADING_REGEXP.exec(content);
-      if (m) {
-        fileData.sections.push({ name: m[0], slug: slugify(m[2]) });
-      }
-    } while (m);
 
-    result.push(fileData);
-  }
-  return result;
-}
+//--------------------------------------------------------------------------
+// Test
+//--------------------------------------------------------------------------
+
+test("All markdown links work", () => {
+    let linkNumber = 0;
+    let invalidLinkNumber = 0;
+    const data = getFiles();
+    for (let file of data) {
+      for (let link of file.links) {
+        linkNumber++;
+        if (!isLinkValid(link, file, data)) {
+          console.warn(`Invalid Link: "${link.name}" in "${file.name}"`);
+          invalidLinkNumber++;
+        }
+    }
+    }
+    expect(invalidLinkNumber).toBe(0);
+    expect(linkNumber).toBeGreaterThan(10);
+});

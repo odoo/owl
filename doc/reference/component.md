@@ -986,7 +986,7 @@ of the props. Here is how it works in Owl:
 - `props` key is a static key (so, different from `this.props` in a component instance)
 - it is optional: it is ok for a component to not define a `props` key.
 - props are validated whenever a component is created/updated
-- props are only validated in `dev` mode (see [tooling page](tooling.md#development-mode))
+- props are only validated in `dev` mode (see [tooling page](../tooling.md#development-mode))
 - if a key does not match the description, an error is thrown
 - it validates keys defined in (static) `props`. Additional keys given by the
   parent will cause an error.

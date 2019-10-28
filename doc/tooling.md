@@ -64,8 +64,8 @@ It is very useful to group code by feature instead of by type of file. It makes
 it easier to scale application to larger size.
 
 To do so, Owl currently has a small helper that makes it easy to define a
-template inside a javascript (or typescript) file: the [`xml`](tags.md#xml-tag)
-helper. With this, a template is automatically registered to [QWeb](qweb.md).
+template inside a javascript (or typescript) file: the [`xml`](reference/tags.md#xml-tag)
+helper. With this, a template is automatically registered to [QWeb](reference/qweb.md).
 
 This means that the template and the javascript code can be defined in the same
 file. It is not currently possible to add css to the same file, but Owl may

@@ -50,19 +50,19 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 
 ## Reference
 
-- [Animations](animations.md)
-- [Component](component.md)
-- [Context](context.md)
-- [Event Bus](event_bus.md)
-- [Hooks](hooks.md)
-- [Misc](misc.md)
-- [Observer](observer.md)
-- [QWeb](qweb.md)
-- [Router](router.md)
-- [Store](store.md)
-- [Tags](tags.md)
-- [Utils](utils.md)
-- [Virtual DOM](vdom.md)
+- [Animations](reference/animations.md)
+- [Component](reference/component.md)
+- [Context](reference/context.md)
+- [Event Bus](reference/event_bus.md)
+- [Hooks](reference/hooks.md)
+- [Misc](reference/misc.md)
+- [Observer](reference/observer.md)
+- [QWeb](reference/qweb.md)
+- [Router](reference/router.md)
+- [Store](reference/store.md)
+- [Tags](reference/tags.md)
+- [Utils](reference/utils.md)
+- [Virtual DOM](architecture/vdom.md)
 
 ## Learning Resources
 

@@ -54,8 +54,8 @@ const app = new App({ qweb: new QWeb() });
 app.mount(document.body);
 ```
 
-Note that the counter component is made reactive with the [`useState` hook](doc/hooks.md#usestate).
-Also, all examples here uses the [`xml` helper](doc/tags.md#xml-tag) to define inline templates.
+Note that the counter component is made reactive with the [`useState` hook](doc/reference/hooks.md#usestate).
+Also, all examples here uses the [`xml` helper](doc/reference/tags.md#xml-tag) to define inline templates.
 But this is not mandatory, many applications will load templates separately.
 
 More interesting examples can be found on the
@@ -93,8 +93,8 @@ A complete documentation for Owl can be found here:
 The most important sections are:
 
 - [Quick Start](doc/quick_start.md)
-- [Component](doc/component.md)
-- [Hooks](doc/hooks.md)
+- [Component](doc/reference/component.md)
+- [Hooks](doc/reference/hooks.md)
 
 Found an issue in the documentation? A broken link? Some outdated information?
 Submit a PR!
@@ -128,7 +128,7 @@ Owl components in an application are used to define a (dynamic) tree of componen
 ```
 
 **Environment:** the root component is special: it is created with an environment,
-which should contain a [`QWeb` instance](doc/qweb.md). The environment is then automatically
+which should contain a [`QWeb` instance](doc/reference/qweb.md). The environment is then automatically
 propagated to each sub components (and accessible in the `this.env` property).
 
 ```js
@@ -255,7 +255,7 @@ class Parent extends Component {
 In this example, the `OrderLine` component trigger a `add-to-order` event. This
 will generate a DOM event which will bubble along the DOM tree. It will then be
 intercepted by the parent component, which will then get the line (from the
-`detail` key) and then increment its quantity. See the section on [event handling](doc/component.md#event-handling)
+`detail` key) and then increment its quantity. See the section on [event handling](doc/reference/component.md#event-handling)
 for more details on how events work.
 
 Note that this example would have also worked if the `OrderLine` component

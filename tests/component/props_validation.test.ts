@@ -323,7 +323,7 @@ describe("props validation", () => {
     }).toThrow();
   });
 
-  test("can set default required boolean values", async () => {
+  test("missing required boolean prop causes an error", async () => {
     class TestWidget extends Widget {
       static props = ["p"];
       static template = xml`<span><t t-if="props.p">hey</t></span>`;
@@ -343,6 +343,57 @@ describe("props validation", () => {
     }
     expect(error).toBeDefined();
     expect(error.message).toBe("Missing props 'p' (component 'TestWidget')");
+  });
+
+  test("props are validated whenever component is updated", async () => {
+    let error;
+    class TestWidget extends Component<any, any> {
+      static props = { p: { type: Number } };
+      static template = xml`<div><t t-esc="props.p"/></div>`;
+
+      async __updateProps() {
+        try {
+          await Component.prototype.__updateProps.apply(this, arguments);
+        } catch(e) {
+          error = e;
+        }
+      }
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="state.p"/></div>`;
+      static components = { TestWidget };
+      state: any = useState({ p: 1 });
+    }
+
+    const w = new Parent(env);
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+
+    w.state.p = undefined;
+    await nextTick();
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Missing props 'p' (component 'TestWidget')");
+  });
+
+  test("default values are applied before validating props at update", async () => {
+    class TestWidget extends Component<any, any> {
+      static props = { p: { type: Number } };
+      static template = xml`<div><t t-esc="props.p"/></div>`;
+      static defaultProps = { p: 4 };
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="state.p"/></div>`;
+      static components = { TestWidget };
+      state: any = useState({ p: 1 });
+    }
+
+    const w = new Parent(env);
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+
+    w.state.p = undefined;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 });
 

@@ -20,7 +20,6 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         w3 = false;
     }
     if (w3) {
-        utils.validateProps(w3.constructor, props3)
         w3.__updateProps(props3, extra.fiber, undefined, undefined, sibling);
         let pvnode = w3.__owl__.pvnode;
         c1.push(pvnode);

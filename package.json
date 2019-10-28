@@ -18,7 +18,7 @@
     "tools": "npm run build && npm run tools:serve",
     "pretools:watch": "npm run build",
     "tools:watch": "npm-run-all  --parallel tools:serve \"build:* -- --watch\"",
-    "prettier": "prettier {src/**/*.ts,tests/**/*.ts,doc/**/*.md} --write"
+    "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --write"
   },
   "repository": {
     "type": "git",

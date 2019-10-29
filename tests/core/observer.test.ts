@@ -429,4 +429,15 @@ describe("observer", () => {
       obj.a.push(2);
     }).toThrow('Observed state cannot be changed here! (key: "1", val: "2")');
   });
+
+  test("functions are not observed, but are properly bound", () => {
+    const observer = new Observer();
+    const obj: any = observer.observe({ m: new Map() });
+    expect(observer.rev).toBe(1);
+    obj.m.set("a", 1);
+    expect(obj.m.get("a")).toBe(1);
+
+    // should be 2, but we do not support reactivity on maps/weakmaps/set/weakset
+    expect(observer.rev).toBe(1);
+  });
 });

@@ -29,6 +29,14 @@ export class Observer {
       // fun fact: typeof null === 'object'
       return value;
     }
+    if (
+      value instanceof Map ||
+      value instanceof WeakMap ||
+      value instanceof Set ||
+      value instanceof WeakSet
+    ) {
+      return value;
+    }
     let metadata = this.weakMap.get(value) || this._observe(value, parent);
     return metadata.proxy;
   }

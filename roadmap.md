@@ -1,23 +1,25 @@
 # 🦉 OWL Roadmap 🦉
 
-- Current version: 0.24.1
+- Current version: 1.0.0-alpha
 - Status: mostly stable
 
 This roadmap is only an attempt at predicting Owl's future.  Everything may
 change!
 
-### October 2019
-
-We plan to complete the following tasks:
-
-- improve API for root widgets (issue #306),
-- replace `t-keepalive`, and maybe `t-transition` by components (issue #295).
 
 ### November 2019
 
-Once the previous tasks are done, release version 1.0alpha. This means that the
-API should be stable.  But it could change a little bit if we need it for our
-work on Odoo.
+Owl will be used in various Odoo projects. We plan to:
+
+- fix any issues encountered
+- maybe cleanup slightly the router API
+- improve the documentation
+- improve error handling, add more helpful error messages
+
+### December 2019
+
+If all goes well, Owl will be upgraded to beta status. From then, no API change,
+even small, is expected.
 
 ### End of 2019
 

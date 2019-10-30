@@ -1,6 +1,6 @@
 {
   "name": "owl-framework",
-  "version": "0.24.1",
+  "version": "1.0.0-alpha",
   "description": "Odoo Web Library (OWL)",
   "main": "src/index.ts",
   "engines": {

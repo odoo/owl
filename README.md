@@ -103,8 +103,8 @@ Submit a PR!
 
 If you want to use a simple `<script>` tag, the last release can be downloaded here:
 
-- [owl-0.24.1.js](https://github.com/odoo/owl/releases/download/v0.24.1/owl.js)
-- [owl-0.24.1.min.js](https://github.com/odoo/owl/releases/download/v0.24.1/owl.min.js)
+- [owl-1.0.0-alpha.js](https://github.com/odoo/owl/releases/download/v1.0.0-alpha/owl.js)
+- [owl-1.0.0-alpha.min.js](https://github.com/odoo/owl/releases/download/v1.0.0-alpha/owl.min.js)
 
 Some npm scripts are available:
 

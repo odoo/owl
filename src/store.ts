@@ -85,7 +85,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   const component: Component<any, any> = Component.current!;
   const store = options.store || (component.env.store as Store);
   let result = selector(store.state, component.props);
-  const hashFn = store.observer.deepRevNumber.bind(store.observer);
+  const hashFn = store.observer.revNumber.bind(store.observer);
   let revNumber = hashFn(result) || result;
   const isEqual = options.isEqual || isStrictEqual;
   if (!store.updateFunctions[component.__owl__.id]) {

@@ -8,13 +8,11 @@ describe("observer", () => {
 
     expect(typeof obj).toBe("object");
     expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
     const obj2: any = observer.observe({ a: 1 });
     expect(observer.revNumber(obj2)).toBe(1);
     expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj2.a = 2;
@@ -33,23 +31,19 @@ describe("observer", () => {
     const obj: any = observer.observe({ a: null, b: undefined });
 
     expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj.a = 3;
     expect(observer.revNumber(obj)).toBe(2);
-    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
 
     obj.b = 5;
     expect(observer.revNumber(obj)).toBe(3);
-    expect(observer.deepRevNumber(obj)).toBe(3);
     expect(observer.rev).toBe(3);
 
     obj.a = null;
     obj.b = undefined;
     expect(observer.revNumber(obj)).toBe(5);
-    expect(observer.deepRevNumber(obj)).toBe(5);
     expect(observer.rev).toBe(5);
     expect(obj).toEqual({
       a: null,
@@ -63,7 +57,6 @@ describe("observer", () => {
     const obj: any = observer.observe({ date });
 
     expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
     expect(typeof obj.date.getFullYear()).toBe("number");
     expect(obj.date).toBe(date);
@@ -71,7 +64,6 @@ describe("observer", () => {
     obj.date = new Date();
 
     expect(observer.revNumber(obj)).toBe(2);
-    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
     expect(obj.date).not.toBe(date);
   });
@@ -82,14 +74,11 @@ describe("observer", () => {
 
     expect(Array.isArray(obj.arr)).toBe(true);
     expect(observer.revNumber(obj.arr)).toBe(1);
-    expect(observer.deepRevNumber(obj.arr)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj.arr[0] = "nope";
     expect(observer.revNumber(obj.arr)).toBe(2);
-    expect(observer.deepRevNumber(obj.arr)).toBe(2);
-    expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(2);
+    expect(observer.revNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
   });
 
@@ -98,24 +87,20 @@ describe("observer", () => {
     const obj: any = observer.observe({ a: 1 });
 
     expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj.a = 2;
 
     expect(observer.revNumber(obj)).toBe(2);
-    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
 
     // same value again
     obj.a = 2;
     expect(observer.revNumber(obj)).toBe(2);
-    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
 
     obj.a = 3;
     expect(observer.revNumber(obj)).toBe(3);
-    expect(observer.deepRevNumber(obj)).toBe(3);
     expect(observer.rev).toBe(3);
   });
 
@@ -126,19 +111,16 @@ describe("observer", () => {
     expect(Array.isArray(arr)).toBe(true);
     expect(arr.length).toBe(0);
     expect(observer.revNumber(arr)).toBe(1);
-    expect(observer.deepRevNumber(arr)).toBe(1);
     expect(observer.rev).toBe(1);
 
     arr.push(1);
     expect(observer.revNumber(arr)).toBe(2);
-    expect(observer.deepRevNumber(arr)).toBe(2);
     expect(observer.rev).toBe(2);
     expect(arr.length).toBe(1);
     expect(arr).toEqual([1]);
 
     arr.splice(1, 0, "hey");
     expect(observer.revNumber(arr)).toBe(3);
-    expect(observer.deepRevNumber(arr)).toBe(3);
     expect(observer.rev).toBe(3);
     expect(arr).toEqual([1, "hey"]);
     expect(arr.length).toBe(2);
@@ -146,7 +128,6 @@ describe("observer", () => {
     arr.unshift("lindemans");
     //it generates 3 primitive operations
     expect(observer.revNumber(arr)).toBe(6);
-    expect(observer.deepRevNumber(arr)).toBe(6);
     expect(observer.rev).toBe(6);
     expect(arr).toEqual(["lindemans", 1, "hey"]);
     expect(arr.length).toBe(3);
@@ -154,21 +135,18 @@ describe("observer", () => {
     arr.reverse();
     //it generates 2 primitive operations
     expect(observer.revNumber(arr)).toBe(8);
-    expect(observer.deepRevNumber(arr)).toBe(8);
     expect(observer.rev).toBe(8);
     expect(arr).toEqual(["hey", 1, "lindemans"]);
     expect(arr.length).toBe(3);
 
     arr.pop(); // one set, one delete
     expect(observer.revNumber(arr)).toBe(10);
-    expect(observer.deepRevNumber(arr)).toBe(10);
     expect(observer.rev).toBe(10);
     expect(arr).toEqual(["hey", 1]);
     expect(arr.length).toBe(2);
 
     arr.shift(); // 2 sets, 1 delete
     expect(observer.revNumber(arr)).toBe(13);
-    expect(observer.deepRevNumber(arr)).toBe(13);
     expect(observer.rev).toBe(13);
     expect(arr).toEqual([1]);
     expect(arr.length).toBe(1);
@@ -187,8 +165,7 @@ describe("observer", () => {
     arr[0].kriek = 6;
 
     expect(observer.rev).toBe(3);
-    expect(observer.revNumber(arr)).toBe(2);
-    expect(observer.deepRevNumber(arr)).toBe(3);
+    expect(observer.revNumber(arr)).toBe(3);
     expect(observer.revNumber(arr[0])).toBe(3);
   });
 
@@ -238,7 +215,6 @@ describe("observer", () => {
 
     expect(observer.rev).toBe(1);
     expect(observer.revNumber(state)).toBe(1);
-    expect(observer.deepRevNumber(state)).toBe(1);
     expect(observer.notifyCB).toBeCalledTimes(0);
 
     state[1] = "b";
@@ -247,7 +223,6 @@ describe("observer", () => {
 
     expect(observer.rev).toBe(2);
     expect(observer.revNumber(state)).toBe(2);
-    expect(observer.deepRevNumber(state)).toBe(2);
     expect(observer.notifyCB).toBeCalledTimes(1);
 
     expect(state).toEqual(["a", "b"]);
@@ -259,13 +234,11 @@ describe("observer", () => {
 
     expect(observer.rev).toBe(1);
     expect(observer.revNumber(state.arr)).toBe(1);
-    expect(observer.deepRevNumber(state.arr)).toBe(1);
     expect(state.arr.length).toBe(0);
 
     state.arr.push(1);
     expect(observer.rev).toBe(2);
     expect(observer.revNumber(state.arr)).toBe(2);
-    expect(observer.deepRevNumber(state.arr)).toBe(2);
     expect(state.arr.length).toBe(1);
   });
 
@@ -280,7 +253,7 @@ describe("observer", () => {
 
     state.arr[0].something = 2;
     expect(observer.rev).toBe(2);
-    expect(observer.revNumber(state.arr)).toBe(1);
+    expect(observer.revNumber(state.arr)).toBe(2);
     expect(observer.revNumber(state.arr[0])).toBe(2);
   });
 
@@ -294,7 +267,7 @@ describe("observer", () => {
 
     state.a.b = 2;
     expect(observer.rev).toBe(2);
-    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.revNumber(state)).toBe(2);
     expect(observer.revNumber(state.a)).toBe(2);
   });
 
@@ -312,7 +285,7 @@ describe("observer", () => {
     expect(observer.revNumber(obj.a)).toBe(2);
     obj.a.b = 3;
     expect(observer.rev).toBe(3);
-    expect(observer.revNumber(obj)).toBe(2);
+    expect(observer.revNumber(obj)).toBe(3);
     expect(observer.revNumber(obj.a)).toBe(3);
   });
 
@@ -320,22 +293,18 @@ describe("observer", () => {
     const observer = new Observer();
     const state: any = observer.observe({ o: { a: 1 }, arr: [1], n: 13 });
     expect(observer.revNumber(state)).toBe(1);
-    expect(observer.deepRevNumber(state)).toBe(1);
 
     state.o.a = 2;
     expect(observer.rev).toBe(2);
-    expect(observer.revNumber(state)).toBe(1);
-    expect(observer.deepRevNumber(state)).toBe(2);
+    expect(observer.revNumber(state)).toBe(2);
 
     state.arr.push(2);
     expect(observer.rev).toBe(3);
-    expect(observer.revNumber(state)).toBe(1);
-    expect(observer.deepRevNumber(state)).toBe(3);
+    expect(observer.revNumber(state)).toBe(3);
 
     state.n = 155;
     expect(observer.rev).toBe(4);
-    expect(observer.revNumber(state)).toBe(2);
-    expect(observer.deepRevNumber(state)).toBe(4);
+    expect(observer.revNumber(state)).toBe(4);
   });
 
   test("properly handle already observed state", () => {
@@ -361,18 +330,15 @@ describe("observer", () => {
     const obj: any = observer.observe({});
 
     expect(observer.revNumber(obj)).toBe(1);
-    expect(observer.deepRevNumber(obj)).toBe(1);
     expect(observer.rev).toBe(1);
 
     obj.aku = "always finds annoying problems";
     expect(observer.revNumber(obj)).toBe(2);
-    expect(observer.deepRevNumber(obj)).toBe(2);
     expect(observer.rev).toBe(2);
 
     obj.aku = "always finds good problems";
 
     expect(observer.revNumber(obj)).toBe(3);
-    expect(observer.deepRevNumber(obj)).toBe(3);
     expect(observer.rev).toBe(3);
   });
 
@@ -416,7 +382,7 @@ describe("observer", () => {
     expect(observer.revNumber(obj2)).toBe(1);
 
     obj2.key = 3;
-    expect(observer.revNumber(obj1)).toBe(1);
+    expect(observer.revNumber(obj1)).toBe(2);
     expect(observer.revNumber(obj2)).toBe(2);
   });
 

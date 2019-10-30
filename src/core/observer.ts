@@ -46,10 +46,6 @@ export class Observer {
     const metadata = this.weakMap.get(value);
     return metadata ? metadata.rev : 0;
   }
-  deepRevNumber(value): number {
-    const metadata = this.weakMap.get(value);
-    return metadata ? metadata.deepRev : 0;
-  }
 
   _observe(value, parent) {
     var self = this;
@@ -87,7 +83,6 @@ export class Observer {
       value,
       proxy,
       rev: this.rev,
-      deepRev: this.rev,
       parent
     };
 
@@ -99,11 +94,10 @@ export class Observer {
   _updateRevNumber(target: any) {
     this.rev++;
     let metadata = this.weakMap.get(target);
-    metadata.rev!++;
     let parent = target;
     do {
       metadata = this.weakMap.get(parent);
-      metadata.deepRev++;
+      metadata.rev++;
     } while ((parent = metadata.parent) && parent !== target);
   }
 }

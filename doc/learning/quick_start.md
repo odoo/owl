@@ -2,8 +2,17 @@
 
 ## Static Server
 
-Let us assume that we have a static server running somewhere. We could then
-simply add an html page with a few extra files.
+Let us assume that we have a static server running somewhere. Let us start by
+adding an html page with a few extra files:
+
+```
+my-app/
+    index.html
+    app.css
+    app.js
+    owl-X.Y.Z.js
+    templates.xml
+```
 
 ### HTML and CSS
 
@@ -88,10 +97,9 @@ class ClickCounter extends owl.Component {
 //------------------------------------------------------------------------------
 async function start() {
   const templates = await owl.utils.loadFile("templates.xml");
-  const env = {
-    qweb: new owl.QWeb({ templates })
-  };
-  const counter = new ClickCounter(env);
+  const qweb = new owl.QWeb({ templates });
+  owl.config.env.qweb = qweb;
+  const counter = new ClickCounter();
   const target = document.getElementById("main");
   await counter.mount(target);
 }

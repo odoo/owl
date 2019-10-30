@@ -1036,7 +1036,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = context['props'].items;
+    var _2 = context['items'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     var _3 = _4 = _2;
     if (!(_2 instanceof Array)) {

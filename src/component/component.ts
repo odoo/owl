@@ -114,23 +114,17 @@ export class Component<T extends Env, Props extends {}> {
   constructor(parent?: Component<T, any>, props?: Props) {
     Component.current = this;
 
-    const defaultProps = (<any>this.constructor).defaultProps;
-    if (defaultProps) {
-      props = this.__applyDefaultProps(props, defaultProps);
-    }
-    // is this a good idea?
-    //   Pro: if props is empty, we can create easily a component
-    //   Con: this is not really safe
-    //   Pro: but creating component (by a template) is always unsafe anyway
-    this.props = <Props>props || <Props>{};
-    if (QWeb.dev) {
-      QWeb.utils.validateProps(this.constructor, this.props);
-    }
-
     const id: number = nextId++;
-
     let depth;
     if (parent) {
+      const defaultProps = (<any>this.constructor).defaultProps;
+      if (defaultProps) {
+        props = this.__applyDefaultProps(props, defaultProps);
+      }
+      this.props = <Props>props;
+      if (QWeb.dev) {
+        QWeb.utils.validateProps(this.constructor, this.props);
+      }
       this.env = parent.env;
       const __powl__ = parent.__owl__;
       __powl__.children[id] = this;
@@ -138,6 +132,7 @@ export class Component<T extends Env, Props extends {}> {
     } else {
       // we are the root component
       this.env = config.env as T;
+      this.props = undefined as unknown as Props;
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {
           this.render(true);
@@ -287,7 +282,7 @@ export class Component<T extends Env, Props extends {}> {
       return;
     }
     return new Promise((resolve, reject) => {
-      const fiber = new Fiber(null, this, this.props, undefined, undefined, false);
+      const fiber = new Fiber(null, this, undefined, undefined, false);
       scheduler.addFiber(fiber, err => {
         if (err) {
           reject(err);
@@ -339,7 +334,7 @@ export class Component<T extends Env, Props extends {}> {
       return;
     }
     return new Promise((resolve, reject) => {
-      const fiber = new Fiber(null, this, this.props, undefined, undefined, force);
+      const fiber = new Fiber(null, this, undefined, undefined, force);
       scheduler.addFiber(fiber.root, err => {
         if (err) {
           reject(err);
@@ -488,7 +483,7 @@ export class Component<T extends Env, Props extends {}> {
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
       const __owl__ = this.__owl__;
-      const fiber = new Fiber(parentFiber, this, this.props, scope, vars, parentFiber.force);
+      const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force);
       if (!parentFiber.child) {
         parentFiber.child = fiber;
       } else {
@@ -532,7 +527,7 @@ export class Component<T extends Env, Props extends {}> {
    * parent template.
    */
   __prepare(parentFiber: Fiber, scope: any, vars: any, previousSibling?: Fiber | null) {
-    const fiber = new Fiber(parentFiber, this, this.props, scope, vars, parentFiber.force);
+    const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force);
     fiber.shouldPatch = false;
     if (!parentFiber.child) {
       parentFiber.child = fiber;

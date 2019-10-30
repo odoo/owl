@@ -1,5 +1,6 @@
 import { VNode } from "../vdom/index";
 import { Component } from "./component";
+import { scheduler } from "./scheduler";
 
 /**
  * Owl Fiber Class
@@ -216,7 +217,11 @@ export class Fiber {
         component.catchError!(error);
       });
     } else {
+      // the 3 next lines aim to mark the root fiber as being in error, and
+      // to force it to end, without waiting for its children
+      this.root.counter = 0;
       this.root.error = error;
+      scheduler.flush();
       root.destroy();
     }
   }

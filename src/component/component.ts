@@ -4,7 +4,7 @@ import { h, patch, VNode } from "../vdom/index";
 import "./directive";
 import { Fiber } from "./fiber";
 import "./props_validation";
-import { Scheduler } from "./scheduler";
+import { scheduler } from "./scheduler";
 
 /**
  * Owl Component System
@@ -20,8 +20,6 @@ import { Scheduler } from "./scheduler";
 //------------------------------------------------------------------------------
 // Types/helpers
 //------------------------------------------------------------------------------
-const raf = window.requestAnimationFrame.bind(window);
-export const scheduler = new Scheduler(raf);
 
 /**
  * An Env (environment) is an object that will be (mostly) shared between all
@@ -296,13 +294,8 @@ export class Component<T extends Env, Props extends {}> {
       }
       return;
     }
-    const fiber = new Fiber(null, this, this.props, undefined, undefined, false);
-    if (!__owl__.vnode) {
-      this.__prepareAndRender(fiber);
-    } else {
-      this.__render(fiber);
-    }
     return new Promise((resolve, reject) => {
+      const fiber = new Fiber(null, this, this.props, undefined, undefined, false);
       scheduler.addFiber(fiber, err => {
         if (err) {
           reject(err);
@@ -317,6 +310,11 @@ export class Component<T extends Env, Props extends {}> {
         }
         resolve();
       });
+      if (!__owl__.vnode) {
+        this.__prepareAndRender(fiber);
+      } else {
+        this.__render(fiber);
+      }
     });
   }
 
@@ -348,9 +346,8 @@ export class Component<T extends Env, Props extends {}> {
     ) {
       return;
     }
-    const fiber = new Fiber(null, this, this.props, undefined, undefined, force);
-    this.__render(fiber);
     return new Promise((resolve, reject) => {
+      const fiber = new Fiber(null, this, this.props, undefined, undefined, force);
       scheduler.addFiber(fiber.root, err => {
         if (err) {
           reject(err);
@@ -361,6 +358,7 @@ export class Component<T extends Env, Props extends {}> {
         }
         resolve();
       });
+      this.__render(fiber);
     });
   }
 

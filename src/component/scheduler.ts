@@ -65,3 +65,6 @@ export class Scheduler {
     });
   }
 }
+
+const raf = window.requestAnimationFrame.bind(window);
+export const scheduler = new Scheduler(raf);

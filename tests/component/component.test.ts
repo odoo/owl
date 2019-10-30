@@ -4739,6 +4739,26 @@ describe("component error handling (catchError)", () => {
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
+
+  test("a rendering error will reject the render promise (with sub components)", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span></span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child/><t t-esc="x.y"/></div>`;
+      static components = { Child };
+    }
+
+    let error;
+    try {
+      const parent = new Parent(env);
+      await parent.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot read property 'y' of undefined");
+  });
 });
 
 describe("top level sub widgets", () => {

@@ -1,4 +1,5 @@
-import { Component, scheduler } from "./component/component";
+import { Component } from "./component/component";
+import { scheduler } from "./component/scheduler";
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
 import { onWillUnmount } from "./hooks";

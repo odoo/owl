@@ -16,9 +16,7 @@ class App extends Component {
 App.components = { Greeter };
 
 // Application setup
-// Note that the xml templates are injected into the global TEMPLATES variable.
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({ qweb });
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -70,8 +68,7 @@ class App extends Component {
 }
 App.components = { Counter };
 
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({qweb});
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -228,8 +225,7 @@ class App extends Component {
 }
 App.components = { DemoComponent };
 
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({ qweb });
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -298,8 +294,7 @@ class App extends owl.Component {
 }
 
 // Application setup
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({ qweb });
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -349,11 +344,9 @@ const themeContext = new Context({
    background: '#000',
    foreground: '#fff',
 });
-const env = {
-    qweb: new owl.QWeb(TEMPLATES),
-    themeContext: themeContext,
-};
-const app = new App(env);
+// Add the themeContext the environment to make it available to all components
+owl.config.env.themeContext = themeContext;
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -534,26 +527,25 @@ TodoApp.components = { TodoItem };
 //------------------------------------------------------------------------------
 // App Initialization
 //------------------------------------------------------------------------------
-function saveState(state) {
-    const str = JSON.stringify(state);
-    window.localStorage.setItem(LOCALSTORAGE_KEY, str);
-}
 
-function loadState() {
-    const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
-    return localState ? JSON.parse(localState) : initialState;
-}
+function makeStore() {
+    function saveState(state) {
+        const str = JSON.stringify(state);
+        window.localStorage.setItem(LOCALSTORAGE_KEY, str);
+    }
+    function loadState() {
+        const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
+        return localState ? JSON.parse(localState) : initialState;
+    }
 
-function makeEnv() {
     const state = loadState();
     const store = new owl.Store({ state, actions });
     store.on("update", null, () => saveState(store.state));
-    const qweb = new owl.QWeb(TEMPLATES);
-    return { qweb, store };
+    return store;
 }
 
-const env = makeEnv();
-const app = new TodoApp(env);
+owl.config.env.store = makeStore();
+const app = new TodoApp();
 app.mount(document.body);
 `;
 
@@ -1040,12 +1032,9 @@ function setupResponsivePlugin(env) {
 //------------------------------------------------------------------------------
 // Application Startup
 //------------------------------------------------------------------------------
-const env = {
-    qweb: new owl.QWeb(TEMPLATES),
-};
-setupResponsivePlugin(env);
+setupResponsivePlugin(owl.config.env);
 
-const app = new App(env);
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -1187,8 +1176,7 @@ class App extends Component {
 App.components = {Card, Counter};
 
 // Application setup
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({ qweb });
+const app = new App();
 app.mount(document.body);`;
 
 const SLOTS_XML = `<templates>
@@ -1301,10 +1289,9 @@ class App extends Component {
         }, 3000);
     }
 }
-App.components = {SlowComponent, NotificationList};
+App.components = {SlowComponent, NotificationList, AsyncRoot};
 
-const qweb = new owl.QWeb(TEMPLATES);
-const app = new App({ qweb });
+const app = new App();
 app.mount(document.body);
 `;
 
@@ -1373,8 +1360,7 @@ class Form extends Component {
 }
 
 // Application setup
-const qweb = new owl.QWeb(TEMPLATES);
-const form = new Form({ qweb });
+const form = new Form();
 form.mount(document.body);
 `;
 
@@ -1540,7 +1526,6 @@ class App extends Component {
 }
 App.components = { WindowManager };
 
-const qweb = new owl.QWeb(TEMPLATES);
 const windows = [
   {
     name: "Hello",
@@ -1558,8 +1543,8 @@ const windows = [
   }
 ];
 
-const env = { qweb, windows };
-const app = new App(env);
+owl.config.env.windows = windows;
+const app = new App();
 app.mount(document.body);
 `;
 

@@ -90,7 +90,14 @@ function makeCodeIframe(js, css, xml, errorHandler) {
     owlScript.addEventListener("load", () => {
       const script = doc.createElement("script");
       script.type = "text/javascript";
-      const content = `owl.__info__.mode = 'dev';\nwindow.TEMPLATES = \`${sanitizedXML}\`\n${js}`;
+      const content = `
+        {
+          owl.__info__.mode = 'dev';
+          let templates = \`${sanitizedXML}\`;
+          const qweb = new owl.QWeb({ templates });
+          owl.config.env = { qweb };
+        }
+        ${js}`;
       script.innerHTML = content;
       iframe.contentWindow.addEventListener("error", errorHandler);
       iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);
@@ -429,12 +436,15 @@ App.components = { TabbedEditor };
 //------------------------------------------------------------------------------
 async function start() {
   document.title = `${document.title} (v${owl.__info__.version})`;
+  const commit = `https://github.com/odoo/owl/commit/${owl.__info__.hash}`;
+  console.info(`This application is using Owl built with the following commit:`, commit);
   const [templates] = await Promise.all([
     owl.utils.loadFile("templates.xml"),
     owl.utils.whenReady()
   ]);
-  const qweb = new owl.QWeb(templates);
-  const app = new App({ qweb });
+  const qweb = new owl.QWeb({ templates });
+  owl.config.env = { qweb };
+  const app = new App();
   app.mount(document.body);
 }
 

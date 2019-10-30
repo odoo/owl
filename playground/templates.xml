@@ -31,7 +31,7 @@
             t-att-style="topEditorStyle"/>
         <t t-if="state.splitLayout">
           <div class="separator horizontal"/>
-          <TabbedEditor t-keepalive="1"
+          <TabbedEditor
              js="false"
              css="state.css"
              xml="state.xml"

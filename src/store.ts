@@ -116,7 +116,6 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     }
   });
   onWillUpdateProps(props => {
-    // FIXME: only do that if not keepalive + do it in destroy in that case
     delete store.updateFunctions[component.__owl__.id];
     result = selector(store.state, props);
   });

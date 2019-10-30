@@ -1,4 +1,5 @@
-import { Env, scheduler } from "../src/component/component";
+import { Env } from "../src/component/component";
+import { scheduler } from "../src/component/scheduler";
 import { EvalContext, QWeb } from "../src/qweb/qweb";
 import { patch } from "../src/vdom";
 import "../src/qweb/base_directives";

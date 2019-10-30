@@ -44,7 +44,6 @@ export class Fiber {
 
   scope: any;
   vars: any;
-  props: any;
 
   component: Component<any, any>;
   vnode: VNode | null = null;
@@ -56,11 +55,10 @@ export class Fiber {
 
   error?: Error;
 
-  constructor(parent: Fiber | null, component: Component<any, any>, props, scope, vars, force) {
+  constructor(parent: Fiber | null, component: Component<any, any>, scope, vars, force) {
     this.force = force;
     this.scope = scope;
     this.vars = vars;
-    this.props = props;
     this.component = component;
 
     this.root = parent ? parent.root : this;

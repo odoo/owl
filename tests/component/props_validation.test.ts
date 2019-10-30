@@ -37,17 +37,32 @@ describe("props validation", () => {
       static props = ["message"];
       static template = xml`<div>hey</div>`;
     }
+    class Parent extends Widget {
+      static components = { TestWidget };
+      static template = xml`<div><TestWidget /></div>`;
+    }
 
+    let error;
     QWeb.dev = true;
-    expect(() => {
-      new TestWidget();
-    }).toThrow();
+    try {
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Missing props 'message' (component 'TestWidget')`);
+
+    error = undefined;
 
     QWeb.dev = false;
-
-    expect(() => {
-      new TestWidget();
-    }).not.toThrow();
+    try {
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
   });
 
   test("props: list of strings", async () => {
@@ -55,10 +70,20 @@ describe("props validation", () => {
       static props = ["message"];
       static template = xml`<div>hey</div>`;
     }
+    class Parent extends Widget {
+      static components = { TestWidget };
+      static template = xml`<div><TestWidget /></div>`;
+    }
 
-    expect(() => {
-      new TestWidget();
-    }).toThrow("Missing props 'message' (component 'TestWidget')");
+    let error;
+    try {
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Missing props 'message' (component 'TestWidget')`);
   });
 
   test("validate simple types", async () => {
@@ -71,23 +96,50 @@ describe("props validation", () => {
       { type: Function, ok: () => {}, ko: "1" }
     ];
 
+    let props;
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      get p() {
+        return props.p;
+      }
+    }
     for (let test of Tests) {
       let TestWidget = class extends Widget {
         static template = xml`<div>hey</div>`;
         static props = { p: test.type };
       };
+      Parent.components = { TestWidget };
 
-      expect(() => {
-        new TestWidget();
-      }).toThrow("Missing props 'p'");
+      let error;
+      props = {};
+      try {
+        const p = new Parent();
+        await p.mount(fixture);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeDefined();
+      expect(error.message).toBe(`Missing props 'p' (component '_a')`);
 
-      expect(() => {
-        new TestWidget(undefined, { p: test.ok });
-      }).not.toThrow();
+      error = undefined;
+      props = {p: test.ok};
+      try {
+        const p = new Parent();
+        await p.mount(fixture);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeUndefined();
 
-      expect(() => {
-        new TestWidget(undefined, { p: test.ko });
-      }).toThrow("Props 'p' of invalid type in component");
+      props = {p: test.ko};
+      try {
+        const p = new Parent();
+        await p.mount(fixture);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeDefined();
+      expect(error.message).toBe(`Props 'p' of invalid type in component '_a'`);
     }
   });
 
@@ -101,119 +153,305 @@ describe("props validation", () => {
       { type: Function, ok: () => {}, ko: "1" }
     ];
 
+    let props;
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      get p() {
+        return props.p;
+      }
+    }
     for (let test of Tests) {
-      let TestWidget = class extends Widget {
-        static template = xml`<div>hey</div>`;
+      let TestWidget = class extends Component<any, any> {
         static props = { p: { type: test.type } };
+        static template = xml`<div>hey</div>`;
       };
+      Parent.components = { TestWidget };
 
-      expect(() => {
-        new TestWidget();
-      }).toThrow("Missing props 'p'");
+      let error;
+      props = {};
+      try {
+        const p = new Parent();
+        await p.mount(fixture);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeDefined();
+      expect(error.message).toBe(`Missing props 'p' (component '_a')`);
 
-      expect(() => {
-        new TestWidget(undefined, { p: test.ok });
-      }).not.toThrow();
+      error = undefined;
+      props = {p: test.ok};
+      try {
+        const p = new Parent();
+        await p.mount(fixture);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeUndefined();
 
-      expect(() => {
-        new TestWidget(undefined, { p: test.ko });
-      }).toThrow("Props 'p' of invalid type in component");
+      props = {p: test.ko};
+      try {
+        const p = new Parent();
+        await p.mount(fixture);
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeDefined();
+      expect(error.message).toBe(`Props 'p' of invalid type in component '_a'`);
     }
   });
 
   test("can validate a prop with multiple types", async () => {
-    let TestWidget = class extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: [String, Boolean] };
     };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      static components = { TestWidget };
+      get p() {
+        return props.p;
+      }
+    };
 
-    expect(() => {
-      new TestWidget(undefined, { p: "string" });
-      new TestWidget(undefined, { p: true });
-    }).not.toThrow();
+    let error;
+    let props;
+    try {
+      props = { p: "string" };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: 1 });
-    }).toThrow("Props 'p' of invalid type in component");
+    try {
+      props = { p: true };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+
+    try {
+      props = { p: 1 };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
   });
 
   test("can validate an optional props", async () => {
-    let TestWidget = class extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: String, optional: true } };
     };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      static components = { TestWidget };
+      get p() {
+        return props.p;
+      }
+    };
 
-    expect(() => {
-      new TestWidget(undefined, { p: "hey" });
-      new TestWidget(undefined, {});
-    }).not.toThrow();
+    let error;
+    let props;
+    try {
+      props = { p: "key" };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: 1 });
-    }).toThrow();
+    try {
+      props = {};
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+
+    try {
+      props = { p: 1 };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
   });
 
   test("can validate an array with given primitive type", async () => {
-    let TestWidget = class extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: String } };
     };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      static components = { TestWidget };
+      get p() {
+        return props.p;
+      }
+    };
 
-    expect(() => {
-      new TestWidget(undefined, { p: [] });
-      new TestWidget(undefined, { p: ["string"] });
-    }).not.toThrow();
+    let error;
+    let props;
+    try {
+      props = { p: [] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: [1] });
-    }).toThrow();
+    try {
+      props = { p: ["string"] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: ["string", 1] });
-    }).toThrow();
+    try {
+      props = { p: [1] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+
+    error = undefined;
+    try {
+      props = { p: ["string", 1] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
   });
 
   test("can validate an array with multiple sub element types", async () => {
-    let TestWidget = class extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: [String, Boolean] } };
     };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      static components = { TestWidget };
+      get p() {
+        return props.p;
+      }
+    }
 
-    expect(() => {
-      new TestWidget(undefined, { p: [] });
-      new TestWidget(undefined, { p: ["string"] });
-      new TestWidget(undefined, { p: [false, true, "string"] });
-    }).not.toThrow();
+    let error;
+    let props;
+    try {
+      props = { p: [] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: [true, 1] });
-    }).toThrow();
+    try {
+      props = { p: ["string"] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+
+    try {
+      props = { p: [false, true, "string"] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+
+    try {
+      props = { p: [true, 1] };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
   });
 
   test("can validate an object with simple shape", async () => {
-    let TestWidget = class extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = {
         p: { type: Object, shape: { id: Number, url: String } }
       };
     };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      static components = { TestWidget };
+      get p() {
+        return props.p;
+      }
+    }
 
-    expect(() => {
-      new TestWidget(undefined, { p: { id: 1, url: "url" } });
-      new TestWidget(undefined, { p: { id: 1, url: "url", extra: true } });
-    }).not.toThrow();
+    let error;
+    let props;
+    try {
+      props = { p: { id: 1, url: "url" } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: { id: "1", url: "url" } });
-    }).toThrow();
+    try {
+      props = { p: { id: 1, url: "url", extra: true } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: { id: 1 } });
-    }).toThrow();
+    try {
+      props = { p: { id: "1", url: "url" } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
+
+    error = undefined;
+    try {
+      props = { p: { id: 1 } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
   });
 
   test("can validate recursively complicated prop def", async () => {
-    let TestWidget = class extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = {
         p: {
@@ -225,15 +463,43 @@ describe("props validation", () => {
         }
       };
     };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget p="p"/></div>`;
+      static components = { TestWidget };
+      get p() {
+        return props.p;
+      }
+    }
 
-    expect(() => {
-      new TestWidget(undefined, { p: { id: 1, url: true } });
-      new TestWidget(undefined, { p: { id: 1, url: [12] } });
-    }).not.toThrow();
+    let error;
+    let props;
+    try {
+      props = { p: { id: 1, url: true } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
 
-    expect(() => {
-      new TestWidget(undefined, { p: { id: 1, url: [12, true] } });
-    }).toThrow();
+    try {
+      props = { p: { id: 1, url: [12] } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+
+    try {
+      props = { p: { id: 1, url: [12, true] } };
+      const p = new Parent();
+      await p.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
   });
 
   test("props are validated in dev mode (code snapshot)", async () => {
@@ -401,13 +667,18 @@ describe("props validation", () => {
 
 describe("default props", () => {
   test("can set default values", async () => {
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static defaultProps = { p: 4 };
-      static template = xml`<div>hey</div>`;
+      static template = xml`<div><t t-esc="props.p"/></div>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><TestWidget /></div>`;
+      static components = { TestWidget };
     }
 
-    const w = new TestWidget(undefined, {});
-    expect(w.props.p).toBe(4);
+    const w = new Parent();
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe('<div><div>4</div></div>');
   });
 
   test("default values are also set whenever component is updated", async () => {

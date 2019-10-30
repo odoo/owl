@@ -72,9 +72,9 @@ class WidgetA extends Widget {
 //------------------------------------------------------------------------------
 
 describe("basic widget properties", () => {
-  test("props is properly defined", async () => {
+  test("props is not defined on root components", async () => {
     const widget = new Widget();
-    expect(widget.props).toEqual({});
+    expect(widget.props).toBe(undefined);
   });
 
   test("has no el after creation", async () => {
@@ -1645,10 +1645,11 @@ describe("props evaluation ", () => {
     class Parent extends Widget {
       static components = { child: Child };
       get greetings() {
-        return `hello ${this.props.name}`;
+        const name = "aaron";
+        return `hello ${name}`;
       }
     }
-    const widget = new Parent(undefined, { name: "aaron" });
+    const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>hello aaron</span></div>");
   });
@@ -2336,30 +2337,27 @@ describe("random stuff/miscellaneous", () => {
 
   test("t-on with handler bound to dynamic argument on a t-foreach", async () => {
     expect.assertions(3);
-    env.qweb.addTemplates(`
-      <templates>
-        <div t-name="ParentWidget">
-          <t t-foreach="props.items" t-as="item">
-            <Child t-key="item" t-on-ev="onEv(item)"/>
-          </t>
-        </div>
-      </templates>
-    `);
-    const items = [1, 2, 3, 4];
 
     class Child extends Widget {}
     class ParentWidget extends Widget {
+      static template = xml`
+        <div>
+          <t t-foreach="items" t-as="item">
+            <Child t-key="item" t-on-ev="onEv(item)"/>
+          </t>
+        </div>`;
       static components = { Child };
+      items = [1, 2, 3, 4];
       onEv(n, ev) {
         expect(n).toBe(1);
         expect(ev.detail).toBe(43);
       }
     }
 
-    const widget = new ParentWidget(undefined, { items });
+    const widget = new ParentWidget();
     await widget.mount(fixture);
     children(widget)[0].trigger("ev", 43);
-    expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[ParentWidget.template].fn.toString()).toMatchSnapshot();
   });
 
   test("updating widget immediately", async () => {

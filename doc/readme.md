@@ -65,7 +65,7 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 
 ## Learning Resources
 
-- [Quick Start](quick_start.md)
+- [Quick Start: create an (almost) empty Owl application](learning/quick_start.md)
 
 ## Miscellaneous
 

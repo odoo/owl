@@ -298,6 +298,25 @@ describe("observer", () => {
     expect(observer.revNumber(state.a)).toBe(2);
   });
 
+  test("can unobserve observed objects in object", () => {
+    const observer = new Observer();
+    const state: any = observer.observe({ a: { b: 1 } });
+
+    expect(observer.rev).toBe(1);
+    expect(observer.revNumber(state)).toBe(1);
+    expect(observer.revNumber(state.a)).toBe(1);
+
+    const sub = state.a;
+
+    sub.b = 2;
+    expect(observer.rev).toBe(2);
+
+    delete state.a;
+    expect(observer.rev).toBe(3);
+    sub.b = 3;
+    expect(observer.rev).toBe(3);
+  });
+
   test("reobserve new object values", () => {
     const observer = new Observer();
     const obj: any = observer.observe({ a: 1 });

@@ -28,7 +28,7 @@ Owl is currently mostly stable.  Possible future changes are explained in the
 Here is a short example to illustrate interactive components:
 
 ```javascript
-const { Component, QWeb, useState } = owl;
+const { Component, useState } = owl;
 const { xml } = owl.tags;
 
 class Counter extends Component {
@@ -50,7 +50,7 @@ class App extends Component {
   static components = { Counter };
 }
 
-const app = new App({ qweb: new QWeb() });
+const app = new App();
 app.mount(document.body);
 ```
 
@@ -92,7 +92,7 @@ A complete documentation for Owl can be found here:
 
 The most important sections are:
 
-- [Quick Start](doc/quick_start.md)
+- [Quick Start](doc/learning/quick_start.md)
 - [Component](doc/reference/component.md)
 - [Hooks](doc/reference/hooks.md)
 
@@ -126,23 +126,6 @@ Owl components in an application are used to define a (dynamic) tree of componen
       / \
      C   D
 ```
-
-**Environment:** the root component is special: it is created with an environment,
-which should contain a [`QWeb` instance](doc/reference/qweb.md). The environment is then automatically
-propagated to each sub components (and accessible in the `this.env` property).
-
-```js
-const env = { qweb: new QWeb() };
-const app = new App(env);
-app.mount(document.body);
-```
-
-The environment is mostly static. Each application is free to add anything to
-the environment, which is very useful, since this can be accessed by each sub
-component. Some good use case for that is some configuration keys, session
-information or generic services (such as doing rpcs, or accessing local storage).
-Doing it this way means that components are easily testable: we can simply
-create a test environment with mock services.
 
 **State:** each component can manage its own local state. It is a simple ES6
 class, there are no special rules:

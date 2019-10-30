@@ -159,7 +159,7 @@ Its API is quite simple:
   ```
 
 In some way, a `QWeb` instance is the core of an Owl application. It is the only
-mandatory element of an [environment](component.md#environment). As such, it
+mandatory element of an [environment](environment.md). As such, it
 has an extra responsibility: it can act as an event bus for internal communication
 between Owl classes. This is the reason why `QWeb` actually extends [EventBus](event_bus.md).
 

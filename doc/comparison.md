@@ -274,7 +274,8 @@ class Counter extends Component {
   dispatch = useDispatch();
 }
 
-const counter = new Counter({ store, qweb });
+owl.config.env.store = store;
+const counter = new Counter();
 ```
 
 ## Hooks

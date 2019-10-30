@@ -67,6 +67,9 @@ function makeEnvironment() {
     await env.router.start();
     return env;
 }
+
+owl.config.env = makeEnvironment();
+// create root component here
 ```
 
 Notice that the router needs to be started. This is an asynchronous operation

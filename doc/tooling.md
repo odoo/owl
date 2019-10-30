@@ -3,7 +3,6 @@
 ## Content
 
 - [Overview](#overview)
-- [Development Mode](#development-mode)
 - [Playground](#playground)
 - [Benchmarks](#benchmarks)
 - [Single File Component](#single-file-component)
@@ -20,26 +19,6 @@ The two applications are available in the `tools/` folder, and can be accessed
 by using a static http server. A simple python
 server is available in `server.py`. There is also a npm script to start it:
 `npm run tools` (and its version with a watcher: `npm run tools:watch`).
-
-## Development Mode
-
-By default, Owl is in _production_ mode, this means that it will try to do its
-job fast, and skip some expensive operations. However, in some cases, it is
-convenient to have better information on what is going on, this is the purpose
-of the dev mode.
-
-Owl has a mode flag, in `owl.__info__.mode`. Its default value is `prod`, but
-it can be set to `dev`:
-
-```js
-owl.__info__.mode = "dev";
-```
-
-Note that templates compiled with the `prod` settings will not be recompiled.
-So, changing this setting is best done at startup.
-
-An important job done by the `dev` mode is to validate props for each component
-creation and update. Also, extra props will cause an error.
 
 ## Playground
 

@@ -12,6 +12,9 @@ owl
     QWeb
     Store
     useState
+    config
+        mode
+        env
     core
         EventBus
         Observer
@@ -48,11 +51,18 @@ owl
 
 Note that for convenience, the `useState` hook is also exported at the root of the `owl` object.
 
+## Learning Resources
+
+- [Quick Start: create an (almost) empty Owl application](learning/quick_start.md)
+- [Environment: what it is and what it should contain](learning/environment.md)
+
 ## Reference
 
 - [Animations](reference/animations.md)
 - [Component](reference/component.md)
+- [Configuration](reference/config.md)
 - [Context](reference/context.md)
+- [Environment](reference/environment.md)
 - [Event Bus](reference/event_bus.md)
 - [Hooks](reference/hooks.md)
 - [Misc](reference/misc.md)
@@ -62,10 +72,6 @@ Note that for convenience, the `useState` hook is also exported at the root of t
 - [Store](reference/store.md)
 - [Tags](reference/tags.md)
 - [Utils](reference/utils.md)
-
-## Learning Resources
-
-- [Quick Start: create an (almost) empty Owl application](learning/quick_start.md)
 
 ## Miscellaneous
 

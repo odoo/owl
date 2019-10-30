@@ -28,10 +28,7 @@ context, and add it to the environment:
 
 ```js
 const deviceContext = new Context({ isMobile: true });
-const env = {
-  qweb: new QWeb({ templates: TEMPLATES }),
-  deviceContext
-};
+owl.config.env.deviceContext = deviceContext;
 ```
 
 If we want to make it completely responsive, we need to update its value whenever

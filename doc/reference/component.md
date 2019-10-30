@@ -11,7 +11,6 @@
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
   - [Root Component](#root-component)
-  - [Environment](#environment)
   - [Composition](#composition)
   - [Event Handling](#event-handling)
   - [Form Input Bindings](#form-input-bindings)
@@ -81,8 +80,8 @@ a state object is defined, by using the `useState` hook. It is not mandatory to 
 ## Reference
 
 An Owl component is a small class which represents a component or some UI element.
-It exists in the context of an environment (`env`), which is propagated from a
-parent to its children. The environment needs to have a QWeb instance, which
+It exists in the context of an [environment](environment.md) (`env`), which is propagated from a
+parent to its children. The environment needs to have a [QWeb](qweb.md) instance, which
 will be used to render the component template.
 
 Be aware that the name of the component may be significant: if a component does
@@ -441,49 +440,12 @@ of an Owl application has to be created manually:
 ```js
 class App extends owl.Component { ... }
 
-const qweb = new owl.QWeb({ templates: TEMPLATES });
-const env = { qweb: qweb };
-const app = new App(env);
+const app = new App();
 app.mount(document.body);
 ```
 
-The root component needs an environment.
-
-### Environment
-
-In Owl, an environment is an object with a `qweb` key, which has to be a
-[QWeb](qweb.md) instance. This qweb instance will be used to render everything.
-
-The environment is meant to contain (mostly) static global information and
-methods for the whole application. For example, settings keys (`mode` to determine
-if we are in desktop or mobile mode, or `theme`: dark or light), `rpc` methods,
-session information, ...
-
-The environment will be given to each child, unchanged, in the `env` property.
-This can be very useful to share common information/methods. For example, all
-rpcs can be made through a `rpc` method in the environment. This makes it very
-easy to test a component.
-
-Updating the environment is not as simple as changing a component's state: its
-content is not observed, so updates will not be reflected immediately in the
-user interface. There is however a mechanism to force root widgets to rerender
-themselves whenever the environment is modified: one only needs to call the
-`forceUpdate` method on the QWeb instance. For example, a responsive environment
-could be done like this:
-
-```js
-function setupResponsivePlugin(env) {
-  const isMobile = () => window.innerWidth <= 768;
-  env.isMobile = isMobile();
-  const updateEnv = owl.utils.debounce(() => {
-    if (env.isMobile !== isMobile()) {
-      env.isMobile = !env.isMobile;
-      env.qweb.forceUpdate();
-    }
-  }, 15);
-  window.addEventListener("resize", updateEnv);
-}
-```
+The root component does not have a parent nor props. It will be setup with an
+[environment](environment.md) (located in `owl.config.env`).
 
 ### Composition
 
@@ -986,7 +948,7 @@ of the props. Here is how it works in Owl:
 - `props` key is a static key (so, different from `this.props` in a component instance)
 - it is optional: it is ok for a component to not define a `props` key.
 - props are validated whenever a component is created/updated
-- props are only validated in `dev` mode (see [tooling page](../tooling.md#development-mode))
+- props are only validated in `dev` mode (see [config page](config.md#mode))
 - if a key does not match the description, an error is thrown
 - it validates keys defined in (static) `props`. Additional keys given by the
   parent will cause an error.

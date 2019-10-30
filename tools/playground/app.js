@@ -443,7 +443,6 @@ async function start() {
     owl.utils.whenReady()
   ]);
   const qweb = new owl.QWeb({ templates });
-  debugger;
   owl.config.env = { qweb };
   const app = new App();
   app.mount(document.body);

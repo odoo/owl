@@ -234,51 +234,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
 }"
 `;
 
-exports[`composition sub components dom state with t-keepalive is preserved 1`] = `
-"function anonymous(context,extra
-) {
-    let utils = this.constructor.utils;
-    let QWeb = this.constructor;
-    let parent = context;
-    let owner = context;
-    let sibling = null;
-    var h = this.h;
-    let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    if (context['state'].ok) {
-        //COMPONENT
-        let templateId3 = \`__4__\`;
-        let w3 = templateId3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId3]] : false;
-        const fiber3 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
-        let props3 = {};
-        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
-            w3.destroy();
-            w3 = false;
-        }
-        if (w3) {
-            w3.__updateProps(props3, w3.__owl__.isMounted ? extra.fiber : fiber3, undefined, undefined, sibling);
-            let pvnode = w3.__owl__.pvnode;
-            pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w3.el,vn.elm);vn.elm=w3.el;w3.__remount();};
-            c1.push(pvnode);
-        } else {
-            let componentKey3 = \`InputWidget\`;
-            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['InputWidget'];
-            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
-            w3 = new W3(parent, props3);
-            parent.__owl__.cmap[templateId3] = w3.__owl__.id;
-            let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
-            let pvnode = h('dummy', {key: templateId3, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.unmount();}}});
-            const fiber = w3.__owl__.currentFiber;
-            def2.then(function () {if (w3.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            c1.push(pvnode);
-            w3.__owl__.pvnode = pvnode;
-        }
-        sibling = w3.__owl__.currentFiber || sibling;
-    }
-    return vn1;
-}"
-`;
-
 exports[`composition sub components with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
@@ -456,51 +411,6 @@ exports[`dynamic t-props basic use 1`] = `
         w3.__owl__.pvnode = pvnode;
     }
     sibling = w3.__owl__.currentFiber || sibling;
-    return vn1;
-}"
-`;
-
-exports[`lifecycle hooks willPatch/patched hook with t-keepalive 1`] = `
-"function anonymous(context,extra
-) {
-    let utils = this.constructor.utils;
-    let QWeb = this.constructor;
-    let parent = context;
-    let owner = context;
-    let sibling = null;
-    var h = this.h;
-    let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    if (context['state'].flag) {
-        //COMPONENT
-        let templateId3 = \`__4__\`;
-        let w3 = templateId3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId3]] : false;
-        const fiber3 = Object.assign(Object.create(extra.fiber), {patchQueue: []});
-        let props3 = {v:context['state'].n};
-        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
-            w3.destroy();
-            w3 = false;
-        }
-        if (w3) {
-            w3.__updateProps(props3, w3.__owl__.isMounted ? extra.fiber : fiber3, undefined, undefined, sibling);
-            let pvnode = w3.__owl__.pvnode;
-            pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w3.el,vn.elm);vn.elm=w3.el;w3.__remount();};
-            c1.push(pvnode);
-        } else {
-            let componentKey3 = \`ChildWidget\`;
-            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['ChildWidget'];
-            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
-            w3 = new W3(parent, props3);
-            parent.__owl__.cmap[templateId3] = w3.__owl__.id;
-            let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
-            let pvnode = h('dummy', {key: templateId3, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.unmount();}}});
-            const fiber = w3.__owl__.currentFiber;
-            def2.then(function () {if (w3.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            c1.push(pvnode);
-            w3.__owl__.pvnode = pvnode;
-        }
-        sibling = w3.__owl__.currentFiber || sibling;
-    }
     return vn1;
 }"
 `;

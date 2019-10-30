@@ -391,8 +391,7 @@ scrollbar.
 
 Note that modifying the state is not allowed here. This method is called just
 before an actual DOM patch, and is only intended to be used to save some local
-DOM state. Also, it will not be called if the component is not in the DOM (this can
-happen with components with `t-keepalive`).
+DOM state. Also, it will not be called if the component is not in the DOM.
 
 #### `patched(snapshot)`
 
@@ -402,7 +401,7 @@ likely via a change in its state/props or environment).
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
 component was patched. Note that this hook will not be called if the compoent is
-not in the DOM (this can happen with components with `t-keepalive`).
+not in the DOM.
 
 Updating the component state in this hook is possible, but not encouraged.
 One needs to be careful, because updates here will create an additional rendering, which in

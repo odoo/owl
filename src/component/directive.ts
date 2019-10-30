@@ -186,7 +186,7 @@ QWeb.utils.defineProxy = function defineProxy(target, source) {
 
 QWeb.addDirective({
   name: "component",
-  extraNames: ["props", "keepalive"],
+  extraNames: ["props"],
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.addLine("//COMPONENT");
@@ -194,7 +194,6 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineParent = true;
     ctx.rootContext.shouldDefineUtils = true;
-    let keepAlive = node.getAttribute("t-keepalive") ? true : false;
     let hasDynamicProps = node.getAttribute("t-props") ? true : false;
 
     // t-on- events and t-transition
@@ -256,8 +255,8 @@ QWeb.addDirective({
     if (transition) {
       transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
     }
-    let finalizeComponentCode = `w${componentID}.${keepAlive ? "unmount" : "destroy"}();`;
-    if (ref && !keepAlive) {
+    let finalizeComponentCode = `w${componentID}.destroy();`;
+    if (ref) {
       finalizeComponentCode += `delete context.__owl__.refs[${refKey}];`;
     }
     if (transition) {
@@ -338,11 +337,6 @@ QWeb.addDirective({
       `let w${componentID} = ${templateId} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateId}]] : false;`
     );
     let shouldProxy = !ctx.parentNode;
-    if (keepAlive) {
-      ctx.addLine(
-        `const fiber${componentID} = Object.assign(Object.create(extra.fiber), {patchQueue: []});`
-      );
-    }
     if (shouldProxy) {
       let id = ctx.generateID();
       ctx.rootContext.rootNode = id;
@@ -393,28 +387,15 @@ QWeb.addDirective({
     ctx.addIf(`w${componentID}`);
 
     // need to update component
-    let patchQueueCode = keepAlive ? `fiber${componentID}` : "extra.fiber";
-    if (keepAlive) {
-      // if we have t-keepalive="1", the component could be unmounted, but then
-      // we __updateProps is called.  This is ok, but we do not want to call
-      // the willPatch/patched hooks of the component in this case, so we
-      // disable the patch queue
-      patchQueueCode = `w${componentID}.__owl__.isMounted ? extra.fiber : fiber${componentID}`;
-    }
     let styleCode = "";
     if (tattStyle) {
       styleCode = `.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`;
     }
     ctx.addLine(
-      `w${componentID}.__updateProps(props${componentID}, ${patchQueueCode}${scopeVars &&
+      `w${componentID}.__updateProps(props${componentID}, extra.fiber${scopeVars &&
         ", " + scopeVars}, sibling)${styleCode};`
     );
     ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
-    let keepAliveCode = "";
-    if (keepAlive) {
-      keepAliveCode = `pvnode.data.hook.insert = vn => {vn.elm.parentNode.replaceChild(w${componentID}.el,vn.elm);vn.elm=w${componentID}.el;w${componentID}.__remount();};`;
-      ctx.addLine(keepAliveCode);
-    }
     if (registerCode) {
       ctx.addLine(registerCode);
     }

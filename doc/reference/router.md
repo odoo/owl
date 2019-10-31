@@ -68,7 +68,7 @@ function makeEnvironment() {
     return env;
 }
 
-owl.config.env = makeEnvironment();
+App.env = makeEnvironment();
 // create root component here
 ```
 

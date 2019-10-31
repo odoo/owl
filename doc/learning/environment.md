@@ -40,7 +40,7 @@ async function myEnv() {
 }
 
 async function start() {
-  owl.config.env = await myEnv();
+  App.env = await myEnv();
   const app = new App();
   await app.mount(document.body);
 }

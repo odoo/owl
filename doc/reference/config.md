@@ -2,10 +2,9 @@
 
 The Owl framework is designed to work in many situations. However, it is
 sometimes necessary to customize some behaviour. This is done by using the
-global `config` object. It currently has two keys:
+global `config` object. It currently has one key:
 
-- [`mode`](#mode),
-- [`env`](#env).
+- [`mode`](#mode).
 
 ## Mode
 
@@ -26,31 +25,3 @@ So, changing this setting is best done at startup.
 
 An important job done by the `dev` mode is to validate props for each component
 creation and update. Also, extra props will cause an error.
-
-## Env
-
-An Owl application needs an [environment](environment.md) to be executed. The
-environment has an important key: the [QWeb](qweb.md) instance, which will render
-all templates.
-
-Whenever a root component is mounted, Owl will take the environment from
-`owl.config.env` and use it to setup the component (and its children).
-
-- if no environment was setup, an empty environment will be generated,
-- if an environment exists, but does not have a QWeb key, a new QWeb instance
-  will then be added to the environment.
-
-The correct way to customize an environment is to simply modify `owl.config.env`
-before the first component is created:
-
-```js
-owl.config.env = {
-    _t: myTranslateFunction,
-    user: {...},
-    services: {
-        ...
-    },
-};
-const app = new App();
-app.mount(document.body);
-```

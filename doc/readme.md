@@ -50,15 +50,14 @@ Store                                       Link
 useState                                    RouteComponent
 config                                      Router
     mode                                tags
-    env                                     xml
-core                                    utils
-    EventBus                                debounce
-    Observer                                escape
-hooks                                       loadJS
-    onWillStart                             loadFile
-    onMounted                               shallowEqual
-    onWillUpdateProps                       whenReady
-    onWillPatch
+core                                        xml
+    EventBus                            utils
+    Observer                                debounce
+hooks                                       escape
+    onWillStart                             loadJS
+    onMounted                               loadFile
+    onWillUpdateProps                       shallowEqual
+    onWillPatch                             whenReady
     onPatched
     onWillUnmount
     useContext

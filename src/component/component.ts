@@ -136,7 +136,7 @@ export class Component<T extends Env, Props extends {}> {
       if (!this.env.qweb) {
         this.env.qweb = new QWeb();
       }
-      this.props = undefined as unknown as Props;
+      this.props = (undefined as unknown) as Props;
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {
           this.render(true);

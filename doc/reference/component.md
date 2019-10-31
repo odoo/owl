@@ -444,7 +444,8 @@ app.mount(document.body);
 ```
 
 The root component does not have a parent nor props. It will be setup with an
-[environment](environment.md) (located in `owl.config.env`).
+[environment](environment.md) (either the `env` defined on its class, or a
+default empty environment).
 
 ### Composition
 

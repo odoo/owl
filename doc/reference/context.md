@@ -28,7 +28,7 @@ context, and add it to the environment:
 
 ```js
 const deviceContext = new Context({ isMobile: true });
-owl.config.env.deviceContext = deviceContext;
+App.env.deviceContext = deviceContext;
 ```
 
 If we want to make it completely responsive, we need to update its value whenever
@@ -53,14 +53,14 @@ fact that we are in a mobile or desktop mode.
 ```js
 class SomeComponent extends Component {
   static template = xml`
-        <div>
-          <t t-if=device.isMobile>
-             some simplified user interface
-          </t>
-          <t t-else="1">
-             some more sopthisticated user interface
-          </t>
-    `;
+    <div>
+      <t t-if=device.isMobile>
+          some simplified user interface
+      </t>
+      <t t-else="1">
+          a more advanced user interface
+      </t>
+    </div>`;
   device = useContext(this.env.deviceContext);
 }
 ```

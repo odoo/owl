@@ -274,7 +274,7 @@ class Counter extends Component {
   dispatch = useDispatch();
 }
 
-owl.config.env.store = store;
+Counter.env.store = store;
 const counter = new Counter();
 ```
 

@@ -16,8 +16,6 @@ class Counter extends owl.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.Component {
-  static components = { Counter };
-
   shouldUpdate(nextProps) {
     return nextProps.message !== this.props.message;
   }
@@ -27,12 +25,12 @@ class Message extends owl.Component {
     });
   }
 }
+Message.components = { Counter };
 
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  static components = { Message };
   state = useState({ messages: [], multipleFlag: false, clearAfterFlag: false });
   logRef = useRef("log");
 
@@ -139,6 +137,7 @@ class App extends owl.Component {
     this.logRef.el.innerHTML = "";
   }
 }
+App.components = { Message };
 
 //------------------------------------------------------------------------------
 // Application initialization

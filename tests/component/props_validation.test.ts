@@ -121,7 +121,7 @@ describe("props validation", () => {
       expect(error.message).toBe(`Missing props 'p' (component '_a')`);
 
       error = undefined;
-      props = {p: test.ok};
+      props = { p: test.ok };
       try {
         const p = new Parent();
         await p.mount(fixture);
@@ -130,7 +130,7 @@ describe("props validation", () => {
       }
       expect(error).toBeUndefined();
 
-      props = {p: test.ko};
+      props = { p: test.ko };
       try {
         const p = new Parent();
         await p.mount(fixture);
@@ -178,7 +178,7 @@ describe("props validation", () => {
       expect(error.message).toBe(`Missing props 'p' (component '_a')`);
 
       error = undefined;
-      props = {p: test.ok};
+      props = { p: test.ok };
       try {
         const p = new Parent();
         await p.mount(fixture);
@@ -187,7 +187,7 @@ describe("props validation", () => {
       }
       expect(error).toBeUndefined();
 
-      props = {p: test.ko};
+      props = { p: test.ko };
       try {
         const p = new Parent();
         await p.mount(fixture);
@@ -203,14 +203,14 @@ describe("props validation", () => {
     class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: [String, Boolean] };
-    };
+    }
     class Parent extends Component<any, any> {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
         return props.p;
       }
-    };
+    }
 
     let error;
     let props;
@@ -247,14 +247,14 @@ describe("props validation", () => {
     class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: String, optional: true } };
-    };
+    }
     class Parent extends Component<any, any> {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
         return props.p;
       }
-    };
+    }
 
     let error;
     let props;
@@ -291,14 +291,14 @@ describe("props validation", () => {
     class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: String } };
-    };
+    }
     class Parent extends Component<any, any> {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
         return props.p;
       }
-    };
+    }
 
     let error;
     let props;
@@ -343,7 +343,7 @@ describe("props validation", () => {
     class TestWidget extends Component<any, any> {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: [String, Boolean] } };
-    };
+    }
     class Parent extends Component<any, any> {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
@@ -398,7 +398,7 @@ describe("props validation", () => {
       static props = {
         p: { type: Object, shape: { id: Number, url: String } }
       };
-    };
+    }
     class Parent extends Component<any, any> {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
@@ -461,7 +461,7 @@ describe("props validation", () => {
           }
         }
       };
-    };
+    }
     class Parent extends Component<any, any> {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
@@ -677,7 +677,7 @@ describe("default props", () => {
 
     const w = new Parent();
     await w.mount(fixture);
-    expect(fixture.innerHTML).toBe('<div><div>4</div></div>');
+    expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
   test("default values are also set whenever component is updated", async () => {

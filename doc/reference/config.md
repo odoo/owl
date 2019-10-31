@@ -1,7 +1,7 @@
 # 🦉 Config 🦉
 
-The Owl framework is designed to work in many situations.  However, it is
-sometimes necessary to customize some behaviour.  This is done by using the
+The Owl framework is designed to work in many situations. However, it is
+sometimes necessary to customize some behaviour. This is done by using the
 global `config` object. It currently has two keys:
 
 - [`mode`](#mode),

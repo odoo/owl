@@ -115,15 +115,16 @@ export class Component<T extends Env, Props extends {}> {
     Component.current = this;
 
     const id: number = nextId++;
+    let constr = this.constructor as any;
     let depth;
     if (parent) {
-      const defaultProps = (<any>this.constructor).defaultProps;
+      const defaultProps = constr.defaultProps;
       if (defaultProps) {
         props = this.__applyDefaultProps(props, defaultProps);
       }
       this.props = <Props>props;
       if (QWeb.dev) {
-        QWeb.utils.validateProps(this.constructor, this.props);
+        QWeb.utils.validateProps(constr, this.props);
       }
       this.env = parent.env;
       const __powl__ = parent.__owl__;
@@ -153,7 +154,7 @@ export class Component<T extends Env, Props extends {}> {
     }
 
     const qweb = this.env.qweb;
-
+    const template = constr.template || this.__getTemplate(qweb);
     this.__owl__ = {
       id: id,
       depth: depth,
@@ -173,7 +174,7 @@ export class Component<T extends Env, Props extends {}> {
       willStartCB: null,
       willUpdatePropsCB: null,
       observer: null,
-      renderFn: qweb.render.bind(qweb, this.__getTemplate(qweb)),
+      renderFn: qweb.render.bind(qweb, template),
       classObj: null,
       refs: null
     };
@@ -543,22 +544,18 @@ export class Component<T extends Env, Props extends {}> {
   __getTemplate(qweb: QWeb): string {
     let p = (<any>this).constructor;
     if (!p.hasOwnProperty("_template")) {
-      if (p.template) {
-        p._template = p.template;
-      } else {
-        // here, the component and none of its superclasses defines a static `template`
-        // key. So we fall back on looking for a template matching its name (or
-        // one of its subclass).
+      // here, the component and none of its superclasses defines a static `template`
+      // key. So we fall back on looking for a template matching its name (or
+      // one of its subclass).
 
-        let template: string;
-        while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
-          p = p.__proto__;
-        }
-        if (p === Component) {
-          throw new Error(`Could not find template for component "${this.constructor.name}"`);
-        } else {
-          p._template = template;
-        }
+      let template: string;
+      while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
+        p = p.__proto__;
+      }
+      if (p === Component) {
+        throw new Error(`Could not find template for component "${this.constructor.name}"`);
+      } else {
+        p._template = template;
       }
     }
     return p._template;

@@ -20,29 +20,28 @@ create a test environment with mock services.
 
 For example:
 
-
 ```js
 async function myEnv() {
-    const templates = await loadTemplates();
-    const qweb = new QWeb({templates});
-    const session = getSession();
+  const templates = await loadTemplates();
+  const qweb = new QWeb({ templates });
+  const session = getSession();
 
-    return {
-        _t: myTranslateFunction,
-        session: session,
-        qweb: qweb,
-        services: {
-            localStorage: localStorage,
-            rpc: rpc,
-        },
-        debug: false,
-        inMobileMode: true,
-    };
+  return {
+    _t: myTranslateFunction,
+    session: session,
+    qweb: qweb,
+    services: {
+      localStorage: localStorage,
+      rpc: rpc
+    },
+    debug: false,
+    inMobileMode: true
+  };
 }
 
 async function start() {
-    owl.config.env = await myEnv();
-    const app = new App();
-    await app.mount(document.body);
+  owl.config.env = await myEnv();
+  const app = new App();
+  await app.mount(document.body);
 }
 ```

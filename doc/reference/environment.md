@@ -15,4 +15,3 @@ Note: some additional information can be found here:
 
 - [What should go into an environment?](../learning/environment.md)
 - [Customizing an environment](config.md#env)
-

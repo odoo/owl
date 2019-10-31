@@ -1,7 +1,6 @@
 import { Observer } from "../core/observer";
 import { CompiledTemplate, QWeb } from "../qweb/index";
 import { h, patch, VNode } from "../vdom/index";
-import { config } from "../config";
 import "./directive";
 import { Fiber } from "./fiber";
 import "./props_validation";
@@ -88,6 +87,7 @@ export class Component<T extends Env, Props extends {}> {
   static components = {};
   static props?: any;
   static defaultProps?: any;
+  static env: any = {};
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -131,7 +131,10 @@ export class Component<T extends Env, Props extends {}> {
       depth = __powl__.depth + 1;
     } else {
       // we are the root component
-      this.env = config.env as T;
+      this.env = (this.constructor as any).env;
+      if (!this.env.qweb) {
+        this.env.qweb = new QWeb();
+      }
       this.props = undefined as unknown as Props;
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {

@@ -1,5 +1,4 @@
 import { AsyncRoot } from "../../src/misc/async_root";
-import { config } from "../../src/config";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeDeferred, makeTestFixture, makeTestEnv, nextTick } from "../helpers";
@@ -18,7 +17,7 @@ let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  config.env = makeTestEnv();
+  Component.env = makeTestEnv();
 });
 
 afterEach(() => {

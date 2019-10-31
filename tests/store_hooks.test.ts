@@ -1,5 +1,4 @@
 import { Component, Env } from "../src/component/component";
-import { config } from "../src/config";
 import { Store, useStore, useDispatch, useGetters } from "../src/store";
 import { useState } from "../src/hooks";
 import { xml } from "../src/tags";
@@ -13,7 +12,7 @@ describe("connecting a component to store", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = makeTestEnv();
-    config.env = env;
+    Component.env = env;
   });
 
   afterEach(() => {
@@ -922,7 +921,7 @@ describe("various scenarios", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = makeTestEnv();
-    config.env = env;
+    Component.env = env;
   });
 
   afterEach(() => {

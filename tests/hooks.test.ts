@@ -1,6 +1,5 @@
 import { makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component, Env } from "../src/component/component";
-import { config } from "../src/config";
 import {
   useState,
   onMounted,
@@ -29,7 +28,7 @@ let env: Env;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
-  config.env = env;
+  Component.env = env;
 });
 
 afterEach(() => {

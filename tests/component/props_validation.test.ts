@@ -1,7 +1,6 @@
 import { Component, Env } from "../../src/component/component";
 import { makeTestFixture, makeTestEnv, nextTick } from "../helpers";
 import { useState } from "../../src/hooks";
-import { config } from "../../src/config";
 import { QWeb } from "../../src/qweb";
 import { xml } from "../../src/tags";
 
@@ -16,7 +15,7 @@ let dev: boolean = false;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
-  config.env = env;
+  Component.env = env;
   dev = QWeb.dev;
   QWeb.dev = true;
 });

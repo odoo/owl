@@ -1,7 +1,6 @@
 import { makeDeferred, makeTestEnv, makeTestFixture, nextTick } from "./helpers";
 import { Component } from "../src/component/component";
 import { Context, useContext } from "../src/context";
-import { config } from "../src/config";
 import { xml } from "../src/tags";
 import { useState } from "../src/hooks";
 
@@ -18,7 +17,7 @@ let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  config.env = makeTestEnv();
+  Component.env = makeTestEnv();
 });
 
 afterEach(() => {

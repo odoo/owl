@@ -1,5 +1,4 @@
 import { QWeb } from "./qweb/index";
-import { Env } from "./component/component";
 
 /**
  * This file creates and exports the OWL 'config' object, with keys:
@@ -8,7 +7,6 @@ import { Env } from "./component/component";
  */
 
 interface Config {
-  env: Env;
   mode: string;
 }
 
@@ -28,21 +26,5 @@ Object.defineProperty(config, "mode", {
     } else {
       console.log(`Owl is now running in 'prod' mode.`);
     }
-  },
-});
-
-let env:Env;
-Object.defineProperty(config, "env", {
-  get() {
-    if (!env) {
-      env = {} as Env;
-    }
-    if (!env.qweb) {
-      env.qweb = new QWeb();
-    }
-    return env;
-  },
-  set(newEnv: Env) {
-    env = newEnv;
   },
 });

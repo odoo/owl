@@ -144,7 +144,7 @@ App.components = { Message };
 //------------------------------------------------------------------------------
 async function start() {
   const templates = await owl.utils.loadFile("templates.xml");
-  owl.config.env = {
+  App.env = {
     qweb: new owl.QWeb({ templates })
   };
   const app = new App();

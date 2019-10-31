@@ -95,7 +95,7 @@ function makeCodeIframe(js, css, xml, errorHandler) {
           owl.__info__.mode = 'dev';
           let templates = \`${sanitizedXML}\`;
           const qweb = new owl.QWeb({ templates });
-          owl.config.env = { qweb };
+          owl.Component.env = { qweb };
         }
         ${js}`;
       script.innerHTML = content;
@@ -443,7 +443,7 @@ async function start() {
     owl.utils.whenReady()
   ]);
   const qweb = new owl.QWeb({ templates });
-  owl.config.env = { qweb };
+  owl.Component.env = { qweb };
   const app = new App();
   app.mount(document.body);
 }

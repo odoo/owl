@@ -3,7 +3,6 @@ import { QWeb } from "../../src/qweb/qweb";
 import { xml } from "../../src/tags";
 import { useState, useRef } from "../../src/hooks";
 import { EventBus } from "../../src/core/event_bus";
-import { config } from "../../src/config";
 import {
   makeDeferred,
   makeTestFixture,
@@ -36,7 +35,7 @@ beforeEach(() => {
   );
   env.qweb.addTemplate("WidgetA", `<div>Hello<t t-component="b"/></div>`);
   env.qweb.addTemplate("WidgetB", `<div>world</div>`);
-  config.env = env;
+  Component.env = env;
 });
 
 afterEach(() => {
@@ -3457,7 +3456,7 @@ describe("can deduce template from name", () => {
     await abc.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Rochefort 8</span>");
     abc.destroy();
-    config.env = env2;
+    Component.env = env2;
     const abc2 = new ABC();
     await abc2.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Rochefort 10</span>");
@@ -4246,6 +4245,31 @@ describe("environment and plugins", () => {
     bus.trigger("some-event");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>Blue</div>");
+  });
+
+  test("can define specific env for root components", async () => {
+    class App1 extends Component<any, any> {
+      static template = xml`<span></span>`;
+    }
+    App1.env = { test: 1 };
+    class App2 extends Component<any, any> {
+      static template = xml`<span></span>`;
+    }
+    App2.env = { test: 2 };
+    class App1B extends App1 {}
+    class App2B extends App2 {}
+    App2B.env = { test: 3 };
+
+    const app1 = new App1();
+    const app2 = new App2();
+    const app1B = new App1B();
+    const app2B = new App2B();
+
+    expect(app1.env.qweb).toBeDefined();
+    expect(app1.env.test).toBe(1);
+    expect(app2.env.test).toBe(2);
+    expect(app1B.env.test).toBe(1);
+    expect(app2B.env.test).toBe(3);
   });
 });
 

@@ -1,5 +1,4 @@
 import { Component } from "../../src/component/component";
-import { config } from "../../src/config";
 import { RouterEnv } from "../../src/router/router";
 import { RouteComponent } from "../../src/router/route_component";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
@@ -13,7 +12,7 @@ describe("RouteComponent", () => {
   beforeEach(() => {
     fixture = makeTestFixture();
     env = <RouterEnv>makeTestEnv();
-    config.env = env;
+    Component.env = env;
   });
 
   afterEach(() => {

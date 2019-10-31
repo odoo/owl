@@ -1,5 +1,4 @@
 import { Component, Env } from "../src/component/component";
-import { config } from "../src/config";
 import { QWeb } from "../src/qweb/index";
 import { useState, useRef } from "../src/hooks";
 import {
@@ -30,7 +29,7 @@ let cssEl: HTMLElement;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
-  config.env = env;
+  Component.env = env;
   qweb = new QWeb();
 });
 

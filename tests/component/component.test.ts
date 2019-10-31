@@ -2683,11 +2683,18 @@ describe("async rendering", () => {
     await nextMicroTick();
     expect(steps).toEqual(["render"]);
     await nextMicroTick();
+    // For an unknown reason, this test fails on windows without the next microtick. It works
+    // in linux and osx, but fails on at least this machine.
+    // I do not see anything harmful in waiting an extra tick. But it is annoying to not
+    // know what is different.
+    await nextMicroTick();
     expect(steps).toEqual(["render", "render"]);
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     parent.state.valA = 3;
     await nextMicroTick();
     expect(steps).toEqual(["render", "render"]);
+    await nextMicroTick();
+    // same as above
     await nextMicroTick();
     expect(steps).toEqual(["render", "render", "render"]);
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");

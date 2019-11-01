@@ -71,9 +71,9 @@ class WidgetA extends Widget {
 //------------------------------------------------------------------------------
 
 describe("basic widget properties", () => {
-  test("props is not defined on root components", async () => {
-    const widget = new Widget();
-    expect(widget.props).toBe(undefined);
+  test("props is set on root components", async () => {
+    const widget = new Widget(null, {});
+    expect(widget.props).toEqual({});
   });
 
   test("has no el after creation", async () => {

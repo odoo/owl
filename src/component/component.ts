@@ -111,21 +111,22 @@ export class Component<T extends Env, Props extends {}> {
    * hand.  Other components should be created automatically by the framework (with
    * the t-component directive in a template)
    */
-  constructor(parent?: Component<T, any>, props?: Props) {
+  constructor(parent?: Component<T, any> | null, props?: Props) {
     Component.current = this;
 
-    const id: number = nextId++;
     let constr = this.constructor as any;
+    const defaultProps = constr.defaultProps;
+    if (defaultProps) {
+      props = this.__applyDefaultProps(props, defaultProps);
+    }
+    this.props = <Props>props;
+    if (QWeb.dev) {
+      QWeb.utils.validateProps(constr, this.props);
+    }
+
+    const id: number = nextId++;
     let depth;
     if (parent) {
-      const defaultProps = constr.defaultProps;
-      if (defaultProps) {
-        props = this.__applyDefaultProps(props, defaultProps);
-      }
-      this.props = <Props>props;
-      if (QWeb.dev) {
-        QWeb.utils.validateProps(constr, this.props);
-      }
       this.env = parent.env;
       const __powl__ = parent.__owl__;
       __powl__.children[id] = this;
@@ -136,7 +137,6 @@ export class Component<T extends Env, Props extends {}> {
       if (!this.env.qweb) {
         this.env.qweb = new QWeb();
       }
-      this.props = (undefined as unknown) as Props;
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {
           this.render(true);

@@ -117,7 +117,8 @@ export class Component<T extends Env, Props extends {}> {
     let constr = this.constructor as any;
     const defaultProps = constr.defaultProps;
     if (defaultProps) {
-      props = this.__applyDefaultProps(props, defaultProps);
+      props = props || {} as Props;
+      this.__applyDefaultProps(props, defaultProps);
     }
     this.props = <Props>props;
     if (QWeb.dev) {
@@ -496,7 +497,7 @@ export class Component<T extends Env, Props extends {}> {
 
       const defaultProps = (<any>this.constructor).defaultProps;
       if (defaultProps) {
-        nextProps = this.__applyDefaultProps(nextProps, defaultProps);
+        this.__applyDefaultProps(nextProps, defaultProps);
       }
       if (QWeb.dev) {
         QWeb.utils.validateProps(this.constructor, nextProps);
@@ -640,16 +641,13 @@ export class Component<T extends Env, Props extends {}> {
   /**
    * Apply default props (only top level).
    *
-   * Note that this method does not modify in place the props, it returns a new
-   * prop object
+   * Note that this method does modify in place the props
    */
-  __applyDefaultProps(props: Object | undefined, defaultProps: Object): Props {
-    props = props ? Object.assign({}, props) : {};
+  __applyDefaultProps(props: Object, defaultProps: Object) {
     for (let propName in defaultProps) {
       if (props![propName] === undefined) {
         props![propName] = defaultProps[propName];
       }
     }
-    return <Props>props;
   }
 }

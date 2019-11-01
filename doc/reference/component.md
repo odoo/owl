@@ -443,9 +443,13 @@ const app = new App();
 app.mount(document.body);
 ```
 
-The root component does not have a parent nor props. It will be setup with an
+The root component does not have a parent nor `props` (see note below). It will be setup with an
 [environment](environment.md) (either the `env` defined on its class, or a
 default empty environment).
+
+Note: a root component can however be given a `props` object in its constructor,
+like this: `new App(null, {some: 'object'});`.  It will not be a true `props`
+object, managed by Owl (so, for example, it will never be updated).
 
 ### Composition
 

@@ -1278,6 +1278,7 @@
     }
 
     var _utils = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         whenReady: whenReady,
         loadJS: loadJS,
         loadFile: loadFile,
@@ -2516,28 +2517,13 @@
         set(mode) {
             QWeb.dev = mode === "dev";
             if (QWeb.dev) {
-                const url = `https://github.com/odoo/owl/blob/master/doc/tooling.md#development-mode`;
+                const url = `https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode`;
                 console.warn(`Owl is running in 'dev' mode.  This is not suitable for production use. See ${url} for more information.`);
             }
             else {
                 console.log(`Owl is now running in 'prod' mode.`);
             }
-        },
-    });
-    let env;
-    Object.defineProperty(config, "env", {
-        get() {
-            if (!env) {
-                env = {};
-            }
-            if (!env.qweb) {
-                env.qweb = new QWeb();
-            }
-            return env;
-        },
-        set(newEnv) {
-            env = newEnv;
-        },
+        }
     });
 
     //------------------------------------------------------------------------------
@@ -3343,17 +3329,19 @@
          */
         constructor(parent, props) {
             Component.current = this;
+            let constr = this.constructor;
+            const defaultProps = constr.defaultProps;
+            if (defaultProps) {
+                props = props || {};
+                this.__applyDefaultProps(props, defaultProps);
+            }
+            this.props = props;
+            if (QWeb.dev) {
+                QWeb.utils.validateProps(constr, this.props);
+            }
             const id = nextId++;
             let depth;
             if (parent) {
-                const defaultProps = this.constructor.defaultProps;
-                if (defaultProps) {
-                    props = this.__applyDefaultProps(props, defaultProps);
-                }
-                this.props = props;
-                if (QWeb.dev) {
-                    QWeb.utils.validateProps(this.constructor, this.props);
-                }
                 this.env = parent.env;
                 const __powl__ = parent.__owl__;
                 __powl__.children[id] = this;
@@ -3361,8 +3349,10 @@
             }
             else {
                 // we are the root component
-                this.env = config.env;
-                this.props = undefined;
+                this.env = this.constructor.env;
+                if (!this.env.qweb) {
+                    this.env.qweb = new QWeb();
+                }
                 this.env.qweb.on("update", this, () => {
                     if (this.__owl__.isMounted) {
                         this.render(true);
@@ -3379,6 +3369,7 @@
                 depth = 0;
             }
             const qweb = this.env.qweb;
+            const template = constr.template || this.__getTemplate(qweb);
             this.__owl__ = {
                 id: id,
                 depth: depth,
@@ -3398,7 +3389,7 @@
                 willStartCB: null,
                 willUpdatePropsCB: null,
                 observer: null,
-                renderFn: qweb.render.bind(qweb, this.__getTemplate(qweb)),
+                renderFn: qweb.render.bind(qweb, template),
                 classObj: null,
                 refs: null
             };
@@ -3694,7 +3685,7 @@
                 }
                 const defaultProps = this.constructor.defaultProps;
                 if (defaultProps) {
-                    nextProps = this.__applyDefaultProps(nextProps, defaultProps);
+                    this.__applyDefaultProps(nextProps, defaultProps);
                 }
                 if (QWeb.dev) {
                     QWeb.utils.validateProps(this.constructor, nextProps);
@@ -3739,23 +3730,18 @@
         __getTemplate(qweb) {
             let p = this.constructor;
             if (!p.hasOwnProperty("_template")) {
-                if (p.template) {
-                    p._template = p.template;
+                // here, the component and none of its superclasses defines a static `template`
+                // key. So we fall back on looking for a template matching its name (or
+                // one of its subclass).
+                let template;
+                while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
+                    p = p.__proto__;
+                }
+                if (p === Component) {
+                    throw new Error(`Could not find template for component "${this.constructor.name}"`);
                 }
                 else {
-                    // here, the component and none of its superclasses defines a static `template`
-                    // key. So we fall back on looking for a template matching its name (or
-                    // one of its subclass).
-                    let template;
-                    while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
-                        p = p.__proto__;
-                    }
-                    if (p === Component) {
-                        throw new Error(`Could not find template for component "${this.constructor.name}"`);
-                    }
-                    else {
-                        p._template = template;
-                    }
+                    p._template = template;
                 }
             }
             return p._template;
@@ -3837,23 +3823,21 @@
         /**
          * Apply default props (only top level).
          *
-         * Note that this method does not modify in place the props, it returns a new
-         * prop object
+         * Note that this method does modify in place the props
          */
         __applyDefaultProps(props, defaultProps) {
-            props = props ? Object.assign({}, props) : {};
             for (let propName in defaultProps) {
                 if (props[propName] === undefined) {
                     props[propName] = defaultProps[propName];
                 }
             }
-            return props;
         }
     }
     Component.template = null;
     Component._template = null;
     Component.current = null;
     Component.components = {};
+    Component.env = {};
 
     /**
      * Owl Hook System
@@ -3964,6 +3948,7 @@
     }
 
     var _hooks = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         useState: useState,
         onMounted: onMounted,
         onWillUnmount: onWillUnmount,
@@ -4215,6 +4200,7 @@
     }
 
     var _tags = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         xml: xml
     });
 
@@ -4529,9 +4515,9 @@
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '1.0.0-alpha';
-    exports.__info__.date = '2019-10-30T15:41:04.324Z';
-    exports.__info__.hash = '2fc71cf';
+    exports.__info__.version = '1.0.0-alpha2';
+    exports.__info__.date = '2019-11-01T08:12:51.280Z';
+    exports.__info__.hash = 'bd3c126';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

@@ -345,7 +345,7 @@ const themeContext = new Context({
    foreground: '#fff',
 });
 // Add the themeContext the environment to make it available to all components
-owl.config.env.themeContext = themeContext;
+App.env.themeContext = themeContext;
 const app = new App();
 app.mount(document.body);
 `;
@@ -544,7 +544,7 @@ function makeStore() {
     return store;
 }
 
-owl.config.env.store = makeStore();
+TodoApp.env.store = makeStore();
 const app = new TodoApp();
 app.mount(document.body);
 `;
@@ -1032,7 +1032,7 @@ function setupResponsivePlugin(env) {
 //------------------------------------------------------------------------------
 // Application Startup
 //------------------------------------------------------------------------------
-setupResponsivePlugin(owl.config.env);
+setupResponsivePlugin(App.env);
 
 const app = new App();
 app.mount(document.body);
@@ -1543,7 +1543,7 @@ const windows = [
   }
 ];
 
-owl.config.env.windows = windows;
+App.env.windows = windows;
 const app = new App();
 app.mount(document.body);
 `;

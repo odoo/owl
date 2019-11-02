@@ -91,6 +91,23 @@ describe("basic widget properties", () => {
     expect(fixture.innerHTML).toBe("<div>content</div>");
   });
 
+  test("display a nice message if mounted on a non existing node", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`<div>content</div>`;
+    }
+    const widget = new SomeWidget();
+    let error;
+    try {
+      await widget.mount(null as any);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(
+      "Component 'SomeWidget' cannot be mounted: the target is not a valid DOM node.\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)"
+    );
+  });
+
   test("crashes if it cannot find a template", async () => {
     expect.assertions(1);
     class SomeWidget extends Component<any, any> {}

@@ -117,7 +117,7 @@ export class Component<T extends Env, Props extends {}> {
     let constr = this.constructor as any;
     const defaultProps = constr.defaultProps;
     if (defaultProps) {
-      props = props || {} as Props;
+      props = props || ({} as Props);
       this.__applyDefaultProps(props, defaultProps);
     }
     this.props = <Props>props;
@@ -285,6 +285,11 @@ export class Component<T extends Env, Props extends {}> {
         this.__callMounted();
       }
       return;
+    }
+    if (!(target instanceof HTMLElement)) {
+      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
+      message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
+      throw new Error(message);
     }
     return new Promise((resolve, reject) => {
       const fiber = new Fiber(null, this, undefined, undefined, false);

@@ -448,7 +448,7 @@ The root component does not have a parent nor `props` (see note below). It will 
 default empty environment).
 
 Note: a root component can however be given a `props` object in its constructor,
-like this: `new App(null, {some: 'object'});`.  It will not be a true `props`
+like this: `new App(null, {some: 'object'});`. It will not be a true `props`
 object, managed by Owl (so, for example, it will never be updated).
 
 ### Composition

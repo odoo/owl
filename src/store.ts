@@ -84,6 +84,9 @@ const isStrictEqual = (a, b) => a === b;
 export function useStore(selector, options: SelectorOptions = {}): any {
   const component: Component<any, any> = Component.current!;
   const store = options.store || (component.env.store as Store);
+  if (!(store instanceof Store)) {
+    throw new Error(`No store found when connecting '${component.constructor.name}'`);
+  }
   let result = selector(store.state, component.props);
   const hashFn = store.observer.revNumber.bind(store.observer);
   let revNumber = hashFn(result) || result;

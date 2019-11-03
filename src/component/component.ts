@@ -117,7 +117,7 @@ export class Component<T extends Env, Props extends {}> {
     let constr = this.constructor as any;
     const defaultProps = constr.defaultProps;
     if (defaultProps) {
-      props = props || {} as Props;
+      props = props || ({} as Props);
       this.__applyDefaultProps(props, defaultProps);
     }
     this.props = <Props>props;

@@ -48,6 +48,22 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>hello</span></div>");
   });
 
+  test("throw error if no store is found", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<div></div>`;
+      todos = useStore(state => state.todos);
+    }
+
+    let error;
+    try {
+      new App();
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("No store found when connecting 'App'");
+  });
+
   test("can use useStore twice in a component", async () => {
     const state = { a: 1, b: 2 };
     const actions = {

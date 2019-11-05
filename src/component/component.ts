@@ -276,17 +276,10 @@ export class Component<T extends Env, Props extends {}> {
    *
    * Note that a component can be mounted an unmounted several times
    */
-  async mount(target: HTMLElement, renderBeforeRemount: boolean = false): Promise<void> {
+  async mount(target: HTMLElement): Promise<void> {
     const __owl__ = this.__owl__;
     if (__owl__.isMounted) {
       return Promise.resolve();
-    }
-    if (__owl__.vnode && !renderBeforeRemount) {
-      target.appendChild(this.el!);
-      if (document.body.contains(target)) {
-        this.__callMounted();
-      }
-      return;
     }
     if (!(target instanceof HTMLElement)) {
       let message = `Component '${

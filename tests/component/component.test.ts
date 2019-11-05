@@ -4911,10 +4911,8 @@ describe("unmounting and remounting", () => {
     expect(fixture.innerHTML).toBe("<div>1</div>");
     widget.unmount();
     expect(fixture.innerHTML).toBe("");
+    await nextTick(); // wait for changes to be detected before remounting
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div>1</div>");
-    widget.unmount();
-    await widget.mount(fixture, true);
     expect(fixture.innerHTML).toBe("<div>3</div>");
   });
 });

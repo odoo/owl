@@ -237,16 +237,15 @@ component.
 
 We explain here all the public methods of the `Component` class.
 
-- **`mount(target, renderBeforeRemount=false)`** (async): this is the main way a
+- **`mount(target)`** (async): this is the main way a
   component is added to the DOM: the root component is mounted to a target
   HTMLElement. Obviously, this is asynchronous, since each children need to be
   created as well. Most applications will need to call `mount` exactly once, on
   the root component.
 
-  The `renderBeforeRemount` argument is useful when a component is unmounted and remounted.
-  In that case, we may want to rerender the component _before_ it is remounted, if
-  we know that its state (or something in the environment, or ...) has changed.
-  In that case, it should simply set to `true`.
+  Note that if a component is mounted, unmounted and remounted, it will be
+  automatically re-rendered to ensure that changes in its state (or something
+  in the environment, or in the store, or ...) will be taken into account.
 
 - **`unmount()`**: in case a component needs to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more

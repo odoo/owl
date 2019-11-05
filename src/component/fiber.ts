@@ -1,4 +1,4 @@
-import { VNode } from "../vdom/index";
+import { h, VNode } from "../vdom/index";
 import { Component } from "./component";
 import { scheduler } from "./scheduler";
 
@@ -20,9 +20,10 @@ export class Fiber {
   // method potentially implemented by a component. It is usually set to false.
   force: boolean;
 
-  // isCancelled means that the rendering corresponding to this fiber and its
-  // children is cancelled. No extra work should be done.
-  isCancelled: boolean = false;
+  // isCompleted means that the rendering corresponding to this fiber's work is
+  // done, either because the component has been mounted or patched, or because
+  // fiber has been cancelled.
+  isCompleted: boolean = false;
 
   // the fibers corresponding to component updates (updateProps) need to call
   // the willPatch and patched hooks from the corresponding component. However,
@@ -42,6 +43,8 @@ export class Fiber {
   // scheduler.
   counter: number = 0;
 
+  target: HTMLElement | null;
+
   scope: any;
   vars: any;
 
@@ -55,23 +58,49 @@ export class Fiber {
 
   error?: Error;
 
-  constructor(parent: Fiber | null, component: Component<any, any>, scope, vars, force) {
+  constructor(parent: Fiber | null, component: Component<any, any>, scope, vars, force, target) {
     this.force = force;
     this.scope = scope;
     this.vars = vars;
     this.component = component;
+    this.target = target;
 
     this.root = parent ? parent.root : this;
     this.parent = parent;
 
     let oldFiber = component.__owl__.currentFiber;
-    if (oldFiber && !oldFiber.isCancelled) {
-      this._remapFiber(oldFiber);
+    if (oldFiber && !oldFiber.isCompleted) {
+      if (oldFiber.root === oldFiber && !parent) {
+        // both oldFiber and this fiber are root fibers
+        this._reuseFiber(oldFiber);
+        return oldFiber;
+      } else {
+        this._remapFiber(oldFiber);
+      }
     }
 
     this.root.counter++;
 
     component.__owl__.currentFiber = this;
+  }
+
+  /**
+   * When the oldFiber is not completed yet, and both oldFiber and this fiber
+   * are root fibers, we want to reuse the oldFiber instead of creating a new
+   * one. Doing so will guarantee that the initiator(s) of those renderings will
+   * be notified (the promise will resolve) when the last rendering will be done.
+   *
+   * This function thus assumes that oldFiber is a root fiber.
+   */
+  _reuseFiber(oldFiber: Fiber) {
+    oldFiber.cancel(); // cancel children fibers
+    oldFiber.isCompleted = false; // keep the root fiber alive
+    if (oldFiber.child) {
+      // remove relation to children
+      oldFiber.child.parent = null;
+      oldFiber.child = null;
+    }
+    oldFiber.counter = 1; // re-initialize counter
   }
 
   /**
@@ -83,7 +112,7 @@ export class Fiber {
   _remapFiber(oldFiber: Fiber) {
     oldFiber.cancel();
     if (oldFiber === oldFiber.root) {
-      oldFiber.root.counter++;
+      oldFiber.counter++;
     }
     if (oldFiber.parent && !this.parent) {
       // re-map links
@@ -132,7 +161,28 @@ export class Fiber {
   }
 
   /**
-   * Apply the given patch queue from a fiber.
+   * Successfully complete the work of the fiber: call the mount or patch hooks
+   * and patch the DOM. This function is called once the fiber and its children
+   * are ready, and the scheduler decides to process it.
+   */
+  complete() {
+    const component = this.component;
+    if (this.target) {
+      component.__patch(this.vnode);
+      this.target.appendChild(component.el!);
+      if (document.body.contains(this.target)) {
+        component.__callMounted();
+      }
+    } else {
+      if (component.__owl__.isMounted && this === this.root) {
+        this.patchComponents();
+      }
+    }
+    this.isCompleted = true;
+  }
+
+  /**
+   * Compute and apply the patch queue of the fiber.
    *   1) Call 'willPatch' on the component of each patch
    *   2) Call '__patch' on the component of each patch
    *   3) Call 'patched' on the component of each patch, in reverse order
@@ -142,8 +192,8 @@ export class Fiber {
     const doWork: (Fiber) => Fiber | null = function(f) {
       if (f.shouldPatch) {
         patchQueue.push(f);
+        return f.child;
       }
-      return f.child;
     };
     this._walk(doWork);
     let component: Component<any, any> = this.component;
@@ -186,7 +236,7 @@ export class Fiber {
       if (!f.isRendered) {
         f.root.counter--;
       }
-      f.isCancelled = true;
+      f.isCompleted = true;
       return f.child;
     });
   }
@@ -200,10 +250,12 @@ export class Fiber {
    * being in a corrupted state.
    */
   handleError(error: Error) {
-    let canCatch = false;
     let component = this.component;
-    let qweb = component.env.qweb;
+    this.vnode = component.__owl__.vnode || h("div");
+
+    const qweb = component.env.qweb;
     let root = component;
+    let canCatch = false;
     while (component && !(canCatch = !!component.catchError)) {
       root = component;
       component = component.__owl__.parent!;

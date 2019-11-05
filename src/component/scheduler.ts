@@ -25,12 +25,25 @@ export class Scheduler {
     this.requestAnimationFrame = requestAnimationFrame;
   }
 
-  addFiber(fiber, callback) {
-    this.tasks.push({ fiber, callback });
-    if (this.isRunning) {
-      return;
-    }
-    this.scheduleTasks();
+  addFiber(fiber): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (fiber.error) {
+        return reject(fiber.error);
+      }
+      this.tasks.push({
+        fiber,
+        callback: () => {
+          if (fiber.error) {
+            reject(fiber.error);
+            return;
+          }
+          resolve();
+        }
+      });
+      if (!this.isRunning) {
+        this.scheduleTasks();
+      }
+    });
   }
 
   /**
@@ -41,11 +54,15 @@ export class Scheduler {
     let tasks = this.tasks;
     this.tasks = [];
     tasks = tasks.filter(task => {
-      if (task.fiber.isCancelled) {
+      if (task.fiber.isCompleted) {
+        task.callback();
         return false;
       }
       if (task.fiber.counter === 0) {
-        task.callback(task.fiber.error);
+        if (!task.fiber.error) {
+          task.fiber.complete();
+        }
+        task.callback();
         return false;
       }
       return true;

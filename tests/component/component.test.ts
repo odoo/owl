@@ -3348,7 +3348,6 @@ describe("async rendering", () => {
     const componentA = new ComponentA();
     await componentA.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><p></p></div>");
-
     stateB.hasChild = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p></p></div>");
@@ -3362,6 +3361,64 @@ describe("async rendering", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p><span>2</span></p></div>");
     expect(ComponentC.prototype.__render).toHaveBeenCalledTimes(1);
+  });
+
+  test("concurrent renderings scenario 11", async () => {
+    // This scenario is the following: we have a component being updated (by props),
+    // and then rendered (render method), but before the willUpdateProps resolves.
+    // We check that in that case, the return value of the render method is a promise
+    // that is resolved when the component is completely rendered (so, properly
+    // remapped to the promise of the ambient rendering)
+    const def = makeDeferred();
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.val"/>|<t t-esc="val"/></span>`;
+      val = 3;
+      willUpdateProps() {
+        child = this;
+        return def;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child val="state.valA"/></div>`;
+      static components = { Child };
+      state = useState({ valA: 1 });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1|3</span></div>");
+    parent.state.valA = 2;
+
+    await nextTick();
+    setTimeout(() => {
+      def.resolve();
+    }, 20);
+    child.val = 5;
+    await child.render();
+    expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
+  });
+
+  test("change state and call manually render: no unnecessary rendering", async () => {
+    // when the state is changed, the component isn't notified directly (we wait
+    // for a microtask tick before calling 'render'), so it may happen that
+    // another rendering is done meanwhile, already using the new value of the
+    // state
+    class Widget extends Component<any, any> {
+      static template = xml`<div><t t-esc="state.val"/></div>`;
+      state = useState({ val: 1 });
+    }
+    Widget.prototype.__render = jest.fn(Widget.prototype.__render);
+
+    const widget = new Widget();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+    expect(Widget.prototype.__render).toHaveBeenCalledTimes(1);
+
+    widget.state.val = 2;
+    await widget.render();
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(Widget.prototype.__render).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -4890,7 +4947,7 @@ describe("unmounting and remounting", () => {
     expect(fixture.innerHTML).toBe("<div>3</div>");
   });
 
-  test("sub component is still active after being  unmounted and remounted", async () => {
+  test("sub component is still active after being unmounted and remounted", async () => {
     class Child extends Component<any, any> {
       static template = xml`
         <p t-on-click="state.value++">
@@ -4919,6 +4976,70 @@ describe("unmounting and remounting", () => {
     fixture.querySelector("p")!.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
+  });
+
+  test("change state just before mounting component", async () => {
+    const steps: number[] = [];
+    class TestWidget extends Component<any, any> {
+      static template = xml`
+        <div><t t-esc="state.val"/></div>
+      `;
+      state = useState({ val: 1 });
+      __render(f) {
+        steps.push(this.state.val);
+        return super.__render(f);
+      }
+    }
+    TestWidget.prototype.__render = jest.fn(TestWidget.prototype.__render);
+
+    const widget = new TestWidget();
+    widget.state.val = 2;
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(1);
+
+    // unmount and re-mount, as in this case, willStart won't be called, so it's
+    // slightly different
+    widget.unmount();
+    widget.state.val = 3;
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+    expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(2);
+    expect(steps).toEqual([2, 3]);
+  });
+
+  test("change state while mounting component", async () => {
+    const steps: number[] = [];
+    class TestWidget extends Component<any, any> {
+      static template = xml`
+        <div><t t-esc="state.val"/></div>
+      `;
+      state = useState({ val: 1 });
+      __render(f) {
+        steps.push(this.state.val);
+        return super.__render(f);
+      }
+    }
+    TestWidget.prototype.__render = jest.fn(TestWidget.prototype.__render);
+    TestWidget.prototype.__patch = jest.fn(TestWidget.prototype.__patch);
+
+    const widget = new TestWidget();
+    let prom = widget.mount(fixture);
+    widget.state.val = 2;
+    await prom;
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(1);
+
+    // unmount and re-mount, as in this case, willStart won't be called, so it's
+    // slightly different
+    widget.unmount();
+    prom = widget.mount(fixture);
+    widget.state.val = 3;
+    await prom;
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+    expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(3);
+    expect(TestWidget.prototype.__patch).toHaveBeenCalledTimes(2);
+    expect(steps).toEqual([2, 2, 3]);
   });
 });
 

@@ -455,7 +455,7 @@ QWeb.addDirective({
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(
-      `def${defID}.then(function () {if (fiber.isCancelled) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
+      `def${defID}.then(function () {if (fiber.isCompleted) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
     );
     if (registerCode) {
       ctx.addLine(registerCode);

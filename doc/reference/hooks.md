@@ -290,6 +290,7 @@ class Parent extends Component {
     // here, if component is mounted, refs are active:
     // - this.divRef.el is the div HTMLElement
     // - this.subRef.comp is the instance of the sub component
+    // - this.subRef.el is the root HTML node of the sub component (i.e. this.subRef.comp.el)
   }
 }
 ```
@@ -297,8 +298,11 @@ class Parent extends Component {
 As shown by the example above, html elements are accessed by using the `el`
 key, and components references are accessed with `comp`.
 
-Note: if used on a component, the reference will be set in the `refs`
-variable between `willPatch` and `patched`.
+Notes:
+
+- if used on a component, the reference will be set in the `refs`
+variable between `willPatch` and `patched`,
+- on a component, accessing `ref.el` will get the root node of the component.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
 (like the [`t-attf-`](qweb.md#dynamic-attributes) and

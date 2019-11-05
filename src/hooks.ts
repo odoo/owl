@@ -104,7 +104,12 @@ export function useRef(name: string): Ref {
   return {
     get el(): HTMLElement | null {
       const val = __owl__.refs && __owl__.refs[name];
-      return val instanceof HTMLElement ? val : null;
+      if (val instanceof HTMLElement) {
+        return val;
+      } else if (val instanceof Component) {
+        return val.el;
+      }
+      return null;
     },
     get comp(): Component<any, any> | null {
       const val = __owl__.refs && __owl__.refs[name];

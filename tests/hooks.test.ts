@@ -228,8 +228,11 @@ describe("hooks", () => {
       }
     }
     const counter = new Counter();
+    expect(counter.button.el).toBe(null);
     await counter.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><button>0</button></div>");
+    expect(counter.button.el).not.toBe(null);
+    expect(counter.button.el).toBe(fixture.querySelector("button"));
     counter.increment();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button>1</button></div>");
@@ -254,6 +257,104 @@ describe("hooks", () => {
     component.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
+  });
+
+  test("t-refs on widget are components", async () => {
+    class WidgetB extends Component<any, any> {
+      static template = xml`<div>b</div>`;
+    }
+    class WidgetC extends Component<any, any> {
+      static template = xml`<div class="outer-div">Hello<WidgetB t-ref="mywidgetb" /></div>`;
+      static components = { WidgetB };
+      ref = useRef("mywidgetb");
+    }
+
+    const widget = new WidgetC();
+    expect(widget.ref.comp).toBe(null);
+    expect(widget.ref.el).toBe(null);
+    await widget.mount(fixture);
+    expect(widget.ref.comp).toBeInstanceOf(WidgetB);
+    expect(widget.ref.el).toEqual(fixture.querySelector(".outer-div > div"));
+  });
+
+  test("t-refs are bound at proper timing", async () => {
+    expect.assertions(2);
+    class Widget extends Component<any, any> {
+      static template = xml`<div>widget</div>`;
+    }
+
+    class ParentWidget extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-foreach="state.list" t-as="elem" t-ref="child" t-key="elem" t-component="Widget"/>
+        </div>
+      `;
+      static components = { Widget };
+      state = useState({ list: <any>[] });
+      child = useRef("child");
+      willPatch() {
+        expect(this.child.comp).toBeNull();
+      }
+      patched() {
+        expect(this.child.comp).not.toBeNull();
+      }
+    }
+
+    const parent = new ParentWidget();
+    await parent.mount(fixture);
+    parent.state.list.push(1);
+    await nextTick();
+  });
+
+  test("t-refs are bound at proper timing (2)", async () => {
+    expect.assertions(10);
+    class Widget extends Component<any, any> {
+      static template = xml`<div>widget</div>`;
+    }
+    class ParentWidget extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-if="state.child1" t-ref="child1" t-component="Widget"/>
+          <t t-if="state.child2" t-ref="child2" t-component="Widget"/>
+        </div>`;
+      static components = { Widget };
+      state = useState({ child1: true, child2: false });
+      child1 = useRef("child1");
+      child2 = useRef("child2");
+      count = 0;
+      mounted() {
+        expect(this.child1.comp).toBeDefined();
+        expect(this.child2.comp).toBeNull();
+      }
+      willPatch() {
+        if (this.count === 0) {
+          expect(this.child1.comp).toBeDefined();
+          expect(this.child2.comp).toBeNull();
+        }
+        if (this.count === 1) {
+          expect(this.child1.comp).toBeDefined();
+          expect(this.child2.comp).toBeDefined();
+        }
+      }
+      patched() {
+        if (this.count === 0) {
+          expect(this.child1.comp).toBeDefined();
+          expect(this.child2.comp).toBeDefined();
+        }
+        if (this.count === 1) {
+          expect(this.child1.comp).toBeNull();
+          expect(this.child2.comp).toBeDefined();
+        }
+        this.count++;
+      }
+    }
+
+    const parent = new ParentWidget();
+    await parent.mount(fixture);
+    parent.state.child2 = true;
+    await nextTick();
+    parent.state.child1 = false;
+    await nextTick();
   });
 
   test("can use onPatched, onWillPatch", async () => {

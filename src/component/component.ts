@@ -4,7 +4,7 @@ import { h, patch, VNode } from "../vdom/index";
 import "./directive";
 import { Fiber } from "./fiber";
 import "./props_validation";
-import { scheduler } from "./scheduler";
+import { Scheduler, scheduler } from "./scheduler";
 
 /**
  * Owl Component System
@@ -88,6 +88,8 @@ export class Component<T extends Env, Props extends {}> {
   static props?: any;
   static defaultProps?: any;
   static env: any = {};
+  // expose scheduler s.t. it can be mocked for testing purposes
+  static scheduler: Scheduler = scheduler;
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -287,7 +289,9 @@ export class Component<T extends Env, Props extends {}> {
       return;
     }
     if (!(target instanceof HTMLElement)) {
-      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
+      let message = `Component '${
+        this.constructor.name
+      }' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }

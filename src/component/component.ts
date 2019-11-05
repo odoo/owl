@@ -1,6 +1,6 @@
 import { Observer } from "../core/observer";
 import { CompiledTemplate, QWeb } from "../qweb/index";
-import { h, patch, VNode } from "../vdom/index";
+import { patch, VNode } from "../vdom/index";
 import "./directive";
 import { Fiber } from "./fiber";
 import "./props_validation";
@@ -282,32 +282,19 @@ export class Component<T extends Env, Props extends {}> {
       return Promise.resolve();
     }
     if (!(target instanceof HTMLElement)) {
-      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
+      let message = `Component '${
+        this.constructor.name
+      }' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
-    return new Promise((resolve, reject) => {
-      const fiber = new Fiber(null, this, undefined, undefined, false);
-      scheduler.addFiber(fiber, err => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        if (!__owl__.isDestroyed) {
-          this.__patch(fiber.vnode);
-          target.appendChild(this.el!);
-          if (document.body.contains(target)) {
-            this.__callMounted();
-          }
-        }
-        resolve();
-      });
-      if (!__owl__.vnode) {
-        this.__prepareAndRender(fiber);
-      } else {
-        this.__render(fiber);
-      }
-    });
+    const fiber = new Fiber(null, this, undefined, undefined, false, target);
+    if (!__owl__.vnode) {
+      this.__prepareAndRender(fiber);
+    } else {
+      this.__render(fiber);
+    }
+    return scheduler.addFiber(fiber);
   }
 
   /**
@@ -332,26 +319,18 @@ export class Component<T extends Env, Props extends {}> {
    */
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
-    if (
-      (!__owl__.isMounted && !__owl__.currentFiber) ||
-      (__owl__.currentFiber && !__owl__.currentFiber.isRendered)
-    ) {
+    if (!__owl__.isMounted && !__owl__.currentFiber) {
+      // if we get here, this means that the component was either never mounted,
+      // or was unmounted and some state change  triggered a render. Either way,
+      // we do not want to actually render anything in this case.
       return;
     }
-    return new Promise((resolve, reject) => {
-      const fiber = new Fiber(null, this, undefined, undefined, force);
-      scheduler.addFiber(fiber.root, err => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        if (__owl__.isMounted && fiber === fiber.root) {
-          fiber.patchComponents();
-        }
-        resolve();
-      });
-      this.__render(fiber);
-    });
+    if (__owl__.currentFiber && !__owl__.currentFiber.isRendered) {
+      return scheduler.addFiber(__owl__.currentFiber.root);
+    }
+    const fiber = new Fiber(null, this, undefined, undefined, force, null);
+    this.__render(fiber);
+    return scheduler.addFiber(fiber);
   }
 
   /**
@@ -437,7 +416,7 @@ export class Component<T extends Env, Props extends {}> {
     __owl__.isDestroyed = true;
     delete __owl__.vnode;
     if (__owl__.currentFiber) {
-      __owl__.currentFiber.isCancelled = true;
+      __owl__.currentFiber.isCompleted = true;
     }
   }
 
@@ -492,7 +471,7 @@ export class Component<T extends Env, Props extends {}> {
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
       const __owl__ = this.__owl__;
-      const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force);
+      const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force, null);
       if (!parentFiber.child) {
         parentFiber.child = fiber;
       } else {
@@ -510,7 +489,7 @@ export class Component<T extends Env, Props extends {}> {
         this.willUpdateProps(nextProps),
         __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps)
       ]);
-      if (fiber.isCancelled) {
+      if (fiber.isCompleted) {
         return;
       }
       this.props = nextProps;
@@ -535,7 +514,7 @@ export class Component<T extends Env, Props extends {}> {
    * parent template.
    */
   __prepare(parentFiber: Fiber, scope: any, vars: any, previousSibling?: Fiber | null) {
-    const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force);
+    const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force, null);
     fiber.shouldPatch = false;
     if (!parentFiber.child) {
       parentFiber.child = fiber;
@@ -569,13 +548,12 @@ export class Component<T extends Env, Props extends {}> {
       await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
     } catch (e) {
       fiber.handleError(e);
-      fiber.vnode = h("div"); // -> we render this div at the end
       return Promise.resolve();
     }
     if (this.__owl__.isDestroyed) {
       return Promise.resolve();
     }
-    if (!fiber.isCancelled) {
+    if (!fiber.isCompleted) {
       this.__render(fiber);
     }
   }
@@ -585,17 +563,14 @@ export class Component<T extends Env, Props extends {}> {
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }
-    let vnode;
     try {
-      vnode = __owl__.renderFn!(this, {
+      fiber.vnode = __owl__.renderFn!(this, {
         handlers: __owl__.boundHandlers,
         fiber: fiber
       });
     } catch (e) {
-      vnode = __owl__.vnode || h("div");
       fiber.handleError(e);
     }
-    fiber.vnode = vnode;
     if (__owl__.observer) {
       __owl__.observer.allowMutations = true;
     }
@@ -604,7 +579,8 @@ export class Component<T extends Env, Props extends {}> {
     // template (so, something like <MyComponent class="..."/>) to the actual
     // root vnode
     if (__owl__.classObj) {
-      vnode.data.class = Object.assign(vnode.data.class || {}, __owl__.classObj);
+      const data = fiber.vnode!.data!;
+      data.class = Object.assign(data.class || {}, __owl__.classObj);
     }
     fiber.root.counter--;
     fiber.isRendered = true;

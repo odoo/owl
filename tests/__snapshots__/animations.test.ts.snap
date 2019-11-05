@@ -35,7 +35,7 @@ exports[`animations t-transition combined with component 1`] = `
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});
         const fiber = w3.__owl__.currentFiber;
-        def2.then(function () {if (fiber.isCancelled) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        def2.then(function () {if (fiber.isCompleted) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
     }
@@ -80,7 +80,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});
             const fiber = w3.__owl__.currentFiber;
-            def2.then(function () {if (fiber.isCancelled) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            def2.then(function () {if (fiber.isCompleted) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             c1.push(pvnode);
             w3.__owl__.pvnode = pvnode;
         }

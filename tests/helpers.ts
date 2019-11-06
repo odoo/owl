@@ -143,3 +143,14 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   input.dispatchEvent(new Event("change"));
   return nextTick();
 }
+
+function sanitizeLine(line: string): string {
+  if (line.startsWith('          at')) {
+    return line.replace(/\(.*\)/, '(sanitized)');
+  }
+  return line;
+}
+
+export function sanitizeErrorMessage(message: string): string {
+  return message.split('\n').map(sanitizeLine).join('\n');
+}

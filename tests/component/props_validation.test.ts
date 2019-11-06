@@ -1,5 +1,5 @@
 import { Component, Env } from "../../src/component/component";
-import { makeTestFixture, makeTestEnv, nextTick } from "../helpers";
+import { makeTestFixture, makeTestEnv, nextTick, sanitizeErrorMessage } from "../helpers";
 import { useState } from "../../src/hooks";
 import { QWeb } from "../../src/qweb";
 import { xml } from "../../src/tags";
@@ -650,7 +650,7 @@ describe("props validation", () => {
     }).toThrow();
   });
 
-  test("missing required boolean prop causes an error", async () => {
+  test.only("missing required boolean prop causes an error", async () => {
     class TestWidget extends Widget {
       static props = ["p"];
       static template = xml`<span><t t-if="props.p">hey</t></span>`;
@@ -669,7 +669,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Missing props 'p' (component 'TestWidget')");
+    expect(sanitizeErrorMessage(error.message)).toMatchSnapshot();
   });
 
   test("props are validated whenever component is updated", async () => {

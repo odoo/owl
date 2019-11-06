@@ -1088,7 +1088,7 @@ describe("composition", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe('Cannot find the definition of component "SomeMispelledWidget"');
+    expect(error.message).toMatchSnapshot();
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
@@ -3471,7 +3471,7 @@ describe("widget and observable state", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
+    expect(error.message).toMatchSnapshot();
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
@@ -4404,7 +4404,7 @@ describe("component error handling (catchError)", () => {
         try {
           await super.render();
         } catch (e) {
-          expect(e.message).toBe("Cannot read property 'this' of undefined");
+          expect(e.message).toMatchSnapshot();
         }
       }
     }
@@ -4466,7 +4466,8 @@ describe("component error handling (catchError)", () => {
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
-    console.error = jest.fn();
+    let error;
+    console.error = jest.fn(m => (error = m));
     env.qweb.addTemplates(`
       <templates>
         <div t-name="ErrorBoundary">
@@ -4504,6 +4505,7 @@ describe("component error handling (catchError)", () => {
     expect(console.error).toBeCalledTimes(1);
     console.error = consoleError;
     expect(handler).toBeCalledTimes(1);
+    expect(error.split('\n').slice(0,-1).join('\n')).toMatchSnapshot();
   });
 
   test("can catch an error in the willStart call", async () => {
@@ -4640,7 +4642,7 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    expect(error.message).toMatchSnapshot();
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -4666,7 +4668,7 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    expect(error.message).toMatchSnapshot();
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -4692,7 +4694,7 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    expect(error.message).toMatchSnapshot();
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -4715,7 +4717,7 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'y' of undefined");
+    expect(error.message).toMatchSnapshot();
   });
 });
 

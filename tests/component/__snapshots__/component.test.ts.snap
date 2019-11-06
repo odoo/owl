@@ -234,6 +234,65 @@ exports[`class and style attributes with t-component t-att-class is properly add
 }"
 `;
 
+exports[`component error handling (catchError) a rendering error in a sub component will reject the mount promise 1`] = `
+"Cannot read property 'crash' of undefined
+The error occured while rendering component \\"Child\\", around this code:
+        5     var vn1 = h('div', p1, c1);
+    --> 6     var _2 = this.will.crash;
+        7     if (_2 || _2 === 0) {"
+`;
+
+exports[`component error handling (catchError) a rendering error will reject the mount promise 1`] = `
+"Cannot read property 'crash' of undefined
+The error occured while rendering component \\"App\\", around this code:
+        5     var vn1 = h('div', p1, c1);
+    --> 6     var _2 = this.will.crash;
+        7     if (_2 || _2 === 0) {"
+`;
+
+exports[`component error handling (catchError) a rendering error will reject the render promise (with sub components) 1`] = `
+"Cannot read property 'y' of undefined
+The error occured while rendering component \\"Parent\\", around this code:
+       35     sibling = w3.__owl__.currentFiber || sibling;
+   --> 36     var _5 = context['x'].y;
+       37     if (_5 || _5 === 0) {"
+`;
+
+exports[`component error handling (catchError) a rendering error will reject the render promise 1`] = `
+"Cannot read property 'crash' of undefined
+The error occured while rendering component \\"App\\", around this code:
+        6     if (context['flag']) {
+    --> 7         var _2 = this.will.crash;
+        8         if (_2 || _2 === 0) {"
+`;
+
+exports[`component error handling (catchError) can catch an error in the constructor call of a component render function 1`] = `
+[Error: NOOOOO
+The error occured while rendering component "ErrorBoundary", around this code:
+       12         if (slot2) {
+   --> 13             slot2.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c1, vars: extra.vars, parent: owner}));
+       14         }Stack:
+          at new ErrorComponent (C:\\Users\\Odoo\\dev\\owl\\tests\\component\\component.test.ts:4355:15)
+          at QWeb.eval (eval at _compile (C:\\Users\\Odoo\\dev\\owl\\src\\qweb\\qweb.ts:402:18), <anonymous>:27:14)
+]
+`;
+
+exports[`component error handling (catchError) no component catching error lead to full app destruction 1`] = `
+"Cannot read property 'this' of undefined
+The error occured while rendering component \\"ErrorComponent\\", around this code:
+        6     c1.push({text: \`hey\`});
+    --> 7     var _2 = context['props'].flag&&context['state'].this.will.crash;
+        8     if (_2 || _2 === 0) {"
+`;
+
+exports[`composition display a nice error if it cannot find component 1`] = `
+"Cannot find the definition of component \\"SomeMispelledWidget\\"
+The error occured while rendering component \\"Parent\\", around this code:
+       24         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['SomeMispelledWidget'];
+   --> 25         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+       26         w3 = new W3(parent, props3);"
+`;
+
 exports[`composition sub components with some state rendered in a loop 1`] = `
 "function anonymous(context,extra
 ) {
@@ -1795,4 +1854,15 @@ exports[`top level sub widgets can select a sub widget  1`] = `
     }
     return result;
 }"
+`;
+
+exports[`widget and observable state subcomponents cannot change observable state received from parent 1`] = `
+"Observed state cannot be changed here! (key: \\"coffee\\", val: \\"2\\")
+The error occured while rendering component \\"Parent\\", around this code:
+       25         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+   --> 26         w3 = new W3(parent, props3);
+       27         parent.__owl__.cmap[templateId3] = w3.__owl__.id;Stack:
+          at Object.set (C:\\\\Users\\\\Odoo\\\\dev\\\\owl\\\\src\\\\core\\\\observer.ts:62:19)
+          at new Child (C:\\\\Users\\\\Odoo\\\\dev\\\\owl\\\\tests\\\\component\\\\component.test.ts:3329:25)
+"
 `;

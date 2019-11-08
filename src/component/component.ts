@@ -438,6 +438,9 @@ export class Component<T extends Env, Props extends {}> {
     }
     __owl__.isDestroyed = true;
     delete __owl__.vnode;
+    if (__owl__.currentFiber) {
+      __owl__.currentFiber.isCancelled = true;
+    }
   }
 
   __callMounted() {

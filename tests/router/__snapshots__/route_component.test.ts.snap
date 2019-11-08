@@ -35,7 +35,7 @@ exports[`RouteComponent can render simple cases 1`] = `
             let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
             let pvnode = h('dummy', {key: templateId3, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});
             const fiber = w3.__owl__.currentFiber;
-            def2.then(function () {if (w3.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            def2.then(function () {if (fiber.isCancelled) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             utils.defineProxy(vn5, pvnode);
             w3.__owl__.pvnode = pvnode;
         }

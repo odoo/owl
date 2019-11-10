@@ -92,7 +92,7 @@ function makeCodeIframe(js, css, xml, errorHandler) {
       script.type = "text/javascript";
       const content = `
         {
-          owl.__info__.mode = 'dev';
+          owl.config.mode = 'dev';
           let templates = \`${sanitizedXML}\`;
           const qweb = new owl.QWeb({ templates });
           owl.Component.env = { qweb };

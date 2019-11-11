@@ -51,10 +51,6 @@
             </p>
           </div>
         </div>
-        <div t-if="state.error" class="error">
-          <h3>Error</h3>
-          <pre t-esc="state.error"/>
-        </div>
         <div class="content" t-ref="content"/>
       </div>
   </div>

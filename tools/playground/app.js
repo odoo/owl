@@ -70,13 +70,9 @@ if __name__ == "__main__":
 /**
  * Make an iframe, with all the js, css and xml properly injected.
  */
-function makeCodeIframe(js, css, xml, errorHandler) {
-  // check templates
-  var qweb = new owl.QWeb();
+function makeCodeIframe(js, css, xml) {
   const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "");
 
-  // will throw error if there is something wrong with xml
-  qweb.addTemplates(sanitizedXML);
 
   // create iframe
   const iframe = document.createElement("iframe");
@@ -99,14 +95,6 @@ function makeCodeIframe(js, css, xml, errorHandler) {
         }
         ${js}`;
       script.innerHTML = content;
-      iframe.contentWindow.addEventListener("error", errorHandler);
-      iframe.contentWindow.addEventListener("unhandledrejection", errorHandler);
-      setTimeout(function() {
-        if (iframe.contentWindow) {
-          iframe.contentWindow.removeEventListener("error", errorHandler);
-          iframe.contentWindow.removeEventListener("unhandledrejection", errorHandler);
-        }
-      }, 200);
       doc.body.appendChild(script);
     });
     doc.head.appendChild(owlScript);
@@ -317,7 +305,6 @@ class App extends owl.Component {
       js: this.SAMPLES[0].code,
       css: this.SAMPLES[0].css || "",
       xml: this.SAMPLES[0].xml || DEFAULT_XML,
-      error: false,
       displayWelcome: true,
       splitLayout: true,
       leftPaneWidth: Math.ceil(window.innerWidth / 2),
@@ -330,37 +317,12 @@ class App extends owl.Component {
     this.content = useRef("content");
   }
 
-  displayError(error) {
-    this.state.error = error;
-    if (error) {
-      setTimeout(() => {
-        this.content.el.innerHTML = "";
-      });
-      return;
-    }
-  }
-
   runCode() {
-    this.state.displayWelcome = false;
-    let subiframe;
-    let error = false;
-    const errorHandler = e => this.displayError(e.message || e.reason.message);
-    try {
-      const { js, css, xml } = this.state;
-      subiframe = makeCodeIframe(js, css, xml, errorHandler);
-    } catch (e) {
-      //probably problem with the templates
-      error = e;
-      // we still log the error, always useful to have it available
-      console.error(e);
-    }
-    if (error) {
-      this.displayError(error.message);
-      return;
-    } else {
-      this.state.error = false;
-    }
     this.content.el.innerHTML = "";
+    this.state.displayWelcome = false;
+
+    const { js, css, xml } = this.state;
+    const subiframe = makeCodeIframe(js, css, xml);
     this.content.el.appendChild(subiframe);
   }
 

@@ -301,11 +301,11 @@ key, and components references are accessed with `comp`.
 Notes:
 
 - if used on a component, the reference will be set in the `refs`
-variable between `willPatch` and `patched`,
+  variable between `willPatch` and `patched`,
 - on a component, accessing `ref.el` will get the root node of the component.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](qweb.md#dynamic-attributes) and
+(like the [`t-attf-`](qweb_templating_language.md#dynamic-attributes) and
 `t-component` directives). For example,
 
 ```xml

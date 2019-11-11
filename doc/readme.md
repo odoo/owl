@@ -9,9 +9,11 @@
 - [Environment](reference/environment.md)
 - [Event Bus](reference/event_bus.md)
 - [Hooks](reference/hooks.md)
-- [Misc](reference/misc.md)
+- [Miscellaneous Components](reference/misc.md)
 - [Observer](reference/observer.md)
-- [QWeb](reference/qweb.md)
+- [Props](reference/props.md)
+- [QWeb Templating Language](reference/qweb_templating_language.md)
+- [QWeb Engine](reference/qweb_engine.md)
 - [Router](reference/router.md)
 - [Store](reference/store.md)
 - [Tags](reference/tags.md)
@@ -21,7 +23,6 @@
 
 - [Quick Start: create an (almost) empty Owl application](learning/quick_start.md)
 - [Tutorial: create a TodoList application](learning/tutorial_todoapp.md)
-- [Environment: what it is and what it should contain](learning/environment.md)
 
 ## Miscellaneous
 

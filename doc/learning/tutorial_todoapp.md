@@ -181,14 +181,14 @@ class App extends Component {
 }
 ```
 
-The template contains a [`t-foreach`](../reference/qweb.md#loops) loop to iterate
+The template contains a [`t-foreach`](../reference/qweb_templating_language.md#loops) loop to iterate
 through the tasks. It can find the `tasks` list from the component, since the
 component is the rendering context. Note that we use the `id` of each task as a
 `t-key`, which is very common. There are two css classes: `task-list` and `task`,
 that we will use in the next section.
 
 Finally, notice the use of the `t-att-checked` attribute:
-prefixing an attribute by [`t-att`](../reference/qweb.md#dynamic-attributes) makes
+prefixing an attribute by [`t-att`](../reference/qweb_templating_language.md#dynamic-attributes) makes
 it dynamic. Owl will evaluate the expression and set it as the value of the
 attribute.
 

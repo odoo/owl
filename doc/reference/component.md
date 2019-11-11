@@ -14,11 +14,11 @@
   - [Composition](#composition)
   - [Event Handling](#event-handling)
   - [Form Input Bindings](#form-input-bindings)
-  - [`t-key` Directive](#t-key-directive)
   - [Semantics](#semantics)
   - [Props Validation](#props-validation)
   - [References](#references)
   - [Slots](#slots)
+  - [Dynamic sub components](#dynamic-sub-components)
   - [Asynchronous Rendering](#asynchronous-rendering)
   - [Error Handling](#error-handling)
   - [Functional Components](#functional-components)
@@ -42,7 +42,7 @@ OWL components are the building blocks for user interface. They are designed to 
    and follow the QWeb specification. This is a requirement for Odoo.
 
 OWL components are defined as a subclass of Component. The rendering is
-exclusively done by a [QWeb](qweb.md) template (which needs to be preloaded in QWeb).
+exclusively done by a [QWeb](qweb_templating_language.md) template (which needs to be preloaded in QWeb).
 Rendering a component generates a virtual dom representation
 of the component, which is then patched to the DOM, in order to apply the changes in an efficient way.
 
@@ -81,7 +81,7 @@ a state object is defined, by using the `useState` hook. It is not mandatory to 
 
 An Owl component is a small class which represents a component or some UI element.
 It exists in the context of an [environment](environment.md) (`env`), which is propagated from a
-parent to its children. The environment needs to have a [QWeb](qweb.md) instance, which
+parent to its children. The environment needs to have a [QWeb](qweb_templating_language.md) instance, which
 will be used to render the component template.
 
 Be aware that the name of the component may be significant: if a component does
@@ -166,7 +166,7 @@ to be called in the constructor.
 - **`el`** (HTMLElement | null): reference to the DOM root node of the element. It is `null` when the
   component is not mounted.
 
-- **`env`** (Object): the component environment, which contains a QWeb instance.
+- **`env`** (Object): the component [environment](environment.md), which contains a QWeb instance.
 
 - **`props`** (Object): this is an object containing all the properties given by
   the parent to a child component. For example, in the following situation,
@@ -502,66 +502,8 @@ the static `components` key, then fallbacks on the global registry.
 _Props_: In this example, the child component will receive the object `{count: 4}` in its
 constructor. This will be assigned to the `props` variable, which can be accessed
 on the component (and also, in the template). Whenever the state is updated, then
-the sub component will also be updated automatically.
-
-Note that there are restrictions on valid prop names: `class`, `style` and any
-string which starts with `t-` are not allowed.
-
-It is not common, but sometimes we need a dynamic component name and/or dynamic props. In this case,
-the `t-component` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb.md#dynamic-attributes) directive):
-
-```xml
-<div t-name="ParentComponent">
-    <t t-component="ChildComponent{{id}}" />
-</div>
-```
-
-```js
-class ParentComponent {
-  static components = { ChildComponent1, ChildComponent2 };
-  state = { id: 1 };
-}
-```
-
-And the `t-props` directive can be used to specify totally dynamic props:
-
-```xml
-<div t-name="ParentComponent">
-    <Child t-props="some.obj"/>
-</div>
-```
-
-```js
-class ParentComponent {
-  static components = { Child };
-  some = { obj: { a: 1, b: 2 } };
-}
-```
-
-There is an even more dynamic way to use `t-component`: its value can be an
-expression evaluating to an actual component class. In that case, this is the
-class that will be used to create the component:
-
-```js
-class A extends Component<any, any, any> {
-  static template = xml`<span>child a</span>`;
-}
-class B extends Component<any, any, any> {
-  static template = xml`<span>child b</span>`;
-}
-class App extends Component<any, any, any> {
-  static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
-
-  state = { child: "a" };
-
-  get myComponent() {
-    return this.state.child === "a" ? A : B;
-  }
-}
-```
-
-In this example, the component `App` selects dynamically the concrete sub
-component class.
+the sub component will also be updated automatically. See the [props section](props.md)
+for more information.
 
 **CSS and style:** Owl allows the parent to declare
 additional css classes or style for the sub component: css declared in `class`, `style`, `t-att-class` or `t-att-style` will be added to the
@@ -787,69 +729,6 @@ update a number whenever the change is done.
 
 Note: the online playground has an example to show how it works.
 
-### `t-key` Directive
-
-Even though Owl tries to be as declarative as possible, the DOM does not fully
-expose its state declaratively in the DOM tree. For example, the scrolling state,
-the current user selection, the focused element or the state of an input are not
-set as attribute in the DOM tree. This is why we use a virtual dom
-algorithm to keep the actual DOM node as much as possible.
-
-However, in some situations, this is not enough, and we need to help Owl decide
-if an element is actually the same, or is a different element with the same
-properties.
-
-Consider the following situation: we have a list of two items `[{text: "a"}, {text: "b"}]`
-and we render them in this template:
-
-```xml
-<p t-foreach="items" t-as="item"><t t-esc="item.text"/></p>
-```
-
-The result will be two `<p>` tags with text `a` and `b`. Now, if we swap them,
-and rerender the template, Owl needs to know what the intent is:
-
-- should Owl actually swap the DOM nodes,
-- or should it keep the DOM nodes, but with an updated text content?
-
-This might look trivial, but it actually matters. These two possibilities lead
-to different results in some cases. For example, if the user selected the text
-of the first `p`, swapping them will keep the selection while updating the
-text content will not.
-
-There are many other cases where this is important: `input` tags with their
-value, css classes and animations, scroll position...
-
-So, the `t-key` directive is used to give an identity to an element. It allows
-Owl to understand if different elements of a list are actually different or not.
-
-The above example could be modified by adding an ID: `[{id: 1, text: "a"}, {id: 2, text: "b"}]`.
-Then, the template could look like this:
-
-```xml
-<p t-foreach="items" t-as="item" t-key="item.id"><t t-esc="item.text"/></p>
-```
-
-The `t-key` directive is useful for lists (`t-foreach`). A key should be
-a unique number or string (objects will not work: they will be cast to the
-`"[object Object]"` string, which is obviously not unique).
-
-Also, the key can be set on a `t` tag or on its children. The following variations
-are all equivalent:
-
-```xml
-<p t-foreach="items" t-as="item" t-key="item.id">
-  <t t-esc="item.text"/>
-</p>
-
-<t t-foreach="items" t-as="item" t-key="item.id">
-  <p t-esc="item.text"/>
-</t>
-
-<t t-foreach="items" t-as="item">
-  <p t-key="item.id" t-esc="item.text"/>
-</t>
-```
 
 ### Semantics
 
@@ -1144,6 +1023,49 @@ be considered the `default` slot. For example:
   <t t-slot="default"/>
 </div>
 ```
+
+### Dynamic sub components
+
+It is not common, but sometimes we need a dynamic component name. In this case,
+the `t-component` directive can also be used to accept dynamic values with string interpolation (like the [`t-attf-`](qweb_templating_language.md#dynamic-attributes) directive):
+
+```xml
+<div t-name="ParentComponent">
+    <t t-component="ChildComponent{{id}}" />
+</div>
+```
+
+```js
+class ParentComponent {
+  static components = { ChildComponent1, ChildComponent2 };
+  state = { id: 1 };
+}
+```
+
+There is an even more dynamic way to use `t-component`: its value can be an
+expression evaluating to an actual component class. In that case, this is the
+class that will be used to create the component:
+
+```js
+class A extends Component<any, any, any> {
+  static template = xml`<span>child a</span>`;
+}
+class B extends Component<any, any, any> {
+  static template = xml`<span>child b</span>`;
+}
+class App extends Component<any, any, any> {
+  static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+
+  state = { child: "a" };
+
+  get myComponent() {
+    return this.state.child === "a" ? A : B;
+  }
+}
+```
+
+In this example, the component `App` selects dynamically the concrete sub
+component class.
 
 ### Asynchronous Rendering
 

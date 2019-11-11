@@ -44,7 +44,7 @@ it easier to scale application to larger size.
 
 To do so, Owl currently has a small helper that makes it easy to define a
 template inside a javascript (or typescript) file: the [`xml`](reference/tags.md#xml-tag)
-helper. With this, a template is automatically registered to [QWeb](reference/qweb.md).
+helper. With this, a template is automatically registered to [QWeb](reference/qweb_engine.md).
 
 This means that the template and the javascript code can be defined in the same
 file. It is not currently possible to add css to the same file, but Owl may

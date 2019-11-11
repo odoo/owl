@@ -92,7 +92,8 @@ A complete documentation for Owl can be found here:
 
 The most important sections are:
 
-- [Quick Start](doc/learning/quick_start.md)
+- [Tutorial: TodoList application](doc/learning/tutorial_todoapp.md)
+- [QWeb templating language](doc/reference/qweb_templating_language.md)
 - [Component](doc/reference/component.md)
 - [Hooks](doc/reference/hooks.md)
 

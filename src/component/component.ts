@@ -282,9 +282,7 @@ export class Component<T extends Env, Props extends {}> {
       return Promise.resolve();
     }
     if (!(target instanceof HTMLElement)) {
-      let message = `Component '${
-        this.constructor.name
-      }' cannot be mounted: the target is not a valid DOM node.`;
+      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }

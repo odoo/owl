@@ -1,10 +1,9 @@
-# 🦉 QWeb 🦉
+# 🦉 QWeb Templating Language🦉
 
 ## Content
 
 - [Overview](#overview)
 - [Directives](#directives)
-- [QWeb Engine](#qweb-engine)
 - [Reference](#reference)
   - [White Spaces](#white-spaces)
   - [Root Nodes](#root-nodes)
@@ -21,13 +20,10 @@
 
 ## Overview
 
-[QWeb](https://www.odoo.com/documentation/13.0/reference/qweb.html) is the primary templating engine used by Odoo. It is based on the XML format, and used
+[QWeb](https://www.odoo.com/documentation/13.0/reference/qweb.html) is the primary
+templating engine used by Odoo. It is based on the XML format, and used
 mostly to generate HTML. In OWL, QWeb templates are compiled into functions that
 generate a virtual dom representation of the HTML.
-
-Template directives are specified as XML attributes prefixed with `t-`, for instance `t-if` for conditionals, with elements and other attributes being rendered directly.
-
-To avoid element rendering, a placeholder element `<t>` is also available, which executes its directive but doesn’t generate any output in and of itself.
 
 ```xml
 <div>
@@ -40,29 +36,32 @@ To avoid element rendering, a placeholder element `<t>` is also available, which
 </div>
 ```
 
-The QWeb class in the OWL project is an implementation of that specification
-with a few interesting points:
+Template directives are specified as XML attributes prefixed with `t-`, for
+instance `t-if` for conditionals, with elements and other attributes being
+rendered directly.
 
-- it compiles templates into functions that output a virtual DOM instead of a
-  string. This is necessary for the component system.
-- it has a few extra directives: `t-component`, `t-on`, ...
+To avoid element rendering, a placeholder element `<t>` is also available, which
+executes its directive but doesn’t generate any output in and of itself.
+
+We present in this section the templating language, including its Owl specific
+extensions.
 
 ## Directives
 
-We present here a list of all standard QWeb directives:
+For reference, here is a list of all standard QWeb directives:
 
-| Name                           | Description                                                  |
-| ------------------------------ | ------------------------------------------------------------ |
-| `t-esc`                        | [Outputting safely a value](#outputting-data)                |
-| `t-raw`                        | [Outputting value, without escaping](#outputting-data)       |
-| `t-set`, `t-value`             | [Setting variables](#setting-variables)                      |
-| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                     |
-| `t-foreach`, `t-as`            | [Loops](#loops)                                              |
-| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                    |
-| `t-call`                       | [Rendering sub templates](#rendering-sub-templates)          |
-| `t-debug`, `t-log`             | [Debugging](#debugging)                                      |
-| `t-translation`                | [Disabling the translation of a node](#translations)         |
-| `t-name`                       | [Defining a template (not really a directive)](#qweb-engine) |
+| Name                           | Description                                                    |
+| ------------------------------ | -------------------------------------------------------------- |
+| `t-esc`                        | [Outputting safely a value](#outputting-data)                  |
+| `t-raw`                        | [Outputting value, without escaping](#outputting-data)         |
+| `t-set`, `t-value`             | [Setting variables](#setting-variables)                        |
+| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                       |
+| `t-foreach`, `t-as`            | [Loops](#loops)                                                |
+| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                      |
+| `t-call`                       | [Rendering sub templates](#rendering-sub-templates)            |
+| `t-debug`, `t-log`             | [Debugging](#debugging)                                        |
+| `t-translation`                | [Disabling the translation of a node](#translations)           |
+| `t-name`                       | [Defining a template (not really a directive)](qweb_engine.md) |
 
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
@@ -71,103 +70,13 @@ needs. Here is a list of all Owl specific directives:
 | ------------------------ | ----------------------------------------------------------------------------------- |
 | `t-component`, `t-props` | [Defining a sub component](component.md#composition)                                |
 | `t-ref`                  | [Setting a reference to a dom node or a sub component](component.md#references)     |
-| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](component.md#t-key-directive) |
+| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops) |
 | `t-on-*`                 | [Event handling](component.md#event-handling)                                       |
 | `t-transition`           | [Defining an animation](animations.md#css-transitions)                              |
 | `t-slot`                 | [Rendering a slot](component.md#slots)                                              |
 | `t-model`                | [Form input bindings](component.md#form-input-bindings)                             |
 
-## QWeb Engine
-
-This section is about the javascript code that implements the `QWeb` specification.
-Owl exports a `QWeb` class in `owl.QWeb`. To use it, it just needs to be
-instantiated:
-
-```js
-const qweb = new owl.QWeb();
-```
-
-Its API is quite simple:
-
-- **`constructor(config)`**: constructor. Takes an optional configuration object
-  with an optional `templates` string to add initial
-  templates (see `addTemplates` for more information on format of the string)
-  and an optional `translateFn` translate function (see the section on
-  [translations](#translations)).
-
-  ```js
-  const qweb = new owl.QWeb({ templates: TEMPLATES, translateFn: _t });
-  ```
-
-- **`addTemplate(name, xmlStr, allowDuplicate)`**: add a specific template.
-
-  ```js
-  qweb.addTemplate("mytemplate", "<div>hello</div>");
-  ```
-
-  If the optional `allowDuplicate` is set to `true`, then `QWeb` will simply
-  ignore templates added for a second time. Otherwise, `QWeb` will crash.
-
-- **`addTemplates(xmlStr)`**: add a list of templates (identified by `t-name`
-  attribute).
-
-  ```js
-  const TEMPLATES = `
-    <templates>
-      <div t-name="App" class="main">main</div>
-      <div t-name="OtherComponent">other component</div>
-    </templates>`;
-  qweb.addTemplates(TEMPLATES);
-  ```
-
-- **`render(name, context, extra)`**: renders a template. This returns a `vnode`,
-  which is a virtual representation of the DOM (see [vdom doc](../architecture/vdom.md)).
-
-  ```js
-  const vnode = qweb.render("App", component);
-  ```
-
-- **`renderToString(name, context)`**: renders a template, but returns an html
-  string.
-
-  ```js
-  const str = qweb.renderToString("someTemplate", somecontext);
-  ```
-
-- **`registerTemplate(name, template)`**: static function to register a global
-  QWeb template. This is useful for commonly used components accross the
-  application, and for making a template available to an application without
-  having a reference to the actual QWeb instance.
-
-  ```js
-  QWeb.registerTemplate("mytemplate", `<div>some template</div>`);
-  ```
-
-- **`registerComponent(name, Component)`**: static function to register an OWL Component
-  to QWeb's global registry. Globally registered Components can be used in
-  templates (see the `t-component` directive). This is useful for commonly used
-  components accross the application.
-
-  ```js
-  class Dialog extends owl.Component { ... }
-  QWeb.registerComponent("Dialog", Dialog);
-
-  ...
-
-  class ParentComponent extends owl.Component { ... }
-  qweb.addTemplate("ParentComponent", "<div><Dialog/></div>");
-  ```
-
-In some way, a `QWeb` instance is the core of an Owl application. It is the only
-mandatory element of an [environment](environment.md). As such, it
-has an extra responsibility: it can act as an event bus for internal communication
-between Owl classes. This is the reason why `QWeb` actually extends [EventBus](event_bus.md).
-
 ## Reference
-
-We define in this section the specification of how `QWeb` templates should be
-rendered. Note that we only document here the standard QWeb specification. Owl
-specific extensions are documented in various other parts of the documentation.
 
 ### White Spaces
 
@@ -479,16 +388,67 @@ into the global context.
 <!-- new_variable undefined -->
 ```
 
-Owl QWeb is used as the template engine for components. Components are frequently
-updated, and reuse as much of the previous DOM as possible. Loops offer a specific
-problem for this usecase: how does the template engine know if two rows have
-been swapped, or if the content of these rows was changed? To help Owl with that,
-there is an additional directive: [`t-key`](component.md#t-key-directive).
+
+Even though Owl tries to be as declarative as possible, the DOM does not fully
+expose its state declaratively in the DOM tree. For example, the scrolling state,
+the current user selection, the focused element or the state of an input are not
+set as attribute in the DOM tree. This is why we use a virtual dom
+algorithm to keep the actual DOM node as much as possible.
+
+However, in some situations, this is not enough, and we need to help Owl decide
+if an element is actually the same, or is a different element with the same
+properties.
+
+Consider the following situation: we have a list of two items `[{text: "a"}, {text: "b"}]`
+and we render them in this template:
 
 ```xml
-<p t-foreach="state.things" t-as="thing" t-key="thing.id">
-    <t t-esc="thing.content"/>
+<p t-foreach="items" t-as="item"><t t-esc="item.text"/></p>
+```
+
+The result will be two `<p>` tags with text `a` and `b`. Now, if we swap them,
+and rerender the template, Owl needs to know what the intent is:
+
+- should Owl actually swap the DOM nodes,
+- or should it keep the DOM nodes, but with an updated text content?
+
+This might look trivial, but it actually matters. These two possibilities lead
+to different results in some cases. For example, if the user selected the text
+of the first `p`, swapping them will keep the selection while updating the
+text content will not.
+
+There are many other cases where this is important: `input` tags with their
+value, css classes and animations, scroll position...
+
+So, the `t-key` directive is used to give an identity to an element. It allows
+Owl to understand if different elements of a list are actually different or not.
+
+The above example could be modified by adding an ID: `[{id: 1, text: "a"}, {id: 2, text: "b"}]`.
+Then, the template could look like this:
+
+```xml
+<p t-foreach="items" t-as="item" t-key="item.id"><t t-esc="item.text"/></p>
+```
+
+The `t-key` directive is useful for lists (`t-foreach`). A key should be
+a unique number or string (objects will not work: they will be cast to the
+`"[object Object]"` string, which is obviously not unique).
+
+Also, the key can be set on a `t` tag or on its children. The following variations
+are all equivalent:
+
+```xml
+<p t-foreach="items" t-as="item" t-key="item.id">
+  <t t-esc="item.text"/>
 </p>
+
+<t t-foreach="items" t-as="item" t-key="item.id">
+  <p t-esc="item.text"/>
+</t>
+
+<t t-foreach="items" t-as="item">
+  <p t-key="item.id" t-esc="item.text"/>
+</t>
 ```
 
 If there is no `t-key` directive, Owl will use the index as a default key.
@@ -543,23 +503,9 @@ will result in :
 
 ### Translations
 
-If properly setup, Owl QWeb engine can translate all rendered templates. To do
-so, it needs a translate function, which takes a string and returns a string.
-
-For example:
-
-```js
-const translations = {
-  hello: "bonjour",
-  yes: "oui",
-  no: "non"
-};
-const translateFn = str => translations[str] || str;
-
-const qweb = new QWeb({ translateFn });
-```
-
-Once setup, all rendered templates will be translated using `translateFn`:
+By default, QWeb specify that templates should be translated. If this behaviour
+is not wanted, there is a `t-translation` directive which can turn off
+translations (if it is set to the `off` value), with the following rules:
 
 - each text node will be replaced with its translation,
 - each of the following attribute values will be translated as well: `title`,
@@ -567,26 +513,8 @@ Once setup, all rendered templates will be translated using `translateFn`:
 - translating text nodes can be disabled with the special attribute `t-translation`,
   if its value is `off`.
 
-So, with the above `translateFn`, the following templates:
-
-```xml
-<div>hello</div>
-<div t-translation="off">hello</div>
-<div>Are you sure?</div>
-<input placeholder="hello" other="yes"/>
-```
-
-will be rendered as:
-
-```xml
-<div>bonjour</div>
-<div>hello</div>
-<div>Are you sure?</div>
-<input placeholder="bonjour" other="yes"/>
-```
-
-Note that the translation is done during the compilation of the template, not
-when it is rendered.
+See [here](qweb_engine.md#translations) for more information on how to setup a
+translate function in Owl QWeb.
 
 ### Debugging
 

@@ -90,12 +90,12 @@ function isValidProp(prop, propDef): boolean {
     return true;
   }
   let result = isValidProp(prop, propDef.type);
-  if (propDef.type === Array) {
+  if (propDef.type === Array && propDef.element) {
     for (let i = 0, iLen = prop.length; i < iLen; i++) {
       result = result && isValidProp(prop[i], propDef.element);
     }
   }
-  if (propDef.type === Object) {
+  if (propDef.type === Object && propDef.shape) {
     const shape = propDef.shape;
     for (let key in shape) {
       result = result && isValidProp(prop[key], shape[key]);

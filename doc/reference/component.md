@@ -729,7 +729,6 @@ update a number whenever the change is done.
 
 Note: the online playground has an example to show how it works.
 
-
 ### Semantics
 
 We give here an informal description of the way components are created/updated
@@ -824,7 +823,7 @@ As an application becomes complex, it may be quite unsafe to define props in an 
 - hard to tell how a component should be used, by looking at its code.
 - unsafe, it is easy to send wrong props into a component, either by refactoring a component, or one of its parents.
 
-A props type system would solve both issues, by describing the types and shapes
+A props type system solves both issues, by describing the types and shapes
 of the props. Here is how it works in Owl:
 
 - `props` key is a static key (so, different from `this.props` in a component instance)

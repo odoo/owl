@@ -451,6 +451,7 @@ export class Component<T extends Env, Props extends {}> {
       }
     }
     __owl__.isMounted = true;
+    __owl__.currentFiber = null;
     try {
       this.mounted();
       if (__owl__.mountedCB) {
@@ -526,7 +527,6 @@ export class Component<T extends Env, Props extends {}> {
     const __owl__ = this.__owl__;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
     __owl__.vnode = patch(target, vnode);
-    __owl__.currentFiber = null;
   }
 
   /**

@@ -4889,6 +4889,37 @@ describe("unmounting and remounting", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
   });
+
+  test("sub component is still active after being  unmounted and remounted", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`
+        <p t-on-click="state.value++">
+          <t t-esc="state.value"/>
+        </p>`;
+
+      state = useState({ value: 1 });
+    }
+
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<div><Child/></div>`;
+    }
+
+    const w = new Parent();
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
+
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
+    w.unmount();
+    await nextTick();
+    await w.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
+  });
 });
 
 describe("dynamic root nodes", () => {

@@ -581,6 +581,32 @@ describe("props validation", () => {
     }).toThrow();
   });
 
+  test("props with type array, and no element", async () => {
+    class TestWidget extends Widget {
+      static props = { myprop: { type: Array } };
+    }
+
+    expect(() => {
+      QWeb.utils.validateProps(TestWidget, { myprop: [1] });
+    }).not.toThrow();
+    expect(() => {
+      QWeb.utils.validateProps(TestWidget, { myprop: 1 });
+    }).toThrow(`Props 'myprop' of invalid type in component 'TestWidget'`);
+  });
+
+  test("props with type object, and no shape", async () => {
+    class TestWidget extends Widget {
+      static props = { myprop: { type: Object } };
+    }
+
+    expect(() => {
+      QWeb.utils.validateProps(TestWidget, { myprop: { a: 3 } });
+    }).not.toThrow();
+    expect(() => {
+      QWeb.utils.validateProps(TestWidget, { myprop: false });
+    }).toThrow(`Props 'myprop' of invalid type in component 'TestWidget'`);
+  });
+
   test("props: extra props cause an error", async () => {
     class TestWidget extends Widget {
       static props = ["message"];

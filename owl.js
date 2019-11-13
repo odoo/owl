@@ -2953,7 +2953,7 @@
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
             ctx.addLine(`let pvnode = h('dummy', {key: ${templateId}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`);
             ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
-            ctx.addLine(`def${defID}.then(function () {if (w${componentID}.__owl__.isDestroyed) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`);
+            ctx.addLine(`def${defID}.then(function () {if (fiber.isCancelled) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`);
             if (registerCode) {
                 ctx.addLine(registerCode);
             }
@@ -3257,7 +3257,14 @@
                         break;
                     }
                 }
-                let isValid = isValidProp(props[propName], propsDef[propName]);
+                let isValid;
+                try {
+                    isValid = isValidProp(props[propName], propsDef[propName]);
+                }
+                catch (e) {
+                    e.message = `Invalid prop '${propName}' in component ${Widget.name} (${e.message})`;
+                    throw e;
+                }
                 if (!isValid) {
                     throw new Error(`Props '${propName}' of invalid type in component '${Widget.name}'`);
                 }
@@ -3297,6 +3304,9 @@
             return result;
         }
         // propsDef is an object
+        if (propDef.optional && prop === undefined) {
+            return true;
+        }
         let result = isValidProp(prop, propDef.type);
         if (propDef.type === Array) {
             for (let i = 0, iLen = prop.length; i < iLen; i++) {
@@ -3307,6 +3317,13 @@
             const shape = propDef.shape;
             for (let key in shape) {
                 result = result && isValidProp(prop[key], shape[key]);
+            }
+            if (result) {
+                for (let propName in prop) {
+                    if (!(propName in shape)) {
+                        throw new Error(`unknown prop '${propName}'`);
+                    }
+                }
             }
         }
         return result;
@@ -3478,17 +3495,15 @@
          *
          * Note that a component can be mounted an unmounted several times
          */
-        async mount(target, renderBeforeRemount = false) {
+        async mount(target) {
             const __owl__ = this.__owl__;
             if (__owl__.isMounted) {
                 return Promise.resolve();
             }
-            if (__owl__.vnode && !renderBeforeRemount) {
-                target.appendChild(this.el);
-                if (document.body.contains(target)) {
-                    this.__callMounted();
-                }
-                return;
+            if (!(target instanceof HTMLElement)) {
+                let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
+                message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
+                throw new Error(message);
             }
             return new Promise((resolve, reject) => {
                 const fiber = new Fiber(null, this, undefined, undefined, false);
@@ -3632,6 +3647,9 @@
             }
             __owl__.isDestroyed = true;
             delete __owl__.vnode;
+            if (__owl__.currentFiber) {
+                __owl__.currentFiber.isCancelled = true;
+            }
         }
         __callMounted() {
             const __owl__ = this.__owl__;
@@ -3838,6 +3856,8 @@
     Component.current = null;
     Component.components = {};
     Component.env = {};
+    // expose scheduler s.t. it can be mocked for testing purposes
+    Component.scheduler = scheduler;
 
     /**
      * Owl Hook System
@@ -3926,7 +3946,13 @@
         return {
             get el() {
                 const val = __owl__.refs && __owl__.refs[name];
-                return val instanceof HTMLElement ? val : null;
+                if (val instanceof HTMLElement) {
+                    return val;
+                }
+                else if (val instanceof Component) {
+                    return val.el;
+                }
+                return null;
             },
             get comp() {
                 const val = __owl__.refs && __owl__.refs[name];
@@ -4123,6 +4149,9 @@
     function useStore(selector, options = {}) {
         const component = Component.current;
         const store = options.store || component.env.store;
+        if (!(store instanceof Store)) {
+            throw new Error(`No store found when connecting '${component.constructor.name}'`);
+        }
         let result = selector(store.state, component.props);
         const hashFn = store.observer.revNumber.bind(store.observer);
         let revNumber = hashFn(result) || result;
@@ -4515,9 +4544,9 @@
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '1.0.0-alpha2';
-    exports.__info__.date = '2019-11-01T08:12:51.280Z';
-    exports.__info__.hash = 'bd3c126';
+    exports.__info__.version = '1.0.0-alpha3';
+    exports.__info__.date = '2019-11-13T14:44:19.699Z';
+    exports.__info__.hash = 'd249f50';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

@@ -163,6 +163,7 @@ export class Fiber {
       const fiber = patchQueue[i];
       component = fiber.component;
       component.__patch(fiber.vnode);
+      component.__owl__.currentFiber = null;
     }
     try {
       for (let i = patchLen - 1; i >= 0; i--) {

@@ -40,7 +40,13 @@ QWeb.utils.validateProps = function(Widget, props: Object) {
           break;
         }
       }
-      let isValid = isValidProp(props[propName], propsDef[propName]);
+      let isValid;
+      try {
+        isValid = isValidProp(props[propName], propsDef[propName]);
+      } catch (e) {
+        e.message = `Invalid prop '${propName}' in component ${Widget.name} (${e.message})`;
+        throw e;
+      }
       if (!isValid) {
         throw new Error(`Props '${propName}' of invalid type in component '${Widget.name}'`);
       }
@@ -80,6 +86,9 @@ function isValidProp(prop, propDef): boolean {
     return result;
   }
   // propsDef is an object
+  if (propDef.optional && prop === undefined) {
+    return true;
+  }
   let result = isValidProp(prop, propDef.type);
   if (propDef.type === Array) {
     for (let i = 0, iLen = prop.length; i < iLen; i++) {
@@ -90,6 +99,13 @@ function isValidProp(prop, propDef): boolean {
     const shape = propDef.shape;
     for (let key in shape) {
       result = result && isValidProp(prop[key], shape[key]);
+    }
+    if (result) {
+      for (let propName in prop) {
+        if (!(propName in shape)) {
+          throw new Error(`unknown prop '${propName}'`);
+        }
+      }
     }
   }
   return result;

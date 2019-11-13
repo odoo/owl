@@ -66,15 +66,15 @@ For reference, here is a list of all standard QWeb directives:
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                     | Description                                                                         |
-| ------------------------ | ----------------------------------------------------------------------------------- |
-| `t-component`, `t-props` | [Defining a sub component](component.md#composition)                                |
-| `t-ref`                  | [Setting a reference to a dom node or a sub component](component.md#references)     |
-| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops) |
-| `t-on-*`                 | [Event handling](component.md#event-handling)                                       |
-| `t-transition`           | [Defining an animation](animations.md#css-transitions)                              |
-| `t-slot`                 | [Rendering a slot](component.md#slots)                                              |
-| `t-model`                | [Form input bindings](component.md#form-input-bindings)                             |
+| Name                     | Description                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| `t-component`, `t-props` | [Defining a sub component](component.md#composition)                            |
+| `t-ref`                  | [Setting a reference to a dom node or a sub component](component.md#references) |
+| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops)                   |
+| `t-on-*`                 | [Event handling](component.md#event-handling)                                   |
+| `t-transition`           | [Defining an animation](animations.md#css-transitions)                          |
+| `t-slot`                 | [Rendering a slot](component.md#slots)                                          |
+| `t-model`                | [Form input bindings](component.md#form-input-bindings)                         |
 
 ## Reference
 
@@ -387,7 +387,6 @@ into the global context.
 <!-- existing_variable always true -->
 <!-- new_variable undefined -->
 ```
-
 
 Even though Owl tries to be as declarative as possible, the DOM does not fully
 expose its state declaratively in the DOM tree. For example, the scrolling state,

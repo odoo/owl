@@ -699,25 +699,25 @@ exports[`misc global 1`] = `
             } else {
                 c17.push({text: \`foo default\`});
             }
-            var _19 = 'bbb';
-            let c20 = [], p20 = {key:20};
-            var vn20 = h('span', p20, c20);
-            c14.push(vn20);
-            if (_19 || _19 === 0) {
-                c20.push({text: _19});
+            _11 = 'bbb'
+            let c19 = [], p19 = {key:19};
+            var vn19 = h('span', p19, c19);
+            c14.push(vn19);
+            if (_11 || _11 === 0) {
+                c19.push({text: _11});
             } else {
-                c20.push({text: \`foo default\`});
+                c19.push({text: \`foo default\`});
             }
         }
     }
-    let c21 = [], p21 = {key:21};
-    var vn21 = h('div', p21, c21);
-    c1.push(vn21);
-    var _22 = context['toto'];
-    if (_22 || _22 === 0) {
-        c21.push(...utils.htmlToVDOM(_22));
+    let c20 = [], p20 = {key:20};
+    var vn20 = h('div', p20, c20);
+    c1.push(vn20);
+    var _21 = context['toto'];
+    if (_21 || _21 === 0) {
+        c20.push(...utils.htmlToVDOM(_21));
     } else {
-        c21.push({text: \`toto default\`});
+        c20.push({text: \`toto default\`});
     }
     return vn1;
 }"
@@ -2395,6 +2395,90 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
             c8.push({text: _2});
         }
         _2 = context['elem']
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['flag']) {
+    }
+    else {
+        var _2 = 0;
+    }
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    } else {
+        c1.push({text: \`1\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 2`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['flag']) {
+    }
+    else {
+        var _2 = 0;
+    }
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    } else {
+        c1.push({text: \`1\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['flag']) {
+        var _2 = 1;
+    }
+    else {
+    }
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    } else {
+        c1.push({text: \`0\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 2`] = `
+"function anonymous(context,extra
+) {
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['flag']) {
+        var _2 = 1;
+    }
+    else {
+    }
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
+    } else {
+        c1.push({text: \`0\`});
     }
     return vn1;
 }"

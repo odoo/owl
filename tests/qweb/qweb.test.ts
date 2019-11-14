@@ -242,6 +242,32 @@ describe("t-set", () => {
     );
     expect(renderToString(qweb, "test", { somevariable: 43 })).toBe("<div>45</div>");
   });
+
+  test("t-set, t-if, and mix of expression/body lookup, 1", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-if="flag" t-set="ourvar">1</t>
+        <t t-else="" t-set="ourvar" t-value="0"></t>
+        <t t-esc="ourvar"/>
+      </div>`
+    );
+    expect(renderToString(qweb, "test", { flag: true })).toBe("<div>1</div>");
+    expect(renderToString(qweb, "test", { flag: false })).toBe("<div>0</div>");
+  });
+
+  test("t-set, t-if, and mix of expression/body lookup, 2", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-if="flag" t-set="ourvar" t-value="1"></t>
+        <t t-else="" t-set="ourvar">0</t>
+        <t t-esc="ourvar"/>
+      </div>`
+    );
+    expect(renderToString(qweb, "test", { flag: true })).toBe("<div>1</div>");
+    expect(renderToString(qweb, "test", { flag: false })).toBe("<div>0</div>");
+  });
 });
 
 describe("t-if", () => {

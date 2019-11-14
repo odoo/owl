@@ -1,5 +1,4 @@
 import { CompilationContext } from "./compilation_context";
-import { QWebExprVar } from "./expression_parser";
 import { QWeb } from "./qweb";
 import { htmlToVDOM } from "../vdom/html_to_vdom";
 
@@ -34,7 +33,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
     return;
   }
 
-  if (value.xml instanceof NodeList) {
+  if (value.xml instanceof NodeList && !value.id) {
     for (let node of Array.from(value.xml)) {
       qweb._compileNode(<ChildNode>node, ctx);
     }
@@ -71,6 +70,12 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
     qweb._compileChildren(node, ctx);
   }
 
+  if (value.xml instanceof NodeList && value.id) {
+    ctx.addElse();
+    for (let node of Array.from(value.xml)) {
+      qweb._compileNode(<ChildNode>node, ctx);
+    }
+  }
   ctx.closeIf();
 }
 
@@ -104,22 +109,21 @@ QWeb.addDirective({
   atNodeEncounter({ node, ctx }): boolean {
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
+    ctx.variables[variable] = ctx.variables[variable] || {};
+    let qwebvar = ctx.variables[variable];
+
     if (value) {
       const formattedValue = ctx.formatExpression(value);
-      if (ctx.variables.hasOwnProperty(variable)) {
-        ctx.addLine(`${(<QWebExprVar>ctx.variables[variable]).id} = ${formattedValue}`);
+      if (ctx.variables.hasOwnProperty(variable) && qwebvar.id) {
+        ctx.addLine(`${qwebvar.id} = ${formattedValue}`);
       } else {
         const varName = `_${ctx.generateID()}`;
         ctx.addLine(`var ${varName} = ${formattedValue};`);
-        ctx.variables[variable] = {
-          id: varName,
-          expr: formattedValue
-        };
+        qwebvar.id = varName;
+        qwebvar.expr = formattedValue;
       }
     } else {
-      ctx.variables[variable] = {
-        xml: node.childNodes
-      };
+      qwebvar.xml = node.childNodes;
     }
     return true;
   }
@@ -133,7 +137,7 @@ QWeb.addDirective({
   priority: 20,
   atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-if")!);
-    ctx.addIf(typeof cond === "string" ? ctx.formatExpression(cond) : cond.id);
+    ctx.addIf(typeof cond === "string" ? ctx.formatExpression(cond) : cond.id!);
     return false;
   },
   finalize({ ctx }) {
@@ -244,8 +248,8 @@ QWeb.addDirective({
       // add new variables, if any
       for (let key in tempCtx.variables) {
         const v = tempCtx.variables[key];
-        if ((<QWebExprVar>v).expr) {
-          ctx.addLine(`let ${(<QWebExprVar>v).id} = ${(<QWebExprVar>v).expr};`);
+        if (v.expr) {
+          ctx.addLine(`let ${v.id} = ${v.expr};`);
         }
         // todo: handle XML variables...
       }

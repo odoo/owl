@@ -1,4 +1,4 @@
-import { compileExpr, QWebVar, QWebExprVar } from "./expression_parser";
+import { compileExpr, QWebVar } from "./expression_parser";
 
 export const INTERP_REGEXP = /\{\{.*?\}\}/g;
 //------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ export class CompilationContext {
     this.addLine("}");
   }
 
-  getValue(val: any): QWebExprVar | string {
+  getValue(val: any): QWebVar | string {
     return val in this.variables ? this.getValue(this.variables[val]) : val;
   }
 

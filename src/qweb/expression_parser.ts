@@ -38,16 +38,11 @@ const WORD_REPLACEMENT = {
   lte: "<="
 };
 
-export interface QWebExprVar {
-  id: string;
-  expr: string;
+export interface QWebVar {
+  id?: string;
+  expr?: string;
+  xml?: NodeList;
 }
-
-export interface QWebXMLVar {
-  xml: NodeList;
-}
-
-export type QWebVar = QWebExprVar | QWebXMLVar;
 
 //------------------------------------------------------------------------------
 // Tokenizer
@@ -252,7 +247,7 @@ export function compileExpr(expr: string, vars: { [key: string]: QWebVar }): str
       }
       if (isVar) {
         if (token.value in vars && "id" in vars[token.value]) {
-          token.value = (<QWebExprVar>vars[token.value]).id;
+          token.value = vars[token.value].id!;
         } else {
           token.value = `context['${token.value}']`;
         }

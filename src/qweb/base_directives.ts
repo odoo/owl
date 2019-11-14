@@ -236,9 +236,7 @@ QWeb.addDirective({
         varCode = `{${content}}`;
       }
       ctx.addLine(
-        `this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${
-          ctx.parentNode
-        }, fiber: {vars: ${varCode}, scope}}));`
+        `this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, fiber: {vars: ${varCode}, scope}}));`
       );
       return true;
     }
@@ -307,9 +305,7 @@ QWeb.addDirective({
       !node.children[0].hasAttribute("t-key");
     if (shouldWarn) {
       console.warn(
-        `Directive t-foreach should always be used with a t-key! (in template: '${
-          ctx.templateName
-        }')`
+        `Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`
       );
     }
 

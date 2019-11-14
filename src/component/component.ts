@@ -282,9 +282,7 @@ export class Component<T extends Env, Props extends {}> {
       return Promise.resolve();
     }
     if (!(target instanceof HTMLElement)) {
-      let message = `Component '${
-        this.constructor.name
-      }' cannot be mounted: the target is not a valid DOM node.`;
+      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
@@ -579,10 +577,14 @@ export class Component<T extends Env, Props extends {}> {
       __owl__.observer.allowMutations = false;
     }
     try {
-      fiber.vnode = __owl__.renderFn!(this, {
+      let vnode = __owl__.renderFn!(this, {
         handlers: __owl__.boundHandlers,
         fiber: fiber
       });
+      if (!vnode) {
+        throw new Error(`Rendering '${this.constructor.name}' did not return anything`);
+      }
+      fiber.vnode = vnode;
     } catch (e) {
       fiber.handleError(e);
     }

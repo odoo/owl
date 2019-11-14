@@ -108,6 +108,21 @@ describe("basic widget properties", () => {
     );
   });
 
+  test("display an error message if result of rendering is empty", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`<t/>`;
+    }
+    const widget = new SomeWidget();
+    let error;
+    try {
+      await widget.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Rendering 'SomeWidget' did not return anything");
+  });
+
   test("crashes if it cannot find a template", async () => {
     expect.assertions(1);
     class SomeWidget extends Component<any, any> {}

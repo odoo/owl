@@ -3400,10 +3400,6 @@ describe("async rendering", () => {
   });
 
   test("change state and call manually render: no unnecessary rendering", async () => {
-    // when the state is changed, the component isn't notified directly (we wait
-    // for a microtask tick before calling 'render'), so it may happen that
-    // another rendering is done meanwhile, already using the new value of the
-    // state
     class Widget extends Component<any, any> {
       static template = xml`<div><t t-esc="state.val"/></div>`;
       state = useState({ val: 1 });

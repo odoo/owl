@@ -34,8 +34,7 @@ export class Scheduler {
         fiber,
         callback: () => {
           if (fiber.error) {
-            reject(fiber.error);
-            return;
+            return reject(fiber.error);
           }
           resolve();
         }

@@ -24,14 +24,6 @@ export class Observer {
   weakMap: WeakMap<any, any> = new WeakMap();
 
   notifyCB() {}
-  async notifyChange() {
-    this.dirty = true;
-    await Promise.resolve();
-    if (this.dirty) {
-      this.dirty = false;
-      this.notifyCB();
-    }
-  }
 
   observe<T>(value: T, parent?: any): T {
     if (value === null || typeof value !== "object" || value instanceof Date) {
@@ -65,7 +57,7 @@ export class Observer {
           }
           self._updateRevNumber(target);
           target[key] = newVal;
-          self.notifyChange();
+          self.notifyCB();
         }
         return true;
       },
@@ -73,7 +65,7 @@ export class Observer {
         if (key in target) {
           delete target[key];
           self._updateRevNumber(target);
-          self.notifyChange();
+          self.notifyCB();
         }
         return true;
       }

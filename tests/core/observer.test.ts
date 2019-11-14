@@ -408,7 +408,7 @@ describe("observer", () => {
     obj.a = 111;
     obj.f = 222;
     await nextMicroTick();
-    expect(observer.notifyCB).toBeCalledTimes(4);
+    expect(observer.notifyCB).toBeCalledTimes(5);
   });
 
   test("throw error when state is mutated in object if allowMutation=false", async () => {

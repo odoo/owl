@@ -81,13 +81,7 @@ export class Context extends EventBus {
     const subscriptions = this.subscriptions.update;
     const groups = partitionBy(subscriptions, s => (s.owner ? s.owner.__owl__.depth : -1));
     for (let group of groups) {
-      const proms = Promise.all(
-        group.map(sub => {
-          if (sub.owner ? sub.owner.__owl__.isMounted : true) {
-            return sub.callback.call(sub.owner, rev);
-          }
-        })
-      );
+      const proms = group.map(sub => sub.callback.call(sub.owner, rev));
       // at this point, each component in the current group has registered a
       // top level fiber in the scheduler. It could happen that rendering these
       // components is done (if they have no children).  This is why we manually
@@ -96,7 +90,7 @@ export class Context extends EventBus {
       // promise to resolve earlier, which means that there is a chance of
       // processing the next group in the same frame.
       scheduler.flush();
-      await proms;
+      await Promise.all(proms);
     }
   }
 }

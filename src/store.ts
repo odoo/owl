@@ -111,9 +111,9 @@ export function useStore(selector, options: SelectorOptions = {}): any {
 
   useContextWithCB(store, component, function(): Promise<void> | void {
     let shouldRender = false;
-    updateFunctions.forEach(function(updateFn) {
-      shouldRender = updateFn() || shouldRender;
-    });
+    for (let fn of updateFunctions) {
+      shouldRender = fn() || shouldRender;
+    }
     if (shouldRender) {
       return component.render();
     }

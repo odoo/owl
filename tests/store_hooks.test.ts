@@ -572,6 +572,31 @@ describe("connecting a component to store", () => {
     );
   });
 
+  test("store changes occuring when mounting a component are notified", async () => {
+    const initialState = { x: { val: 1 } };
+    const actions = {
+      setValue({ state }, val) {
+        state.x.val = val;
+      }
+    };
+    class Parent extends Component<any, any> {
+      static template = xml`<div><t t-esc="x.val"/></div>`;
+      x = useStore(state => {
+        return Object.assign({}, state.x);
+      });
+      dispatch = useDispatch();
+    }
+    Parent.prototype.__render = jest.fn(Parent.prototype.__render);
+    Parent.env.store = new Store({ state: initialState, actions });
+
+    const parent = new Parent();
+    const prom = parent.mount(fixture);
+    parent.dispatch("setValue", 2);
+    await prom;
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(Parent.prototype.__render).toHaveBeenCalledTimes(1);
+  });
+
   test("correct update order when parent/children are connected", async () => {
     const steps: string[] = [];
 
@@ -897,6 +922,46 @@ describe("connecting a component to store", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(steps).toEqual(["on:update", "off:update"]);
+  });
+
+  test("connected child component destroyed by dispatched action", async () => {
+    let steps: any = [];
+
+    class Child extends Component<any, any> {
+      static template = xml`<div><t t-esc="store.val"/></div>`;
+      store = useStore(s => {
+        steps.push("child selector");
+        return s;
+      });
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child t-if="store.child" /></div>`;
+      static components = { Child };
+      store = useStore(s => {
+        steps.push("parent selector");
+        return s;
+      });
+      dispatch = useDispatch();
+    }
+
+    const state = { child: true, val: 1 };
+    const actions = {
+      toggleChild({ state }) {
+        state.child = !state.child;
+      }
+    };
+    const store = new Store({ state, actions });
+    (<any>env).store = store;
+    const parent = new Parent();
+
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+    expect(steps).toEqual(["parent selector", "child selector"]);
+
+    parent.dispatch("toggleChild");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(steps).toEqual(["parent selector", "child selector", "parent selector"]);
   });
 
   test("dispatch an action", async () => {

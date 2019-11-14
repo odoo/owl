@@ -328,8 +328,23 @@ export class Component<T extends Env, Props extends {}> {
     if (__owl__.currentFiber && !__owl__.currentFiber.isRendered) {
       return scheduler.addFiber(__owl__.currentFiber.root);
     }
+    // if we aren't mounted at this point, it implies that there is a
+    // currentFiber that is already rendered (isRendered is true), so we are
+    // about to be mounted
+    const isMounted = __owl__.isMounted;
     const fiber = new Fiber(null, this, undefined, undefined, force, null);
-    this.__render(fiber);
+    Promise.resolve().then(() => {
+      if (__owl__.isMounted || !isMounted) {
+        // we are mounted (__owl__.isMounted), or if we are currently being
+        // mounted (!isMounted), so we call __render
+        this.__render(fiber);
+      } else {
+        // we were mounted when render was called, but we aren't anymore, so we
+        // were actually about to be unmounted ; we can thus forget about this
+        // fiber
+        __owl__.currentFiber = null;
+      }
+    });
     return scheduler.addFiber(fiber);
   }
 

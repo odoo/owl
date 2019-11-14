@@ -24,19 +24,9 @@ import { Observer } from "./core/observer";
 export function useState<T>(state: T): T {
   const component: Component<any, any> = Component.current!;
   const __owl__ = component.__owl__;
-  const renderFn = __owl__.renderFn;
-  let lastRenderRevNumber;
-  __owl__.renderFn = function(comp, params) {
-    lastRenderRevNumber = __owl__.observer!.rev;
-    return renderFn(comp, params);
-  };
   if (!__owl__.observer) {
     __owl__.observer = new Observer();
-    __owl__.observer.notifyCB = () => {
-      if (lastRenderRevNumber < __owl__.observer!.rev) {
-        component.render();
-      }
-    };
+    __owl__.observer.notifyCB = component.render.bind(component);
   }
   return __owl__.observer.observe(state);
 }

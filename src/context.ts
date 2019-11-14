@@ -45,7 +45,16 @@ export class Context extends EventBus {
   constructor(state: Object = {}) {
     super();
     this.observer = new Observer();
-    this.observer.notifyCB = this.__notifyComponents.bind(this);
+    this.observer.notifyCB = () => {
+      // notify components in the next microtask tick to ensure that subscribers
+      // are notified only once for all changes that occur in the same micro tick
+      let rev = this.rev;
+      return Promise.resolve().then(() => {
+        if (rev === this.rev) {
+          this.__notifyComponents();
+        }
+      });
+    };
     this.state = this.observer.observe(state);
     this.subscriptions.update = [];
   }

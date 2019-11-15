@@ -43,6 +43,9 @@ describe("tokenizer", () => {
       { type: "OPERATOR", value: "!==" },
       { type: "OPERATOR", value: "!=" }
     ]);
+    expect(tokenize("typeof a")).toEqual([
+      {"type": "OPERATOR", "value": "typeof "}, {"type": "SYMBOL", "value": "a"}
+    ]);
   });
 
   test("strings", () => {
@@ -112,6 +115,7 @@ describe("expression evaluation", () => {
     expect(compileExpr("!flag", {})).toBe("!context['flag']");
     expect(compileExpr("-3", {})).toBe("-3");
     expect(compileExpr("-a", {})).toBe("-context['a']");
+    expect(compileExpr("typeof a", {})).toBe("typeof context['a']");
   });
 
   test("various binary operators", () => {

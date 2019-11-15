@@ -25,7 +25,7 @@
 // Misc types, constants and helpers
 //------------------------------------------------------------------------------
 
-const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,typeof,eval,void,Math,RegExp,Array,Object,Date".split(
+const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,eval,void,Math,RegExp,Array,Object,Date".split(
   ","
 );
 
@@ -77,7 +77,9 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ")": "RIGHT_PAREN"
 };
 
-const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%".split(",");
+// note that the space after typeof is relevant. It makes sure that the formatted
+// expression has a space after typeof
+const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ".split(",");
 
 type Tokenizer = (expr: string) => Token | false;
 
@@ -160,9 +162,9 @@ const tokenizeOperator: Tokenizer = function(expr) {
 const TOKENIZERS = [
   tokenizeString,
   tokenizeNumber,
+  tokenizeOperator,
   tokenizeSymbol,
   tokenizeStatic,
-  tokenizeOperator
 ];
 
 /**

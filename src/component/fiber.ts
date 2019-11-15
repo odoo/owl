@@ -222,6 +222,7 @@ export class Fiber {
     if (this.target) {
       this.target.appendChild(this.component.el!);
       inDOM = document.body.contains(this.target);
+      this.component.env.qweb.trigger("dom-appended");
     }
 
     // call patched/mounted hook on each fiber of (reversed) patchQueue

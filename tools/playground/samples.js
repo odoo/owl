@@ -1444,6 +1444,111 @@ const FORM_XML = `<templates>
 </templates>
 `;
 
+const PORTAL_COMPONENTS = `
+// This shows the expected use case of Portal
+// which is to implement something similar
+// to bootstrap modal
+const { Component, useState } = owl;
+const { Portal } = owl.misc;
+
+class Modal extends Component {}
+Modal.components = { Portal };
+
+class Dialog extends Component {}
+Dialog.components = { Modal };
+
+class Interstellar extends Component {}
+
+// Main root component
+class App extends Component {
+    state = useState({
+        name: 'Portal used for Dialog (Modal)',
+        dialog: false,
+        text: 'Hello !',
+    });
+}
+App.components = { Dialog , Interstellar };
+
+// Application setup
+const app = new App();
+app.mount(document.body);
+`;
+
+const PORTAL_XML = `
+<templates>
+  <t t-name="Modal">
+    <Portal target="'body'">
+        <div class="owl-modal-supercontainer">
+          <div class="owl-modal-backdrop"></div>
+          <div class="owl-modal-container">
+            <t t-slot="default" />
+          </div>
+        </div>
+    </Portal>
+  </t>
+
+  <t t-name="Dialog">
+    <Modal>
+      <div class="owl-dialog-body">
+        <t t-slot="default" />
+      </div>
+    </Modal>
+  </t>
+
+  <div t-name="Interstellar" class="owl-interstellar">
+    <h4>This is a subComponent</h4>
+    <p>The events it triggers will go through the Portal and be teleported
+    on the other side of the wormhole it has created</p>
+    <button t-on-click="trigger('collapse-all')">Close the wormhole</button>
+  </div>
+
+  <div t-name="App" t-on-collapse-all="state.dialog=false">
+    <div t-esc="state.name"/>
+    <button t-on-click="state.dialog = true">Open Dialog</button>
+    <Dialog t-if="state.dialog">
+      <div t-esc="state.text"/>
+      <Interstellar />
+    </Dialog>
+  </div>
+</templates>
+`;
+
+const PORTAL_CSS = `
+.owl-modal-supercontainer {
+  position: static;
+}
+.owl-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left:0;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+}
+.owl-modal-container {
+    opacity:1;
+    z-index: 1050;
+    position: fixed;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 100%;
+}
+.owl-dialog-body {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    padding: 2rem;
+    background-color: #FFFFFF;
+    max-height: 100%;
+}
+.owl-interstellar {
+    border: groove;
+}`
+
 const WMS = `// This example is slightly more complex than usual. We demonstrate
 // here a way to manage sub windows in Owl, declaratively. This is still just a
 // demonstration. Managing windows can be as complex as we want.  For example,
@@ -1770,5 +1875,11 @@ export const SAMPLES = [
     code: ASYNC_COMPONENTS,
     xml: ASYNC_COMPONENTS_XML,
     css: ASYNC_COMPONENTS_CSS
-  }
+  },
+  {
+    description: "Portal (Dialog)",
+    code: PORTAL_COMPONENTS,
+    xml: PORTAL_XML,
+    css: PORTAL_CSS,
+  },
 ];

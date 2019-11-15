@@ -50,20 +50,20 @@ and `EventBus` is exported as `owl.core.EventBus`):
 ```
 Component                               misc
 Context                                     AsyncRoot
-QWeb                                    router
-Store                                       Link
-useState                                    RouteComponent
-config                                      Router
-    mode                                tags
-core                                        xml
-    EventBus                            utils
-    Observer                                debounce
-hooks                                       escape
-    onWillStart                             loadJS
-    onMounted                               loadFile
-    onWillUpdateProps                       shallowEqual
-    onWillPatch                             whenReady
-    onPatched
+QWeb                                        Portal
+Store                                   router
+useState                                    Link
+config                                      RouteComponent
+    mode                                    Router
+core                                    tags
+    EventBus                                xml
+    Observer                            utils
+hooks                                       debounce
+    onWillStart                             escape
+    onMounted                               loadJS
+    onWillUpdateProps                       loadFile
+    onWillPatch                             shallowEqual
+    onPatched                               whenReady
     onWillUnmount
     useContext
     useState

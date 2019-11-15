@@ -20,10 +20,8 @@ function htmlToVNode(node: ChildNode): VNode {
     attrs[attr.name] = attr.textContent;
   }
   const children: VNode[] = [];
-  if (node.hasChildNodes) {
-    for (let c of node.childNodes) {
-      children.push(htmlToVNode(c));
-    }
+  for (let c of node.childNodes) {
+    children.push(htmlToVNode(c));
   }
   return h((node as Element).tagName, { attrs }, children);
 }

@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`props validation missing required boolean prop causes an error 1`] = `
+"Missing props 'p' (component 'TestWidget')
+The error occured while rendering component \\"App\\", around this code:
+       25         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+   --> 26         w3 = new W3(parent, props3);
+       27         parent.__owl__.cmap[templateId3] = w3.__owl__.id;
+Stack:
+          at Object.<anonymous>.index_1.QWeb.utils.validateProps (sanitized)
+          at new Component (sanitized)
+          at new Widget (sanitized)
+          at new TestWidget (sanitized)
+"
+`;
+
 exports[`props validation props are validated in dev mode (code snapshot) 1`] = `
 "function anonymous(context,extra
 ) {

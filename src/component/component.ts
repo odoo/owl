@@ -586,6 +586,7 @@ export class Component<T extends Env, Props extends {}> {
       }
       fiber.vnode = vnode;
     } catch (e) {
+      this.addRenderingContext(e);
       fiber.handleError(e);
     }
     if (__owl__.observer) {
@@ -603,6 +604,42 @@ export class Component<T extends Env, Props extends {}> {
     fiber.isRendered = true;
   }
 
+  addRenderingContext(e: Error) {
+    // step 1: find the line in the stack which corresponds to the evaluation of
+    // the compiled template
+    let stackLine: number = 0;
+    const lines: string[] = e.stack!.split("\n");
+    for (let i = 0; i < lines.length - 3; i++) {
+      if (lines[i].includes("anonymous")) {
+        let j = lines[i + 1].includes("fn") ? 1 : 0;
+        if (lines[i + +j + 1].includes("render") && lines[i + j + 2].includes("__render")) {
+          stackLine = i;
+          break;
+        }
+      }
+    }
+    
+    // step 2: if possible, find the line number in the compiled template that
+    // was executing when the error occurred
+    let lineNbr = 0;
+    if (stackLine) {
+      const numberstr: string[] = lines[stackLine].match(/\d+/g)!;
+      // we assume that the last 2 numbers are line/char where the error occurred
+      lineNbr = Number(numberstr[numberstr.length - 2]);
+    }
+    
+    // step 3: add rendering context information
+    const constructor = this.constructor as any;
+    e.message += `\nThe error occured while rendering component "${constructor.name}"`;
+
+    if (lineNbr) {
+      const templateName = constructor.template || constructor._template;
+      const code = this.env.qweb.templates[templateName].fn.toString().split("\n");
+      const line = n => "\n" + String(n-1).padStart(9) + " " + code[n-1];
+      const targetLine = n => "\n" + ("--> " + (n-1)).padStart(9) + " " + code[n-1];
+      e.message += `, around this code:${line(lineNbr-1 )}${targetLine(lineNbr )}${line(lineNbr+1)}`;
+    }
+  }
   /**
    * Only called by qweb t-component directive
    */

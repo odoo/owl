@@ -252,11 +252,11 @@ describe("animations", () => {
     widget.state.display = false;
     patchNextFrame(cb => {
       expect(fixture.innerHTML).toBe(
-        '<div><span class="chimay-leave chimay-leave-active" data-owl-key="__4__">blue</span></div>'
+        '<div><span class="chimay-leave chimay-leave-active" data-owl-key="__5__">blue</span></div>'
       );
       cb();
       expect(fixture.innerHTML).toBe(
-        '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__4__">blue</span></div>'
+        '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__5__">blue</span></div>'
       );
       def.resolve();
     });

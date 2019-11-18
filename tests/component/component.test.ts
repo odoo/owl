@@ -4271,6 +4271,31 @@ describe("t-model directive", () => {
     expect(comp.state.number).toBe("invalid");
     expect(fixture.innerHTML).toBe("<div><input><span>invalid</span></div>");
   });
+
+  test("in a t-foreach", async () => {
+    class SomeComponent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-foreach="state" t-as="thing" t-key="thing.id">
+            <input type="checkbox" t-model="thing.f"/>
+          </t>
+        </div>
+      `;
+      state = useState([{ f: false, id: 1 }, { f: false, id: 2 }, { f: false, id: 3 }]);
+    }
+    const comp = new SomeComponent();
+    await comp.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="checkbox"><input type="checkbox"><input type="checkbox"></div>'
+    );
+
+    const input = fixture.querySelectorAll("input")[1]!;
+    input.click();
+    expect(comp.state[1].f).toBe(true);
+    expect(comp.state[0].f).toBe(false);
+    expect(comp.state[2].f).toBe(false);
+    expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("environment and plugins", () => {

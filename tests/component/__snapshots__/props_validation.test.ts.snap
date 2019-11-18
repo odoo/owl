@@ -12,8 +12,8 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
-    let templateId3 = \`__4__\`;
-    let w3 = templateId3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[templateId3]] : false;
+    let k4 = \`__5__\`;
+    let w3 = k4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k4]] : false;
     let props3 = {message:1};
     if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
         w3.destroy();
@@ -28,9 +28,9 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
-        parent.__owl__.cmap[templateId3] = w3.__owl__.id;
+        parent.__owl__.cmap[k4] = w3.__owl__.id;
         let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
-        let pvnode = h('dummy', {key: templateId3, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});
+        let pvnode = h('dummy', {key: k4, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w3.destroy();}}});
         const fiber = w3.__owl__.currentFiber;
         def2.then(function () {if (fiber.isCompleted) {return;} const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         c1.push(pvnode);

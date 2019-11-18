@@ -253,10 +253,8 @@ export class Fiber {
     qweb.trigger("error", error);
 
     if (canCatch) {
-      setTimeout(() => {
-        console.error(error);
-        component.catchError!(error);
-      });
+      console.error(error);
+      component.catchError!(error);
     } else {
       // the 3 next lines aim to mark the root fiber as being in error, and
       // to force it to end, without waiting for its children

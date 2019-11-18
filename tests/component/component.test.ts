@@ -4376,8 +4376,6 @@ describe("component error handling (catchError)", () => {
     expect(fixture.innerHTML).toBe("<div><div><div>hey</div></div></div>");
     app.state.flag = true;
     await nextTick();
-    await nextTick();
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(1);
@@ -4412,8 +4410,6 @@ describe("component error handling (catchError)", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
     app.state.flag = true;
-    await nextTick();
-    await nextTick();
     await nextTick();
     expect(fixture.innerHTML).toBe("");
 
@@ -4452,9 +4448,6 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
-    await nextTick();
-    await nextTick();
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(1);
@@ -4496,9 +4489,6 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
-    await nextTick();
-    await nextTick();
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(1);
@@ -4535,9 +4525,6 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
-    await nextTick();
-    await nextTick();
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(1);

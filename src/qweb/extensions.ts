@@ -231,7 +231,17 @@ QWeb.addDirective({
     const type = node.getAttribute("type");
     let handler;
     let event = fullName.includes(".lazy") ? "change" : "input";
-    const expr = ctx.formatExpression(value);
+
+    // we keep here a reference to the "base expression" (if the expression
+    // is `t-model="some.expr.value", then the base expression is "some.expr").
+    // This is necessary so we can capture it in the handler closure.
+    let expr = ctx.formatExpression(value);
+    const index = expr.lastIndexOf(".");
+    const baseExpr = expr.slice(0, index);
+    ctx.addLine(`let expr${nodeID} = ${baseExpr};`);
+
+    expr = `expr${nodeID}.${expr.slice(index + 1)}`;
+    const key = ctx.generateTemplateKey();
     if (node.tagName === "select") {
       ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);
       addNodeHook("create", `n.elm.value=${expr};`);
@@ -255,10 +265,8 @@ QWeb.addDirective({
       }
       handler = `(ev) => {${expr} = ${valueCode}}`;
     }
-    ctx.addLine(
-      `extra.handlers['${event}' + ${nodeID}] = extra.handlers['${event}' + ${nodeID}] || (${handler});`
-    );
-    ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers['${event}' + ${nodeID}];`);
+    ctx.addLine(`extra.handlers[${key}] = extra.handlers[${key}] || (${handler});`);
+    ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers[${key}];`);
   }
 });
 

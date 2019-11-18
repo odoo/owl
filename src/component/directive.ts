@@ -229,19 +229,7 @@ QWeb.addDirective({
     let defID = ctx.generateID();
     let componentID = ctx.generateID();
 
-    let locationExpr = `\`__${ctx.generateID()}__`;
-    for (let i = 0; i < ctx.loopNumber - 1; i++) {
-      locationExpr += `\${i${i + 1}}__`;
-    }
-    if (ctx.lastNodeKey || ctx.currentKey) {
-      const k = ctx.lastNodeKey || ctx.currentKey;
-      ctx.addLine(`let templateId${componentID} = ${locationExpr}\` + ${k};`);
-    } else {
-      locationExpr += ctx.loopNumber ? `\${i${ctx.loopNumber}}__\`` : "`";
-      ctx.addLine(`let templateId${componentID} = ${locationExpr};`);
-    }
-    const templateId = `templateId${componentID}`;
-
+    const templateKey = ctx.generateTemplateKey();
     let ref = node.getAttribute("t-ref");
     let refExpr = "";
     let refKey: string = "";
@@ -334,7 +322,7 @@ QWeb.addDirective({
     }
 
     ctx.addLine(
-      `let w${componentID} = ${templateId} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateId}]] : false;`
+      `let w${componentID} = ${templateKey} in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[${templateKey}]] : false;`
     );
     let shouldProxy = !ctx.parentNode;
     if (shouldProxy) {
@@ -421,7 +409,7 @@ QWeb.addDirective({
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
-    ctx.addLine(`parent.__owl__.cmap[${templateId}] = w${componentID}.__owl__.id;`);
+    ctx.addLine(`parent.__owl__.cmap[${templateKey}] = w${componentID}.__owl__.id;`);
 
     if (hasSlots) {
       const clone = <Element>node.cloneNode(true);
@@ -451,7 +439,7 @@ QWeb.addDirective({
     ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     ctx.addLine(
-      `let pvnode = h('dummy', {key: ${templateId}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
+      `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(

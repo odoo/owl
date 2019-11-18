@@ -444,13 +444,9 @@ export class Component<T extends Env, Props extends {}> {
     }
     __owl__.isMounted = true;
     __owl__.currentFiber = null;
-    try {
-      this.mounted();
-      if (__owl__.mountedCB) {
-        __owl__.mountedCB();
-      }
-    } catch (e) {
-      console.error(e); // TODO : add a test
+    this.mounted();
+    if (__owl__.mountedCB) {
+      __owl__.mountedCB();
     }
   }
 

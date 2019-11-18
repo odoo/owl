@@ -196,16 +196,12 @@ export class Fiber {
     this._walk(doWork);
     let component: Component<any, any> = this.component;
     const patchLen = patchQueue.length;
-    try {
-      for (let i = 0; i < patchLen; i++) {
-        component = patchQueue[i].component;
-        if (component.__owl__.willPatchCB) {
-          component.__owl__.willPatchCB();
-        }
-        component.willPatch();
+    for (let i = 0; i < patchLen; i++) {
+      component = patchQueue[i].component;
+      if (component.__owl__.willPatchCB) {
+        component.__owl__.willPatchCB();
       }
-    } catch (e) {
-      console.error(e);
+      component.willPatch();
     }
     for (let i = 0; i < patchLen; i++) {
       const fiber = patchQueue[i];
@@ -213,16 +209,12 @@ export class Fiber {
       component.__patch(fiber.vnode);
       component.__owl__.currentFiber = null;
     }
-    try {
-      for (let i = patchLen - 1; i >= 0; i--) {
-        component = patchQueue[i].component;
-        component.patched();
-        if (component.__owl__.patchedCB) {
-          component.__owl__.patchedCB();
-        }
+    for (let i = patchLen - 1; i >= 0; i--) {
+      component = patchQueue[i].component;
+      component.patched();
+      if (component.__owl__.patchedCB) {
+        component.__owl__.patchedCB();
       }
-    } catch (e) {
-      console.error(e);
     }
   }
 

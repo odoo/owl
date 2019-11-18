@@ -4646,6 +4646,90 @@ describe("component error handling (catchError)", () => {
     console.error = consoleError;
   });
 
+  test("an error in mounted call will reject the mount promise", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn(() => {});
+
+    class App extends Component<any, any> {
+      static template = xml`<div>abc</div>`;
+      mounted() {
+        throw new Error("boom");
+      }
+    }
+
+    const app = new App();
+    let error;
+    try {
+      await app.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("boom");
+    expect(fixture.innerHTML).toBe("");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
+  test("an error in willPatch call will reject the render promise", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn(() => {});
+
+    class App extends Component<any, any> {
+      static template = xml`<div><t t-esc="val"/></div>`;
+      val = 3;
+      willPatch() {
+        throw new Error("boom");
+      }
+    }
+
+    const app = new App();
+    await app.mount(fixture);
+    app.val = 4;
+    let error;
+    try {
+      await app.render();
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("boom");
+    expect(fixture.innerHTML).toBe("");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
+  test("an error in patched call will reject the render promise", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn(() => {});
+
+    class App extends Component<any, any> {
+      static template = xml`<div><t t-esc="val"/></div>`;
+      val = 3;
+      patched() {
+        throw new Error("boom");
+      }
+    }
+
+    const app = new App();
+    await app.mount(fixture);
+    app.val = 4;
+    let error;
+    try {
+      await app.render();
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("boom");
+    expect(fixture.innerHTML).toBe("");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
   test("a rendering error in a sub component will reject the mount promise", async () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});

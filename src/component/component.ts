@@ -572,6 +572,7 @@ export class Component<T extends Env, Props extends {}> {
     if (__owl__.observer) {
       __owl__.observer.allowMutations = false;
     }
+    let error;
     try {
       let vnode = __owl__.renderFn!(this, {
         handlers: __owl__.boundHandlers,
@@ -582,7 +583,7 @@ export class Component<T extends Env, Props extends {}> {
       }
       fiber.vnode = vnode;
     } catch (e) {
-      fiber.handleError(e);
+      error = e;
     }
     if (__owl__.observer) {
       __owl__.observer.allowMutations = true;
@@ -597,6 +598,9 @@ export class Component<T extends Env, Props extends {}> {
     }
     fiber.root.counter--;
     fiber.isRendered = true;
+    if (error) {
+      fiber.handleError(error);
+    }
   }
 
   /**

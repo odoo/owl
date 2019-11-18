@@ -44,7 +44,8 @@ describe("tokenizer", () => {
       { type: "OPERATOR", value: "!=" }
     ]);
     expect(tokenize("typeof a")).toEqual([
-      {"type": "OPERATOR", "value": "typeof "}, {"type": "SYMBOL", "value": "a"}
+      { type: "OPERATOR", value: "typeof " },
+      { type: "SYMBOL", value: "a" }
     ]);
   });
 

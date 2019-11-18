@@ -164,7 +164,7 @@ const TOKENIZERS = [
   tokenizeNumber,
   tokenizeOperator,
   tokenizeSymbol,
-  tokenizeStatic,
+  tokenizeStatic
 ];
 
 /**

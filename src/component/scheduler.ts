@@ -59,7 +59,11 @@ export class Scheduler {
       }
       if (task.fiber.counter === 0) {
         if (!task.fiber.error) {
-          task.fiber.complete();
+          try {
+            task.fiber.complete();
+          } catch (e) {
+            task.fiber.handleError(e);
+          }
         }
         task.callback();
         return false;

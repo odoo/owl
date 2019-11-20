@@ -5052,6 +5052,8 @@ describe("unmounting and remounting", () => {
     await nextTick(); // wait for changes to be detected before remounting
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
+    // we want to make sure that there are no remaining tasks left at this point.
+    expect(Component.scheduler.tasks.length).toBe(0);
   });
 
   test("sub component is still active after being unmounted and remounted", async () => {

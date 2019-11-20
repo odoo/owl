@@ -2,7 +2,7 @@ import { Component } from "./component/component";
 import { scheduler } from "./component/scheduler";
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
-import { onWillUnmount } from "./hooks";
+
 /**
  * The `Context` object provides a way to share data between an arbitrary number
  * of component. Usually, data is passed from a parent to its children component,
@@ -138,9 +138,11 @@ export function useContextWithCB(ctx: Context, component: Component<any, any>, m
       await method();
     }
   });
-  onWillUnmount(() => {
+  const __destroy = component.__destroy;
+  component.__destroy = (parent) => {
     ctx.off("update", component);
     delete mapping[id];
-  });
+    __destroy.call(component, parent);
+  }
   return ctx.state;
 }

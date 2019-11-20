@@ -977,13 +977,12 @@ describe("destroy method", () => {
   });
 
   test("destroying a widget before being mounted (2)", async () => {
-    const def = makeDeferred();
     const steps: string[] = [];
     class Child extends Component<any, any> {
       static template = xml`<span></span>`;
       willStart() {
         steps.push("willStart");
-        return def;
+        return makeDeferred();
       }
       __destroy(parent) {
         steps.push("__destroy");
@@ -1002,12 +1001,6 @@ describe("destroy method", () => {
     parent.state.flag = false;
     await prom;
     expect(fixture.innerHTML).toBe("<div></div>");
-    // we can't easily detect that we have to destroy the component before
-    // willStart is resolved. However, willStart should have no side-effect
-    // (like dispatching an action), so it's probably fine
-    expect(steps).toEqual(["willStart"]);
-    def.resolve();
-    await nextTick();
     expect(steps).toEqual(["willStart", "__destroy"]);
   });
 });

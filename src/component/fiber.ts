@@ -16,6 +16,9 @@ import { scheduler } from "./scheduler";
  */
 
 export class Fiber {
+  static nextId: number = 1;
+  id: number = Fiber.nextId++;
+
   // The force attribute determines if a rendering should bypass the `shouldUpdate`
   // method potentially implemented by a component. It is usually set to false.
   force: boolean;
@@ -101,6 +104,7 @@ export class Fiber {
       oldFiber.child = null;
     }
     oldFiber.counter = 1; // re-initialize counter
+    oldFiber.id = Fiber.nextId++;
   }
 
   /**

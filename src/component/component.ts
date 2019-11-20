@@ -60,6 +60,9 @@ interface Internal<T extends Env, Props> {
   cmap: { [key: number]: number };
 
   currentFiber: Fiber | null;
+  // parentLastFiberId is there to help the parent component to detect, among
+  // its children, those that are not used anymore and thus can be destroyed
+  parentLastFiberId: number;
 
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
@@ -169,6 +172,7 @@ export class Component<T extends Env, Props extends {}> {
       children: {},
       cmap: {},
       currentFiber: null,
+      parentLastFiberId: 0,
       boundHandlers: {},
       mountedCB: null,
       willUnmountCB: null,
@@ -579,6 +583,16 @@ export class Component<T extends Env, Props extends {}> {
         handlers: __owl__.boundHandlers,
         fiber: fiber
       });
+      // we iterate over the children to detect those that no longer belong to the
+      // current rendering: those ones, if not mounted yet, can (and have to) be
+      // destroyed right now, because they are not in the DOM, and thus we won't
+      // be notified later on (when patching), that they are removed from the DOM
+      for (let childKey in __owl__.children) {
+        let child = __owl__.children[childKey];
+        if (!child.__owl__.isMounted && child.__owl__.parentLastFiberId < fiber.id) {
+          child.destroy();
+        }
+      }
       if (!vnode) {
         throw new Error(`Rendering '${this.constructor.name}' did not return anything`);
       }

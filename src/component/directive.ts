@@ -443,7 +443,7 @@ QWeb.addDirective({
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(
-      `def${defID}.then(function () { if (fiber.isCompleted) { w${componentID}.destroy(); return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
+      `def${defID}.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
     );
     if (registerCode) {
       ctx.addLine(registerCode);
@@ -459,6 +459,7 @@ QWeb.addDirective({
       ctx.addLine(`w${componentID}.__owl__.classObj=${classObj};`);
     }
 
+    ctx.addLine(`w${componentID}.__owl__.parentLastFiberId = extra.fiber.id;`);
     ctx.addLine(`sibling = w${componentID}.__owl__.currentFiber || sibling;`);
 
     return true;

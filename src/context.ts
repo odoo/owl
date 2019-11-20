@@ -139,10 +139,10 @@ export function useContextWithCB(ctx: Context, component: Component<any, any>, m
     }
   });
   const __destroy = component.__destroy;
-  component.__destroy = (parent) => {
+  component.__destroy = parent => {
     ctx.off("update", component);
     delete mapping[id];
     __destroy.call(component, parent);
-  }
+  };
   return ctx.state;
 }

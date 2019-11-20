@@ -1738,7 +1738,6 @@ describe("class and style attributes with t-component", () => {
     expect(error.message).toBe("Cannot read property 'crash' of undefined");
     expect(fixture.innerHTML).toBe("");
   });
-
 });
 
 describe("other directives with t-component", () => {
@@ -2422,6 +2421,43 @@ describe("random stuff/miscellaneous", () => {
     await widget.mount(fixture);
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+  });
+
+  test("t-foreach, mounted, modifying other state in mounted", async () => {
+    let activeWidget: Child | null = null;
+
+    class Child extends Component<any, any> {
+      static template = xml`<span t-esc="state.value"/>`;
+      state = useState({ value: 0 });
+
+      mounted() {
+        if (activeWidget) {
+          activeWidget.state.value = 0;
+        }
+        activeWidget = this;
+        this.state.value = 1;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-foreach="state" t-as="n" t-key="n_index">
+            <Child/>
+          </t>
+        </div>`;
+      static components = { Child };
+      state = useState([true]);
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    widget.state.push(true);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
   });
 });
 

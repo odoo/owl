@@ -193,6 +193,7 @@ export class Fiber {
     const patchQueue: Fiber[] = [];
     const doWork: (Fiber) => Fiber | null = function(f) {
       if (f.shouldPatch) {
+        f.component.__owl__.currentFiber = null;
         patchQueue.push(f);
         return f.child;
       }
@@ -211,7 +212,6 @@ export class Fiber {
       const fiber = patchQueue[i];
       component = fiber.component;
       component.__patch(fiber.vnode);
-      component.__owl__.currentFiber = null;
     }
     for (let i = patchLen - 1; i >= 0; i--) {
       component = patchQueue[i].component;

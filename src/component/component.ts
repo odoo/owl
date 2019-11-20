@@ -622,7 +622,7 @@ export class Component<T extends Env, Props extends {}> {
    * Only called by qweb t-component directive
    */
   __mount(fiber: Fiber, elm: HTMLElement): VNode {
-    if (fiber !== this.__owl__.currentFiber) {
+    if (fiber !== this.__owl__.currentFiber && this.__owl__.currentFiber) {
       fiber = this.__owl__.currentFiber!; // TODO: check if we can remove fiber arg
     }
     const vnode = fiber.vnode!;
@@ -631,7 +631,6 @@ export class Component<T extends Env, Props extends {}> {
       (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
     }
     __owl__.vnode = patch(elm, vnode);
-    __owl__.currentFiber = null;
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this.__callMounted();
     }

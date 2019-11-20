@@ -1718,6 +1718,27 @@ describe("class and style attributes with t-component", () => {
 
     expect(fixture.innerHTML).toBe(`<div><div style="font-size: 30px;"></div></div>`);
   });
+
+  test("error in subcomponent with class", async () => {
+    class Child extends Widget {
+      static template = xml`<div t-esc="this.will.crash"/>`;
+    }
+    class ParentWidget extends Widget {
+      static template = xml`<div><Child class="a"/></div>`;
+      static components = { Child };
+    }
+    const widget = new ParentWidget();
+    let error;
+    try {
+      await widget.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    expect(fixture.innerHTML).toBe("");
+  });
+
 });
 
 describe("other directives with t-component", () => {

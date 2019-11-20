@@ -597,6 +597,13 @@ export class Component<T extends Env, Props extends {}> {
         throw new Error(`Rendering '${this.constructor.name}' did not return anything`);
       }
       fiber.vnode = vnode;
+      // we apply here the class information described on the component by the
+      // template (so, something like <MyComponent class="..."/>) to the actual
+      // root vnode
+      if (__owl__.classObj) {
+        const data = vnode.data!;
+        data.class = Object.assign(data.class || {}, __owl__.classObj);
+      }
     } catch (e) {
       error = e;
     }
@@ -604,13 +611,6 @@ export class Component<T extends Env, Props extends {}> {
       __owl__.observer.allowMutations = true;
     }
 
-    // we apply here the class information described on the component by the
-    // template (so, something like <MyComponent class="..."/>) to the actual
-    // root vnode
-    if (__owl__.classObj) {
-      const data = fiber.vnode!.data!;
-      data.class = Object.assign(data.class || {}, __owl__.classObj);
-    }
     fiber.root.counter--;
     fiber.isRendered = true;
     if (error) {

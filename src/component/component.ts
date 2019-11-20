@@ -340,6 +340,7 @@ export class Component<T extends Env, Props extends {}> {
         // we were mounted when render was called, but we aren't anymore, so we
         // were actually about to be unmounted ; we can thus forget about this
         // fiber
+        fiber.isCompleted = true;
         __owl__.currentFiber = null;
       }
     });

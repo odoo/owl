@@ -106,7 +106,7 @@ describe("Context", () => {
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
-  test("two async components on two levels are updated in parallel", async () => {
+  test("two async components on two levels are updated (mostly) in parallel", async () => {
     const testContext = new Context({ value: 123 });
     const def = makeDeferred();
     const steps: string[] = [];
@@ -150,6 +150,11 @@ describe("Context", () => {
       "<div><span><p>123</p></span><div><span><p>123</p></span><span><p>123</p></span></div></div>"
     );
     def.resolve();
+    await nextTick();
+    // we need to wait for an extra tick because it could happen (even though it
+    // is rare) that the second batch of renderings is not done yet, because
+    // the initial promise has been given to the macrotask queue, so a small
+    // delay happens.
     await nextTick();
     expect(steps).toEqual(["render", "render", "render"]);
     expect(fixture.innerHTML).toBe(

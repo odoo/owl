@@ -255,6 +255,38 @@ describe("Context", () => {
     expect(testContext.subscriptions.update.length).toBe(0);
   });
 
+  test("destroyed component before being mounted is inactive", async () => {
+    const testContext = new Context({ a: 123 });
+    const def = makeDeferred();
+
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="contextObj.a"/></span>`;
+      contextObj = useContext(testContext);
+      willStart() {
+        return def;
+      }
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+
+    const parent = new Parent();
+    const prom = parent.mount(fixture);
+    await nextTick(); // wait for Child to be instantiated
+    expect(testContext.subscriptions.update.length).toBe(1);
+    parent.state.flag = false;
+    await prom;
+    expect(fixture.innerHTML).toBe("<div></div>");
+    def.resolve(); // must wait for willStart promise to be resolved
+    await nextTick();
+    // kind of whitebox...
+    // we make sure we do not have any pending subscriptions to the 'update'
+    // event
+    expect(testContext.subscriptions.update.length).toBe(0);
+  });
+
   test("concurrent renderings", async () => {
     const testContext = new Context({ x: { n: 1 }, key: "x" });
     const def = makeDeferred();

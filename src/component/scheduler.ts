@@ -26,6 +26,9 @@ export class Scheduler {
   }
 
   addFiber(fiber): Promise<void> {
+    // if the fiber was remapped into a larger rendering fiber, it may not be a
+    // root fiber.  But we only want to register root fibers
+    fiber = fiber.root;
     return new Promise((resolve, reject) => {
       if (fiber.error) {
         return reject(fiber.error);

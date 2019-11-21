@@ -27,9 +27,11 @@ exports[`animations t-transition combined with component 1`] = `
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
+        const __mount3 = w3.__mount;
+        w3.__mount = (fiber, elm) => {const vn = __mount3.call(w3, fiber, elm); utils.transitionInsert(vn, 'chimay'); return vn;};
         parent.__owl__.cmap[k4] = w3.__owl__.id;
         let def2 = w3.__prepare(extra.fiber, undefined, undefined);
-        let pvnode = h('dummy', {key: k4, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+        let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {const p=w3.__patch;w3.__patch=vn=>{p.call(w3,vn);utils.transitionInsert(vn, 'chimay');};let elm = pvnode.elm;pvnode.data.hook.insert = vn => {vn.elm.remove();vn.elm=elm};let finalize = () => {
           w3.destroy();
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});
@@ -71,9 +73,58 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
             if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
             w3 = new W3(parent, props3);
+            const __mount3 = w3.__mount;
+            w3.__mount = (fiber, elm) => {const vn = __mount3.call(w3, fiber, elm); utils.transitionInsert(vn, 'chimay'); return vn;};
             parent.__owl__.cmap[k4] = w3.__owl__.id;
             let def2 = w3.__prepare(extra.fiber, undefined, undefined);
-            let pvnode = h('dummy', {key: k4, hook: {insert(vn) { let nvn=w3.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+            let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {const p=w3.__patch;w3.__patch=vn=>{p.call(w3,vn);utils.transitionInsert(vn, 'chimay');};let elm = pvnode.elm;pvnode.data.hook.insert = vn => {vn.elm.remove();vn.elm=elm};let finalize = () => {
+          w3.destroy();
+        };
+        utils.transitionRemove(vn, 'chimay', finalize);}}});
+            const fiber = w3.__owl__.currentFiber;
+            def2.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            c1.push(pvnode);
+            w3.__owl__.pvnode = pvnode;
+        }
+        w3.__owl__.parentLastFiberId = extra.fiber.id;
+    }
+    return vn1;
+}"
+`;
+
+exports[`animations t-transition combined with t-component, remove and re-add before transitionend 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (context['state'].flag) {
+        //COMPONENT
+        let k4 = \`__5__\`;
+        let w3 = k4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k4]] : false;
+        let props3 = {};
+        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+            w3.destroy();
+            w3 = false;
+        }
+        if (w3) {
+            w3.__updateProps(props3, extra.fiber, undefined, undefined);
+            let pvnode = w3.__owl__.pvnode;
+            c1.push(pvnode);
+        } else {
+            let componentKey3 = \`Child\`;
+            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
+            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+            w3 = new W3(parent, props3);
+            const __mount3 = w3.__mount;
+            w3.__mount = (fiber, elm) => {const vn = __mount3.call(w3, fiber, elm); utils.transitionInsert(vn, 'chimay'); return vn;};
+            parent.__owl__.cmap[k4] = w3.__owl__.id;
+            let def2 = w3.__prepare(extra.fiber, undefined, undefined);
+            let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {const p=w3.__patch;w3.__patch=vn=>{p.call(w3,vn);utils.transitionInsert(vn, 'chimay');};let elm = pvnode.elm;pvnode.data.hook.insert = vn => {vn.elm.remove();vn.elm=elm};let finalize = () => {
           w3.destroy();
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});

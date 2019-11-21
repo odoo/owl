@@ -1,6 +1,7 @@
 import { Component, Env } from "../src/component/component";
 import { QWeb } from "../src/qweb/index";
 import { useState, useRef } from "../src/hooks";
+import { xml } from "../src/tags";
 import {
   makeDeferred,
   makeTestFixture,
@@ -252,11 +253,11 @@ describe("animations", () => {
     widget.state.display = false;
     patchNextFrame(cb => {
       expect(fixture.innerHTML).toBe(
-        '<div><span class="chimay-leave chimay-leave-active" data-owl-key="__5__">blue</span></div>'
+        "<div><span class=\"chimay-leave chimay-leave-active\" data-owl-key=\"__5__\">blue</span></div>"
       );
       cb();
       expect(fixture.innerHTML).toBe(
-        '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__5__">blue</span></div>'
+        "<div><span class=\"chimay-leave-active chimay-leave-to\" data-owl-key=\"__5__\">blue</span></div>"
       );
       def.resolve();
     });
@@ -321,30 +322,23 @@ describe("animations", () => {
   });
 
   test("t-transition combined with t-component, remove and re-add before transitionend", async () => {
-    expect.assertions(11);
+    expect.assertions(12);
 
-    env.qweb.addTemplates(
-      `<templates>
-        <div t-name="Parent">
-          <button t-on-click="toggle">Toggle</button>
-          <t t-if="state.flag" t-component="Child" t-transition="chimay"/>
-        </div>
-        <span t-name="Child">blue</span>
-      </templates>`
-    );
-    class Child extends Widget {}
+    class Child extends Widget {
+      static template = xml`<span>blue</span>`;
+    }
     class Parent extends Widget {
+      static template = xml`
+        <div t-name="Parent">
+          <t t-if="state.flag" t-component="Child" t-transition="chimay"/>
+        </div>`;
       static components = { Child };
       state = useState({ flag: false });
-
-      toggle() {
-        this.state.flag = !this.state.flag;
-      }
     }
 
     const widget = new Parent();
     await widget.mount(fixture);
-    let button = widget.el!.querySelector("button");
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
 
     let def = makeDeferred();
     let phase = "enter";
@@ -357,24 +351,25 @@ describe("animations", () => {
       def.resolve();
     });
 
-    // click display the span
-    button!.click();
+    // display the span
+    widget.state.flag = true;
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
+    expect(fixture.innerHTML).toBe('<div><span class="">blue</span></div>');
 
     // click to remove the span, and click again to re-add it before transitionend
     def = makeDeferred();
     phase = "leave";
-    button!.click();
+
+    widget.state.flag = false;
 
     await def; // wait for the mocked repaint to be done
     def = makeDeferred();
     phase = "enter";
-    button!.click();
+    widget.state.flag = true;
 
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
+    expect(fixture.innerHTML).toBe("<div><span class=\"\" data-owl-key=\"__5__\">blue</span></div>");
   });
 });

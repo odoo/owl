@@ -120,6 +120,7 @@ export class Fiber {
    */
   _remapFiber(oldFiber: Fiber) {
     oldFiber.cancel();
+    this.shouldPatch = oldFiber.shouldPatch;
     if (oldFiber === oldFiber.root) {
       oldFiber.counter++;
     }
@@ -178,54 +179,57 @@ export class Fiber {
    * are ready, and the scheduler decides to process it.
    */
   complete() {
-    const component = this.component;
-    if (this.target) {
-      component.__patch(this.vnode);
-      this.target.appendChild(component.el!);
-      if (document.body.contains(this.target)) {
-        component.__callMounted();
-      }
-    } else if (component.__owl__.isMounted && this === this.root) {
-      this.patchComponents();
-    }
+    let component = this.component;
     this.isCompleted = true;
-  }
-
-  /**
-   * Compute and apply the patch queue of the fiber.
-   *   1) Call 'willPatch' on the component of each patch
-   *   2) Call '__patch' on the component of each patch
-   *   3) Call 'patched' on the component of each patch, in reverse order
-   */
-  patchComponents() {
+    if (!this.target && !component.__owl__.isMounted) {
+      return;
+    }
     const patchQueue: Fiber[] = [];
     const doWork: (Fiber) => Fiber | null = function(f) {
-      if (f.shouldPatch) {
-        patchQueue.push(f);
-        return f.child;
-      }
+      patchQueue.push(f);
+      // f.component.__owl__.currentFiber = null;
+      return f.child;
     };
     this._walk(doWork);
-    let component: Component<any, any> = this.component;
     const patchLen = patchQueue.length;
     for (let i = 0; i < patchLen; i++) {
-      component = patchQueue[i].component;
-      if (component.__owl__.willPatchCB) {
-        component.__owl__.willPatchCB();
+      const fiber = patchQueue[i];
+      if (fiber.shouldPatch) {
+        component = fiber.component;
+        if (component.__owl__.willPatchCB) {
+          component.__owl__.willPatchCB();
+        }
+        component.willPatch();
       }
-      component.willPatch();
     }
     for (let i = 0; i < patchLen; i++) {
       const fiber = patchQueue[i];
       component = fiber.component;
-      component.__patch(fiber.vnode);
+      if (fiber.shouldPatch || (fiber.target && i === 0)) {
+        component.__patch(fiber.vnode);
+      } else {
+        let nvn = component.__mount(fiber, component.__owl__.pvnode!.elm as HTMLElement);
+        component.__owl__.pvnode!.elm = nvn.elm;
+      }
       component.__owl__.currentFiber = null;
     }
+    let inDOM = false;
+    if (this.target) {
+      this.target.appendChild(this.component.el!);
+      inDOM = document.body.contains(this.target);
+    }
     for (let i = patchLen - 1; i >= 0; i--) {
-      component = patchQueue[i].component;
-      component.patched();
-      if (component.__owl__.patchedCB) {
-        component.__owl__.patchedCB();
+      const fiber = patchQueue[i];
+      component = fiber.component;
+      if (fiber.shouldPatch && !this.target) {
+        component.patched();
+        if (component.__owl__.patchedCB) {
+          component.__owl__.patchedCB();
+        }
+      } else {
+        if (this.target ? inDOM : true) {
+          component.__callMounted();
+        }
       }
     }
   }

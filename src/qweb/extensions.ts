@@ -105,6 +105,8 @@ QWeb.utils.transitionInsert = function(vn: VNode, name: string) {
 
   elm.classList.add(name + "-enter");
   elm.classList.add(name + "-enter-active");
+  elm.classList.remove(name + "-leave-active");
+  elm.classList.remove(name + "-leave-to");
   const finalize = () => {
     elm.classList.remove(name + "-enter-active");
     elm.classList.remove(name + "-enter-to");
@@ -123,6 +125,9 @@ QWeb.utils.transitionRemove = function(vn: VNode, name: string, rm: () => void) 
   elm.classList.add(name + "-leave");
   elm.classList.add(name + "-leave-active");
   const finalize = () => {
+    if (!elm.classList.contains(name + '-leave-active')) {
+      return;
+    }
     elm.classList.remove(name + "-leave-active");
     elm.classList.remove(name + "-leave-to");
     rm();

@@ -2471,10 +2471,10 @@ describe("random stuff/miscellaneous", () => {
       "C:__patch(from __mount)",
       "D:__patch(from __mount)",
       "E:__patch(from __mount)",
-      "B:mounted",
-      "D:mounted",
       "E:mounted",
+      "D:mounted",
       "C:mounted",
+      "B:mounted",
       "A:mounted"
     ]);
 
@@ -2494,9 +2494,9 @@ describe("random stuff/miscellaneous", () => {
       "C:__patch",
       "E:willUnmount",
       "E:destroy",
+      "D:__patch",
       "F:__patch(from __mount)",
       "F:mounted",
-      "D:__patch",
       "D:patched",
       "C:patched"
     ]);
@@ -3597,6 +3597,43 @@ describe("async rendering", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>4</span></div>");
     expect(Parent.prototype.__render).toHaveBeenCalledTimes(3);
+  });
+
+  test("concurrent renderings scenario 13", async () => {
+    let lastChild;
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="state.val"/></span>`;
+      state = useState({ val: 0 });
+      mounted() {
+        if (lastChild) {
+          lastChild.state.val = 0;
+        }
+        lastChild = this;
+        this.state.val = 1;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <Child/>
+          <Child t-if="state.bool"/>
+        </div>`;
+      static components = { Child };
+      state = useState({ bool: false });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+    parent.state.bool = true;
+    await nextTick(); // wait for this change to be applied
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
   });
 
   test("change state and call manually render: no unnecessary rendering", async () => {
@@ -4752,7 +4789,7 @@ describe("component error handling (catchError)", () => {
     expect(handler).toBeCalledTimes(1);
   });
 
-  test("can catch an error in the initial call of a component render function", async () => {
+  test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
@@ -4781,6 +4818,45 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("can catch an error in the initial call of a component render function (parent updated)", async () => {
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    const consoleError = console.error;
+    console.error = jest.fn();
+    class ErrorComponent extends Component<any, any> {
+      static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
+    }
+    class ErrorBoundary extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-if="state.error">Error handled</t>
+          <t t-else="1"><t t-slot="default" /></t>
+        </div>`;
+      state = useState({ error: false });
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Component<any, any> {
+      static template = xml`
+        <div>
+            <ErrorBoundary t-if="state.flag"><ErrorComponent /></ErrorBoundary>
+        </div>`;
+      state = useState({ flag: false });
+      static components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App();
+    await app.mount(fixture);
+    app.state.flag = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(0);
@@ -5457,6 +5533,39 @@ describe("unmounting and remounting", () => {
     expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(3);
     expect(TestWidget.prototype.__patch).toHaveBeenCalledTimes(2);
     expect(steps).toEqual([2, 2, 3]);
+  });
+
+  test("change state while component is unmounted", async () => {
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml`<span t-esc="state.val"/>`;
+      state = useState({
+        val: "C1"
+      });
+      constructor(parent, props) {
+        super(parent, props);
+        child = this;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<div><t t-esc="state.val"/><Child/></div>`;
+      state = useState({ val: "P1" });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>P1<span>C1</span></div>");
+
+    parent.unmount();
+    expect(fixture.innerHTML).toBe("");
+
+    parent.state.val = "P2";
+    child.state.val = "C2";
+
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>P2<span>C2</span></div>");
   });
 });
 

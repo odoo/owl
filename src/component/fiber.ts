@@ -98,6 +98,7 @@ export class Fiber {
   _reuseFiber(oldFiber: Fiber) {
     oldFiber.cancel(); // cancel children fibers
     oldFiber.isCompleted = false; // keep the root fiber alive
+    oldFiber.isRendered = false; // the fiber has to be re-rendered
     if (oldFiber.child) {
       // remove relation to children
       oldFiber.child.parent = null;

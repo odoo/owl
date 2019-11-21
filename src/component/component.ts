@@ -292,6 +292,7 @@ export class Component<T extends Env, Props extends {}> {
       throw new Error(message);
     }
     const fiber = new Fiber(null, this, undefined, undefined, false, target);
+    fiber.shouldPatch = false
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber);
     } else {

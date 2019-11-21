@@ -178,15 +178,12 @@ export class Fiber {
     }
     if (this.target) {
       component.__patch(this.vnode);
-      this.target.appendChild(component.el!);
-      if (document.body.contains(this.target)) {
-        component.__callMounted();
-      }
     } else {
       const patchQueue: Fiber[] = [];
       const doWork: (Fiber) => Fiber | null = function(f) {
         if (f.shouldPatch) {
           patchQueue.push(f);
+          component.__owl__.currentFiber = null;
           return f.child;
         }
       };
@@ -211,6 +208,13 @@ export class Fiber {
         if (component.__owl__.patchedCB) {
           component.__owl__.patchedCB();
         }
+      }
+    }
+
+    if (this.target) {
+      this.target.appendChild(component.el!);
+      if (document.body.contains(this.target)) {
+        component.__callMounted();
       }
     }
   }

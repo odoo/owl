@@ -632,7 +632,6 @@ export class Component<T extends Env, Props extends {}> {
       (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
     }
     __owl__.vnode = patch(elm, vnode);
-    __owl__.currentFiber = null;
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this.__callMounted();
     }

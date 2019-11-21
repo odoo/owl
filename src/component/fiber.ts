@@ -173,13 +173,16 @@ export class Fiber {
   complete() {
     const component = this.component;
     this.isCompleted = true;
+    if (!this.target && !component.__owl__.isMounted) {
+      return;
+    }
     if (this.target) {
       component.__patch(this.vnode);
       this.target.appendChild(component.el!);
       if (document.body.contains(this.target)) {
         component.__callMounted();
       }
-    } else if (component.__owl__.isMounted) {
+    } else {
       const patchQueue: Fiber[] = [];
       const doWork: (Fiber) => Fiber | null = function(f) {
         if (f.shouldPatch) {

@@ -5314,6 +5314,39 @@ describe("unmounting and remounting", () => {
     expect(TestWidget.prototype.__patch).toHaveBeenCalledTimes(2);
     expect(steps).toEqual([2, 2, 3]);
   });
+
+  test("change state while component is unmounted", async () => {
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml`<span t-esc="state.val"/>`;
+      state = useState({
+        val: "C1"
+      });
+      constructor(parent, props) {
+        super(parent, props);
+        child = this;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<div t-debug="1"><t t-esc="state.val"/><Child/></div>`;
+      state = useState({ val: "P1" });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>P1<span>C1</span></div>");
+
+    parent.unmount();
+    expect(fixture.innerHTML).toBe("");
+
+    parent.state.val = 'P2';
+    child.state.val = 'C2';
+
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>P2<span>C2</span></div>");
+  });
 });
 
 describe("dynamic root nodes", () => {

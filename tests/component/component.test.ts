@@ -1738,7 +1738,6 @@ describe("class and style attributes with t-component", () => {
     expect(error.message).toBe("Cannot read property 'crash' of undefined");
     expect(fixture.innerHTML).toBe("");
   });
-
 });
 
 describe("other directives with t-component", () => {

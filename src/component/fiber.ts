@@ -179,48 +179,38 @@ export class Fiber {
         component.__callMounted();
       }
     } else if (component.__owl__.isMounted) {
-      this.patchComponents();
+      const patchQueue: Fiber[] = [];
+      const doWork: (Fiber) => Fiber | null = function(f) {
+        if (f.shouldPatch) {
+          patchQueue.push(f);
+          return f.child;
+        }
+      };
+      this._walk(doWork);
+      let component: Component<any, any> = this.component;
+      const patchLen = patchQueue.length;
+      for (let i = 0; i < patchLen; i++) {
+        component = patchQueue[i].component;
+        if (component.__owl__.willPatchCB) {
+          component.__owl__.willPatchCB();
+        }
+        component.willPatch();
+      }
+      for (let i = 0; i < patchLen; i++) {
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        component.__patch(fiber.vnode);
+        component.__owl__.currentFiber = null;
+      }
+      for (let i = patchLen - 1; i >= 0; i--) {
+        component = patchQueue[i].component;
+        component.patched();
+        if (component.__owl__.patchedCB) {
+          component.__owl__.patchedCB();
+        }
+      }
     }
     this.isCompleted = true;
-  }
-
-  /**
-   * Compute and apply the patch queue of the fiber.
-   *   1) Call 'willPatch' on the component of each patch
-   *   2) Call '__patch' on the component of each patch
-   *   3) Call 'patched' on the component of each patch, in reverse order
-   */
-  patchComponents() {
-    const patchQueue: Fiber[] = [];
-    const doWork: (Fiber) => Fiber | null = function(f) {
-      if (f.shouldPatch) {
-        patchQueue.push(f);
-        return f.child;
-      }
-    };
-    this._walk(doWork);
-    let component: Component<any, any> = this.component;
-    const patchLen = patchQueue.length;
-    for (let i = 0; i < patchLen; i++) {
-      component = patchQueue[i].component;
-      if (component.__owl__.willPatchCB) {
-        component.__owl__.willPatchCB();
-      }
-      component.willPatch();
-    }
-    for (let i = 0; i < patchLen; i++) {
-      const fiber = patchQueue[i];
-      component = fiber.component;
-      component.__patch(fiber.vnode);
-      component.__owl__.currentFiber = null;
-    }
-    for (let i = patchLen - 1; i >= 0; i--) {
-      component = patchQueue[i].component;
-      component.patched();
-      if (component.__owl__.patchedCB) {
-        component.__owl__.patchedCB();
-      }
-    }
   }
 
   /**

@@ -70,7 +70,7 @@ class WidgetA extends Widget {
 // Tests
 //------------------------------------------------------------------------------
 
-describe("basic widget properties", () => {
+describe.only("basic widget properties", () => {
   test("props is set on root components", async () => {
     const widget = new Widget(null, {});
     expect(widget.props).toEqual({});
@@ -269,7 +269,7 @@ describe("basic widget properties", () => {
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
   });
 
-  test("reconciliation alg is not confused in some specific situation", async () => {
+  test.only("reconciliation alg is not confused in some specific situation", async () => {
     // in this test, we set t-key to 4 because it was in conflict with the
     // template id corresponding to the first child.
     class Child extends Component<any, any> {

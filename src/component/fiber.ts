@@ -176,33 +176,40 @@ export class Fiber {
     if (!this.target && !component.__owl__.isMounted) {
       return;
     }
-    if (this.target) {
-      component.__patch(this.vnode);
-    } else {
-      const patchQueue: Fiber[] = [];
-      const doWork: (Fiber) => Fiber | null = function(f) {
-        if (f.shouldPatch) {
-          patchQueue.push(f);
-          component.__owl__.currentFiber = null;
-          return f.child;
-        }
-      };
-      this._walk(doWork);
-      const patchLen = patchQueue.length;
-      for (let i = 0; i < patchLen; i++) {
-        component = patchQueue[i].component;
+    const patchQueue: Fiber[] = [];
+    const doWork: (Fiber) => Fiber | null = function(f) {
+      patchQueue.push(f);
+      component.__owl__.currentFiber = null;
+      return f.child;
+    };
+    this._walk(doWork);
+    const patchLen = patchQueue.length;
+    for (let i = 0; i < patchLen; i++) {
+      const fiber = patchQueue[i];
+      if (fiber.shouldPatch) {
+        component = fiber.component;
         if (component.__owl__.willPatchCB) {
           component.__owl__.willPatchCB();
         }
         component.willPatch();
       }
-      for (let i = 0; i < patchLen; i++) {
-        const fiber = patchQueue[i];
-        component = fiber.component;
+    }
+    for (let i = 0; i < patchLen; i++) {
+      const fiber = patchQueue[i];
+      component = fiber.component;
+      if (fiber.shouldPatch || fiber.target) {
+        console.warn('patching', fiber.id)
         component.__patch(fiber.vnode);
-        component.__owl__.currentFiber = null;
+      } else {
+        console.warn('mounting', fiber.id,  component.__owl__.pvnode!.elm as HTMLElement)
+        let nvn = component.__mount(fiber, component.__owl__.pvnode!.elm as HTMLElement);
+        console.warn(nvn);
+        component.__owl__.pvnode!.elm = nvn.elm;
       }
-      for (let i = patchLen - 1; i >= 0; i--) {
+    }
+    for (let i = patchLen - 1; i >= 0; i--) {
+      const fiber = patchQueue[i];
+      if (fiber.shouldPatch) {
         component = patchQueue[i].component;
         component.patched();
         if (component.__owl__.patchedCB) {

@@ -438,8 +438,9 @@ QWeb.addDirective({
 
     ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
+    const insertHook = refExpr || transitionsInsertCode ? `insert(vn) {${refExpr}${transitionsInsertCode}},` : '';
     ctx.addLine(
-      `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
+      `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {},destroy(vn) {${finalizeComponentCode}}}});`
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(

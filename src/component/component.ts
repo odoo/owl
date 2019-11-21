@@ -292,6 +292,7 @@ export class Component<T extends Env, Props extends {}> {
       throw new Error(message);
     }
     const fiber = new Fiber(null, this, undefined, undefined, false, target);
+    fiber.shouldPatch = false;
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber);
     } else {
@@ -449,7 +450,7 @@ export class Component<T extends Env, Props extends {}> {
       }
     }
     __owl__.isMounted = true;
-    __owl__.currentFiber = null;
+    // __owl__.currentFiber = null;
     this.mounted();
     if (__owl__.mountedCB) {
       __owl__.mountedCB();
@@ -619,20 +620,26 @@ export class Component<T extends Env, Props extends {}> {
     }
   }
 
+  // __patch(vnode) {
+  //   const __owl__ = this.__owl__;
+  //   const target = __owl__.vnode || document.createElement(vnode.sel!);
+  //   __owl__.vnode = patch(target, vnode);
+  // }
+
   /**
    * Only called by qweb t-component directive
    */
   __mount(fiber: Fiber, elm: HTMLElement): VNode {
-    if (fiber !== this.__owl__.currentFiber) {
-      fiber = this.__owl__.currentFiber!; // TODO: check if we can remove fiber arg
-    }
+    // if (fiber !== this.__owl__.currentFiber) {
+    //   fiber = this.__owl__.currentFiber!; // TODO: check if we can remove fiber arg
+    // }
     const vnode = fiber.vnode!;
     const __owl__ = this.__owl__;
     if (__owl__.classObj) {
       (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
     }
     __owl__.vnode = patch(elm, vnode);
-    __owl__.currentFiber = null;
+    // __owl__.currentFiber = null;
     if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
       this.__callMounted();
     }

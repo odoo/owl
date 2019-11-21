@@ -85,6 +85,7 @@ export class Fiber {
     this.root.counter++;
 
     component.__owl__.currentFiber = this;
+    console.warn(this)
   }
 
   /**
@@ -171,46 +172,57 @@ export class Fiber {
    * are ready, and the scheduler decides to process it.
    */
   complete() {
+    // console.warn(this);
     let component = this.component;
     this.isCompleted = true;
     if (!this.target && !component.__owl__.isMounted) {
       return;
     }
-    if (this.target) {
-      component.__patch(this.vnode);
-      this.target.appendChild(component.el!);
-      if (document.body.contains(this.target)) {
-        component.__callMounted();
-      }
-    } else {
-      const patchQueue: Fiber[] = [];
-      const doWork: (Fiber) => Fiber | null = function(f) {
-        if (f.shouldPatch) {
-          patchQueue.push(f);
-          return f.child;
-        }
-      };
-      this._walk(doWork);
-      const patchLen = patchQueue.length;
-      for (let i = 0; i < patchLen; i++) {
-        component = patchQueue[i].component;
+    // let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;
+    const patchQueue: Fiber[] = [];
+    const doWork: (Fiber) => Fiber | null = function(f) {
+      patchQueue.push(f);
+      component.__owl__.currentFiber = null;
+      return f.child;
+    };
+    this._walk(doWork);
+    const patchLen = patchQueue.length;
+    for (let i = 0; i < patchLen; i++) {
+      const fiber = patchQueue[i];
+      if (fiber.shouldPatch) {
+        component = fiber.component;
         if (component.__owl__.willPatchCB) {
           component.__owl__.willPatchCB();
         }
         component.willPatch();
       }
-      for (let i = 0; i < patchLen; i++) {
-        const fiber = patchQueue[i];
-        component = fiber.component;
+    }
+    for (let i = 0; i < patchLen; i++) {
+      const fiber = patchQueue[i];
+      component = fiber.component;
+      if (fiber.shouldPatch || fiber.target) {
+        console.warn('patching', fiber.id)
         component.__patch(fiber.vnode);
-        component.__owl__.currentFiber = null;
+      } else {
+        console.warn('mounting', fiber.id,  component.__owl__.pvnode!.elm as HTMLElement)
+        component.__mount(fiber, component.__owl__.pvnode!.elm as HTMLElement);
+        // component.__owl__.pvnode!.elm = nvn.elm;
       }
-      for (let i = patchLen - 1; i >= 0; i--) {
+    }
+    for (let i = patchLen - 1; i >= 0; i--) {
+      const fiber = patchQueue[i];
+      if (fiber.shouldPatch) {
         component = patchQueue[i].component;
         component.patched();
         if (component.__owl__.patchedCB) {
           component.__owl__.patchedCB();
         }
+      }
+    }
+    if (this.target) {
+      this.target.appendChild(component.el!);
+      if (document.body.contains(this.target)) {
+        component.__callMounted();
       }
     }
   }

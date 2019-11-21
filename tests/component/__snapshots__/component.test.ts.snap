@@ -59,7 +59,7 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
                 w9 = new W9(parent, props9);
                 parent.__owl__.cmap[k10] = w9.__owl__.id;
                 let def8 = w9.__prepare(extra.fiber, undefined, undefined, sibling);
-                let pvnode = h('dummy', {key: k10, hook: {insert(vn) { let nvn=w9.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w9.destroy();}}});
+                let pvnode = h('dummy', {key: k10, hook: {insert(vn) {},remove() {},destroy(vn) {w9.destroy();}}});
                 const fiber = w9.__owl__.currentFiber;
                 def8.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
                 c1.push(pvnode);

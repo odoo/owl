@@ -171,7 +171,7 @@ export class Fiber {
    * are ready, and the scheduler decides to process it.
    */
   complete() {
-    const component = this.component;
+    let component = this.component;
     this.isCompleted = true;
     if (!this.target && !component.__owl__.isMounted) {
       return;
@@ -191,7 +191,6 @@ export class Fiber {
         }
       };
       this._walk(doWork);
-      let component: Component<any, any> = this.component;
       const patchLen = patchQueue.length;
       for (let i = 0; i < patchLen; i++) {
         component = patchQueue[i].component;

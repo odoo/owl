@@ -1,4 +1,5 @@
 import { Observer } from "../core/observer";
+import { OwlEvent } from "../core/owl_event";
 import { CompiledTemplate, QWeb } from "../qweb/index";
 import { patch, VNode } from "../vdom/index";
 import "./directive";
@@ -388,7 +389,7 @@ export class Component<T extends Env, Props extends {}> {
    */
   trigger(eventType: string, payload?: any) {
     if (this.el) {
-      const ev = new CustomEvent(eventType, {
+      const ev = new OwlEvent(this, eventType, {
         bubbles: true,
         cancelable: true,
         detail: payload

@@ -702,7 +702,8 @@ describe("t-call (template calling", () => {
             </div>
         </templates>
     `);
-    const expected = "<div><div><div><div><span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span></div></div></div></div>";
+    const expected =
+      "<div><div><div><div><span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span></div></div></div></div>";
     expect(renderToString(qweb, "main")).toBe(expected);
   });
 

@@ -781,15 +781,14 @@ component (with some code like `app.mount(document.body)`).
           1. `willStart` is called on `E`
           2. template `E` is rendered
 
-3. component `A` is patched into a detached DOM element. This will create the actual
-   component `A` DOM structure. The patching process will cause recursively the
-   patching of the `B`, `C`, `D` and `E` DOM trees. (so the actual full DOM tree is created
+3. each components are patched into a detached DOM element, in the following order:
+   `E`, `D`, `C`, `B`, `A`. (so the actual full DOM tree is created
    in one pass)
 
 4. the component `A` root element is actually appended to `document.body`
 
 5. The method `mounted` is called recursively on all components in the following
-   order: `B`, `D`, `E`, `C`, `A`.
+   order: `E`, `D`, `C`, `B`, `A`.
 
 **Scenario 2: rerendering a component**. Now, let's assume that the user clicked on some
 button in `C`, and this results in a state update, which is supposed to:
@@ -823,14 +822,14 @@ Here is what Owl will do:
 3. `willPatch` hooks are called recursively on components `C`, `D` (not on `F`,
    because it is not mounted yet)
 
-4. component `C` is patched, which will cause recursively:
+4. components `F`, `D` are patched in that order
 
-   2. `willUnmount` hook on `E`, then destruction of `E`,
-   3. (initial) patching of `F`, then hook `mounted` is called on `F`
+5. component `C` is patched, which will cause recursively:
 
-5. patching of `D`
+   1. `willUnmount` hook on `E`
+   2. destruction of `E`,
 
-6. `patched` hooks are called on `D`, `C`
+6. `mounted` hook is called on `F`, `patched` hooks are called on `D`, `C`
 
 ### Props Validation
 

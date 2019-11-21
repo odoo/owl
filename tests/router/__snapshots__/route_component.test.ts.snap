@@ -32,7 +32,7 @@ exports[`RouteComponent can render simple cases 1`] = `
             w8 = new W8(parent, props8);
             parent.__owl__.cmap[k9] = w8.__owl__.id;
             let def7 = w8.__prepare(extra.fiber, undefined, undefined);
-            let pvnode = h('dummy', {key: k9, hook: {insert(vn) { let nvn=w8.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});
+            let pvnode = h('dummy', {key: k9, hook: {remove() {},destroy(vn) {w8.destroy();}}});
             const fiber = w8.__owl__.currentFiber;
             def7.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             utils.defineProxy(vn11, pvnode);

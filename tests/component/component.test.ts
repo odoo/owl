@@ -1513,6 +1513,25 @@ describe("composition", () => {
       "<div><span>11</span><span>2</span><span>13</span></div>"
     );
   });
+
+  test("three level of components with collapsing root nodes", async () => {
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div>2</div>`;
+    }
+    class Child extends Component<any, any> {
+      static components = { GrandChild };
+      static template = xml`<GrandChild/>`;
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<Child></Child>`;
+    }
+
+    const app = new Parent();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+  });
 });
 
 describe("props evaluation ", () => {
@@ -2136,6 +2155,40 @@ describe("other directives with t-component", () => {
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
   });
 
+  test("t-on on nested components with collapsing root nodes", async () => {
+    const steps: string[] = [];
+    let grandChild;
+    class GrandChild extends Component<any, any> {
+      static template = xml`<span t-on-ev="_onEv"/>`;
+      constructor() {
+        super(...arguments);
+        grandChild = this;
+      }
+      _onEv() {
+        steps.push('GrandChild');
+      }
+    }
+    class Child extends Component<any, any> {
+      static template = xml`<GrandChild t-on-ev="_onEv"/>`;
+      static components = { GrandChild };
+      _onEv() {
+        steps.push('Child');
+      }
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<Child t-on-ev="_onEv"/>`;
+      static components = { Child };
+      _onEv() {
+        steps.push('Parent');
+      }
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    grandChild.trigger("ev");
+    expect(steps).toEqual(['GrandChild', 'Child', 'Parent']);
+  });
+
   test("t-if works with t-component", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" t-if="state.flag"/></div>`);
     class Child extends Widget {}
@@ -2244,9 +2297,9 @@ describe("other directives with t-component", () => {
           <t t-esc="state.val"/>
           <t t-esc="props.val"/>
         </span>`;
-      state = useState({ val: 'A' });
+      state = useState({ val: "A" });
       mounted() {
-        this.state.val = 'B';
+        this.state.val = "B";
       }
     }
     class ParentWidget extends Widget {
@@ -2366,10 +2419,6 @@ describe("random stuff/miscellaneous", () => {
         steps.push(`${this.name}:__patch`);
         super.__patch(vnode);
       }
-      __mount(vnode, elm) {
-        steps.push(`${this.name}:__patch(from __mount)`);
-        return super.__mount(vnode, elm);
-      }
       mounted() {
         steps.push(`${this.name}:mounted`);
       }
@@ -2466,15 +2515,15 @@ describe("random stuff/miscellaneous", () => {
       "E:willStart",
       "D:render",
       "E:render",
+      "E:__patch",
+      "D:__patch",
+      "C:__patch",
+      "B:__patch",
       "A:__patch",
-      "B:__patch(from __mount)",
-      "C:__patch(from __mount)",
-      "D:__patch(from __mount)",
-      "E:__patch(from __mount)",
-      "B:mounted",
-      "D:mounted",
       "E:mounted",
+      "D:mounted",
       "C:mounted",
+      "B:mounted",
       "A:mounted"
     ]);
 
@@ -2491,12 +2540,12 @@ describe("random stuff/miscellaneous", () => {
       "F:render",
       "C:willPatch",
       "D:willPatch",
+      "F:__patch",
+      "D:__patch",
       "C:__patch",
       "E:willUnmount",
       "E:destroy",
-      "F:__patch(from __mount)",
       "F:mounted",
-      "D:__patch",
       "D:patched",
       "C:patched"
     ]);
@@ -3599,6 +3648,43 @@ describe("async rendering", () => {
     expect(Parent.prototype.__render).toHaveBeenCalledTimes(3);
   });
 
+  test("concurrent renderings scenario 13", async () => {
+    let lastChild;
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="state.val"/></span>`;
+      state = useState({ val: 0 });
+      mounted() {
+        if (lastChild) {
+          lastChild.state.val = 0;
+        }
+        lastChild = this;
+        this.state.val = 1;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <Child/>
+          <Child t-if="state.bool"/>
+        </div>`;
+      static components = { Child };
+      state = useState({ bool: false });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+    parent.state.bool = true;
+    await nextTick(); // wait for this change to be applied
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
+  });
+
   test("change state and call manually render: no unnecessary rendering", async () => {
     class Widget extends Component<any, any> {
       static template = xml`<div><t t-esc="state.val"/></div>`;
@@ -4240,9 +4326,9 @@ describe("t-slot directive", () => {
   test("slots in t-foreach and re-rendering", async () => {
     class Child extends Widget {
       static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
-      state = useState({ val: 'A' });
+      state = useState({ val: "A" });
       mounted() {
-        this.state.val = 'B';
+        this.state.val = "B";
       }
     }
     class Parent extends Widget {
@@ -4269,9 +4355,9 @@ describe("t-slot directive", () => {
           <t t-esc="state.val"/>
           <t t-slot="default"/>
         </span>`;
-      state = useState({ val: 'A' });
+      state = useState({ val: "A" });
       mounted() {
-        this.state.val = 'B';
+        this.state.val = "B";
       }
     }
     class ParentWidget extends Widget {
@@ -4752,7 +4838,7 @@ describe("component error handling (catchError)", () => {
     expect(handler).toBeCalledTimes(1);
   });
 
-  test("can catch an error in the initial call of a component render function", async () => {
+  test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
@@ -4781,6 +4867,45 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("can catch an error in the initial call of a component render function (parent updated)", async () => {
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    const consoleError = console.error;
+    console.error = jest.fn();
+    class ErrorComponent extends Component<any, any> {
+      static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
+    }
+    class ErrorBoundary extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-if="state.error">Error handled</t>
+          <t t-else="1"><t t-slot="default" /></t>
+        </div>`;
+      state = useState({ error: false });
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Component<any, any> {
+      static template = xml`
+        <div>
+            <ErrorBoundary t-if="state.flag"><ErrorComponent /></ErrorBoundary>
+        </div>`;
+      state = useState({ flag: false });
+      static components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App();
+    await app.mount(fixture);
+    app.state.flag = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(0);
@@ -5457,6 +5582,73 @@ describe("unmounting and remounting", () => {
     expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(3);
     expect(TestWidget.prototype.__patch).toHaveBeenCalledTimes(2);
     expect(steps).toEqual([2, 2, 3]);
+  });
+
+  test("change state while component is unmounted", async () => {
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml`<span t-esc="state.val"/>`;
+      state = useState({
+        val: "C1"
+      });
+      constructor(parent, props) {
+        super(parent, props);
+        child = this;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<div><t t-esc="state.val"/><Child/></div>`;
+      state = useState({ val: "P1" });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>P1<span>C1</span></div>");
+
+    parent.unmount();
+    expect(fixture.innerHTML).toBe("");
+
+    parent.state.val = "P2";
+    child.state.val = "C2";
+
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>P2<span>C2</span></div>");
+  });
+
+  test("unmount component during a re-rendering", async () => {
+    const def = makeDeferred();
+    class Child extends Widget {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+      willUpdateProps() {
+        return def;
+      }
+    }
+    Child.prototype.__render = jest.fn(Child.prototype.__render);
+
+    class Parent extends Widget {
+      static template = xml`<div><Child val="state.val"/></div>`;
+      static components = { Child };
+      state = useState({ val: 1 });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    expect(Child.prototype.__render).toBeCalledTimes(1);
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+    parent.unmount();
+    expect(fixture.innerHTML).toBe("");
+
+    def.resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+    expect(Child.prototype.__render).toBeCalledTimes(1);
   });
 });
 

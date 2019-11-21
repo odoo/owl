@@ -176,10 +176,12 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       }
       vnode.elm = api.createComment(vnode.text as string);
     } else if (sel !== undefined) {
-      const elm = (vnode.elm =
-        isDef(data) && isDef((i = (data as VNodeData).ns))
-          ? api.createElementNS(i, sel)
-          : api.createElement(sel));
+      const elm =
+        vnode.elm ||
+        (vnode.elm =
+          isDef(data) && isDef((i = (data as VNodeData).ns))
+            ? api.createElementNS(i, sel)
+            : api.createElement(sel));
       for (i = 0, iLen = cbs.create.length; i < iLen; ++i) cbs.create[i](emptyNode, vnode);
       if (array(children)) {
         for (i = 0, iLen = children.length; i < iLen; ++i) {

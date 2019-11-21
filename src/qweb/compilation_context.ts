@@ -131,7 +131,7 @@ export class CompilationContext {
   subContext(key: keyof CompilationContext, value: any): CompilationContext {
     const newContext = Object.create(this);
     newContext[key] = value;
-    if (key === 'caller') {
+    if (key === "caller") {
       newContext.callingLevel++;
       newContext.inliningLevel++;
     }
@@ -191,7 +191,7 @@ export class CompilationContext {
    * in which we are for inlining archs (t-raw="0")
    */
   getInliningContext(): CompilationContext {
-    return this.subContext('inliningLevel', this.inliningLevel - 1);
+    return this.subContext("inliningLevel", this.inliningLevel - 1);
   }
 
   getValue(val: any): QWebVar | string {

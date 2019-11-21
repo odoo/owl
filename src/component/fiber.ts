@@ -178,7 +178,7 @@ export class Fiber {
       if (document.body.contains(this.target)) {
         component.__callMounted();
       }
-    } else if (component.__owl__.isMounted && this === this.root) {
+    } else if (component.__owl__.isMounted) {
       this.patchComponents();
     }
     this.isCompleted = true;

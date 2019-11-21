@@ -1068,6 +1068,8 @@ class App extends Component<any, any, any> {
 In this example, the component `App` selects dynamically the concrete sub
 component class.
 
+Note that the `t-component` directive can only be used on `<t>` nodes.
+
 ### Asynchronous Rendering
 
 Working with asynchronous code always adds a lot of complexity to a system. Whenever

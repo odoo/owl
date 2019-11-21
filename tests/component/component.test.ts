@@ -1414,6 +1414,25 @@ describe("composition", () => {
     expect(env.qweb.templates.ParentWidget.fn.toString()).toMatchSnapshot();
   });
 
+  test("t-component not on a <t> node", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span>1</span>`;
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<div><div t-component="Child"/></div>`;
+    }
+    const parent = new Parent();
+    let error;
+    try {
+      await parent.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Directive 't-component' can only be used on <t> nodes (used on a <div>)`);
+  });
+
   test("sub components, loops, and shouldUpdate", async () => {
     class ChildWidget extends Component<any, any> {
       static template = xml`<span><t t-esc="props.val"/></span>`;

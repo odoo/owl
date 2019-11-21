@@ -239,10 +239,6 @@ QWeb.addDirective({
       ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
       refExpr = `context.__owl__.refs[${refKey}] = w${componentID};`;
     }
-    let transitionsInsertCode = "";
-    if (transition) {
-      transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
-    }
     let finalizeComponentCode = `w${componentID}.destroy();`;
     if (ref) {
       finalizeComponentCode += `delete context.__owl__.refs[${refKey}];`;
@@ -251,6 +247,7 @@ QWeb.addDirective({
       finalizeComponentCode = `let finalize = () => {
           ${finalizeComponentCode}
         };
+        delete w${componentID}.__owl__.transitionInserted;
         utils.transitionRemove(vn, '${transition}', finalize);`;
     }
 
@@ -409,6 +406,12 @@ QWeb.addDirective({
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
+    if (transition) {
+      ctx.addLine(`const __patch${componentID} = w${componentID}.__patch;`);
+      ctx.addLine(
+        `w${componentID}.__patch = fiber => {__patch${componentID}.call(w${componentID}, fiber); if(!w${componentID}.__owl__.transitionInserted){w${componentID}.__owl__.transitionInserted = true;utils.transitionInsert(w${componentID}.__owl__.vnode, '${transition}');}};`
+      );
+    }
     ctx.addLine(`parent.__owl__.cmap[${templateKey}] = w${componentID}.__owl__.id;`);
 
     if (hasSlots) {
@@ -438,8 +441,9 @@ QWeb.addDirective({
 
     ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
+    const insertHook = refExpr ? `insert(vn) {${refExpr}},` : "";
     ctx.addLine(
-      `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
+      `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {},destroy(vn) {${finalizeComponentCode}}}});`
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(

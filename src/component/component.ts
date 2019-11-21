@@ -295,13 +295,12 @@ export class Component<T extends Env, Props extends {}> {
       return Promise.resolve();
     }
     if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
-      let message = `Component '${
-        this.constructor.name
-      }' cannot be mounted: the target is not a valid DOM node.`;
+      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
     const fiber = new Fiber(null, this, false, target);
+    fiber.shouldPatch = false;
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber);
     } else {
@@ -451,13 +450,7 @@ export class Component<T extends Env, Props extends {}> {
 
   __callMounted() {
     const __owl__ = this.__owl__;
-    const children = __owl__.children;
-    for (let id in children) {
-      const comp = children[id];
-      if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
-        comp.__callMounted();
-      }
-    }
+
     __owl__.isMounted = true;
     __owl__.currentFiber = null;
     this.mounted();
@@ -473,6 +466,10 @@ export class Component<T extends Env, Props extends {}> {
     }
     this.willUnmount();
     __owl__.isMounted = false;
+    if (this.__owl__.currentFiber) {
+      this.__owl__.currentFiber.isCompleted = true;
+      this.__owl__.currentFiber.root.counter = 0;
+    }
     const children = __owl__.children;
     for (let id in children) {
       const comp = children[id];
@@ -524,7 +521,7 @@ export class Component<T extends Env, Props extends {}> {
    * Main patching method. We call the virtual dom patch method here to convert
    * a virtual dom vnode into some actual dom.
    */
-  __patch(vnode) {
+  __patch(vnode: VNode) {
     const __owl__ = this.__owl__;
     const target = __owl__.vnode || document.createElement(vnode.sel!);
     __owl__.vnode = patch(target, vnode);
@@ -627,26 +624,6 @@ export class Component<T extends Env, Props extends {}> {
     if (error) {
       fiber.handleError(error);
     }
-  }
-
-  /**
-   * Only called by qweb t-component directive
-   */
-  __mount(fiber: Fiber, elm: HTMLElement): VNode {
-    if (fiber !== this.__owl__.currentFiber) {
-      fiber = this.__owl__.currentFiber!; // TODO: check if we can remove fiber arg
-    }
-    const vnode = fiber.vnode!;
-    const __owl__ = this.__owl__;
-    if (__owl__.classObj) {
-      (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
-    }
-    __owl__.vnode = patch(elm, vnode);
-    __owl__.currentFiber = null;
-    if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
-      this.__callMounted();
-    }
-    return __owl__.vnode;
   }
 
   /**

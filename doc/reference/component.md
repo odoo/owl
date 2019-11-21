@@ -567,11 +567,13 @@ A _business_ DOM event is triggered by a call to `trigger` on a component.
  }
 ```
 
-The call to `trigger` generates a [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
-of type `menu-loaded` and dispatches it on the component's DOM element
-(`this.el`). The event bubbles and is cancelable. The parent component listening
-to event `menu-loaded` will receive the payload in its `someMethod` handler
-(in the `detail` property of the event), whenever the event is triggered.
+The call to `trigger` generates an `OwlEvent`, a subclass of [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
+with an additional attribute `originalComponent` (the component that triggered
+the event). The generated event is of type `menu-loaded` and dispatches it on
+the component's DOM element (`this.el`). The event bubbles and is cancelable.
+The parent component listening to event `menu-loaded` will receive the payload
+in its `someMethod` handler (in the `detail` property of the event), whenever
+the event is triggered.
 
 ```js
  class ParentComponent {

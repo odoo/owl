@@ -4537,7 +4537,7 @@ describe("component error handling (catchError)", () => {
     expect(handler).toBeCalledTimes(1);
   });
 
-  test("can catch an error in the initial call of a component render function", async () => {
+  test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
@@ -4566,6 +4566,45 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+    expect(handler).toBeCalledTimes(1);
+  });
+
+  test("can catch an error in the initial call of a component render function (parent updated)", async () => {
+    const handler = jest.fn();
+    env.qweb.on("error", null, handler);
+    const consoleError = console.error;
+    console.error = jest.fn();
+    class ErrorComponent extends Component<any, any> {
+      static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
+    }
+    class ErrorBoundary extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-if="state.error">Error handled</t>
+          <t t-else="1"><t t-slot="default" /></t>
+        </div>`;
+      state = useState({ error: false });
+
+      catchError() {
+        this.state.error = true;
+      }
+    }
+    class App extends Component<any, any> {
+      static template = xml`
+        <div>
+            <ErrorBoundary t-if="state.flag"><ErrorComponent /></ErrorBoundary>
+        </div>`;
+      state = useState({flag: false});
+      static components = { ErrorBoundary, ErrorComponent };
+    }
+    const app = new App();
+    await app.mount(fixture);
+    app.state.flag = true;
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
 
     expect(console.error).toBeCalledTimes(0);

@@ -460,6 +460,8 @@ export class QWeb extends EventBus {
       // this is a component, we modify in place the xml document to change
       // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
       node.setAttribute("t-component", node.tagName);
+    } else if (node.tagName !== 't' && node.hasAttribute('t-component')) {
+      throw new Error(`Directive 't-component' can only be used on <t> nodes (used on a <${node.tagName}>)`);
     }
     const attributes = (<Element>node).attributes;
 

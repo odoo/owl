@@ -120,20 +120,34 @@ async function makeApp(js, css, xml) {
     .join("\n");
 
   const JS = `
-async function loadTemplates() {
-  try {
-    return owl.utils.loadFile('app.xml');
-  } catch(e) {
-    console.error(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
-  }
-}
-
-function start([TEMPLATES]) {
-  // Application code
+/**
+ * This is the javascript code defined in the playground.
+ * In a larger application, this code should probably be moved in different
+ * sub files.
+ */
+function app() {
 ${processedJS}
 }
 
-Promise.all([loadTemplates(), owl.utils.whenReady()]).then(start);
+/**
+ * Initialization code
+ * This code load templates, and make sure everything is properly connected.
+ */
+async function start() {
+  let templates;
+  try {
+    templates = await owl.utils.loadFile('app.xml');
+  } catch(e) {
+    console.error(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
+    return;
+  }
+  const env = { qweb: new owl.QWeb({templates})};
+  owl.Component.env = env;
+  await owl.utils.whenReady();
+  app();
+}
+
+start();
 `;
 
   zip.file("app.js", JS);

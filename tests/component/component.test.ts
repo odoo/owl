@@ -1430,7 +1430,9 @@ describe("composition", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Directive 't-component' can only be used on <t> nodes (used on a <div>)`);
+    expect(error.message).toBe(
+      `Directive 't-component' can only be used on <t> nodes (used on a <div>)`
+    );
   });
 
   test("sub components, loops, and shouldUpdate", async () => {
@@ -1757,7 +1759,6 @@ describe("class and style attributes with t-component", () => {
     expect(error.message).toBe("Cannot read property 'crash' of undefined");
     expect(fixture.innerHTML).toBe("");
   });
-
 });
 
 describe("other directives with t-component", () => {

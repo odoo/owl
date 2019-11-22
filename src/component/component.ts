@@ -627,6 +627,7 @@ export class Component<T extends Env, Props extends {}> {
    * Only called by qweb t-component directive
    */
   __mount(fiber: Fiber, elm: HTMLElement): VNode {
+    console.warn('_mount 1', this.constructor.name);
     if (fiber !== this.__owl__.currentFiber) {
       fiber = this.__owl__.currentFiber!; // TODO: check if we can remove fiber arg
     }
@@ -635,10 +636,13 @@ export class Component<T extends Env, Props extends {}> {
     if (__owl__.classObj) {
       (<any>vnode).data.class = Object.assign((<any>vnode).data.class || {}, __owl__.classObj);
     }
+    console.warn('_mount 2', this.constructor.name);
     __owl__.vnode = patch(elm, vnode);
-    if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
-      this.__callMounted();
-    }
+    console.warn('_mount 3', this.constructor.name);
+    // if (__owl__.parent!.__owl__.isMounted && !__owl__.isMounted) {
+    //   console.warn('_mount 4 (callMounted)', this.constructor.name);
+    //   this.__callMounted();
+    // }
     return __owl__.vnode;
   }
 

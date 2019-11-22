@@ -415,7 +415,7 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual(["child:mounted", "parent:mounted"]);
   });
 
-  test.only("mounted hook is called on subsubcomponents, in proper order", async () => {
+  test("mounted hook is called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
     class ChildChildWidget extends Widget {
@@ -453,7 +453,6 @@ describe("lifecycle hooks", () => {
     await widget.mount(fixture);
     expect(steps).toEqual(["parent:mounted"]);
     widget.state.flag = true;
-    console.warn('new render');
     await nextTick();
     widget.destroy();
     expect(steps).toEqual([

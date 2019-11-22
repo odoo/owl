@@ -172,7 +172,7 @@ describe("animations", () => {
     expect(spanNode.className).toBe("");
   });
 
-  test("t-transition combined with component", async () => {
+  test.only("t-transition combined with component", async () => {
     expect.assertions(5);
 
     env.qweb.addTemplate("Parent", `<div><Child t-transition="chimay"/></div>`);

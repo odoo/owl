@@ -103,14 +103,18 @@ QWeb.utils.transitionInsert = function(vn: VNode, name: string) {
     dup.remove();
   }
 
+  console.warn('adding className enter active', elm);
   elm.classList.add(name + "-enter");
   elm.classList.add(name + "-enter-active");
   const finalize = () => {
+    console.warn('removing className active to');
     elm.classList.remove(name + "-enter-active");
     elm.classList.remove(name + "-enter-to");
   };
   this.nextFrame(() => {
+    console.warn('removing className enter');
     elm.classList.remove(name + "-enter");
+    console.warn('adding className enter to');
     elm.classList.add(name + "-enter-to");
     whenTransitionEnd(elm, finalize);
   });

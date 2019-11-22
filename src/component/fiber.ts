@@ -219,7 +219,7 @@ export class Fiber {
       const fiber = patchQueue[i];
       component = fiber.component;
       console.warn('patched loop', i, !!component.__owl__.currentFiber);
-      if (fiber.shouldPatch) {
+      if (fiber.shouldPatch && !this.target) {
         console.warn('patched');
         component.patched();
         if (component.__owl__.patchedCB) {

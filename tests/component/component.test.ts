@@ -91,6 +91,17 @@ describe("basic widget properties", () => {
     expect(fixture.innerHTML).toBe("<div>content</div>");
   });
 
+  test("can be mounted on a documentFragment", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`<div>content</div>`;
+    }
+    const widget = new SomeWidget();
+    await widget.mount(document.createDocumentFragment());
+    expect(fixture.innerHTML).toBe("");
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>content</div>");
+  });
+
   test("display a nice message if mounted on a non existing node", async () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`<div>content</div>`;

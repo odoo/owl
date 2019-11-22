@@ -239,13 +239,27 @@ We explain here all the public methods of the `Component` class.
 
 - **`mount(target)`** (async): this is the main way a
   component is added to the DOM: the root component is mounted to a target
-  HTMLElement. Obviously, this is asynchronous, since each children need to be
+  HTMLElement (or document fragment). Obviously, this is asynchronous, since each children need to be
   created as well. Most applications will need to call `mount` exactly once, on
   the root component.
 
   Note that if a component is mounted, unmounted and remounted, it will be
   automatically re-rendered to ensure that changes in its state (or something
   in the environment, or in the store, or ...) will be taken into account.
+
+  If a component is mounted inside an element or a fragment which is not in the
+  DOM, then it will be rendered fully, but not active: the `mounted` hooks will
+  not be called. This is sometimes useful if we want to load an application in
+  memory. In that case, we need to mount the root component again in an element
+  which is in the DOM:
+
+  ```js
+  const app = new App();
+  await app.mount(document.createDocumentFragment());
+  // app is rendered in memory, but not active
+  await app.mount(document.body);
+  // app is now visible
+  ```
 
 - **`unmount()`**: in case a component needs to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more

@@ -23,6 +23,7 @@
 
 - [Quick Start: create an (almost) empty Owl application](learning/quick_start.md)
 - [Tutorial: create a TodoList application](learning/tutorial_todoapp.md)
+- [Testing and Debugging Owl components](learning/testing_components.md)
 
 ## Miscellaneous
 

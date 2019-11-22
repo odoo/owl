@@ -152,9 +152,15 @@ class SomeComponent extends Component {
 }
 ```
 
-In a hook, the `Component.current` static property is the reference to the
-component instance that is currently being created. Hooks need to be called in
-the constructor to ensure that this reference is properly set.
+As you can see, the `useState` hook does not need to be given a reference to
+the component. This is possible because there is a way to get a reference to the
+current component: the `Component.current` static property is the reference to the
+component instance that is currently being created.
+
+Hooks need to be called in the constructor to ensure that this reference is
+properly set. This is also a good thing for performance reasons (Owl can use
+this to optimize its implementation), and for a clean architecture (this makes
+it easier for developers to understand what is really happening in a component).
 
 ### `useState`
 

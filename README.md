@@ -1,10 +1,10 @@
 <h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Odoo Web Library</a> 🦉</h1>
 
-_A no nonsense web framework for structured, dynamic and maintainable applications_
+_Class based components with hooks, reactive state and concurrent mode_
 
 ## Project Overview
 
-The Odoo Web Library (OWL) is a smallish (~18kb gzipped) UI framework intended to
+The Odoo Web Library (OWL) is a smallish (~<20kb gzipped) UI framework intended to
 be the basis for the [Odoo](https://www.odoo.com/) Web Client. Owl is a modern
 framework, written in Typescript, taking the best ideas from React and Vue in a
 simple and consistent way. Owl's main features are:

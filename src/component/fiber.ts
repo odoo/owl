@@ -206,14 +206,14 @@ export class Fiber {
         component.__owl__.pvnode!.elm = nvn.elm;
       }
     }
-    for (let i = 0; i < patchLen; i++) {
-      const fiber = patchQueue[i];
-      component = fiber.component;
-      console.warn('(callMounted ?)', component.constructor.name);
-      if (component.__owl__.parent && component.__owl__.parent.__owl__.isMounted && !component.__owl__.isMounted) {
-        component.__callMounted();
-      }
-    }
+    // for (let i = 0; i < patchLen; i++) {
+    //   const fiber = patchQueue[i];
+    //   component = fiber.component;
+    //   console.warn('(callMounted ?)', component.constructor.name);
+    //   if (component.__owl__.parent && component.__owl__.parent.__owl__.isMounted && !component.__owl__.isMounted) {
+    //     component.__callMounted();
+    //   }
+    // }
     for (let i = patchLen - 1; i >= 0; i--) {
       const fiber = patchQueue[i];
       if (fiber.shouldPatch) {
@@ -222,6 +222,8 @@ export class Fiber {
         if (component.__owl__.patchedCB) {
           component.__owl__.patchedCB();
         }
+      } else {
+        component.__callMounted();
       }
     }
 

@@ -441,11 +441,14 @@ export class Component<T extends Env, Props extends {}> {
   }
 
   __callMounted() {
+    console.warn('callMounted', this.constructor.name);
     const __owl__ = this.__owl__;
     const children = __owl__.children;
     for (let id in children) {
       const comp = children[id];
+        console.log('1', comp.__owl__.isMounted, this.el!.contains(comp.el));
       if (!comp.__owl__.isMounted && this.el!.contains(comp.el)) {
+        console.log('1bis');
         comp.__callMounted();
       }
     }

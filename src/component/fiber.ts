@@ -203,7 +203,6 @@ export class Fiber {
       } else {
         console.warn('mounting', fiber.id,  component.__owl__.pvnode!.elm as HTMLElement)
         let nvn = component.__mount(fiber, component.__owl__.pvnode!.elm as HTMLElement);
-        console.warn(nvn);
         component.__owl__.pvnode!.elm = nvn.elm;
       }
     }

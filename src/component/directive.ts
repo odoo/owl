@@ -241,7 +241,7 @@ QWeb.addDirective({
     }
     let transitionsInsertCode = "";
     if (transition) {
-      transitionsInsertCode = `utils.transitionInsert(vn, '${transition}');`;
+      transitionsInsertCode = `setTimeout(() => utils.transitionInsert(vn, '${transition}'));`;
     }
     let finalizeComponentCode = `w${componentID}.destroy();`;
     if (ref) {

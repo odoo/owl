@@ -179,7 +179,7 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineUtils = true;
     let name = value;
     const hooks = {
-      insert: `utils.transitionInsert(vn, '${name}');`,
+      insert: `setTimeout(() => utils.transitionInsert(vn, '${name}'));`,
       remove: `utils.transitionRemove(vn, '${name}', rm);`
     };
     for (let hookName in hooks) {

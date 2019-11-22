@@ -277,10 +277,10 @@ describe.only("basic widget properties", () => {
     }
 
     class Parent extends Component<any, any> {
+            // <Child t-key="4"/>
       static template = xml`
         <div>
             <Child />
-            <Child t-key="4"/>
         </div>
       `;
       static components = { Child };
@@ -288,7 +288,8 @@ describe.only("basic widget properties", () => {
 
     const widget = new Parent();
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
+    expect(fixture.innerHTML).toBe("<div><span>child</span></div>");
+    // expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
   });
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {

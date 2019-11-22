@@ -281,12 +281,12 @@ export class Component<T extends Env, Props extends {}> {
    *
    * Note that a component can be mounted an unmounted several times
    */
-  async mount(target: HTMLElement): Promise<void> {
+  async mount(target: HTMLElement | DocumentFragment): Promise<void> {
     const __owl__ = this.__owl__;
     if (__owl__.isMounted) {
       return Promise.resolve();
     }
-    if (!(target instanceof HTMLElement)) {
+    if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
       let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);

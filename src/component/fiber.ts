@@ -219,9 +219,9 @@ export class Fiber {
     }
 
     if (this.target) {
-      this.target.appendChild(component.el!);
+      this.target.appendChild(this.component.el!);
       if (document.body.contains(this.target)) {
-        component.__callMounted();
+        this.component.__callMounted();
       }
     }
   }

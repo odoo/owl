@@ -70,7 +70,7 @@ class WidgetA extends Widget {
 // Tests
 //------------------------------------------------------------------------------
 
-describe.only("basic widget properties", () => {
+describe("basic widget properties", () => {
   test("props is set on root components", async () => {
     const widget = new Widget(null, {});
     expect(widget.props).toEqual({});
@@ -269,7 +269,7 @@ describe.only("basic widget properties", () => {
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
   });
 
-  test.only("reconciliation alg is not confused in some specific situation", async () => {
+  test("reconciliation alg is not confused in some specific situation", async () => {
     // in this test, we set t-key to 4 because it was in conflict with the
     // template id corresponding to the first child.
     class Child extends Component<any, any> {
@@ -277,10 +277,10 @@ describe.only("basic widget properties", () => {
     }
 
     class Parent extends Component<any, any> {
-            // <Child t-key="4"/>
       static template = xml`
         <div>
             <Child />
+            <Child t-key="4"/>
         </div>
       `;
       static components = { Child };
@@ -288,8 +288,7 @@ describe.only("basic widget properties", () => {
 
     const widget = new Parent();
     await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><span>child</span></div>");
-    // expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
+    expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
   });
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {

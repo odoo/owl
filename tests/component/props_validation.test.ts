@@ -138,7 +138,7 @@ describe("props validation", () => {
         error = e;
       }
       expect(error).toBeDefined();
-      expect(error.message).toBe(`Props 'p' of invalid type in component '_a'`);
+      expect(error.message).toBe("Invalid Prop 'p' in component '_a'");
     }
   });
 
@@ -195,7 +195,7 @@ describe("props validation", () => {
         error = e;
       }
       expect(error).toBeDefined();
-      expect(error.message).toBe(`Props 'p' of invalid type in component '_a'`);
+      expect(error.message).toBe("Invalid Prop 'p' in component '_a'");
     }
   });
 
@@ -240,7 +240,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Props 'p' of invalid type in component 'TestWidget'");
+    expect(error.message).toBe("Invalid Prop 'p' in component 'TestWidget'");
   });
 
   test("can validate an optional props", async () => {
@@ -284,7 +284,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
+    expect(error.message).toBe("Invalid Prop 'p' in component 'TestWidget'");
   });
 
   test("can validate an array with given primitive type", async () => {
@@ -389,7 +389,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
+    expect(error.message).toBe("Invalid Prop 'p' in component 'TestWidget'");
   });
 
   test("can validate an object with simple shape", async () => {
@@ -436,7 +436,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
+    expect(error.message).toBe("Invalid Prop 'p' in component 'TestWidget'");
 
     error = undefined;
     try {
@@ -447,7 +447,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
+    expect(error.message).toBe("Invalid Prop 'p' in component 'TestWidget'");
   });
 
   test("can validate recursively complicated prop def", async () => {
@@ -499,7 +499,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Props 'p' of invalid type in component 'TestWidget'`);
+    expect(error.message).toBe("Invalid Prop 'p' in component 'TestWidget'");
   });
 
   test("can validate optional attributes in nested sub props", () => {
@@ -533,6 +533,70 @@ describe("props validation", () => {
     expect(error.message).toBe(
       "Invalid prop 'myprop' in component TestComponent (unknown prop 'a')"
     );
+  });
+
+  test("can validate with a custom validator", () => {
+    class TestComponent extends Component<any, any> {
+      static props = {
+        size: {
+          validate: e => ["small", "medium", "large"].includes(e)
+        }
+      };
+    }
+    let error;
+    try {
+      QWeb.utils.validateProps(TestComponent, { size: "small" });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+
+    try {
+      QWeb.utils.validateProps(TestComponent, { size: "abcdef" });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Invalid Prop 'size' in component 'TestComponent'");
+  });
+
+  test("can validate with a custom validator, and a type", () => {
+    const validator = jest.fn(n => 0 <= n && n <= 10);
+    class TestComponent extends Component<any, any> {
+      static props = {
+        n: {
+          type: Number,
+          validate: validator
+        }
+      };
+    }
+    let error;
+    try {
+      QWeb.utils.validateProps(TestComponent, { n: 3 });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeUndefined();
+    expect(validator).toBeCalledTimes(1);
+
+    try {
+      QWeb.utils.validateProps(TestComponent, { n: "str" });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
+    expect(validator).toBeCalledTimes(1);
+
+    error = null;
+    try {
+      QWeb.utils.validateProps(TestComponent, { n: 100 });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
+    expect(validator).toBeCalledTimes(2);
   });
 
   test("props are validated in dev mode (code snapshot)", async () => {
@@ -591,7 +655,7 @@ describe("props validation", () => {
     }).not.toThrow();
     expect(() => {
       QWeb.utils.validateProps(TestWidget, { myprop: 1 });
-    }).toThrow(`Props 'myprop' of invalid type in component 'TestWidget'`);
+    }).toThrow(`Invalid Prop 'myprop' in component 'TestWidget'`);
   });
 
   test("props with type object, and no shape", async () => {
@@ -604,7 +668,7 @@ describe("props validation", () => {
     }).not.toThrow();
     expect(() => {
       QWeb.utils.validateProps(TestWidget, { myprop: false });
-    }).toThrow(`Props 'myprop' of invalid type in component 'TestWidget'`);
+    }).toThrow(`Invalid Prop 'myprop' in component 'TestWidget'`);
   });
 
   test("props: extra props cause an error", async () => {

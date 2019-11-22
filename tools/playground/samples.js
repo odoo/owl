@@ -1552,7 +1552,7 @@ const WMS_XML = `<templates>
   <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex">
     <div class="header">
       <span t-on-mousedown="startDragAndDrop"><t t-esc="props.info.title"/></span>
-      <span class="close" t-on-click="close">×</span>
+      <span class="close" t-on-click.stop="close">×</span>
     </div>
     <t t-slot="default"/>
   </div>

@@ -48,7 +48,7 @@ QWeb.utils.validateProps = function(Widget, props: Object) {
         throw e;
       }
       if (!isValid) {
-        throw new Error(`Props '${propName}' of invalid type in component '${Widget.name}'`);
+        throw new Error(`Invalid Prop '${propName}' in component '${Widget.name}'`);
       }
     }
     for (let propName in props) {
@@ -89,7 +89,10 @@ function isValidProp(prop, propDef): boolean {
   if (propDef.optional && prop === undefined) {
     return true;
   }
-  let result = isValidProp(prop, propDef.type);
+  let result = propDef.type ? isValidProp(prop, propDef.type) : true;
+  if (propDef.validate) {
+    result = result && propDef.validate(prop);
+  }
   if (propDef.type === Array && propDef.element) {
     for (let i = 0, iLen = prop.length; i < iLen; i++) {
       result = result && isValidProp(prop[i], propDef.element);

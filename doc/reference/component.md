@@ -891,10 +891,12 @@ For each key, a `prop` definition is either a boolean, a constructor, a list of 
 - a list of constructors. In that case, this means that we allow more than one
   type. For example, `id: [Number, String]` means that `id` can be either a string
   or a number.
-- an object. This makes it possible to have more expressive definition. The following sub keys are then allowed:
+- an object. This makes it possible to have more expressive definition. The following sub keys are then allowed (but not mandatory):
   - `type`: the main type of the prop being validated
-  - `element`: if the type was `Array`, then the `element` key describes the type of each element in the array. It is optional (not set means that we only validate the array, not its elements),
-  - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. It is optional (not set means that we only validate the object, not its elements)
+  - `element`: if the type was `Array`, then the `element` key describes the type of each element in the array. If it is not set, then we only validate the array, not its elements,
+  - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. If it is not set, then we only validate the object, not its elements,
+  - `validate`: this is a function which should return a boolean to determine if
+    the value is valid or not. Useful for custom validation logic.
 
 Examples:
 
@@ -924,6 +926,13 @@ Examples:
     someFlag: Boolean,     // a boolean, mandatory (even if `false`)
     someVal: [Boolean, Date],   // either a boolean or a date
     otherValue: true,     // indicates that it is a prop
+    kindofsmallnumber: {
+      type: Number,
+      validate: n => (0 <= n && n <= 10)
+    },
+    size: {
+      validate:  e => ["small", "medium", "large"].includes(e)
+    },
   };
 ```
 

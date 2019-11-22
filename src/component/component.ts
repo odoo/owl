@@ -323,6 +323,7 @@ export class Component<T extends Env, Props extends {}> {
    */
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
+    console.warn('render', this.constructor.name, __owl__.isMounted, !!__owl__.currentFiber, __owl__.currentFiber && __owl__.currentFiber.isRendered);
     if (!__owl__.isMounted && !__owl__.currentFiber) {
       // if we get here, this means that the component was either never mounted,
       // or was unmounted and some state change  triggered a render. Either way,
@@ -461,6 +462,7 @@ export class Component<T extends Env, Props extends {}> {
   }
 
   __callWillUnmount() {
+    // TODO: cancel current fiber maybe?
     const __owl__ = this.__owl__;
     if (__owl__.willUnmountCB) {
       __owl__.willUnmountCB();

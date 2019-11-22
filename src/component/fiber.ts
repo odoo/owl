@@ -116,6 +116,7 @@ export class Fiber {
    */
   _remapFiber(oldFiber: Fiber) {
     oldFiber.cancel();
+    this.shouldPatch = oldFiber.shouldPatch;
     if (oldFiber === oldFiber.root) {
       oldFiber.counter++;
     }
@@ -179,7 +180,7 @@ export class Fiber {
     const patchQueue: Fiber[] = [];
     const doWork: (Fiber) => Fiber | null = function(f) {
       patchQueue.push(f);
-      component.__owl__.currentFiber = null;
+      // f.component.__owl__.currentFiber = null;
       return f.child;
     };
     this._walk(doWork);
@@ -197,7 +198,8 @@ export class Fiber {
     for (let i = 0; i < patchLen; i++) {
       const fiber = patchQueue[i];
       component = fiber.component;
-      if (fiber.shouldPatch || fiber.target) {
+      console.warn('patch loop', fiber.shouldPatch, i)
+      if (fiber.shouldPatch || (fiber.target && i === 0)) {
         console.warn('patching', fiber.id)
         component.__patch(fiber.vnode);
       } else {
@@ -205,32 +207,29 @@ export class Fiber {
         let nvn = component.__mount(fiber, component.__owl__.pvnode!.elm as HTMLElement);
         component.__owl__.pvnode!.elm = nvn.elm;
       }
+      component.__owl__.currentFiber = null;
     }
-    // for (let i = 0; i < patchLen; i++) {
-    //   const fiber = patchQueue[i];
-    //   component = fiber.component;
-    //   console.warn('(callMounted ?)', component.constructor.name);
-    //   if (component.__owl__.parent && component.__owl__.parent.__owl__.isMounted && !component.__owl__.isMounted) {
-    //     component.__callMounted();
-    //   }
-    // }
+    console.warn('this.target', this.target);
+    let inDOM = false;
+    if (this.target) {
+      this.target.appendChild(this.component.el!);
+      inDOM = document.body.contains(this.target);
+    }
     for (let i = patchLen - 1; i >= 0; i--) {
       const fiber = patchQueue[i];
+      component = fiber.component;
+      console.warn('patched loop', i, !!component.__owl__.currentFiber);
       if (fiber.shouldPatch) {
-        component = patchQueue[i].component;
+        console.warn('patched');
         component.patched();
         if (component.__owl__.patchedCB) {
           component.__owl__.patchedCB();
         }
       } else {
-        component.__callMounted();
-      }
-    }
-
-    if (this.target) {
-      this.target.appendChild(this.component.el!);
-      if (document.body.contains(this.target)) {
-        this.component.__callMounted();
+        console.warn('mounted');
+        if ((this.target ? inDOM : true)) {
+          component.__callMounted();
+        }
       }
     }
   }

@@ -2411,10 +2411,10 @@ describe("random stuff/miscellaneous", () => {
       "C:__patch(from __mount)",
       "D:__patch(from __mount)",
       "E:__patch(from __mount)",
-      "B:mounted",
-      "D:mounted",
       "E:mounted",
+      "D:mounted",
       "C:mounted",
+      "B:mounted",
       "A:mounted"
     ]);
 
@@ -2434,9 +2434,9 @@ describe("random stuff/miscellaneous", () => {
       "C:__patch",
       "E:willUnmount",
       "E:destroy",
+      "D:__patch",
       "F:__patch(from __mount)",
       "F:mounted",
-      "D:__patch",
       "D:patched",
       "C:patched"
     ]);

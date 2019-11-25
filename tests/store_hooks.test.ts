@@ -48,6 +48,42 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>hello</span></div>");
   });
 
+  test("useStore can observe primitive types and call onUpdate", async () => {
+    const state = { isBoolean: false };
+    const actions = {
+      setTrue({ state }) {
+        state.isBoolean = true;
+      }
+    };
+    const store = new Store({ state, actions });
+
+    class App extends Component<any, any> {
+      static template = xml`
+            <div>
+                <span t-if="isBoolean">ok</span>
+            </div>`;
+      isBoolean: boolean;
+      constructor() {
+        super();
+        this.isBoolean = useStore(state => state.isBoolean, {
+          onUpdate: isBoolean => {
+            this.isBoolean = isBoolean;
+          }
+        });
+      }
+    }
+
+    (<any>env).store = store;
+    const app = new App();
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    store.dispatch("setTrue");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>ok</span></div>");
+  });
+
   test("throw error if no store is found", async () => {
     class App extends Component<any, any> {
       static template = xml`<div></div>`;

@@ -252,19 +252,27 @@ The `useStore` hook is used to select some part of the store state. It accepts
 two arguments:
 
 - a selector function, which takes the store state as first argument (and the
-  component props as second argument) and returns
-  an object or an array (which will be then observed),
-- optionally, an object with a `store` key (if we want to override the default
-  store) and an equality function (if we want to specialize the comparison).
+  component props as second argument) and which must return the part of the
+  store state that will be made available and observed for changes,
+- optionally, an object which can have the following optional keys:
+  - a `store` key containing a store object if we want to use another store than
+    the default store,
+  - an `isEqual` key containing an equality function if we want to specialize
+    the comparison (the function must accept two arguments: the previous result
+    and the new result, and must return whether they are equal),
+  - and an `onUpdate` key containing an update function if we want to execute an
+    arbitrary code every time the selected state changes (the function will
+    receive one argument, the new result, and can execute arbitrary code).
 
-If the `useStore` callback selects a sub part of the store state, the component
+If the `useStore` selector returns a sub part of the store state, the component
 will only be rerendered whenever this part of the state changes. Otherwise, it
-will perform a strict equality check and will update the component every time this
-check fails.
+will perform a strict equality check (unless the `isEqual` option is defined,
+then it will call it) and will update the component every time this check fails.
 
-Also, it may not be obvious, but it is crucial to remember that the selector
-function should return an object or an array. The reason is that it needs to be
-observed, otherwise the component would not be able to react to changes.
+Note that if the selector function returns a primitive type, the result of
+`useStore` will be immutable and it will not react to changes. In this case, it
+is important to define the `onUpdate` option to properly update the value
+manually when it changes.
 
 ### `useDispatch`
 

@@ -77,6 +77,7 @@ export class Store extends Context {
 interface SelectorOptions {
   store?: Store;
   isEqual?: (a: any, b: any) => boolean;
+  onUpdate?: (result: any) => any;
 }
 
 const isStrictEqual = (a, b) => a === b;
@@ -89,7 +90,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   }
   let result = selector(store.state, component.props);
   const hashFn = store.observer.revNumber.bind(store.observer);
-  let revNumber = hashFn(result) || result;
+  let revNumber = hashFn(result);
   const isEqual = options.isEqual || isStrictEqual;
   if (!store.updateFunctions[component.__owl__.id]) {
     store.updateFunctions[component.__owl__.id] = [];
@@ -104,6 +105,9 @@ export function useStore(selector, options: SelectorOptions = {}): any {
       (newRevNumber === 0 && !isEqual(oldResult, result))
     ) {
       revNumber = newRevNumber;
+      if (options.onUpdate) {
+        options.onUpdate(result);
+      }
       return true;
     }
     return false;
@@ -122,6 +126,9 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     delete store.updateFunctions[component.__owl__.id];
     result = selector(store.state, props);
   });
+  if (typeof result !== "object") {
+    return result;
+  }
   return new Proxy(result, {
     get(target, k) {
       return result[k];

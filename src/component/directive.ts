@@ -239,10 +239,6 @@ QWeb.addDirective({
       ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
       refExpr = `context.__owl__.refs[${refKey}] = w${componentID};`;
     }
-    let transitionsInsertCode = "";
-    if (transition) {
-      transitionsInsertCode = `setTimeout(() => utils.transitionInsert(vn, '${transition}'));`;
-    }
     let finalizeComponentCode = `w${componentID}.destroy();`;
     if (ref) {
       finalizeComponentCode += `delete context.__owl__.refs[${refKey}];`;
@@ -409,6 +405,10 @@ QWeb.addDirective({
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
+    if (transition) {
+      ctx.addLine(`const __mount${componentID} = w${componentID}.__mount;`);
+      ctx.addLine(`w${componentID}.__mount = (fiber, elm) => {const vn = __mount${componentID}.call(w${componentID}, fiber, elm); utils.transitionInsert(vn, '${transition}'); return vn;};`);
+    }
     ctx.addLine(`parent.__owl__.cmap[${templateKey}] = w${componentID}.__owl__.id;`);
 
     if (hasSlots) {
@@ -438,7 +438,7 @@ QWeb.addDirective({
 
     ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
-    const insertHook = refExpr || transitionsInsertCode ? `insert(vn) {${refExpr}${transitionsInsertCode}},` : '';
+    const insertHook = refExpr ? `insert(vn) {${refExpr}},` : '';
     ctx.addLine(
       `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {},destroy(vn) {${finalizeComponentCode}}}});`
     );

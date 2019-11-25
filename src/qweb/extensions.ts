@@ -95,29 +95,31 @@ QWeb.utils.nextFrame = function(cb: () => void) {
 };
 
 QWeb.utils.transitionInsert = function(vn: VNode, name: string) {
-  const elm = <HTMLElement>vn.elm;
-  // remove potential duplicated vnode that is currently being removed, to
-  // prevent from having twice the same node in the DOM during an animation
-  const dup = elm.parentElement && elm.parentElement!.querySelector(`*[data-owl-key='${vn.key}']`);
-  if (dup) {
-    dup.remove();
-  }
+  // Promise.resolve().then(() => {
+    const elm = <HTMLElement>vn.elm;
+    // remove potential duplicated vnode that is currently being removed, to
+    // prevent from having twice the same node in the DOM during an animation
+    const dup = elm.parentElement && elm.parentElement!.querySelector(`*[data-owl-key='${vn.key}']`);
+    if (dup) {
+      dup.remove();
+    }
 
-  console.warn('adding className enter active', elm);
-  elm.classList.add(name + "-enter");
-  elm.classList.add(name + "-enter-active");
-  const finalize = () => {
-    console.warn('removing className active to');
-    elm.classList.remove(name + "-enter-active");
-    elm.classList.remove(name + "-enter-to");
-  };
-  this.nextFrame(() => {
-    console.warn('removing className enter');
-    elm.classList.remove(name + "-enter");
-    console.warn('adding className enter to');
-    elm.classList.add(name + "-enter-to");
-    whenTransitionEnd(elm, finalize);
-  });
+    console.warn('adding className enter active', elm);
+    elm.classList.add(name + "-enter");
+    elm.classList.add(name + "-enter-active");
+    const finalize = () => {
+      console.warn('removing className active to');
+      elm.classList.remove(name + "-enter-active");
+      elm.classList.remove(name + "-enter-to");
+    };
+    this.nextFrame(() => {
+      console.warn('removing className enter');
+      elm.classList.remove(name + "-enter");
+      console.warn('adding className enter to');
+      elm.classList.add(name + "-enter-to");
+      whenTransitionEnd(elm, finalize);
+    });
+  // });
 };
 
 QWeb.utils.transitionRemove = function(vn: VNode, name: string, rm: () => void) {
@@ -179,7 +181,7 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineUtils = true;
     let name = value;
     const hooks = {
-      insert: `setTimeout(() => utils.transitionInsert(vn, '${name}'));`,
+      insert: `utils.transitionInsert(vn, '${name}');`,
       remove: `utils.transitionRemove(vn, '${name}', rm);`
     };
     for (let hookName in hooks) {

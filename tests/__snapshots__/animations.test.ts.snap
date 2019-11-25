@@ -28,9 +28,11 @@ exports[`animations t-transition combined with component 1`] = `
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
+        const __mount3 = w3.__mount;
+        w3.__mount = (fiber, elm) => {const vn = __mount3.call(w3, fiber, elm); utils.transitionInsert(vn, 'chimay'); return vn;};
         parent.__owl__.cmap[k4] = w3.__owl__.id;
         let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
-        let pvnode = h('dummy', {key: k4, hook: {insert(vn) {setTimeout(() => utils.transitionInsert(vn, 'chimay'));},remove() {},destroy(vn) {let finalize = () => {
+        let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {let finalize = () => {
           w3.destroy();
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});
@@ -74,9 +76,11 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
             if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
             w3 = new W3(parent, props3);
+            const __mount3 = w3.__mount;
+            w3.__mount = (fiber, elm) => {const vn = __mount3.call(w3, fiber, elm); utils.transitionInsert(vn, 'chimay'); return vn;};
             parent.__owl__.cmap[k4] = w3.__owl__.id;
             let def2 = w3.__prepare(extra.fiber, undefined, undefined, sibling);
-            let pvnode = h('dummy', {key: k4, hook: {insert(vn) {utils.transitionInsert(vn, 'chimay');},remove() {},destroy(vn) {let finalize = () => {
+            let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {let finalize = () => {
           w3.destroy();
         };
         utils.transitionRemove(vn, 'chimay', finalize);}}});
@@ -102,7 +106,7 @@ exports[`animations t-transition with no delay/duration 1`] = `
     var vn1 = h('span', p1, c1);
     p1.hook = {
       insert: vn => {
-        setTimeout(() => utils.transitionInsert(vn, 'jupiler'));
+        utils.transitionInsert(vn, 'jupiler');
       },
       remove: (vn, rm) => {
         utils.transitionRemove(vn, 'jupiler', rm);
@@ -123,7 +127,7 @@ exports[`animations t-transition, on a simple node (insert) 1`] = `
     var vn1 = h('span', p1, c1);
     p1.hook = {
       insert: vn => {
-        setTimeout(() => utils.transitionInsert(vn, 'chimay'));
+        utils.transitionInsert(vn, 'chimay');
       },
       remove: (vn, rm) => {
         utils.transitionRemove(vn, 'chimay', rm);

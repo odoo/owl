@@ -320,7 +320,7 @@ describe("animations", () => {
     expect(fixture.innerHTML).toBe('<div><button>Toggle</button><span class="">blue</span></div>');
   });
 
-  test("t-transition combined with t-component, remove and re-add before transitionend", async () => {
+  test.only("t-transition combined with t-component, remove and re-add before transitionend", async () => {
     expect.assertions(11);
 
     env.qweb.addTemplates(

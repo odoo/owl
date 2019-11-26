@@ -1225,7 +1225,10 @@ describe("t-on", () => {
     );
     const steps: string[] = [];
     const owner = {
-      projects: [{ id: 1, name: "Project 1" }, { id: 2, name: "Project 2" }],
+      projects: [
+        { id: 1, name: "Project 1" },
+        { id: 2, name: "Project 2" }
+      ],
 
       onEdit(projectId, ev) {
         expect(ev.defaultPrevented).toBe(true);

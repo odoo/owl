@@ -1362,7 +1362,13 @@ describe("composition", () => {
     class SubWidget extends Widget {}
     class Parent extends Widget {
       static components = { SubWidget };
-      state = useState({ blips: [{ a: "a", id: 1 }, { b: "b", id: 2 }, { c: "c", id: 4 }] });
+      state = useState({
+        blips: [
+          { a: "a", id: 1 },
+          { b: "b", id: 2 },
+          { c: "c", id: 4 }
+        ]
+      });
     }
     const parent = new Parent();
     await parent.mount(fixture);
@@ -1465,7 +1471,11 @@ describe("composition", () => {
             </t>
           </div>`;
       state = useState({
-        records: [{ id: 1, val: 1 }, { id: 2, val: 2 }, { id: 3, val: 3 }]
+        records: [
+          { id: 1, val: 1 },
+          { id: 2, val: 2 },
+          { id: 3, val: 3 }
+        ]
       });
       static components = { ChildWidget };
     }
@@ -3731,7 +3741,12 @@ describe("t-slot directive", () => {
     class Link extends Widget {}
 
     class App extends Widget {
-      state = useState({ users: [{ id: 1, name: "Aaron" }, { id: 2, name: "David" }] });
+      state = useState({
+        users: [
+          { id: 1, name: "Aaron" },
+          { id: 2, name: "David" }
+        ]
+      });
       static components = { Link };
     }
 
@@ -3770,7 +3785,12 @@ describe("t-slot directive", () => {
     class Link extends Widget {}
 
     class App extends Widget {
-      state = useState({ users: [{ id: 1, name: "Aaron" }, { id: 2, name: "David" }] });
+      state = useState({
+        users: [
+          { id: 1, name: "Aaron" },
+          { id: 2, name: "David" }
+        ]
+      });
       static components = { Link };
     }
 
@@ -4406,7 +4426,11 @@ describe("t-model directive", () => {
           </t>
         </div>
       `;
-      state = useState([{ f: false, id: 1 }, { f: false, id: 2 }, { f: false, id: 3 }]);
+      state = useState([
+        { f: false, id: 1 },
+        { f: false, id: 2 },
+        { f: false, id: 3 }
+      ]);
     }
     const comp = new SomeComponent();
     await comp.mount(fixture);

@@ -416,16 +416,16 @@ QWeb.addDirective({
           return vn;
         };
       `);
-      ctx.addLine(`
-        const __patch${componentID} = w${componentID}.__patch;
-      `);
-      ctx.addLine(`
-        w${componentID}.__patch = (vn) => {
-          console.warn(w${componentID}.__owl__.isMounted);
-          __patch${componentID}.call(w${componentID}, vn);
-          utils.transitionInsert(w${componentID}.__owl__.pvnode, '${transition}');
-        };
-      `);
+      // ctx.addLine(`
+      //   const __patch${componentID} = w${componentID}.__patch;
+      // `);
+      // ctx.addLine(`
+      //   w${componentID}.__patch = (vn) => {
+      //     console.warn(w${componentID}.__owl__.isMounted);
+      //     __patch${componentID}.call(w${componentID}, vn);
+      //     utils.transitionInsert(w${componentID}.__owl__.pvnode, '${transition}');
+      //   };
+      // `);
     }
     ctx.addLine(`parent.__owl__.cmap[${templateKey}] = w${componentID}.__owl__.id;`);
 
@@ -457,8 +457,10 @@ QWeb.addDirective({
     ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     const insertHook = refExpr ? `insert(vn) {${refExpr}},` : '';
+    console.log(insertHook);
     ctx.addLine(
-      `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {}, destroy(vn) {${finalizeComponentCode}}}});`
+      `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) {console.warn("_____________________________");console.warn(vn);console.warn(w${componentID}.__owl__);if (w${componentID}.__owl__.isMounted) utils.transitionInsert(vn, '${transition}');},remove() {}, destroy(vn) {${finalizeComponentCode}}}});`
+      // `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {}, destroy(vn) {${finalizeComponentCode}}}});`
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(

@@ -221,6 +221,7 @@ export class Fiber {
       console.warn('patched loop', i, !!component.__owl__.currentFiber);
       if (fiber.shouldPatch && !this.target) {
         console.warn('patched');
+        console.warn('patched', component.constructor.name, component.__owl__.vnode);
         component.patched();
         if (component.__owl__.patchedCB) {
           component.__owl__.patchedCB();

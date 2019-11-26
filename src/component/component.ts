@@ -442,7 +442,7 @@ export class Component<T extends Env, Props extends {}> {
   }
 
   __callMounted() {
-    console.warn('callMounted', this.constructor.name);
+    console.warn('callMounted', this.constructor.name, this.__owl__.vnode);
     const __owl__ = this.__owl__;
     // const children = __owl__.children;
     // for (let id in children) {

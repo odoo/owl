@@ -100,6 +100,7 @@ QWeb.utils.transitionInsert = function(vn: VNode, name: string) {
     // remove potential duplicated vnode that is currently being removed, to
     // prevent from having twice the same node in the DOM during an animation
     const dup = elm.parentElement && elm.parentElement!.querySelector(`*[data-owl-key='${vn.key}']`);
+    console.warn('CHECKING DUP', elm.parentElement!.innerHTML, vn.key);
     if (dup) {
       dup.remove();
     }

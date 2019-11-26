@@ -349,6 +349,7 @@ describe("animations", () => {
     let def = makeDeferred();
     let phase = "enter";
     patchNextFrame(cb => {
+      console.log(fixture.innerHTML);
       let spans = fixture.querySelectorAll("span");
       expect(spans.length).toBe(1);
       expect(spans[0].className).toBe(`chimay-${phase} chimay-${phase}-active`);
@@ -370,6 +371,7 @@ describe("animations", () => {
 
     await def; // wait for the mocked repaint to be done
     def = makeDeferred();
+    console.warn(' **************************************************** ');
     phase = "enter";
     button!.click();
 

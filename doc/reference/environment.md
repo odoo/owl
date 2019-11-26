@@ -4,6 +4,7 @@
 
 - [Overview](#overview)
 - [Setting an Environment](#setting-an-environment)
+- [Using a sub environment](#using-a-sub-environment)
 - [Content of an Environment](#content-of-an-environment)
 
 ## Overview
@@ -63,6 +64,27 @@ by simply doing this:
 
 ```js
 Component.env = myEnv; // will be the default env for all components
+```
+
+Note that this environment is the global owl environment for an application. The
+next section explains how to extend an environment for a specific sub component
+and its children.
+
+## Using a sub environment
+
+It is sometimes useful to add one (or more) specific keys to the environment,
+from the perspective of a specific component and its children. In that case, the
+solution presented above will not work, since it sets the global environment.
+
+There is a hook for this situation: [`useSubEnv`](hooks.md#usesubenv).
+
+```js
+class FormComponent extends Component {
+  constructor(parent, props) {
+    super(parent, props);
+    useSubEnv({ myKey: someValue });
+  }
+}
 ```
 
 ## Content of an Environment

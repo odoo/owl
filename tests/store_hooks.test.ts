@@ -100,6 +100,24 @@ describe("connecting a component to store", () => {
     expect(error.message).toBe("No store found when connecting 'App'");
   });
 
+  test("cannot modify state returned by usestore", async () => {
+    const state = { a: { b: 1 } };
+    const actions = {};
+    const store = new Store({ state, actions });
+
+    class App extends Component<any, any> {
+      static template = xml`<div/>`;
+      storeState = useStore(state => state.a);
+    }
+
+    (<any>env).store = store;
+    const app = new App();
+    expect(app.storeState.b).toBe(1);
+    expect(() => (app.storeState.b = 2)).toThrow(
+      "Store state should only be modified through actions"
+    );
+  });
+
   test("can use useStore twice in a component", async () => {
     const state = { a: 1, b: 2 };
     const actions = {
@@ -293,7 +311,12 @@ describe("connecting a component to store", () => {
   });
 
   test("useStore can use props", async () => {
-    const state = { todos: [{ id: 1, text: "jupiler" }, { id: 2, text: "chimay" }] };
+    const state = {
+      todos: [
+        { id: 1, text: "jupiler" },
+        { id: 2, text: "chimay" }
+      ]
+    };
     const store = new Store({ state, actions: {} });
 
     class TodoItem extends Component<any, any> {
@@ -360,7 +383,10 @@ describe("connecting a component to store", () => {
   test("can call useGetters to receive store getters", async () => {
     const state = {
       importantID: 1,
-      todos: [{ id: 1, text: "jupiler" }, { id: 2, text: "bertinchamps" }]
+      todos: [
+        { id: 1, text: "jupiler" },
+        { id: 2, text: "bertinchamps" }
+      ]
     };
     const getters = {
       importantTodoText({ state }) {

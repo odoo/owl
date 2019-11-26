@@ -27,7 +27,10 @@ describe("tokenizer", () => {
       { type: "VALUE", value: "2" },
       { type: "RIGHT_BRACE", value: "}" }
     ]);
-    expect(tokenize("a,")).toEqual([{ type: "SYMBOL", value: "a" }, { type: "COMMA", value: "," }]);
+    expect(tokenize("a,")).toEqual([
+      { type: "SYMBOL", value: "a" },
+      { type: "COMMA", value: "," }
+    ]);
     expect(tokenize("][")).toEqual([
       { type: "RIGHT_BRACKET", value: "]" },
       { type: "LEFT_BRACKET", value: "[" }

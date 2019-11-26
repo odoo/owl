@@ -274,6 +274,9 @@ Note that if the selector function returns a primitive type, the result of
 is important to define the `onUpdate` option to properly update the value
 manually when it changes.
 
+Also, the return value from `useStore` is not supposed to be modified. The store
+state should only be updated with actions.
+
 ### `useDispatch`
 
 The `useDispatch` hook is useful when a component needs to be able to dispatch

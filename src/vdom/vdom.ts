@@ -101,7 +101,7 @@ function isVnode(vnode: any): vnode is VNode {
 
 type KeyToIndexMap = { [key: string]: number };
 
-type ArraysOf<T> = { [K in keyof T]: (T[K])[] };
+type ArraysOf<T> = { [K in keyof T]: T[K][] };
 
 type ModuleHooks = ArraysOf<Module>;
 

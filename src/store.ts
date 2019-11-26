@@ -134,8 +134,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
       return result[k];
     },
     set(target, k, v) {
-      result[k] = v;
-      return true;
+      throw new Error("Store state should only be modified through actions");
     }
   });
 }

@@ -35,7 +35,10 @@ describe("Link component", () => {
       static components = { Link: Link };
     }
 
-    const routes = [{ name: "about", path: "/about" }, { name: "users", path: "/users" }];
+    const routes = [
+      { name: "about", path: "/about" },
+      { name: "users", path: "/users" }
+    ];
 
     router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ to: "users" });
@@ -66,7 +69,10 @@ describe("Link component", () => {
       static components = { Link: Link };
     }
 
-    const routes = [{ name: "about", path: "/about" }, { name: "users", path: "/users" }];
+    const routes = [
+      { name: "about", path: "/about" },
+      { name: "users", path: "/users" }
+    ];
 
     router = new TestRouter(env, routes, { mode: "history" });
     router.navigate({ to: "users" });

@@ -293,7 +293,12 @@ describe("connecting a component to store", () => {
   });
 
   test("useStore can use props", async () => {
-    const state = { todos: [{ id: 1, text: "jupiler" }, { id: 2, text: "chimay" }] };
+    const state = {
+      todos: [
+        { id: 1, text: "jupiler" },
+        { id: 2, text: "chimay" }
+      ]
+    };
     const store = new Store({ state, actions: {} });
 
     class TodoItem extends Component<any, any> {
@@ -360,7 +365,10 @@ describe("connecting a component to store", () => {
   test("can call useGetters to receive store getters", async () => {
     const state = {
       importantID: 1,
-      todos: [{ id: 1, text: "jupiler" }, { id: 2, text: "bertinchamps" }]
+      todos: [
+        { id: 1, text: "jupiler" },
+        { id: 2, text: "bertinchamps" }
+      ]
     };
     const getters = {
       importantTodoText({ state }) {

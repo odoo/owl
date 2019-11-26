@@ -5330,7 +5330,7 @@ describe("unmounting and remounting", () => {
 
     class Parent extends Component<any, any> {
       static components = { Child };
-      static template = xml`<div t-debug="1"><t t-esc="state.val"/><Child/></div>`;
+      static template = xml`<div><t t-esc="state.val"/><Child/></div>`;
       state = useState({ val: "P1" });
     }
 

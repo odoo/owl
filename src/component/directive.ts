@@ -423,7 +423,9 @@ QWeb.addDirective({
       //   w${componentID}.__patch = (vn) => {
       //     console.warn(w${componentID}.__owl__.isMounted);
       //     __patch${componentID}.call(w${componentID}, vn);
-      //     utils.transitionInsert(w${componentID}.__owl__.pvnode, '${transition}');
+      //     if () {
+      //       utils.transitionInsert(vn, '${transition}');
+      //     }
       //   };
       // `);
     }
@@ -459,12 +461,11 @@ QWeb.addDirective({
     const insertHook = refExpr ? `insert(vn) {${refExpr}},` : '';
     console.log(insertHook);
     ctx.addLine(
-      `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) {console.warn("_____________________________");console.warn(vn);console.warn(w${componentID}.__owl__);if (w${componentID}.__owl__.isMounted) utils.transitionInsert(vn, '${transition}');},remove() {}, destroy(vn) {${finalizeComponentCode}}}});`
-      // `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {}, destroy(vn) {${finalizeComponentCode}}}});`
+      `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) {console.warn('xxxxxxxxxxxxxxxxxxxxxxxx', fiber.vnode); if (w${componentID}.__owl__.isMounted) { console.warn(w${componentID}.el.outerHTML); utils.transitionInsert(w${componentID}.__owl__.pvnode, '${transition}');}},${insertHook}remove() {}, destroy(vn) {${finalizeComponentCode}}}});`
     );
     ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
     ctx.addLine(
-      `def${defID}.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
+      `def${defID}.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; console.warn('------------ FIBER VNODE ------------------', fiber.vnode); pvnode.sel = vnode.sel; ${createHook}});`
     );
     if (registerCode) {
       ctx.addLine(registerCode);

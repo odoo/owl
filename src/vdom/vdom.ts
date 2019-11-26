@@ -414,9 +414,12 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       oldVnode = emptyNodeAt(oldVnode);
     }
 
+    console.log('ICICICICICICICI', oldVnode, vnode);
     if (sameVnode(oldVnode, vnode)) {
+      console.log('1');
       patchVnode(oldVnode, vnode, insertedVnodeQueue);
     } else {
+      console.log('2');
       elm = oldVnode.elm as Node;
       parent = api.parentNode(elm);
 

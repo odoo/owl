@@ -201,7 +201,7 @@ QWeb.addDirective({
     if (!ctx.parentNode) {
       ctx.rootContext.shouldDefineResult = true;
       ctx.rootContext.shouldDefineUtils = true;
-      parentNode = `children${ctx.nextID++}`;
+      parentNode = `children${ctx.generateID()}`;
       ctx.addLine(`let ${parentNode}= []`);
       ctx.addLine(`result = {}`);
     }

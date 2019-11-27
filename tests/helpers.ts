@@ -1,6 +1,7 @@
 import { Env } from "../src/component/component";
 import { scheduler } from "../src/component/scheduler";
 import { EvalContext, QWeb } from "../src/qweb/qweb";
+import { CompilationContext } from "../src/qweb/compilation_context";
 import { patch } from "../src/vdom";
 import "../src/qweb/base_directives";
 import "../src/qweb/extensions";
@@ -20,6 +21,7 @@ let TEMPLATES;
 
 beforeEach(() => {
   nextSlotId = QWeb.nextSlotId;
+  CompilationContext.nextID = 1;
   slots = Object.assign({}, QWeb.slots);
   nextId = QWeb.nextId;
   TEMPLATES = Object.assign({}, QWeb.TEMPLATES);

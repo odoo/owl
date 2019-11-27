@@ -999,15 +999,15 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
     var h = this.h;
     let c1 = extra.parentNode;
         Object.assign(context, extra.fiber.scope);
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('div', p4, c4);
+    c1.push(vn4);
     let c5 = [], p5 = {key:5};
-    var vn5 = h('div', p5, c5);
-    c1.push(vn5);
-    let c6 = [], p6 = {key:6};
-    var vn6 = h('span', p6, c6);
-    c5.push(vn6);
-    c6.push({text: \`hey\`});
+    var vn5 = h('span', p5, c5);
+    c4.push(vn5);
+    c5.push({text: \`hey\`});
     if (false) {
-        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c5, fiber: {vars: {}, scope}}));
+        this.recursiveFns['__3'].call(this, context, Object.assign({}, extra, {parentNode: c4, fiber: {vars: {}, scope}}));
     }
 }"
 `;
@@ -1071,36 +1071,36 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     let c3 = extra.parentNode;
     let _v0 = extra.fiber.vars._v0
         Object.assign(context, extra.fiber.scope);
+    let c11 = [], p11 = {key:11};
+    var vn11 = h('div', p11, c11);
+    c3.push(vn11);
     let c12 = [], p12 = {key:12};
-    var vn12 = h('div', p12, c12);
-    c3.push(vn12);
-    let c13 = [], p13 = {key:13};
-    var vn13 = h('p', p13, c13);
-    c12.push(vn13);
-    var _14 = _v0.val;
-    if (_14 || _14 === 0) {
-        c13.push({text: _14});
+    var vn12 = h('p', p12, c12);
+    c11.push(vn12);
+    var _13 = _v0.val;
+    if (_13 || _13 === 0) {
+        c12.push({text: _13});
     }
-    var _15 = _v0.children||[];
-    if (!_15) { throw new Error('QWeb error: Invalid loop expression')}
-    var _16 = _17 = _15;
-    if (!(_15 instanceof Array)) {
-        _16 = Object.keys(_15);
-        _17 = Object.values(_15);
+    var _14 = _v0.children||[];
+    if (!_14) { throw new Error('QWeb error: Invalid loop expression')}
+    var _15 = _16 = _14;
+    if (!(_14 instanceof Array)) {
+        _15 = Object.keys(_14);
+        _16 = Object.values(_14);
     }
-    var _length16 = _16.length;
-    for (let i1 = 0; i1 < _length16; i1++) {
+    var _length15 = _15.length;
+    for (let i1 = 0; i1 < _length15; i1++) {
         context.subtree_first = i1 === 0;
         scope.subtree_first = context.subtree_first;
-        context.subtree_last = i1 === _length16 - 1;
+        context.subtree_last = i1 === _length15 - 1;
         scope.subtree_last = context.subtree_last;
         context.subtree_index = i1;
         scope.subtree_index = context.subtree_index;
-        context.subtree = _16[i1];
+        context.subtree = _15[i1];
         scope.subtree = context.subtree;
-        context.subtree_value = _17[i1];
+        context.subtree_value = _16[i1];
         scope.subtree_value = context.subtree_value;
-        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c12, fiber: {vars: {_v0: context['subtree']}, scope}}));
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c11, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
 }"
 `;
@@ -1164,36 +1164,36 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     let c3 = extra.parentNode;
     let _v0 = extra.fiber.vars._v0
         Object.assign(context, extra.fiber.scope);
+    let c11 = [], p11 = {key:11};
+    var vn11 = h('div', p11, c11);
+    c3.push(vn11);
     let c12 = [], p12 = {key:12};
-    var vn12 = h('div', p12, c12);
-    c3.push(vn12);
-    let c13 = [], p13 = {key:13};
-    var vn13 = h('p', p13, c13);
-    c12.push(vn13);
-    var _14 = _v0.val;
-    if (_14 || _14 === 0) {
-        c13.push({text: _14});
+    var vn12 = h('p', p12, c12);
+    c11.push(vn12);
+    var _13 = _v0.val;
+    if (_13 || _13 === 0) {
+        c12.push({text: _13});
     }
-    var _15 = _v0.children||[];
-    if (!_15) { throw new Error('QWeb error: Invalid loop expression')}
-    var _16 = _17 = _15;
-    if (!(_15 instanceof Array)) {
-        _16 = Object.keys(_15);
-        _17 = Object.values(_15);
+    var _14 = _v0.children||[];
+    if (!_14) { throw new Error('QWeb error: Invalid loop expression')}
+    var _15 = _16 = _14;
+    if (!(_14 instanceof Array)) {
+        _15 = Object.keys(_14);
+        _16 = Object.values(_14);
     }
-    var _length16 = _16.length;
-    for (let i1 = 0; i1 < _length16; i1++) {
+    var _length15 = _15.length;
+    for (let i1 = 0; i1 < _length15; i1++) {
         context.subtree_first = i1 === 0;
         scope.subtree_first = context.subtree_first;
-        context.subtree_last = i1 === _length16 - 1;
+        context.subtree_last = i1 === _length15 - 1;
         scope.subtree_last = context.subtree_last;
         context.subtree_index = i1;
         scope.subtree_index = context.subtree_index;
-        context.subtree = _16[i1];
+        context.subtree = _15[i1];
         scope.subtree = context.subtree;
-        context.subtree_value = _17[i1];
+        context.subtree_value = _16[i1];
         scope.subtree_value = context.subtree_value;
-        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c12, fiber: {vars: {_v0: context['subtree']}, scope}}));
+        this.recursiveFns['__10'].call(this, context, Object.assign({}, extra, {parentNode: c11, fiber: {vars: {_v0: context['subtree']}, scope}}));
     }
 }"
 `;
@@ -2595,12 +2595,12 @@ exports[`whitespace handling nothing is done in pre tags 2`] = `
 ) {
     let sibling = null;
     var h = this.h;
-    let c1 = [], p1 = {key:1};
-    var vn1 = h('pre', p1, c1);
-    c1.push({text: \`
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('pre', p2, c2);
+    c2.push({text: \`
         some text
       \`});
-    return vn1;
+    return vn2;
 }"
 `;
 
@@ -2609,12 +2609,12 @@ exports[`whitespace handling nothing is done in pre tags 3`] = `
 ) {
     let sibling = null;
     var h = this.h;
-    let c1 = [], p1 = {key:1};
-    var vn1 = h('pre', p1, c1);
-    c1.push({text: \`
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('pre', p3, c3);
+    c3.push({text: \`
         
       \`});
-    return vn1;
+    return vn3;
 }"
 `;
 

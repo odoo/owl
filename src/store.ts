@@ -84,6 +84,7 @@ const isStrictEqual = (a, b) => a === b;
 
 export function useStore(selector, options: SelectorOptions = {}): any {
   const component: Component<any, any> = Component.current!;
+  const componentId = component.__owl__.id;
   const store = options.store || (component.env.store as Store);
   if (!(store instanceof Store)) {
     throw new Error(`No store found when connecting '${component.constructor.name}'`);
@@ -92,11 +93,10 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   const hashFn = store.observer.revNumber.bind(store.observer);
   let revNumber = hashFn(result);
   const isEqual = options.isEqual || isStrictEqual;
-  if (!store.updateFunctions[component.__owl__.id]) {
-    store.updateFunctions[component.__owl__.id] = [];
+  if (!store.updateFunctions[componentId]) {
+    store.updateFunctions[componentId] = [];
   }
-  const updateFunctions = store.updateFunctions[component.__owl__.id];
-  updateFunctions.push(function(): boolean {
+  store.updateFunctions[componentId].push(function(): boolean {
     const oldResult = result;
     result = selector(store!.state, component.props);
     const newRevNumber = hashFn(result);
@@ -115,7 +115,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
 
   useContextWithCB(store, component, function(): Promise<void> | void {
     let shouldRender = false;
-    for (let fn of updateFunctions) {
+    for (let fn of store.updateFunctions[componentId]) {
       shouldRender = fn() || shouldRender;
     }
     if (shouldRender) {
@@ -123,9 +123,15 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     }
   });
   onWillUpdateProps(props => {
-    delete store.updateFunctions[component.__owl__.id];
     result = selector(store.state, props);
   });
+
+  const __destroy = component.__destroy;
+  component.__destroy = parent => {
+    delete store.updateFunctions[componentId];
+    __destroy.call(component, parent);
+  };
+
   if (typeof result !== "object") {
     return result;
   }

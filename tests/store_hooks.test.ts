@@ -490,6 +490,25 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>kwak</span></div>");
   });
 
+  test("connected component is properly cleaned up on destroy", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<div></div>`;
+      state = useStore((state, props) => state);
+    }
+
+    const store = new Store({ state: {} });
+    (<any>env).store = store;
+    const app = new App();
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(store.updateFunctions[app.__owl__.id].length).toBe(1);
+
+    app.destroy();
+
+    expect(store.updateFunctions[app.__owl__.id]).toBe(undefined);
+  });
+
   test("connected component with undefined, null and string props", async () => {
     class Beer extends Component<any, any> {
       static template = xml`

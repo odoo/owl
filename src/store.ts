@@ -96,14 +96,11 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   if (!store.updateFunctions[componentId]) {
     store.updateFunctions[componentId] = [];
   }
-  store.updateFunctions[componentId].push(function(): boolean {
+  function selectCompareUpdate(state, props): boolean {
     const oldResult = result;
-    result = selector(store!.state, component.props);
+    result = selector(state, props);
     const newRevNumber = hashFn(result);
-    if (
-      (newRevNumber > 0 && revNumber !== newRevNumber) ||
-      (newRevNumber === 0 && !isEqual(oldResult, result))
-    ) {
+    if ((newRevNumber > 0 && revNumber !== newRevNumber) || !isEqual(oldResult, result)) {
       revNumber = newRevNumber;
       if (options.onUpdate) {
         options.onUpdate(result);
@@ -111,6 +108,9 @@ export function useStore(selector, options: SelectorOptions = {}): any {
       return true;
     }
     return false;
+  }
+  store.updateFunctions[componentId].push(function(): boolean {
+    return selectCompareUpdate(store!.state, component.props);
   });
 
   useContextWithCB(store, component, function(): Promise<void> | void {
@@ -123,7 +123,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     }
   });
   onWillUpdateProps(props => {
-    result = selector(store.state, props);
+    selectCompareUpdate(store.state, props);
   });
 
   const __destroy = component.__destroy;

@@ -22,7 +22,6 @@ export class CompilationContext {
   shouldDefineUtils: boolean = false;
   shouldDefineRefs: boolean = false;
   shouldDefineResult: boolean = true;
-  shouldDefineSibling: boolean = true;
   shouldProtectContext: boolean = false;
   shouldTrackScope: boolean = false;
   loopNumber: number = 0;
@@ -85,9 +84,6 @@ export class CompilationContext {
     }
     if (this.shouldDefineResult) {
       this.code.unshift("    let result;");
-    }
-    if (this.shouldDefineSibling) {
-      this.code.unshift("    let sibling = null;");
     }
     if (this.shouldDefineRefs) {
       this.code.unshift("    context.__owl__.refs = context.__owl__.refs || {};");

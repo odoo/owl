@@ -57,6 +57,7 @@ export class Fiber {
   root: Fiber;
   child: Fiber | null = null;
   sibling: Fiber | null = null;
+  lastChild: Fiber | null = null;
   parent: Fiber | null = null;
 
   error?: Error;
@@ -103,6 +104,7 @@ export class Fiber {
       // remove relation to children
       oldFiber.child.parent = null;
       oldFiber.child = null;
+      oldFiber.lastChild = null;
     }
     oldFiber.counter = 1; // re-initialize counter
     oldFiber.id = Fiber.nextId++;
@@ -124,6 +126,9 @@ export class Fiber {
       this.parent = oldFiber.parent;
       this.root = this.parent.root;
       this.sibling = oldFiber.sibling;
+      if (this.parent.lastChild === oldFiber) {
+        this.parent.lastChild = this;
+      }
       if (this.parent.child === oldFiber) {
         this.parent.child = this;
       } else {

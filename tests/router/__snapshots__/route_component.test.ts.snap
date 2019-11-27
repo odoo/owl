@@ -7,7 +7,6 @@ exports[`RouteComponent can render simple cases 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let owner = context;
-    let sibling = null;
     let result;
     var h = this.h;
     if (context['routeComponent']) {
@@ -23,7 +22,7 @@ exports[`RouteComponent can render simple cases 1`] = `
             w8 = false;
         }
         if (w8) {
-            w8.__updateProps(props8, extra.fiber, undefined, undefined, sibling);
+            w8.__updateProps(props8, extra.fiber, undefined, undefined);
             let pvnode = w8.__owl__.pvnode;
             utils.defineProxy(vn11, pvnode);
         } else {
@@ -32,7 +31,7 @@ exports[`RouteComponent can render simple cases 1`] = `
             if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
             w8 = new W8(parent, props8);
             parent.__owl__.cmap[k9] = w8.__owl__.id;
-            let def7 = w8.__prepare(extra.fiber, undefined, undefined, sibling);
+            let def7 = w8.__prepare(extra.fiber, undefined, undefined);
             let pvnode = h('dummy', {key: k9, hook: {insert(vn) { let nvn=w8.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});
             const fiber = w8.__owl__.currentFiber;
             def7.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
@@ -40,7 +39,6 @@ exports[`RouteComponent can render simple cases 1`] = `
             w8.__owl__.pvnode = pvnode;
         }
         w8.__owl__.parentLastFiberId = extra.fiber.id;
-        sibling = w8.__owl__.currentFiber || sibling;
     }
     return result;
 }"

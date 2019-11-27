@@ -32,7 +32,6 @@ export class CompilationContext {
   hasParentWidget: boolean = false;
   scopeVars: any[] = [];
   currentKey: string = "";
-  lastNodeKey: string = ""; // temp variable to communicate to previous caller
   templates: { [key: string]: boolean } = {};
 
   constructor(name?: string) {
@@ -61,8 +60,8 @@ export class CompilationContext {
     for (let i = 0; i < this.loopNumber - 1; i++) {
       locationExpr += `\${i${i + 1}}__`;
     }
-    if (this.lastNodeKey || this.currentKey) {
-      const k = this.lastNodeKey || this.currentKey;
+    if (this.currentKey) {
+      const k = this.currentKey;
       this.addLine(`let k${id} = ${locationExpr}\` + ${k};`);
     } else {
       locationExpr += this.loopNumber ? `\${i${this.loopNumber}}__\`` : "`";

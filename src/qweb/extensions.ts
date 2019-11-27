@@ -279,6 +279,6 @@ QWeb.addDirective({
   atNodeEncounter({ ctx, value }) {
     let id = ctx.generateID();
     ctx.addLine(`const nodeKey${id} = ${ctx.formatExpression(value)};`);
-    ctx.lastNodeKey = `nodeKey${id}`;
+    ctx.currentKey = `nodeKey${id}`;
   }
 });

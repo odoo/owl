@@ -73,6 +73,78 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
 }"
 `;
 
+exports[`basic widget properties t-key on a component with t-if, and a sibling component 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let owner = context;
+    let sibling = null;
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    if (false) {
+        const nodeKey2 = 'str';
+        //COMPONENT
+        let k5 = \`__6__\` + nodeKey2;
+        let w4 = k5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k5]] : false;
+        let props4 = {};
+        if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
+            w4.destroy();
+            w4 = false;
+        }
+        if (w4) {
+            w4.__updateProps(props4, extra.fiber, undefined, undefined, sibling);
+            let pvnode = w4.__owl__.pvnode;
+            c1.push(pvnode);
+        } else {
+            let componentKey4 = \`Child\`;
+            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| context['Child'];
+            if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
+            w4 = new W4(parent, props4);
+            parent.__owl__.cmap[k5] = w4.__owl__.id;
+            let def3 = w4.__prepare(extra.fiber, undefined, undefined, sibling);
+            let pvnode = h('dummy', {key: k5, hook: {insert(vn) { let nvn=w4.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w4.destroy();}}});
+            const fiber = w4.__owl__.currentFiber;
+            def3.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            c1.push(pvnode);
+            w4.__owl__.pvnode = pvnode;
+        }
+        w4.__owl__.parentLastFiberId = extra.fiber.id;
+        sibling = w4.__owl__.currentFiber || sibling;
+    }
+    //COMPONENT
+    let k9 = \`__10__\`;
+    let w8 = k9 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k9]] : false;
+    let props8 = {};
+    if (w8 && w8.__owl__.currentFiber && !w8.__owl__.vnode) {
+        w8.destroy();
+        w8 = false;
+    }
+    if (w8) {
+        w8.__updateProps(props8, extra.fiber, undefined, undefined, sibling);
+        let pvnode = w8.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey8 = \`Child\`;
+        let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| context['Child'];
+        if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
+        w8 = new W8(parent, props8);
+        parent.__owl__.cmap[k9] = w8.__owl__.id;
+        let def7 = w8.__prepare(extra.fiber, undefined, undefined, sibling);
+        let pvnode = h('dummy', {key: k9, hook: {insert(vn) { let nvn=w8.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;},remove() {},destroy(vn) {w8.destroy();}}});
+        const fiber = w8.__owl__.currentFiber;
+        def7.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        c1.push(pvnode);
+        w8.__owl__.pvnode = pvnode;
+    }
+    w8.__owl__.parentLastFiberId = extra.fiber.id;
+    sibling = w8.__owl__.currentFiber || sibling;
+    return vn1;
+}"
+`;
+
 exports[`class and style attributes with t-component dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(context,extra
 ) {

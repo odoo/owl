@@ -1592,12 +1592,12 @@ exports[`t-if t-set, then t-elif, part 3 1`] = `
         c1.push(vn4);
         c4.push({text: \`AAA\`});
     }
-        else if (!_3) {
-            let c5 = [], p5 = {key:5};
-            var vn5 = h('span', p5, c5);
-            c1.push(vn5);
-            c5.push({text: \`BBB\`});
-        }
+    else if (!_3) {
+        let c5 = [], p5 = {key:5};
+        var vn5 = h('span', p5, c5);
+        c1.push(vn5);
+        c5.push({text: \`BBB\`});
+    }
     return vn1;
 }"
 `;

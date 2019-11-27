@@ -336,6 +336,26 @@ describe("basic widget properties", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>1</span></div><div><span>2</span></div></div>");
   });
+
+  test("t-key on a component with t-if, and a sibling component", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span>child</span>`;
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <Child t-if="false" t-key="'str'"/>
+          <Child/>
+        </div>`;
+      static components = { Child };
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>child</span></div>");
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("lifecycle hooks", () => {

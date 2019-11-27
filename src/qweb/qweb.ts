@@ -455,6 +455,10 @@ export class QWeb extends EventBus {
       return;
     }
 
+    if (ctx !== ctx.rootContext) {
+      ctx = ctx.subContext("currentKey", ctx.currentKey);
+    }
+
     const firstLetter = node.tagName[0];
     if (firstLetter === firstLetter.toUpperCase()) {
       // this is a component, we modify in place the xml document to change
@@ -544,7 +548,6 @@ export class QWeb extends EventBus {
     if (node.nodeName !== "t") {
       let nodeID = this._compileGenericNode(node, ctx, withHandlers);
       ctx = ctx.withParent(nodeID);
-      ctx = ctx.subContext("currentKey", ctx.lastNodeKey);
       let nodeHooks = {};
       let addNodeHook = function(hook, handler) {
         nodeHooks[hook] = nodeHooks[hook] || [];
@@ -728,7 +731,7 @@ export class QWeb extends EventBus {
       }
     }
     let nodeID = ctx.generateID();
-    let nodeKey = ctx.lastNodeKey || nodeID;
+    let nodeKey = ctx.currentKey || nodeID;
     const parts = [`key:${nodeKey}`];
     if (attrs.length + tattrs.length > 0) {
       parts.push(`attrs:{${attrs.join(",")}}`);

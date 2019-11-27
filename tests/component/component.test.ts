@@ -4153,6 +4153,28 @@ describe("t-slot directive", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>5</span></div>");
   });
+
+  test("multiple slots containing components", async () => {
+    class C extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class B extends Component<any, any> {
+      static template = xml`<div><t t-slot="s1"/><t t-slot="s2"/></div>`;
+    }
+    class A extends Component<any, any> {
+      static template = xml`
+        <B>
+          <t t-set="s1"><C val="1"/></t>
+          <t t-set="s2"><C val="2"/></t>
+        </B>`;
+      static components = { B, C };
+    }
+
+    const a = new A();
+    await a.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(`<div><span>1</span><span>2</span></div>`);
+  });
 });
 
 describe("t-model directive", () => {

@@ -481,7 +481,6 @@ export class Component<T extends Env, Props extends {}> {
     parentFiber: Fiber,
     scope: any,
     vars: any,
-    previousSibling?: Fiber | null
   ): Promise<void> {
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
@@ -490,8 +489,9 @@ export class Component<T extends Env, Props extends {}> {
       if (!parentFiber.child) {
         parentFiber.child = fiber;
       } else {
-        previousSibling!.sibling = fiber;
+        parentFiber.lastChild!.sibling = fiber;
       }
+      parentFiber.lastChild = fiber;
 
       const defaultProps = (<any>this.constructor).defaultProps;
       if (defaultProps) {
@@ -528,14 +528,15 @@ export class Component<T extends Env, Props extends {}> {
    * subcomponent is created. It gets its scope and vars, if any, from the
    * parent template.
    */
-  __prepare(parentFiber: Fiber, scope: any, vars: any, previousSibling?: Fiber | null) {
+  __prepare(parentFiber: Fiber, scope: any, vars: any) {
     const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force, null);
     fiber.shouldPatch = false;
     if (!parentFiber.child) {
       parentFiber.child = fiber;
     } else {
-      previousSibling!.sibling = fiber;
+      parentFiber.lastChild!.sibling = fiber;
     }
+    parentFiber.lastChild = fiber;
     return this.__prepareAndRender(fiber);
   }
 

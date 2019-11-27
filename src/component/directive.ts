@@ -381,7 +381,7 @@ QWeb.addDirective({
     }
     ctx.addLine(
       `w${componentID}.__updateProps(props${componentID}, extra.fiber${scopeVars &&
-        ", " + scopeVars}, sibling)${styleCode};`
+        ", " + scopeVars})${styleCode};`
     );
     ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
     if (registerCode) {
@@ -436,7 +436,7 @@ QWeb.addDirective({
       }
     }
 
-    ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars}, sibling);`);
+    ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     ctx.addLine(
       `let pvnode = h('dummy', {key: ${templateKey}, hook: {insert(vn) { let nvn=w${componentID}.__mount(fiber, pvnode.elm);pvnode.elm=nvn.elm;${refExpr}${transitionsInsertCode}},remove() {},destroy(vn) {${finalizeComponentCode}}}});`
@@ -460,7 +460,6 @@ QWeb.addDirective({
     }
 
     ctx.addLine(`w${componentID}.__owl__.parentLastFiberId = extra.fiber.id;`);
-    ctx.addLine(`sibling = w${componentID}.__owl__.currentFiber || sibling;`);
 
     return true;
   }

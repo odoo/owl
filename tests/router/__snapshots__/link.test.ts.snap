@@ -5,7 +5,6 @@ exports[`Link component can render simple cases 1`] = `
 ) {
     let utils = this.constructor.utils;
     let owner = context;
-    let sibling = null;
     var h = this.h;
     let _6 = utils.toObj({'router-link-active':context['isActive']});
     var _7 = context['href'];

@@ -192,11 +192,9 @@ QWeb.addDirective({
 
     // extract variables from nodecopy
     const tempCtx = new CompilationContext();
-    tempCtx.nextID = ctx.rootContext.nextID;
     tempCtx.allowMultipleRoots = true;
     qweb._compileNode(nodeCopy, tempCtx);
     const vars = Object.assign({}, ctx.variables, tempCtx.variables);
-    ctx.rootContext.nextID = tempCtx.nextID;
 
     const templateMap = Object.create(ctx.templates);
     // open new scope, if necessary

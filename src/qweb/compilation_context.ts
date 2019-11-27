@@ -6,7 +6,7 @@ export const INTERP_REGEXP = /\{\{.*?\}\}/g;
 //------------------------------------------------------------------------------
 
 export class CompilationContext {
-  nextID: number = 1;
+  static nextID: number = 1;
   code: string[] = [];
   variables: { [key: string]: QWebVar } = {};
   escaping: boolean = false;
@@ -42,8 +42,7 @@ export class CompilationContext {
   }
 
   generateID(): number {
-    const id = this.rootContext.nextID++;
-    return id;
+    return CompilationContext.nextID++;
   }
 
   /**

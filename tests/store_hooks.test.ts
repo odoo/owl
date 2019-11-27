@@ -490,6 +490,49 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>jupiler</span><span>kwak</span></div>");
   });
 
+  test("connected component is updated when mixing store and props changes", async () => {
+    let counter = 0;
+
+    class Beer extends Component<any, any> {
+      static template = xml`<span><t t-esc="beer.name"/></span>`;
+      beer = useStore((state, props) => state.beers[props.id], {
+        onUpdate: result => {
+          ++counter;
+        }
+      });
+    }
+
+    class App extends Component<any, any> {
+      static template = xml`<div><Beer id="state.beerId"/></div>`;
+      static components = { Beer };
+      state = useState({ beerId: 1 });
+    }
+
+    const state = { beers: { 1: { name: "jupiler" }, 2: { name: "kwak" } } };
+    const actions = {
+      renameBeer({ state }, { id, name }) {
+        state.beers[id].name = name;
+      }
+    };
+    const store = new Store({ state, actions });
+    (<any>env).store = store;
+    const app = new App();
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>jupiler</span></div>");
+    expect(counter).toBe(0);
+
+    app.state.beerId = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>kwak</span></div>");
+    expect(counter).toBe(1);
+
+    store.dispatch("renameBeer", { id: 2, name: "orval" });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>orval</span></div>");
+    expect(counter).toBe(2);
+  });
+
   test("connected component is properly cleaned up on destroy", async () => {
     class App extends Component<any, any> {
       static template = xml`<div></div>`;

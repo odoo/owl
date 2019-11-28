@@ -1341,14 +1341,14 @@ exports[`t-slot directive can define and call slots 2`] = `
     c8.push(vn9);
     const slot10 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
     if (slot10) {
-        slot10.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c9, vars: extra.vars, parent: owner}));
+        slot10.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c9, vars: extra.vars, parent: extra.parent || owner}));
     }
     let c11 = [], p11 = {key:11};
     var vn11 = h('div', p11, c11);
     c8.push(vn11);
     const slot12 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
     if (slot12) {
-        slot12.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c11, vars: extra.vars, parent: owner}));
+        slot12.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c11, vars: extra.vars, parent: extra.parent || owner}));
     }
     return vn8;
 }"
@@ -1489,7 +1489,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
     var vn14 = h('a', p14, c14);
     const slot15 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot15) {
-        slot15.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c14, vars: extra.vars, parent: owner}));
+        slot15.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c14, vars: extra.vars, parent: extra.parent || owner}));
     }
     return vn14;
 }"
@@ -1589,7 +1589,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
     var vn14 = h('a', p14, c14);
     const slot15 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot15) {
-        slot15.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c14, vars: extra.vars, parent: owner}));
+        slot15.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c14, vars: extra.vars, parent: extra.parent || owner}));
     }
     return vn14;
 }"
@@ -1745,7 +1745,7 @@ exports[`t-slot directive template can just return a slot 1`] = `
     if (slot10) {
         let children11= []
         result = {}
-        slot10.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: children11, vars: extra.vars, parent: owner}));
+        slot10.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: children11, vars: extra.vars, parent: extra.parent || owner}));
         utils.defineProxy(result, children11[0]);
     }
     return result;

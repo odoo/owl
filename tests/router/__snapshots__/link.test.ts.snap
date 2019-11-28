@@ -14,7 +14,7 @@ exports[`Link component can render simple cases 1`] = `
     p8.on['click'] = extra.handlers['click' + 8];
     const slot9 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot9) {
-        slot9.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c8, vars: extra.vars, parent: owner}));
+        slot9.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c8, vars: extra.vars, parent: extra.parent || owner}));
     }
     return vn8;
 }"

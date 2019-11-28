@@ -65,6 +65,12 @@ interface Internal<T extends Env, Props> {
   // its children, those that are not used anymore and thus can be destroyed
   parentLastFiberId: number;
 
+  // when a rendering is initiated by a parent, it may set variables in 'scope'
+  // and 'vars' (typically when the component is rendered in a slot). We need to
+  // store that information in case the component would be re-rendered later on.
+  scope: any;
+  vars: any;
+
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
   renderFn: CompiledTemplate;
@@ -184,7 +190,9 @@ export class Component<T extends Env, Props extends {}> {
       observer: null,
       renderFn: qweb.render.bind(qweb, template),
       classObj: null,
-      refs: null
+      refs: null,
+      scope: null,
+      vars: null
     };
   }
 
@@ -287,11 +295,13 @@ export class Component<T extends Env, Props extends {}> {
       return Promise.resolve();
     }
     if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
-      let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
+      let message = `Component '${
+        this.constructor.name
+      }' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
-    const fiber = new Fiber(null, this, undefined, undefined, false, target);
+    const fiber = new Fiber(null, this, false, target);
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber);
     } else {
@@ -335,7 +345,7 @@ export class Component<T extends Env, Props extends {}> {
     // currentFiber that is already rendered (isRendered is true), so we are
     // about to be mounted
     const isMounted = __owl__.isMounted;
-    const fiber = new Fiber(null, this, undefined, undefined, force, null);
+    const fiber = new Fiber(null, this, force, null);
     Promise.resolve().then(() => {
       if (__owl__.isMounted || !isMounted) {
         // we are mounted (__owl__.isMounted), or if we are currently being
@@ -476,16 +486,13 @@ export class Component<T extends Env, Props extends {}> {
    * The __updateProps method is called by the t-component directive whenever
    * it updates a component (so, when the parent template is rerendered).
    */
-  async __updateProps(
-    nextProps: Props,
-    parentFiber: Fiber,
-    scope: any,
-    vars: any,
-  ): Promise<void> {
+  async __updateProps(nextProps: Props, parentFiber: Fiber, scope: any, vars: any): Promise<void> {
+    this.__owl__.scope = scope;
+    this.__owl__.vars = vars;
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
       const __owl__ = this.__owl__;
-      const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force, null);
+      const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
       if (!parentFiber.child) {
         parentFiber.child = fiber;
       } else {
@@ -529,7 +536,9 @@ export class Component<T extends Env, Props extends {}> {
    * parent template.
    */
   __prepare(parentFiber: Fiber, scope: any, vars: any) {
-    const fiber = new Fiber(parentFiber, this, scope, vars, parentFiber.force, null);
+    this.__owl__.scope = scope;
+    this.__owl__.vars = vars;
+    const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
     fiber.shouldPatch = false;
     if (!parentFiber.child) {
       parentFiber.child = fiber;

@@ -62,17 +62,19 @@ export class Fiber {
 
   error?: Error;
 
-  constructor(parent: Fiber | null, component: Component<any, any>, scope, vars, force, target) {
-    this.force = force;
-    this.scope = scope;
-    this.vars = vars;
+  constructor(parent: Fiber | null, component: Component<any, any>, force, target) {
     this.component = component;
+    this.force = force;
     this.target = target;
+
+    const __owl__ = component.__owl__;
+    this.scope = __owl__.scope;
+    this.vars = __owl__.vars;
 
     this.root = parent ? parent.root : this;
     this.parent = parent;
 
-    let oldFiber = component.__owl__.currentFiber;
+    let oldFiber = __owl__.currentFiber;
     if (oldFiber && !oldFiber.isCompleted) {
       if (oldFiber.root === oldFiber && !parent) {
         // both oldFiber and this fiber are root fibers
@@ -85,7 +87,7 @@ export class Fiber {
 
     this.root.counter++;
 
-    component.__owl__.currentFiber = this;
+    __owl__.currentFiber = this;
   }
 
   /**

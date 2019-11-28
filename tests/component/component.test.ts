@@ -2236,6 +2236,36 @@ describe("other directives with t-component", () => {
     await nextTick();
     expect(normalize(fixture.innerHTML)).toBe("<div><span>hey</span></div>");
   });
+
+  test("t-foreach with t-component, and update", async () => {
+    class Child extends Widget {
+      static template = xml`
+        <span>
+          <t t-esc="state.val"/>
+          <t t-esc="props.val"/>
+        </span>`;
+      state = useState({ val: 'A' });
+      mounted() {
+        this.state.val = 'B';
+      }
+    }
+    class ParentWidget extends Widget {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <t t-foreach="Array(2)" t-as="n" t-key="n_index">
+            <Child val="n_index"/>
+          </t>
+        </div>`;
+    }
+
+    const widget = new ParentWidget();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
+  });
 });
 
 describe("random stuff/miscellaneous", () => {
@@ -4205,6 +4235,62 @@ describe("t-slot directive", () => {
     await a.mount(fixture);
 
     expect(fixture.innerHTML).toBe(`<div><span>1</span><span>2</span></div>`);
+  });
+
+  test("slots in t-foreach and re-rendering", async () => {
+    class Child extends Widget {
+      static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
+      state = useState({ val: 'A' });
+      mounted() {
+        this.state.val = 'B';
+      }
+    }
+    class Parent extends Widget {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <t t-foreach="Array(2)" t-as="n" t-key="n_index">
+            <Child><t t-esc="n_index"/></Child>
+          </t>
+        </div>`;
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for the changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
+  });
+
+  test("slots in t-foreach with t-set and re-rendering", async () => {
+    class Child extends Widget {
+      static template = xml`
+        <span>
+          <t t-esc="state.val"/>
+          <t t-slot="default"/>
+        </span>`;
+      state = useState({ val: 'A' });
+      mounted() {
+        this.state.val = 'B';
+      }
+    }
+    class ParentWidget extends Widget {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <t t-foreach="Array(2)" t-as="n" t-key="n_index">
+            <t t-set="dummy" t-value="n_index"/>
+            <Child><t t-esc="dummy"/></Child>
+          </t>
+        </div>`;
+    }
+
+    const widget = new ParentWidget();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 });
 

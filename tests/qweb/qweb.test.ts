@@ -673,6 +673,39 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb, "main")).toBe(expected);
   });
 
+  test("cascading t-call t-raw='0'", () => {
+    qweb.addTemplates(`
+        <templates>
+            <div t-name="finalTemplate">
+              <span>cascade 2</span>
+              <t t-raw="0"/>
+            </div>
+
+            <div t-name="subSubTemplate">
+              <t t-call="finalTemplate">
+                <span>cascade 1</span>
+                <t t-raw="0"/>
+              </t>
+            </div>
+
+            <div t-name="SubTemplate">
+              <t t-call="subSubTemplate">
+                <span>cascade 0</span>
+                <t t-raw="0"/>
+              </t>
+            </div>
+
+            <div t-name="main">
+              <t t-call="SubTemplate">
+                <span>hey</span> <span>yay</span>
+              </t>
+            </div>
+        </templates>
+    `);
+    const expected = "<div><div><div><div><span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span></div></div></div></div>";
+    expect(renderToString(qweb, "main")).toBe(expected);
+  });
+
   test("recursive template, part 1", () => {
     qweb.addTemplates(`
         <templates>

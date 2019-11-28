@@ -4069,6 +4069,37 @@ describe("t-slot directive", () => {
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
 
+  test("nested slots: evaluation context and parented relationship", async () => {
+    let slot;
+    class Slot extends Component<any, any> {
+      static template = xml`<span t-esc="props.val"/>`;
+      constructor(parent, props) {
+        super(parent, props);
+        slot = this;
+      }
+    }
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+    class Child extends Component<any, any> {
+      static components = { GrandChild };
+      static template = xml`
+        <GrandChild>
+          <t t-slot="default"/>
+        </GrandChild>`;
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child, Slot };
+      static template = xml`<Child><Slot val="state.val"/></Child>`;
+      state = useState({ val: 3 });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+    expect(slot.__owl__.parent).toBeInstanceOf(GrandChild);
+  });
+
   test("slot are properly rendered if inner props are changed", async () => {
     env.qweb.addTemplates(`
     <templates>

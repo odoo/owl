@@ -1513,6 +1513,25 @@ describe("composition", () => {
       "<div><span>11</span><span>2</span><span>13</span></div>"
     );
   });
+
+  test.only("three level of components with collapsing root nodes", async () => {
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div>2</div>`;
+    }
+    class Child extends Component<any, any> {
+      static components = { GrandChild };
+      static template = xml`<GrandChild/>`;
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`<Child></Child>`;
+    }
+
+    const app = new Parent();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div>2</div>');
+  });
 });
 
 describe("props evaluation ", () => {

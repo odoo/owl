@@ -32,6 +32,8 @@ export class CompilationContext {
   scopeVars: any[] = [];
   currentKey: string = "";
   templates: { [key: string]: boolean } = {};
+  callingLevel: number = 0;
+  inliningLevel: number = 0;
 
   constructor(name?: string) {
     this.rootContext = this;
@@ -129,6 +131,10 @@ export class CompilationContext {
   subContext(key: keyof CompilationContext, value: any): CompilationContext {
     const newContext = Object.create(this);
     newContext[key] = value;
+    if (key === 'caller') {
+      newContext.callingLevel++;
+      newContext.inliningLevel++;
+    }
     return newContext;
   }
 
@@ -165,6 +171,27 @@ export class CompilationContext {
   closeIf() {
     this.dedent();
     this.addLine("}");
+  }
+  /**
+   * Recursively (inverse) fetches the `caller` of a context
+   * Useful to determine to which t-call a t-raw="0" refers
+   */
+  getCaller(targetLevel?: number): Element | null {
+    if (targetLevel === undefined) {
+      targetLevel = this.inliningLevel;
+    }
+    if (targetLevel === this.callingLevel) {
+      return this.caller || null;
+    }
+    const proto = (this as any).__proto__;
+    return proto ? proto.getCaller(targetLevel) : null;
+  }
+  /**
+   * Marks the context with the current recursive level
+   * in which we are for inlining archs (t-raw="0")
+   */
+  getInliningContext(): CompilationContext {
+    return this.subContext('inliningLevel', this.inliningLevel - 1);
   }
 
   getValue(val: any): QWebVar | string {

@@ -28,9 +28,12 @@ QWeb.utils.getFragment = function(str: string): DocumentFragment {
 QWeb.utils.htmlToVDOM = htmlToVDOM;
 
 function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: CompilationContext) {
-  if (value === "0" && ctx.caller) {
-    qweb._compileNode(ctx.caller, ctx);
-    return;
+  if (value === "0") {
+    const caller = ctx.getCaller();
+    if (caller) {
+      qweb._compileNode(caller, ctx.getInliningContext());
+      return;
+    }
   }
 
   if (value.xml instanceof NodeList && !value.id) {

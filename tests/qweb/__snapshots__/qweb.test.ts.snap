@@ -910,6 +910,46 @@ exports[`t-call (template calling call with several sub nodes on same line 1`] =
 }"
 `;
 
+exports[`t-call (template calling cascading t-call t-raw='0' 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('div', p5, c5);
+    c1.push(vn5);
+    let c8 = [], p8 = {key:8};
+    var vn8 = h('div', p8, c8);
+    c5.push(vn8);
+    let c11 = [], p11 = {key:11};
+    var vn11 = h('div', p11, c11);
+    c8.push(vn11);
+    let c12 = [], p12 = {key:12};
+    var vn12 = h('span', p12, c12);
+    c11.push(vn12);
+    c12.push({text: \`cascade 2\`});
+    let c13 = [], p13 = {key:13};
+    var vn13 = h('span', p13, c13);
+    c11.push(vn13);
+    c13.push({text: \`cascade 1\`});
+    let c14 = [], p14 = {key:14};
+    var vn14 = h('span', p14, c14);
+    c11.push(vn14);
+    c14.push({text: \`cascade 0\`});
+    let c15 = [], p15 = {key:15};
+    var vn15 = h('span', p15, c15);
+    c11.push(vn15);
+    c15.push({text: \`hey\`});
+    c11.push({text: \` \`});
+    let c16 = [], p16 = {key:16};
+    var vn16 = h('span', p16, c16);
+    c11.push(vn16);
+    c16.push({text: \`yay\`});
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling inherit context 1`] = `
 "function anonymous(context,extra
 ) {

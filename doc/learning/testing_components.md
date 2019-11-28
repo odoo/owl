@@ -108,28 +108,11 @@ make sure that the DOM is up-to-date.
 
 It is sometimes useful to wait until Owl is completely done updating components
 (in particular, if we have a highly concurrent user interface). This next
-helper simply polls every 20ms the internal Owl task queue and returns a promise
-which resolves when it is empty:
+helper simply returns a Promise that resolves the next time the internal Owl
+task queue becomes empty.
 
 ```js
-function afterUpdates() {
-  return new Promise((resolve, reject) => {
-    let timer = setTimeout(poll, 20);
-    let counter = 0;
-    function poll() {
-      counter++;
-      if (owl.Component.scheduler.tasks.length) {
-        if (counter > 10) {
-          reject(new Error("timeout"));
-        } else {
-          timer = setTimeout(poll);
-        }
-      } else {
-        resolve();
-      }
-    }
-  });
-}
+Component.scheduler.afterUpdates();
 ```
 
 ## Debugging

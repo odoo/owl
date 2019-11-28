@@ -16,10 +16,27 @@ interface Task {
   callback: (err?: Error) => void;
 }
 
+interface Deferred extends Promise<any> {
+  resolve(val?: any): void;
+  reject(): void;
+}
+
+function makeDeferred(): Deferred {
+  let resolve, reject;
+  let def = new Promise((_resolve, _reject) => {
+    resolve = _resolve;
+    reject = _reject;
+  });
+  (<Deferred>def).resolve = resolve;
+  (<Deferred>def).reject = reject;
+  return <Deferred>def;
+}
+
 export class Scheduler {
   tasks: Task[] = [];
   isRunning: boolean = false;
   requestAnimationFrame: typeof window.requestAnimationFrame;
+  updateDefs: Deferred[] = [];
 
   constructor(requestAnimationFrame) {
     this.requestAnimationFrame = requestAnimationFrame;
@@ -81,8 +98,17 @@ export class Scheduler {
         this.scheduleTasks();
       } else {
         this.isRunning = false;
+        while (this.updateDefs.length) {
+          this.updateDefs.pop()!.resolve();
+        }
       }
     });
+  }
+
+  afterUpdates() {
+    var def = makeDeferred();
+    this.updateDefs.push(def);
+    return def;
   }
 }
 

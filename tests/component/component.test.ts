@@ -2484,6 +2484,31 @@ describe("random stuff/miscellaneous", () => {
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
+
+  test("scheduler afterUpdates is properly waiting", async () => {
+    class TestWidget extends Widget {
+      static template = xml`
+        <div><t t-esc="state.val"/></div>
+      `;
+      state = useState({ val: 1 });
+    }
+
+    const widget = new TestWidget();
+    widget.mount(fixture);
+    await Component.scheduler.afterUpdates();
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    widget.state.val = 2;
+    await Component.scheduler.afterUpdates();
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+
+    var def = Component.scheduler.afterUpdates();
+    setTimeout(() => {
+      widget.state.val = 3;
+    }, 50);
+    await def;
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+  });
 });
 
 describe("async rendering", () => {

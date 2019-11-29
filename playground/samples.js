@@ -2,7 +2,10 @@ const COMPONENTS = `// In this example, we show how components can be defined an
 const { Component, useState } = owl;
 
 class Greeter extends Component {
-    state = useState({ word: 'Hello' });
+    constructor() {
+        super(...arguments);
+        this.state = useState({ word: 'Hello' });
+    }
 
     toggle() {
         this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi';
@@ -11,7 +14,10 @@ class Greeter extends Component {
 
 // Main root component
 class App extends Component {
-    state = useState({ name: 'World'});
+    constructor() {
+        super(...arguments);
+        this.state = useState({ name: 'World'});
+    }
 }
 App.components = { Greeter };
 
@@ -47,7 +53,10 @@ const ANIMATION = `// The goal of this component is to see how the t-transition 
 const { Component, useState } = owl;
 
 class Counter extends Component {
-    state = useState({ value: 0 });
+    constructor() {
+        super(...arguments);
+        this.state = useState({ value: 0 });
+    }
 
     increment() {
         this.state.value++;
@@ -55,7 +64,10 @@ class Counter extends Component {
 }
 
 class App extends Component {
-    state = useState({ flag: false, componentFlag: false, numbers: [] });
+    constructor() {
+        super(...arguments);
+        this.state = useState({ flag: false, componentFlag: false, numbers: [] });
+    }
 
     toggle(key) {
         this.state[key] = !this.state[key];
@@ -213,7 +225,10 @@ class DemoComponent extends Component {
 }
 
 class App extends Component {
-    state = useState({ n: 0, flag: true });
+    constructor() {
+        super(...arguments);
+        this.state = useState({ n: 0, flag: true });
+    }
 
     increment() {
         this.state.n++;
@@ -282,11 +297,14 @@ function useMouse() {
 
 // Main root component
 class App extends owl.Component {
-    // simple state hook (reactive object)
-    counter = useState({ value: 0 });
+    constructor() {
+        super(...arguments);
+        // simple state hook (reactive object)
+        this.counter = useState({ value: 0 });
 
-    // this hooks is bound to the 'mouse' property.
-    mouse = useMouse();
+        // this hooks is bound to the 'mouse' property.
+        this.mouse = useMouse();
+    }
 
     increment() {
         this.counter.value++;
@@ -318,7 +336,10 @@ const { Component, Context } = owl;
 const { useContext } = owl.hooks;
 
 class ToolbarButton extends Component {
-    theme = useContext(this.env.themeContext);
+    constructor() {
+        super(...arguments);
+        this.theme = useContext(this.env.themeContext);
+    }
 
     get style () {
         const theme = this.theme;
@@ -451,12 +472,11 @@ const actions = {
 // TodoItem
 //------------------------------------------------------------------------------
 class TodoItem extends Component {
-    state = useState({ isEditing: false });
-    dispatch = useDispatch();
-
-    constructor(...args) {
-        super(...args);
+    constructor() {
+        super(...arguments);
         useAutofocus("input");
+        this.state = useState({ isEditing: false });
+        this.dispatch = useDispatch();
     }
 
     handleKeyup(ev) {
@@ -483,9 +503,12 @@ class TodoItem extends Component {
 // TodoApp
 //------------------------------------------------------------------------------
 class TodoApp extends Component {
-    state = useState({ filter: "all" });
-    todos = useStore(state => state.todos);
-    dispatch = useDispatch();
+    constructor() {
+        super(...arguments);
+        this.state = useState({ filter: "all" });
+        this.todos = useStore(state => state.todos);
+        this.dispatch = useDispatch();
+    }
 
     get visibleTodos() {
         switch (this.state.filter) {
@@ -1008,7 +1031,10 @@ class FormView extends owl.Component {}
 FormView.components = { AdvancedComponent };
 
 class Chatter extends owl.Component {
-    messages = Array.from(Array(100).keys());
+    constructor() {
+        super(...arguments);
+        this.messages = Array.from(Array(100).keys());
+    }
 }
 
 class App extends owl.Component {}
@@ -1150,7 +1176,10 @@ const SLOTS = `// We show here how slots can be used to create generic component
 const { Component, useState } = owl;
 
 class Card extends Component {
-    state = useState({ showContent: true });
+    constructor() {
+        super(...arguments);
+        this.state = useState({ showContent: true });
+    }
 
     toggleDisplay() {
         this.state.showContent = !this.state.showContent;
@@ -1158,7 +1187,10 @@ class Card extends Component {
 }
 
 class Counter extends Component {
-    state = useState({val: 1});
+    constructor() {
+        super(...arguments);
+        this.state = useState({val: 1});
+    }
 
     inc() {
         this.state.val++;
@@ -1167,7 +1199,10 @@ class Counter extends Component {
 
 // Main root component
 class App extends Component {
-    state = useState({a: 1, b: 3});
+    constructor() {
+        super(...arguments);
+        this.state = useState({a: 1, b: 3});
+    }
 
     inc(key, delta) {
         this.state[key] += delta;
@@ -1277,7 +1312,10 @@ class SlowComponent extends Component {
 class NotificationList extends Component {}
 
 class App extends Component {
-    state = useState({ value: 0, notifs: [] });
+    constructor() {
+        super(...arguments);
+        this.state = useState({ value: 0, notifs: [] });
+    }
 
     increment() {
         this.state.value++;
@@ -1350,13 +1388,16 @@ const FORM = `// This example illustrate how the t-model directive can be used t
 const { Component, useState } = owl;
 
 class Form extends Component {
-    state = useState({
-        text: "",
-        othertext: "",
-        number: 11,
-        color: "",
-        bool: false
-    });
+    constructor() {
+        super(...arguments);
+        this.state = useState({
+            text: "",
+            othertext: "",
+            number: 11,
+            color: "",
+            bool: false
+        });
+    }
 }
 
 // Application setup
@@ -1419,7 +1460,10 @@ const { useRef } = owl.hooks;
 class HelloWorld extends Component {}
 
 class Counter extends Component {
-  state = useState({ value: 0 });
+  constructor() {
+    super(...arguments);
+    this.state = useState({ value: 0 });
+  }
 
   inc() {
     this.state.value++;
@@ -1470,11 +1514,14 @@ class Window extends Component {
 }
 
 class WindowManager extends Component {
-  windows = [];
-  nextId = 1;
-  currentZindex = 1;
-  nextLeft = 0;
-  nextTop = 0;
+  constructor() {
+    super(...arguments);
+    this.windows = [];
+    this.nextId = 1;
+    this.currentZindex = 1;
+    this.nextLeft = 0;
+    this.nextTop = 0;
+  }
 
   addWindow(name) {
     const info = this.env.windows.find(w => w.name === name);
@@ -1518,7 +1565,10 @@ class WindowManager extends Component {
 WindowManager.components = { Window };
 
 class App extends Component {
-  wmRef = useRef("wm");
+  constructor() {
+    super(...arguments);
+    this.wmRef = useRef("wm");
+  }
 
   addWindow(name) {
     this.wmRef.comp.addWindow(name);
@@ -1552,7 +1602,7 @@ const WMS_XML = `<templates>
   <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex">
     <div class="header">
       <span t-on-mousedown="startDragAndDrop"><t t-esc="props.info.title"/></span>
-      <span class="close" t-on-click="close">×</span>
+      <span class="close" t-on-click.stop="close">×</span>
     </div>
     <t t-slot="default"/>
   </div>

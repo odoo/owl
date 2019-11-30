@@ -4,6 +4,7 @@
 
 - [Animations](reference/animations.md)
 - [Component](reference/component.md)
+- [Concurrency Model](reference/concurrency_model.md)
 - [Configuration](reference/config.md)
 - [Context](reference/context.md)
 - [Environment](reference/environment.md)
@@ -12,6 +13,7 @@
 - [Miscellaneous Components](reference/misc.md)
 - [Observer](reference/observer.md)
 - [Props](reference/props.md)
+- [Props Validation](reference/props_validation.md)
 - [QWeb Templating Language](reference/qweb_templating_language.md)
 - [QWeb Engine](reference/qweb_engine.md)
 - [Router](reference/router.md)

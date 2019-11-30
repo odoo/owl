@@ -297,7 +297,7 @@ A lot of stuff happened here:
 - the `Task` component has a `props` key: this is only useful for validation
   purpose. It says that each `Task` should be given exactly one prop, named
   `task`. If this is not the case, Owl will throw an
-  [error](../reference/component.md#props-validation). This is extremely
+  [error](../reference/props_validation.md). This is extremely
   useful when refactoring components
 - finally, to activate the props validation, we need to set Owl's
   [mode](../reference/config.md#mode) to `dev`. This is done in the `setup`

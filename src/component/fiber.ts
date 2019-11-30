@@ -180,6 +180,7 @@ export class Fiber {
    */
   complete() {
     let component = this.component;
+    let fiber: Fiber = this;
     this.isCompleted = true;
     if (!this.target && !component.__owl__.isMounted) {
       return;
@@ -194,48 +195,58 @@ export class Fiber {
     this._walk(doWork);
     const patchLen = patchQueue.length;
 
-    // call willPatch hook on each fiber of patchQueue
-    for (let i = 0; i < patchLen; i++) {
-      const fiber = patchQueue[i];
-      if (fiber.shouldPatch) {
+    try {
+      // call willPatch hook on each fiber of patchQueue
+      for (let i = 0; i < patchLen; i++) {
+        fiber = patchQueue[i];
+        if (fiber.shouldPatch) {
+          component = fiber.component;
+          if (component.__owl__.willPatchCB) {
+            component.__owl__.willPatchCB();
+          }
+          component.willPatch();
+        }
+      }
+
+      // call __patch on each fiber of (reversed) patchQueue
+      for (let i = patchLen - 1; i >= 0; i--) {
+        fiber = patchQueue[i];
         component = fiber.component;
-        if (component.__owl__.willPatchCB) {
-          component.__owl__.willPatchCB();
+        component.__patch(fiber.vnode!);
+        if (!fiber.shouldPatch && (!fiber.target || i !== 0)) {
+          component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;
         }
-        component.willPatch();
+        component.__owl__.currentFiber = null;
       }
-    }
 
-    // call __patch on each fiber of (reversed) patchQueue
-    for (let i = patchLen - 1; i >= 0; i--) {
-      const fiber = patchQueue[i];
-      component = fiber.component;
-      component.__patch(fiber.vnode!);
-      if (!fiber.shouldPatch && (!fiber.target || i !== 0)) {
-        component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;
+      // insert into the DOM (mount case)
+      let inDOM = false;
+      if (this.target) {
+        this.target.appendChild(this.component.el!);
+        inDOM = document.body.contains(this.target);
       }
-      component.__owl__.currentFiber = null;
-    }
 
-    // insert into the DOM (mount case)
-    let inDOM = false;
-    if (this.target) {
-      this.target.appendChild(this.component.el!);
-      inDOM = document.body.contains(this.target);
-    }
-
-    // call patched/mounted hook on each fiber of (reversed) patchQueue
-    for (let i = patchLen - 1; i >= 0; i--) {
-      const fiber = patchQueue[i];
-      component = fiber.component;
-      if (fiber.shouldPatch && !this.target) {
-        component.patched();
-        if (component.__owl__.patchedCB) {
-          component.__owl__.patchedCB();
+      // call patched/mounted hook on each fiber of (reversed) patchQueue
+      for (let i = patchLen - 1; i >= 0; i--) {
+        fiber = patchQueue[i];
+        component = fiber.component;
+        if (fiber.shouldPatch && !this.target) {
+          component.patched();
+          if (component.__owl__.patchedCB) {
+            component.__owl__.patchedCB();
+          }
+        } else if (this.target ? inDOM : true) {
+          component.__callMounted();
         }
-      } else if (this.target ? inDOM : true) {
-        component.__callMounted();
       }
+    } catch (e) {
+      // if there is no current fiber on component, we are in the situation where
+      // components were patched to the DOM, but a mounted/patched hook threw an
+      // error.  In that case, we cannot manage the error at a lower level than
+      // the root fiber, since some components may not have been properly mounted
+      // patched yet.
+      const errorFiber = component.__owl__.currentFiber ? fiber : this;
+      errorFiber.handleError(e);
     }
   }
 
@@ -274,7 +285,11 @@ export class Fiber {
     qweb.trigger("error", error);
 
     if (canCatch) {
+      // this.root.isCompleted = false
+      this.root.isCompleted = false;
+      // component.__owl__.currentFiber!.root.isCompleted = false;
       component.catchError!(error);
+
     } else {
       // the 3 next lines aim to mark the root fiber as being in error, and
       // to force it to end, without waiting for its children

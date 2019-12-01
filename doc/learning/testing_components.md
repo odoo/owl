@@ -1,10 +1,9 @@
-# 🦉 Testing and Debugging Owl components 🦉
+# 🦉 Testing Owl components 🦉
 
 ## Content
 
 - [Overview](#overview)
 - [Unit Tests](#unit-tests)
-- [Debugging](#debugging)
 
 ## Overview
 
@@ -131,81 +130,3 @@ function afterUpdates() {
   });
 }
 ```
-
-## Debugging
-
-Non trivial applications become quickly more difficult to understand. It is then
-useful to have a solid understanding of what is going on. To help with that,
-the following code can simply be copy/pasted in an application. Once it is
-executed, it will log a lot of information on each component main hooks.
-
-```js
-let current;
-Object.defineProperty(owl.Component, "current", {
-  get() {
-    return current;
-  },
-  set(comp) {
-    current = comp;
-    const name = comp.constructor.name;
-    let __owl__;
-    Object.defineProperty(current, "__owl__", {
-      get() {
-        return __owl__;
-      },
-      set(val) {
-        __owl__ = val;
-        debugComponent(comp, name, __owl__.id);
-      }
-    });
-  }
-});
-
-function toStr(props) {
-  let str = JSON.stringify(props || {});
-  if (str.length > 200) {
-    str = str.slice(0, 200) + "...";
-  }
-  return str;
-}
-
-function debugComponent(component, name, id) {
-  console.log(`[DEBUG] constructor ${name}<id=${id}>, props=${toStr(component.props)}`);
-  owl.hooks.onWillStart(() => {
-    console.log(`[DEBUG] willStart: '${name}<id=${id}>'`);
-  });
-  owl.hooks.onMounted(() => {
-    console.log(`[DEBUG] mounted: '${name}<id=${id}>'`);
-  });
-  owl.hooks.onWillUpdateProps(nextProps => {
-    console.log(`[DEBUG] willUpdateProps: '${name}<id=${id}> nextprops=${toStr(nextProps)}`);
-  });
-  owl.hooks.onWillPatch(() => {
-    console.log(`[DEBUG] willPatch: '${name}<id=${id}>'`);
-  });
-  owl.hooks.onPatched(() => {
-    console.log(`[DEBUG] patched: '${name}<id=${id}>'`);
-  });
-  owl.hooks.onWillUnmount(() => {
-    console.log(`[DEBUG] willUnmount: '${name}<id=${id}>'`);
-  });
-  const __render = component.__render.bind(component);
-  component.__render = function(...args) {
-    console.log(`[DEBUG] rendering template: '${name}<id=${id}>'`);
-    __render(...args);
-  };
-  const render = component.render.bind(component);
-  component.render = function(...args) {
-    console.log(`[DEBUG] render: '${name}<id=${id}>'`);
-    return render(...args);
-  };
-  const mount = component.mount.bind(component);
-  component.mount = function(...args) {
-    console.log(`[DEBUG] mount: '${name}<id=${id}>'`);
-    return mount(...args);
-  };
-}
-```
-
-Note that it is certainly useful to run this code at some point in an application,
-just to get a feel of what each user action implies, for the framework.

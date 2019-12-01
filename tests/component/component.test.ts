@@ -2165,28 +2165,28 @@ describe("other directives with t-component", () => {
         grandChild = this;
       }
       _onEv() {
-        steps.push('GrandChild');
+        steps.push("GrandChild");
       }
     }
     class Child extends Component<any, any> {
       static template = xml`<GrandChild t-on-ev="_onEv"/>`;
       static components = { GrandChild };
       _onEv() {
-        steps.push('Child');
+        steps.push("Child");
       }
     }
     class Parent extends Component<any, any> {
       static template = xml`<Child t-on-ev="_onEv"/>`;
       static components = { Child };
       _onEv() {
-        steps.push('Parent');
+        steps.push("Parent");
       }
     }
     const parent = new Parent();
     await parent.mount(fixture);
 
     grandChild.trigger("ev");
-    expect(steps).toEqual(['GrandChild', 'Child', 'Parent']);
+    expect(steps).toEqual(["GrandChild", "Child", "Parent"]);
   });
 
   test("t-if works with t-component", async () => {

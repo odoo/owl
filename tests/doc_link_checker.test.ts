@@ -85,7 +85,7 @@ function getFiles(path: string[] = []): FileData[] {
   return Array.prototype.concat(...files);
 }
 
-const LOCAL_FILES = ["LICENSE"];
+const LOCAL_FILES = ["LICENSE", "tools/debug.js"];
 export function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
   if (link.link.startsWith("http")) {
     // no check on external links

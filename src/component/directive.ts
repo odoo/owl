@@ -226,7 +226,6 @@ QWeb.addDirective({
     let propStr = Object.keys(props)
       .map(k => k + ":" + props[k])
       .join(",");
-    let defID = ctx.generateID();
     let componentID = ctx.generateID();
 
     const templateKey = ctx.generateTemplateKey();
@@ -439,15 +438,13 @@ QWeb.addDirective({
       }
     }
 
-    ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
+    ctx.addLine(
+      `let fiber = w${componentID}.__prepare(extra.fiber, ${scopeVars}, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
+    );
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     const insertHook = refExpr ? `insert(vn) {${refExpr}},` : "";
     ctx.addLine(
       `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {},destroy(vn) {${finalizeComponentCode}}}});`
-    );
-    ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
-    ctx.addLine(
-      `def${defID}.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
     );
     if (registerCode) {
       ctx.addLine(registerCode);

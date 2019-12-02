@@ -11,37 +11,35 @@ exports[`animations t-transition combined with component 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     //COMPONENT
-    let k4 = \`__5__\`;
-    let w3 = k4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k4]] : false;
-    let props3 = {};
-    if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
-        w3.destroy();
-        w3 = false;
+    let k3 = \`__4__\`;
+    let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
+    let props2 = {};
+    if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
+        w2.destroy();
+        w2 = false;
     }
-    if (w3) {
-        w3.__updateProps(props3, extra.fiber, undefined, undefined);
-        let pvnode = w3.__owl__.pvnode;
+    if (w2) {
+        w2.__updateProps(props2, extra.fiber, undefined, undefined);
+        let pvnode = w2.__owl__.pvnode;
         c1.push(pvnode);
     } else {
-        let componentKey3 = \`Child\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
-        if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
-        w3 = new W3(parent, props3);
-        const __patch3 = w3.__patch;
-        w3.__patch = fiber => {__patch3.call(w3, fiber); if(!w3.__owl__.transitionInserted){w3.__owl__.transitionInserted = true;utils.transitionInsert(w3.__owl__.vnode, 'chimay');}};
-        parent.__owl__.cmap[k4] = w3.__owl__.id;
-        let def2 = w3.__prepare(extra.fiber, undefined, undefined);
-        let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {let finalize = () => {
-          w3.destroy();
+        let componentKey2 = \`Child\`;
+        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
+        if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
+        w2 = new W2(parent, props2);
+        const __patch2 = w2.__patch;
+        w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
+        parent.__owl__.cmap[k3] = w2.__owl__.id;
+        let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {let finalize = () => {
+          w2.destroy();
         };
-        delete w3.__owl__.transitionInserted;
+        delete w2.__owl__.transitionInserted;
         utils.transitionRemove(vn, 'chimay', finalize);}}});
-        const fiber = w3.__owl__.currentFiber;
-        def2.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         c1.push(pvnode);
-        w3.__owl__.pvnode = pvnode;
+        w2.__owl__.pvnode = pvnode;
     }
-    w3.__owl__.parentLastFiberId = extra.fiber.id;
+    w2.__owl__.parentLastFiberId = extra.fiber.id;
     return vn1;
 }"
 `;
@@ -58,37 +56,35 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
     var vn1 = h('div', p1, c1);
     if (context['state'].display) {
         //COMPONENT
-        let k4 = \`__5__\`;
-        let w3 = k4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k4]] : false;
-        let props3 = {};
-        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
-            w3.destroy();
-            w3 = false;
+        let k3 = \`__4__\`;
+        let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
+        let props2 = {};
+        if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
+            w2.destroy();
+            w2 = false;
         }
-        if (w3) {
-            w3.__updateProps(props3, extra.fiber, undefined, undefined);
-            let pvnode = w3.__owl__.pvnode;
+        if (w2) {
+            w2.__updateProps(props2, extra.fiber, undefined, undefined);
+            let pvnode = w2.__owl__.pvnode;
             c1.push(pvnode);
         } else {
-            let componentKey3 = \`Child\`;
-            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
-            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
-            w3 = new W3(parent, props3);
-            const __patch3 = w3.__patch;
-            w3.__patch = fiber => {__patch3.call(w3, fiber); if(!w3.__owl__.transitionInserted){w3.__owl__.transitionInserted = true;utils.transitionInsert(w3.__owl__.vnode, 'chimay');}};
-            parent.__owl__.cmap[k4] = w3.__owl__.id;
-            let def2 = w3.__prepare(extra.fiber, undefined, undefined);
-            let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {let finalize = () => {
-          w3.destroy();
+            let componentKey2 = \`Child\`;
+            let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
+            if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
+            w2 = new W2(parent, props2);
+            const __patch2 = w2.__patch;
+            w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
+            parent.__owl__.cmap[k3] = w2.__owl__.id;
+            let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {let finalize = () => {
+          w2.destroy();
         };
-        delete w3.__owl__.transitionInserted;
+        delete w2.__owl__.transitionInserted;
         utils.transitionRemove(vn, 'chimay', finalize);}}});
-            const fiber = w3.__owl__.currentFiber;
-            def2.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             c1.push(pvnode);
-            w3.__owl__.pvnode = pvnode;
+            w2.__owl__.pvnode = pvnode;
         }
-        w3.__owl__.parentLastFiberId = extra.fiber.id;
+        w2.__owl__.parentLastFiberId = extra.fiber.id;
     }
     return vn1;
 }"
@@ -106,37 +102,35 @@ exports[`animations t-transition combined with t-component, remove and re-add be
     var vn1 = h('div', p1, c1);
     if (context['state'].flag) {
         //COMPONENT
-        let k4 = \`__5__\`;
-        let w3 = k4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k4]] : false;
-        let props3 = {};
-        if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
-            w3.destroy();
-            w3 = false;
+        let k3 = \`__4__\`;
+        let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
+        let props2 = {};
+        if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
+            w2.destroy();
+            w2 = false;
         }
-        if (w3) {
-            w3.__updateProps(props3, extra.fiber, undefined, undefined);
-            let pvnode = w3.__owl__.pvnode;
+        if (w2) {
+            w2.__updateProps(props2, extra.fiber, undefined, undefined);
+            let pvnode = w2.__owl__.pvnode;
             c1.push(pvnode);
         } else {
-            let componentKey3 = \`Child\`;
-            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
-            if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
-            w3 = new W3(parent, props3);
-            const __patch3 = w3.__patch;
-            w3.__patch = fiber => {__patch3.call(w3, fiber); if(!w3.__owl__.transitionInserted){w3.__owl__.transitionInserted = true;utils.transitionInsert(w3.__owl__.vnode, 'chimay');}};
-            parent.__owl__.cmap[k4] = w3.__owl__.id;
-            let def2 = w3.__prepare(extra.fiber, undefined, undefined);
-            let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {let finalize = () => {
-          w3.destroy();
+            let componentKey2 = \`Child\`;
+            let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
+            if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
+            w2 = new W2(parent, props2);
+            const __patch2 = w2.__patch;
+            w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
+            parent.__owl__.cmap[k3] = w2.__owl__.id;
+            let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {let finalize = () => {
+          w2.destroy();
         };
-        delete w3.__owl__.transitionInserted;
+        delete w2.__owl__.transitionInserted;
         utils.transitionRemove(vn, 'chimay', finalize);}}});
-            const fiber = w3.__owl__.currentFiber;
-            def2.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             c1.push(pvnode);
-            w3.__owl__.pvnode = pvnode;
+            w2.__owl__.pvnode = pvnode;
         }
-        w3.__owl__.parentLastFiberId = extra.fiber.id;
+        w2.__owl__.parentLastFiberId = extra.fiber.id;
     }
     return vn1;
 }"

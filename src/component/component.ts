@@ -304,7 +304,7 @@ export class Component<T extends Env, Props extends {}> {
     const fiber = new Fiber(null, this, false, target);
     fiber.shouldPatch = false;
     if (!__owl__.vnode) {
-      this.__prepareAndRender(fiber);
+      this.__prepareAndRender(fiber, () => {});
     } else {
       this.__render(fiber);
     }
@@ -544,7 +544,7 @@ export class Component<T extends Env, Props extends {}> {
    * subcomponent is created. It gets its scope and vars, if any, from the
    * parent template.
    */
-  __prepare(parentFiber: Fiber, scope: any, vars: any) {
+  __prepare(parentFiber: Fiber, scope: any, vars: any, cb: CallableFunction): Fiber {
     this.__owl__.scope = scope;
     this.__owl__.vars = vars;
     const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
@@ -555,7 +555,8 @@ export class Component<T extends Env, Props extends {}> {
       parentFiber.lastChild!.sibling = fiber;
     }
     parentFiber.lastChild = fiber;
-    return this.__prepareAndRender(fiber);
+    this.__prepareAndRender(fiber, cb);
+    return fiber;
   }
 
   __getTemplate(qweb: QWeb): string {
@@ -577,7 +578,7 @@ export class Component<T extends Env, Props extends {}> {
     }
     return p._template;
   }
-  async __prepareAndRender(fiber: Fiber) {
+  async __prepareAndRender(fiber: Fiber, cb: CallableFunction) {
     try {
       await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
     } catch (e) {
@@ -589,6 +590,7 @@ export class Component<T extends Env, Props extends {}> {
     }
     if (!fiber.isCompleted) {
       this.__render(fiber);
+      cb();
     }
   }
 

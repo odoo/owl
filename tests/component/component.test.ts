@@ -1849,6 +1849,38 @@ describe("other directives with t-component", () => {
     expect(widget.n).toBe(1);
   });
 
+  test("t-on works, even if flush is called many times", async () => {
+    let flag = false;
+    let mounted = false;
+    class Child extends Component<any, any> {
+      static template = xml`<span>child</span>`;
+      mounted() {
+        mounted = true;
+      }
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child t-on-click="doSomething"/></div>`;
+      static components = { Child };
+
+      doSomething() {
+        flag = true;
+      }
+    }
+
+    const parent = new Parent();
+    parent.mount(fixture);
+    while (!mounted) {
+      await nextMicroTick();
+      Component.scheduler.flush();
+    }
+
+    expect(fixture.innerHTML).toBe("<div><span>child</span></div>");
+    expect(flag).toBe(false);
+    fixture.querySelector("span")!.click();
+    expect(flag).toBe(true);
+  });
+
   test("t-on with handler bound to argument", async () => {
     expect.assertions(3);
     env.qweb.addTemplates(`

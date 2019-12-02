@@ -33,7 +33,7 @@ The component `Portal` has no particular state, rather it is meant to be a slave
 and ultimately just a way for the parent to teleport a piece of its own DOM elsewhere.
 
 The `Portal`'s root node is always `<portal/>` and is placed where the teleported content
-*would have* been. It is this element that the [teleported events](#expected-behaviors) are re-directed on.
+_would have_ been. It is this element that the [teleported events](#expected-behaviors) are re-directed on.
 
 ### Example
 

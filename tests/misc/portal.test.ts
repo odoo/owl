@@ -740,7 +740,7 @@ describe("Portal: Events handling", () => {
         <button>child</button>`;
     }
     class Parent extends Component<any, any> {
-      static components = { Portal, Child, };
+      static components = { Portal, Child };
       static template = xml`
         <div>
           <Portal target="'#outside'">

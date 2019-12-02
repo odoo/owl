@@ -5,15 +5,7 @@
  * to log lot of helpful information on how Owl components behave.
  */
 
-let debugSetup = {
-  // componentBlackList: /App/,  // regexp
-  // componentWhiteList: /SomeComponent/, // regexp
-  // methodBlackList: ["mounted"], // list of method names
-  // methodWhiteList: ["willStart"], // list of method names
-  logScheduler: true, // display/mute scheduler logs
-  logStore: true // display/mute store logs
-};
-{
+ function debugOwl(owl, options) {
   let prefix = "[OWL_DEBUG]";
   let current;
   Object.defineProperty(owl.Component, "current", {
@@ -23,10 +15,10 @@ let debugSetup = {
     set(comp) {
       current = comp;
       const name = comp.constructor.name;
-      if (debugSetup.componentBlackList && debugSetup.componentBlackList.test(name)) {
+      if (options.componentBlackList && options.componentBlackList.test(name)) {
         return;
       }
-      if (debugSetup.componentWhiteList && !debugSetup.componentWhiteList.test(name)) {
+      if (options.componentWhiteList && !options.componentWhiteList.test(name)) {
         return;
       }
       let __owl__;
@@ -53,10 +45,10 @@ let debugSetup = {
   function debugComponent(component, name, id) {
     let fullName = `${name}<id=${id}>`;
     let shouldDebug = method => {
-      if (debugSetup.methodBlackList && debugSetup.methodBlackList.includes(method)) {
+      if (options.methodBlackList && options.methodBlackList.includes(method)) {
         return false;
       }
-      if (debugSetup.methodWhiteList && !debugSetup.methodWhiteList.includes(method)) {
+      if (options.methodWhiteList && !options.methodWhiteList.includes(method)) {
         return false;
       }
       return true;
@@ -111,23 +103,19 @@ let debugSetup = {
     };
   }
 
-  if (debugSetup.logScheduler) {
-    let isRunning;
-    Object.defineProperty(owl.Component.scheduler, "isRunning", {
-      get() {
-        return isRunning;
-      },
-      set(val) {
-        if (val) {
-          console.log(`${prefix} scheduler: start running tasks queue`);
-        } else {
-          console.log(`${prefix} scheduler: stop running tasks queue`);
-        }
-        isRunning = val;
-      }
-    });
+  if (options.logScheduler) {
+    let start = owl.Component.scheduler.start;
+    let stop = owl.Component.scheduler.stop;
+    owl.Component.scheduler.start = function () {
+      console.log(`${prefix} scheduler: start running tasks queue`);
+      start.call(this);
+    };
+    owl.Component.scheduler.stop = function () {
+      console.log(`${prefix} scheduler: stop running tasks queue`);
+      stop.call(this);
+    };
   }
-  if (debugSetup.logStore) {
+  if (options.logStore) {
     let dispatch = owl.Store.prototype.dispatch;
     owl.Store.prototype.dispatch = function(action, ...payload) {
       console.log(`${prefix} store: action '${action}' dispatched. Payload: '${toStr(payload)}'`);
@@ -135,3 +123,17 @@ let debugSetup = {
     };
   }
 }
+
+
+// This debug function can then be used like this:
+//
+// debugOwl(owl, {
+//   componentBlackList: /App/,  // regexp
+//   componentWhiteList: /SomeComponent/, // regexp
+//   methodBlackList: ["mounted"], // list of method names
+//   methodWhiteList: ["willStart"], // list of method names
+//   logScheduler: true, // display/mute scheduler logs
+//   logStore: true // display/mute store logs
+// });
+
+module.exports.debugOwl = debugOwl;

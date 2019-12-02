@@ -25,6 +25,15 @@ export class Scheduler {
     this.requestAnimationFrame = requestAnimationFrame;
   }
 
+  start() {
+    this.isRunning = true;
+    this.scheduleTasks();
+  }
+
+  stop() {
+    this.isRunning = false;
+  }
+
   addFiber(fiber): Promise<void> {
     // if the fiber was remapped into a larger rendering fiber, it may not be a
     // root fiber.  But we only want to register root fibers
@@ -43,7 +52,7 @@ export class Scheduler {
         }
       });
       if (!this.isRunning) {
-        this.scheduleTasks();
+        this.start();
       }
     });
   }
@@ -74,16 +83,16 @@ export class Scheduler {
       return true;
     });
     this.tasks = tasks.concat(this.tasks);
+    if (this.tasks.length === 0) {
+      this.stop();
+    }
   }
 
   scheduleTasks() {
-    this.isRunning = true;
     this.requestAnimationFrame(() => {
       this.flush();
-      if (this.tasks.length > 0) {
+      if (this.isRunning) {
         this.scheduleTasks();
-      } else {
-        this.isRunning = false;
       }
     });
   }

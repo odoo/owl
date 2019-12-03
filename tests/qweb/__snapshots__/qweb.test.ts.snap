@@ -44,6 +44,30 @@ exports[`attributes dynamic attributes 1`] = `
 }"
 `;
 
+exports[`attributes dynamic class attribute 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    var h = this.h;
+    let _1 = utils.toObj(context['c']);
+    let c2 = [], p2 = {key:2,class:_1};
+    var vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
+exports[`attributes dynamic empty class attribute 1`] = `
+"function anonymous(context,extra
+) {
+    let utils = this.constructor.utils;
+    var h = this.h;
+    let _1 = utils.toObj(context['c']);
+    let c2 = [], p2 = {key:2,class:_1};
+    var vn2 = h('div', p2, c2);
+    return vn2;
+}"
+`;
+
 exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(context,extra
 ) {
@@ -784,6 +808,29 @@ exports[`special cases for some boolean html attributes/properties various boole
     var vn17 = h('button', p17, c17);
     c1.push(vn17);
     return vn1;
+}"
+`;
+
+exports[`static templates div with a class attribute 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let _2 = {'abc':true};
+    let c3 = [], p3 = {key:3,class:_2};
+    var vn3 = h('div', p3, c3);
+    c3.push({text: \`word\`});
+    return vn3;
+}"
+`;
+
+exports[`static templates div with a empty class attribute 1`] = `
+"function anonymous(context,extra
+) {
+    var h = this.h;
+    let c2 = [], p2 = {key:2};
+    var vn2 = h('div', p2, c2);
+    c2.push({text: \`word\`});
+    return vn2;
 }"
 `;
 

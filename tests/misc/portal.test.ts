@@ -548,6 +548,68 @@ describe("Portal: Basic use and DOM placement", () => {
     expect(error).toBeDefined();
     expect(error.message).toBe("Cannot read property 'crash' of undefined");
   });
+
+  test("portal manual unmount", async () => {
+    class Parent extends Component<any, any> {
+      static components = { Portal };
+      static template = xml`
+        <div>
+          <Portal target="'#outside'">
+            <span>gloria</span>
+          </Portal>
+        </div>`;
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(outside.innerHTML).toBe('<span>gloria</span>');
+    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+
+    parent.unmount();
+    expect(outside.innerHTML).toBe('');
+    expect(parent.el!.innerHTML).toBe('<portal><span>gloria</span></portal>');
+
+    await parent.mount(fixture);
+    expect(outside.innerHTML).toBe('<span>gloria</span>');
+    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+  });
+
+  test("portal manual unmount with subcomponent", async () => {
+    expect.assertions(9);
+    class Child extends Component<any, any> {
+      static template = xml`<span>gloria</span>`;
+      mounted() {
+        expect(outside.contains(this.el)).toBeTruthy();
+      }
+      willUnmount() {
+        expect(outside.contains(this.el)).toBeTruthy();
+      }
+    }
+    class Parent extends Component<any, any> {
+      static components = { Portal , Child };
+      static template = xml`
+        <div>
+          <Portal target="'#outside'">
+            <Child />
+          </Portal>
+        </div>`;
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(outside.innerHTML).toBe('<span>gloria</span>');
+    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+
+    parent.unmount();
+    expect(outside.innerHTML).toBe('');
+    expect(parent.el!.innerHTML).toBe('<portal><span>gloria</span></portal>');
+
+    await parent.mount(fixture);
+    expect(outside.innerHTML).toBe('<span>gloria</span>');
+    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+  });
 });
 
 describe("Portal: Events handling", () => {

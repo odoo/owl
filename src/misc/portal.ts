@@ -60,6 +60,16 @@ export class Portal extends Component<any, any> {
     });
   }
   /**
+   * Override to revert back to a classic Component's structure
+   *
+   * @override
+   */
+  __callWillUnmount() {
+    super.__callWillUnmount();
+    this.el!.appendChild(this.portal!.elm!);
+    this.doTargetLookUp = true;
+  }
+  /**
    * At each DOM change, we must ensure that the portal contains exactly one
    * child
    */
@@ -126,7 +136,9 @@ export class Portal extends Component<any, any> {
       }
     }
     this.__checkVNodeStructure(vnode);
-    const shouldDeploy = !this.portal && !this.doTargetLookUp;
+    const shouldDeploy =
+      (!this.portal || this.el!.contains(this.portal.elm!)) &&
+      !this.doTargetLookUp;
 
     if (!this.doTargetLookUp && !shouldDeploy) {
       // Only on pure patching, provided the

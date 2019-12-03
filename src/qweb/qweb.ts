@@ -371,12 +371,12 @@ export class QWeb extends EventBus {
       for (let v in parentContext.variables) {
         let variable = <any>parentContext.variables[v];
         if (variable.id) {
-          ctx.addLine(`let ${variable.id} = extra.fiber.vars.${variable.id}`);
+          ctx.addLine(`let ${variable.id} = extra.vars.${variable.id};`);
         }
       }
     }
     if (parentContext) {
-      ctx.addLine("    Object.assign(context, extra.fiber.scope);");
+      ctx.addLine("Object.assign(context, extra.fiber.scope);");
     }
     this._compileNode(elem, ctx);
 

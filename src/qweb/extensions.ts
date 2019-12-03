@@ -210,8 +210,11 @@ QWeb.addDirective({
       ctx.addLine(`let ${parentNode}= []`);
       ctx.addLine(`result = {}`);
     }
+    // if we are in a slot of a component, we need to get the vars from the
+    // parent fiber instead.
+    const vars = ctx.allowMultipleRoots ? "extra.fiber.parent.vars" : "extra.fiber.vars";
     ctx.addLine(
-      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, vars: extra.vars, parent: extra.parent || owner}));`
+      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, parent: extra.parent || owner, vars: ${vars}}));`
     );
     if (!ctx.parentNode) {
       ctx.addLine(`utils.defineProxy(result, ${parentNode}[0]);`);

@@ -237,7 +237,7 @@ QWeb.addDirective({
         varCode = `{${content}}`;
       }
       ctx.addLine(
-        `this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, fiber: {vars: ${varCode}, scope}}));`
+        `this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: ${varCode}, fiber: {scope}}));`
       );
       return true;
     }

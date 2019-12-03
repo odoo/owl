@@ -1293,14 +1293,14 @@ exports[`t-slot directive can define and call slots 2`] = `
     c7.push(vn8);
     const slot9 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
     if (slot9) {
-        slot9.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c8, vars: extra.vars, parent: extra.parent || owner}));
+        slot9.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c8, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     let c10 = [], p10 = {key:10};
     var vn10 = h('div', p10, c10);
     c7.push(vn10);
     const slot11 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
     if (slot11) {
-        slot11.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c10, vars: extra.vars, parent: extra.parent || owner}));
+        slot11.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c10, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn7;
 }"
@@ -1311,7 +1311,7 @@ exports[`t-slot directive can define and call slots 3`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c5 = [], p5 = {key:5};
     var vn5 = h('span', p5, c5);
     c1.push(vn5);
@@ -1324,7 +1324,7 @@ exports[`t-slot directive can define and call slots 4`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c6 = [], p6 = {key:6};
     var vn6 = h('span', p6, c6);
     c1.push(vn6);
@@ -1337,7 +1337,7 @@ exports[`t-slot directive content is the default slot 1`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c5 = [], p5 = {key:5};
     var vn5 = h('span', p5, c5);
     c1.push(vn5);
@@ -1350,7 +1350,7 @@ exports[`t-slot directive default slot work with text nodes 1`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     c1.push({text: \`sts rocks\`});
 }"
 `;
@@ -1360,7 +1360,7 @@ exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c5 = [], p5 = {key:5};
     var vn5 = h('span', p5, c5);
     c1.push(vn5);
@@ -1377,7 +1377,7 @@ exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c5 = [], p5 = {key:5};
     var vn5 = h('span', p5, c5);
     c1.push(vn5);
@@ -1396,7 +1396,7 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     context.__owl__.refs = context.__owl__.refs || {};
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c9 = [], p9 = {key:9,on:{}};
     var vn9 = h('button', p9, c9);
     c1.push(vn9);
@@ -1421,7 +1421,7 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
     let owner = context;
     var h = this.h;
     let c1 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     let c9 = [], p9 = {key:9,on:{}};
     var vn9 = h('button', p9, c9);
     c1.push(vn9);
@@ -1441,7 +1441,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
     var vn13 = h('a', p13, c13);
     const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot14) {
-        slot14.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c13, vars: extra.vars, parent: extra.parent || owner}));
+        slot14.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn13;
 }"
@@ -1520,7 +1520,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
 ) {
     var h = this.h;
     let c7 = extra.parentNode;
-        Object.assign(context, extra.fiber.scope);
+    Object.assign(context, extra.fiber.scope);
     c7.push({text: \`User \`});
     var _11 = context['user'].name;
     if (_11 || _11 === 0) {
@@ -1539,7 +1539,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
     var vn13 = h('a', p13, c13);
     const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot14) {
-        slot14.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c13, vars: extra.vars, parent: extra.parent || owner}));
+        slot14.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn13;
 }"
@@ -1619,8 +1619,8 @@ exports[`t-slot directive slots are rendered with proper context, part 3 3`] = `
 ) {
     var h = this.h;
     let c7 = extra.parentNode;
-    let _8 = extra.fiber.vars._8
-        Object.assign(context, extra.fiber.scope);
+    let _8 = extra.vars._8;
+    Object.assign(context, extra.fiber.scope);
     if (_8 || _8 === 0) {
         c7.push({text: _8});
     }
@@ -1672,8 +1672,8 @@ exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
 ) {
     var h = this.h;
     let c1 = extra.parentNode;
-    let _2 = extra.fiber.vars._2
-        Object.assign(context, extra.fiber.scope);
+    let _2 = extra.vars._2;
+    Object.assign(context, extra.fiber.scope);
     if (_2 || _2 === 0) {
         c1.push({text: _2});
     }
@@ -1691,7 +1691,7 @@ exports[`t-slot directive template can just return a slot 1`] = `
     if (slot8) {
         let children9= []
         result = {}
-        slot8.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: children9, vars: extra.vars, parent: extra.parent || owner}));
+        slot8.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: children9, parent: extra.parent || owner, vars: extra.fiber.vars}));
         utils.defineProxy(result, children9[0]);
     }
     return result;

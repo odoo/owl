@@ -4423,6 +4423,36 @@ describe("t-slot directive", () => {
     await nextTick(); // wait for changes triggered in mounted to be applied
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
+
+  test("slots in slots, with vars", async () => {
+    class B extends Component<any, any> {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class A extends Component<any, any> {
+      static template = xml`
+        <div>
+          <B>
+            <t t-slot="default"/>
+          </B>
+        </div>`;
+      static components = { B };
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-set="test" t-value="state.name"/>
+          <A>
+            <p>hey<t t-esc="test"/></p>
+          </A>
+        </div>`;
+      static components = { A };
+      state = { name: "aaron" };
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span><p>heyaaron</p></span></div></div>");
+  });
 });
 
 describe("t-model directive", () => {

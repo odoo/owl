@@ -1614,6 +1614,19 @@ describe("class and style attributes with t-component", () => {
     expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
   });
 
+  test("empty class attribute is not added on widget root el", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span/>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child class=""/></div>`;
+      static components = { Child };
+    }
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
+  });
+
   test("t-att-class is properly added/removed on widget root el", async () => {
     class Child extends Widget {
       static template = xml`<div class="c"/>`;

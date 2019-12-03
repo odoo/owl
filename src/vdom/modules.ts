@@ -219,7 +219,7 @@ function updateClass(oldVnode: VNode, vnode: VNode): void {
   elm = vnode.elm as Element;
 
   for (name in oldClass) {
-    if (!klass[name]) {
+    if (name && !klass[name]) {
       elm.classList.remove(name);
     }
   }

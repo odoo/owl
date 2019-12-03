@@ -650,13 +650,14 @@ export class QWeb extends EventBus {
       if (!name.startsWith("t-") && !(<Element>node).getAttribute("t-attf-" + name)) {
         const attID = ctx.generateID();
         if (name === "class") {
-          let classDef = value
-            .trim()
-            .split(/\s+/)
-            .map(a => `'${a}':true`)
-            .join(",");
-          classObj = `_${ctx.generateID()}`;
-          ctx.addLine(`let ${classObj} = {${classDef}};`);
+          if (value = value.trim()) {
+            let classDef = value
+              .split(/\s+/)
+              .map(a => `'${a}':true`)
+              .join(",");
+            classObj = `_${ctx.generateID()}`;
+            ctx.addLine(`let ${classObj} = {${classDef}};`);
+          }
         } else {
           ctx.addLine(`var _${attID} = '${value}';`);
           if (!name.match(/^[a-zA-Z]+$/)) {

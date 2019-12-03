@@ -46,6 +46,16 @@ describe("static templates", () => {
     expect(renderToString(qweb, "test")).toBe("<div>word</div>");
   });
 
+  test("div with a class attribute", () => {
+    qweb.addTemplate("test", `<div class="abc">word</div>`);
+    expect(renderToString(qweb, "test")).toBe(`<div class="abc">word</div>`);
+  });
+
+  test("div with a empty class attribute", () => {
+    qweb.addTemplate("test", `<div class="">word</div>`);
+    expect(renderToString(qweb, "test")).toBe(`<div>word</div>`);
+  });
+
   test("div with a span child node", () => {
     qweb.addTemplate("test", "<div><span>word</span></div>");
     expect(renderToString(qweb, "test")).toBe("<div><span>word</span></div>");
@@ -430,6 +440,18 @@ describe("attributes", () => {
     qweb.addTemplate("test", `<div t-att-foo="'bar'"/>`);
     const result = renderToString(qweb, "test");
     expect(result).toBe(`<div foo="bar"></div>`);
+  });
+
+  test("dynamic class attribute", () => {
+    qweb.addTemplate("test", `<div t-att-class="c"/>`);
+    const result = renderToString(qweb, "test", { c: "abc" });
+    expect(result).toBe(`<div class="abc"></div>`);
+  });
+
+  test("dynamic empty class attribute", () => {
+    qweb.addTemplate("test", `<div t-att-class="c"/>`);
+    const result = renderToString(qweb, "test", { c: "" });
+    expect(result).toBe(`<div></div>`);
   });
 
   test("dynamic attribute with a dash", () => {

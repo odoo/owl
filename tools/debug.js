@@ -107,11 +107,15 @@
     let start = owl.Component.scheduler.start;
     let stop = owl.Component.scheduler.stop;
     owl.Component.scheduler.start = function () {
-      console.log(`${prefix} scheduler: start running tasks queue`);
+      if (!this.isRunning) {
+        console.log(`${prefix} scheduler: start running tasks queue`);
+      }
       start.call(this);
     };
     owl.Component.scheduler.stop = function () {
-      console.log(`${prefix} scheduler: stop running tasks queue`);
+      if (this.isRunning) {
+        console.log(`${prefix} scheduler: stop running tasks queue`);
+      }
       stop.call(this);
     };
   }

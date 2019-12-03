@@ -2818,7 +2818,6 @@
             let propStr = Object.keys(props)
                 .map(k => k + ":" + props[k])
                 .join(",");
-            let defID = ctx.generateID();
             let componentID = ctx.generateID();
             const templateKey = ctx.generateTemplateKey();
             let ref = node.getAttribute("t-ref");
@@ -3010,12 +3009,10 @@
                     QWeb.slots[`${slotId}_default`] = slotFn;
                 }
             }
-            ctx.addLine(`let def${defID} = w${componentID}.__prepare(extra.fiber, ${scopeVars});`);
+            ctx.addLine(`let fiber = w${componentID}.__prepare(extra.fiber, ${scopeVars}, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`);
             // hack: specify empty remove hook to prevent the node from being removed from the DOM
             const insertHook = refExpr ? `insert(vn) {${refExpr}},` : "";
             ctx.addLine(`let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {},destroy(vn) {${finalizeComponentCode}}}});`);
-            ctx.addLine(`const fiber = w${componentID}.__owl__.currentFiber;`);
-            ctx.addLine(`def${defID}.then(function () { if (fiber.isCompleted) { return; } const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`);
             if (registerCode) {
                 ctx.addLine(registerCode);
             }
@@ -3038,6 +3035,13 @@
             this.isRunning = false;
             this.requestAnimationFrame = requestAnimationFrame;
         }
+        start() {
+            this.isRunning = true;
+            this.scheduleTasks();
+        }
+        stop() {
+            this.isRunning = false;
+        }
         addFiber(fiber) {
             // if the fiber was remapped into a larger rendering fiber, it may not be a
             // root fiber.  But we only want to register root fibers
@@ -3056,7 +3060,7 @@
                     }
                 });
                 if (!this.isRunning) {
-                    this.scheduleTasks();
+                    this.start();
                 }
             });
         }
@@ -3087,16 +3091,15 @@
                 return true;
             });
             this.tasks = tasks.concat(this.tasks);
+            if (this.tasks.length === 0) {
+                this.stop();
+            }
         }
         scheduleTasks() {
-            this.isRunning = true;
             this.requestAnimationFrame(() => {
                 this.flush();
-                if (this.tasks.length > 0) {
+                if (this.isRunning) {
                     this.scheduleTasks();
-                }
-                else {
-                    this.isRunning = false;
                 }
             });
         }
@@ -3291,6 +3294,7 @@
             if (this.target) {
                 this.target.appendChild(this.component.el);
                 inDOM = document.body.contains(this.target);
+                this.component.env.qweb.trigger("dom-appended");
             }
             // call patched/mounted hook on each fiber of (reversed) patchQueue
             for (let i = patchLen - 1; i >= 0; i--) {
@@ -3468,6 +3472,7 @@
         return result;
     }
 
+    const portalSymbol = Symbol("portal"); // FIXME
     //------------------------------------------------------------------------------
     // Component
     //------------------------------------------------------------------------------
@@ -3650,7 +3655,7 @@
             const fiber = new Fiber(null, this, false, target);
             fiber.shouldPatch = false;
             if (!__owl__.vnode) {
-                this.__prepareAndRender(fiber);
+                this.__prepareAndRender(fiber, () => { });
             }
             else {
                 this.__render(fiber);
@@ -3742,14 +3747,7 @@
          * willUnmount().
          */
         trigger(eventType, payload) {
-            if (this.el) {
-                const ev = new OwlEvent(this, eventType, {
-                    bubbles: true,
-                    cancelable: true,
-                    detail: payload
-                });
-                this.el.dispatchEvent(ev);
-            }
+            this.__trigger(this, eventType, payload);
         }
         //--------------------------------------------------------------------------
         // Private
@@ -3819,6 +3817,24 @@
             }
         }
         /**
+         * Private trigger method, allows to choose the component which triggered
+         * the event in the first place
+         */
+        __trigger(component, eventType, payload) {
+            if (this.el) {
+                const ev = new OwlEvent(component, eventType, {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: payload
+                });
+                const triggerHook = this.env[portalSymbol];
+                if (triggerHook) {
+                    triggerHook(ev);
+                }
+                this.el.dispatchEvent(ev);
+            }
+        }
+        /**
          * The __updateProps method is called by the t-component directive whenever
          * it updates a component (so, when the parent template is rerendered).
          */
@@ -3868,7 +3884,7 @@
          * subcomponent is created. It gets its scope and vars, if any, from the
          * parent template.
          */
-        __prepare(parentFiber, scope, vars) {
+        __prepare(parentFiber, scope, vars, cb) {
             this.__owl__.scope = scope;
             this.__owl__.vars = vars;
             const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
@@ -3880,7 +3896,8 @@
                 parentFiber.lastChild.sibling = fiber;
             }
             parentFiber.lastChild = fiber;
-            return this.__prepareAndRender(fiber);
+            this.__prepareAndRender(fiber, cb);
+            return fiber;
         }
         __getTemplate(qweb) {
             let p = this.constructor;
@@ -3901,7 +3918,7 @@
             }
             return p._template;
         }
-        async __prepareAndRender(fiber) {
+        async __prepareAndRender(fiber, cb) {
             try {
                 await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
             }
@@ -3914,6 +3931,7 @@
             }
             if (!fiber.isCompleted) {
                 this.__render(fiber);
+                cb();
             }
         }
         __render(fiber) {
@@ -4399,6 +4417,151 @@
     }
     AsyncRoot.template = xml `<t t-slot="default"/>`;
 
+    /**
+     * Portal
+     *
+     * The Portal component allows to render a part of a component outside it's DOM.
+     * It is for example useful for dialogs: for css reasons, dialogs are in general
+     * placed in a specific spot of the DOM (e.g. directly in the body). With the
+     * Portal, a component can conditionally specify in its tempate that it contains
+     * a dialog, and where this dialog should be inserted in the DOM.
+     *
+     * The Portal component ensures that the communication between the content of
+     * the Portal and its parent properly works: business events reaching the Portal
+     * are re-triggered on an empty <portal> node located in the parent's DOM.
+     */
+    class Portal extends Component {
+        constructor(parent, props) {
+            super(parent, props);
+            // boolean to indicate whether or not we must listen to 'dom-appended' event
+            // to hook on the moment when the target is inserted into the DOM (because it
+            // is not when the portal is rendered)
+            this.doTargetLookUp = true;
+            // set of encountered events that need to be redirected
+            this._handledEvents = new Set();
+            // function that will be the event's tunnel (needs to be an arrow function to
+            // avoid having to rebind `this`)
+            this._handlerTunnel = (ev) => {
+                ev.stopPropagation();
+                this.__trigger(ev.originalComponent, ev.type, ev.detail);
+            };
+            // Storing the parent's env
+            this.parentEnv = null;
+            // represents the element that is moved somewhere else
+            this.portal = null;
+            // the target where we will move `portal`
+            this.target = null;
+            this.parentEnv = parent ? parent.env : {};
+            // put a callback in the env that is propagated to children s.t. portal can
+            // register an handler to those events just before children will trigger them
+            useSubEnv({
+                [portalSymbol]: ev => {
+                    if (!this._handledEvents.has(ev.type)) {
+                        this.portal.elm.addEventListener(ev.type, this._handlerTunnel);
+                        this._handledEvents.add(ev.type);
+                    }
+                }
+            });
+        }
+        /**
+         * At each DOM change, we must ensure that the portal contains exactly one
+         * child
+         */
+        __checkVNodeStructure(vnode) {
+            const children = vnode.children;
+            let countRealNodes = 0;
+            for (let child of children) {
+                if (child.sel) {
+                    countRealNodes++;
+                }
+            }
+            if (countRealNodes !== 1) {
+                throw new Error(`Portal must have exactly one non-text child (has ${countRealNodes})`);
+            }
+        }
+        /**
+         * Ensure the target is still there at whichever time we render
+         */
+        __checkTargetPresence() {
+            if (!this.target || !document.contains(this.target)) {
+                throw new Error(`Could not find any match for "${this.props.target}"`);
+            }
+        }
+        /**
+         * Move the portal's element to the target
+         */
+        __deployPortal() {
+            this.__checkTargetPresence();
+            this.target.appendChild(this.portal.elm);
+        }
+        /**
+         * Override to remove from the DOM the element we have teleported
+         *
+         * @override
+         */
+        __destroy(parent) {
+            if (this.portal && this.portal.elm) {
+                const displacedElm = this.portal.elm;
+                const parent = displacedElm.parentNode;
+                if (parent) {
+                    parent.removeChild(displacedElm);
+                }
+            }
+            super.__destroy(parent);
+        }
+        /**
+         * Override to patch the element that has been teleported
+         *
+         * @override
+         */
+        __patch(vnode) {
+            if (this.doTargetLookUp) {
+                const target = document.querySelector(this.props.target);
+                if (!target) {
+                    this.env.qweb.on("dom-appended", this, () => {
+                        this.doTargetLookUp = false;
+                        this.env.qweb.off("dom-appended", this);
+                        this.target = document.querySelector(this.props.target);
+                        this.__deployPortal();
+                    });
+                }
+                else {
+                    this.doTargetLookUp = false;
+                    this.target = target;
+                }
+            }
+            this.__checkVNodeStructure(vnode);
+            const shouldDeploy = !this.portal && !this.doTargetLookUp;
+            if (!this.doTargetLookUp && !shouldDeploy) {
+                // Only on pure patching, provided the
+                // this.target's parent has not been unmounted
+                this.__checkTargetPresence();
+            }
+            const portalPatch = this.portal ? this.portal : document.createElement(vnode.children[0].sel);
+            this.portal = patch(portalPatch, vnode.children[0]);
+            vnode.children = [];
+            super.__patch(vnode);
+            if (shouldDeploy) {
+                this.__deployPortal();
+            }
+        }
+        /**
+         * Override to set the env
+         */
+        __trigger(component, eventType, payload) {
+            const env = this.env;
+            this.env = this.parentEnv;
+            super.__trigger(component, eventType, payload);
+            this.env = env;
+        }
+    }
+    Portal.template = xml `<portal><t t-slot="default"/></portal>`;
+    Portal.props = {
+        target: {
+            type: String
+        }
+    };
+
     class Link extends Component {
         constructor() {
             super(...arguments);
@@ -4672,7 +4835,7 @@
     const Store$1 = Store;
     const utils = _utils;
     const tags = _tags;
-    const misc = { AsyncRoot };
+    const misc = { AsyncRoot, Portal };
     const hooks$1 = Object.assign({}, _hooks, {
         useContext: useContext,
         useDispatch: useDispatch,
@@ -4695,9 +4858,9 @@
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '1.0.0-alpha5';
-    exports.__info__.date = '2019-11-29T15:12:14.501Z';
-    exports.__info__.hash = 'c126928';
+    exports.__info__.version = '1.0.0-beta1';
+    exports.__info__.date = '2019-12-03T07:54:22.133Z';
+    exports.__info__.hash = '42aa9d3';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

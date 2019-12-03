@@ -1,25 +1,17 @@
 # 🦉 OWL Roadmap 🦉
 
-- Current version: 1.0.0-alpha5
+- Current version: 1.0.0-beta1
 - Status: mostly stable
 
 This roadmap is only an attempt at predicting Owl's future.  Everything may
 change!
 
 
-### November 2019
-
-Owl will be used in various Odoo projects. We plan to:
-
-- fix any issues encountered
-- maybe cleanup slightly the router API
-- improve the documentation
-- improve error handling, add more helpful error messages
 
 ### December 2019
 
-If all goes well, Owl will be upgraded to beta status. From then, no API change,
-even small, is expected.
+If all goes well, Owl is upgraded to beta status. From now on, no API change,
+even small, is expected (but it still could happen).
 
 ### End of 2019
 
@@ -41,7 +33,8 @@ Release v1.0
 
 Maybe:
 
-- reimplement vdom to use *block* system, like Vue 3,
+- reimplement vdom to use *block* system, like Vue 3, which should make Owl
+  much faster
 - refactor `QWeb` to use an intermediate representation (some kind of AST) to
   allow additional optimisations.
 

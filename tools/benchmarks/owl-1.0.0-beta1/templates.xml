@@ -12,11 +12,11 @@
         </div>
         <div class="flags">
             <div>
-                <input type="checkbox" id="multipleflag" t-on-change="toggleMultiple" t-att-checked="state.multipleFlag"/>
+                <input type="checkbox" id="multipleflag" t-model="state.multipleFlag"/>
                 <label for="multipleflag">Do it 20x</label>
             </div>
             <div>
-                <input type="checkbox" id="clearFlag" t-on-change="toggleClear"  t-att-checked="state.clearAfterFlag"/>
+                <input type="checkbox" id="clearFlag" t-model="state.clearAfterFlag" />
                 <label for="clearFlag">Clear after</label>
             </div>
         </div>

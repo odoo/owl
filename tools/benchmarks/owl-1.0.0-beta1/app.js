@@ -1,15 +1,11 @@
-import {
-  buildData,
-  startMeasure,
-  stopMeasure,
-  formatNumber
-} from "../shared/utils.js";
+import { buildData, startMeasure, stopMeasure, formatNumber } from "../shared/utils.js";
 
+const { useState, useRef } = owl.hooks;
 //------------------------------------------------------------------------------
 // Likes Counter Widget
 //------------------------------------------------------------------------------
 class Counter extends owl.Component {
-  state = { counter: 0 };
+  state = useState({ counter: 0 });
 
   increment() {
     this.state.counter++;
@@ -20,31 +16,26 @@ class Counter extends owl.Component {
 // Message Widget
 //------------------------------------------------------------------------------
 class Message extends owl.Component {
-  widgets = { Counter };
-
   shouldUpdate(nextProps) {
-    return nextProps !== this.props;
+    return nextProps.message !== this.props.message;
   }
   removeMessage() {
-    this.trigger("remove_message", {
-      id: this.props.id
+    this.trigger("remove-message", {
+      id: this.props.message.id
     });
   }
 }
+Message.components = { Counter };
 
 //------------------------------------------------------------------------------
 // Root Widget
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  widgets = { Message };
-  state = { messages: [], multipleFlag: false, clearAfterFlag: false };
+  state = useState({ messages: [], multipleFlag: false, clearAfterFlag: false });
+  logRef = useRef("log");
 
   mounted() {
-    this.log(
-      `Benchmarking Owl v${owl.__info__.version} (build date: ${
-        owl.__info__.date
-      })`
-    );
+    this.log(`Benchmarking Owl v${owl.__info__.version} (build date: ${owl.__info__.date})`);
   }
 
   benchmark(message, fn, callback) {
@@ -109,7 +100,7 @@ class App extends owl.Component {
   }
 
   clear() {
-    this.benchmark("clear", () => {
+    this._benchmark("clear", () => {
       this.state.messages = [];
     });
   }
@@ -117,17 +108,17 @@ class App extends owl.Component {
   updateSomeMessages() {
     this.benchmark("update every 10th", () => {
       const messages = this.state.messages;
-      for (let i = 0; i < this.state.messages.length; i += 10) {
+      for (let i = 0; i < messages.length; i += 10) {
         const msg = Object.assign({}, messages[i]);
         msg.author += "!!!";
-        this.set(messages, i, msg);
+        messages[i] = msg;
       }
     });
   }
 
-  removeMessage(data) {
+  removeMessage(event) {
     this.benchmark("remove message", () => {
-      const index = this.state.messages.findIndex(m => m.id === data.id);
+      const index = this.state.messages.findIndex(m => m.id === event.detail.id);
       this.state.messages.splice(index, 1);
     });
   }
@@ -138,32 +129,25 @@ class App extends owl.Component {
       div.classList.add("bold");
     }
     div.textContent = `> ${str}`;
-    this.refs.log.appendChild(div);
-    this.refs.log.scrollTop = this.refs.log.scrollHeight;
+    this.logRef.el.appendChild(div);
+    this.logRef.el.scrollTop = this.logRef.el.scrollHeight;
   }
 
   clearLog() {
-    this.refs.log.innerHTML = "";
-  }
-
-  toggleMultiple() {
-    this.state.multipleFlag = !this.state.multipleFlag;
-  }
-
-  toggleClear() {
-    this.state.clearAfterFlag = !this.state.clearAfterFlag;
+    this.logRef.el.innerHTML = "";
   }
 }
+App.components = { Message };
 
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
 async function start() {
-  const templates = await owl.utils.loadTemplates("templates.xml");
-  const env = {
-    qweb: new owl.QWeb(templates)
+  const templates = await owl.utils.loadFile("templates.xml");
+  App.env = {
+    qweb: new owl.QWeb({ templates })
   };
-  const app = new App(env);
+  const app = new App();
   app.mount(document.body);
 }
 

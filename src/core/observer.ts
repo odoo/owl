@@ -20,7 +20,6 @@
 export class Observer {
   rev: number = 1;
   allowMutations: boolean = true;
-  dirty: boolean = false;
   weakMap: WeakMap<any, any> = new WeakMap();
 
   notifyCB() {}

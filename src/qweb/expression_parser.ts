@@ -63,6 +63,7 @@ type TKind =
 interface Token {
   type: TKind;
   value: string;
+  originalValue?: string;
   size?: number;
 }
 
@@ -79,7 +80,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
 
 // note that the space after typeof is relevant. It makes sure that the formatted
 // expression has a space after typeof
-const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ".split(",");
+const OPERATORS = ".,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>".split(",");
 
 type Tokenizer = (expr: string) => Token | false;
 
@@ -227,35 +228,53 @@ export function tokenize(expr: string): Token[] {
  * - unless the previous token is a dot (in that case, this is a property: `a.b`)
  * - or if the previous token is a left brace or a comma, and the next token is
  *   a colon (in that case, this is an object key: `{a: b}`)
+ *
+ * Some specific code is also required to support arrow functions. If we detect
+ * the arrow operator, then we add the current (or some previous tokens) token to
+ * the list of variables so it does not get replaced by a lookup in the context
  */
 export function compileExpr(expr: string, vars: { [key: string]: QWebVar }): string {
+  vars = Object.create(vars);
   const tokens = tokenize(expr);
-  let result = "";
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
+    let prevToken = tokens[i - 1];
+    let nextToken = tokens[i + 1];
+    let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
     if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
-      // we need to find if it is a variable
-      let isVar = true;
-      let prevToken = tokens[i - 1];
       if (prevToken) {
         if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
           isVar = false;
         } else if (prevToken.type === "LEFT_BRACE" || prevToken.type === "COMMA") {
-          let nextToken = tokens[i + 1];
           if (nextToken && nextToken.type === "COLON") {
             isVar = false;
           }
         }
       }
-      if (isVar) {
-        if (token.value in vars && "id" in vars[token.value]) {
-          token.value = vars[token.value].id!;
-        } else {
-          token.value = `context['${token.value}']`;
+    }
+    if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
+      if (token.type === "RIGHT_PAREN") {
+        let j = i - 1;
+        while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
+          if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
+            tokens[j].value = tokens[j].originalValue!;
+            vars[tokens[j].value] = { id: tokens[j].value };
+          }
+          j--;
         }
+      } else {
+        vars[token.value] = { id: token.value };
       }
     }
-    result += token.value;
+
+    if (isVar) {
+      if (token.value in vars && "id" in vars[token.value]) {
+        token.value = vars[token.value].id!;
+      } else {
+        token.originalValue = token.value;
+        token.value = `context['${token.value}']`;
+      }
+    }
   }
-  return result;
+  return tokens.map(t => t.value).join("");
 }

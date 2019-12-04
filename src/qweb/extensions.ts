@@ -41,7 +41,7 @@ QWeb.addDirective({
       return "";
     });
     let params = extraArgs ? `owner, ${ctx.formatExpression(extraArgs)}` : "owner";
-    let handler = `function (e) {`;
+    let handler = `function (e) {if (!context.__owl__.isMounted){return}`;
     handler += mods
       .map(function(mod) {
         return MODS_CODE[mod];

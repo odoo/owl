@@ -10,7 +10,7 @@ exports[`Link component can render simple cases 1`] = `
     var _6 = context['href'];
     let c7 = [], p7 = {key:7,attrs:{href: _6},class:_5,on:{}};
     var vn7 = h('a', p7, c7);
-    extra.handlers['click' + 7] = extra.handlers['click' + 7] || function (e) {const fn = context['navigate'];if (fn) { fn.call(owner, e); } else { context.navigate; }};
+    extra.handlers['click' + 7] = extra.handlers['click' + 7] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['navigate'];if (fn) { fn.call(owner, e); } else { context.navigate; }};
     p7.on['click'] = extra.handlers['click' + 7];
     const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot8) {

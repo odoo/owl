@@ -87,6 +87,11 @@ export function renderToDOM(
   context: EvalContext = {},
   extra?: any
 ): HTMLElement | Text {
+  if (!context.__owl__) {
+    // we add `__owl__` to better simulate a component as context.  This is
+    // particularly important for event handlers added with the `t-on` directive.
+    context.__owl__ = { isMounted: true };
+  }
   const vnode = qweb.render(template, context, extra);
 
   // we snapshot here the compiled code. This is useful to prevent unwanted code

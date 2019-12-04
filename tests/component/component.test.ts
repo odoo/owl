@@ -164,7 +164,7 @@ describe("basic widget properties", () => {
     button.click();
     await nextTick();
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
-    expect(counter.state.counter).toBe(1);
+    expect(counter.state.counter).toBe(0);
   });
 
   test("widget style and classname", async () => {
@@ -2232,6 +2232,100 @@ describe("other directives with t-component", () => {
 
     grandChild.trigger("ev");
     expect(steps).toEqual(["GrandChild", "Child", "Parent"]);
+  });
+
+  test("t-on on unmounted components", async () => {
+    const steps: string[] = [];
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml`<div t-on-click="onClick"/>`;
+      mounted() {
+        child = this;
+      }
+      onClick() {
+        steps.push("click");
+      }
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child/></div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    let el = child.el;
+    el.click();
+    expect(steps).toEqual(["click"]);
+    parent.unmount();
+    expect(child.__owl__.isMounted).toBe(false);
+    el.click();
+    expect(steps).toEqual(["click"]);
+  });
+
+  test("t-on on destroyed components", async () => {
+    const steps: string[] = [];
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml`<div t-on-click="onClick"/>`;
+      mounted() {
+        child = this;
+      }
+      onClick() {
+        steps.push("click");
+      }
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    let el = child.el;
+    el.click();
+    expect(steps).toEqual(["click"]);
+    parent.state.flag = false;
+    await nextTick();
+    expect(child.__owl__.isDestroyed).toBe(true);
+    el.click();
+    expect(steps).toEqual(["click"]);
+  });
+
+  test("t-on on destroyed components, part 2", async () => {
+    const steps: string[] = [];
+    let child;
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div>grandchild</div>`;
+    }
+    class Child extends Component<any, any> {
+      static template = xml`<div><GrandChild t-ref="gc" t-on-click="onClick"/></div>`;
+      static components = { GrandChild };
+      gc = useRef("gc");
+      mounted() {
+        child = this;
+      }
+      onClick() {
+        steps.push("click");
+      }
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    let el = child.gc.el;
+    el.click();
+    expect(steps).toEqual(["click"]);
+    parent.state.flag = false;
+    await nextTick();
+    expect(child.__owl__.isDestroyed).toBe(true);
+    el.click();
+    expect(steps).toEqual(["click"]);
   });
 
   test("t-if works with t-component", async () => {

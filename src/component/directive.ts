@@ -298,7 +298,7 @@ QWeb.addDirective({
               params = `owner, ${ctx.formatExpression(extraArgs)}`;
             }
           }
-          let handler = `function (e) {`;
+          let handler = `function (e) {if(!owner.__owl__.isMounted){return}`;
           handler += mods
             .map(function(mod) {
               return T_COMPONENT_MODS_CODE[mod];

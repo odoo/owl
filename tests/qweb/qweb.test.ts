@@ -875,9 +875,9 @@ describe("foreach", () => {
         <t t-foreach="[1]" t-as="item"><t t-esc="item"/></t>
       </div>`
     );
-    const context = {};
+    const context = { __owl__: {} };
     renderToString(qweb, "test", context);
-    expect(Object.keys(context).length).toBe(0);
+    expect(Object.keys(context)).toEqual(["__owl__"]);
   });
 
   test("t-foreach in t-forach", () => {

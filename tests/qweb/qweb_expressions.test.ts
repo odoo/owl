@@ -163,4 +163,13 @@ describe("expression evaluation", () => {
       "'x'.toUpperCase({b:_v5})"
     );
   });
+
+  test("arrow functions", () => {
+    expect(compileExpr("list.map(e => e.val)", {})).toBe("context['list'].map(e=>e.val)");
+    expect(compileExpr("list.map(e => a + e)", {})).toBe("context['list'].map(e=>context['a']+e)");
+    expect(compileExpr("list.map((e) => e)", {})).toBe("context['list'].map((e)=>e)");
+    expect(compileExpr("list.map((elem, index) => elem + index)", {})).toBe(
+      "context['list'].map((elem,index)=>elem+index)"
+    );
+  });
 });

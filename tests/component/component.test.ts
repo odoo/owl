@@ -358,6 +358,74 @@ describe("basic widget properties", () => {
   });
 });
 
+describe("mount targets", () => {
+  test("can attach a component to an existing node (if same tagname)", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<div>app</div>`;
+    }
+    const div = document.createElement("div");
+    fixture.appendChild(div);
+
+    const app = new App();
+    await app.mount(div, { position: "self" });
+    expect(fixture.innerHTML).toBe("<div>app</div>");
+  });
+
+  test("cannot attach a component to an existing node (if not same tagname)", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<span>app</span>`;
+    }
+    const div = document.createElement("div");
+    fixture.appendChild(div);
+
+    const app = new App();
+    let error;
+    try {
+      await app.mount(div, { position: "self" });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot attach 'App' to target node (not same tag name)");
+  });
+
+  test("can mount a component (with position='first-child')", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+
+    const app = new App();
+    await app.mount(fixture, { position: "first-child" });
+    expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
+  });
+
+  test("can mount a component (with position='last-child')", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+
+    const app = new App();
+    await app.mount(fixture, { position: "last-child" });
+    expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+  });
+
+  test("default mount option is 'last-child'", async () => {
+    class App extends Component<any, any> {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+
+    const app = new App();
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+  });
+});
+
 describe("lifecycle hooks", () => {
   test("willStart hook is called", async () => {
     let willstart = false;

@@ -46,7 +46,7 @@ export class Fiber {
   // scheduler.
   counter: number = 0;
 
-  target: HTMLElement | null;
+  inserter: (el: HTMLElement) => void | null;
 
   scope: any;
   vars: any;
@@ -62,10 +62,10 @@ export class Fiber {
 
   error?: Error;
 
-  constructor(parent: Fiber | null, component: Component<any, any>, force, target) {
+  constructor(parent: Fiber | null, component: Component<any, any>, force, inserter) {
     this.component = component;
     this.force = force;
-    this.target = target;
+    this.inserter = inserter;
 
     const __owl__ = component.__owl__;
     this.scope = __owl__.scope;
@@ -181,7 +181,7 @@ export class Fiber {
   complete() {
     let component = this.component;
     this.isCompleted = true;
-    if (!this.target && !component.__owl__.isMounted) {
+    if (!this.inserter && !component.__owl__.isMounted) {
       return;
     }
 
@@ -211,7 +211,7 @@ export class Fiber {
       const fiber = patchQueue[i];
       component = fiber.component;
       component.__patch(fiber.vnode!);
-      if (!fiber.shouldPatch && (!fiber.target || i !== 0)) {
+      if (!fiber.shouldPatch && (!fiber.inserter || i !== 0)) {
         component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;
       }
       component.__owl__.currentFiber = null;
@@ -219,9 +219,9 @@ export class Fiber {
 
     // insert into the DOM (mount case)
     let inDOM = false;
-    if (this.target) {
-      this.target.appendChild(this.component.el!);
-      inDOM = document.body.contains(this.target);
+    if (this.inserter) {
+      this.inserter(this.component.el!);
+      inDOM = document.body.contains(this.component.el);
       this.component.env.qweb.trigger("dom-appended");
     }
 
@@ -229,12 +229,12 @@ export class Fiber {
     for (let i = patchLen - 1; i >= 0; i--) {
       const fiber = patchQueue[i];
       component = fiber.component;
-      if (fiber.shouldPatch && !this.target) {
+      if (fiber.shouldPatch && !this.inserter) {
         component.patched();
         if (component.__owl__.patchedCB) {
           component.__owl__.patchedCB();
         }
-      } else if (this.target ? inDOM : true) {
+      } else if (this.inserter ? inDOM : true) {
         component.__callMounted();
       }
     }

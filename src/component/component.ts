@@ -36,6 +36,10 @@ export interface Env {
   [key: string]: any;
 }
 
+interface MountOptions {
+  position?: "first-child" | "last-child" | "self";
+}
+
 /**
  * This is mostly an internal detail of implementation. The Meta interface is
  * useful to typecheck and describe the internal keys used by Owl to manage the
@@ -102,6 +106,7 @@ export class Component<T extends Env, Props extends {}> {
   static env: any = {};
   // expose scheduler s.t. it can be mocked for testing purposes
   static scheduler: Scheduler = scheduler;
+  __target: HTMLElement | undefined;
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -291,7 +296,8 @@ export class Component<T extends Env, Props extends {}> {
    *
    * Note that a component can be mounted an unmounted several times
    */
-  async mount(target: HTMLElement | DocumentFragment): Promise<void> {
+  async mount(target: HTMLElement | DocumentFragment, options: MountOptions = {}): Promise<void> {
+    const position = options.position || "last-child";
     const __owl__ = this.__owl__;
     if (__owl__.isMounted) {
       return Promise.resolve();
@@ -301,7 +307,16 @@ export class Component<T extends Env, Props extends {}> {
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
-    const fiber = new Fiber(null, this, false, target);
+    let inserter =
+      position === "last-child"
+        ? el => target.appendChild(el)
+        : position === "first-child"
+        ? el => target.prepend(el)
+        : el => {};
+    if (position === "self") {
+      this.__target = target as HTMLElement;
+    }
+    const fiber = new Fiber(null, this, false, inserter);
     fiber.shouldPatch = false;
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber, () => {});
@@ -535,8 +550,18 @@ export class Component<T extends Env, Props extends {}> {
    */
   __patch(vnode: VNode) {
     const __owl__ = this.__owl__;
-    const target = __owl__.vnode || document.createElement(vnode.sel!);
-    __owl__.vnode = patch(target, vnode);
+    if (this.__target) {
+      if (this.__target.tagName.toLowerCase() !== vnode.sel) {
+        throw new Error(
+          `Cannot attach '${this.constructor.name}' to target node (not same tag name)`
+        );
+      }
+      __owl__.vnode = patch(this.__target, vnode);
+      delete this.__target;
+    } else {
+      const target = __owl__.vnode || document.createElement(vnode.sel!);
+      __owl__.vnode = patch(target, vnode);
+    }
   }
 
   /**

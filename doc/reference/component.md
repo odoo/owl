@@ -234,11 +234,22 @@ component.
 
 We explain here all the public methods of the `Component` class.
 
-- **`mount(target)`** (async): this is the main way a
+- **`mount(target, options)`** (async): this is the main way a
   component is added to the DOM: the root component is mounted to a target
   HTMLElement (or document fragment). Obviously, this is asynchronous, since each children need to be
   created as well. Most applications will need to call `mount` exactly once, on
   the root component.
+
+  The `options` argument is an optional object with a `position` key. The
+  `position` key can have three possible values: `first-child`, `last-child`, `self`.
+
+  - `first-child`: with this option, the component will be prepended inside the target,
+  - `last-child` (default value): with this option, the component will be
+    appended in the target element,
+  - `self`: the target will be used as the root element for the component. This
+    means that the target has to be an HTMLElement (and not a document fragment).
+    In this situation, it is possible that the component cannot be unmounted. For
+    example, if its target is `document.body`.
 
   Note that if a component is mounted, unmounted and remounted, it will be
   automatically re-rendered to ensure that changes in its state (or something
@@ -258,25 +269,25 @@ We explain here all the public methods of the `Component` class.
   // app is now visible
   ```
 
-- **`unmount()`**: in case a component needs to be detached/removed from the DOM, this
+* **`unmount()`**: in case a component needs to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more
   useful to the underlying component system.
 
-- **`render()`** (async): calling this method directly will cause a rerender. Note
+* **`render()`** (async): calling this method directly will cause a rerender. Note
   that this should be very rare to have to do it manually, the Owl framework is
   most of the time responsible for doing that at an appropriate moment.
 
   Note that the render method is asynchronous, so one cannot observe the updated
   DOM in the same stack frame.
 
-- **`shouldUpdate(nextProps)`**: this method is called each time a component's props
+* **`shouldUpdate(nextProps)`**: this method is called each time a component's props
   are updated. It returns a boolean, which indicates if the component should
   ignore a props update. If it returns false, then `willUpdateProps` will not
   be called, and no rendering will occur. Its default implementation is to
   always return true. This is an optimization, similar to React's `shouldComponentUpdate`. Most of the time, this should not be used, but it
   can be useful if we are handling large number of components.
 
-- **`destroy()`**. As its name suggests, this method will remove the component,
+* **`destroy()`**. As its name suggests, this method will remove the component,
   and perform all necessary cleanup, such as unmounting the component, its children,
   removing the parent/children relationship. This method should almost never be
   called directly (except maybe on the root component), but should be done by the

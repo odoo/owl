@@ -500,6 +500,15 @@ will result in :
 </div>
 ```
 
+This can be used to define variables scoped to a sub template:
+
+```xml
+<t t-call="other-template">
+    <t t-set="var" t-value="1"/>
+</t>
+<!-- "var" does not exist here -->
+```
+
 ### Translations
 
 By default, QWeb specify that templates should be translated. If this behaviour

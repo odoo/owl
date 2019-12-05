@@ -563,16 +563,16 @@ describe("Portal: Basic use and DOM placement", () => {
     const parent = new Parent();
     await parent.mount(fixture);
 
-    expect(outside.innerHTML).toBe('<span>gloria</span>');
-    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+    expect(outside.innerHTML).toBe("<span>gloria</span>");
+    expect(parent.el!.innerHTML).toBe("<portal></portal>");
 
     parent.unmount();
-    expect(outside.innerHTML).toBe('');
-    expect(parent.el!.innerHTML).toBe('<portal><span>gloria</span></portal>');
+    expect(outside.innerHTML).toBe("");
+    expect(parent.el!.innerHTML).toBe("<portal><span>gloria</span></portal>");
 
     await parent.mount(fixture);
-    expect(outside.innerHTML).toBe('<span>gloria</span>');
-    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+    expect(outside.innerHTML).toBe("<span>gloria</span>");
+    expect(parent.el!.innerHTML).toBe("<portal></portal>");
   });
 
   test("portal manual unmount with subcomponent", async () => {
@@ -587,7 +587,7 @@ describe("Portal: Basic use and DOM placement", () => {
       }
     }
     class Parent extends Component<any, any> {
-      static components = { Portal , Child };
+      static components = { Portal, Child };
       static template = xml`
         <div>
           <Portal target="'#outside'">
@@ -599,16 +599,16 @@ describe("Portal: Basic use and DOM placement", () => {
     const parent = new Parent();
     await parent.mount(fixture);
 
-    expect(outside.innerHTML).toBe('<span>gloria</span>');
-    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+    expect(outside.innerHTML).toBe("<span>gloria</span>");
+    expect(parent.el!.innerHTML).toBe("<portal></portal>");
 
     parent.unmount();
-    expect(outside.innerHTML).toBe('');
-    expect(parent.el!.innerHTML).toBe('<portal><span>gloria</span></portal>');
+    expect(outside.innerHTML).toBe("");
+    expect(parent.el!.innerHTML).toBe("<portal><span>gloria</span></portal>");
 
     await parent.mount(fixture);
-    expect(outside.innerHTML).toBe('<span>gloria</span>');
-    expect(parent.el!.innerHTML).toBe('<portal></portal>');
+    expect(outside.innerHTML).toBe("<span>gloria</span>");
+    expect(parent.el!.innerHTML).toBe("<portal></portal>");
   });
 });
 

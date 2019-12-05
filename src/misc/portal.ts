@@ -137,8 +137,7 @@ export class Portal extends Component<any, any> {
     }
     this.__checkVNodeStructure(vnode);
     const shouldDeploy =
-      (!this.portal || this.el!.contains(this.portal.elm!)) &&
-      !this.doTargetLookUp;
+      (!this.portal || this.el!.contains(this.portal.elm!)) && !this.doTargetLookUp;
 
     if (!this.doTargetLookUp && !shouldDeploy) {
       // Only on pure patching, provided the

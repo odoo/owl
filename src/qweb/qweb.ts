@@ -650,7 +650,7 @@ export class QWeb extends EventBus {
       if (!name.startsWith("t-") && !(<Element>node).getAttribute("t-attf-" + name)) {
         const attID = ctx.generateID();
         if (name === "class") {
-          if (value = value.trim()) {
+          if ((value = value.trim())) {
             let classDef = value
               .split(/\s+/)
               .map(a => `'${a}':true`)

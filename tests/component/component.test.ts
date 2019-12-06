@@ -4586,6 +4586,119 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 
+  test("nested slots in same template", async () => {
+    let child, child2, child3;
+    class Child extends Widget {
+      static template = xml`
+        <span id="c1">
+          <div>
+            <t t-slot="default"/>
+          </div>
+        </span>`;
+       constructor(parent, props) {
+         super(parent, props);
+         child = this;
+       }
+    }
+    class Child2 extends Widget {
+      static template = xml`
+        <span id="c2">
+          <t t-slot="default"/>
+        </span>`;
+      constructor(parent, props) {
+         super(parent, props);
+         child2 = this;
+       }
+
+    }
+    class Child3 extends Widget {
+      static template = xml`
+        <span>Child 3</span>`;
+      constructor(parent, props) {
+         super(parent, props);
+         child3 = this;
+       }
+    }
+    class Parent extends Widget {
+      static components = { Child , Child2 , Child3 }
+      static template = xml`
+        <span id="parent">
+          <Child>
+            <Child2>
+              <Child3/>
+            </Child2>
+          </Child>
+        </span>`;
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span id=\"parent\"><span id=\"c1\"><div><span id=\"c2\"><span>Child 3</span></span></div></span></span>");
+
+    expect(child3.__owl__.parent).toStrictEqual(child2);
+    expect(child2.__owl__.parent).toStrictEqual(child);
+    expect(child.__owl__.parent).toStrictEqual(widget);
+  });
+
+  test("t-slot nested within another slot", async () => {
+    let portal, modal, child3;
+    class Child3 extends Widget {
+      static template = xml`
+        <span>Child 3</span>`;
+       constructor(parent, props) {
+         super(parent, props);
+         child3 = this;
+       }
+    }
+    class Modal extends Widget {
+      static template = xml`
+        <span id="modal">
+          <t t-slot="default" id="inModal"/>
+        </span>`;
+      constructor(parent, props) {
+         super(parent, props);
+         modal = this;
+       }
+    }
+    class Portal extends Widget {
+      static template = xml`
+        <span id="portal">
+          <t t-slot="default" id="inPortal"/>
+        </span>`;
+      constructor(parent, props) {
+         super(parent, props);
+         portal = this;
+       }
+    }
+    class Dialog extends Widget {
+      static components = { Modal, Portal };
+      static template = xml`
+        <span id="c2">
+          <Modal>
+            <Portal>
+              <t t-slot="default" id="inDialog"/>
+            </Portal>
+           </Modal>
+        </span>`;
+    }
+    class Parent extends Widget {
+      static components = { Child3, Dialog }
+      static template = xml`
+        <span id="c1">
+          <Dialog>
+            <Child3/>
+          </Dialog>
+        </span>`;
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span id=\"c1\"><span id=\"c2\"><span id=\"modal\"><span id=\"portal\"><span>Child 3</span></span></span></span></span>");
+
+    expect(child3.__owl__.parent).toStrictEqual(portal);
+    expect(portal.__owl__.parent).toStrictEqual(modal);
+  });
+
   test("slots in slots, with vars", async () => {
     class B extends Component<any, any> {
       static template = xml`<span><t t-slot="default"/></span>`;

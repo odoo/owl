@@ -30,6 +30,7 @@ exports[`RouteComponent can render simple cases 1`] = `
             let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| context['routeComponent'];
             if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
             w6 = new W6(parent, props6);
+            w6.__owl__.contextualParentID = 2;
             parent.__owl__.cmap[k7] = w6.__owl__.id;
             let fiber = w6.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});

@@ -27,6 +27,7 @@ exports[`animations t-transition combined with component 1`] = `
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
+        w2.__owl__.contextualParentID = 3;
         const __patch2 = w2.__patch;
         w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
         parent.__owl__.cmap[k3] = w2.__owl__.id;
@@ -72,6 +73,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
             if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
             w2 = new W2(parent, props2);
+            w2.__owl__.contextualParentID = 5;
             const __patch2 = w2.__patch;
             w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
             parent.__owl__.cmap[k3] = w2.__owl__.id;
@@ -118,6 +120,7 @@ exports[`animations t-transition combined with t-component, remove and re-add be
             let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
             if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
             w2 = new W2(parent, props2);
+            w2.__owl__.contextualParentID = 8;
             const __patch2 = w2.__patch;
             w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
             parent.__owl__.cmap[k3] = w2.__owl__.id;

@@ -27,6 +27,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
+        w2.__owl__.contextualParentID = 86;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});

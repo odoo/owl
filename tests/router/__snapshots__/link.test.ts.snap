@@ -5,6 +5,12 @@ exports[`Link component can render simple cases 1`] = `
 ) {
     let utils = this.constructor.utils;
     let owner = context;
+
+    const contextualParentID = context.__owl__.contextualParentID;
+    let ctxParent = context;
+    while (ctxParent.__owl__.id !== contextualParentID) {
+      ctxParent = ctxParent.__owl__.parent;
+    }
     var h = this.h;
     let _5 = utils.toObj({'router-link-active':context['isActive']});
     var _6 = context['href'];
@@ -14,7 +20,7 @@ exports[`Link component can render simple cases 1`] = `
     p7.on['click'] = extra.handlers['click' + 7];
     const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot8) {
-        slot8.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c7, parent: extra.parent || owner, vars: extra.fiber.vars}));
+        slot8.call(this, ctxParent, Object.assign({}, extra, {parentNode: c7, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn7;
 }"

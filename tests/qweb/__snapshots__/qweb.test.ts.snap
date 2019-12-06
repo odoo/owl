@@ -1265,6 +1265,42 @@ exports[`t-call (template calling t-call with t-if 1`] = `
 }"
 `;
 
+exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
+"function anonymous(context,extra
+) {
+    context = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    var _2 = context['list'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    var _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    var _length3 = _3.length;
+    for (let i1 = 0; i1 < _length3; i1++) {
+        context.v_first = i1 === 0;
+        context.v_last = i1 === _length3 - 1;
+        context.v_index = i1;
+        context.v = _3[i1];
+        context.v_value = _4[i1];
+        var _5 = context['v'].val;
+        {
+            let _6 = _5*3;
+            let c7 = [], p7 = {key:7};
+            var vn7 = h('span', p7, c7);
+            c1.push(vn7);
+            if (_6 || _6 === 0) {
+                c7.push({text: _6});
+            }
+        }
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling t-call, global templates 1`] = `
 "function anonymous(context,extra
 ) {

@@ -196,12 +196,19 @@ QWeb.addDirective({
     // extract variables from nodecopy
     const tempCtx = new CompilationContext();
     tempCtx.allowMultipleRoots = true;
+    tempCtx.variables = Object.assign({}, ctx.variables);
     qweb._compileNode(nodeCopy, tempCtx);
-    const vars = Object.assign({}, ctx.variables, tempCtx.variables);
+    const newVars = {};
+    for (let v in tempCtx.variables) {
+      if (ctx.variables[v] !== tempCtx.variables[v]) {
+        newVars[v] = tempCtx.variables[v];
+      }
+    }
+    const vars = Object.assign({}, ctx.variables, newVars);
 
     const templateMap = Object.create(ctx.templates);
     // open new scope, if necessary
-    const hasNewVariables = Object.keys(tempCtx.variables).length > 0;
+    const hasNewVariables = Object.keys(newVars).length > 0;
 
     // compile sub template
     let subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
@@ -247,8 +254,8 @@ QWeb.addDirective({
       ctx.addLine("{");
       ctx.indent();
       // add new variables, if any
-      for (let key in tempCtx.variables) {
-        const v = tempCtx.variables[key];
+      for (let key in newVars) {
+        const v = newVars[key];
         if (v.expr) {
           ctx.addLine(`let ${v.id} = ${v.expr};`);
         }

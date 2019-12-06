@@ -807,6 +807,27 @@ describe("t-call (template calling", () => {
     const expected = "<div><span>desk</span></div>";
     expect(trim(renderToString(qweb, "abcd"))).toBe(expected);
   });
+
+  test("t-call with t-set inside and outside", () => {
+    qweb.addTemplates(`
+      <templates>
+        <div t-name="main">
+          <t t-foreach="list" t-as="v">
+            <t t-set="val" t-value="v.val"/>
+            <t t-call="sub">
+              <t t-set="val3" t-value="val*3"/>
+            </t>
+          </t>
+        </div>
+        <t t-name="sub">
+          <span t-esc="val3"/>
+        </t>
+      </templates>
+    `);
+    const expected = "<div><span>3</span><span>6</span><span>9</span></div>";
+    const context =  {list: [{val:1}, {val:2}, {val:3}]};
+    expect(trim(renderToString(qweb, "main", context))).toBe(expected);
+  });
 });
 
 describe("foreach", () => {

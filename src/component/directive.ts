@@ -405,6 +405,9 @@ QWeb.addDirective({
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
+    if (ctx.currentComponent) {
+      ctx.addLine(`w${componentID}.__owl__.contextualParentID = ${ctx.currentComponent.__owl__.id};`);
+    }
     if (transition) {
       ctx.addLine(`const __patch${componentID} = w${componentID}.__patch;`);
       ctx.addLine(

@@ -260,7 +260,7 @@ export class QWeb extends EventBus {
     const template = {
       elem,
       fn: function(this: QWeb, context, extra) {
-        const compiledFunction = this._compile(name, elem);
+        const compiledFunction = this._compile(name, elem, undefined, context);
         template.fn = compiledFunction;
         return compiledFunction.call(this, context, extra);
       }
@@ -353,9 +353,11 @@ export class QWeb extends EventBus {
     });
   }
 
-  _compile(name: string, elem: Element, parentContext?: CompilationContext): CompiledTemplate {
+  _compile(name: string, elem: Element, parentContext?: CompilationContext, currentComponent?: any): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new CompilationContext(name);
+    ctx.currentComponent = currentComponent;
+
     if (elem.tagName !== "t") {
       ctx.shouldDefineResult = false;
     }
@@ -366,6 +368,7 @@ export class QWeb extends EventBus {
       ctx.allowMultipleRoots = true;
       ctx.hasParentWidget = true;
       ctx.shouldDefineResult = false;
+      ctx.currentComponent = currentComponent || parentContext.currentComponent;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
 
       for (let v in parentContext.variables) {

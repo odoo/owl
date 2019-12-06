@@ -44,6 +44,7 @@
 
   function debugComponent(component, name, id) {
     let fullName = `${name}<id=${id}>`;
+    let log = str => console.log(`${prefix} ${fullName} ${str}`);
     let shouldDebug = method => {
       if (options.methodBlackList && options.methodBlackList.includes(method)) {
         return false;
@@ -54,51 +55,56 @@
       return true;
     };
     if (shouldDebug("constructor")) {
-      console.log(`${prefix} ${fullName} constructor, props=${toStr(component.props)}`);
+      log(`constructor, props=${toStr(component.props)}`);
     }
     if (shouldDebug("willStart")) {
       owl.hooks.onWillStart(() => {
-        console.log(`${prefix} ${fullName} willStart`);
+        log(`willStart`);
       });
     }
     if (shouldDebug("mounted")) {
       owl.hooks.onMounted(() => {
-        console.log(`${prefix} ${fullName} mounted`);
+        log(`mounted`);
       });
     }
     if (shouldDebug("willUpdateProps")) {
       owl.hooks.onWillUpdateProps(nextProps => {
-        console.log(`${prefix} ${fullName} willUpdateProps, nextprops=${toStr(nextProps)}`);
+        log(`willUpdateProps, nextprops=${toStr(nextProps)}`);
       });
     }
     if (shouldDebug("willPatch")) {
       owl.hooks.onWillPatch(() => {
-        console.log(`${prefix} ${fullName} willPatch`);
+        log(`willPatch`);
       });
     }
     if (shouldDebug("patched")) {
       owl.hooks.onPatched(() => {
-        console.log(`${prefix} ${fullName} patched`);
+        log(`patched`);
       });
     }
     if (shouldDebug("willUnmount")) {
       owl.hooks.onWillUnmount(() => {
-        console.log(`${prefix} ${fullName} willUnmount`);
+        log(`willUnmount`);
       });
     }
     const __render = component.__render.bind(component);
     component.__render = function(...args) {
-      console.log(`${prefix} ${fullName} rendering template`);
+      log(`rendering template`);
       __render(...args);
     };
     const render = component.render.bind(component);
     component.render = function(...args) {
-      console.log(`${prefix} ${fullName} render`);
+      const __owl__ = component.__owl__;
+      let msg = `render`;
+      if (!__owl__.isMounted && !__owl__.currentFiber) {
+        msg += ` (warning: component is not mounted, this render has no effect)`;
+      }
+      log(msg);
       return render(...args);
     };
     const mount = component.mount.bind(component);
     component.mount = function(...args) {
-      console.log(`${prefix} ${fullName} mount`);
+      log(`mount`);
       return mount(...args);
     };
   }

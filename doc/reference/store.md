@@ -25,8 +25,8 @@ component should own which part of the state.
 
 Owl's solution to this issue is a centralized store. It is a class that owns
 some (or all) state, and lets the developer update it in a structured way, with
-`actions`. Owl components can then connect to the store, and will be updated if
-necessary.
+`actions`. Owl components can then connect to the store to read their relevant
+state, and they will be rerendered if the state is updated.
 
 Note: Owl store is inspired by React Redux and VueX.
 

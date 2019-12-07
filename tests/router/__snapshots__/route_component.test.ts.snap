@@ -7,32 +7,32 @@ exports[`RouteComponent can render simple cases 1`] = `
     let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
-    let owner = context;
+    let scope = Object.create(context);
     let result;
     var h = this.h;
-    if (context['routeComponent']) {
-        const nodeKey5 = context['env'].router.currentRouteName;
+    if (scope['routeComponent']) {
+        const nodeKey5 = scope['env'].router.currentRouteName;
         //COMPONENT
         let k7 = \`__8__\` + nodeKey5;
         let w6 = k7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k7]] : false;
         let vn9 = {};
         result = vn9;
-        let props6 = Object.assign({}, context['env'].router.currentParams);
+        let props6 = Object.assign({}, scope['env'].router.currentParams);
         if (w6 && w6.__owl__.currentFiber && !w6.__owl__.vnode) {
             w6.destroy();
             w6 = false;
         }
         if (w6) {
-            w6.__updateProps(props6, extra.fiber, undefined, undefined);
+            w6.__updateProps(props6, extra.fiber, undefined);
             let pvnode = w6.__owl__.pvnode;
             utils.defineProxy(vn9, pvnode);
         } else {
             let componentKey6 = \`routeComponent\`;
-            let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| context['routeComponent'];
+            let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| scope['routeComponent'];
             if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
             w6 = new W6(parent, props6);
             parent.__owl__.cmap[k7] = w6.__owl__.id;
-            let fiber = w6.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
             utils.defineProxy(vn9, pvnode);
             w6.__owl__.pvnode = pvnode;

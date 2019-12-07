@@ -190,10 +190,10 @@ QWeb.addDirective({
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     ctx.addLine("//COMPONENT");
-    ctx.rootContext.shouldDefineOwner = true;
     ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineParent = true;
     ctx.rootContext.shouldDefineUtils = true;
+    ctx.rootContext.shouldDefineScope = true;
     let hasDynamicProps = node.getAttribute("t-props") ? true : false;
 
     // t-on- events and t-transition
@@ -285,7 +285,7 @@ QWeb.addDirective({
       }
       let eventsCode = events
         .map(function([eventName, mods, handlerValue, extraArgs]) {
-          let params = "owner";
+          let params = "context";
           if (extraArgs) {
             if (ctx.loopNumber) {
               let argId = ctx.generateID();
@@ -293,20 +293,20 @@ QWeb.addDirective({
               // be set asynchronously later when the widget is ready, and the
               // context might be different.
               ctx.addLine(`let arg${argId} = ${ctx.formatExpression(extraArgs)};`);
-              params = `owner, arg${argId}`;
+              params = `context, arg${argId}`;
             } else {
-              params = `owner, ${ctx.formatExpression(extraArgs)}`;
+              params = `context, ${ctx.formatExpression(extraArgs)}`;
             }
           }
-          let handler = `function (e) {if(!owner.__owl__.isMounted){return}`;
+          let handler = `function (e) {if(!context.__owl__.isMounted){return}`;
           handler += mods
             .map(function(mod) {
               return T_COMPONENT_MODS_CODE[mod];
             })
             .join("");
           if (handlerValue) {
-            handler += `const fn = owner['${handlerValue}'];`;
-            handler += `if (fn) { fn.call(${params}, e); } else { owner.${handlerValue}; }`;
+            handler += `const fn = context['${handlerValue}'];`;
+            handler += `if (fn) { fn.call(${params}, e); } else { context.${handlerValue}; }`;
           }
           handler += `}`;
           return `vn.elm.addEventListener('${eventName}', ${handler});`;
@@ -348,25 +348,9 @@ QWeb.addDirective({
     }
 
     // SLOTS
-    const varDefs: string[] = [];
     const hasSlots = node.childNodes.length;
-    if (hasSlots) {
-      ctx.rootContext.shouldTrackScope = true;
-      for (let v of Object.values(ctx.variables)) {
-        if (v["id"]) {
-          varDefs.push(v["id"]);
-        }
-      }
-    }
 
-    let scopeVars;
-    if (hasSlots) {
-      let scope = ctx.scopeVars.length ? `Object.assign({}, scope)` : `{}`;
-      let vars = varDefs.length ? `{${varDefs.join(",")}}` : "undefined";
-      scopeVars = `${scope}, ${vars}`;
-    } else {
-      scopeVars = "undefined, undefined";
-    }
+    let scope = hasSlots ? `Object.assign(Object.create(context), scope)` : "undefined";
 
     ctx.addIf(`w${componentID}`);
 
@@ -376,8 +360,7 @@ QWeb.addDirective({
       styleCode = `.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`;
     }
     ctx.addLine(
-      `w${componentID}.__updateProps(props${componentID}, extra.fiber${scopeVars &&
-        ", " + scopeVars})${styleCode};`
+      `w${componentID}.__updateProps(props${componentID}, extra.fiber, ${scope})${styleCode};`
     );
     ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
     if (registerCode) {
@@ -439,7 +422,7 @@ QWeb.addDirective({
     }
 
     ctx.addLine(
-      `let fiber = w${componentID}.__prepare(extra.fiber, ${scopeVars}, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
+      `let fiber = w${componentID}.__prepare(extra.fiber, ${scope}, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; ${createHook}});`
     );
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     const insertHook = refExpr ? `insert(vn) {${refExpr}},` : "";

@@ -30,7 +30,6 @@ QWeb.addDirective({
   name: "on",
   priority: 90,
   atNodeCreation({ ctx, fullName, value, nodeID }) {
-    ctx.rootContext.shouldDefineOwner = true;
     const [eventName, ...mods] = fullName.slice(5).split(".");
     if (!eventName) {
       throw new Error("Missing event name with t-on directive");
@@ -40,7 +39,7 @@ QWeb.addDirective({
       extraArgs = args.slice(1, -1);
       return "";
     });
-    let params = extraArgs ? `owner, ${ctx.formatExpression(extraArgs)}` : "owner";
+    let params = extraArgs ? `context, ${ctx.formatExpression(extraArgs)}` : "context";
     let handler = `function (e) {if (!context.__owl__.isMounted){return}`;
     handler += mods
       .map(function(mod) {
@@ -197,7 +196,6 @@ QWeb.addDirective({
   priority: 80,
   atNodeEncounter({ ctx, value }): boolean {
     const slotKey = ctx.generateID();
-    ctx.rootContext.shouldDefineOwner = true;
     ctx.addLine(
       `const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`
     );
@@ -210,11 +208,8 @@ QWeb.addDirective({
       ctx.addLine(`let ${parentNode}= []`);
       ctx.addLine(`result = {}`);
     }
-    // if we are in a slot of a component, we need to get the vars from the
-    // parent fiber instead.
-    const vars = ctx.allowMultipleRoots ? "extra.fiber.parent.vars" : "extra.fiber.vars";
     ctx.addLine(
-      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, parent: extra.parent || owner, vars: ${vars}}));`
+      `slot${slotKey}.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: ${parentNode}, parent: extra.parent || context}));`
     );
     if (!ctx.parentNode) {
       ctx.addLine(`utils.defineProxy(result, ${parentNode}[0]);`);

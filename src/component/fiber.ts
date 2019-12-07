@@ -49,7 +49,6 @@ export class Fiber {
   inserter: (el: HTMLElement) => void | null;
 
   scope: any;
-  vars: any;
 
   component: Component<any, any>;
   vnode: VNode | null = null;
@@ -69,7 +68,6 @@ export class Fiber {
 
     const __owl__ = component.__owl__;
     this.scope = __owl__.scope;
-    this.vars = __owl__.vars;
 
     this.root = parent ? parent.root : this;
     this.parent = parent;

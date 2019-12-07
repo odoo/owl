@@ -19,21 +19,18 @@ import { htmlToVDOM } from "../vdom/html_to_vdom";
 //------------------------------------------------------------------------------
 // t-esc and t-raw
 //------------------------------------------------------------------------------
-QWeb.utils.getFragment = function(str: string): DocumentFragment {
-  const temp = document.createElement("template");
-  temp.innerHTML = str;
-  return temp.content;
-};
-
 QWeb.utils.htmlToVDOM = htmlToVDOM;
 
 function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: CompilationContext) {
+  ctx.rootContext.shouldDefineScope = true;
   if (value === "0") {
-    const caller = ctx.getCaller();
-    if (caller) {
-      qweb._compileNode(caller, ctx.getInliningContext());
-      return;
+    if (ctx.parentNode) {
+      // the 'zero' magical symbol is where we can find the result of the rendering
+      // of  the body of the t-call.
+      ctx.rootContext.shouldDefineUtils = true;
+      ctx.addLine(`c${ctx.parentNode}.push(...scope[utils.zero]);`);
     }
+    return;
   }
 
   if (value.xml instanceof NodeList && !value.id) {
@@ -47,7 +44,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
     exprID = `_${ctx.generateID()}`;
     ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
   } else {
-    exprID = value.id;
+    exprID = `scope.${value.id}`;
   }
   ctx.addIf(`${exprID} || ${exprID} === 0`);
   if (ctx.escaping) {
@@ -110,6 +107,7 @@ QWeb.addDirective({
   extraNames: ["value"],
   priority: 60,
   atNodeEncounter({ node, ctx }): boolean {
+    ctx.rootContext.shouldDefineScope = true;
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
     ctx.variables[variable] = ctx.variables[variable] || {};
@@ -118,12 +116,12 @@ QWeb.addDirective({
     if (value) {
       const formattedValue = ctx.formatExpression(value);
       if (ctx.variables.hasOwnProperty(variable) && qwebvar.id) {
-        ctx.addLine(`${qwebvar.id} = ${formattedValue}`);
+        ctx.addLine(`${qwebvar.expr} = ${formattedValue}`);
       } else {
-        const varName = `_${ctx.generateID()}`;
-        ctx.addLine(`var ${varName} = ${formattedValue};`);
-        qwebvar.id = varName;
-        qwebvar.expr = formattedValue;
+        ctx.addLine(`scope.${variable} = ${formattedValue};`);
+        qwebvar.id = variable;
+        qwebvar.expr = `scope.${variable}`;
+        qwebvar.value = formattedValue;
       }
     } else {
       qwebvar.xml = node.childNodes;
@@ -140,7 +138,7 @@ QWeb.addDirective({
   priority: 20,
   atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-if")!);
-    ctx.addIf(typeof cond === "string" ? ctx.formatExpression(cond) : cond.id!);
+    ctx.addIf(typeof cond === "string" ? ctx.formatExpression(cond) : `scope.${cond.id!}`);
     return false;
   },
   finalize({ ctx }) {
@@ -153,7 +151,9 @@ QWeb.addDirective({
   priority: 30,
   atNodeEncounter({ node, ctx }): boolean {
     let cond = ctx.getValue(node.getAttribute("t-elif")!);
-    ctx.addLine(`else if (${typeof cond === "string" ? ctx.formatExpression(cond) : cond.id}) {`);
+    ctx.addLine(
+      `else if (${typeof cond === "string" ? ctx.formatExpression(cond) : `scope.${cond.id}`}) {`
+    );
     ctx.indent();
     return false;
   },
@@ -182,6 +182,9 @@ QWeb.addDirective({
   name: "call",
   priority: 50,
   atNodeEncounter({ node, qweb, ctx }): boolean {
+    // Step 1: sanity checks
+    // ------------------------------------------------
+    ctx.rootContext.shouldDefineScope = true;
     if (node.nodeName !== "t") {
       throw new Error("Invalid tag for t-call directive (should be 't')");
     }
@@ -190,77 +193,63 @@ QWeb.addDirective({
     if (!nodeTemplate) {
       throw new Error(`Cannot find template "${subTemplate}" (t-call)`);
     }
-    const nodeCopy = node.cloneNode(true) as Element;
-    nodeCopy.removeAttribute("t-call");
 
-    // extract variables from nodecopy
-    const tempCtx = new CompilationContext();
-    tempCtx.allowMultipleRoots = true;
-    qweb._compileNode(nodeCopy, tempCtx);
-    const vars = Object.assign({}, ctx.variables, tempCtx.variables);
-
-    const templateMap = Object.create(ctx.templates);
-    // open new scope, if necessary
-    const hasNewVariables = Object.keys(tempCtx.variables).length > 0;
-
-    // compile sub template
-    let subCtx = ctx.subContext("caller", nodeCopy).subContext("variables", Object.create(vars));
-    subCtx = subCtx.subContext("templates", templateMap);
-
-    if (templateMap[subTemplate]) {
-      // OUCH, IT IS A RECURSIVE TEMPLATE SITUATION...
-      // This is a tricky situation... We obviously cannot inline the compiled
-      // template. So, what we need to do is to compile it, and make sure we
-      // properly transfer everything from the current scope to the sub template.
-      ctx.rootContext.shouldTrackScope = true;
-      ctx.rootContext.shouldDefineOwner = true;
-      let subTemplateName;
-      if (ctx.hasParentWidget) {
-        subTemplateName = ctx.templateName;
-      } else {
-        subTemplateName = `__${ctx.generateID()}`;
-        subCtx.variables = {};
-        let id = 0;
-        for (let v in vars) {
-          subCtx.variables[v] = vars[v];
-          (vars[v] as any).id = `_v${id++}`;
-        }
-        const subTemplateFn = qweb._compile(subTemplateName, nodeTemplate.elem, subCtx);
-        qweb.recursiveFns[subTemplateName] = subTemplateFn;
-      }
-      let varCode = `{}`;
-      if (Object.keys(vars).length) {
-        let id = 0;
-        const content = Object.values(vars)
-          .map((v: any) => `_v${id++}: ${v.expr}`)
-          .join(",");
-        varCode = `{${content}}`;
-      }
-      ctx.addLine(
-        `this.recursiveFns['${subTemplateName}'].call(this, context, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, vars: ${varCode}, fiber: {scope}}));`
-      );
-      return true;
+    // Step 2: compile target template in sub templates
+    // ------------------------------------------------
+    if (!qweb.subTemplates[subTemplate]) {
+      qweb.subTemplates[subTemplate] = true;
+      const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx);
+      qweb.subTemplates[subTemplate] = subTemplateFn;
     }
-    templateMap[subTemplate] = true;
 
-    if (hasNewVariables) {
-      ctx.addLine("{");
+    // Step 3: compile t-call body if necessary
+    // ------------------------------------------------
+    let hasBody = node.hasChildNodes();
+    if (hasBody) {
+      // we add a sub scope to protect the ambient scope
+      ctx.addLine(`{`);
       ctx.indent();
-      // add new variables, if any
-      for (let key in tempCtx.variables) {
-        const v = tempCtx.variables[key];
-        if (v.expr) {
-          ctx.addLine(`let ${v.id} = ${v.expr};`);
-        }
-        // todo: handle XML variables...
-      }
-    }
-    qweb._compileNode(nodeTemplate.elem, subCtx);
-
-    // close new scope
-    if (hasNewVariables) {
+      ctx.addLine(`let origScope = scope;`);
+      ctx.addLine(`scope = Object.assign(Object.create(context), scope);`);
+      const nodeCopy = node.cloneNode(true) as Element;
+      nodeCopy.removeAttribute("t-call");
+      const parentNode = ctx.parentNode;
+      ctx.parentNode = "__0";
+      // this local scope is intended to trap c__0
+      ctx.addLine(`{`);
+      ctx.indent();
+      ctx.addLine("let c__0 = [];");
+      qweb._compileNode(nodeCopy, ctx);
+      ctx.rootContext.shouldDefineUtils = true;
+      ctx.addLine("scope[utils.zero] = c__0;");
+      ctx.parentNode = parentNode;
       ctx.dedent();
-      ctx.addLine("}");
+      ctx.addLine(`}`);
+    }
+
+    // Step 4: add the appropriate function call to current component
+    // ------------------------------------------------
+    const callingScope = hasBody ? 'scope' : 'Object.assign(Object.create(context), scope)';
+    if (ctx.parentNode) {
+      ctx.addLine(
+        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: c${ctx.parentNode}}));`
+      );
+    } else {
+      // this is a t-call with no parentnode, we need to extract the result
+      ctx.rootContext.shouldDefineResult = true;
+      ctx.addLine(`result = []`);
+      ctx.addLine(
+        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: result}));`
+      );
+      ctx.addLine(`result = result[0]`);
+    }
+
+    // Step 5: restore previous scope
+    // ------------------------------------------------
+    if (hasBody) {
+      ctx.addLine(`scope = origScope;`);
+      ctx.dedent();
+      ctx.addLine(`}`);
     }
 
     return true;
@@ -275,7 +264,7 @@ QWeb.addDirective({
   extraNames: ["as"],
   priority: 10,
   atNodeEncounter({ node, qweb, ctx }): boolean {
-    ctx.rootContext.shouldProtectContext = true;
+    ctx.rootContext.shouldDefineScope = true;
     ctx = ctx.subContext("loopNumber", ctx.loopNumber + 1);
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
@@ -290,14 +279,18 @@ QWeb.addDirective({
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
     ctx.closeIf();
     ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
+    let varsID = ctx.generateID();
+    ctx.addLine(`let _scope${varsID} = scope;`);
+    ctx.addLine(`scope = Object.assign(Object.create(context), _scope${varsID});`);
     const loopVar = `i${ctx.loopNumber}`;
     ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);
     ctx.indent();
-    ctx.addToScope(name + "_first", `${loopVar} === 0`);
-    ctx.addToScope(name + "_last", `${loopVar} === _length${keysID} - 1`);
-    ctx.addToScope(name + "_index", loopVar);
-    ctx.addToScope(name, `_${keysID}[${loopVar}]`);
-    ctx.addToScope(name + "_value", `_${valuesID}[${loopVar}]`);
+
+    ctx.addLine(`scope.${name}_first = ${loopVar} === 0`);
+    ctx.addLine(`scope.${name}_last = ${loopVar} === _length${keysID} - 1`);
+    ctx.addLine(`scope.${name}_index = ${loopVar}`);
+    ctx.addLine(`scope.${name} = _${keysID}[${loopVar}]`);
+    ctx.addLine(`scope.${name}_value = _${valuesID}[${loopVar}]`);
     const nodeCopy = <Element>node.cloneNode(true);
     let shouldWarn =
       !nodeCopy.hasAttribute("t-key") &&
@@ -314,6 +307,7 @@ QWeb.addDirective({
     qweb._compileNode(nodeCopy, ctx);
     ctx.dedent();
     ctx.addLine("}");
+    ctx.addLine(`scope = _scope${varsID};`);
     return true;
   }
 });

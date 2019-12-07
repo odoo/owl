@@ -23,7 +23,7 @@ test("log a specific message for render method calls if component is not mounted
 
   class Parent extends Component<any, any> {
     static template = xml`<div><t t-esc="state.value"/></div>`;
-    state = owl.hooks.useState({value: 1});
+    state = owl.hooks.useState({ value: 1 });
   }
 
   const parent = new Parent(null, {});

@@ -87,6 +87,7 @@ interface Utils {
 }
 
 const UTILS: Utils = {
+  zero: Symbol('zero'),
   toObj(expr) {
     if (typeof expr === "string") {
       expr = expr.trim();
@@ -171,7 +172,7 @@ export class QWeb extends EventBus {
   // recursiveTemplates contains sub templates called with t-call, but which
   // ends up in recursive situations.  This is very similar to the slot situation,
   // as in we need to propagate the scope.
-  recursiveFns = {};
+  subTemplates = {};
 
   isUpdating: boolean = false;
   translateFn?: QWebConfig["translateFn"];
@@ -360,23 +361,12 @@ export class QWeb extends EventBus {
       ctx.shouldDefineResult = false;
     }
     if (parentContext) {
-      ctx.templates = Object.create(parentContext.templates);
       ctx.variables = Object.create(parentContext.variables);
       ctx.parentNode = parentContext.parentNode || ctx.generateID();
       ctx.allowMultipleRoots = true;
       ctx.hasParentWidget = true;
       ctx.shouldDefineResult = false;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
-
-      for (let v in parentContext.variables) {
-        let variable = <any>parentContext.variables[v];
-        if (variable.id) {
-          ctx.addLine(`let ${variable.id} = extra.vars.${variable.id};`);
-        }
-      }
-    }
-    if (parentContext) {
-      ctx.addLine("Object.assign(context, extra.fiber.scope);");
     }
     this._compileNode(elem, ctx);
 
@@ -673,7 +663,7 @@ export class QWeb extends EventBus {
       if (name.startsWith("t-att-")) {
         let attName = name.slice(6);
         const v = ctx.getValue(value);
-        let formattedValue = typeof v === "string" ? ctx.formatExpression(v) : v.id;
+        let formattedValue = typeof v === "string" ? ctx.formatExpression(v) : `scope.${v.id}`;
 
         if (attName === "class") {
           ctx.rootContext.shouldDefineUtils = true;

@@ -7,7 +7,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;
-    let owner = context;
+    let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
@@ -20,16 +20,16 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         w2 = false;
     }
     if (w2) {
-        w2.__updateProps(props2, extra.fiber, undefined, undefined);
+        w2.__updateProps(props2, extra.fiber, undefined);
         let pvnode = w2.__owl__.pvnode;
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
+        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap[k3] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;

@@ -92,7 +92,7 @@ describe("expression evaluation", () => {
 
   test("parenthesis", () => {
     expect(compileExpr("(1)", {})).toBe("(1)");
-    expect(compileExpr("a*(1 +3)", {})).toBe("context['a']*(1+3)");
+    expect(compileExpr("a*(1 +3)", {})).toBe("scope['a']*(1+3)");
   });
 
   test("objects and sub objects", () => {
@@ -100,8 +100,8 @@ describe("expression evaluation", () => {
   });
 
   test("replacing variables", () => {
-    expect(compileExpr("a", {})).toBe("context['a']");
-    expect(compileExpr("a", { a: { id: "_3", expr: "" } })).toBe("_3");
+    expect(compileExpr("a", {})).toBe("scope['a']");
+    expect(compileExpr("a", { a: { id: "_3", expr: "scope._3" } })).toBe("scope._3");
   });
 
   test("arrays and objects", () => {
@@ -111,65 +111,63 @@ describe("expression evaluation", () => {
   });
 
   test("dot operator", () => {
-    expect(compileExpr("a.b", {})).toBe("context['a'].b");
-    expect(compileExpr("a.b.c", {})).toBe("context['a'].b.c");
+    expect(compileExpr("a.b", {})).toBe("scope['a'].b");
+    expect(compileExpr("a.b.c", {})).toBe("scope['a'].b.c");
   });
 
   test("various unary operators", () => {
-    expect(compileExpr("!flag", {})).toBe("!context['flag']");
+    expect(compileExpr("!flag", {})).toBe("!scope['flag']");
     expect(compileExpr("-3", {})).toBe("-3");
-    expect(compileExpr("-a", {})).toBe("-context['a']");
-    expect(compileExpr("typeof a", {})).toBe("typeof context['a']");
+    expect(compileExpr("-a", {})).toBe("-scope['a']");
+    expect(compileExpr("typeof a", {})).toBe("typeof scope['a']");
   });
 
   test("various binary operators", () => {
-    expect(compileExpr("color == 'black'", {})).toBe("context['color']=='black'");
-    expect(compileExpr("a || b", {})).toBe("context['a']||context['b']");
-    expect(compileExpr("color === 'black'", {})).toBe("context['color']==='black'");
-    expect(compileExpr("'li_'+item", {})).toBe("'li_'+context['item']");
-    expect(compileExpr("state.val > 1", {})).toBe("context['state'].val>1");
+    expect(compileExpr("color == 'black'", {})).toBe("scope['color']=='black'");
+    expect(compileExpr("a || b", {})).toBe("scope['a']||scope['b']");
+    expect(compileExpr("color === 'black'", {})).toBe("scope['color']==='black'");
+    expect(compileExpr("'li_'+item", {})).toBe("'li_'+scope['item']");
+    expect(compileExpr("state.val > 1", {})).toBe("scope['state'].val>1");
   });
 
   test("boolean operations", () => {
-    expect(compileExpr("a && b", {})).toBe("context['a']&&context['b']");
+    expect(compileExpr("a && b", {})).toBe("scope['a']&&scope['b']");
   });
 
   test("ternary operators", () => {
-    expect(compileExpr("a ? b: '2'", {})).toBe("context['a']?context['b']:'2'");
-    expect(compileExpr("a ? b: (c or '2') ", {})).toBe(
-      "context['a']?context['b']:(context['c']||'2')"
-    );
+    expect(compileExpr("a ? b: '2'", {})).toBe("scope['a']?scope['b']:'2'");
+    expect(compileExpr("a ? b: (c or '2') ", {})).toBe("scope['a']?scope['b']:(scope['c']||'2')");
     expect(compileExpr("a ? {test:c}: [1,u]", {})).toBe(
-      "context['a']?{test:context['c']}:[1,context['u']]"
+      "scope['a']?{test:scope['c']}:[1,scope['u']]"
     );
   });
 
   test("word replacement", () => {
-    expect(compileExpr("a or b", {})).toBe("context['a']||context['b']");
-    expect(compileExpr("a and b", {})).toBe("context['a']&&context['b']");
+    expect(compileExpr("a or b", {})).toBe("scope['a']||scope['b']");
+    expect(compileExpr("a and b", {})).toBe("scope['a']&&scope['b']");
   });
 
   test("function calls", () => {
-    expect(compileExpr("a()", {})).toBe("context['a']()");
-    expect(compileExpr("a(1)", {})).toBe("context['a'](1)");
-    expect(compileExpr("a(1,2)", {})).toBe("context['a'](1,2)");
-    expect(compileExpr("a(1,2,{a:[a]})", {})).toBe("context['a'](1,2,{a:[context['a']]})");
+    expect(compileExpr("a()", {})).toBe("scope['a']()");
+    expect(compileExpr("a(1)", {})).toBe("scope['a'](1)");
+    expect(compileExpr("a(1,2)", {})).toBe("scope['a'](1,2)");
+    expect(compileExpr("a(1,2,{a:[a]})", {})).toBe("scope['a'](1,2,{a:[scope['a']]})");
     expect(compileExpr("'x'.toUpperCase()", {})).toBe("'x'.toUpperCase()");
     expect(compileExpr("'x'.toUpperCase({a: 3})", {})).toBe("'x'.toUpperCase({a:3})");
-    expect(compileExpr("'x'.toUpperCase(a)", { a: { id: "_v5", expr: "" } })).toBe(
-      "'x'.toUpperCase(_v5)"
+    expect(compileExpr("'x'.toUpperCase(a)", { a: { id: "_v5", expr: "scope._v5" } })).toBe(
+      "'x'.toUpperCase(scope._v5)"
     );
-    expect(compileExpr("'x'.toUpperCase({b: a})", { a: { id: "_v5", expr: "" } })).toBe(
-      "'x'.toUpperCase({b:_v5})"
+    expect(compileExpr("'x'.toUpperCase({b: a})", { a: { id: "_v5", expr: "scope._v5" } })).toBe(
+      "'x'.toUpperCase({b:scope._v5})"
     );
   });
 
   test("arrow functions", () => {
-    expect(compileExpr("list.map(e => e.val)", {})).toBe("context['list'].map(e=>e.val)");
-    expect(compileExpr("list.map(e => a + e)", {})).toBe("context['list'].map(e=>context['a']+e)");
-    expect(compileExpr("list.map((e) => e)", {})).toBe("context['list'].map((e)=>e)");
+    expect(compileExpr("list.map(e => e.val)", {})).toBe("scope['list'].map(e=>e.val)");
+    expect(compileExpr("list.map(e => a + e)", {})).toBe("scope['list'].map(e=>scope['a']+e)");
+    expect(compileExpr("list.map((e) => e)", {})).toBe("scope['list'].map((e)=>e)");
     expect(compileExpr("list.map((elem, index) => elem + index)", {})).toBe(
-      "context['list'].map((elem,index)=>elem+index)"
+      "scope['list'].map((elem,index)=>elem+index)"
     );
   });
 });

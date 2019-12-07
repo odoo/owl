@@ -70,10 +70,9 @@ interface Internal<T extends Env, Props> {
   parentLastFiberId: number;
 
   // when a rendering is initiated by a parent, it may set variables in 'scope'
-  // and 'vars' (typically when the component is rendered in a slot). We need to
+  // (typically when the component is rendered in a slot). We need to
   // store that information in case the component would be re-rendered later on.
   scope: any;
-  vars: any;
 
   boundHandlers: { [key: number]: any };
   observer: Observer | null;
@@ -198,8 +197,7 @@ export class Component<T extends Env, Props extends {}> {
       renderFn: qweb.render.bind(qweb, template),
       classObj: null,
       refs: null,
-      scope: null,
-      vars: null
+      scope: null
     };
   }
 
@@ -510,9 +508,8 @@ export class Component<T extends Env, Props extends {}> {
    * The __updateProps method is called by the t-component directive whenever
    * it updates a component (so, when the parent template is rerendered).
    */
-  async __updateProps(nextProps: Props, parentFiber: Fiber, scope: any, vars: any): Promise<void> {
+  async __updateProps(nextProps: Props, parentFiber: Fiber, scope: any): Promise<void> {
     this.__owl__.scope = scope;
-    this.__owl__.vars = vars;
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
       const __owl__ = this.__owl__;
@@ -566,12 +563,11 @@ export class Component<T extends Env, Props extends {}> {
 
   /**
    * The __prepare method is only called by the t-component directive, when a
-   * subcomponent is created. It gets its scope and vars, if any, from the
+   * subcomponent is created. It gets its scope, if any, from the
    * parent template.
    */
-  __prepare(parentFiber: Fiber, scope: any, vars: any, cb: CallableFunction): Fiber {
+  __prepare(parentFiber: Fiber, scope: any, cb: CallableFunction): Fiber {
     this.__owl__.scope = scope;
-    this.__owl__.vars = vars;
     const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
     fiber.shouldPatch = false;
     if (!parentFiber.child) {

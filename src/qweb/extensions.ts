@@ -198,7 +198,6 @@ QWeb.addDirective({
   atNodeEncounter({ ctx, value }): boolean {
     const slotKey = ctx.generateID();
     ctx.rootContext.shouldDefineOwner = true;
-    ctx.rootContext.shouldDefineContextualParent = true;
     ctx.addLine(
       `const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`
     );
@@ -215,7 +214,7 @@ QWeb.addDirective({
     // parent fiber instead.
     const vars = ctx.allowMultipleRoots ? "extra.fiber.parent.vars" : "extra.fiber.vars";
     ctx.addLine(
-      `slot${slotKey}.call(this, ctxParent, Object.assign({}, extra, {parentNode: ${parentNode}, parent: extra.parent || owner, vars: ${vars}}));`
+      `slot${slotKey}.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: ${parentNode}, parent: extra.parent || owner, vars: ${vars}}));`
     );
     if (!ctx.parentNode) {
       ctx.addLine(`utils.defineProxy(result, ${parentNode}[0]);`);

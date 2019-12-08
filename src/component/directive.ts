@@ -405,9 +405,6 @@ QWeb.addDirective({
       `if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`
     );
     ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
-    if (ctx.currentComponent) {
-      ctx.addLine(`w${componentID}.__owl__.contextualParentID = ${ctx.currentComponent.__owl__.id};`);
-    }
     if (transition) {
       ctx.addLine(`const __patch${componentID} = w${componentID}.__patch;`);
       ctx.addLine(
@@ -428,7 +425,10 @@ QWeb.addDirective({
           const key = slotNode.getAttribute("t-set")!;
           slotNode.removeAttribute("t-set");
           const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
-          QWeb.slots[`${slotId}_${key}`] = slotFn;
+          QWeb.slots[`${slotId}_${key}`] = function ctxSlotFn(context, extra) {
+            context = ctx.currentComponent ? ctx.currentComponent : context;
+            return slotFn.call(this, context, extra);
+          };
         }
       }
       if (clone.childNodes.length) {
@@ -437,7 +437,10 @@ QWeb.addDirective({
           t.appendChild(child);
         }
         const slotFn = qweb._compile(`slot_default_template`, t, ctx);
-        QWeb.slots[`${slotId}_default`] = slotFn;
+        QWeb.slots[`${slotId}_default`] = function ctxSlotFn(context, extra) {
+          context = ctx.currentComponent ? ctx.currentComponent : context;
+          return slotFn.call(this, context, extra);
+        };
       }
     }
 

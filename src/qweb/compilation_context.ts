@@ -18,7 +18,6 @@ export class CompilationContext {
   caller: Element | undefined;
   shouldDefineOwner: boolean = false;
   shouldDefineParent: boolean = false;
-  shouldDefineContextualParent: boolean = false;
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
   shouldDefineRefs: boolean = false;
@@ -91,15 +90,6 @@ export class CompilationContext {
     }
     if (this.shouldDefineRefs) {
       this.code.unshift("    context.__owl__.refs = context.__owl__.refs || {};");
-    }
-    if (this.shouldDefineContextualParent) {
-      this.code.unshift(`
-    const contextualParentID = context.__owl__.contextualParentID;
-    let ctxParent = context;
-    while (ctxParent.__owl__.id !== contextualParentID) {
-      ctxParent = ctxParent.__owl__.parent;
-    }`
-      );
     }
     if (this.shouldDefineOwner) {
       // this is necessary to prevent some directives (t-forach for ex) to

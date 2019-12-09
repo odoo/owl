@@ -86,7 +86,6 @@ interface Internal<T extends Env, Props> {
   willUpdatePropsCB: Function | null;
   classObj: { [key: string]: boolean } | null;
   refs: { [key: string]: Component<T, any> | HTMLElement | undefined } | null;
-  contextualParentID: number;
 }
 
 export const portalSymbol = Symbol("portal"); // FIXME
@@ -201,7 +200,6 @@ export class Component<T extends Env, Props extends {}> {
       refs: null,
       scope: null,
       vars: null,
-      contextualParentID: id,
     };
   }
 

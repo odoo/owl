@@ -56,7 +56,6 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
                 let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| context['Child'];
                 if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
                 w8 = new W8(parent, props8);
-                w8.__owl__.contextualParentID = 20;
                 parent.__owl__.cmap[k9] = w8.__owl__.id;
                 let fiber = w8.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
                 let pvnode = h('dummy', {key: k9, hook: {remove() {},destroy(vn) {w8.destroy();}}});
@@ -99,7 +98,6 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
             let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
             if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
             w3 = new W3(parent, props3);
-            w3.__owl__.contextualParentID = 27;
             parent.__owl__.cmap[k4] = w3.__owl__.id;
             let fiber = w3.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {w3.destroy();}}});
@@ -125,7 +123,6 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
         let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| context['Child'];
         if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
         w6 = new W6(parent, props6);
-        w6.__owl__.contextualParentID = 27;
         parent.__owl__.cmap[k7] = w6.__owl__.id;
         let fiber = w6.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
@@ -165,7 +162,6 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 160;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.style = _5;}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -208,7 +204,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 153;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){}};});
         let pvnode = h('dummy', {key: k3, hook: {insert(vn) {context.__owl__.refs[ref5] = w2;},remove() {},destroy(vn) {w2.destroy();delete context.__owl__.refs[ref5];}}});
@@ -265,7 +260,6 @@ exports[`class and style attributes with t-component t-att-class is properly add
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 155;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){}};});
         let pvnode = h('dummy', {key: k3, hook: {insert(vn) {context.__owl__.refs[ref5] = w2;},remove() {},destroy(vn) {w2.destroy();delete context.__owl__.refs[ref5];}}});
@@ -334,7 +328,6 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
             let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| context['ChildWidget'];
             if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
             w6 = new W6(parent, props6);
-            w6.__owl__.contextualParentID = 114;
             parent.__owl__.cmap[k7] = w6.__owl__.id;
             let fiber = w6.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
@@ -374,7 +367,6 @@ exports[`composition t-component with dynamic value 1`] = `
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 127;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -413,7 +405,6 @@ exports[`composition t-component with dynamic value 2 1`] = `
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 129;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -452,7 +443,6 @@ exports[`dynamic t-props basic use 1`] = `
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 449;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -495,7 +485,6 @@ exports[`other directives with t-component t-on with getter as handler 1`] = `
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
-        w3.__owl__.contextualParentID = 187;
         parent.__owl__.cmap[k4] = w3.__owl__.id;
         let fiber = w3.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['handler'];if (fn) { fn.call(owner, e); } else { owner.handler; }});}};});
         let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {w3.destroy();}}});
@@ -534,7 +523,6 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 168;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv'];if (fn) { fn.call(owner, 3, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -573,7 +561,6 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 174;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv'];if (fn) { fn.call(owner, {}, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -612,7 +599,6 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 172;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv'];if (fn) { fn.call(owner, {}, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -651,7 +637,6 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 170;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv'];if (fn) { fn.call(owner, {val:3}, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -694,7 +679,6 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
-        w3.__owl__.contextualParentID = 189;
         parent.__owl__.cmap[k4] = w3.__owl__.id;
         let fiber = w3.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['state.counter++'];if (fn) { fn.call(owner, e); } else { owner.state.counter++; }});}};});
         let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {w3.destroy();}}});
@@ -733,7 +717,6 @@ exports[`other directives with t-component t-on with no handler (only modifiers)
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['ComponentA'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 191;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv'];if (fn) { fn.call(owner, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -772,7 +755,6 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 184;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}e.preventDefault();if (e.target !== vn.elm) {return}const fn = owner['onEv'];if (fn) { fn.call(owner, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -811,7 +793,6 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 181;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}if (e.target !== vn.elm) {return}e.preventDefault();const fn = owner['onEv'];if (fn) { fn.call(owner, e); } else { owner.onEv; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -850,7 +831,6 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 178;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv1'];if (fn) { fn.call(owner, e); } else { owner.onEv1; }});vn.elm.addEventListener('ev-2', function (e) {if(!owner.__owl__.isMounted){return}if (e.target !== vn.elm) {return}const fn = owner['onEv2'];if (fn) { fn.call(owner, e); } else { owner.onEv2; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -889,7 +869,6 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['child'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 176;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if(!owner.__owl__.isMounted){return}e.stopPropagation();const fn = owner['onEv1'];if (fn) { fn.call(owner, e); } else { owner.onEv1; }});vn.elm.addEventListener('ev-2', function (e) {if(!owner.__owl__.isMounted){return}e.preventDefault();const fn = owner['onEv2'];if (fn) { fn.call(owner, e); } else { owner.onEv2; }});vn.elm.addEventListener('ev-3', function (e) {if(!owner.__owl__.isMounted){return}e.stopPropagation();e.preventDefault();const fn = owner['onEv3'];if (fn) { fn.call(owner, e); } else { owner.onEv3; }});}};});
         let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
@@ -946,7 +925,6 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['child'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
-        w3.__owl__.contextualParentID = 225;
         parent.__owl__.cmap[k4] = w3.__owl__.id;
         let fiber = w3.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {w3.destroy();}}});
@@ -1002,7 +980,6 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
             let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| context['Child'];
             if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
             w6 = new W6(parent, props6);
-            w6.__owl__.contextualParentID = 218;
             parent.__owl__.cmap[k7] = w6.__owl__.id;
             let fiber = w6.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if(!owner.__owl__.isMounted){return}const fn = owner['onEv'];if (fn) { fn.call(owner, arg9, e); } else { owner.onEv; }});}};});
             let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
@@ -1292,7 +1269,6 @@ exports[`t-slot directive can define and call slots 1`] = `
         let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| context['Dialog'];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
-        w2.__owl__.contextualParentID = 310;
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         w2.__owl__.slotId = 1;
         let fiber = w2.__prepare(extra.fiber, {}, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
@@ -1309,12 +1285,6 @@ exports[`t-slot directive can define and call slots 2`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-
-    const contextualParentID = context.__owl__.contextualParentID;
-    let ctxParent = context;
-    while (ctxParent.__owl__.id !== contextualParentID) {
-      ctxParent = ctxParent.__owl__.parent;
-    }
     var h = this.h;
     let c7 = [], p7 = {key:7};
     var vn7 = h('div', p7, c7);
@@ -1323,161 +1293,86 @@ exports[`t-slot directive can define and call slots 2`] = `
     c7.push(vn8);
     const slot9 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
     if (slot9) {
-        slot9.call(this, ctxParent, Object.assign({}, extra, {parentNode: c8, parent: extra.parent || owner, vars: extra.fiber.vars}));
+        slot9.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c8, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     let c10 = [], p10 = {key:10};
     var vn10 = h('div', p10, c10);
     c7.push(vn10);
     const slot11 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
     if (slot11) {
-        slot11.call(this, ctxParent, Object.assign({}, extra, {parentNode: c10, parent: extra.parent || owner, vars: extra.fiber.vars}));
+        slot11.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c10, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn7;
 }"
 `;
 
 exports[`t-slot directive can define and call slots 3`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`header\`});
-}"
+"function ctxSlotFn(context, extra) {
+                        context = ctx.currentComponent ? ctx.currentComponent : context;
+                        return slotFn.call(this, context, extra);
+                    }"
 `;
 
 exports[`t-slot directive can define and call slots 4`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c6 = [], p6 = {key:6};
-    var vn6 = h('span', p6, c6);
-    c1.push(vn6);
-    c6.push({text: \`footer\`});
-}"
+"function ctxSlotFn(context, extra) {
+                        context = ctx.currentComponent ? ctx.currentComponent : context;
+                        return slotFn.call(this, context, extra);
+                    }"
 `;
 
 exports[`t-slot directive content is the default slot 1`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`sts rocks\`});
-}"
+"function ctxSlotFn(context, extra) {
+                    context = ctx.currentComponent ? ctx.currentComponent : context;
+                    return slotFn.call(this, context, extra);
+                }"
 `;
 
 exports[`t-slot directive default slot work with text nodes 1`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    c1.push({text: \`sts rocks\`});
-}"
+"function ctxSlotFn(context, extra) {
+                    context = ctx.currentComponent ? ctx.currentComponent : context;
+                    return slotFn.call(this, context, extra);
+                }"
 `;
 
 exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`sts\`});
-    let c6 = [], p6 = {key:6};
-    var vn6 = h('span', p6, c6);
-    c1.push(vn6);
-    c6.push({text: \`rocks\`});
-}"
+"function ctxSlotFn(context, extra) {
+                    context = ctx.currentComponent ? ctx.currentComponent : context;
+                    return slotFn.call(this, context, extra);
+                }"
 `;
 
 exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`sts\`});
-    let c6 = [], p6 = {key:6};
-    var vn6 = h('span', p6, c6);
-    c1.push(vn6);
-    c6.push({text: \`rocks\`});
-}"
+"function ctxSlotFn(context, extra) {
+                        context = ctx.currentComponent ? ctx.currentComponent : context;
+                        return slotFn.call(this, context, extra);
+                    }"
 `;
 
 exports[`t-slot directive refs are properly bound in slots 1`] = `
-"function anonymous(context,extra
-) {
-    let owner = context;
-    context.__owl__.refs = context.__owl__.refs || {};
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c9 = [], p9 = {key:9,on:{}};
-    var vn9 = h('button', p9, c9);
-    c1.push(vn9);
-    extra.handlers['click' + 9] = extra.handlers['click' + 9] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['doSomething'];if (fn) { fn.call(owner, e); } else { context.doSomething; }};
-    p9.on['click'] = extra.handlers['click' + 9];
-    const ref10 = \`myButton\`;
-    p9.hook = {
-      create: (_, n) => {
-        context.__owl__.refs[ref10] = n.elm;
-      },
-      destroy: () => {
-        delete context.__owl__.refs[ref10];
-      },
-    };
-    c9.push({text: \`do something\`});
-}"
+"function ctxSlotFn(context, extra) {
+                        context = ctx.currentComponent ? ctx.currentComponent : context;
+                        return slotFn.call(this, context, extra);
+                    }"
 `;
 
 exports[`t-slot directive slots are rendered with proper context 1`] = `
-"function anonymous(context,extra
-) {
-    let owner = context;
-    var h = this.h;
-    let c1 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    let c9 = [], p9 = {key:9,on:{}};
-    var vn9 = h('button', p9, c9);
-    c1.push(vn9);
-    extra.handlers['click' + 9] = extra.handlers['click' + 9] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['doSomething'];if (fn) { fn.call(owner, e); } else { context.doSomething; }};
-    p9.on['click'] = extra.handlers['click' + 9];
-    c9.push({text: \`do something\`});
-}"
+"function ctxSlotFn(context, extra) {
+                        context = ctx.currentComponent ? ctx.currentComponent : context;
+                        return slotFn.call(this, context, extra);
+                    }"
 `;
 
 exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-
-    const contextualParentID = context.__owl__.contextualParentID;
-    let ctxParent = context;
-    while (ctxParent.__owl__.id !== contextualParentID) {
-      ctxParent = ctxParent.__owl__.parent;
-    }
     var h = this.h;
     var _12 = context['props'].to;
     let c13 = [], p13 = {key:13,attrs:{href: _12}};
     var vn13 = h('a', p13, c13);
     const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot14) {
-        slot14.call(this, ctxParent, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || owner, vars: extra.fiber.vars}));
+        slot14.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn13;
 }"
@@ -1538,7 +1433,6 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
             let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| context['Link'];
             if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
             w8 = new W8(parent, props8);
-            w8.__owl__.contextualParentID = 314;
             parent.__owl__.cmap[k9] = w8.__owl__.id;
             w8.__owl__.slotId = 1;
             let fiber = w8.__prepare(extra.fiber, Object.assign({}, scope), undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
@@ -1553,36 +1447,23 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
 `;
 
 exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c7 = extra.parentNode;
-    Object.assign(context, extra.fiber.scope);
-    c7.push({text: \`User \`});
-    var _11 = context['user'].name;
-    if (_11 || _11 === 0) {
-        c7.push({text: _11});
-    }
-}"
+"function ctxSlotFn(context, extra) {
+                    context = ctx.currentComponent ? ctx.currentComponent : context;
+                    return slotFn.call(this, context, extra);
+                }"
 `;
 
 exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
 "function anonymous(context,extra
 ) {
     let owner = context;
-
-    const contextualParentID = context.__owl__.contextualParentID;
-    let ctxParent = context;
-    while (ctxParent.__owl__.id !== contextualParentID) {
-      ctxParent = ctxParent.__owl__.parent;
-    }
     var h = this.h;
     var _12 = context['props'].to;
     let c13 = [], p13 = {key:13,attrs:{href: _12}};
     var vn13 = h('a', p13, c13);
     const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot14) {
-        slot14.call(this, ctxParent, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || owner, vars: extra.fiber.vars}));
+        slot14.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || owner, vars: extra.fiber.vars}));
     }
     return vn13;
 }"
@@ -1644,7 +1525,6 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
             let W9 = context.constructor.components[componentKey9] || QWeb.components[componentKey9]|| context['Link'];
             if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
             w9 = new W9(parent, props9);
-            w9.__owl__.contextualParentID = 317;
             parent.__owl__.cmap[k10] = w9.__owl__.id;
             w9.__owl__.slotId = 1;
             let fiber = w9.__prepare(extra.fiber, Object.assign({}, scope), {_8}, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
@@ -1659,16 +1539,10 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
 `;
 
 exports[`t-slot directive slots are rendered with proper context, part 3 3`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c7 = extra.parentNode;
-    let _8 = extra.vars._8;
-    Object.assign(context, extra.fiber.scope);
-    if (_8 || _8 === 0) {
-        c7.push({text: _8});
-    }
-}"
+"function ctxSlotFn(context, extra) {
+                    context = ctx.currentComponent ? ctx.currentComponent : context;
+                    return slotFn.call(this, context, extra);
+                }"
 `;
 
 exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
@@ -1699,7 +1573,6 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
         let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| context['Link'];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
-        w3.__owl__.contextualParentID = 320;
         parent.__owl__.cmap[k4] = w3.__owl__.id;
         w3.__owl__.slotId = 1;
         let fiber = w3.__prepare(extra.fiber, {}, {_2}, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
@@ -1713,16 +1586,10 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
 `;
 
 exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
-"function anonymous(context,extra
-) {
-    var h = this.h;
-    let c1 = extra.parentNode;
-    let _2 = extra.vars._2;
-    Object.assign(context, extra.fiber.scope);
-    if (_2 || _2 === 0) {
-        c1.push({text: _2});
-    }
-}"
+"function ctxSlotFn(context, extra) {
+                    context = ctx.currentComponent ? ctx.currentComponent : context;
+                    return slotFn.call(this, context, extra);
+                }"
 `;
 
 exports[`t-slot directive template can just return a slot 1`] = `
@@ -1730,19 +1597,13 @@ exports[`t-slot directive template can just return a slot 1`] = `
 ) {
     let utils = this.constructor.utils;
     let owner = context;
-
-    const contextualParentID = context.__owl__.contextualParentID;
-    let ctxParent = context;
-    while (ctxParent.__owl__.id !== contextualParentID) {
-      ctxParent = ctxParent.__owl__.parent;
-    }
     let result;
     var h = this.h;
     const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot8) {
         let children9= []
         result = {}
-        slot8.call(this, ctxParent, Object.assign({}, extra, {parentNode: children9, parent: extra.parent || owner, vars: extra.fiber.vars}));
+        slot8.call(this, context.__owl__.parent, Object.assign({}, extra, {parentNode: children9, parent: extra.parent || owner, vars: extra.fiber.vars}));
         utils.defineProxy(result, children9[0]);
     }
     return result;
@@ -1777,7 +1638,6 @@ exports[`top level sub widgets basic use 1`] = `
         let W1 = context.constructor.components[componentKey1] || QWeb.components[componentKey1]|| context['Child'];
         if (!W1) {throw new Error('Cannot find the definition of component \\"' + componentKey1 + '\\"')}
         w1 = new W1(parent, props1);
-        w1.__owl__.contextualParentID = 416;
         parent.__owl__.cmap[k2] = w1.__owl__.id;
         let fiber = w1.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: k2, hook: {remove() {},destroy(vn) {w1.destroy();}}});
@@ -1818,7 +1678,6 @@ exports[`top level sub widgets can select a sub widget  1`] = `
             let W1 = context.constructor.components[componentKey1] || QWeb.components[componentKey1]|| context['Child'];
             if (!W1) {throw new Error('Cannot find the definition of component \\"' + componentKey1 + '\\"')}
             w1 = new W1(parent, props1);
-            w1.__owl__.contextualParentID = 420;
             parent.__owl__.cmap[k2] = w1.__owl__.id;
             let fiber = w1.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: k2, hook: {remove() {},destroy(vn) {w1.destroy();}}});
@@ -1847,7 +1706,6 @@ exports[`top level sub widgets can select a sub widget  1`] = `
             let W5 = context.constructor.components[componentKey5] || QWeb.components[componentKey5]|| context['OtherChild'];
             if (!W5) {throw new Error('Cannot find the definition of component \\"' + componentKey5 + '\\"')}
             w5 = new W5(parent, props5);
-            w5.__owl__.contextualParentID = 420;
             parent.__owl__.cmap[k6] = w5.__owl__.id;
             let fiber = w5.__prepare(extra.fiber, undefined, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: k6, hook: {remove() {},destroy(vn) {w5.destroy();}}});

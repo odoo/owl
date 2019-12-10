@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`props validation props are validated in dev mode (code snapshot) 1`] = `
-"function anonymous(context,extra
+"function anonymous(context, extra
 ) {
+    // Template name: \\"App\\"
     let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;

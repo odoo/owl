@@ -1395,6 +1395,23 @@ exports[`t-slot directive content is the default slot 1`] = `
 }"
 `;
 
+exports[`t-slot directive dafault slots can define a default content 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    var h = this.h;
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('span', p5, c5);
+    const slot6 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot6) {
+        slot6.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c5, parent: extra.parent || context}));
+    } else {
+        c5.push({text: \`default content\`});
+    }
+    return vn5;
+}"
+`;
+
 exports[`t-slot directive default slot work with text nodes 1`] = `
 "function anonymous(context, extra
 ) {
@@ -1436,6 +1453,23 @@ exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
     var vn6 = h('span', p6, c6);
     c1.push(vn6);
     c6.push({text: \`rocks\`});
+}"
+`;
+
+exports[`t-slot directive named slots can define a default content 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    var h = this.h;
+    let c5 = [], p5 = {key:5};
+    var vn5 = h('span', p5, c5);
+    const slot6 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
+    if (slot6) {
+        slot6.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c5, parent: extra.parent || context}));
+    } else {
+        c5.push({text: \`default content\`});
+    }
+    return vn5;
 }"
 `;
 

@@ -174,4 +174,14 @@ export class CompilationContext {
     let r = s.replace(/\{\{.*?\}\}/g, s => "${" + this.formatExpression(s.slice(2, -2)) + "}");
     return "`" + r + "`";
   }
+  startProtectScope(): number {
+    const protectID = this.generateID();
+    this.rootContext.shouldDefineScope = true;
+    this.addLine(`const _origScope${protectID} = scope;`);
+    this.addLine(`scope = Object.assign(Object.create(context), scope);`);
+    return protectID;
+  }
+  stopProtectScope(protectID: number) {
+    this.addLine(`scope = _origScope${protectID};`);
+  }
 }

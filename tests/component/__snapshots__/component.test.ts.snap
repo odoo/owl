@@ -19,8 +19,8 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.section_first = i1 === 0
         scope.section_last = i1 === _length3 - 1
@@ -35,8 +35,8 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
             _8 = Object.values(_6);
         }
         var _length7 = _7.length;
-        let _scope9 = scope;
-        scope = Object.assign(Object.create(context), _scope9);
+        const _origScope9 = scope;
+        scope = Object.assign(Object.create(context), scope);
         for (let i2 = 0; i2 < _length7; i2++) {
             scope.blip_first = i2 === 0
             scope.blip_last = i2 === _length7 - 1
@@ -68,9 +68,9 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
             }
             w10.__owl__.parentLastFiberId = extra.fiber.id;
         }
-        scope = _scope9;
+        scope = _origScope9;
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -318,8 +318,8 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.number_first = i1 === 0
         scope.number_last = i1 === _length3 - 1
@@ -352,7 +352,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         }
         w7.__owl__.parentLastFiberId = extra.fiber.id;
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -983,8 +983,8 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -1018,7 +1018,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         }
         w7.__owl__.parentLastFiberId = extra.fiber.id;
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -1120,8 +1120,8 @@ exports[`t-model directive in a t-foreach 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.thing_first = i1 === 0
         scope.thing_last = i1 === _length3 - 1
@@ -1139,7 +1139,7 @@ exports[`t-model directive in a t-foreach 1`] = `
         extra.handlers[k9] = extra.handlers[k9] || ((ev) => {expr8.f = ev.target.checked});
         p8.on['input'] = extra.handlers[k9];
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -1518,8 +1518,8 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         _5 = Object.values(_3);
     }
     var _length4 = _4.length;
-    let _scope6 = scope;
-    scope = Object.assign(Object.create(context), _scope6);
+    const _origScope6 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length4; i1++) {
         scope.user_first = i1 === 0
         scope.user_last = i1 === _length4 - 1
@@ -1556,7 +1556,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         }
         w9.__owl__.parentLastFiberId = extra.fiber.id;
     }
-    scope = _scope6;
+    scope = _origScope6;
     return vn1;
 }"
 `;
@@ -1615,8 +1615,8 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         _5 = Object.values(_3);
     }
     var _length4 = _4.length;
-    let _scope6 = scope;
-    scope = Object.assign(Object.create(context), _scope6);
+    const _origScope6 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length4; i1++) {
         scope.user_first = i1 === 0
         scope.user_last = i1 === _length4 - 1
@@ -1654,7 +1654,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         }
         w9.__owl__.parentLastFiberId = extra.fiber.id;
     }
-    scope = _scope6;
+    scope = _origScope6;
     return vn1;
 }"
 `;

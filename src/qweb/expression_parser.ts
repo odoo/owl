@@ -42,6 +42,7 @@ export interface QWebVar {
   id: string; // foo
   expr: string; // scope.foo (local variables => only foo)
   value?: string; // 1 + 3
+  hasBody?: boolean;
 }
 
 //------------------------------------------------------------------------------

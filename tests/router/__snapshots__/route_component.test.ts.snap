@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RouteComponent can render simple cases 1`] = `
-"function anonymous(context,extra
+"function anonymous(context, extra
 ) {
+    // Template name: \\"__template__1\\"
     let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;

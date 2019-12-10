@@ -865,6 +865,19 @@ be considered the `default` slot. For example:
 </div>
 ```
 
+Slots can define a default content, in case the parent did not define them:
+
+```xml
+<div t-name="Parent">
+  <Child/>
+</div>
+
+<span t-name="Child">
+  <t t-slot="default">default content</t>
+</span>
+<!-- will be rendered as: <div><span>default content</span></div> -->
+```
+
 ### Dynamic sub components
 
 It is not common, but sometimes we need a dynamic component name. In this case,

@@ -4032,6 +4032,76 @@ describe("t-slot directive", () => {
     expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
   });
 
+  test("named slots can define a default content", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
+        <span>
+          <t t-slot="header">default content</t>
+        </span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog/></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
+    expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("dafault slots can define a default content", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
+        <span>
+          <t t-slot="default">default content</t>
+        </span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog/></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
+    expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("default content is not rendered if slot is provided", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
+        <span>
+          <t t-slot="default">default content</t>
+        </span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog>hey</Dialog></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("default content is not rendered if named slot is provided", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
+        <span>
+          <t t-slot="header">default content</t>
+        </span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog><t t-set="header">hey</t></Dialog></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
   test("slots are rendered with proper context", async () => {
     env.qweb.addTemplates(`
         <templates>

@@ -194,7 +194,7 @@ QWeb.addDirective({
 QWeb.addDirective({
   name: "slot",
   priority: 80,
-  atNodeEncounter({ ctx, value }): boolean {
+  atNodeEncounter({ ctx, value, node, qweb }): boolean {
     const slotKey = ctx.generateID();
     ctx.addLine(
       `const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`
@@ -213,6 +213,12 @@ QWeb.addDirective({
     );
     if (!ctx.parentNode) {
       ctx.addLine(`utils.defineProxy(result, ${parentNode}[0]);`);
+    }
+    if (node.hasChildNodes()) {
+      ctx.addElse();
+      const nodeCopy = <Element>node.cloneNode(true);
+      nodeCopy.removeAttribute("t-slot");
+      qweb._compileNode(nodeCopy, ctx);
     }
     ctx.closeIf();
     return true;

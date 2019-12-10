@@ -397,8 +397,8 @@ exports[`foreach does not pollute the rendering context 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -410,7 +410,7 @@ exports[`foreach does not pollute the rendering context 1`] = `
             c1.push({text: _6});
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -431,8 +431,8 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -448,7 +448,7 @@ exports[`foreach iterate on items (on a element node) 1`] = `
             c7.push({text: _8});
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -469,8 +469,8 @@ exports[`foreach iterate on items 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -494,7 +494,7 @@ exports[`foreach iterate on items 1`] = `
         }
         c1.push({text: \`] \`});
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -515,8 +515,8 @@ exports[`foreach iterate, dict param 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -540,7 +540,7 @@ exports[`foreach iterate, dict param 1`] = `
         }
         c1.push({text: \`] \`});
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -561,8 +561,8 @@ exports[`foreach iterate, position 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.elem_first = i1 === 0
         scope.elem_last = i1 === _length3 - 1
@@ -583,7 +583,7 @@ exports[`foreach iterate, position 1`] = `
         }
         c1.push({text: \`) \`});
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -604,8 +604,8 @@ exports[`foreach t-foreach in t-forach 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.number_first = i1 === 0
         scope.number_last = i1 === _length3 - 1
@@ -620,8 +620,8 @@ exports[`foreach t-foreach in t-forach 1`] = `
             _8 = Object.values(_6);
         }
         var _length7 = _7.length;
-        let _scope9 = scope;
-        scope = Object.assign(Object.create(context), _scope9);
+        const _origScope9 = scope;
+        scope = Object.assign(Object.create(context), scope);
         for (let i2 = 0; i2 < _length7; i2++) {
             scope.letter_first = i2 === 0
             scope.letter_last = i2 === _length7 - 1
@@ -639,9 +639,9 @@ exports[`foreach t-foreach in t-forach 1`] = `
             }
             c1.push({text: \`] \`});
         }
-        scope = _scope9;
+        scope = _origScope9;
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -662,8 +662,8 @@ exports[`foreach warn if no key in some case 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -678,7 +678,7 @@ exports[`foreach warn if no key in some case 1`] = `
             c6.push({text: _7});
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -725,8 +725,8 @@ exports[`misc global 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.value_first = i1 === 0
         scope.value_last = i1 === _length3 - 1
@@ -741,12 +741,12 @@ exports[`misc global 1`] = `
             c6.push({text: _7});
         }
         {
-            let origScope = scope;
+            const _origScope10 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
                 {
-                    let origScope = scope;
+                    const _origScope13 = scope;
                     scope = Object.assign(Object.create(context), scope);
                     {
                         let c__0 = [];
@@ -754,18 +754,18 @@ exports[`misc global 1`] = `
                         scope[utils.zero] = c__0;
                     }
                     this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c__0}));
-                    scope = origScope;
+                    scope = _origScope13;
                 }
                 this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0}));
-                scope.foo = 'bbb'
+                scope.foo = 'bbb';
                 this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0}));
                 scope[utils.zero] = c__0;
             }
             this.subTemplates['_callee-asc'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-            scope = origScope;
+            scope = _origScope10;
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     this.subTemplates['_callee-asc-toto'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1}));
     return vn1;
 }"
@@ -1059,23 +1059,23 @@ exports[`t-call (template calling call with several sub nodes on same line 1`] =
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     {
-        let origScope = scope;
+        const _origScope3 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            let c3 = [], p3 = {key:3};
-            var vn3 = h('span', p3, c3);
-            c__0.push(vn3);
-            c3.push({text: \`hey\`});
-            c__0.push({text: \` \`});
             let c4 = [], p4 = {key:4};
             var vn4 = h('span', p4, c4);
             c__0.push(vn4);
-            c4.push({text: \`yay\`});
+            c4.push({text: \`hey\`});
+            c__0.push({text: \` \`});
+            let c5 = [], p5 = {key:5};
+            var vn5 = h('span', p5, c5);
+            c__0.push(vn5);
+            c5.push({text: \`yay\`});
             scope[utils.zero] = c__0;
         }
         this.subTemplates['SubTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-        scope = origScope;
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -1106,23 +1106,23 @@ exports[`t-call (template calling cascading t-call t-raw='0' 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     {
-        let origScope = scope;
+        const _origScope10 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            let c8 = [], p8 = {key:8};
-            var vn8 = h('span', p8, c8);
-            c__0.push(vn8);
-            c8.push({text: \`hey\`});
+            let c11 = [], p11 = {key:11};
+            var vn11 = h('span', p11, c11);
+            c__0.push(vn11);
+            c11.push({text: \`hey\`});
             c__0.push({text: \` \`});
-            let c9 = [], p9 = {key:9};
-            var vn9 = h('span', p9, c9);
-            c__0.push(vn9);
-            c9.push({text: \`yay\`});
+            let c12 = [], p12 = {key:12};
+            var vn12 = h('span', p12, c12);
+            c__0.push(vn12);
+            c12.push({text: \`yay\`});
             scope[utils.zero] = c__0;
         }
         this.subTemplates['SubTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-        scope = origScope;
+        scope = _origScope10;
     }
     return vn1;
 }"
@@ -1191,7 +1191,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     {
-        let origScope = scope;
+        const _origScope10 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1199,7 +1199,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             scope[utils.zero] = c__0;
         }
         this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-        scope = origScope;
+        scope = _origScope10;
     }
     return vn1;
 }"
@@ -1231,8 +1231,8 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
         _7 = Object.values(_5);
     }
     var _length6 = _6.length;
-    let _scope8 = scope;
-    scope = Object.assign(Object.create(context), _scope8);
+    const _origScope8 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length6; i1++) {
         scope.subtree_first = i1 === 0
         scope.subtree_last = i1 === _length6 - 1
@@ -1240,7 +1240,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
         scope.subtree = _6[i1]
         scope.subtree_value = _7[i1]
         {
-            let origScope = scope;
+            const _origScope9 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
@@ -1248,10 +1248,10 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
                 scope[utils.zero] = c__0;
             }
             this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c2}));
-            scope = origScope;
+            scope = _origScope9;
         }
     }
-    scope = _scope8;
+    scope = _origScope8;
 }"
 `;
 
@@ -1265,7 +1265,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     {
-        let origScope = scope;
+        const _origScope10 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1273,7 +1273,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             scope[utils.zero] = c__0;
         }
         this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-        scope = origScope;
+        scope = _origScope10;
     }
     return vn1;
 }"
@@ -1305,8 +1305,8 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
         _7 = Object.values(_5);
     }
     var _length6 = _6.length;
-    let _scope8 = scope;
-    scope = Object.assign(Object.create(context), _scope8);
+    const _origScope8 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length6; i1++) {
         scope.subtree_first = i1 === 0
         scope.subtree_last = i1 === _length6 - 1
@@ -1314,7 +1314,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
         scope.subtree = _6[i1]
         scope.subtree_value = _7[i1]
         {
-            let origScope = scope;
+            const _origScope9 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
@@ -1322,10 +1322,10 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
                 scope[utils.zero] = c__0;
             }
             this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c2}));
-            scope = origScope;
+            scope = _origScope9;
         }
     }
-    scope = _scope8;
+    scope = _origScope8;
 }"
 `;
 
@@ -1339,7 +1339,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     {
-        let origScope = scope;
+        const _origScope2 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1347,7 +1347,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
             scope[utils.zero] = c__0;
         }
         this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-        scope = origScope;
+        scope = _origScope2;
     }
     if (scope.foo || scope.foo === 0) {
         c1.push({text: scope.foo});
@@ -1401,8 +1401,8 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.v_first = i1 === 0
         scope.v_last = i1 === _length3 - 1
@@ -1411,7 +1411,7 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
         scope.v_value = _4[i1]
         scope.val = scope['v'].val;
         {
-            let origScope = scope;
+            const _origScope8 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
@@ -1419,10 +1419,10 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
                 scope[utils.zero] = c__0;
             }
             this.subTemplates['sub'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-            scope = origScope;
+            scope = _origScope8;
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -1463,7 +1463,7 @@ exports[`t-call (template calling with unused body 1`] = `
     let result;
     var h = this.h;
     {
-        let origScope = scope;
+        const _origScope3 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1473,7 +1473,7 @@ exports[`t-call (template calling with unused body 1`] = `
         result = []
         this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: result}));
         result = result[0]
-        scope = origScope;
+        scope = _origScope3;
     }
     return result;
 }"
@@ -1488,7 +1488,7 @@ exports[`t-call (template calling with unused setbody 1`] = `
     let result;
     var h = this.h;
     {
-        let origScope = scope;
+        const _origScope3 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1498,7 +1498,7 @@ exports[`t-call (template calling with unused setbody 1`] = `
         result = []
         this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: result}));
         result = result[0]
-        scope = origScope;
+        scope = _origScope3;
     }
     return result;
 }"
@@ -1513,7 +1513,7 @@ exports[`t-call (template calling with used body 1`] = `
     let result;
     var h = this.h;
     {
-        let origScope = scope;
+        const _origScope3 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1523,7 +1523,7 @@ exports[`t-call (template calling with used body 1`] = `
         result = []
         this.subTemplates['_callee-printsbody'].call(this, scope, Object.assign({}, extra, {parentNode: result}));
         result = result[0]
-        scope = origScope;
+        scope = _origScope3;
     }
     return result;
 }"
@@ -1539,7 +1539,7 @@ exports[`t-call (template calling with used set body 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('span', p1, c1);
     {
-        let origScope = scope;
+        const _origScope3 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1547,7 +1547,7 @@ exports[`t-call (template calling with used set body 1`] = `
             scope[utils.zero] = c__0;
         }
         this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
-        scope = origScope;
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -1616,6 +1616,59 @@ exports[`t-esc literal 1`] = `
     var _2 = 'ok';
     if (_2 || _2 === 0) {
         c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc t-esc is escaped 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    const c2 = new utils.VDomArray();
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('p', p3, c3);
+    c2.push(vn3);
+    c3.push({text: \`escaped\`});
+    scope.var = c2
+    if (scope.var || scope.var === 0) {
+        const _origScope4 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.var = scope.var instanceof utils.VDomArray ? utils.vDomToString(scope.var) : scope.var;
+        c1.push({text: scope.var});
+        scope = _origScope4;
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc t-esc=0 is escaped 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"testCaller\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    {
+        const _origScope3 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        {
+            let c__0 = [];
+            let c4 = [], p4 = {key:4};
+            var vn4 = h('p', p4, c4);
+            c__0.push(vn4);
+            c4.push({text: \`escaped\`});
+            scope[utils.zero] = c__0;
+        }
+        this.subTemplates['test'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -1930,8 +1983,8 @@ exports[`t-key t-key directive in a list 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.beer_first = i1 === 0
         scope.beer_last = i1 === _length3 - 1
@@ -1947,7 +2000,7 @@ exports[`t-key t-key directive in a list 1`] = `
             c7.push({text: _8});
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -2029,8 +2082,8 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.action_first = i1 === 0
         scope.action_last = i1 === _length3 - 1
@@ -2048,7 +2101,7 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler9) { handler9(e); } else { context.activate(action); }};
         c8.push({text: \`link\`});
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -2251,8 +2304,8 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.project_first = i1 === 0
         scope.project_last = i1 === _length3 - 1
@@ -2272,7 +2325,7 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
             c8.push({text: _10});
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -2464,8 +2517,8 @@ exports[`t-ref refs in a loop 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -2490,7 +2543,7 @@ exports[`t-ref refs in a loop 1`] = `
             c7.push({text: _9});
         }
     }
-    scope = _scope5;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -2563,11 +2616,21 @@ exports[`t-set set from body literal 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let result;
     var h = this.h;
-    var vn1 = {text: \`ok\`};
-    result = vn1;
+    const c1 = new utils.VDomArray();
+    c1.push({text: \`ok\`});
+    scope.value = c1
+    if (scope.value || scope.value === 0) {
+        const _origScope2 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.value = scope.value instanceof utils.VDomArray ? utils.vDomToString(scope.value) : scope.value;
+        var vn3 = {text: scope.value};
+        result = vn3
+        scope = _origScope2;
+    }
     return result;
 }"
 `;
@@ -2576,13 +2639,23 @@ exports[`t-set set from body lookup 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    var _2 = scope['value'];
-    if (_2 || _2 === 0) {
-        c1.push({text: _2});
+    const c2 = new utils.VDomArray();
+    var _3 = scope['value'];
+    if (_3 || _3 === 0) {
+        c2.push({text: _3});
+    }
+    scope.stuff = c2
+    if (scope.stuff || scope.stuff === 0) {
+        const _origScope4 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.stuff = scope.stuff instanceof utils.VDomArray ? utils.vDomToString(scope.stuff) : scope.stuff;
+        c1.push({text: scope.stuff});
+        scope = _origScope4;
     }
     return vn1;
 }"
@@ -2596,6 +2669,9 @@ exports[`t-set set from empty body 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
+    if (scope.stuff || scope.stuff === 0) {
+        c1.push({text: scope.stuff});
+    }
     return vn1;
 }"
 `;
@@ -2617,19 +2693,27 @@ exports[`t-set t-set and t-if 1`] = `
 `;
 
 exports[`t-set t-set body is evaluated immediately 1`] = `
-"function anonymous(context,extra
+"function anonymous(context, extra
 ) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     scope.v1 = 'before';
-    scope.v1 = 'after'
-    let c2 = [], p2 = {key:2};
-    var vn2 = h('span', p2, c2);
-    c1.push(vn2);
+    const c2 = new utils.VDomArray();
+    let c3 = [], p3 = {key:3};
+    var vn3 = h('span', p3, c3);
+    c2.push(vn3);
     if (scope.v1 || scope.v1 === 0) {
-        c2.push({text: scope.v1});
+        c3.push({text: scope.v1});
+    }
+    scope.v2 = c2
+    scope.v1 = 'after';
+    if (scope.v2 || scope.v2 === 0) {
+        const vnodeArray = scope.v2 instanceof utils.VDomArray ? scope.v2 : utils.htmlToVDOM(scope.v2);
+        c1.push(...vnodeArray);
     }
     return vn1;
 }"
@@ -2671,8 +2755,8 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         _4 = Object.values(_2);
     }
     var _length3 = _3.length;
-    let _scope5 = scope;
-    scope = Object.assign(Object.create(context), _scope5);
+    const _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.elem_first = i1 === 0
         scope.elem_last = i1 === _length3 - 1
@@ -2690,9 +2774,73 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         if (scope.v || scope.v === 0) {
             c8.push({text: scope.v});
         }
-        scope.v = scope['elem']
+        scope.v = scope['elem'];
     }
-    scope = _scope5;
+    scope = _origScope5;
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set with t-value (falsy) and body 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    scope.v3 = false;
+    scope.v1 = 'before';
+    scope.v2 = scope.v3;
+    if (!(scope.v2)) {
+        const c2 = new utils.VDomArray();
+        let c3 = [], p3 = {key:3};
+        var vn3 = h('span', p3, c3);
+        c2.push(vn3);
+        if (scope.v1 || scope.v1 === 0) {
+            c3.push({text: scope.v1});
+        }
+        scope.v2 = c2
+    }
+    scope.v1 = 'after';
+    scope.v3 = true;
+    if (scope.v2 || scope.v2 === 0) {
+        const vnodeArray = scope.v2 instanceof utils.VDomArray ? scope.v2 : utils.htmlToVDOM(scope.v2);
+        c1.push(...vnodeArray);
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-set t-set with t-value (truthy) and body 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    scope.v3 = 'Truthy';
+    scope.v1 = 'before';
+    scope.v2 = scope.v3;
+    if (!(scope.v2)) {
+        const c2 = new utils.VDomArray();
+        let c3 = [], p3 = {key:3};
+        var vn3 = h('span', p3, c3);
+        c2.push(vn3);
+        if (scope.v1 || scope.v1 === 0) {
+            c3.push({text: scope.v1});
+        }
+        scope.v2 = c2
+    }
+    scope.v1 = 'after';
+    scope.v3 = false;
+    if (scope.v2 || scope.v2 === 0) {
+        const vnodeArray = scope.v2 instanceof utils.VDomArray ? scope.v2 : utils.htmlToVDOM(scope.v2);
+        c1.push(...vnodeArray);
+    }
     return vn1;
 }"
 `;
@@ -2701,19 +2849,25 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     if (scope['flag']) {
+        const c2 = new utils.VDomArray();
+        c2.push({text: \`1\`});
+        scope.ourvar = c2
     }
     else {
         scope.ourvar = 0;
     }
     if (scope.ourvar || scope.ourvar === 0) {
+        const _origScope3 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.ourvar = scope.ourvar instanceof utils.VDomArray ? utils.vDomToString(scope.ourvar) : scope.ourvar;
         c1.push({text: scope.ourvar});
-    } else {
-        c1.push({text: \`1\`});
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -2723,19 +2877,25 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 2`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     if (scope['flag']) {
+        const c2 = new utils.VDomArray();
+        c2.push({text: \`1\`});
+        scope.ourvar = c2
     }
     else {
         scope.ourvar = 0;
     }
     if (scope.ourvar || scope.ourvar === 0) {
+        const _origScope3 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.ourvar = scope.ourvar instanceof utils.VDomArray ? utils.vDomToString(scope.ourvar) : scope.ourvar;
         c1.push({text: scope.ourvar});
-    } else {
-        c1.push({text: \`1\`});
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -2745,6 +2905,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
@@ -2753,11 +2914,16 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
         scope.ourvar = 1;
     }
     else {
+        const c2 = new utils.VDomArray();
+        c2.push({text: \`0\`});
+        scope.ourvar = c2
     }
     if (scope.ourvar || scope.ourvar === 0) {
+        const _origScope3 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.ourvar = scope.ourvar instanceof utils.VDomArray ? utils.vDomToString(scope.ourvar) : scope.ourvar;
         c1.push({text: scope.ourvar});
-    } else {
-        c1.push({text: \`0\`});
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -2767,6 +2933,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 2`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
@@ -2775,11 +2942,16 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 2`] = `
         scope.ourvar = 1;
     }
     else {
+        const c2 = new utils.VDomArray();
+        c2.push({text: \`0\`});
+        scope.ourvar = c2
     }
     if (scope.ourvar || scope.ourvar === 0) {
+        const _origScope3 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.ourvar = scope.ourvar instanceof utils.VDomArray ? utils.vDomToString(scope.ourvar) : scope.ourvar;
         c1.push({text: scope.ourvar});
-    } else {
-        c1.push({text: \`0\`});
+        scope = _origScope3;
     }
     return vn1;
 }"
@@ -2789,13 +2961,23 @@ exports[`t-set value priority 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     scope.value = 1;
+    if (!(scope.value)) {
+        const c2 = new utils.VDomArray();
+        c2.push({text: \`2\`});
+        scope.value = c2
+    }
     if (scope.value || scope.value === 0) {
+        const _origScope3 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.value = scope.value instanceof utils.VDomArray ? utils.vDomToString(scope.value) : scope.value;
         c1.push({text: scope.value});
+        scope = _origScope3;
     }
     return vn1;
 }"

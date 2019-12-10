@@ -87,7 +87,7 @@ interface Utils {
 }
 
 const UTILS: Utils = {
-  zero: Symbol('zero'),
+  zero: Symbol("zero"),
   toObj(expr) {
     if (typeof expr === "string") {
       expr = expr.trim();
@@ -106,6 +106,20 @@ const UTILS: Utils = {
   shallowEqual,
   addNameSpace(vnode) {
     addNS(vnode.data, vnode.children, vnode.sel);
+  },
+  VDomArray: class VDomArray extends Array {},
+  vDomToString: function(vdom: VNode[]): string {
+    return vdom
+      .map(vnode => {
+        if (vnode.sel) {
+          const node = document.createElement(vnode.sel);
+          const result = patch(node, vnode);
+          return (<HTMLElement>result.elm).outerHTML;
+        } else {
+          return vnode.text;
+        }
+      })
+      .join();
   }
 };
 
@@ -383,7 +397,7 @@ export class QWeb extends EventBus {
 
     let code = ctx.generateCode();
     const templateName = ctx.templateName.replace(/`/g, "'").slice(0, 200);
-    code.unshift(`    // Template name: "${templateName}"`)
+    code.unshift(`    // Template name: "${templateName}"`);
 
     let template;
     try {

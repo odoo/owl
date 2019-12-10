@@ -139,6 +139,17 @@ describe("t-esc", () => {
     qweb.addTemplate("test", `<span t-esc="var">nope</span>`);
     expect(renderToString(qweb, "test")).toBe("<span>nope</span>");
   });
+  test("t-esc is escaped", () => {
+    qweb.addTemplate("test", `<div><t t-set="var"><p>escaped</p></t><t t-esc="var"/></div>`);
+    const domRendered = renderToDOM(qweb, "test");
+    expect(domRendered.textContent).toBe("<p>escaped</p>");
+  });
+  test("t-esc=0 is escaped", () => {
+    qweb.addTemplate("test", `<span><t t-esc="0"/></span>`);
+    qweb.addTemplate("testCaller", `<div><t t-call="test"><p>escaped</p></t></div>`);
+    const domRendered = renderToDOM(qweb, "testCaller") as HTMLElement;
+    expect(domRendered.querySelector("span")!.textContent).toBe("<p>escaped</p>");
+  });
 });
 
 describe("t-raw", () => {
@@ -289,9 +300,44 @@ describe("t-set", () => {
         </t>
         <t t-set="v1" t-value="'after'"/>
         <t t-raw="v2"/>
+      </div>`
+    );
+
+    expect(renderToString(qweb, "test")).toBe("<div><span>before</span></div>");
+  });
+
+  test("t-set with t-value (falsy) and body", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-set="v3" t-value="false"/>
+        <t t-set="v1" t-value="'before'"/>
+        <t t-set="v2" t-value="v3">
+          <span><t t-esc="v1"/></span>
+        </t>
+        <t t-set="v1" t-value="'after'"/>
+        <t t-set="v3" t-value="true"/>
+        <t t-raw="v2"/>
       </div>`);
 
       expect(renderToString(qweb, "test")).toBe("<div><span>before</span></div>");
+    });
+
+    test("t-set with t-value (truthy) and body", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-set="v3" t-value="'Truthy'"/>
+        <t t-set="v1" t-value="'before'"/>
+        <t t-set="v2" t-value="v3">
+          <span><t t-esc="v1"/></span>
+        </t>
+        <t t-set="v1" t-value="'after'"/>
+        <t t-set="v3" t-value="false"/>
+        <t t-raw="v2"/>
+      </div>`);
+
+      expect(renderToString(qweb, "test")).toBe("<div>Truthy</div>");
     });
 });
 
@@ -1611,11 +1657,12 @@ describe("debugging", () => {
     const consoleLog = console.log;
     console.log = jest.fn();
     qweb.addTemplates(`
+      <templates>
       <p t-name="sub" t-debug="1">coucou</p>
       <div t-name="test">
         <t t-call="sub"/>
-      </div>`
-    );
+      </div>
+      </templates>`);
     qweb.render("test");
 
     expect(console.log).toHaveBeenCalledTimes(1);

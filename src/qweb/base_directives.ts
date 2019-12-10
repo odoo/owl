@@ -28,17 +28,14 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
       // the 'zero' magical symbol is where we can find the result of the rendering
       // of  the body of the t-call.
       ctx.rootContext.shouldDefineUtils = true;
-      ctx.addLine(`c${ctx.parentNode}.push(...scope[utils.zero]);`);
+      const zeroArgs = ctx.escaping
+        ? `{text: utils.vDomToString(scope[utils.zero])}`
+        : `...scope[utils.zero]`;
+      ctx.addLine(`c${ctx.parentNode}.push(${zeroArgs});`);
     }
     return;
   }
 
-  if (value.xml instanceof NodeList && !value.id) {
-    for (let node of Array.from(value.xml)) {
-      qweb._compileNode(<ChildNode>node, ctx);
-    }
-    return;
-  }
   let exprID: string;
   if (typeof value === "string") {
     exprID = `_${ctx.generateID()}`;
@@ -47,7 +44,15 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
     exprID = `scope.${value.id}`;
   }
   ctx.addIf(`${exprID} || ${exprID} === 0`);
+
   if (ctx.escaping) {
+    let protectID;
+    if (value.hasBody) {
+      protectID = ctx.startProtectScope();
+      ctx.addLine(
+        `${exprID} = ${exprID} instanceof utils.VDomArray ? utils.vDomToString(${exprID}) : ${exprID};`
+      );
+    }
     if (ctx.parentTextNode) {
       ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
     } else if (ctx.parentNode) {
@@ -61,21 +66,25 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
         ctx.addLine(`result = vn${nodeID}`);
       }
     }
+    if (value.hasBody) {
+      ctx.stopProtectScope(protectID);
+    }
   } else {
     ctx.rootContext.shouldDefineUtils = true;
-    ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
+    if (value.hasBody) {
+      ctx.addLine(
+        `const vnodeArray = ${exprID} instanceof utils.VDomArray ? ${exprID} : utils.htmlToVDOM(${exprID});`
+      );
+      ctx.addLine(`c${ctx.parentNode}.push(...vnodeArray);`);
+    } else {
+      ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
+    }
   }
   if (node.childNodes.length) {
     ctx.addElse();
     qweb._compileChildren(node, ctx);
   }
 
-  if (value.xml instanceof NodeList && value.id) {
-    ctx.addElse();
-    for (let node of Array.from(value.xml)) {
-      qweb._compileNode(<ChildNode>node, ctx);
-    }
-  }
   ctx.closeIf();
 }
 
@@ -106,25 +115,46 @@ QWeb.addDirective({
   name: "set",
   extraNames: ["value"],
   priority: 60,
-  atNodeEncounter({ node, ctx }): boolean {
+  atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldDefineScope = true;
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
     ctx.variables[variable] = ctx.variables[variable] || {};
     let qwebvar = ctx.variables[variable];
+    const hasBody = node.hasChildNodes();
 
+    qwebvar.id = variable;
+    qwebvar.expr = `scope.${variable}`;
     if (value) {
       const formattedValue = ctx.formatExpression(value);
-      if (ctx.variables.hasOwnProperty(variable) && qwebvar.id) {
-        ctx.addLine(`${qwebvar.expr} = ${formattedValue}`);
-      } else {
-        ctx.addLine(`scope.${variable} = ${formattedValue};`);
-        qwebvar.id = variable;
-        qwebvar.expr = `scope.${variable}`;
-        qwebvar.value = formattedValue;
+      ctx.addLine(`${qwebvar.expr} = ${formattedValue};`);
+      qwebvar.value = formattedValue;
+    }
+
+    if (hasBody) {
+      ctx.rootContext.shouldDefineUtils = true;
+      if (value) {
+        ctx.addIf(`!(${qwebvar.expr})`);
       }
-    } else {
-      qwebvar.xml = node.childNodes;
+      const tempParentNodeID = ctx.generateID();
+      const _parentNode = ctx.parentNode;
+      ctx.parentNode = tempParentNodeID;
+
+      ctx.addLine(`const c${tempParentNodeID} = new utils.VDomArray();`);
+      const nodeCopy = node.cloneNode(true) as Element;
+      for (let attr of ["t-set", "t-value", "t-if", "t-else", "t-elif"]) {
+        nodeCopy.removeAttribute(attr);
+      }
+      qweb._compileNode(nodeCopy, ctx);
+
+      ctx.addLine(`${qwebvar.expr} = c${tempParentNodeID}`);
+      qwebvar.value = `c${tempParentNodeID}`;
+      qwebvar.hasBody = true;
+
+      ctx.parentNode = _parentNode;
+      if (value) {
+        ctx.closeIf();
+      }
     }
     return true;
   }
@@ -205,12 +235,12 @@ QWeb.addDirective({
     // Step 3: compile t-call body if necessary
     // ------------------------------------------------
     let hasBody = node.hasChildNodes();
+    let protectID;
     if (hasBody) {
       // we add a sub scope to protect the ambient scope
       ctx.addLine(`{`);
       ctx.indent();
-      ctx.addLine(`let origScope = scope;`);
-      ctx.addLine(`scope = Object.assign(Object.create(context), scope);`);
+      protectID = ctx.startProtectScope();
       const nodeCopy = node.cloneNode(true) as Element;
       nodeCopy.removeAttribute("t-call");
       const parentNode = ctx.parentNode;
@@ -229,7 +259,7 @@ QWeb.addDirective({
 
     // Step 4: add the appropriate function call to current component
     // ------------------------------------------------
-    const callingScope = hasBody ? 'scope' : 'Object.assign(Object.create(context), scope)';
+    const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
     if (ctx.parentNode) {
       ctx.addLine(
         `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: c${ctx.parentNode}}));`
@@ -247,7 +277,7 @@ QWeb.addDirective({
     // Step 5: restore previous scope
     // ------------------------------------------------
     if (hasBody) {
-      ctx.addLine(`scope = origScope;`);
+      ctx.stopProtectScope(protectID);
       ctx.dedent();
       ctx.addLine(`}`);
     }
@@ -279,9 +309,7 @@ QWeb.addDirective({
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
     ctx.closeIf();
     ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
-    let varsID = ctx.generateID();
-    ctx.addLine(`let _scope${varsID} = scope;`);
-    ctx.addLine(`scope = Object.assign(Object.create(context), _scope${varsID});`);
+    let varsID = ctx.startProtectScope();
     const loopVar = `i${ctx.loopNumber}`;
     ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);
     ctx.indent();
@@ -307,7 +335,7 @@ QWeb.addDirective({
     qweb._compileNode(nodeCopy, ctx);
     ctx.dedent();
     ctx.addLine("}");
-    ctx.addLine(`scope = _scope${varsID};`);
+    ctx.stopProtectScope(varsID);
     return true;
   }
 });

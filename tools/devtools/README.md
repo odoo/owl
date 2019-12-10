@@ -4,6 +4,9 @@ Chrome Extension starter Kit with es6 standards
 ## Features
 - Working with Popup File
 - Working with Background File
+- Working with console.log across all files
+- Working with export, imports all types of ES6 keywords
+- Working with basic scrapping methods
 - Keep alive chrome extension in the background
 - Chrome extension Configured with ES6 standards
 - Chrome extension Configured with eslint standards

@@ -882,6 +882,22 @@ describe("t-call (template calling", () => {
     expect(trim(renderToString(qweb, "abcd"))).toBe(expected);
   });
 
+  test("t-call, conditional and t-set in t-call body", () => {
+    QWeb.registerTemplate("callee1", '<div>callee1</div>');
+    QWeb.registerTemplate("callee2", '<div>callee2 <t t-esc="v"/></div>');
+    QWeb.registerTemplate("caller",
+      `<div>
+        <t t-set="v1" t-value="'elif'"/>
+        <t t-if="v1 === 'if'" t-call="callee1" />
+        <t t-elif="v1 === 'elif'" t-call="callee2" >
+          <t t-set="v" t-value="'success'" />
+        </t>
+       </div>`
+    );
+    const rendered = renderToString(qweb, "caller");
+    expect(rendered).toBe(`<div><div>callee2 success</div></div>`);
+  });
+
   test("t-call with t-set inside and outside", () => {
     qweb.addTemplates(`
       <templates>

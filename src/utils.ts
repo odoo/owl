@@ -58,12 +58,9 @@ export function escape(str: string | number | undefined): string {
   if (typeof str === "number") {
     return String(str);
   }
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&#x27;")
-    .replace(/`/g, "&#x60;");
+  const p = document.createElement('p');
+  p.textContent = str;
+  return p.innerHTML;
 }
 
 /**

@@ -347,6 +347,29 @@ exports[`attributes tuple variable 1`] = `
 }"
 `;
 
+exports[`attributes various escapes 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    var h = this.h;
+    var _1 = '<foo';
+    var _2 = scope['bar'];
+    var _3 = \`<\${scope['baz']}>\`;
+    var _4 = scope['qux'];
+    let c5 = [], p5 = {key:5,attrs:{foo: _1,bar: _2,baz: _3}};
+    if (_4 instanceof Array) {
+        p5.attrs[_4[0]] = _4[1];
+    } else {
+        for (let key in _4) {
+            p5.attrs[key] = _4[key];
+        }
+    }
+    var vn5 = h('div', p5, c5);
+    return vn5;
+}"
+`;
+
 exports[`debugging t-debug 1`] = `
 "function anonymous(context, extra
 ) {
@@ -1548,6 +1571,22 @@ exports[`t-call (template calling with used set body 1`] = `
         }
         this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
         scope = _origScope3;
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-esc escaping 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('span', p1, c1);
+    var _2 = scope['var'];
+    if (_2 || _2 === 0) {
+        c1.push({text: _2});
     }
     return vn1;
 }"

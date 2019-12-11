@@ -1,7 +1,7 @@
 import { EventBus } from "../core/event_bus";
 import { h, patch, VNode } from "../vdom/index";
 import { CompilationContext } from "./compilation_context";
-import { shallowEqual } from "../utils";
+import { shallowEqual, escape } from "../utils";
 import { addNS } from "../vdom/vdom";
 
 /**
@@ -348,8 +348,15 @@ export class QWeb extends EventBus {
       return vnode.text!;
     }
     const node = document.createElement(vnode.sel);
-    const result = patch(node, vnode);
-    return (<HTMLElement>result.elm).outerHTML;
+    const elem = patch(node, vnode).elm as HTMLElement;
+    function escapeTextNodes(node) {
+      if (node.nodeType === 3) {
+        node.textContent = escape(node.textContent);
+      }
+      for (let n of node.childNodes) { escapeTextNodes(n) }
+    }
+    escapeTextNodes(elem);
+    return elem.outerHTML;
   }
 
   /**

@@ -120,9 +120,9 @@ describe("t-esc", () => {
     expect(renderToString(qweb, "test", { var: "ok" })).toBe("<span>ok</span>");
   });
 
-  test.skip("escaping", () => {
+  test("escaping", () => {
     qweb.addTemplate("test", `<span><t t-esc="var"/></span>`);
-    expect(renderToString(qweb, "test", { var: "<ok>" })).toBe("<span>&lt;ok&gt;</span>");
+    expect(renderToString(qweb, "test", { var: "<ok>abc</ok>" })).toBe("<span>&amp;lt;ok&amp;gt;abc&amp;lt;/ok&amp;gt;</span>");
   });
 
   test("escaping on a node", () => {
@@ -620,7 +620,7 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="a 0 is 1 of 2 ]"></div>`);
   });
 
-  test.skip("various escapes", () => {
+  test("various escapes", () => {
     // not needed??
     qweb.addTemplate(
       "test",
@@ -636,7 +636,7 @@ describe("attributes", () => {
       baz: 1,
       qux: { qux: "<>" }
     });
-    const expected = `<div foo="&lt;foo" bar="&lt;bar&gt;" baz="&lt;&quot;&lt;baz&gt;&quot;&gt;" qux="&lt;&gt;"></div>`;
+    const expected =  "<div foo=\"<foo\" bar=\"0\" baz=\"<1>\" qux=\"<>\"></div>";
     expect(result).toBe(expected);
   });
 

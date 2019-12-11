@@ -618,7 +618,7 @@ describe("lifecycle hooks", () => {
             <t t-if="state.ok">
               <t t-component="child"/>
             </t>
-            <t t-else="1">
+            <t t-else="">
               <div/>
             </t>
           </div>`
@@ -1399,7 +1399,7 @@ describe("composition", () => {
       static template = xml`
         <div>
           <h1 t-if="state.flag">hey</h1>
-          <h2 t-else="1">noo</h2>
+          <h2 t-else="">noo</h2>
           <span><ChildWidget/></span>
           <t t-if="state.flag"><span>test</span></t>
         </div>`;
@@ -2425,7 +2425,7 @@ describe("other directives with t-component", () => {
       `
         <div>
           <div t-if="state.flag">somediv</div>
-          <t t-else="1" t-component="child"/>
+          <t t-else="" t-component="child"/>
         </div>`
     );
     class Child extends Widget {}
@@ -4414,7 +4414,7 @@ describe("t-slot directive", () => {
     env.qweb.addTemplates(`
         <templates>
           <div t-name="Parent">
-            <Dialog><t t-set="content" t-debug="1">abc</t></Dialog>
+            <Dialog><t t-set="content" t-debug="">abc</t></Dialog>
           </div>
           <span t-name="Dialog">
             <t t-slot="content"/>
@@ -4892,7 +4892,7 @@ describe("t-model directive", () => {
             <input type="checkbox" t-model="state.flag"/>
             <span>
                 <t t-if="state.flag">yes</t>
-                <t t-else="1">no</t>
+                <t t-else="">no</t>
             </span>
         </div>
     </templates>`);
@@ -5171,7 +5171,7 @@ describe("environment and plugins", () => {
       static template = xml`
         <div>
             <t t-if="env.someFlag">Red</t>
-            <t t-else="1">Blue</t>
+            <t t-else="">Blue</t>
         </div>
       `;
     }
@@ -5234,7 +5234,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
-          <t t-else="1"><t t-slot="default" /></t>
+          <t t-else=""><t t-slot="default" /></t>
         </div>`;
       state = useState({ error: false });
 
@@ -5310,7 +5310,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
-          <t t-else="1"><t t-slot="default" /></t>
+          <t t-else=""><t t-slot="default" /></t>
         </div>`;
       state = useState({ error: false });
 
@@ -5346,7 +5346,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
-          <t t-else="1"><t t-slot="default" /></t>
+          <t t-else=""><t t-slot="default" /></t>
         </div>`;
       state = useState({ error: false });
 
@@ -5382,7 +5382,7 @@ describe("component error handling (catchError)", () => {
       <templates>
         <div t-name="ErrorBoundary">
             <t t-if="state.error">Error handled</t>
-            <t t-else="1"><t t-slot="default" /></t>
+            <t t-else=""><t t-slot="default" /></t>
         </div>
         <div t-name="ErrorComponent">Some text</div>
         <div t-name="App">
@@ -5429,7 +5429,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
-          <t t-else="1"><t t-slot="default" /></t>
+          <t t-else=""><t t-slot="default" /></t>
         </div>`;
       state = useState({ error: false });
 
@@ -5456,7 +5456,7 @@ describe("component error handling (catchError)", () => {
       <templates>
         <div t-name="ErrorBoundary">
             <t t-if="state.error">Error handled</t>
-            <t t-else="1"><t t-slot="default" /></t>
+            <t t-else=""><t t-slot="default" /></t>
         </div>
         <div t-name="ErrorComponent">Some text</div>
         <div t-name="App">
@@ -5500,7 +5500,7 @@ describe("component error handling (catchError)", () => {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
-          <t t-else="1"><t t-slot="default" /></t>
+          <t t-else=""><t t-slot="default" /></t>
         </div>`;
       state = useState({ error: false });
 

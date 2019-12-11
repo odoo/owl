@@ -946,7 +946,7 @@ For example, here is how we could implement an `ErrorBoundary` component:
     <t t-if="state.error">
         Error handled
     </t>
-    <t t-else="1">
+    <t t-else="">
         <t t-slot="default" />
     </t>
 </div>

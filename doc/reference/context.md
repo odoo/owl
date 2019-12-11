@@ -57,7 +57,7 @@ class SomeComponent extends Component {
       <t t-if=device.isMobile>
           some simplified user interface
       </t>
-      <t t-else="1">
+      <t t-else="">
           a more advanced user interface
       </t>
     </div>`;

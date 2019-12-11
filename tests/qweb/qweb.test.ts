@@ -426,7 +426,7 @@ describe("t-if", () => {
   });
 
   test("t-esc with t-elif", () => {
-    qweb.addTemplate("test", `<div><t t-if="false">abc</t><t t-else="1" t-esc="'x'"/></div>`);
+    qweb.addTemplate("test", `<div><t t-if="false">abc</t><t t-else="" t-esc="'x'"/></div>`);
     expect(renderToString(qweb, "test")).toBe("<div>x</div>");
   });
 
@@ -1644,7 +1644,7 @@ describe("debugging", () => {
     console.log = jest.fn();
     qweb.addTemplate(
       "test",
-      `<div t-debug="1"><t t-if="true"><span t-debug="1">hey</span></t></div>`
+      `<div t-debug=""><t t-if="true"><span t-debug="">hey</span></t></div>`
     );
     qweb.render("test");
     expect(qweb.templates.test.fn.toString()).toMatchSnapshot();
@@ -1658,7 +1658,7 @@ describe("debugging", () => {
     console.log = jest.fn();
     qweb.addTemplates(`
       <templates>
-      <p t-name="sub" t-debug="1">coucou</p>
+      <p t-name="sub" t-debug="">coucou</p>
       <div t-name="test">
         <t t-call="sub"/>
       </div>

@@ -242,7 +242,9 @@ QWeb.addDirective({
       ctx.indent();
       protectID = ctx.startProtectScope();
       const nodeCopy = node.cloneNode(true) as Element;
-      nodeCopy.removeAttribute("t-call");
+      for (let attr of ["t-if", "t-else", "t-elif", "t-call"]) {
+        nodeCopy.removeAttribute(attr);
+      }
       const parentNode = ctx.parentNode;
       ctx.parentNode = "__0";
       // this local scope is intended to trap c__0

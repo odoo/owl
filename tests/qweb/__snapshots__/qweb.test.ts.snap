@@ -1464,6 +1464,36 @@ exports[`t-call (template calling t-call with t-set inside and outside. 2 1`] = 
 }"
 `;
 
+exports[`t-call (template calling t-call, conditional and t-set in t-call body 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"caller\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1};
+    var vn1 = h('div', p1, c1);
+    scope.v1 = 'elif';
+    if (scope.v1==='if') {
+        this.subTemplates['callee1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1}));
+    }
+    else if (scope.v1==='elif') {
+        {
+            const _origScope5 = scope;
+            scope = Object.assign(Object.create(context), scope);
+            {
+                let c__0 = [];
+                scope.v = 'success';
+                scope[utils.zero] = c__0;
+            }
+            this.subTemplates['callee2'].call(this, scope, Object.assign({}, extra, {parentNode: c1}));
+            scope = _origScope5;
+        }
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling t-call, global templates 1`] = `
 "function anonymous(context, extra
 ) {

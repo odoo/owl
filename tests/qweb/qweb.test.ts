@@ -318,12 +318,13 @@ describe("t-set", () => {
         <t t-set="v1" t-value="'after'"/>
         <t t-set="v3" t-value="true"/>
         <t t-raw="v2"/>
-      </div>`);
+      </div>`
+    );
 
-      expect(renderToString(qweb, "test")).toBe("<div><span>before</span></div>");
-    });
+    expect(renderToString(qweb, "test")).toBe("<div><span>before</span></div>");
+  });
 
-    test("t-set with t-value (truthy) and body", () => {
+  test("t-set with t-value (truthy) and body", () => {
     qweb.addTemplate(
       "test",
       `<div>
@@ -335,10 +336,11 @@ describe("t-set", () => {
         <t t-set="v1" t-value="'after'"/>
         <t t-set="v3" t-value="false"/>
         <t t-raw="v2"/>
-      </div>`);
+      </div>`
+    );
 
-      expect(renderToString(qweb, "test")).toBe("<div>Truthy</div>");
-    });
+    expect(renderToString(qweb, "test")).toBe("<div>Truthy</div>");
+  });
 });
 
 describe("t-if", () => {

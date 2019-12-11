@@ -1,4 +1,4 @@
-import { Env } from "../src/component/component";
+import { Env, Component } from "../src/component/component";
 import { scheduler } from "../src/component/scheduler";
 import { EvalContext, QWeb } from "../src/qweb/qweb";
 import { CompilationContext } from "../src/qweb/compilation_context";
@@ -25,6 +25,7 @@ beforeEach(() => {
   slots = Object.assign({}, QWeb.slots);
   nextId = QWeb.nextId;
   TEMPLATES = Object.assign({}, QWeb.TEMPLATES);
+  Component.scheduler.tasks = [];
 });
 
 afterEach(() => {
@@ -32,6 +33,7 @@ afterEach(() => {
   QWeb.slots = slots;
   QWeb.nextId = nextId;
   QWeb.TEMPLATES = TEMPLATES;
+  Component.scheduler.tasks = [];
 });
 
 // helpers

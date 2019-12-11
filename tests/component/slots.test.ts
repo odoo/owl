@@ -2,11 +2,7 @@ import { Component, Env } from "../../src/component/component";
 import { QWeb } from "../../src/qweb/qweb";
 import { xml } from "../../src/tags";
 import { useState, useRef } from "../../src/hooks";
-import {
-  makeTestFixture,
-  makeTestEnv,
-  nextTick,
-} from "../helpers";
+import { makeTestFixture, makeTestEnv, nextTick } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -37,18 +33,18 @@ afterEach(() => {
   fixture.remove();
 });
 
-function children(w: Component<any,any>): Component<any,any>[] {
-    const childrenMap = w.__owl__.children;
-    return Object.keys(childrenMap).map(id => childrenMap[id]);
-  }
+function children(w: Component<any, any>): Component<any, any>[] {
+  const childrenMap = w.__owl__.children;
+  return Object.keys(childrenMap).map(id => childrenMap[id]);
+}
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
 describe("t-slot directive", () => {
-    test("can define and call slots", async () => {
-      env.qweb.addTemplates(`
+  test("can define and call slots", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
                <Dialog>
@@ -62,94 +58,94 @@ describe("t-slot directive", () => {
             </div>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(
-        "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
-      );
-      expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
-      expect(env.qweb.templates.Dialog.fn.toString()).toMatchSnapshot();
-      expect(QWeb.slots["1_header"].toString()).toMatchSnapshot();
-      expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
-    });
-  
-    test("named slots can define a default content", async () => {
-      class Dialog extends Component<any, any> {
-        static template = xml`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
+    );
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Dialog.fn.toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_header"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
+  });
+
+  test("named slots can define a default content", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
           <span>
             <t t-slot="header">default content</t>
           </span>`;
-      }
-      class Parent extends Component<any, any> {
-        static template = xml`<div><Dialog/></div>`;
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
-      expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
-    });
-  
-    test("dafault slots can define a default content", async () => {
-      class Dialog extends Component<any, any> {
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog/></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
+    expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("dafault slots can define a default content", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
           <span>
             <t t-slot="default">default content</t>
           </span>`;
-      }
-      class Parent extends Component<any, any> {
-        static template = xml`<div><Dialog/></div>`;
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
-      expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
-    });
-  
-    test("default content is not rendered if slot is provided", async () => {
-      class Dialog extends Component<any, any> {
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog/></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
+    expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("default content is not rendered if slot is provided", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
           <span>
             <t t-slot="default">default content</t>
           </span>`;
-      }
-      class Parent extends Component<any, any> {
-        static template = xml`<div><Dialog>hey</Dialog></div>`;
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
-    });
-  
-    test("default content is not rendered if named slot is provided", async () => {
-      class Dialog extends Component<any, any> {
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog>hey</Dialog></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("default content is not rendered if named slot is provided", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`
           <span>
             <t t-slot="header">default content</t>
           </span>`;
-      }
-      class Parent extends Component<any, any> {
-        static template = xml`<div><Dialog><t t-set="header">hey</t></Dialog></div>`;
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
-    });
-  
-    test("slots are rendered with proper context", async () => {
-      env.qweb.addTemplates(`
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Dialog><t t-set="header">hey</t></Dialog></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("slots are rendered with proper context", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
               <span class="counter"><t t-esc="state.val"/></span>
@@ -160,32 +156,32 @@ describe("t-slot directive", () => {
             <span t-name="Dialog"><t t-slot="footer"/></span>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-        state = useState({ val: 0 });
-        doSomething() {
-          this.state.val++;
-        }
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+      state = useState({ val: 0 });
+      doSomething() {
+        this.state.val++;
       }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(
-        '<div><span class="counter">0</span><span><button>do something</button></span></div>'
-      );
-  
-      fixture.querySelector("button")!.click();
-      await nextTick();
-  
-      expect(fixture.innerHTML).toBe(
-        '<div><span class="counter">1</span><span><button>do something</button></span></div>'
-      );
-      expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
-    });
-  
-    test("slots are rendered with proper context, part 2", async () => {
-      env.qweb.addTemplates(`
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">0</span><span><button>do something</button></span></div>'
+    );
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">1</span><span><button>do something</button></span></div>'
+    );
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
+  });
+
+  test("slots are rendered with proper context, part 2", async () => {
+    env.qweb.addTemplates(`
           <templates>
               <a t-name="Link" t-att-href="props.to">
                   <t t-slot="default"/>
@@ -197,38 +193,38 @@ describe("t-slot directive", () => {
               </div>
           </templates>
       `);
-      class Link extends Component<any,any> {}
-  
-      class App extends Component<any,any> {
-        state = useState({
-          users: [
-            { id: 1, name: "Aaron" },
-            { id: 2, name: "David" }
-          ]
-        });
-        static components = { Link };
-      }
-  
-      const app = new App();
-      await app.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(
-        '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
-      );
-      expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
-      expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
-  
-      // test updateprops here
-      app.state.users[1].name = "Mathieu";
-      await nextTick();
-      expect(fixture.innerHTML).toBe(
-        '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
-      );
-      expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-    });
-  
-    test("slots are rendered with proper context, part 3", async () => {
-      env.qweb.addTemplates(`
+    class Link extends Component<any, any> {}
+
+    class App extends Component<any, any> {
+      state = useState({
+        users: [
+          { id: 1, name: "Aaron" },
+          { id: 2, name: "David" }
+        ]
+      });
+      static components = { Link };
+    }
+
+    const app = new App();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
+    );
+    expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+
+    // test updateprops here
+    app.state.users[1].name = "Mathieu";
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
+    );
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  });
+
+  test("slots are rendered with proper context, part 3", async () => {
+    env.qweb.addTemplates(`
           <templates>
               <a t-name="Link" t-att-href="props.to">
                   <t t-slot="default"/>
@@ -241,38 +237,38 @@ describe("t-slot directive", () => {
               </div>
           </templates>
       `);
-      class Link extends Component<any,any> {}
-  
-      class App extends Component<any,any> {
-        state = useState({
-          users: [
-            { id: 1, name: "Aaron" },
-            { id: 2, name: "David" }
-          ]
-        });
-        static components = { Link };
-      }
-  
-      const app = new App();
-      await app.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(
-        '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
-      );
-      expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
-      expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
-  
-      // test updateprops here
-      app.state.users[1].name = "Mathieu";
-      await nextTick();
-      expect(fixture.innerHTML).toBe(
-        '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
-      );
-      expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-    });
-  
-    test("slots are rendered with proper context, part 4", async () => {
-      env.qweb.addTemplates(`
+    class Link extends Component<any, any> {}
+
+    class App extends Component<any, any> {
+      state = useState({
+        users: [
+          { id: 1, name: "Aaron" },
+          { id: 2, name: "David" }
+        ]
+      });
+      static components = { Link };
+    }
+
+    const app = new App();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
+    );
+    expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+
+    // test updateprops here
+    app.state.users[1].name = "Mathieu";
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
+    );
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  });
+
+  test("slots are rendered with proper context, part 4", async () => {
+    env.qweb.addTemplates(`
           <templates>
               <a t-name="Link" t-att-href="props.to">
                   <t t-slot="default"/>
@@ -283,33 +279,33 @@ describe("t-slot directive", () => {
               </div>
           </templates>
       `);
-      class Link extends Component<any,any> {}
-  
-      class App extends Component<any,any> {
-        state = useState({ user: { id: 1, name: "Aaron" } });
-        static components = { Link };
-      }
-  
-      const app = new App();
-      await app.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
-  
-      expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
-  
-      // test updateprops here
-      app.state.user.name = "David";
-      await nextTick();
-      expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
-      expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-    });
-  
-    test("refs are properly bound in slots", async () => {
-      class Dialog extends Component<any,any> {
-        static template = xml`<span><t t-slot="footer"/></span>`;
-      }
-      class Parent extends Component<any,any> {
-        static template = xml`
+    class Link extends Component<any, any> {}
+
+    class App extends Component<any, any> {
+      state = useState({ user: { id: 1, name: "Aaron" } });
+      static components = { Link };
+    }
+
+    const app = new App();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
+
+    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+
+    // test updateprops here
+    app.state.user.name = "David";
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  });
+
+  test("refs are properly bound in slots", async () => {
+    class Dialog extends Component<any, any> {
+      static template = xml`<span><t t-slot="footer"/></span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`
             <div>
               <span class="counter"><t t-esc="state.val"/></span>
               <Dialog>
@@ -317,31 +313,31 @@ describe("t-slot directive", () => {
               </Dialog>
             </div>
           `;
-        static components = { Dialog };
-        state = useState({ val: 0 });
-        button = useRef("myButton");
-        doSomething() {
-          this.state.val++;
-        }
+      static components = { Dialog };
+      state = useState({ val: 0 });
+      button = useRef("myButton");
+      doSomething() {
+        this.state.val++;
       }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(
-        '<div><span class="counter">0</span><span><button>do something</button></span></div>'
-      );
-  
-      parent.button.el!.click();
-      await nextTick();
-  
-      expect(fixture.innerHTML).toBe(
-        '<div><span class="counter">1</span><span><button>do something</button></span></div>'
-      );
-      expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
-    });
-  
-    test("content is the default slot", async () => {
-      env.qweb.addTemplates(`
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">0</span><span><button>do something</button></span></div>'
+    );
+
+    parent.button.el!.click();
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe(
+      '<div><span class="counter">1</span><span><button>do something</button></span></div>'
+    );
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
+  });
+
+  test("content is the default slot", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
                <Dialog>
@@ -351,19 +347,19 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="default"/></div>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
-      expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-    });
-  
-    test("default slot work with text nodes", async () => {
-      env.qweb.addTemplates(`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  });
+
+  test("default slot work with text nodes", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
                <Dialog>sts rocks</Dialog>
@@ -371,19 +367,19 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="default"/></div>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
-      expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-    });
-  
-    test("multiple roots are allowed in a named slot", async () => {
-      env.qweb.addTemplates(`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  });
+
+  test("multiple roots are allowed in a named slot", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
                <Dialog>
@@ -396,19 +392,19 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="content"/></div>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
-      expect(QWeb.slots["1_content"].toString()).toMatchSnapshot();
-    });
-  
-    test("multiple roots are allowed in a default slot", async () => {
-      env.qweb.addTemplates(`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
+    expect(QWeb.slots["1_content"].toString()).toMatchSnapshot();
+  });
+
+  test("multiple roots are allowed in a default slot", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
                <Dialog>
@@ -419,19 +415,19 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="default"/></div>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
-      expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-    });
-  
-    test("missing slots are ignored", async () => {
-      env.qweb.addTemplates(`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  });
+
+  test("missing slots are ignored", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
               <Dialog/>
@@ -443,21 +439,21 @@ describe("t-slot directive", () => {
             </span>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
-    });
-  
-    test("t-debug on a t-set (defining a slot)", async () => {
-      const consoleLog = console.log;
-      console.log = jest.fn();
-  
-      env.qweb.addTemplates(`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
+  });
+
+  test("t-debug on a t-set (defining a slot)", async () => {
+    const consoleLog = console.log;
+    console.log = jest.fn();
+
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
               <Dialog><t t-set="content" t-debug="">abc</t></Dialog>
@@ -467,18 +463,18 @@ describe("t-slot directive", () => {
             </span>
           </templates>
       `);
-      class Dialog extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Dialog };
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-      expect(console.log).toHaveBeenCalledTimes(0);
-      console.log = consoleLog;
-    });
-  
-    test("slot preserves properly parented relationship", async () => {
-      env.qweb.addTemplates(`
+    class Dialog extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(console.log).toHaveBeenCalledTimes(0);
+    console.log = consoleLog;
+  });
+
+  test("slot preserves properly parented relationship", async () => {
+    env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
                <Child>
@@ -489,58 +485,58 @@ describe("t-slot directive", () => {
             <div t-name="GrandChild">Grand Child</div>
           </templates>
       `);
-      class Child extends Component<any,any> {}
-      class GrandChild extends Component<any,any> {}
-      class Parent extends Component<any,any> {
-        static components = { Child, GrandChild };
+    class Child extends Component<any, any> {}
+    class GrandChild extends Component<any, any> {}
+    class Parent extends Component<any, any> {
+      static components = { Child, GrandChild };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><div>Grand Child</div></div></div>");
+
+    const parentChildren = children(parent);
+    expect(parentChildren.length).toBe(1);
+    expect(parentChildren[0]).toBeInstanceOf(Child);
+
+    const childrenChildren = children(parentChildren[0]);
+    expect(childrenChildren.length).toBe(1);
+    expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
+  });
+
+  test("nested slots: evaluation context and parented relationship", async () => {
+    let slot;
+    class Slot extends Component<any, any> {
+      static template = xml`<span t-esc="props.val"/>`;
+      constructor(parent, props) {
+        super(parent, props);
+        slot = this;
       }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><div><div>Grand Child</div></div></div>");
-  
-      const parentChildren = children(parent);
-      expect(parentChildren.length).toBe(1);
-      expect(parentChildren[0]).toBeInstanceOf(Child);
-  
-      const childrenChildren = children(parentChildren[0]);
-      expect(childrenChildren.length).toBe(1);
-      expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
-    });
-  
-    test("nested slots: evaluation context and parented relationship", async () => {
-      let slot;
-      class Slot extends Component<any, any> {
-        static template = xml`<span t-esc="props.val"/>`;
-        constructor(parent, props) {
-          super(parent, props);
-          slot = this;
-        }
-      }
-      class GrandChild extends Component<any, any> {
-        static template = xml`<div><t t-slot="default"/></div>`;
-      }
-      class Child extends Component<any, any> {
-        static components = { GrandChild };
-        static template = xml`
+    }
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+    class Child extends Component<any, any> {
+      static components = { GrandChild };
+      static template = xml`
           <GrandChild>
             <t t-slot="default"/>
           </GrandChild>`;
-      }
-      class Parent extends Component<any, any> {
-        static components = { Child, Slot };
-        static template = xml`<Child><Slot val="state.val"/></Child>`;
-        state = useState({ val: 3 });
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-      expect(slot.__owl__.parent).toBeInstanceOf(GrandChild);
-    });
-  
-    test("slot are properly rendered if inner props are changed", async () => {
-      env.qweb.addTemplates(`
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child, Slot };
+      static template = xml`<Child><Slot val="state.val"/></Child>`;
+      state = useState({ val: 3 });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+    expect(slot.__owl__.parent).toBeInstanceOf(GrandChild);
+  });
+
+  test("slot are properly rendered if inner props are changed", async () => {
+    env.qweb.addTemplates(`
       <templates>
           <div t-name="SomeComponent">
               SC:<t t-esc="props.val"/>
@@ -559,184 +555,184 @@ describe("t-slot directive", () => {
           </div>
       </templates>
       `);
-      class SomeComponent extends Component<any,any> {}
-      class GenericComponent extends Component<any,any> {}
-      class App extends Component<any,any> {
-        static components = { GenericComponent, SomeComponent };
-        state = useState({ val: 4 });
-  
-        inc() {
-          this.state.val++;
-        }
+    class SomeComponent extends Component<any, any> {}
+    class GenericComponent extends Component<any, any> {}
+    class App extends Component<any, any> {
+      static components = { GenericComponent, SomeComponent };
+      state = useState({ val: 4 });
+
+      inc() {
+        this.state.val++;
       }
-      const app = new App();
-      await app.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe("<div><button>Inc[4]</button><div><div> SC:4</div></div></div>");
-      (<any>fixture.querySelector("button")).click();
-      await nextTick();
-      expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
-    });
-  
-    test("slots and wrapper components", async () => {
-      class Link extends Component<any, any> {
-        static template = xml`
+    }
+    const app = new App();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><button>Inc[4]</button><div><div> SC:4</div></div></div>");
+    (<any>fixture.querySelector("button")).click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
+  });
+
+  test("slots and wrapper components", async () => {
+    class Link extends Component<any, any> {
+      static template = xml`
           <a href="abc">
               <t t-slot="default"/>
           </a>`;
-      }
-  
-      class A extends Component<any, any> {
-        static template = xml`<Link>hey</Link>`;
-        static components = { Link: Link };
-      }
-  
-      const a = new A();
-      await a.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
-    });
-  
-    test("template can just return a slot", async () => {
-      class Child extends Component<any,any> {
-        static template = xml`<span><t t-esc="props.value"/></span>`;
-      }
-      class SlotComponent extends Component<any,any> {
-        static template = xml`<t t-slot="default"/>`;
-      }
-  
-      class Parent extends Component<any,any> {
-        static template = xml`
+    }
+
+    class A extends Component<any, any> {
+      static template = xml`<Link>hey</Link>`;
+      static components = { Link: Link };
+    }
+
+    const a = new A();
+    await a.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
+  });
+
+  test("template can just return a slot", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.value"/></span>`;
+    }
+    class SlotComponent extends Component<any, any> {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
           <div>
               <SlotComponent><Child value="state.value"/></SlotComponent>
           </div>`;
-        static components = { SlotComponent, Child };
-        state = useState({ value: 3 });
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-      expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-  
-      expect(QWeb.TEMPLATES[SlotComponent.template].fn.toString()).toMatchSnapshot();
-  
-      parent.state.value = 5;
-      await nextTick();
-      expect(fixture.innerHTML).toBe("<div><span>5</span></div>");
-    });
-  
-    test("multiple slots containing components", async () => {
-      class C extends Component<any, any> {
-        static template = xml`<span><t t-esc="props.val"/></span>`;
-      }
-      class B extends Component<any, any> {
-        static template = xml`<div><t t-slot="s1"/><t t-slot="s2"/></div>`;
-      }
-      class A extends Component<any, any> {
-        static template = xml`
+      static components = { SlotComponent, Child };
+      state = useState({ value: 3 });
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+
+    expect(QWeb.TEMPLATES[SlotComponent.template].fn.toString()).toMatchSnapshot();
+
+    parent.state.value = 5;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>5</span></div>");
+  });
+
+  test("multiple slots containing components", async () => {
+    class C extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class B extends Component<any, any> {
+      static template = xml`<div><t t-slot="s1"/><t t-slot="s2"/></div>`;
+    }
+    class A extends Component<any, any> {
+      static template = xml`
           <B>
             <t t-set="s1"><C val="1"/></t>
             <t t-set="s2"><C val="2"/></t>
           </B>`;
-        static components = { B, C };
+      static components = { B, C };
+    }
+
+    const a = new A();
+    await a.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(`<div><span>1</span><span>2</span></div>`);
+  });
+
+  test("slots in t-foreach and re-rendering", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
+      state = useState({ val: "A" });
+      mounted() {
+        this.state.val = "B";
       }
-  
-      const a = new A();
-      await a.mount(fixture);
-  
-      expect(fixture.innerHTML).toBe(`<div><span>1</span><span>2</span></div>`);
-    });
-  
-    test("slots in t-foreach and re-rendering", async () => {
-      class Child extends Component<any,any> {
-        static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
-        state = useState({ val: "A" });
-        mounted() {
-          this.state.val = "B";
-        }
-      }
-      class Parent extends Component<any,any> {
-        static components = { Child };
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`
           <div>
             <t t-foreach="Array(2)" t-as="n" t-key="n_index">
               <Child><t t-esc="n_index"/></Child>
             </t>
           </div>`;
-      }
-      const parent = new Parent();
-      await parent.mount(fixture);
-      expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
-  
-      await nextTick(); // wait for the changes triggered in mounted to be applied
-      expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
-    });
-  
-    test("slots in t-foreach with t-set and re-rendering", async () => {
-      class Child extends Component<any,any> {
-        static template = xml`
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for the changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
+  });
+
+  test("slots in t-foreach with t-set and re-rendering", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`
           <span>
             <t t-esc="state.val"/>
             <t t-slot="default"/>
           </span>`;
-        state = useState({ val: "A" });
-        mounted() {
-          this.state.val = "B";
-        }
+      state = useState({ val: "A" });
+      mounted() {
+        this.state.val = "B";
       }
-      class ParentWidget extends Component<any,any> {
-        static components = { Child };
-        static template = xml`
+    }
+    class ParentWidget extends Component<any, any> {
+      static components = { Child };
+      static template = xml`
           <div>
             <t t-foreach="Array(2)" t-as="n" t-key="n_index">
               <t t-set="dummy" t-value="n_index"/>
               <Child><t t-esc="dummy"/></Child>
             </t>
           </div>`;
-      }
-  
-      const widget = new ParentWidget();
-      await widget.mount(fixture);
-      expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
-  
-      await nextTick(); // wait for changes triggered in mounted to be applied
-      expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
-    });
-  
-    test("nested slots in same template", async () => {
-      let child, child2, child3;
-      class Child extends Component<any,any> {
-        static template = xml`
+    }
+
+    const widget = new ParentWidget();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
+  });
+
+  test("nested slots in same template", async () => {
+    let child, child2, child3;
+    class Child extends Component<any, any> {
+      static template = xml`
           <span id="c1">
             <div>
               <t t-slot="default"/>
             </div>
           </span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          child = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        child = this;
       }
-      class Child2 extends Component<any,any> {
-        static template = xml`
+    }
+    class Child2 extends Component<any, any> {
+      static template = xml`
           <span id="c2">
             <t t-slot="default"/>
           </span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          child2 = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        child2 = this;
       }
-      class Child3 extends Component<any,any> {
-        static template = xml`
+    }
+    class Child3 extends Component<any, any> {
+      static template = xml`
           <span>Child 3</span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          child3 = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        child3 = this;
       }
-      class Parent extends Component<any,any> {
-        static components = { Child, Child2, Child3 };
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child, Child2, Child3 };
+      static template = xml`
           <span id="parent">
             <Child>
               <Child2>
@@ -744,52 +740,52 @@ describe("t-slot directive", () => {
               </Child2>
             </Child>
           </span>`;
-      }
-  
-      const widget = new Parent();
-      await widget.mount(fixture);
-      expect(fixture.innerHTML).toBe(
-        '<span id="parent"><span id="c1"><div><span id="c2"><span>Child 3</span></span></div></span></span>'
-      );
-  
-      expect(child3.__owl__.parent).toStrictEqual(child2);
-      expect(child2.__owl__.parent).toStrictEqual(child);
-      expect(child.__owl__.parent).toStrictEqual(widget);
-    });
-  
-    test("t-slot nested within another slot", async () => {
-      let portal, modal, child3;
-      class Child3 extends Component<any,any> {
-        static template = xml`
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      '<span id="parent"><span id="c1"><div><span id="c2"><span>Child 3</span></span></div></span></span>'
+    );
+
+    expect(child3.__owl__.parent).toStrictEqual(child2);
+    expect(child2.__owl__.parent).toStrictEqual(child);
+    expect(child.__owl__.parent).toStrictEqual(widget);
+  });
+
+  test("t-slot nested within another slot", async () => {
+    let portal, modal, child3;
+    class Child3 extends Component<any, any> {
+      static template = xml`
           <span>Child 3</span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          child3 = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        child3 = this;
       }
-      class Modal extends Component<any,any> {
-        static template = xml`
+    }
+    class Modal extends Component<any, any> {
+      static template = xml`
           <span id="modal">
             <t t-slot="default"/>
           </span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          modal = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        modal = this;
       }
-      class Portal extends Component<any,any> {
-        static template = xml`
+    }
+    class Portal extends Component<any, any> {
+      static template = xml`
           <span id="portal">
             <t t-slot="default"/>
           </span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          portal = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        portal = this;
       }
-      class Dialog extends Component<any,any> {
-        static components = { Modal, Portal };
-        static template = xml`
+    }
+    class Dialog extends Component<any, any> {
+      static components = { Modal, Portal };
+      static template = xml`
           <span id="c2">
             <Modal>
               <Portal>
@@ -797,91 +793,91 @@ describe("t-slot directive", () => {
               </Portal>
              </Modal>
           </span>`;
-      }
-      class Parent extends Component<any,any> {
-        static components = { Child3, Dialog };
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child3, Dialog };
+      static template = xml`
           <span id="c1">
             <Dialog>
               <Child3/>
             </Dialog>
           </span>`;
-      }
-  
-      const widget = new Parent();
-      await widget.mount(fixture);
-      expect(fixture.innerHTML).toBe(
-        '<span id="c1"><span id="c2"><span id="modal"><span id="portal"><span>Child 3</span></span></span></span></span>'
-      );
-  
-      expect(child3.__owl__.parent).toStrictEqual(portal);
-      expect(portal.__owl__.parent).toStrictEqual(modal);
-    });
-  
-    test("t-slot supports many instances", async () => {
-      let child3;
-      class Child3 extends Component<any,any> {
-        static template = xml`
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      '<span id="c1"><span id="c2"><span id="modal"><span id="portal"><span>Child 3</span></span></span></span></span>'
+    );
+
+    expect(child3.__owl__.parent).toStrictEqual(portal);
+    expect(portal.__owl__.parent).toStrictEqual(modal);
+  });
+
+  test("t-slot supports many instances", async () => {
+    let child3;
+    class Child3 extends Component<any, any> {
+      static template = xml`
           <span>Child 3</span>`;
-        constructor(parent, props) {
-          super(parent, props);
-          child3 = this;
-        }
+      constructor(parent, props) {
+        super(parent, props);
+        child3 = this;
       }
-      class Dialog extends Component<any,any> {
-        static template = xml`
+    }
+    class Dialog extends Component<any, any> {
+      static template = xml`
           <span id="c2">
             <t t-slot="default"/>
           </span>`;
-      }
-      class Parent extends Component<any,any> {
-        static components = { Child3, Dialog };
-        static template = xml`
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child3, Dialog };
+      static template = xml`
           <span id="c1">
             <Dialog>
               <Child3 val="state.lol"/>
             </Dialog>
           </span>`;
-        state = { lol: "k" };
-      }
-  
-      const widget = new Parent();
-      await widget.mount(fixture);
-      expect(child3.props.val).toBe("k");
-  
-      const widget_1 = new Parent();
-      widget_1.state.lol = "m";
-      await widget_1.mount(fixture);
-      expect(child3.props.val).toBe("m");
-    });
-  
-    test("slots in slots, with vars", async () => {
-      class B extends Component<any, any> {
-        static template = xml`<span><t t-slot="default"/></span>`;
-      }
-      class A extends Component<any, any> {
-        static template = xml`
+      state = { lol: "k" };
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(child3.props.val).toBe("k");
+
+    const widget_1 = new Parent();
+    widget_1.state.lol = "m";
+    await widget_1.mount(fixture);
+    expect(child3.props.val).toBe("m");
+  });
+
+  test("slots in slots, with vars", async () => {
+    class B extends Component<any, any> {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class A extends Component<any, any> {
+      static template = xml`
           <div>
             <B>
               <t t-slot="default"/>
             </B>
           </div>`;
-        static components = { B };
-      }
-      class Parent extends Component<any, any> {
-        static template = xml`
+      static components = { B };
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`
           <div>
             <t t-set="test" t-value="state.name"/>
             <A>
               <p>hey<t t-esc="test"/></p>
             </A>
           </div>`;
-        static components = { A };
-        state = { name: "aaron" };
-      }
-  
-      const parent = new Parent();
-      await parent.mount(fixture);
-      expect(fixture.innerHTML).toBe("<div><div><span><p>heyaaron</p></span></div></div>");
-    });
+      static components = { A };
+      state = { name: "aaron" };
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span><p>heyaaron</p></span></div></div>");
   });
+});

@@ -28,11 +28,6 @@ let env: Env;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
-  env.qweb.addTemplate("Widget", "<div></div>");
-  env.qweb.addTemplate(
-    "Counter",
-    `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`
-  );
   env.qweb.addTemplate("WidgetA", `<div>Hello<t t-component="b"/></div>`);
   env.qweb.addTemplate("WidgetB", `<div>world</div>`);
   Component.env = env;
@@ -42,27 +37,16 @@ afterEach(() => {
   fixture.remove();
 });
 
-class Widget extends Component<any, any> {}
-
-function children(w: Widget): Widget[] {
+function children(w: Component<any, any>): Component<any, any>[] {
   const childrenMap = w.__owl__.children;
   return Object.keys(childrenMap).map(id => childrenMap[id]);
 }
 
 // Test components
-class Counter extends Widget {
-  state = useState({
-    counter: 0
-  });
 
-  inc() {
-    this.state.counter++;
-  }
-}
+class WidgetB extends Component<any, any> {}
 
-class WidgetB extends Widget {}
-
-class WidgetA extends Widget {
+class WidgetA extends Component<any, any> {
   static components = { b: WidgetB };
 }
 
@@ -72,12 +56,12 @@ class WidgetA extends Widget {
 
 describe("basic widget properties", () => {
   test("props is set on root components", async () => {
-    const widget = new Widget(null, {});
+    const widget = new Component<any, any>(null, {});
     expect(widget.props).toEqual({});
   });
 
   test("has no el after creation", async () => {
-    const widget = new Widget();
+    const widget = new Component<any, any>();
     expect(widget.el).toBe(null);
   });
 
@@ -145,6 +129,14 @@ describe("basic widget properties", () => {
   });
 
   test("can be clicked on and updated", async () => {
+    class Counter extends Component<any, any> {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0
+      });
+    }
+
     const counter = new Counter();
     counter.mount(fixture);
     await nextTick();
@@ -156,6 +148,14 @@ describe("basic widget properties", () => {
   });
 
   test("cannot be clicked on and updated if not in DOM", async () => {
+    class Counter extends Component<any, any> {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0
+      });
+    }
+
     const counter = new Counter();
     const target = document.createElement("div");
     await counter.mount(target);
@@ -168,7 +168,7 @@ describe("basic widget properties", () => {
   });
 
   test("widget style and classname", async () => {
-    class StyledWidget extends Widget {
+    class StyledWidget extends Component<any, any> {
       static template = xml`
         <div style="font-weight:bold;" class="some-class">world</div>
       `;
@@ -180,7 +180,8 @@ describe("basic widget properties", () => {
 
   test("changing state before first render does not trigger a render", async () => {
     const steps: string[] = [];
-    class TestW extends Widget {
+    class TestW extends Component<any, any> {
+      static template = xml`<div/>`;
       state = useState({ drinks: 1 });
       async willStart() {
         this.state.drinks++;
@@ -255,12 +256,15 @@ describe("basic widget properties", () => {
   });
 
   test("keeps a reference to env", async () => {
-    const widget = new Widget();
+    const widget = new Component<any, any>();
     expect(widget.env).toBe(env);
   });
 
   test("do not remove previously rendered dom if not necessary", async () => {
-    const widget = new Widget();
+    class SomeComponent extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    const widget = new SomeComponent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div></div>`);
     widget.el!.appendChild(document.createElement("span"));
@@ -429,7 +433,8 @@ describe("mount targets", () => {
 describe("lifecycle hooks", () => {
   test("willStart hook is called", async () => {
     let willstart = false;
-    class HookWidget extends Widget {
+    class HookWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       async willStart() {
         willstart = true;
       }
@@ -441,7 +446,8 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is not called if not in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget {
+    class HookWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       async mounted() {
         mounted = true;
       }
@@ -454,7 +460,8 @@ describe("lifecycle hooks", () => {
 
   test("mounted hook is called if mounted in DOM", async () => {
     let mounted = false;
-    class HookWidget extends Widget {
+    class HookWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       async mounted() {
         mounted = true;
       }
@@ -466,13 +473,14 @@ describe("lifecycle hooks", () => {
 
   test("willStart hook is called on subwidget", async () => {
     let ok = false;
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       async willStart() {
         ok = true;
       }
     }
 
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
     }
@@ -484,14 +492,15 @@ describe("lifecycle hooks", () => {
   test("mounted hook is called on subcomponents, in proper order", async () => {
     const steps: any[] = [];
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       mounted() {
         expect(document.body.contains(this.el)).toBe(true);
         steps.push("child:mounted");
       }
     }
 
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><ChildWidget /></div>`;
       static components = { ChildWidget };
       mounted() {
@@ -506,7 +515,8 @@ describe("lifecycle hooks", () => {
   test("mounted hook is called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
-    class ChildChildWidget extends Widget {
+    class ChildChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       mounted() {
         steps.push("childchild:mounted");
       }
@@ -515,7 +525,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
       static template = xml`<div><t t-component="childchild"/></div>`;
       static components = { childchild: ChildChildWidget };
       mounted() {
@@ -526,7 +536,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><t t-if="state.flag"><t t-component="child"/></t></div>`;
       static components = { child: ChildWidget };
       state = useState({ flag: false });
@@ -559,7 +569,7 @@ describe("lifecycle hooks", () => {
     env.qweb.addTemplate("ChildWidget", `<div><t t-component="childchild" n="props.n"/></div>`);
     env.qweb.addTemplate("ChildChildWidget", `<div><t t-esc="props.n"/></div>`);
 
-    class ChildChildWidget extends Widget {
+    class ChildChildWidget extends Component<any, any> {
       willPatch() {
         steps.push("childchild:willPatch");
       }
@@ -567,7 +577,7 @@ describe("lifecycle hooks", () => {
         steps.push("childchild:patched");
       }
     }
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
       static components = { childchild: ChildChildWidget };
       willPatch() {
         steps.push("child:willPatch");
@@ -578,7 +588,7 @@ describe("lifecycle hooks", () => {
     }
 
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" n="state.n"/></div>`);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { child: ChildWidget };
       state = useState({ n: 1 });
       willPatch() {
@@ -623,7 +633,8 @@ describe("lifecycle hooks", () => {
             </t>
           </div>`
     );
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       async willStart() {
         steps.push("child:willStart");
       }
@@ -631,7 +642,7 @@ describe("lifecycle hooks", () => {
         steps.push("child:mounted");
       }
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       state = useState({ ok: false });
       static components = { child: ChildWidget };
     }
@@ -650,13 +661,15 @@ describe("lifecycle hooks", () => {
     // being visited, so the mount action of the parent could cause a mount
     // action of the new child widget, even though it is not ready yet.
     expect.assertions(1);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       mounted() {
         const child = new ChildWidget(this);
         child.mount(this.el!);
       }
     }
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       mounted() {
         expect(this.el).toBeTruthy();
       }
@@ -669,7 +682,8 @@ describe("lifecycle hooks", () => {
   test("components are unmounted and destroyed if no longer in DOM", async () => {
     let steps: string[] = [];
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       constructor(parent) {
         super(parent);
         steps.push("init");
@@ -684,7 +698,7 @@ describe("lifecycle hooks", () => {
         steps.push("willunmount");
       }
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`
         <div>
           <t t-if="state.ok"><ChildWidget /></t>
@@ -705,14 +719,14 @@ describe("lifecycle hooks", () => {
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
     let childUnmounted = false;
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
       static template = xml`<span><t t-esc="props.n"/></span>`;
       willUnmount() {
         childUnmounted = true;
       }
     }
 
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`
         <div>
           <div t-if="state.flag">
@@ -745,7 +759,8 @@ describe("lifecycle hooks", () => {
   test("hooks are called in proper order in widget creation/destruction", async () => {
     let steps: string[] = [];
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       constructor(parent) {
         super(parent);
         steps.push("c init");
@@ -760,7 +775,7 @@ describe("lifecycle hooks", () => {
         steps.push("c willunmount");
       }
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
       constructor(parent?) {
@@ -796,17 +811,17 @@ describe("lifecycle hooks", () => {
   test("willUpdateProps hook is called", async () => {
     let def = makeDeferred();
     env.qweb.addTemplate("Parent", '<span><Child n="state.n"/></span>');
-    class HookWidget extends Widget {
+    class HookWidget extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.n"/></span>`;
       willUpdateProps(nextProps) {
         expect(nextProps.n).toBe(2);
         return def;
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       state = useState({ n: 1 });
       static components = { Child: HookWidget };
     }
-    env.qweb.addTemplate("HookWidget", '<span><t t-esc="props.n"/></span>');
     const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<span><span>1</span></span>");
@@ -821,7 +836,8 @@ describe("lifecycle hooks", () => {
   test("patched hook is called after updating State", async () => {
     let n = 0;
 
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       state = useState({ a: 1 });
 
       patched() {
@@ -844,12 +860,13 @@ describe("lifecycle hooks", () => {
   test("patched hook is called after updateProps", async () => {
     let n = 0;
 
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       patched() {
         n++;
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`<div><Child a="state.a"/></div>`;
       state = useState({ a: 1 });
       static components = { Child: TestWidget };
@@ -866,13 +883,13 @@ describe("lifecycle hooks", () => {
 
   test("shouldUpdate hook prevent rerendering", async () => {
     let shouldUpdate = false;
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div><t t-esc="props.val"/></div>`;
       shouldUpdate() {
         return shouldUpdate;
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`<div><Child val="state.val"/></div>`;
       static components = { Child: TestWidget };
       state = useState({ val: 42 });
@@ -894,7 +911,8 @@ describe("lifecycle hooks", () => {
     let created = false;
     let mounted = false;
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       constructor(parent, props) {
         super(parent, props);
         created = true;
@@ -903,7 +921,7 @@ describe("lifecycle hooks", () => {
         mounted = true;
       }
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`
         <div>
           <t t-if="state.flag">
@@ -928,7 +946,8 @@ describe("lifecycle hooks", () => {
   test("willPatch/patched hook", async () => {
     const steps: string[] = [];
 
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       willPatch() {
         steps.push("child:willPatch");
       }
@@ -936,7 +955,7 @@ describe("lifecycle hooks", () => {
         steps.push("child:patched");
       }
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`
         <div>
           <t t-component="child" v="state.n"/>
@@ -970,7 +989,11 @@ describe("lifecycle hooks", () => {
 
 describe("destroy method", () => {
   test("destroy remove the widget from the DOM", async () => {
-    const widget = new Widget();
+    class SomeComponent extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+
+    const widget = new SomeComponent();
     await widget.mount(fixture);
     expect(document.contains(widget.el)).toBe(true);
     widget.destroy();
@@ -1005,7 +1028,8 @@ describe("destroy method", () => {
   test("destroying a widget before willStart is done", async () => {
     let def = makeDeferred();
     let isRendered = false;
-    class DelayedWidget extends Widget {
+    class DelayedWidget extends Component<any, any> {
+      static template = xml`<div/>`;
       willStart() {
         return def;
       }
@@ -1115,7 +1139,7 @@ describe("composition", () => {
   test("can use components from the global registry", async () => {
     QWeb.registerComponent("WidgetB", WidgetB);
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
-    class ParentWidget extends Widget {}
+    class ParentWidget extends Component<any, any> {}
     const widget = new ParentWidget();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div>world</div></div>");
@@ -1174,8 +1198,8 @@ describe("composition", () => {
     QWeb.registerComponent("WidgetB", WidgetB); // should not use this widget
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
     env.qweb.addTemplate("AnotherWidgetB", `<span>Belgium</span>`);
-    class AnotherWidgetB extends Widget {}
-    class ParentWidget extends Widget {
+    class AnotherWidgetB extends Component<any, any> {}
+    class ParentWidget extends Component<any, any> {
       static components = { WidgetB: AnotherWidgetB };
     }
     const widget = new ParentWidget();
@@ -1190,8 +1214,8 @@ describe("composition", () => {
         <div t-name="P"><C a="1"/></div>
         <span t-name="C"><t t-esc="props.a"/></span>
       </templates>`);
-    class C extends Widget {}
-    class P extends Widget {
+    class C extends Component<any, any> {}
+    class P extends Component<any, any> {
       static components = { C };
     }
     const parent = new P();
@@ -1203,9 +1227,10 @@ describe("composition", () => {
     const consoleError = console.error;
     console.error = jest.fn();
 
+    class SomeComponent extends Component<any, any> {}
     env.qweb.addTemplate("Parent", `<div><SomeMispelledWidget /></div>`);
-    class Parent extends Widget {
-      static components = { SomeWidget: Widget };
+    class Parent extends Component<any, any> {
+      static components = { SomeWidget: SomeComponent };
     }
     const parent = new Parent();
     let error;
@@ -1221,8 +1246,16 @@ describe("composition", () => {
   });
 
   test("modifying a sub widget", async () => {
+    class Counter extends Component<any, any> {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0
+      });
+    }
+
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { Counter };
     }
     const widget = new ParentWidget();
@@ -1243,8 +1276,11 @@ describe("composition", () => {
         </t>
       </div>`
     );
-    class ParentWidget extends Widget {
-      static components = { Child: Widget };
+    class SomeComponent extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
+      static components = { Child: SomeComponent };
       elem1 = useRef("1");
       elem2 = useRef("2");
       elem3 = useRef("3");
@@ -1280,8 +1316,16 @@ describe("composition", () => {
   });
 
   test("rerendering a widget with a sub widget", async () => {
+    class Counter extends Component<any, any> {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0
+      });
+    }
+
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="Counter"/></div>`);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { Counter };
     }
     const widget = new ParentWidget();
@@ -1295,8 +1339,16 @@ describe("composition", () => {
   });
 
   test("sub components are destroyed if no longer in dom, then recreated", async () => {
+    class Counter extends Component<any, any> {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0
+      });
+    }
+
     env.qweb.addTemplate("ParentWidget", `<div><t t-if="state.ok"><Counter /></t></div>`);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       state = useState({ ok: true });
       static components = { Counter };
     }
@@ -1317,7 +1369,7 @@ describe("composition", () => {
 
   test("sub components rendered in a loop", async () => {
     env.qweb.addTemplate("ChildWidget", `<span><t t-esc="props.n"/></span>`);
-    class ChildWidget extends Widget {}
+    class ChildWidget extends Component<any, any> {}
 
     env.qweb.addTemplate(
       "Parent",
@@ -1328,7 +1380,7 @@ describe("composition", () => {
           </t>
         </div>`
     );
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       state = useState({
         numbers: [1, 2, 3]
       });
@@ -1350,7 +1402,7 @@ describe("composition", () => {
   test("sub components with some state rendered in a loop", async () => {
     let n = 1;
     env.qweb.addTemplate("ChildWidget", `<span><t t-esc="state.n"/></span>`);
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
       state: any;
       constructor(parent) {
         super(parent);
@@ -1367,7 +1419,7 @@ describe("composition", () => {
           </t>
         </div>`
     );
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = "parent";
       state = useState({
         numbers: [1, 2, 3]
@@ -1391,11 +1443,11 @@ describe("composition", () => {
 
   test("sub components between t-ifs", async () => {
     // this confuses the patching algorithm...
-    class ChildWidget extends Widget {
+    class ChildWidget extends Component<any, any> {
       static template = xml`<span>child</span>`;
     }
 
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`
         <div>
           <h1 t-if="state.flag">hey</h1>
@@ -1447,8 +1499,8 @@ describe("composition", () => {
             <span t-name="SubWidget">asdf</span>
         </templates>`);
 
-    class SubWidget extends Widget {}
-    class Parent extends Widget {
+    class SubWidget extends Component<any, any> {}
+    class Parent extends Component<any, any> {
       static components = { SubWidget };
       state = useState({
         blips: [
@@ -1485,8 +1537,8 @@ describe("composition", () => {
             <span t-name="SubWidget">asdf</span>
         </templates>`);
 
-    class SubWidget extends Widget {}
-    class Parent extends Widget {
+    class SubWidget extends Component<any, any> {}
+    class Parent extends Component<any, any> {
       static components = { SubWidget };
       state = useState({ blips: [{ a: "a", id: 1 }] });
     }
@@ -1497,7 +1549,7 @@ describe("composition", () => {
 
   test("t-component with dynamic value", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="{{state.widget}}"/></div>`);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { WidgetB };
       state = useState({ widget: "WidgetB" });
     }
@@ -1509,7 +1561,7 @@ describe("composition", () => {
 
   test("t-component with dynamic value 2", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="Widget{{state.widget}}"/></div>`);
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { WidgetB };
       state = useState({ widget: "B" });
     }
@@ -1605,14 +1657,14 @@ describe("composition", () => {
 describe("props evaluation ", () => {
   test("explicit object prop", async () => {
     env.qweb.addTemplate("Parent", `<div><t t-component="child" value="state.val"/></div>`);
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       state: { someval: number };
       constructor(parent: Parent, props: { value: number }) {
         super(parent);
         this.state = useState({ someval: props.value });
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static components = { child: Child };
       state = useState({ val: 42 });
     }
@@ -1626,10 +1678,10 @@ describe("props evaluation ", () => {
 
   test("accept ES6-like syntax for props (with getters)", async () => {
     env.qweb.addTemplate("Child", `<span><t t-esc="props.greetings"/></span>`);
-    class Child extends Widget {}
+    class Child extends Component<any, any> {}
 
     env.qweb.addTemplate("Parent", `<div><t t-component="child" greetings="greetings"/></div>`);
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static components = { child: Child };
       get greetings() {
         const name = "aaron";
@@ -1642,7 +1694,7 @@ describe("props evaluation ", () => {
   });
 
   test("t-set works ", async () => {
-    class Child extends Widget {}
+    class Child extends Component<any, any> {}
     env.qweb.addTemplate(
       "Parent",
       `
@@ -1651,7 +1703,7 @@ describe("props evaluation ", () => {
           <t t-component="child" val="val"/>
         </div>`
     );
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static components = { child: Child };
     }
     env.qweb.addTemplate(
@@ -1670,10 +1722,10 @@ describe("props evaluation ", () => {
 
 describe("class and style attributes with t-component", () => {
   test("class is properly added on widget root el", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<div class="c"/>`;
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><Child class="a b"/></div>`;
       static components = { Child };
     }
@@ -1696,10 +1748,10 @@ describe("class and style attributes with t-component", () => {
   });
 
   test("t-att-class is properly added/removed on widget root el", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<div class="c"/>`;
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
       static components = { Child };
       state = useState({ a: true, b: false });
@@ -1722,8 +1774,8 @@ describe("class and style attributes with t-component", () => {
             <Child class="a  b c   d"/>
       </div>`
     );
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {}
+    class ParentWidget extends Component<any, any> {
       static components = { Child };
     }
     env.qweb.addTemplate("Child", `<div/>`);
@@ -1741,10 +1793,10 @@ describe("class and style attributes with t-component", () => {
         <span t-name="Child" class="c" t-att-class="{ d: state.d }"/>
       </templates>`);
 
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       state = useState({ d: true });
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { Child };
       state = useState({ b: true });
       child = useRef("child");
@@ -1783,10 +1835,10 @@ describe("class and style attributes with t-component", () => {
         <span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>
       </templates>`);
 
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       state = useState({ d: true });
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { Child };
       state = useState({ b: true });
       child = useRef("child");
@@ -1822,7 +1874,7 @@ describe("class and style attributes with t-component", () => {
         <div t-name="App" t-att-class="{ c: state.c }" />
       </templates>`);
 
-    class App extends Widget {
+    class App extends Component<any, any> {
       state = useState({ c: true });
       mounted() {
         this.el!.classList.add("user");
@@ -1848,8 +1900,13 @@ describe("class and style attributes with t-component", () => {
             <t t-component="child" style="font-weight: bold;"/>
         </div>`
     );
-    class ParentWidget extends Widget {
-      static components = { child: Widget };
+
+    class SomeComponent extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+
+    class ParentWidget extends Component<any, any> {
+      static components = { child: SomeComponent };
     }
     const widget = new ParentWidget();
     await widget.mount(fixture);
@@ -1864,8 +1921,13 @@ describe("class and style attributes with t-component", () => {
             <t t-component="child" t-att-style="state.style"/>
         </div>`
     );
-    class ParentWidget extends Widget {
-      static components = { child: Widget };
+
+    class SomeComponent extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+
+    class ParentWidget extends Component<any, any> {
+      static components = { child: SomeComponent };
       state = useState({ style: "font-size: 20px" });
     }
     const widget = new ParentWidget();
@@ -1882,10 +1944,10 @@ describe("class and style attributes with t-component", () => {
   });
 
   test("error in subcomponent with class", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<div t-esc="this.will.crash"/>`;
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static template = xml`<div><Child class="a"/></div>`;
       static components = { Child };
     }
@@ -1910,8 +1972,10 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-custom-event="someMethod"/></div>
       </templates>
     `);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       n = 0;
       someMethod(ev) {
@@ -1969,8 +2033,10 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv(3)"/></div>
       </templates>
     `);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv(n, ev) {
         expect(n).toBe(3);
@@ -1991,8 +2057,10 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv({val: 3})"/></div>
       </templates>
     `);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv(o, ev) {
         expect(o).toEqual({ val: 3 });
@@ -2013,8 +2081,10 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv({})"/></div>
       </templates>
     `);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv(o, ev) {
         expect(o).toEqual({});
@@ -2035,8 +2105,10 @@ describe("other directives with t-component", () => {
         <div t-name="ParentWidget"><t t-component="child" t-on-ev="onEv({  })"/></div>
       </templates>
     `);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv(o, ev) {
         expect(o).toEqual({});
@@ -2062,8 +2134,10 @@ describe("other directives with t-component", () => {
         </div>
       </templates>
     `);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv1(ev) {
         expect(ev.defaultPrevented).toBe(false);
@@ -2098,11 +2172,13 @@ describe("other directives with t-component", () => {
       </templates>
     `);
     const steps: string[] = [];
-    class GrandChild extends Widget {}
-    class Child extends Widget {
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class Child extends Component<any, any> {
       static components = { child: GrandChild };
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv1(ev) {
         steps.push("onEv1");
@@ -2135,11 +2211,13 @@ describe("other directives with t-component", () => {
       </templates>
     `);
     const steps: boolean[] = [];
-    class GrandChild extends Widget {}
-    class Child extends Widget {
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class Child extends Component<any, any> {
       static components = { child: GrandChild };
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       onEv() {}
     }
@@ -2167,11 +2245,14 @@ describe("other directives with t-component", () => {
       </templates>
     `);
     const steps: boolean[] = [];
-    class GrandChild extends Widget {}
-    class Child extends Widget {
+    class GrandChild extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+
+    class Child extends Component<any, any> {
       static components = { GrandChild };
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { Child };
       onEv() {}
     }
@@ -2398,8 +2479,8 @@ describe("other directives with t-component", () => {
 
   test("t-if works with t-component", async () => {
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="child" t-if="state.flag"/></div>`);
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {}
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       state = useState({ flag: true });
     }
@@ -2428,8 +2509,8 @@ describe("other directives with t-component", () => {
           <t t-else="" t-component="child"/>
         </div>`
     );
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {}
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       state = useState({ flag: true });
     }
@@ -2454,8 +2535,8 @@ describe("other directives with t-component", () => {
           <t t-elif="!state.flag" t-component="child"/>
         </div>`
     );
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {}
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       state = useState({ flag: true });
     }
@@ -2480,8 +2561,8 @@ describe("other directives with t-component", () => {
           <t t-else="" t-component="child"/>
         </div>`
     );
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {}
+    class ParentWidget extends Component<any, any> {
       static components = { child: Child };
       state = useState({ flag: true });
     }
@@ -2498,7 +2579,7 @@ describe("other directives with t-component", () => {
   });
 
   test("t-foreach with t-component, and update", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`
         <span>
           <t t-esc="state.val"/>
@@ -2509,7 +2590,7 @@ describe("other directives with t-component", () => {
         this.state.val = "B";
       }
     }
-    class ParentWidget extends Widget {
+    class ParentWidget extends Component<any, any> {
       static components = { Child };
       static template = xml`
         <div>
@@ -2537,8 +2618,13 @@ describe("random stuff/miscellaneous", () => {
       "Test",
       `<div><t t-foreach="Array(2)">txt</t><t t-component="widget"/></div>`
     );
-    class Test extends Widget {
-      static components = { widget: Widget };
+
+    class SomeComponent extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+
+    class Test extends Component<any, any> {
+      static components = { widget: SomeComponent };
     }
     const widget = new Test();
     await widget.mount(fixture);
@@ -2548,8 +2634,10 @@ describe("random stuff/miscellaneous", () => {
   test("t-on with handler bound to dynamic argument on a t-foreach", async () => {
     expect.assertions(3);
 
-    class Child extends Widget {}
-    class ParentWidget extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
+    }
+    class ParentWidget extends Component<any, any> {
       static template = xml`
         <div>
           <t t-foreach="items" t-as="item">
@@ -2575,8 +2663,8 @@ describe("random stuff/miscellaneous", () => {
     // interplay between components and vnodes, a sub widget vnode was patched
     // twice.
     env.qweb.addTemplate("Parent", `<div><t t-component="child" flag="state.flag"/></div>`);
-    class Child extends Widget {}
-    class Parent extends Widget {
+    class Child extends Component<any, any> {}
+    class Parent extends Component<any, any> {
       static components = { child: Child };
       state = useState({ flag: false });
     }
@@ -2596,8 +2684,8 @@ describe("random stuff/miscellaneous", () => {
       "Parent",
       `<div><t t-component="child" t-key="'somestring'" flag="state.flag"/></div>`
     );
-    class Child extends Widget {}
-    class Parent extends Widget {
+    class Child extends Component<any, any> {}
+    class Parent extends Component<any, any> {
       static components = { child: Child };
       state = useState({ flag: false });
     }
@@ -2613,7 +2701,7 @@ describe("random stuff/miscellaneous", () => {
     let steps: string[] = [];
     let c: C;
 
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       name: string = "test";
       async willStart() {
         steps.push(`${this.name}:willStart`);
@@ -2760,7 +2848,7 @@ describe("random stuff/miscellaneous", () => {
 
   test("can inject values in tagged templates", async () => {
     const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`;
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`<div><t t-call="${SUBTEMPLATE}"/></div>`;
       state = useState({ n: 42 });
     }
@@ -2775,7 +2863,8 @@ describe("random stuff/miscellaneous", () => {
 describe("async rendering", () => {
   test("destroying a widget before start is over", async () => {
     let def = makeDeferred();
-    class W extends Widget {
+    class W extends Component<any, any> {
+      static template = xml`<div/>`;
       willStart(): Promise<void> {
         return def;
       }
@@ -2794,7 +2883,7 @@ describe("async rendering", () => {
   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
     let def = makeDeferred();
     let n = 0;
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<span>child:<t t-esc="props.val"/></span>`;
       constructor(parent, props) {
         super(parent, props);
@@ -2804,7 +2893,7 @@ describe("async rendering", () => {
         return def;
       }
     }
-    class W extends Widget {
+    class W extends Component<any, any> {
       static template = xml`<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`;
       static components = { Child };
       state = useState({ val: 1 });
@@ -3043,9 +3132,9 @@ describe("async rendering", () => {
   });
 
   test("components in a node in a t-foreach ", async () => {
-    class Child extends Widget {}
+    class Child extends Component<any, any> {}
 
-    class App extends Widget {
+    class App extends Component<any, any> {
       static components = { Child };
 
       get items() {
@@ -3076,7 +3165,8 @@ describe("async rendering", () => {
   test("properly behave when destroyed/unmounted while rendering ", async () => {
     const def = makeDeferred();
 
-    class SubChild extends Widget {
+    class SubChild extends Component<any, any> {
+      static template = xml`<div/>`;
       willPatch() {
         throw new Error("Should not happen!");
       }
@@ -3088,12 +3178,12 @@ describe("async rendering", () => {
       }
     }
 
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<div><SubChild /></div>`;
       static components = { SubChild };
     }
 
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`<div><t t-if="state.flag"><Child val="state.val"/></t></div>`;
       static components = { Child };
       state = useState({ flag: true, val: "Framboise Lindemans" });
@@ -3136,18 +3226,18 @@ describe("async rendering", () => {
     `);
 
     let destroyCount = 0;
-    class ChildA extends Widget {
+    class ChildA extends Component<any, any> {
       destroy() {
         destroyCount++;
         super.destroy();
       }
     }
-    class ChildB extends Widget {
+    class ChildB extends Component<any, any> {
       willStart(): any {
         return new Promise(function() {});
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static components = { ChildA, ChildB };
       state = useState({ valA: 1, valB: 2, flag: false });
     }
@@ -3166,11 +3256,11 @@ describe("async rendering", () => {
   });
 
   test("rendering component again in next microtick", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<div t-name="Child">Child</div>`;
     }
 
-    class App extends Widget {
+    class App extends Component<any, any> {
       static template = xml`
         <div>
           <button t-on-click="onClick">Click</button>
@@ -3913,7 +4003,7 @@ describe("async rendering", () => {
 
 describe("widget and observable state", () => {
   test("widget is rerendered when its state is changed", async () => {
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`<div><t t-esc="state.drink"/></div>`;
       state = useState({ drink: "water" });
     }
@@ -3931,13 +4021,14 @@ describe("widget and observable state", () => {
     const consoleError = console.error;
     console.error = jest.fn();
     env.qweb.addTemplate("Parent", `<div><Child obj="state.obj"/></div>`);
-    class Child extends Widget {
+    class Child extends Component<any, any> {
+      static template = xml`<div/>`;
       constructor(parent, props) {
         super(parent, props);
         props.obj.coffee = 2;
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       state = useState({ obj: { coffee: 1 } });
       static components = { Child };
     }
@@ -3957,7 +4048,7 @@ describe("widget and observable state", () => {
 
 describe("can deduce template from name", () => {
   test("can find template if name of component", async () => {
-    class ABC extends Widget {}
+    class ABC extends Component<any, any> {}
     env.qweb.addTemplate("ABC", "<span>Orval</span>");
     const abc = new ABC();
     await abc.mount(fixture);
@@ -3965,7 +4056,7 @@ describe("can deduce template from name", () => {
   });
 
   test("can find template of parent component", async () => {
-    class ABC extends Widget {}
+    class ABC extends Component<any, any> {}
     class DEF extends ABC {}
     env.qweb.addTemplate("ABC", "<span>Orval</span>");
     const def = new DEF();
@@ -3974,7 +4065,7 @@ describe("can deduce template from name", () => {
   });
 
   test("can find template of parent component, defined by template key", async () => {
-    class ABC extends Widget {
+    class ABC extends Component<any, any> {
       static template = "Achel";
     }
     class DEF extends ABC {}
@@ -3988,7 +4079,7 @@ describe("can deduce template from name", () => {
     const env2 = makeTestEnv();
     env.qweb.addTemplate("ABC", "<span>Rochefort 8</span>");
     env2.qweb.addTemplate("ABC", "<span>Rochefort 10</span>");
-    class ABC extends Widget {}
+    class ABC extends Component<any, any> {}
     const abc = new ABC();
     await abc.mount(fixture);
     expect(fixture.innerHTML).toBe("<span>Rochefort 8</span>");
@@ -4000,10 +4091,9 @@ describe("can deduce template from name", () => {
   });
 });
 
-
 describe("t-model directive", () => {
   test("basic use, on an input", async () => {
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       static template = xml`
         <div>
           <input t-model="state.text"/>
@@ -4031,7 +4121,7 @@ describe("t-model directive", () => {
             <span><t t-esc="some.text"/></span>
         </div>
     </templates>`);
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       some = useState({ text: "" });
     }
     const comp = new SomeComponent();
@@ -4057,7 +4147,7 @@ describe("t-model directive", () => {
             </span>
         </div>
     </templates>`);
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       state = useState({ flag: false });
     }
     const comp = new SomeComponent();
@@ -4085,7 +4175,7 @@ describe("t-model directive", () => {
             <span><t t-esc="state.text"/></span>
         </div>
     </templates>`);
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       state = useState({ text: "" });
     }
     const comp = new SomeComponent();
@@ -4108,7 +4198,7 @@ describe("t-model directive", () => {
             <span>Choice: <t t-esc="state.choice"/></span>
         </div>
     </templates>`);
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       state = useState({ choice: "" });
     }
     const comp = new SomeComponent();
@@ -4148,7 +4238,7 @@ describe("t-model directive", () => {
             <span>Choice: <t t-esc="state.color"/></span>
         </div>
     </templates>`);
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       state = useState({ color: "" });
     }
     const comp = new SomeComponent();
@@ -4172,7 +4262,7 @@ describe("t-model directive", () => {
   });
 
   test("on a select, initial state", async () => {
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       static template = xml`
         <div>
           <select t-model="state.color">
@@ -4191,7 +4281,7 @@ describe("t-model directive", () => {
   });
 
   test("on a sub state key", async () => {
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       static template = xml`
         <div>
           <input t-model="state.something.text"/>
@@ -4213,7 +4303,7 @@ describe("t-model directive", () => {
   });
 
   test(".lazy modifier", async () => {
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       static template = xml`
         <div>
             <input t-model.lazy="state.text"/>
@@ -4241,7 +4331,7 @@ describe("t-model directive", () => {
   });
 
   test(".trim modifier", async () => {
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       static template = xml`
         <div t-name="SomeComponent">
           <input t-model.trim="state.text"/>
@@ -4260,7 +4350,7 @@ describe("t-model directive", () => {
   });
 
   test(".number modifier", async () => {
-    class SomeComponent extends Widget {
+    class SomeComponent extends Component<any, any> {
       static template = xml`
         <div>
           <input t-model.number="state.number"/>
@@ -4328,7 +4418,7 @@ describe("environment and plugins", () => {
 
   test("plugin works as expected", async () => {
     somePlugin(env);
-    class App extends Widget {
+    class App extends Component<any, any> {
       static template = xml`
         <div>
             <t t-if="env.someFlag">Red</t>
@@ -4388,10 +4478,10 @@ describe("component error handling (catchError)", () => {
     console.error = jest.fn();
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
-    class ErrorComponent extends Widget {
+    class ErrorComponent extends Component<any, any> {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
-    class ErrorBoundary extends Widget {
+    class ErrorBoundary extends Component<any, any> {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
@@ -4403,7 +4493,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Widget {
+    class App extends Component<any, any> {
       static template = xml`
         <div>
           <ErrorBoundary><ErrorComponent flag="state.flag"/></ErrorBoundary>
@@ -4430,11 +4520,11 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn();
 
-    class ErrorComponent extends Widget {
+    class ErrorComponent extends Component<any, any> {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
 
-    class App extends Widget {
+    class App extends Component<any, any> {
       static template = xml`<div><ErrorComponent flag="state.flag"/></div>`;
       static components = { ErrorComponent };
       state = useState({ flag: false });
@@ -4550,20 +4640,20 @@ describe("component error handling (catchError)", () => {
             <ErrorBoundary><ErrorComponent /></ErrorBoundary>
         </div>
       </templates>`);
-    class ErrorComponent extends Widget {
+    class ErrorComponent extends Component<any, any> {
       constructor(parent) {
         super(parent);
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Widget {
+    class ErrorBoundary extends Component<any, any> {
       state = useState({ error: false });
 
       catchError() {
         this.state.error = true;
       }
     }
-    class App extends Widget {
+    class App extends Component<any, any> {
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App();
@@ -4578,7 +4668,7 @@ describe("component error handling (catchError)", () => {
   test("can catch an error in the willStart call", async () => {
     const consoleError = console.error;
     console.error = jest.fn();
-    class ErrorComponent extends Widget {
+    class ErrorComponent extends Component<any, any> {
       static template = xml`<div t-name="ErrorComponent">Some text</div>`;
       async willStart() {
         // we wait a little bit to be in a different stack frame
@@ -4586,7 +4676,7 @@ describe("component error handling (catchError)", () => {
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Widget {
+    class ErrorBoundary extends Component<any, any> {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
@@ -4598,7 +4688,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Widget {
+    class App extends Component<any, any> {
       static template = xml`<div><ErrorBoundary><ErrorComponent /></ErrorBoundary></div>`;
       static components = { ErrorBoundary, ErrorComponent };
     }
@@ -4624,19 +4714,19 @@ describe("component error handling (catchError)", () => {
             <ErrorBoundary><ErrorComponent /></ErrorBoundary>
         </div>
       </templates>`);
-    class ErrorComponent extends Widget {
+    class ErrorComponent extends Component<any, any> {
       mounted() {
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Widget {
+    class ErrorBoundary extends Component<any, any> {
       state = useState({ error: false });
 
       catchError() {
         this.state.error = true;
       }
     }
-    class App extends Widget {
+    class App extends Component<any, any> {
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App();
@@ -4651,13 +4741,13 @@ describe("component error handling (catchError)", () => {
     // we do not catch error in willPatch anymore
     const consoleError = console.error;
     console.error = jest.fn();
-    class ErrorComponent extends Widget {
+    class ErrorComponent extends Component<any, any> {
       static template = xml`<div><t t-esc="props.message"/></div>`;
       willPatch() {
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Widget {
+    class ErrorBoundary extends Component<any, any> {
       static template = xml`
         <div>
           <t t-if="state.error">Error handled</t>
@@ -4669,7 +4759,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Widget {
+    class App extends Component<any, any> {
       static template = xml`
         <div>
             <span><t t-esc="state.message"/></span>
@@ -4878,8 +4968,8 @@ describe("top level sub widgets", () => {
           </t>
           <span t-name="Child">child<t t-esc="props.p"/></span>
         </templates>`);
-    class Child extends Widget {}
-    class Parent extends Widget {
+    class Child extends Component<any, any> {}
+    class Parent extends Component<any, any> {
       static components = { Child };
     }
     const parent = new Parent();
@@ -4896,13 +4986,13 @@ describe("top level sub widgets", () => {
           </t>
           <span t-name="Child"><button t-on-click="inc">click</button>child<t t-esc="state.val"/></span>
         </templates>`);
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       state = useState({ val: 1 });
       inc() {
         this.state.val++;
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static components = { Child };
     }
     const parent = new Parent();
@@ -4915,13 +5005,13 @@ describe("top level sub widgets", () => {
   });
 
   test("can select a sub widget ", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<span>CHILD 1</span>`;
     }
-    class OtherChild extends Widget {
+    class OtherChild extends Component<any, any> {
       static template = xml`<div>CHILD 2</div>`;
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`
         <t>
           <t t-if="env.flag"><Child /></t>
@@ -4944,13 +5034,13 @@ describe("top level sub widgets", () => {
   });
 
   test("can select a sub widget, part 2", async () => {
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<span>CHILD 1</span>`;
     }
-    class OtherChild extends Widget {
+    class OtherChild extends Component<any, any> {
       static template = xml`<div>CHILD 2</div>`;
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`
         <t>
           <t t-if="state.flag"><Child /></t>
@@ -4991,7 +5081,7 @@ describe("top level sub widgets", () => {
 describe("unmounting and remounting", () => {
   test("widget can be unmounted and remounted", async () => {
     const steps: string[] = [];
-    class MyWidget extends Widget {
+    class MyWidget extends Component<any, any> {
       static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");
@@ -5023,7 +5113,7 @@ describe("unmounting and remounting", () => {
 
   test("widget can be mounted twice without ill effect", async () => {
     const steps: string[] = [];
-    class MyWidget extends Widget {
+    class MyWidget extends Component<any, any> {
       static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");
@@ -5046,7 +5136,7 @@ describe("unmounting and remounting", () => {
   test("state changes in willUnmount do not trigger rerender", async () => {
     const steps: string[] = [];
 
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`
         <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
       `;
@@ -5067,7 +5157,7 @@ describe("unmounting and remounting", () => {
         this.state.n = 3;
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`
         <div>
           <Child t-if="state.flag" val="state.val"/>
@@ -5088,7 +5178,7 @@ describe("unmounting and remounting", () => {
   });
 
   test("state changes in willUnmount will be applied on remount", async () => {
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`
         <div><t t-esc="state.val"/></div>
       `;
@@ -5240,7 +5330,7 @@ describe("unmounting and remounting", () => {
 
   test("unmount component during a re-rendering", async () => {
     const def = makeDeferred();
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`<span><t t-esc="props.val"/></span>`;
       willUpdateProps() {
         return def;
@@ -5248,7 +5338,7 @@ describe("unmounting and remounting", () => {
     }
     Child.prototype.__render = jest.fn(Child.prototype.__render);
 
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`<div><Child val="state.val"/></div>`;
       static components = { Child };
       state = useState({ val: 1 });
@@ -5275,7 +5365,7 @@ describe("unmounting and remounting", () => {
 
 describe("dynamic root nodes", () => {
   test("template with t-if, part 1", async () => {
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`
         <t>
           <t t-if="true"><span>hey</span></t>
@@ -5291,7 +5381,7 @@ describe("dynamic root nodes", () => {
   });
 
   test("template with t-if, part 2", async () => {
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`
         <t>
           <t t-if="false"><span>hey</span></t>
@@ -5307,7 +5397,7 @@ describe("dynamic root nodes", () => {
   });
 
   test("switching between sub branches dynamically", async () => {
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`
         <t>
           <t t-if="state.flag"><span>hey</span></t>
@@ -5328,13 +5418,13 @@ describe("dynamic root nodes", () => {
   });
 
   test("switching between sub components dynamically", async () => {
-    class ChildA extends Widget {
+    class ChildA extends Component<any, any> {
       static template = xml`<span>hey</span>`;
     }
-    class ChildB extends Widget {
+    class ChildB extends Component<any, any> {
       static template = xml`<div>abc</div>`;
     }
-    class TestWidget extends Widget {
+    class TestWidget extends Component<any, any> {
       static template = xml`
         <t>
             <t t-if="state.flag"><ChildA/></t>
@@ -5360,7 +5450,7 @@ describe("dynamic t-props", () => {
   test("basic use", async () => {
     expect.assertions(4);
 
-    class Child extends Widget {
+    class Child extends Component<any, any> {
       static template = xml`
         <span>
             <t t-esc="props.a + props.b"/>
@@ -5372,7 +5462,7 @@ describe("dynamic t-props", () => {
         expect(props).not.toBe(widget.some.obj);
       }
     }
-    class Parent extends Widget {
+    class Parent extends Component<any, any> {
       static template = xml`
         <div>
             <Child t-props="some.obj"/>
@@ -5393,14 +5483,14 @@ describe("dynamic t-props", () => {
 
 describe("support svg components", () => {
   test("add proper namespace to svg", async () => {
-    class GComp extends Widget {
+    class GComp extends Component<any, any> {
       static template = xml`
         <g>
             <circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/>
         </g>`;
     }
 
-    class Svg extends Widget {
+    class Svg extends Component<any, any> {
       static template = xml`
         <svg>
             <GComp/>
@@ -5418,7 +5508,7 @@ describe("support svg components", () => {
 
 describe("t-raw in components", () => {
   test("update properly on state changes", async () => {
-    class TestW extends Widget {
+    class TestW extends Component<any, any> {
       static template = xml`<div><t t-raw="state.value"/></div>`;
       state = useState({ value: "<b>content</b>" });
     }
@@ -5433,7 +5523,7 @@ describe("t-raw in components", () => {
   });
 
   test("can render list of t-raw ", async () => {
-    class TestW extends Widget {
+    class TestW extends Component<any, any> {
       static template = xml`
         <div>
             <t t-foreach="state.items" t-as="item">

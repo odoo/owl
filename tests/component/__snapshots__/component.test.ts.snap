@@ -967,7 +967,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
 exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument on a t-foreach 1`] = `
 "function anonymous(context, extra
 ) {
-    // Template name: \\"__template__1\\"
+    // Template name: \\"__template__2\\"
     let utils = this.constructor.utils;
     let QWeb = this.constructor;
     let parent = context;

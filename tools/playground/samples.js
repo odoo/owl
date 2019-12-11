@@ -1101,7 +1101,7 @@ const RESPONSIVE_XML = `<templates>
         <t t-raw="maincontent"/>
       </div>
     </div>
-    <t t-else="1">
+    <t t-else="">
       <t t-raw="maincontent"/>
     </t>
   </div>
@@ -1438,7 +1438,7 @@ const FORM_XML = `<templates>
     <div>Text: <t t-esc="state.text"/></div>
     <div>Other Text: <t t-esc="state.othertext"/></div>
     <div>Number: <t t-esc="state.number"/></div>
-    <div>Boolean: <t t-if="state.bool">True</t><t t-else="1">False</t></div>
+    <div>Boolean: <t t-if="state.bool">True</t><t t-else="">False</t></div>
     <div>Color: <t t-esc="state.color"/></div>
   </div>
 </templates>

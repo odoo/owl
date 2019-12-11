@@ -28,7 +28,7 @@ generate a virtual dom representation of the HTML.
 ```xml
 <div>
     <span t-if="somecondition">Some string</span>
-    <ul t-else="1">
+    <ul t-else="">
         <li t-foreach="messages" t-as="message">
             <t t-esc="message"/>
         </li>
@@ -101,7 +101,7 @@ precisely, the result of a template rendering should have a single root node:
 <!–– ok: result has one single root node ––>
 <t>
     <div t-if="someCondition">foo</div>
-    <span t-else="1">bar</span>
+    <span t-else="">bar</span>
 </t>
 ```
 

@@ -353,7 +353,9 @@ export class QWeb extends EventBus {
       if (node.nodeType === 3) {
         node.textContent = escape(node.textContent);
       }
-      for (let n of node.childNodes) { escapeTextNodes(n) }
+      for (let n of node.childNodes) {
+        escapeTextNodes(n);
+      }
     }
     escapeTextNodes(elem);
     return elem.outerHTML;

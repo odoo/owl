@@ -187,12 +187,13 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
 ) {
     // Template name: \\"slot_footer_template\\"
     context.__owl__.refs = context.__owl__.refs || {};
+    let scope = Object.create(context);
     var h = this.h;
     let c1 = extra.parentNode;
     let c9 = [], p9 = {key:9,on:{}};
     var vn9 = h('button', p9, c9);
     c1.push(vn9);
-    extra.handlers['click' + 9] = extra.handlers['click' + 9] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['doSomething'];if (fn) { fn.call(context, e); } else { context.doSomething; }};
+    extra.handlers['click' + 9] = extra.handlers['click' + 9] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['doSomething'];if (fn) { fn.call(context, e); } else { scope['doSomething']; }};
     p9.on['click'] = extra.handlers['click' + 9];
     const ref10 = \`myButton\`;
     p9.hook = {
@@ -211,12 +212,13 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_footer_template\\"
+    let scope = Object.create(context);
     var h = this.h;
     let c1 = extra.parentNode;
     let c9 = [], p9 = {key:9,on:{}};
     var vn9 = h('button', p9, c9);
     c1.push(vn9);
-    extra.handlers['click' + 9] = extra.handlers['click' + 9] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['doSomething'];if (fn) { fn.call(context, e); } else { context.doSomething; }};
+    extra.handlers['click' + 9] = extra.handlers['click' + 9] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['doSomething'];if (fn) { fn.call(context, e); } else { scope['doSomething']; }};
     p9.on['click'] = extra.handlers['click' + 9];
     c9.push({text: \`do something\`});
 }"

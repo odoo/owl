@@ -49,7 +49,9 @@ QWeb.addDirective({
     if (handlerName) {
       if (!extraArgs) {
         handler += `const fn = context['${handlerName}'];`;
-        handler += `if (fn) { fn.call(${params}, e); } else { context.${handlerName}; }`;
+        handler += `if (fn) { fn.call(${params}, e); } else { ${ctx.formatExpression(
+          handlerName
+        )}; }`;
         handler += `}`;
         ctx.addLine(
           `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
@@ -60,7 +62,9 @@ QWeb.addDirective({
         ctx.addLine(
           `const ${handlerKey} = context['${handlerName}'] && context['${handlerName}'].bind(${params});`
         );
-        handler += `if (${handlerKey}) { ${handlerKey}(e); } else { context.${value}; }`;
+        handler += `if (${handlerKey}) { ${handlerKey}(e); } else { ${ctx.formatExpression(
+          value
+        )}; }`;
         handler += `}`;
         ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
       }

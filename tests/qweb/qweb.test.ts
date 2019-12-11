@@ -122,7 +122,9 @@ describe("t-esc", () => {
 
   test("escaping", () => {
     qweb.addTemplate("test", `<span><t t-esc="var"/></span>`);
-    expect(renderToString(qweb, "test", { var: "<ok>abc</ok>" })).toBe("<span>&amp;lt;ok&amp;gt;abc&amp;lt;/ok&amp;gt;</span>");
+    expect(renderToString(qweb, "test", { var: "<ok>abc</ok>" })).toBe(
+      "<span>&amp;lt;ok&amp;gt;abc&amp;lt;/ok&amp;gt;</span>"
+    );
   });
 
   test("escaping on a node", () => {
@@ -636,7 +638,7 @@ describe("attributes", () => {
       baz: 1,
       qux: { qux: "<>" }
     });
-    const expected =  "<div foo=\"<foo\" bar=\"0\" baz=\"<1>\" qux=\"<>\"></div>";
+    const expected = '<div foo="<foo" bar="0" baz="<1>" qux="<>"></div>';
     expect(result).toBe(expected);
   });
 
@@ -883,9 +885,10 @@ describe("t-call (template calling", () => {
   });
 
   test("t-call, conditional and t-set in t-call body", () => {
-    QWeb.registerTemplate("callee1", '<div>callee1</div>');
+    QWeb.registerTemplate("callee1", "<div>callee1</div>");
     QWeb.registerTemplate("callee2", '<div>callee2 <t t-esc="v"/></div>');
-    QWeb.registerTemplate("caller",
+    QWeb.registerTemplate(
+      "caller",
       `<div>
         <t t-set="v1" t-value="'elif'"/>
         <t t-if="v1 === 'if'" t-call="callee1" />
@@ -1272,6 +1275,37 @@ describe("t-on", () => {
     expect(owner.state.counter).toBe(0);
     (<HTMLElement>node).click();
     expect(owner.state.counter).toBe(1);
+  });
+
+  test("t-on with inline statement, part 2", () => {
+    qweb.addTemplate("test", `<button t-on-click="state.flag = !state.flag">Toggle</button>`);
+    let owner = {
+      state: {
+        flag: true
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(owner.state.flag).toBe(true);
+    (<HTMLElement>node).click();
+    expect(owner.state.flag).toBe(false);
+    (<HTMLElement>node).click();
+    expect(owner.state.flag).toBe(true);
+  });
+
+  test("t-on with inline statement, part 3", () => {
+    qweb.addTemplate("test", `<button t-on-click="state.n = someFunction(3)">Toggle</button>`);
+    let owner = {
+      someFunction(n) {
+        return n + 1;
+      },
+      state: {
+        n: 11
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(owner.state.n).toBe(11);
+    (<HTMLElement>node).click();
+    expect(owner.state.n).toBe(4);
   });
 
   test("t-on with inline statement (function call)", () => {

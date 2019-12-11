@@ -170,4 +170,9 @@ describe("expression evaluation", () => {
       "scope['list'].map((elem,index)=>elem+index)"
     );
   });
+
+  test("assignation", () => {
+    expect(compileExpr("a = b", {})).toBe("scope['a']=scope['b']");
+    expect(compileExpr("a.b = !a.b", {})).toBe("scope['a'].b=!scope['a'].b");
+  });
 });

@@ -26,48 +26,64 @@ export const MODS_CODE = {
   stop: "e.stopPropagation();"
 };
 
+interface HandlerInfo {
+  event: string;
+  handler: string;
+}
+
+const FNAMEREGEXP = /^[$A-Z_][0-9A-Z_$]*$/i;
+
+export function makeHandlerCode(
+  ctx,
+  fullName,
+  value,
+  putInCache: boolean,
+  modcodes = MODS_CODE
+): HandlerInfo {
+  const [event, ...mods] = fullName.slice(5).split(".");
+  if (!event) {
+    throw new Error("Missing event name with t-on directive");
+  }
+  let code: string;
+  // check if it is a method with no args, a method with args or an expression
+  let args: string = "";
+  const name: string = value.replace(/\(.*\)/, function(_args) {
+    args = _args.slice(1, -1);
+    return "";
+  });
+  const isMethodCall = name.match(FNAMEREGEXP);
+
+  // then generate code
+  if (isMethodCall) {
+    if (args) {
+      let argId = ctx.generateID();
+      ctx.addLine(`let args${argId} = [${ctx.formatExpression(args)}];`);
+      code = `context['${name}'](...args${argId}, e);`;
+      putInCache = false;
+    } else {
+      code = `context['${name}'](e);`;
+    }
+  } else {
+    // if we get here, then it is an expression
+    putInCache = false;
+    code = ctx.formatExpression(value);
+  }
+  const modCode = mods.map(mod => modcodes[mod]).join("");
+  let handler = `function (e) {if (!context.__owl__.isMounted){return}${modCode}${code}}`;
+  if (putInCache) {
+    const key = ctx.generateTemplateKey(event);
+    ctx.addLine(`extra.handlers[${key}] = extra.handlers[${key}] || ${handler};`);
+    handler = `extra.handlers[${key}]`;
+  }
+  return { event, handler };
+}
+
 QWeb.addDirective({
   name: "on",
   priority: 90,
   atNodeCreation({ ctx, fullName, value, nodeID }) {
-    const [eventName, ...mods] = fullName.slice(5).split(".");
-    if (!eventName) {
-      throw new Error("Missing event name with t-on directive");
-    }
-    let extraArgs;
-    let handlerName = value.replace(/\(.*\)/, function(args) {
-      extraArgs = args.slice(1, -1);
-      return "";
-    });
-    let params = extraArgs ? `context, ${ctx.formatExpression(extraArgs)}` : "context";
-    let handler = `function (e) {if (!context.__owl__.isMounted){return}`;
-    handler += mods
-      .map(function(mod) {
-        return MODS_CODE[mod];
-      })
-      .join("");
-    if (handlerName) {
-      if (!extraArgs) {
-        handler += `const fn = context['${handlerName}'];`;
-        handler += `if (fn) { fn.call(${params}, e); } else { context.${handlerName}; }`;
-        handler += `}`;
-        ctx.addLine(
-          `extra.handlers['${eventName}' + ${nodeID}] = extra.handlers['${eventName}' + ${nodeID}] || ${handler};`
-        );
-        ctx.addLine(`p${nodeID}.on['${eventName}'] = extra.handlers['${eventName}' + ${nodeID}];`);
-      } else {
-        const handlerKey = `handler${ctx.generateID()}`;
-        ctx.addLine(
-          `const ${handlerKey} = context['${handlerName}'] && context['${handlerName}'].bind(${params});`
-        );
-        handler += `if (${handlerKey}) { ${handlerKey}(e); } else { context.${value}; }`;
-        handler += `}`;
-        ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
-      }
-    } else {
-      handler += "}";
-      ctx.addLine(`p${nodeID}.on['${eventName}'] = ${handler};`);
-    }
+    const { event, handler } = makeHandlerCode(ctx, fullName, value, true);
+    ctx.addLine(`p${nodeID}.on['${event}'] = ${handler};`);
   }
 });
 

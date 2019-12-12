@@ -11,11 +11,11 @@ exports[`Link component can render simple cases 1`] = `
     var _5 = scope['href'];
     let c6 = [], p6 = {key:6,attrs:{href: _5},class:_4,on:{}};
     var vn6 = h('a', p6, c6);
-    extra.handlers['click' + 6] = extra.handlers['click' + 6] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['navigate'];if (fn) { fn.call(context, e); } else { context.navigate; }};
-    p6.on['click'] = extra.handlers['click' + 6];
-    const slot7 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot7) {
-        slot7.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c6, parent: extra.parent || context}));
+    extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}context['navigate'](e);};
+    p6.on['click'] = extra.handlers['click__7__'];
+    const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot8) {
+        slot8.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c6, parent: extra.parent || context}));
     }
     return vn6;
 }"

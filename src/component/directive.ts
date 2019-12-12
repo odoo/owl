@@ -1,6 +1,6 @@
 import { QWeb } from "../qweb/index";
 import { INTERP_REGEXP } from "../qweb/compilation_context";
-import { MODS_CODE } from "../qweb/extensions";
+import { makeHandlerCode, MODS_CODE } from "../qweb/extensions";
 
 //------------------------------------------------------------------------------
 // t-component
@@ -197,7 +197,7 @@ QWeb.addDirective({
     let hasDynamicProps = node.getAttribute("t-props") ? true : false;
 
     // t-on- events and t-transition
-    const events: [string, string[], string, string][] = [];
+    const events: [string, string][] = [];
     let transition: string = "";
     const attributes = (<Element>node).attributes;
     const props: { [key: string]: string } = {};
@@ -205,13 +205,7 @@ QWeb.addDirective({
       const name = attributes[i].name;
       const value = attributes[i].textContent!;
       if (name.startsWith("t-on-")) {
-        const [eventName, ...mods] = name.slice(5).split(".");
-        let extraArgs;
-        let handlerValue = value.replace(/\(.*\)/, function(args) {
-          extraArgs = args.slice(1, -1);
-          return "";
-        });
-        events.push([eventName, mods, handlerValue, extraArgs]);
+        events.push([name, value]);
       } else if (name === "t-transition") {
         transition = value;
       } else if (!name.startsWith("t-")) {
@@ -284,32 +278,9 @@ QWeb.addDirective({
         }
       }
       let eventsCode = events
-        .map(function([eventName, mods, handlerValue, extraArgs]) {
-          let params = "context";
-          if (extraArgs) {
-            if (ctx.loopNumber) {
-              let argId = ctx.generateID();
-              // we need to evaluate the arguments now, because the handler will
-              // be set asynchronously later when the widget is ready, and the
-              // context might be different.
-              ctx.addLine(`let arg${argId} = ${ctx.formatExpression(extraArgs)};`);
-              params = `context, arg${argId}`;
-            } else {
-              params = `context, ${ctx.formatExpression(extraArgs)}`;
-            }
-          }
-          let handler = `function (e) {if(!context.__owl__.isMounted){return}`;
-          handler += mods
-            .map(function(mod) {
-              return T_COMPONENT_MODS_CODE[mod];
-            })
-            .join("");
-          if (handlerValue) {
-            handler += `const fn = context['${handlerValue}'];`;
-            handler += `if (fn) { fn.call(${params}, e); } else { context.${handlerValue}; }`;
-          }
-          handler += `}`;
-          return `vn.elm.addEventListener('${eventName}', ${handler});`;
+        .map(function([name, value]) {
+          const { event, handler } = makeHandlerCode(ctx, name, value, false, T_COMPONENT_MODS_CODE);
+          return `vn.elm.addEventListener('${event}', ${handler});`;
         })
         .join("");
       const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);

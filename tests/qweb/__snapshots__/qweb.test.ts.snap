@@ -2083,8 +2083,8 @@ exports[`t-on can bind event handler 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['add'];if (fn) { fn.call(context, e); } else { context.add; }};
-    p1.on['click'] = extra.handlers['click' + 1];
+    extra.handlers['click__2__'] = extra.handlers['click__2__'] || function (e) {if (!context.__owl__.isMounted){return}context['add'](e);};
+    p1.on['click'] = extra.handlers['click__2__'];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2098,8 +2098,8 @@ exports[`t-on can bind handlers with arguments 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    const handler2 = context['add'] && context['add'].bind(context, 5);
-    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler2) { handler2(e); } else { context.add(5); }};
+    let args2 = [5];
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}context['add'](...args2, e);};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2113,8 +2113,8 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    const handler2 = context['doSomething'] && context['doSomething'].bind(context, {});
-    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler2) { handler2(e); } else { context.doSomething({ }); }};
+    let args2 = [{}];
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}context['doSomething'](...args2, e);};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2128,8 +2128,8 @@ exports[`t-on can bind handlers with empty object 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    const handler2 = context['doSomething'] && context['doSomething'].bind(context, {});
-    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler2) { handler2(e); } else { context.doSomething({}); }};
+    let args2 = [{}];
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}context['doSomething'](...args2, e);};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2166,8 +2166,8 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         let c8 = [], p8 = {key:nodeKey6,on:{}};
         var vn8 = h('a', p8, c8);
         c7.push(vn8);
-        const handler9 = context['activate'] && context['activate'].bind(context, scope['action']);
-        p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler9) { handler9(e); } else { context.activate(action); }};
+        let args9 = [scope['action']];
+        p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}context['activate'](...args9, e);};
         c8.push({text: \`link\`});
     }
     scope = _origScope5;
@@ -2183,8 +2183,8 @@ exports[`t-on can bind handlers with object arguments 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    const handler2 = context['add'] && context['add'].bind(context, {val:5});
-    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler2) { handler2(e); } else { context.add({val: 5}); }};
+    let args2 = [{val:5}];
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}context['add'](...args2, e);};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2197,10 +2197,10 @@ exports[`t-on can bind two event handlers 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['handleClick'];if (fn) { fn.call(context, e); } else { context.handleClick; }};
-    p1.on['click'] = extra.handlers['click' + 1];
-    extra.handlers['dblclick' + 1] = extra.handlers['dblclick' + 1] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['handleDblClick'];if (fn) { fn.call(context, e); } else { context.handleDblClick; }};
-    p1.on['dblclick'] = extra.handlers['dblclick' + 1];
+    extra.handlers['click__2__'] = extra.handlers['click__2__'] || function (e) {if (!context.__owl__.isMounted){return}context['handleClick'](e);};
+    p1.on['click'] = extra.handlers['click__2__'];
+    extra.handlers['dblclick__3__'] = extra.handlers['dblclick__3__'] || function (e) {if (!context.__owl__.isMounted){return}context['handleDblClick'](e);};
+    p1.on['dblclick'] = extra.handlers['dblclick__3__'];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2213,8 +2213,8 @@ exports[`t-on handler is bound to proper owner 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['add'];if (fn) { fn.call(context, e); } else { context.add; }};
-    p1.on['click'] = extra.handlers['click' + 1];
+    extra.handlers['click__2__'] = extra.handlers['click__2__'] || function (e) {if (!context.__owl__.isMounted){return}context['add'](e);};
+    p1.on['click'] = extra.handlers['click__2__'];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2231,11 +2231,11 @@ exports[`t-on t-on combined with t-esc 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['onClick'];if (fn) { fn.call(context, e); } else { context.onClick; }};
-    p2.on['click'] = extra.handlers['click' + 2];
-    var _3 = scope['text'];
-    if (_3 || _3 === 0) {
-        c2.push({text: _3});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}context['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    var _4 = scope['text'];
+    if (_4 || _4 === 0) {
+        c2.push({text: _4});
     }
     return vn1;
 }"
@@ -2253,11 +2253,11 @@ exports[`t-on t-on combined with t-raw 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['onClick'];if (fn) { fn.call(context, e); } else { context.onClick; }};
-    p2.on['click'] = extra.handlers['click' + 2];
-    var _3 = scope['html'];
-    if (_3 || _3 === 0) {
-        c2.push(...utils.htmlToVDOM(_3));
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}context['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    var _4 = scope['html'];
+    if (_4 || _4 === 0) {
+        c2.push(...utils.htmlToVDOM(_4));
     }
     return vn1;
 }"
@@ -2267,6 +2267,7 @@ exports[`t-on t-on with empty handler (only modifiers) 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
@@ -2287,8 +2288,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    const handler2 = context['state.incrementCounter'] && context['state.incrementCounter'].bind(context, 2);
-    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}if (handler2) { handler2(e); } else { context.state.incrementCounter(2); }};
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}scope['state'].incrementCounter(2)};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2298,11 +2298,11 @@ exports[`t-on t-on with inline statement 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let scope = Object.create(context);
     var h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     var vn1 = h('button', p1, c1);
-    extra.handlers['click' + 1] = extra.handlers['click' + 1] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['state.counter++'];if (fn) { fn.call(context, e); } else { context.state.counter++; }};
-    p1.on['click'] = extra.handlers['click' + 1];
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}scope['state'].counter++};
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2318,12 +2318,12 @@ exports[`t-on t-on with prevent and self modifiers (order matters) 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();if (e.target !== this.elm) {return}const fn = context['onClick'];if (fn) { fn.call(context, e); } else { context.onClick; }};
-    p2.on['click'] = extra.handlers['click' + 2];
-    let c3 = [], p3 = {key:3};
-    var vn3 = h('span', p3, c3);
-    c2.push(vn3);
-    c3.push({text: \`Button\`});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();if (e.target !== this.elm) {return}context['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('span', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Button\`});
     return vn1;
 }"
 `;
@@ -2338,21 +2338,21 @@ exports[`t-on t-on with prevent and/or stop modifiers 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();const fn = context['onClickPrevented'];if (fn) { fn.call(context, e); } else { context.onClickPrevented; }};
-    p2.on['click'] = extra.handlers['click' + 2];
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();context['onClickPrevented'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
     c2.push({text: \`Button 1\`});
-    let c3 = [], p3 = {key:3,on:{}};
-    var vn3 = h('button', p3, c3);
-    c1.push(vn3);
-    extra.handlers['click' + 3] = extra.handlers['click' + 3] || function (e) {if (!context.__owl__.isMounted){return}e.stopPropagation();const fn = context['onClickStopped'];if (fn) { fn.call(context, e); } else { context.onClickStopped; }};
-    p3.on['click'] = extra.handlers['click' + 3];
-    c3.push({text: \`Button 2\`});
     let c4 = [], p4 = {key:4,on:{}};
     var vn4 = h('button', p4, c4);
     c1.push(vn4);
-    extra.handlers['click' + 4] = extra.handlers['click' + 4] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();e.stopPropagation();const fn = context['onClickPreventedAndStopped'];if (fn) { fn.call(context, e); } else { context.onClickPreventedAndStopped; }};
-    p4.on['click'] = extra.handlers['click' + 4];
-    c4.push({text: \`Button 3\`});
+    extra.handlers['click__5__'] = extra.handlers['click__5__'] || function (e) {if (!context.__owl__.isMounted){return}e.stopPropagation();context['onClickStopped'](e);};
+    p4.on['click'] = extra.handlers['click__5__'];
+    c4.push({text: \`Button 2\`});
+    let c6 = [], p6 = {key:6,on:{}};
+    var vn6 = h('button', p6, c6);
+    c1.push(vn6);
+    extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();e.stopPropagation();context['onClickPreventedAndStopped'](e);};
+    p6.on['click'] = extra.handlers['click__7__'];
+    c6.push({text: \`Button 3\`});
     return vn1;
 }"
 `;
@@ -2386,8 +2386,8 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
         let c8 = [], p8 = {key:nodeKey6,attrs:{href: _7},on:{}};
         var vn8 = h('a', p8, c8);
         c1.push(vn8);
-        const handler9 = context['onEdit'] && context['onEdit'].bind(context, scope['project'].id);
-        p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();if (handler9) { handler9(e); } else { context.onEdit(project.id); }};
+        let args9 = [scope['project'].id];
+        p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();context['onEdit'](...args9, e);};
         c8.push({text: \` Edit \`});
         var _10 = scope['project'].name;
         if (_10 || _10 === 0) {
@@ -2409,12 +2409,12 @@ exports[`t-on t-on with self and prevent modifiers (order matters) 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}e.preventDefault();const fn = context['onClick'];if (fn) { fn.call(context, e); } else { context.onClick; }};
-    p2.on['click'] = extra.handlers['click' + 2];
-    let c3 = [], p3 = {key:3};
-    var vn3 = h('span', p3, c3);
-    c2.push(vn3);
-    c3.push({text: \`Button\`});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}e.preventDefault();context['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('span', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Button\`});
     return vn1;
 }"
 `;
@@ -2429,21 +2429,21 @@ exports[`t-on t-on with self modifier 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     var vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click' + 2] = extra.handlers['click' + 2] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['onClick'];if (fn) { fn.call(context, e); } else { context.onClick; }};
-    p2.on['click'] = extra.handlers['click' + 2];
-    let c3 = [], p3 = {key:3};
-    var vn3 = h('span', p3, c3);
-    c2.push(vn3);
-    c3.push({text: \`Button\`});
-    let c4 = [], p4 = {key:4,on:{}};
-    var vn4 = h('button', p4, c4);
-    c1.push(vn4);
-    extra.handlers['click' + 4] = extra.handlers['click' + 4] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}const fn = context['onClickSelf'];if (fn) { fn.call(context, e); } else { context.onClickSelf; }};
-    p4.on['click'] = extra.handlers['click' + 4];
-    let c5 = [], p5 = {key:5};
-    var vn5 = h('span', p5, c5);
-    c4.push(vn5);
-    c5.push({text: \`Button\`});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}context['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let c4 = [], p4 = {key:4};
+    var vn4 = h('span', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Button\`});
+    let c5 = [], p5 = {key:5,on:{}};
+    var vn5 = h('button', p5, c5);
+    c1.push(vn5);
+    extra.handlers['click__6__'] = extra.handlers['click__6__'] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}context['onClickSelf'](e);};
+    p5.on['click'] = extra.handlers['click__6__'];
+    let c7 = [], p7 = {key:7};
+    var vn7 = h('span', p7, c7);
+    c5.push(vn7);
+    c7.push({text: \`Button\`});
     return vn1;
 }"
 `;

@@ -440,4 +440,33 @@ describe("observer", () => {
     // should be 2, but we do not support reactivity on maps/weakmaps/set/weakset
     expect(observer.rev).toBe(1);
   });
+
+  test("functions are correctly bound", async () => {
+    const observer = new Observer();
+    const obj: any = observer.observe({ set: new Set() });
+    expect(observer.revNumber(obj)).toBe(1);
+    obj.set.add('mojo');
+    expect(observer.revNumber(obj)).toBe(1);
+
+    const steps: string[] = [];
+    obj.set.forEach((elm)=>{steps.push(elm)});
+
+    expect(steps).toStrictEqual(['mojo']);
+
+    obj.set.clear();
+    expect(observer.revNumber(obj)).toBe(1);
+  });
+
+  test("functions are correctly bound", async () => {
+    const observer = new Observer();
+    const obj: any = observer.observe({ set: [] });
+    expect(observer.revNumber(obj)).toBe(1);
+    obj.set.push('mojo');
+    expect(observer.revNumber(obj)).toBe(2);
+
+    const steps: string[] = [];
+    obj.set.forEach((elm)=>{steps.push(elm)});
+
+    expect(steps).toStrictEqual(['mojo']);
+  });
 });

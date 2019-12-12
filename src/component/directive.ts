@@ -189,7 +189,7 @@ QWeb.addDirective({
   extraNames: ["props"],
   priority: 100,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
-    ctx.addLine("//COMPONENT");
+    ctx.addLine(`// Component '${value}'`);
     ctx.rootContext.shouldDefineQWeb = true;
     ctx.rootContext.shouldDefineParent = true;
     ctx.rootContext.shouldDefineUtils = true;

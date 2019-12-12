@@ -254,11 +254,11 @@ describe("animations", () => {
     widget.state.display = false;
     patchNextFrame(cb => {
       expect(fixture.innerHTML).toBe(
-        '<div><span class="chimay-leave chimay-leave-active" data-owl-key="__4__">blue</span></div>'
+        '<div><span class="chimay-leave chimay-leave-active" data-owl-key="__3__">blue</span></div>'
       );
       cb();
       expect(fixture.innerHTML).toBe(
-        '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__4__">blue</span></div>'
+        '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__3__">blue</span></div>'
       );
       def.resolve();
     });
@@ -371,7 +371,7 @@ describe("animations", () => {
 
     await def; // wait for the mocked repaint to be done
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend")); // mock end of css transition
-    expect(fixture.innerHTML).toBe('<div><span class="" data-owl-key="__4__">blue</span></div>');
+    expect(fixture.innerHTML).toBe('<div><span class="" data-owl-key="__3__">blue</span></div>');
   });
 
   test("transitionInsert is called the correct amount of times", async () => {
@@ -405,14 +405,14 @@ describe("animations", () => {
     widget.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe(
-      '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__4__">blue</span></div>'
+      '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__3__">blue</span></div>'
     );
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(1);
 
     widget.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe(
-      '<div><span class="chimay-enter-active chimay-enter-to" data-owl-key="__4__">blue</span></div>'
+      '<div><span class="chimay-enter-active chimay-enter-to" data-owl-key="__3__">blue</span></div>'
     );
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(2);
 
@@ -423,7 +423,7 @@ describe("animations", () => {
 
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(3);
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend"));
-    expect(fixture.innerHTML).toBe('<div><span class="" data-owl-key="__4__">blue</span></div>');
+    expect(fixture.innerHTML).toBe('<div><span class="" data-owl-key="__3__">blue</span></div>');
     QWeb.utils.transitionInsert = oldTransitionInsert;
   });
 });

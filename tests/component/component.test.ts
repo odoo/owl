@@ -2034,7 +2034,7 @@ describe("other directives with t-component", () => {
     class Parent extends Component<any, any> {
       static template = xml`<div><Child t-on-click="state.n = state.n + 1"/></div>`;
       static components = { Child };
-      state = {n: 3};
+      state = { n: 3 };
     }
     const parent = new Parent();
     await parent.mount(fixture);
@@ -2042,7 +2042,6 @@ describe("other directives with t-component", () => {
     fixture.querySelector("span")!.click();
     expect(parent.state.n).toBe(4);
   });
-
 
   test("t-on with handler bound to argument", async () => {
     expect.assertions(3);
@@ -5557,5 +5556,42 @@ describe("t-raw in components", () => {
     expect(fixture.innerHTML).toBe(
       "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
     );
+  });
+});
+
+describe("t-call", () => {
+  test("handlers are properly bound through a t-call", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplate("sub", `<p t-on-click="update">lucas</p>`);
+    class Parent extends Component<any, any> {
+      static template = xml`<div><t t-call="sub"/></div>`;
+      update() {
+        expect(this).toBe(parent);
+      }
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>lucas</p></div>");
+    fixture.querySelector("p")!.click();
+    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+  });
+
+  test("handlers with arguments are properly bound through a t-call", async () => {
+    expect.assertions(3);
+    env.qweb.addTemplate("sub", `<p t-on-click="update(a)">lucas</p>`);
+    class Parent extends Component<any, any> {
+      static template = xml`<div><t t-call="sub"/></div>`;
+      update(a) {
+        expect(this).toBe(parent);
+        expect(a).toBe(3);
+      }
+      a = 3;
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+
+    fixture.querySelector("p")!.click();
   });
 });

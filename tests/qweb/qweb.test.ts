@@ -1120,7 +1120,7 @@ describe("misc", () => {
   });
 });
 
-describe.only("t-on", () => {
+describe("t-on", () => {
   test("can bind event handler", () => {
     qweb.addTemplate("test", `<button t-on-click="add">Click</button>`);
     let a = 1;
@@ -1322,6 +1322,38 @@ describe.only("t-on", () => {
     expect(owner.state.n).toBe(11);
     (<HTMLElement>node).click();
     expect(owner.state.n).toBe(4);
+  });
+
+  test("t-on with t-call", async () => {
+    expect.assertions(2);
+    qweb.addTemplate("sub", `<p t-on-click="update">lucas</p>`);
+    qweb.addTemplate("main", `<div><t t-call="sub"/></div>`);
+
+    let owner = {
+      update() {
+        expect(this).toBe(owner);
+      }
+    };
+
+    const node = renderToDOM(qweb, "main", owner, { handlers: [] });
+    (<HTMLElement>node).querySelector("p")!.click();
+  });
+
+  test("t-on, with arguments and t-call", async () => {
+    expect.assertions(3);
+    qweb.addTemplate("sub", `<p t-on-click="update(value)">lucas</p>`);
+    qweb.addTemplate("main", `<div><t t-call="sub"/></div>`);
+
+    let owner = {
+      update(val) {
+        expect(this).toBe(owner);
+        expect(val).toBe(444);
+      },
+      value: 444
+    };
+
+    const node = renderToDOM(qweb, "main", owner, { handlers: [] });
+    (<HTMLElement>node).querySelector("p")!.click();
   });
 
   test("t-on with prevent and/or stop modifiers", async () => {

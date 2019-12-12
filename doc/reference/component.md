@@ -628,8 +628,18 @@ as it will be translated to:
 
 ```js
 button.addEventListener("click", () => {
-  component.state.counter++;
+  context.state.counter++;
 });
+```
+
+Warning: inline expressions are evaluated in the context of the template. This
+means that they can access the component methods and properties. But if they set
+a key, the inline statement will actually not modify the component, but a key in
+a sub scope.
+
+```xml
+<button t-on-click="value = 1">Set value to 1 (does not work!!!)</button>
+<button t-on-click="state.value = 1">Set state.value to 1 (work as expected)</button>
 ```
 
 In order to remove the DOM event details from the event handlers (like calls to

@@ -120,6 +120,12 @@ const UTILS: Utils = {
         }
       })
       .join();
+  },
+  getComponent(obj) {
+    while (obj && !obj.hasOwnProperty("__owl__")) {
+      obj = obj.__proto__;
+    }
+    return obj;
   }
 };
 

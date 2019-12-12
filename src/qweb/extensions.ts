@@ -55,13 +55,15 @@ export function makeHandlerCode(
 
   // then generate code
   if (isMethodCall) {
+    ctx.rootContext.shouldDefineUtils = true;
+    const comp = `utils.getComponent(context)`;
     if (args) {
       let argId = ctx.generateID();
       ctx.addLine(`let args${argId} = [${ctx.formatExpression(args)}];`);
-      code = `context['${name}'](...args${argId}, e);`;
+      code = `${comp}['${name}'](...args${argId}, e);`;
       putInCache = false;
     } else {
-      code = `context['${name}'](e);`;
+      code = `${comp}['${name}'](e);`;
     }
   } else {
     // if we get here, then it is an expression

@@ -279,7 +279,13 @@ QWeb.addDirective({
       }
       let eventsCode = events
         .map(function([name, value]) {
-          const { event, handler } = makeHandlerCode(ctx, name, value, false, T_COMPONENT_MODS_CODE);
+          const { event, handler } = makeHandlerCode(
+            ctx,
+            name,
+            value,
+            false,
+            T_COMPONENT_MODS_CODE
+          );
           return `vn.elm.addEventListener('${event}', ${handler});`;
         })
         .join("");

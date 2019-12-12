@@ -11,7 +11,7 @@ exports[`Link component can render simple cases 1`] = `
     var _5 = scope['href'];
     let c6 = [], p6 = {key:6,attrs:{href: _5},class:_4,on:{}};
     var vn6 = h('a', p6, c6);
-    extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}context['navigate'](e);};
+    extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['navigate'](e);};
     p6.on['click'] = extra.handlers['click__7__'];
     const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
     if (slot8) {

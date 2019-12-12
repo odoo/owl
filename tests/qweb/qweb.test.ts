@@ -152,6 +152,26 @@ describe("t-esc", () => {
     const domRendered = renderToDOM(qweb, "testCaller") as HTMLElement;
     expect(domRendered.querySelector("span")!.textContent).toBe("<p>escaped</p>");
   });
+
+  test("div with falsy values", () => {
+    qweb.addTemplate("test", `
+      <div>
+        <p t-esc="v1"/>
+        <p t-esc="v2"/>
+        <p t-esc="v3"/>
+        <p t-esc="v4"/>
+        <p t-esc="v5"/>
+      </div>`);
+    const vals = {
+      v1: false,
+      v2: undefined,
+      v3: null,
+      v4: 0,
+      v5: ""
+    }
+    expect(renderToString(qweb, "test", vals)).toBe("<div><p>false</p><p></p><p></p><p>0</p><p></p></div>");
+  });
+
 });
 
 describe("t-raw", () => {

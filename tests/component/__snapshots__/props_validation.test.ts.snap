@@ -8,9 +8,9 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {message:1};

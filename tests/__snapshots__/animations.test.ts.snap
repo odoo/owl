@@ -11,9 +11,8 @@ exports[`animations t-transition combined with component 1`] = `
     var h = this.h;
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
-    //COMPONENT
-    let k3 = \`__4__\`;
-    let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
+    // Component 'Child'
+    let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
     if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
         w2.destroy();
@@ -30,9 +29,9 @@ exports[`animations t-transition combined with component 1`] = `
         w2 = new W2(parent, props2);
         const __patch2 = w2.__patch;
         w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
-        parent.__owl__.cmap[k3] = w2.__owl__.id;
+        parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {let finalize = () => {
+        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {let finalize = () => {
           w2.destroy();
         };
         delete w2.__owl__.transitionInserted;
@@ -57,9 +56,8 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     if (scope['state'].display) {
-        //COMPONENT
-        let k3 = \`__4__\`;
-        let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
+        // Component 'Child'
+        let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
         let props2 = {};
         if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
             w2.destroy();
@@ -76,9 +74,9 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             w2 = new W2(parent, props2);
             const __patch2 = w2.__patch;
             w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
-            parent.__owl__.cmap[k3] = w2.__owl__.id;
+            parent.__owl__.cmap['__3__'] = w2.__owl__.id;
             let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {let finalize = () => {
+            let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {let finalize = () => {
           w2.destroy();
         };
         delete w2.__owl__.transitionInserted;
@@ -104,9 +102,8 @@ exports[`animations t-transition combined with t-component, remove and re-add be
     let c1 = [], p1 = {key:1};
     var vn1 = h('div', p1, c1);
     if (scope['state'].flag) {
-        //COMPONENT
-        let k3 = \`__4__\`;
-        let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
+        // Component 'Child'
+        let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
         let props2 = {};
         if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
             w2.destroy();
@@ -123,9 +120,9 @@ exports[`animations t-transition combined with t-component, remove and re-add be
             w2 = new W2(parent, props2);
             const __patch2 = w2.__patch;
             w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
-            parent.__owl__.cmap[k3] = w2.__owl__.id;
+            parent.__owl__.cmap['__3__'] = w2.__owl__.id;
             let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {let finalize = () => {
+            let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {let finalize = () => {
           w2.destroy();
         };
         delete w2.__owl__.transitionInserted;

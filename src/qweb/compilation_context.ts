@@ -48,7 +48,10 @@ export class CompilationContext {
    */
   generateTemplateKey(): string {
     const id = this.generateID();
-    let locationExpr = `\`__${this.generateID()}__`;
+    if (this.loopNumber === 0 && !this.currentKey) {
+      return `'__${id}__'`;
+    }
+    let locationExpr = `\`__${id}__`;
     for (let i = 0; i < this.loopNumber - 1; i++) {
       locationExpr += `\${i${i + 1}}__`;
     }

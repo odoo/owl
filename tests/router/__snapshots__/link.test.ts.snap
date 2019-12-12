@@ -7,16 +7,16 @@ exports[`Link component can render simple cases 1`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     var h = this.h;
-    let _5 = utils.toObj({'router-link-active':scope['isActive']});
-    var _6 = scope['href'];
-    let c7 = [], p7 = {key:7,attrs:{href: _6},class:_5,on:{}};
-    var vn7 = h('a', p7, c7);
-    extra.handlers['click' + 7] = extra.handlers['click' + 7] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['navigate'];if (fn) { fn.call(context, e); } else { context.navigate; }};
-    p7.on['click'] = extra.handlers['click' + 7];
-    const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot8) {
-        slot8.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c7, parent: extra.parent || context}));
+    let _4 = utils.toObj({'router-link-active':scope['isActive']});
+    var _5 = scope['href'];
+    let c6 = [], p6 = {key:6,attrs:{href: _5},class:_4,on:{}};
+    var vn6 = h('a', p6, c6);
+    extra.handlers['click' + 6] = extra.handlers['click' + 6] || function (e) {if (!context.__owl__.isMounted){return}const fn = context['navigate'];if (fn) { fn.call(context, e); } else { context.navigate; }};
+    p6.on['click'] = extra.handlers['click' + 6];
+    const slot7 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot7) {
+        slot7.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c6, parent: extra.parent || context}));
     }
-    return vn7;
+    return vn6;
 }"
 `;

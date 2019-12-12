@@ -4520,7 +4520,7 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div><div>hey</div></div></div>");
+    expect(fixture.innerHTML).toBe("<div><div><div>heyfalse</div></div></div>");
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
@@ -4555,7 +4555,7 @@ describe("component error handling (catchError)", () => {
     }
     const app = new App();
     await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div><div>hey</div></div>");
+    expect(fixture.innerHTML).toBe("<div><div>heyfalse</div></div>");
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("");

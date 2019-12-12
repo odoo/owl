@@ -8,9 +8,9 @@ exports[`animations t-transition combined with component 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -52,9 +52,9 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     if (scope['state'].display) {
         // Component 'Child'
         let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -98,9 +98,9 @@ exports[`animations t-transition combined with t-component, remove and re-add be
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     if (scope['state'].flag) {
         // Component 'Child'
         let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -141,9 +141,9 @@ exports[`animations t-transition with no delay/duration 1`] = `
 ) {
     // Template name: \\"test\\"
     let utils = this.constructor.utils;
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('span', p1, c1);
+    let vn1 = h('span', p1, c1);
     p1.hook = {
       insert: vn => {
         utils.transitionInsert(vn, 'jupiler');
@@ -162,9 +162,9 @@ exports[`animations t-transition, on a simple node (insert) 1`] = `
 ) {
     // Template name: \\"test\\"
     let utils = this.constructor.utils;
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('span', p1, c1);
+    let vn1 = h('span', p1, c1);
     p1.hook = {
       insert: vn => {
         utils.transitionInsert(vn, 'chimay');

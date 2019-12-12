@@ -6,11 +6,11 @@ exports[`Link component can render simple cases 1`] = `
     // Template name: \\"__template__1\\"
     let utils = this.constructor.utils;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let _4 = utils.toObj({'router-link-active':scope['isActive']});
-    var _5 = scope['href'];
+    let _5 = scope['href'];
     let c6 = [], p6 = {key:6,attrs:{href: _5},class:_4,on:{}};
-    var vn6 = h('a', p6, c6);
+    let vn6 = h('a', p6, c6);
     extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['navigate'](e);};
     p6.on['click'] = extra.handlers['click__7__'];
     const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];

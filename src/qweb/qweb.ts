@@ -466,7 +466,7 @@ export class QWeb extends EventBus {
         // this is an unusual situation: this text node is the result of the
         // template rendering.
         let nodeID = ctx.generateID();
-        ctx.addLine(`var vn${nodeID} = {text: \`${text}\`};`);
+        ctx.addLine(`let vn${nodeID} = {text: \`${text}\`};`);
         ctx.addLine(`result = vn${nodeID};`);
         ctx.rootContext.rootNode = nodeID;
         ctx.rootContext.parentTextNode = nodeID;
@@ -678,7 +678,7 @@ export class QWeb extends EventBus {
             ctx.addLine(`let ${classObj} = {${classDef}};`);
           }
         } else {
-          ctx.addLine(`var _${attID} = '${value}';`);
+          ctx.addLine(`let _${attID} = '${value}';`);
           if (!name.match(/^[a-zA-Z]+$/)) {
             // attribute contains 'non letters' => we want to quote it
             name = '"' + name + '"';
@@ -714,12 +714,12 @@ export class QWeb extends EventBus {
           const attValue = (<Element>node).getAttribute(attName);
           if (attValue) {
             const attValueID = ctx.generateID();
-            ctx.addLine(`var _${attValueID} = ${formattedValue};`);
+            ctx.addLine(`let _${attValueID} = ${formattedValue};`);
             formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
             const attrIndex = attrs.findIndex(att => att.startsWith(attName + ":"));
             attrs.splice(attrIndex, 1);
           }
-          ctx.addLine(`var _${attID} = ${formattedValue};`);
+          ctx.addLine(`let _${attID} = ${formattedValue};`);
           attrs.push(`${attName}: _${attID}`);
           handleBooleanProps(attName, attID);
         }
@@ -735,9 +735,9 @@ export class QWeb extends EventBus {
         const attID = ctx.generateID();
         let staticVal = (<Element>node).getAttribute(attName);
         if (staticVal) {
-          ctx.addLine(`var _${attID} = '${staticVal} ' + ${formattedExpr};`);
+          ctx.addLine(`let _${attID} = '${staticVal} ' + ${formattedExpr};`);
         } else {
-          ctx.addLine(`var _${attID} = ${formattedExpr};`);
+          ctx.addLine(`let _${attID} = ${formattedExpr};`);
         }
         attrs.push(`${attName}: _${attID}`);
       }
@@ -745,7 +745,7 @@ export class QWeb extends EventBus {
       // t-att= attributes
       if (name === "t-att") {
         let id = ctx.generateID();
-        ctx.addLine(`var _${id} = ${ctx.formatExpression(value!)};`);
+        ctx.addLine(`let _${id} = ${ctx.formatExpression(value!)};`);
         tattrs.push(id);
       }
     }
@@ -777,7 +777,7 @@ export class QWeb extends EventBus {
       ctx.addLine(`}`);
       ctx.closeIf();
     }
-    ctx.addLine(`var vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
+    ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
     if (ctx.parentNode) {
       ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
     }

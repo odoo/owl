@@ -31,7 +31,7 @@ export class CompilationContext {
   constructor(name?: string) {
     this.rootContext = this;
     this.templateName = name || "noname";
-    this.addLine("var h = this.h;");
+    this.addLine("let h = this.h;");
   }
 
   generateID(): number {
@@ -180,7 +180,7 @@ export class CompilationContext {
   startProtectScope(): number {
     const protectID = this.generateID();
     this.rootContext.shouldDefineScope = true;
-    this.addLine(`const _origScope${protectID} = scope;`);
+    this.addLine(`let _origScope${protectID} = scope;`);
     this.addLine(`scope = Object.assign(Object.create(context), scope);`);
     return protectID;
   }

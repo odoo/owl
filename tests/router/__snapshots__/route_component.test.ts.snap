@@ -9,7 +9,7 @@ exports[`RouteComponent can render simple cases 1`] = `
     let parent = context;
     let scope = Object.create(context);
     let result;
-    var h = this.h;
+    let h = this.h;
     if (scope['routeComponent']) {
         const nodeKey4 = scope['env'].router.currentRouteName;
         // Component 'routeComponent'

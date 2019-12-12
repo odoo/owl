@@ -39,11 +39,11 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
   let exprID: string;
   if (typeof value === "string") {
     exprID = `_${ctx.generateID()}`;
-    ctx.addLine(`var ${exprID} = ${ctx.formatExpression(value)};`);
+    ctx.addLine(`let ${exprID} = ${ctx.formatExpression(value)};`);
   } else {
     exprID = `scope.${value.id}`;
   }
-  ctx.addIf(`${exprID} || ${exprID} === 0`);
+  ctx.addIf(`${exprID} != null`);
 
   if (ctx.escaping) {
     let protectID;
@@ -61,7 +61,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
       let nodeID = ctx.generateID();
       ctx.rootContext.rootNode = nodeID;
       ctx.rootContext.parentTextNode = nodeID;
-      ctx.addLine(`var vn${nodeID} = {text: ${exprID}};`);
+      ctx.addLine(`let vn${nodeID} = {text: ${exprID}};`);
       if (ctx.rootContext.shouldDefineResult) {
         ctx.addLine(`result = vn${nodeID}`);
       }
@@ -140,7 +140,7 @@ QWeb.addDirective({
       const _parentNode = ctx.parentNode;
       ctx.parentNode = tempParentNodeID;
 
-      ctx.addLine(`const c${tempParentNodeID} = new utils.VDomArray();`);
+      ctx.addLine(`let c${tempParentNodeID} = new utils.VDomArray();`);
       const nodeCopy = node.cloneNode(true) as Element;
       for (let attr of ["t-set", "t-value", "t-if", "t-else", "t-elif"]) {
         nodeCopy.removeAttribute(attr);
@@ -301,16 +301,16 @@ QWeb.addDirective({
     const elems = node.getAttribute("t-foreach")!;
     const name = node.getAttribute("t-as")!;
     let arrayID = ctx.generateID();
-    ctx.addLine(`var _${arrayID} = ${ctx.formatExpression(elems)};`);
+    ctx.addLine(`let _${arrayID} = ${ctx.formatExpression(elems)};`);
     ctx.addLine(`if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`);
     let keysID = ctx.generateID();
     let valuesID = ctx.generateID();
-    ctx.addLine(`var _${keysID} = _${valuesID} = _${arrayID};`);
+    ctx.addLine(`let _${keysID} = _${valuesID} = _${arrayID};`);
     ctx.addIf(`!(_${arrayID} instanceof Array)`);
     ctx.addLine(`_${keysID} = Object.keys(_${arrayID});`);
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
     ctx.closeIf();
-    ctx.addLine(`var _length${keysID} = _${keysID}.length;`);
+    ctx.addLine(`let _length${keysID} = _${keysID}.length;`);
     let varsID = ctx.startProtectScope();
     const loopVar = `i${ctx.loopNumber}`;
     ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);

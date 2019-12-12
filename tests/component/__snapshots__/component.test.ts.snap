@@ -8,18 +8,18 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = scope['state'].s;
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].s;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    var _3 = _4 = _2;
+    let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
     }
-    var _length3 = _3.length;
-    const _origScope5 = scope;
+    let _length3 = _3.length;
+    let _origScope5 = scope;
     scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.section_first = i1 === 0
@@ -27,15 +27,15 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
         scope.section_index = i1
         scope.section = _3[i1]
         scope.section_value = _4[i1]
-        var _6 = scope['section'].blips;
+        let _6 = scope['section'].blips;
         if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
-        var _7 = _8 = _6;
+        let _7 = _8 = _6;
         if (!(_6 instanceof Array)) {
             _7 = Object.keys(_6);
             _8 = Object.values(_6);
         }
-        var _length7 = _7.length;
-        const _origScope9 = scope;
+        let _length7 = _7.length;
+        let _origScope9 = scope;
         scope = Object.assign(Object.create(context), scope);
         for (let i2 = 0; i2 < _length7; i2++) {
             scope.blip_first = i2 === 0
@@ -83,9 +83,9 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     if (false) {
         const nodeKey2 = 'str';
         // Component 'Child'
@@ -148,9 +148,9 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     const _4 = scope['state'].style;
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -188,9 +188,9 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let parent = context;
     context.__owl__.refs = context.__owl__.refs || {};
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Child'
     const ref4 = \`child\`;
     let _5 = {'a':true};
@@ -228,11 +228,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
     // Template name: \\"Child\\"
     let utils = this.constructor.utils;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let _7 = {'c':true};
     Object.assign(_7, utils.toObj({d:scope['state'].d}))
     let c8 = [], p8 = {key:8,class:_7};
-    var vn8 = h('span', p8, c8);
+    let vn8 = h('span', p8, c8);
     return vn8;
 }"
 `;
@@ -246,9 +246,9 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let parent = context;
     context.__owl__.refs = context.__owl__.refs || {};
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Child'
     const ref4 = \`child\`;
     let _5 = {'a':true};
@@ -286,11 +286,11 @@ exports[`class and style attributes with t-component t-att-class is properly add
     // Template name: \\"Child\\"
     let utils = this.constructor.utils;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let _7 = {'c':true};
     Object.assign(_7, utils.toObj(scope['state'].d?'d':''))
     let c8 = [], p8 = {key:8,class:_7};
-    var vn8 = h('span', p8, c8);
+    let vn8 = h('span', p8, c8);
     return vn8;
 }"
 `;
@@ -303,18 +303,18 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = scope['state'].numbers;
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    var _3 = _4 = _2;
+    let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
     }
-    var _length3 = _3.length;
-    const _origScope5 = scope;
+    let _length3 = _3.length;
+    let _origScope5 = scope;
     scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.number_first = i1 === 0
@@ -361,9 +361,9 @@ exports[`composition t-component with dynamic value 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component '{{state.widget}}'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -399,9 +399,9 @@ exports[`composition t-component with dynamic value 2 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Widget{{state.widget}}'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -437,9 +437,9 @@ exports[`dynamic t-props basic use 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = Object.assign({}, scope['some'].obj);
@@ -475,11 +475,11 @@ exports[`other directives with t-component t-on with getter as handler 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = scope['state'].counter;
-    if (_2 || _2 === 0) {
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].counter;
+    if (_2 != null) {
         c1.push({text: _2});
     }
     // Component 'Child'
@@ -517,9 +517,9 @@ exports[`other directives with t-component t-on with handler bound to argument 1
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let args4 = [3];
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -556,9 +556,9 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let args4 = [{}];
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -595,9 +595,9 @@ exports[`other directives with t-component t-on with handler bound to empty obje
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let args4 = [{}];
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -634,9 +634,9 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let args4 = [{val:3}];
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
@@ -673,11 +673,11 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = scope['state'].counter;
-    if (_2 || _2 === 0) {
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].counter;
+    if (_2 != null) {
         c1.push({text: _2});
     }
     // Component 'Child'
@@ -715,9 +715,9 @@ exports[`other directives with t-component t-on with no handler (only modifiers)
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'ComponentA'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -753,9 +753,9 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'Child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -791,9 +791,9 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -829,9 +829,9 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -867,9 +867,9 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     // Component 'child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
@@ -902,9 +902,9 @@ exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = 
 ) {
     // Template name: \\"__template__2\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     this.subTemplates['__template__1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1}));
     return vn1;
 }"
@@ -918,9 +918,9 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     const nodeKey2 = 'somestring';
     // Component 'child'
     let k4 = \`__4__\` + nodeKey2;
@@ -958,18 +958,18 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     let QWeb = this.constructor;
     let parent = context;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = scope['items'];
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['items'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    var _3 = _4 = _2;
+    let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
     }
-    var _length3 = _3.length;
-    const _origScope5 = scope;
+    let _length3 = _3.length;
+    let _origScope5 = scope;
     scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
@@ -1014,10 +1014,10 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 ) {
     // Template name: \\"sub\\"
     let utils = this.constructor.utils;
-    var h = this.h;
+    let h = this.h;
     let c1 = extra.parentNode;
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('p', p2, c2);
+    let vn2 = h('p', p2, c2);
     c1.push(vn2);
     extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
     p2.on['click'] = extra.handlers['click__3__'];
@@ -1031,10 +1031,10 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
     // Template name: \\"sub\\"
     let utils = this.constructor.utils;
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = extra.parentNode;
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('p', p2, c2);
+    let vn2 = h('p', p2, c2);
     c1.push(vn2);
     let args3 = [scope['a']];
     p2.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](...args3, e);};
@@ -1047,21 +1047,21 @@ exports[`t-model directive .lazy modifier 1`] = `
 ) {
     // Template name: \\"__template__1\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('input', p2, c2);
+    let vn2 = h('input', p2, c2);
     c1.push(vn2);
     let expr2 = scope['state'];
     p2.props = {value: expr2.text};
     extra.handlers['__3__'] = extra.handlers['__3__'] || ((ev) => {expr2.text = ev.target.value});
     p2.on['change'] = extra.handlers['__3__'];
     let c4 = [], p4 = {key:4};
-    var vn4 = h('span', p4, c4);
+    let vn4 = h('span', p4, c4);
     c1.push(vn4);
-    var _5 = scope['state'].text;
-    if (_5 || _5 === 0) {
+    let _5 = scope['state'].text;
+    if (_5 != null) {
         c4.push({text: _5});
     }
     return vn1;
@@ -1073,21 +1073,21 @@ exports[`t-model directive basic use, on an input 1`] = `
 ) {
     // Template name: \\"__template__1\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('input', p2, c2);
+    let vn2 = h('input', p2, c2);
     c1.push(vn2);
     let expr2 = scope['state'];
     p2.props = {value: expr2.text};
     extra.handlers['__3__'] = extra.handlers['__3__'] || ((ev) => {expr2.text = ev.target.value});
     p2.on['input'] = extra.handlers['__3__'];
     let c4 = [], p4 = {key:4};
-    var vn4 = h('span', p4, c4);
+    let vn4 = h('span', p4, c4);
     c1.push(vn4);
-    var _5 = scope['state'].text;
-    if (_5 || _5 === 0) {
+    let _5 = scope['state'].text;
+    if (_5 != null) {
         c4.push({text: _5});
     }
     return vn1;
@@ -1099,21 +1099,21 @@ exports[`t-model directive basic use, on another key in component 1`] = `
 ) {
     // Template name: \\"SomeComponent\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('input', p2, c2);
+    let vn2 = h('input', p2, c2);
     c1.push(vn2);
     let expr2 = scope['some'];
     p2.props = {value: expr2.text};
     extra.handlers['__3__'] = extra.handlers['__3__'] || ((ev) => {expr2.text = ev.target.value});
     p2.on['input'] = extra.handlers['__3__'];
     let c4 = [], p4 = {key:4};
-    var vn4 = h('span', p4, c4);
+    let vn4 = h('span', p4, c4);
     c1.push(vn4);
-    var _5 = scope['some'].text;
-    if (_5 || _5 === 0) {
+    let _5 = scope['some'].text;
+    if (_5 != null) {
         c4.push({text: _5});
     }
     return vn1;
@@ -1125,18 +1125,18 @@ exports[`t-model directive in a t-foreach 1`] = `
 ) {
     // Template name: \\"__template__1\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = scope['state'];
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    var _3 = _4 = _2;
+    let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
     }
-    var _length3 = _3.length;
-    const _origScope5 = scope;
+    let _length3 = _3.length;
+    let _origScope5 = scope;
     scope = Object.assign(Object.create(context), scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.thing_first = i1 === 0
@@ -1145,9 +1145,9 @@ exports[`t-model directive in a t-foreach 1`] = `
         scope.thing = _3[i1]
         scope.thing_value = _4[i1]
         const nodeKey6 = scope['thing'].id;
-        var _7 = 'checkbox';
+        let _7 = 'checkbox';
         let c8 = [], p8 = {key:nodeKey6,attrs:{type: _7},on:{}};
-        var vn8 = h('input', p8, c8);
+        let vn8 = h('input', p8, c8);
         c1.push(vn8);
         let expr8 = scope['thing'];
         let k9 = \`__9__\` + nodeKey6;
@@ -1165,11 +1165,11 @@ exports[`t-model directive on a select 1`] = `
 ) {
     // Template name: \\"SomeComponent\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('select', p2, c2);
+    let vn2 = h('select', p2, c2);
     c1.push(vn2);
     let expr2 = scope['state'];
     p2.props = {value: expr2.color};
@@ -1180,27 +1180,27 @@ exports[`t-model directive on a select 1`] = `
         n.elm.value=expr2.color;
       },
     };
-    var _4 = '';
+    let _4 = '';
     let c5 = [], p5 = {key:5,attrs:{value: _4}};
-    var vn5 = h('option', p5, c5);
+    let vn5 = h('option', p5, c5);
     c2.push(vn5);
     c5.push({text: \`Please select one\`});
-    var _6 = 'red';
+    let _6 = 'red';
     let c7 = [], p7 = {key:7,attrs:{value: _6}};
-    var vn7 = h('option', p7, c7);
+    let vn7 = h('option', p7, c7);
     c2.push(vn7);
     c7.push({text: \`Red\`});
-    var _8 = 'blue';
+    let _8 = 'blue';
     let c9 = [], p9 = {key:9,attrs:{value: _8}};
-    var vn9 = h('option', p9, c9);
+    let vn9 = h('option', p9, c9);
     c2.push(vn9);
     c9.push({text: \`Blue\`});
     let c10 = [], p10 = {key:10};
-    var vn10 = h('span', p10, c10);
+    let vn10 = h('span', p10, c10);
     c1.push(vn10);
     c10.push({text: \`Choice: \`});
-    var _11 = scope['state'].color;
-    if (_11 || _11 === 0) {
+    let _11 = scope['state'].color;
+    if (_11 != null) {
         c10.push({text: _11});
     }
     return vn1;
@@ -1212,21 +1212,21 @@ exports[`t-model directive on a sub state key 1`] = `
 ) {
     // Template name: \\"__template__1\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
+    let vn1 = h('div', p1, c1);
     let c2 = [], p2 = {key:2,on:{}};
-    var vn2 = h('input', p2, c2);
+    let vn2 = h('input', p2, c2);
     c1.push(vn2);
     let expr2 = scope['state'].something;
     p2.props = {value: expr2.text};
     extra.handlers['__3__'] = extra.handlers['__3__'] || ((ev) => {expr2.text = ev.target.value});
     p2.on['input'] = extra.handlers['__3__'];
     let c4 = [], p4 = {key:4};
-    var vn4 = h('span', p4, c4);
+    let vn4 = h('span', p4, c4);
     c1.push(vn4);
-    var _5 = scope['state'].something.text;
-    if (_5 || _5 === 0) {
+    let _5 = scope['state'].something.text;
+    if (_5 != null) {
         c4.push({text: _5});
     }
     return vn1;
@@ -1238,35 +1238,35 @@ exports[`t-model directive on an input type=radio 1`] = `
 ) {
     // Template name: \\"SomeComponent\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = 'radio';
-    var _3 = 'one';
-    var _4 = 'One';
+    let vn1 = h('div', p1, c1);
+    let _2 = 'radio';
+    let _3 = 'one';
+    let _4 = 'One';
     let c5 = [], p5 = {key:5,attrs:{type: _2,id: _3,value: _4},on:{}};
-    var vn5 = h('input', p5, c5);
+    let vn5 = h('input', p5, c5);
     c1.push(vn5);
     let expr5 = scope['state'];
     p5.props = {checked:expr5.choice === 'One'};
     extra.handlers['__6__'] = extra.handlers['__6__'] || ((ev) => {expr5.choice = ev.target.value});
     p5.on['click'] = extra.handlers['__6__'];
-    var _7 = 'radio';
-    var _8 = 'two';
-    var _9 = 'Two';
+    let _7 = 'radio';
+    let _8 = 'two';
+    let _9 = 'Two';
     let c10 = [], p10 = {key:10,attrs:{type: _7,id: _8,value: _9},on:{}};
-    var vn10 = h('input', p10, c10);
+    let vn10 = h('input', p10, c10);
     c1.push(vn10);
     let expr10 = scope['state'];
     p10.props = {checked:expr10.choice === 'Two'};
     extra.handlers['__11__'] = extra.handlers['__11__'] || ((ev) => {expr10.choice = ev.target.value});
     p10.on['click'] = extra.handlers['__11__'];
     let c12 = [], p12 = {key:12};
-    var vn12 = h('span', p12, c12);
+    let vn12 = h('span', p12, c12);
     c1.push(vn12);
     c12.push({text: \`Choice: \`});
-    var _13 = scope['state'].choice;
-    if (_13 || _13 === 0) {
+    let _13 = scope['state'].choice;
+    if (_13 != null) {
         c12.push({text: _13});
     }
     return vn1;
@@ -1278,19 +1278,19 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
 ) {
     // Template name: \\"SomeComponent\\"
     let scope = Object.create(context);
-    var h = this.h;
+    let h = this.h;
     let c1 = [], p1 = {key:1};
-    var vn1 = h('div', p1, c1);
-    var _2 = 'checkbox';
+    let vn1 = h('div', p1, c1);
+    let _2 = 'checkbox';
     let c3 = [], p3 = {key:3,attrs:{type: _2},on:{}};
-    var vn3 = h('input', p3, c3);
+    let vn3 = h('input', p3, c3);
     c1.push(vn3);
     let expr3 = scope['state'];
     p3.props = {checked: expr3.flag};
     extra.handlers['__4__'] = extra.handlers['__4__'] || ((ev) => {expr3.flag = ev.target.checked});
     p3.on['input'] = extra.handlers['__4__'];
     let c5 = [], p5 = {key:5};
-    var vn5 = h('span', p5, c5);
+    let vn5 = h('span', p5, c5);
     c1.push(vn5);
     if (scope['state'].flag) {
         c5.push({text: \`yes\`});
@@ -1311,7 +1311,7 @@ exports[`top level sub widgets basic use 1`] = `
     let parent = context;
     let scope = Object.create(context);
     let result;
-    var h = this.h;
+    let h = this.h;
     // Component 'Child'
     let w1 = '__2__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__2__']] : false;
     let vn3 = {};
@@ -1350,7 +1350,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
     let parent = context;
     let scope = Object.create(context);
     let result;
-    var h = this.h;
+    let h = this.h;
     if (scope['env'].flag) {
         // Component 'Child'
         let w1 = '__2__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__2__']] : false;

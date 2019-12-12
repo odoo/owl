@@ -2026,6 +2026,24 @@ describe("other directives with t-component", () => {
     expect(flag).toBe(true);
   });
 
+  test("t-on with inline statement", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span>child</span>`;
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child t-on-click="state.n = state.n + 1"/></div>`;
+      static components = { Child };
+      state = {n: 3};
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(parent.state.n).toBe(3);
+    fixture.querySelector("span")!.click();
+    expect(parent.state.n).toBe(4);
+  });
+
+
   test("t-on with handler bound to argument", async () => {
     expect.assertions(3);
     env.qweb.addTemplates(`

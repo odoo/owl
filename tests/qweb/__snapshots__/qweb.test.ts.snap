@@ -2308,6 +2308,34 @@ exports[`t-on t-on with inline statement 1`] = `
 }"
 `;
 
+exports[`t-on t-on with inline statement, part 2 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    var vn1 = h('button', p1, c1);
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}scope['state'].flag=!scope['state'].flag};
+    c1.push({text: \`Toggle\`});
+    return vn1;
+}"
+`;
+
+exports[`t-on t-on with inline statement, part 3 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    var h = this.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    var vn1 = h('button', p1, c1);
+    p1.on['click'] = function (e) {if (!context.__owl__.isMounted){return}scope['state'].n=scope['someFunction'](3)};
+    c1.push({text: \`Toggle\`});
+    return vn1;
+}"
+`;
+
 exports[`t-on t-on with prevent and self modifiers (order matters) 1`] = `
 "function anonymous(context, extra
 ) {

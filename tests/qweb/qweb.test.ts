@@ -1293,6 +1293,37 @@ describe.only("t-on", () => {
     expect(owner.state.counter).toBe(2);
   });
 
+  test("t-on with inline statement, part 2", () => {
+    qweb.addTemplate("test", `<button t-on-click="state.flag = !state.flag">Toggle</button>`);
+    let owner = {
+      state: {
+        flag: true
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(owner.state.flag).toBe(true);
+    (<HTMLElement>node).click();
+    expect(owner.state.flag).toBe(false);
+    (<HTMLElement>node).click();
+    expect(owner.state.flag).toBe(true);
+  });
+
+  test("t-on with inline statement, part 3", () => {
+    qweb.addTemplate("test", `<button t-on-click="state.n = someFunction(3)">Toggle</button>`);
+    let owner = {
+      someFunction(n) {
+        return n + 1;
+      },
+      state: {
+        n: 11
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+    expect(owner.state.n).toBe(11);
+    (<HTMLElement>node).click();
+    expect(owner.state.n).toBe(4);
+  });
+
   test("t-on with prevent and/or stop modifiers", async () => {
     expect.assertions(7);
     qweb.addTemplate(

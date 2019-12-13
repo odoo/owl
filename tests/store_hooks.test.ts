@@ -84,6 +84,38 @@ describe("connecting a component to store", () => {
     expect(fixture.innerHTML).toBe("<div><span>ok</span></div>");
   });
 
+  test("map works on the result of useStore when the resulting array changes for a bigger one", async () => {
+    const state = { smallerArray: [1], biggerArray: [2, 3], useSmallArray: true };
+    const store = new Store({ state });
+
+    class App extends Component<any, any> {
+      static template = xml`<div t-esc="mapAdd"/>`;
+      storeProps = {
+        array: useStore(state => {
+          if (state.useSmallArray) {
+            return state.smallerArray;
+          }
+          return state.biggerArray;
+        })
+      };
+      get mapAdd() {
+        return this.storeProps.array.map(a => {
+          return a + 1;
+        });
+      }
+    }
+
+    (<any>env).store = store;
+    const app = new App();
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+
+    store.state.useSmallArray = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>3,4</div>");
+  });
+
   test("throw error if no store is found", async () => {
     class App extends Component<any, any> {
       static template = xml`<div></div>`;

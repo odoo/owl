@@ -141,11 +141,13 @@ describe("t-esc", () => {
     qweb.addTemplate("test", `<span t-esc="var">nope</span>`);
     expect(renderToString(qweb, "test")).toBe("<span>nope</span>");
   });
+
   test("t-esc is escaped", () => {
     qweb.addTemplate("test", `<div><t t-set="var"><p>escaped</p></t><t t-esc="var"/></div>`);
     const domRendered = renderToDOM(qweb, "test");
     expect(domRendered.textContent).toBe("<p>escaped</p>");
   });
+
   test("t-esc=0 is escaped", () => {
     qweb.addTemplate("test", `<span><t t-esc="0"/></span>`);
     qweb.addTemplate("testCaller", `<div><t t-call="test"><p>escaped</p></t></div>`);
@@ -175,6 +177,12 @@ describe("t-esc", () => {
     expect(renderToString(qweb, "test", vals)).toBe(
       "<div><p>false</p><p></p><p></p><p>0</p><p></p></div>"
     );
+  });
+
+  test("t-esc work with spread operator", () => {
+    qweb.addTemplate("test", `<span><t t-esc="[...state.list]"/></span>`);
+    const result = renderToString(qweb, "test", { state: { list: [1, 2] } });
+    expect(result).toBe("<span>1,2</span>");
   });
 });
 

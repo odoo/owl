@@ -50,6 +50,12 @@ describe("tokenizer", () => {
       { type: "OPERATOR", value: "typeof " },
       { type: "SYMBOL", value: "a" }
     ]);
+
+    expect(tokenize("a...1")).toEqual([
+      { type: "SYMBOL", value: "a" },
+      { type: "OPERATOR", value: "..." },
+      { type: "VALUE", value: "1" }
+    ]);
   });
 
   test("strings", () => {
@@ -176,5 +182,11 @@ describe("expression evaluation", () => {
     expect(compileExpr("a += b", {})).toBe("scope['a']+=scope['b']");
     expect(compileExpr("a -= b", {})).toBe("scope['a']-=scope['b']");
     expect(compileExpr("a.b = !a.b", {})).toBe("scope['a'].b=!scope['a'].b");
+  });
+
+  test("spread operator", () => {
+    expect(compileExpr("[...state.list]", {})).toBe("[...scope['state'].list]");
+    expect(compileExpr("f(...state.list)", {})).toBe("scope['f'](...scope['state'].list)");
+    expect(compileExpr("f([...list])", {})).toBe("scope['f']([...scope['list']])");
   });
 });

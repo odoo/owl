@@ -2965,6 +2965,33 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
 }"
 `;
 
+exports[`t-set t-set with content and sub t-esc 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = new utils.VDomArray();
+    let _3 = scope['beep'];
+    if (_3 != null) {
+        c2.push({text: _3});
+    }
+    c2.push({text: \` boop\`});
+    scope.setvar = c2
+    if (scope.setvar != null) {
+        let _origScope4 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        scope.setvar = scope.setvar instanceof utils.VDomArray ? utils.vDomToString(scope.setvar) : scope.setvar;
+        c1.push({text: scope.setvar});
+        scope = _origScope4;
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-set t-set with t-value (falsy) and body 1`] = `
 "function anonymous(context, extra
 ) {

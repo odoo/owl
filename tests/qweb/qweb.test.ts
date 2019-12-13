@@ -154,24 +154,28 @@ describe("t-esc", () => {
   });
 
   test("div with falsy values", () => {
-    qweb.addTemplate("test", `
+    qweb.addTemplate(
+      "test",
+      `
       <div>
         <p t-esc="v1"/>
         <p t-esc="v2"/>
         <p t-esc="v3"/>
         <p t-esc="v4"/>
         <p t-esc="v5"/>
-      </div>`);
+      </div>`
+    );
     const vals = {
       v1: false,
       v2: undefined,
       v3: null,
       v4: 0,
       v5: ""
-    }
-    expect(renderToString(qweb, "test", vals)).toBe("<div><p>false</p><p></p><p></p><p>0</p><p></p></div>");
+    };
+    expect(renderToString(qweb, "test", vals)).toBe(
+      "<div><p>false</p><p></p><p></p><p>0</p><p></p></div>"
+    );
   });
-
 });
 
 describe("t-raw", () => {
@@ -276,6 +280,18 @@ describe("t-set", () => {
     expect(normalize(renderToString(qweb, "test", { list: ["a", "b"] }))).toBe(
       "<div><div><span>v1</span></div><div><span>va</span></div></div>"
     );
+  });
+
+  test("t-set with content and sub t-esc", () => {
+    qweb.addTemplate(
+      "test",
+      `<div>
+        <t t-set="setvar"><t t-esc="beep"/> boop</t>
+        <t t-esc="setvar"/>
+      </div>`
+    );
+
+    expect(renderToString(qweb, "test", { beep: "beep" })).toBe("<div>beep boop</div>");
   });
 
   test("evaluate value expression, part 2", () => {

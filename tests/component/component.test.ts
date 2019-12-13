@@ -5581,14 +5581,14 @@ describe("t-call", () => {
     env.qweb.addTemplate("sub", `<Child/>`);
     let child;
     class Child extends Component<any, any> {
-      static template = xml `<span>lucas</span>`
+      static template = xml`<span>lucas</span>`;
       constructor() {
         super(...arguments);
         child = this;
       }
     }
     class Parent extends Component<any, any> {
-      static components = { Child }
+      static components = { Child };
       static template = xml`<div><t t-call="sub"/></div>`;
     }
     const parent = new Parent();
@@ -5607,10 +5607,10 @@ describe("t-call", () => {
         super(...arguments);
         child = this;
       }
-      static template = xml `<span>lucas</span>`
+      static template = xml`<span>lucas</span>`;
     }
     class Parent extends Component<any, any> {
-      static components = { Child }
+      static components = { Child };
       static template = xml`<t t-call="sub"/>`;
     }
     const parent = new Parent();

@@ -1772,6 +1772,22 @@ exports[`t-esc t-esc is escaped 1`] = `
 }"
 `;
 
+exports[`t-esc t-esc work with spread operator 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = [...scope['state'].list];
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-esc t-esc=0 is escaped 1`] = `
 "function anonymous(context, extra
 ) {

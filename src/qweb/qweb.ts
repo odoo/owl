@@ -119,7 +119,7 @@ const UTILS: Utils = {
           return vnode.text;
         }
       })
-      .join();
+      .join("");
   },
   getComponent(obj) {
     while (obj && !obj.hasOwnProperty("__owl__")) {

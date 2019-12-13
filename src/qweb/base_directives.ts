@@ -215,6 +215,7 @@ QWeb.addDirective({
     // Step 1: sanity checks
     // ------------------------------------------------
     ctx.rootContext.shouldDefineScope = true;
+    ctx.rootContext.shouldDefineUtils = true;
     if (node.nodeName !== "t") {
       throw new Error("Invalid tag for t-call directive (should be 't')");
     }
@@ -262,16 +263,17 @@ QWeb.addDirective({
     // Step 4: add the appropriate function call to current component
     // ------------------------------------------------
     const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
+    const parentComponent = `utils.getComponent(context)`;
     if (ctx.parentNode) {
       ctx.addLine(
-        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: c${ctx.parentNode}}));`
+        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, parent: ${parentComponent}}));`
       );
     } else {
       // this is a t-call with no parentnode, we need to extract the result
       ctx.rootContext.shouldDefineResult = true;
       ctx.addLine(`result = []`);
       ctx.addLine(
-        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: result}));`
+        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: result, parent: ${parentComponent}}));`
       );
       ctx.addLine(`result = result[0]`);
     }

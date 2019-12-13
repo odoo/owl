@@ -5577,6 +5577,50 @@ describe("t-call", () => {
     expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
   });
 
+  test("parent is set within t-call", async () => {
+    env.qweb.addTemplate("sub", `<Child/>`);
+    let child;
+    class Child extends Component<any, any> {
+      static template = xml `<span>lucas</span>`
+      constructor() {
+        super(...arguments);
+        child = this;
+      }
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child }
+      static template = xml`<div><t t-call="sub"/></div>`;
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>lucas</span></div>");
+    expect(child.__owl__.parent).toBe(parent);
+    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+  });
+
+  test("parent is set within t-call with no parentNode", async () => {
+    env.qweb.addTemplate("sub", `<Child/>`);
+    let child;
+    class Child extends Component<any, any> {
+      constructor() {
+        super(...arguments);
+        child = this;
+      }
+      static template = xml `<span>lucas</span>`
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child }
+      static template = xml`<t t-call="sub"/>`;
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<span>lucas</span>");
+    expect(child.__owl__.parent).toBe(parent);
+    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+  });
+
   test("handlers with arguments are properly bound through a t-call", async () => {
     expect.assertions(3);
     env.qweb.addTemplate("sub", `<p t-on-click="update(a)">lucas</p>`);

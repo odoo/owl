@@ -901,11 +901,12 @@ exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = 
 "function anonymous(context, extra
 ) {
     // Template name: \\"__template__2\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.subTemplates['__template__1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1}));
+    this.subTemplates['__template__1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
     return vn1;
 }"
 `;
@@ -1039,6 +1040,78 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
     let args3 = [scope['a']];
     p2.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](...args3, e);};
     c2.push({text: \`lucas\`});
+}"
+`;
+
+exports[`t-call parent is set within t-call 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"sub\\"
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = extra.parent;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = extra.parentNode;
+    // Component 'Child'
+    let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
+    let props2 = {};
+    if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
+        w2.destroy();
+        w2 = false;
+    }
+    if (w2) {
+        w2.__updateProps(props2, extra.fiber, undefined);
+        let pvnode = w2.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey2 = \`Child\`;
+        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
+        w2 = new W2(parent, props2);
+        parent.__owl__.cmap['__3__'] = w2.__owl__.id;
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        c1.push(pvnode);
+        w2.__owl__.pvnode = pvnode;
+    }
+    w2.__owl__.parentLastFiberId = extra.fiber.id;
+}"
+`;
+
+exports[`t-call parent is set within t-call with no parentNode 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"sub\\"
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = extra.parent;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = extra.parentNode;
+    // Component 'Child'
+    let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
+    let props2 = {};
+    if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
+        w2.destroy();
+        w2 = false;
+    }
+    if (w2) {
+        w2.__updateProps(props2, extra.fiber, undefined);
+        let pvnode = w2.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey2 = \`Child\`;
+        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
+        w2 = new W2(parent, props2);
+        parent.__owl__.cmap['__3__'] = w2.__owl__.id;
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        c1.push(pvnode);
+        w2.__owl__.pvnode = pvnode;
+    }
+    w2.__owl__.parentLastFiberId = extra.fiber.id;
 }"
 `;
 

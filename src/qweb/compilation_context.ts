@@ -26,7 +26,8 @@ export class CompilationContext {
   templateName: string;
   allowMultipleRoots: boolean = false;
   hasParentWidget: boolean = false;
-  currentKey: string = "";
+  hasKey0: boolean = false;
+  keyStack: boolean[] = [];
 
   constructor(name?: string) {
     this.rootContext = this;
@@ -48,20 +49,15 @@ export class CompilationContext {
    */
   generateTemplateKey(prefix: string = ""): string {
     const id = this.generateID();
-    if (this.loopNumber === 0 && !this.currentKey) {
+    if (this.loopNumber === 0 && !this.hasKey0) {
       return `'${prefix}__${id}__'`;
     }
-    let locationExpr = `\`${prefix}__${id}__`;
-    for (let i = 0; i < this.loopNumber - 1; i++) {
-      locationExpr += `\${i${i + 1}}__`;
+    let key = `\`${prefix}__${id}__`;
+    let start = this.hasKey0 ? 0 : 1;
+    for (let i = start; i < this.loopNumber + 1; i++) {
+      key += `\${key${i}}__`;
     }
-    if (this.currentKey) {
-      const k = this.currentKey;
-      this.addLine(`let k${id} = ${locationExpr}\` + ${k};`);
-    } else {
-      locationExpr += this.loopNumber ? `\${i${this.loopNumber}}__\`` : "`";
-      this.addLine(`let k${id} = ${locationExpr};`);
-    }
+    this.addLine(`let k${id} = ${key}\`;`);
     return `k${id}`;
   }
 
@@ -116,11 +112,11 @@ export class CompilationContext {
   }
 
   indent() {
-    this.indentLevel++;
+    this.rootContext.indentLevel++;
   }
 
   dedent() {
-    this.indentLevel--;
+    this.rootContext.indentLevel--;
   }
 
   addLine(line: string): number {

@@ -303,9 +303,20 @@ QWeb.addDirective({
 QWeb.addDirective({
   name: "key",
   priority: 45,
-  atNodeEncounter({ ctx, value }) {
-    let id = ctx.generateID();
-    ctx.addLine(`const nodeKey${id} = ${ctx.formatExpression(value)};`);
-    ctx.currentKey = `nodeKey${id}`;
+  atNodeEncounter({ ctx, value, node }) {
+    if (ctx.loopNumber === 0) {
+      ctx.keyStack.push(ctx.rootContext.hasKey0);
+      ctx.rootContext.hasKey0 = true;
+    }
+    ctx.addLine("{");
+    ctx.indent();
+    ctx.addLine(`let key${ctx.loopNumber} = ${ctx.formatExpression(value)};`);
+  },
+  finalize({ ctx }) {
+    ctx.dedent();
+    ctx.addLine("}");
+    if (ctx.loopNumber === 0) {
+      ctx.rootContext.hasKey0 = ctx.keyStack.pop() as boolean;
+    }
   }
 });

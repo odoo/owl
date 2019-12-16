@@ -265,7 +265,7 @@ QWeb.addDirective({
     // ------------------------------------------------
     const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
     const parentComponent = `utils.getComponent(context)`;
-    const keyCode = ctx.loopNumber ? `, key: ${ctx.generateTemplateKey()}` : "";
+    const keyCode = ctx.loopNumber || ctx.hasKey0 ? `, key: ${ctx.generateTemplateKey()}` : "";
     const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
     const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}${keyCode}})`;
     if (ctx.parentNode) {
@@ -333,6 +333,13 @@ QWeb.addDirective({
       console.warn(
         `Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`
       );
+    }
+    if (nodeCopy.hasAttribute("t-key")) {
+      const expr = ctx.formatExpression(nodeCopy.getAttribute("t-key")!);
+      ctx.addLine(`let key${ctx.loopNumber} = ${expr};`);
+      nodeCopy.removeAttribute("t-key");
+    } else {
+      ctx.addLine(`let key${ctx.loopNumber} = i${ctx.loopNumber};`);
     }
 
     nodeCopy.removeAttribute("t-foreach");

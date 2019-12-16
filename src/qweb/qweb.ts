@@ -383,7 +383,12 @@ export class QWeb extends EventBus {
     });
   }
 
-  _compile(name: string, elem: Element, parentContext?: CompilationContext): CompiledTemplate {
+  _compile(
+    name: string,
+    elem: Element,
+    parentContext?: CompilationContext,
+    defineKey?: boolean
+  ): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new CompilationContext(name);
     if (elem.tagName !== "t") {
@@ -396,6 +401,10 @@ export class QWeb extends EventBus {
       ctx.hasParentWidget = true;
       ctx.shouldDefineResult = false;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
+      if (defineKey) {
+        ctx.currentKey = `key${ctx.generateID()}`;
+        ctx.addLine(`let ${ctx.currentKey} = extra.key || '';`);
+      }
     }
     this._compileNode(elem, ctx);
 

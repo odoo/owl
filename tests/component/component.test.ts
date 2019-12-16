@@ -5599,6 +5599,26 @@ describe("t-call", () => {
     expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
   });
 
+  test("t-call in t-foreach and children component", async () => {
+    env.qweb.addTemplate("sub", `<Child val="val"/>`);
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class Parent extends Component<any, any> {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <t t-foreach="['a', 'b', 'c']" t-as="val" t-key="val">
+            <t t-call="sub"/>
+          </t>
+        </div>`;
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>a</span><span>b</span><span>c</span></div>");
+  });
+
   test("parent is set within t-call with no parentNode", async () => {
     env.qweb.addTemplate("sub", `<Child/>`);
     let child;

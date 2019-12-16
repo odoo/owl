@@ -1,6 +1,7 @@
 import { CompilationContext } from "./compilation_context";
 import { QWeb } from "./qweb";
 import { htmlToVDOM } from "../vdom/html_to_vdom";
+import { QWebVar } from "./expression_parser";
 
 /**
  * Owl QWeb Directives
@@ -119,7 +120,7 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineScope = true;
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
-    ctx.variables[variable] = ctx.variables[variable] || {};
+    ctx.variables[variable] = ctx.variables[variable] || ({} as QWebVar);
     let qwebvar = ctx.variables[variable];
     const hasBody = node.hasChildNodes();
 
@@ -229,7 +230,7 @@ QWeb.addDirective({
     // ------------------------------------------------
     if (!qweb.subTemplates[subTemplate]) {
       qweb.subTemplates[subTemplate] = true;
-      const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx);
+      const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx, true);
       qweb.subTemplates[subTemplate] = subTemplateFn;
     }
 
@@ -264,17 +265,16 @@ QWeb.addDirective({
     // ------------------------------------------------
     const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
     const parentComponent = `utils.getComponent(context)`;
+    const keyCode = ctx.loopNumber ? `, key: ${ctx.generateTemplateKey()}` : "";
+    const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
+    const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}${keyCode}})`;
     if (ctx.parentNode) {
-      ctx.addLine(
-        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, parent: ${parentComponent}}));`
-      );
+      ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, ${extra});`);
     } else {
       // this is a t-call with no parentnode, we need to extract the result
       ctx.rootContext.shouldDefineResult = true;
       ctx.addLine(`result = []`);
-      ctx.addLine(
-        `this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: result, parent: ${parentComponent}}));`
-      );
+      ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, ${extra});`);
       ctx.addLine(`result = result[0]`);
     }
 

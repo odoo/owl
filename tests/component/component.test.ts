@@ -322,6 +322,36 @@ describe("basic widget properties", () => {
     console.warn = warn;
   });
 
+  test("reconciliation alg works for t-foreach in t-foreach, 2", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<div><t t-esc="props.row + '_' + props.col"/></div>`;
+    }
+
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <p t-foreach="state.rows" t-as="row" t-key="row">
+            <p t-foreach="state.cols" t-as="col" t-key="col">
+                <Child row="row" col="col"/>
+              </p>
+            </p>
+        </div>`;
+      static components = { Child };
+      state = useState({ rows: [1, 2], cols: ["a", "b"] });
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><p><p><div>1_a</div></p><p><div>1_b</div></p></p><p><p><div>2_a</div></p><p><div>2_b</div></p></p></div>"
+    );
+    widget.state.rows = [2, 1];
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><p><p><div>2_a</div></p><p><div>2_b</div></p></p><p><p><div>1_a</div></p><p><div>1_b</div></p></p></div>"
+    );
+  });
+
   test("same t-keys in two different places", async () => {
     class Child extends Component<any, any> {
       static template = xml`<span><t t-esc="props.blip"/></span>`;
@@ -339,6 +369,7 @@ describe("basic widget properties", () => {
     const widget = new Parent();
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>1</span></div><div><span>2</span></div></div>");
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
   });
 
   test("t-key on a component with t-if, and a sibling component", async () => {
@@ -4417,6 +4448,28 @@ describe("t-model directive", () => {
     expect(comp.state[0].f).toBe(false);
     expect(comp.state[2].f).toBe(false);
     expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("two inputs in a div with a t-key", async () => {
+    class SomeComponent extends Component<any, any> {
+      static template = xml`
+        <div t-key="'key'">
+          <input class="a" t-if="state.flag"/>
+          <input class="b" t-if="!state.flag"/>
+        </div>
+      `;
+      state = useState({ flag: true });
+    }
+    const comp = new SomeComponent();
+    await comp.mount(fixture);
+    expect(fixture.innerHTML).toBe('<div><input class="a"></div>');
+    expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
+    fixture.querySelector("input")!.value = "asdf";
+    expect(fixture.querySelector("input")!.value).toBe("asdf");
+    comp.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div><input class="b"></div>');
+    expect(fixture.querySelector("input")!.value).toBe("");
   });
 });
 

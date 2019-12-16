@@ -402,8 +402,8 @@ export class QWeb extends EventBus {
       ctx.shouldDefineResult = false;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
       if (defineKey) {
-        ctx.currentKey = `key${ctx.generateID()}`;
-        ctx.addLine(`let ${ctx.currentKey} = extra.key || '';`);
+        ctx.addLine(`let key0 = extra.key || "";`);
+        ctx.hasKey0 = true;
       }
     }
     this._compileNode(elem, ctx);
@@ -481,9 +481,6 @@ export class QWeb extends EventBus {
         ctx.rootContext.parentTextNode = nodeID;
       }
       return;
-    }
-    if (ctx !== ctx.rootContext) {
-      ctx = ctx.subContext("currentKey", ctx.currentKey);
     }
 
     const firstLetter = node.tagName[0];
@@ -759,8 +756,8 @@ export class QWeb extends EventBus {
       }
     }
     let nodeID = ctx.generateID();
-    let nodeKey = ctx.currentKey || nodeID;
-    const parts = [`key:${nodeKey}`];
+    let key = ctx.loopNumber || ctx.hasKey0 ? `\`\${key${ctx.loopNumber}}_${nodeID}\`` : nodeID;
+    const parts = [`key:${key}`];
     if (attrs.length + tattrs.length > 0) {
       parts.push(`attrs:{${attrs.join(",")}}`);
     }
@@ -789,6 +786,9 @@ export class QWeb extends EventBus {
     ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
     if (ctx.parentNode) {
       ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
+    } else if (ctx.loopNumber || ctx.hasKey0) {
+      ctx.rootContext.shouldDefineResult = true;
+      ctx.addLine(`result = vn${nodeID};`);
     }
 
     return nodeID;

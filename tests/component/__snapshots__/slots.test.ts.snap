@@ -229,14 +229,14 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
     // Template name: \\"Link\\"
     let scope = Object.create(context);
     let h = this.h;
-    let _12 = scope['props'].to;
-    let c13 = [], p13 = {key:13,attrs:{href: _12}};
-    let vn13 = h('a', p13, c13);
-    const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot14) {
-        slot14.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || context}));
+    let _11 = scope['props'].to;
+    let c12 = [], p12 = {key:12,attrs:{href: _11}};
+    let vn12 = h('a', p12, c12);
+    const slot13 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot13) {
+        slot13.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c12, parent: extra.parent || context}));
     }
-    return vn13;
+    return vn12;
 }"
 `;
 
@@ -270,35 +270,35 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
         scope.user_index = i1
         scope.user = _4[i1]
         scope.user_value = _5[i1]
-        const nodeKey7 = scope['user'].id;
-        let c8 = [], p8 = {key:nodeKey7};
-        let vn8 = h('li', p8, c8);
-        c2.push(vn8);
+        let key1 = scope['user'].id;
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('li', p7, c7);
+        c2.push(vn7);
         // Component 'Link'
-        let k10 = \`__10__\` + nodeKey7;
-        let w9 = k10 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k10]] : false;
-        let props9 = {to:'/user/'+scope['user'].id};
-        if (w9 && w9.__owl__.currentFiber && !w9.__owl__.vnode) {
-            w9.destroy();
-            w9 = false;
+        let k9 = \`__9__\${key1}__\`;
+        let w8 = k9 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k9]] : false;
+        let props8 = {to:'/user/'+scope['user'].id};
+        if (w8 && w8.__owl__.currentFiber && !w8.__owl__.vnode) {
+            w8.destroy();
+            w8 = false;
         }
-        if (w9) {
-            w9.__updateProps(props9, extra.fiber, Object.assign(Object.create(context), scope));
-            let pvnode = w9.__owl__.pvnode;
-            c8.push(pvnode);
+        if (w8) {
+            w8.__updateProps(props8, extra.fiber, Object.assign(Object.create(context), scope));
+            let pvnode = w8.__owl__.pvnode;
+            c7.push(pvnode);
         } else {
-            let componentKey9 = \`Link\`;
-            let W9 = context.constructor.components[componentKey9] || QWeb.components[componentKey9]|| scope['Link'];
-            if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
-            w9 = new W9(parent, props9);
-            parent.__owl__.cmap[k10] = w9.__owl__.id;
-            w9.__owl__.slotId = 1;
-            let fiber = w9.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k10, hook: {remove() {},destroy(vn) {w9.destroy();}}});
-            c8.push(pvnode);
-            w9.__owl__.pvnode = pvnode;
+            let componentKey8 = \`Link\`;
+            let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| scope['Link'];
+            if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
+            w8 = new W8(parent, props8);
+            parent.__owl__.cmap[k9] = w8.__owl__.id;
+            w8.__owl__.slotId = 1;
+            let fiber = w8.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            let pvnode = h('dummy', {key: k9, hook: {remove() {},destroy(vn) {w8.destroy();}}});
+            c7.push(pvnode);
+            w8.__owl__.pvnode = pvnode;
         }
-        w9.__owl__.parentLastFiberId = extra.fiber.id;
+        w8.__owl__.parentLastFiberId = extra.fiber.id;
     }
     scope = _origScope6;
     return vn1;
@@ -311,11 +311,11 @@ exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
     // Template name: \\"slot_default_template\\"
     let scope = Object.create(context);
     let h = this.h;
-    let c8 = extra.parentNode;
-    c8.push({text: \`User \`});
-    let _11 = scope['user'].name;
-    if (_11 != null) {
-        c8.push({text: _11});
+    let c7 = extra.parentNode;
+    c7.push({text: \`User \`});
+    let _10 = scope['user'].name;
+    if (_10 != null) {
+        c7.push({text: _10});
     }
 }"
 `;
@@ -326,14 +326,14 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
     // Template name: \\"Link\\"
     let scope = Object.create(context);
     let h = this.h;
-    let _11 = scope['props'].to;
-    let c12 = [], p12 = {key:12,attrs:{href: _11}};
-    let vn12 = h('a', p12, c12);
-    const slot13 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot13) {
-        slot13.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c12, parent: extra.parent || context}));
+    let _10 = scope['props'].to;
+    let c11 = [], p11 = {key:11,attrs:{href: _10}};
+    let vn11 = h('a', p11, c11);
+    const slot12 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot12) {
+        slot12.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c11, parent: extra.parent || context}));
     }
-    return vn12;
+    return vn11;
 }"
 `;
 
@@ -367,36 +367,36 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         scope.user_index = i1
         scope.user = _4[i1]
         scope.user_value = _5[i1]
-        const nodeKey7 = scope['user'].id;
-        let c8 = [], p8 = {key:nodeKey7};
-        let vn8 = h('li', p8, c8);
-        c2.push(vn8);
+        let key1 = scope['user'].id;
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('li', p7, c7);
+        c2.push(vn7);
         scope.userdescr = 'User '+scope['user'].name;
         // Component 'Link'
-        let k10 = \`__10__\` + nodeKey7;
-        let w9 = k10 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k10]] : false;
-        let props9 = {to:'/user/'+scope['user'].id};
-        if (w9 && w9.__owl__.currentFiber && !w9.__owl__.vnode) {
-            w9.destroy();
-            w9 = false;
+        let k9 = \`__9__\${key1}__\`;
+        let w8 = k9 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k9]] : false;
+        let props8 = {to:'/user/'+scope['user'].id};
+        if (w8 && w8.__owl__.currentFiber && !w8.__owl__.vnode) {
+            w8.destroy();
+            w8 = false;
         }
-        if (w9) {
-            w9.__updateProps(props9, extra.fiber, Object.assign(Object.create(context), scope));
-            let pvnode = w9.__owl__.pvnode;
-            c8.push(pvnode);
+        if (w8) {
+            w8.__updateProps(props8, extra.fiber, Object.assign(Object.create(context), scope));
+            let pvnode = w8.__owl__.pvnode;
+            c7.push(pvnode);
         } else {
-            let componentKey9 = \`Link\`;
-            let W9 = context.constructor.components[componentKey9] || QWeb.components[componentKey9]|| scope['Link'];
-            if (!W9) {throw new Error('Cannot find the definition of component \\"' + componentKey9 + '\\"')}
-            w9 = new W9(parent, props9);
-            parent.__owl__.cmap[k10] = w9.__owl__.id;
-            w9.__owl__.slotId = 1;
-            let fiber = w9.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k10, hook: {remove() {},destroy(vn) {w9.destroy();}}});
-            c8.push(pvnode);
-            w9.__owl__.pvnode = pvnode;
+            let componentKey8 = \`Link\`;
+            let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| scope['Link'];
+            if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
+            w8 = new W8(parent, props8);
+            parent.__owl__.cmap[k9] = w8.__owl__.id;
+            w8.__owl__.slotId = 1;
+            let fiber = w8.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+            let pvnode = h('dummy', {key: k9, hook: {remove() {},destroy(vn) {w8.destroy();}}});
+            c7.push(pvnode);
+            w8.__owl__.pvnode = pvnode;
         }
-        w9.__owl__.parentLastFiberId = extra.fiber.id;
+        w8.__owl__.parentLastFiberId = extra.fiber.id;
     }
     scope = _origScope6;
     return vn1;
@@ -409,9 +409,9 @@ exports[`t-slot directive slots are rendered with proper context, part 3 3`] = `
     // Template name: \\"slot_default_template\\"
     let scope = Object.create(context);
     let h = this.h;
-    let c8 = extra.parentNode;
+    let c7 = extra.parentNode;
     if (scope.userdescr != null) {
-        c8.push({text: scope.userdescr});
+        c7.push({text: scope.userdescr});
     }
 }"
 `;

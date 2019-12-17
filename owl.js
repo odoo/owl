@@ -1052,7 +1052,8 @@
             this.inPreTag = false;
             this.allowMultipleRoots = false;
             this.hasParentWidget = false;
-            this.currentKey = "";
+            this.hasKey0 = false;
+            this.keyStack = [];
             this.rootContext = this;
             this.templateName = name || "noname";
             this.addLine("let h = this.h;");
@@ -1070,21 +1071,15 @@
          */
         generateTemplateKey(prefix = "") {
             const id = this.generateID();
-            if (this.loopNumber === 0 && !this.currentKey) {
+            if (this.loopNumber === 0 && !this.hasKey0) {
                 return `'${prefix}__${id}__'`;
             }
-            let locationExpr = `\`${prefix}__${id}__`;
-            for (let i = 0; i < this.loopNumber - 1; i++) {
-                locationExpr += `\${i${i + 1}}__`;
+            let key = `\`${prefix}__${id}__`;
+            let start = this.hasKey0 ? 0 : 1;
+            for (let i = start; i < this.loopNumber + 1; i++) {
+                key += `\${key${i}}__`;
             }
-            if (this.currentKey) {
-                const k = this.currentKey;
-                this.addLine(`let k${id} = ${locationExpr}\` + ${k};`);
-            }
-            else {
-                locationExpr += this.loopNumber ? `\${i${this.loopNumber}}__\`` : "`";
-                this.addLine(`let k${id} = ${locationExpr};`);
-            }
+            this.addLine(`let k${id} = ${key}\`;`);
             return `k${id}`;
         }
         generateCode() {
@@ -1133,10 +1128,10 @@
             return newContext;
         }
         indent() {
-            this.indentLevel++;
+            this.rootContext.indentLevel++;
         }
         dedent() {
-            this.indentLevel--;
+            this.rootContext.indentLevel--;
         }
         addLine(line) {
             const prefix = new Array(this.indentLevel + 2).join("    ");
@@ -1570,7 +1565,7 @@
                 }
             });
         }
-        _compile(name, elem, parentContext) {
+        _compile(name, elem, parentContext, defineKey) {
             const isDebug = elem.attributes.hasOwnProperty("t-debug");
             const ctx = new CompilationContext(name);
             if (elem.tagName !== "t") {
@@ -1583,6 +1578,10 @@
                 ctx.hasParentWidget = true;
                 ctx.shouldDefineResult = false;
                 ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
+                if (defineKey) {
+                    ctx.addLine(`let key0 = extra.key || "";`);
+                    ctx.hasKey0 = true;
+                }
             }
             this._compileNode(elem, ctx);
             if (!parentContext) {
@@ -1658,9 +1657,6 @@
                     ctx.rootContext.parentTextNode = nodeID;
                 }
                 return;
-            }
-            if (ctx !== ctx.rootContext) {
-                ctx = ctx.subContext("currentKey", ctx.currentKey);
             }
             const firstLetter = node.tagName[0];
             if (firstLetter === firstLetter.toUpperCase()) {
@@ -1908,8 +1904,8 @@
                 }
             }
             let nodeID = ctx.generateID();
-            let nodeKey = ctx.currentKey || nodeID;
-            const parts = [`key:${nodeKey}`];
+            let key = ctx.loopNumber || ctx.hasKey0 ? `\`\${key${ctx.loopNumber}}_${nodeID}\`` : nodeID;
+            const parts = [`key:${key}`];
             if (attrs.length + tattrs.length > 0) {
                 parts.push(`attrs:{${attrs.join(",")}}`);
             }
@@ -1937,6 +1933,10 @@
             ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
             if (ctx.parentNode) {
                 ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
+            }
+            else if (ctx.loopNumber || ctx.hasKey0) {
+                ctx.rootContext.shouldDefineResult = true;
+                ctx.addLine(`result = vn${nodeID};`);
             }
             return nodeID;
         }
@@ -2198,7 +2198,7 @@
             // ------------------------------------------------
             if (!qweb.subTemplates[subTemplate]) {
                 qweb.subTemplates[subTemplate] = true;
-                const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx);
+                const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx, true);
                 qweb.subTemplates[subTemplate] = subTemplateFn;
             }
             // Step 3: compile t-call body if necessary
@@ -2231,14 +2231,17 @@
             // ------------------------------------------------
             const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
             const parentComponent = `utils.getComponent(context)`;
+            const keyCode = ctx.loopNumber || ctx.hasKey0 ? `, key: ${ctx.generateTemplateKey()}` : "";
+            const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
+            const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}${keyCode}})`;
             if (ctx.parentNode) {
-                ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: c${ctx.parentNode}, parent: ${parentComponent}}));`);
+                ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, ${extra});`);
             }
             else {
                 // this is a t-call with no parentnode, we need to extract the result
                 ctx.rootContext.shouldDefineResult = true;
                 ctx.addLine(`result = []`);
-                ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, Object.assign({}, extra, {parentNode: result, parent: ${parentComponent}}));`);
+                ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, ${extra});`);
                 ctx.addLine(`result = result[0]`);
             }
             // Step 5: restore previous scope
@@ -2290,6 +2293,14 @@
                 !node.children[0].hasAttribute("t-key");
             if (shouldWarn) {
                 console.warn(`Directive t-foreach should always be used with a t-key! (in template: '${ctx.templateName}')`);
+            }
+            if (nodeCopy.hasAttribute("t-key")) {
+                const expr = ctx.formatExpression(nodeCopy.getAttribute("t-key"));
+                ctx.addLine(`let key${ctx.loopNumber} = ${expr};`);
+                nodeCopy.removeAttribute("t-key");
+            }
+            else {
+                ctx.addLine(`let key${ctx.loopNumber} = i${ctx.loopNumber};`);
             }
             nodeCopy.removeAttribute("t-foreach");
             qweb._compileNode(nodeCopy, ctx);
@@ -2589,10 +2600,21 @@
     QWeb.addDirective({
         name: "key",
         priority: 45,
-        atNodeEncounter({ ctx, value }) {
-            let id = ctx.generateID();
-            ctx.addLine(`const nodeKey${id} = ${ctx.formatExpression(value)};`);
-            ctx.currentKey = `nodeKey${id}`;
+        atNodeEncounter({ ctx, value, node }) {
+            if (ctx.loopNumber === 0) {
+                ctx.keyStack.push(ctx.rootContext.hasKey0);
+                ctx.rootContext.hasKey0 = true;
+            }
+            ctx.addLine("{");
+            ctx.indent();
+            ctx.addLine(`let key${ctx.loopNumber} = ${ctx.formatExpression(value)};`);
+        },
+        finalize({ ctx }) {
+            ctx.dedent();
+            ctx.addLine("}");
+            if (ctx.loopNumber === 0) {
+                ctx.rootContext.hasKey0 = ctx.keyStack.pop();
+            }
         }
     });
 
@@ -4864,9 +4886,9 @@
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '1.0.0-beta3';
-    exports.__info__.date = '2019-12-16T08:57:32.773Z';
-    exports.__info__.hash = 'd9bf428';
+    exports.__info__.version = '1.0.0-beta4';
+    exports.__info__.date = '2019-12-17T14:27:10.310Z';
+    exports.__info__.hash = '1db0f5a';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

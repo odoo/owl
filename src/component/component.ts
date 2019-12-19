@@ -6,6 +6,7 @@ import "./directive";
 import { Fiber } from "./fiber";
 import "./props_validation";
 import { Scheduler, scheduler } from "./scheduler";
+import { activateSheet } from "./styles";
 
 /**
  * Owl Component System
@@ -199,6 +200,9 @@ export class Component<T extends Env, Props extends {}> {
       refs: null,
       scope: null
     };
+    if (constr.style) {
+      this.__applyStyles(constr);
+    }
   }
 
   /**
@@ -580,6 +584,20 @@ export class Component<T extends Env, Props extends {}> {
     return fiber;
   }
 
+  /**
+   * Apply the stylesheets defined by the component. Note that we need to make
+   * sure all inherited stylesheets are applied as well.  We then delete the
+   * `style` key from the constructor to make sure we do not apply it again.
+   */
+  private __applyStyles(constr) {
+    while (constr && constr.style) {
+      if (constr.hasOwnProperty("style")) {
+        activateSheet(constr.style, constr.name);
+        delete constr.style;
+      }
+      constr = constr.__proto__;
+    }
+  }
   __getTemplate(qweb: QWeb): string {
     let p = (<any>this).constructor;
     if (!p.hasOwnProperty("_template")) {

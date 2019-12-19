@@ -225,6 +225,10 @@ to be called in the constructor.
   }
   ```
 
+- **`style`** (string, optional): it should be the return value of the [`css tag](tags.md#css-tag),
+  which is used to inject stylesheet whenever the component is visible on the
+  screen.
+
 There is another static property defined on the `Component` class: `current`.
 This property is set to the currently being defined component (in the constructor).
 This is the way [hooks](hooks.md) are able to get a reference to the target

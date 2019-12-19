@@ -19,13 +19,6 @@ let env: Env;
 beforeEach(() => {
   fixture = makeTestFixture();
   env = makeTestEnv();
-  env.qweb.addTemplate("Component<any,any>", "<div></div>");
-  env.qweb.addTemplate(
-    "Counter",
-    `<div><t t-esc="state.counter"/><button t-on-click="inc">Inc</button></div>`
-  );
-  env.qweb.addTemplate("WidgetA", `<div>Hello<t t-component="b"/></div>`);
-  env.qweb.addTemplate("WidgetB", `<div>world</div>`);
   Component.env = env;
 });
 

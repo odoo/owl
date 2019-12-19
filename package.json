@@ -1,8 +1,11 @@
 {
-  "name": "owl-framework",
+  "name": "@odoo/owl",
   "version": "1.0.0-beta4",
   "description": "Odoo Web Library (OWL)",
-  "main": "src/index.ts",
+  "main": "dist/owl/index.js",
+  "types": "dist/owl/index.d.ts",
+  "prepublish": "npm run build",
+  "files": ["dist/owl/"],
   "engines": {
     "node": ">=10.15.3"
   },

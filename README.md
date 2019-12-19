@@ -102,6 +102,12 @@ Submit a PR!
 
 ## Installing/Building
 
+Owl can be installed with the following command:
+
+```
+npm install @odoo/owl
+```
+
 If you want to use a simple `<script>` tag, the last release can be downloaded here:
 
 - [owl-1.0.0-beta4.js](https://github.com/odoo/owl/releases/download/v1.0.0-beta4/owl.js)

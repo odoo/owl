@@ -211,7 +211,7 @@ QWeb.addDirective({
       } else if (!name.startsWith("t-")) {
         if (name !== "class" && name !== "style") {
           // this is a prop!
-          props[name] = ctx.formatExpression(value);
+          props[name] = ctx.formatExpression(value) || "undefined";
         }
       }
     }

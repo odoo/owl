@@ -147,6 +147,21 @@ describe("basic widget properties", () => {
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 
+  test("can handle empty props", async () => {
+    class Child extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class Parent extends Component<any, any> {
+      static template = xml`<div><Child val=""/></div>`;
+      static components = { Child };
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+    expect(fixture.innerHTML).toBe( "<div><span></span></div>");
+  });
+
   test("cannot be clicked on and updated if not in DOM", async () => {
     class Counter extends Component<any, any> {
       static template = xml`

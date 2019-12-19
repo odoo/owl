@@ -49,10 +49,13 @@ describe("connecting a component to store", () => {
   });
 
   test("useStore can observe primitive types and call onUpdate", async () => {
-    const state = { isBoolean: false };
+    const state = { isBoolean: false, nullValue: null };
     const actions = {
       setTrue({ state }) {
         state.isBoolean = true;
+      },
+      setNotNull({ state }) {
+        state.nullValue = "ok";
       }
     };
     const store = new Store({ state, actions });
@@ -61,13 +64,20 @@ describe("connecting a component to store", () => {
       static template = xml`
             <div>
                 <span t-if="isBoolean">ok</span>
+                <span t-if="nullValue !== null">not null</span>
             </div>`;
       isBoolean: boolean;
+      nullValue: string;
       constructor() {
         super();
         this.isBoolean = useStore(state => state.isBoolean, {
           onUpdate: isBoolean => {
             this.isBoolean = isBoolean;
+          }
+        });
+        this.nullValue = useStore(state => state.nullValue, {
+          onUpdate: nullValue => {
+            this.nullValue = nullValue;
           }
         });
       }
@@ -82,6 +92,10 @@ describe("connecting a component to store", () => {
     store.dispatch("setTrue");
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>ok</span></div>");
+
+    store.dispatch("setNotNull");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>ok</span><span>not null</span></div>");
   });
 
   test("map works on the result of useStore when the resulting array changes for a bigger one", async () => {

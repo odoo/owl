@@ -159,7 +159,7 @@ describe("basic widget properties", () => {
     const parent = new Parent();
     await parent.mount(fixture);
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
-    expect(fixture.innerHTML).toBe( "<div><span></span></div>");
+    expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
 
   test("cannot be clicked on and updated if not in DOM", async () => {

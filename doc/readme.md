@@ -56,15 +56,15 @@ useState                                    Link
 config                                      RouteComponent
     mode                                    Router
 core                                    tags
-    EventBus                                xml
-    Observer                            utils
-hooks                                       debounce
-    onWillStart                             escape
-    onMounted                               loadJS
-    onWillUpdateProps                       loadFile
-    onWillPatch                             shallowEqual
-    onPatched                               whenReady
-    onWillUnmount
+    EventBus                                css
+    Observer                                xml
+hooks                                   utils
+    onWillStart                             debounce
+    onMounted                               escape
+    onWillUpdateProps                       loadJS
+    onWillPatch                             loadFile
+    onPatched                               shallowEqual
+    onWillUnmount                           whenReady
     useContext
     useState
     useRef

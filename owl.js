@@ -2853,7 +2853,7 @@
                 else if (!name.startsWith("t-")) {
                     if (name !== "class" && name !== "style") {
                         // this is a prop!
-                        props[name] = ctx.formatExpression(value);
+                        props[name] = ctx.formatExpression(value) || "undefined";
                     }
                 }
             }
@@ -3472,6 +3472,59 @@
         return result;
     }
 
+    /**
+     * Owl Style System
+     *
+     * This files contains the Owl code related to processing (extended) css strings
+     * and creating/adding <style> tags to the document head.
+     */
+    const STYLESHEETS = {};
+    function processSheet(str) {
+        const tokens = str.split(/(\{|\}|;)/).map(s => s.trim());
+        const selectorStack = [];
+        const parts = [];
+        let rules = [];
+        function generateRules() {
+            if (rules.length) {
+                parts.push(selectorStack.join(" ") + " {");
+                parts.push(...rules);
+                parts.push("}");
+                rules = [];
+            }
+        }
+        while (tokens.length) {
+            let token = tokens.shift();
+            if (token === "}") {
+                generateRules();
+                selectorStack.pop();
+            }
+            else {
+                if (tokens[0] === "{") {
+                    generateRules();
+                    selectorStack.push(token);
+                    tokens.shift();
+                }
+                if (tokens[0] === ";") {
+                    rules.push("  " + token + ";");
+                }
+            }
+        }
+        return parts.join("\n");
+    }
+    function registerSheet(id, css) {
+        const sheet = document.createElement("style");
+        sheet.innerHTML = processSheet(css);
+        STYLESHEETS[id] = sheet;
+    }
+    function activateSheet(id, name) {
+        const sheet = STYLESHEETS[id];
+        if (!sheet) {
+            throw new Error(`Invalid css stylesheet for component '${name}'. Did you forget to use the 'css' tag helper?`);
+        }
+        sheet.setAttribute("component", name);
+        document.head.appendChild(sheet);
+    }
+
     const portalSymbol = Symbol("portal"); // FIXME
     //------------------------------------------------------------------------------
     // Component
@@ -3556,6 +3609,9 @@
                 refs: null,
                 scope: null
             };
+            if (constr.style) {
+                this.__applyStyles(constr);
+            }
         }
         /**
          * The `el` is the root element of the component.  Note that it could be null:
@@ -3913,6 +3969,20 @@
             parentFiber.lastChild = fiber;
             this.__prepareAndRender(fiber, cb);
             return fiber;
+        }
+        /**
+         * Apply the stylesheets defined by the component. Note that we need to make
+         * sure all inherited stylesheets are applied as well.  We then delete the
+         * `style` key from the constructor to make sure we do not apply it again.
+         */
+        __applyStyles(constr) {
+            while (constr && constr.style) {
+                if (constr.hasOwnProperty("style")) {
+                    activateSheet(constr.style, constr.name);
+                    delete constr.style;
+                }
+                constr = constr.__proto__;
+            }
         }
         __getTemplate(qweb) {
             let p = this.constructor;
@@ -4366,7 +4436,7 @@
             delete store.updateFunctions[componentId];
             __destroy.call(component, parent);
         };
-        if (typeof result !== "object") {
+        if (typeof result !== "object" || result === null) {
             return result;
         }
         return new Proxy(result, {
@@ -4414,10 +4484,26 @@
         QWeb.registerTemplate(name, value);
         return name;
     }
+    /**
+     * CSS tag helper for defining inline stylesheets.  With this, one can simply define
+     * an inline stylesheet with just the following code:
+     * ```js
+     *   class A extends Component {
+     *     static style = css`.component-a { color: red; }`;
+     *   }
+     * ```
+     */
+    function css(strings, ...args) {
+        const name = `__sheet__${QWeb.nextId++}`;
+        const value = String.raw(strings, ...args);
+        registerSheet(name, value);
+        return name;
+    }
 
     var _tags = /*#__PURE__*/Object.freeze({
         __proto__: null,
-        xml: xml
+        xml: xml,
+        css: css
     });
 
     /**
@@ -4886,9 +4972,9 @@
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '1.0.0-beta4';
-    exports.__info__.date = '2019-12-17T14:27:10.310Z';
-    exports.__info__.hash = '1db0f5a';
+    exports.__info__.version = '1.0.0-beta5';
+    exports.__info__.date = '2019-12-20T10:27:22.467Z';
+    exports.__info__.hash = 'b63cd4c';
     exports.__info__.url = 'https://github.com/odoo/owl';
 
 }(this.owl = this.owl || {}));

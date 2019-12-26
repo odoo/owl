@@ -7,14 +7,25 @@
 
 export const STYLESHEETS: { [id: string]: HTMLStyleElement } = {};
 
-function processSheet(str: string): string {
+export function processSheet(str: string): string {
   const tokens = str.split(/(\{|\}|;)/).map(s => s.trim());
-  const selectorStack: string[] = [];
+  const selectorStack: string[][] = [];
   const parts: string[] = [];
   let rules: string[] = [];
+  function generateSelector(stackIndex: number, parentSelector?: string) {
+    const parts: string[] = [];
+    for (const selector of selectorStack[stackIndex]) {
+      let part = parentSelector && parentSelector + ' ' + selector || selector;
+      if (stackIndex < selectorStack.length - 1) {
+        part = generateSelector(stackIndex + 1, part);
+      }
+      parts.push(part);
+    }
+    return parts.join(', ');
+  }
   function generateRules() {
     if (rules.length) {
-      parts.push(selectorStack.join(" ") + " {");
+      parts.push(generateSelector(0) + " {");
       parts.push(...rules);
       parts.push("}");
       rules = [];
@@ -28,7 +39,7 @@ function processSheet(str: string): string {
     } else {
       if (tokens[0] === "{") {
         generateRules();
-        selectorStack.push(token);
+        selectorStack.push(token.split(/\s*,\s*/));
         tokens.shift();
       }
       if (tokens[0] === ";") {

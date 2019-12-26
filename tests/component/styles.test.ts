@@ -1,4 +1,5 @@
 import { Component, Env } from "../../src/component/component";
+import { processSheet } from "../../src/component/styles";
 import { xml, css } from "../../src/tags";
 import { makeTestFixture, makeTestEnv } from "../helpers";
 
@@ -127,6 +128,18 @@ describe("styles and component", () => {
 }
 .app {
   display: block;
+}`);
+  });
+
+  test("properly handle rules with commas", async () => {
+    const sheet = processSheet(`.parent-a, .parent-b {
+      .child-a, .child-b {
+        color: red;
+      }
+    }`);
+    
+    expect(sheet).toBe(`.parent-a .child-a, .parent-a .child-b, .parent-b .child-a, .parent-b .child-b {
+  color: red;
 }`);
   });
 });

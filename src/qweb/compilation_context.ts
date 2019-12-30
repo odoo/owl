@@ -28,6 +28,7 @@ export class CompilationContext {
   hasParentWidget: boolean = false;
   hasKey0: boolean = false;
   keyStack: boolean[] = [];
+  subScopeID: null | number = null;
 
   constructor(name?: string) {
     this.rootContext = this;
@@ -153,7 +154,8 @@ export class CompilationContext {
    */
   formatExpression(expr: string): string {
     this.rootContext.shouldDefineScope = true;
-    return compileExpr(expr, this.variables);
+    const compiledScopeName = this.subScopeID ? `subScope_${this.subScopeID}` : `scope`;
+    return compileExpr(expr, this.variables, compiledScopeName);
   }
 
   /**
@@ -182,5 +184,18 @@ export class CompilationContext {
   }
   stopProtectScope(protectID: number) {
     this.addLine(`scope = _origScope${protectID};`);
+  }
+  /**
+   * Similar in essence to startProtectScope
+   * i.e. creates a subscope to not alter the original one
+   * though this one should be uses in block of compiled code
+   * e.g.: forEach loop
+   */
+  startBlockScope(): CompilationContext {
+    this.rootContext.shouldDefineScope = true;
+    const scopeID = this.generateID();
+    const ctx = this.subContext('subScopeID', scopeID);
+    ctx.addLine(`const subScope_${scopeID} = Object.assign(Object.create(context), scope);`);
+    return ctx;
   }
 }

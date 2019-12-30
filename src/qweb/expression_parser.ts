@@ -234,9 +234,10 @@ export function tokenize(expr: string): Token[] {
  * the arrow operator, then we add the current (or some previous tokens) token to
  * the list of variables so it does not get replaced by a lookup in the context
  */
-export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): string {
+export function compileExpr(expr: string, scope: { [key: string]: QWebVar }, compiledScopeName?: string): string {
   scope = Object.create(scope);
   const tokens = tokenize(expr);
+  compiledScopeName = compiledScopeName === undefined ? `scope` : compiledScopeName;
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
     let prevToken = tokens[i - 1];
@@ -273,7 +274,7 @@ export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): st
         token.value = scope[token.value].expr!;
       } else {
         token.originalValue = token.value;
-        token.value = `scope['${token.value}']`;
+        token.value = `${compiledScopeName}['${token.value}']`;
       }
     }
   }

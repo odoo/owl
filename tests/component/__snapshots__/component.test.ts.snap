@@ -65,50 +65,52 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
         scope.section_index = i1
         scope.section = _3[i1]
         scope.section_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
-        let _6 = scope['section'].blips;
-        if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
-        let _7 = _8 = _6;
-        if (!(_6 instanceof Array)) {
-            _7 = Object.keys(_6);
-            _8 = Object.values(_6);
+        let _7 = subScope_6['section'].blips;
+        if (!_7) { throw new Error('QWeb error: Invalid loop expression')}
+        let _8 = _9 = _7;
+        if (!(_7 instanceof Array)) {
+            _8 = Object.keys(_7);
+            _9 = Object.values(_7);
         }
-        let _length7 = _7.length;
-        let _origScope9 = scope;
+        let _length8 = _8.length;
+        let _origScope10 = scope;
         scope = Object.assign(Object.create(context), scope);
-        for (let i2 = 0; i2 < _length7; i2++) {
+        for (let i2 = 0; i2 < _length8; i2++) {
             scope.blip_first = i2 === 0
-            scope.blip_last = i2 === _length7 - 1
+            scope.blip_last = i2 === _length8 - 1
             scope.blip_index = i2
-            scope.blip = _7[i2]
-            scope.blip_value = _8[i2]
+            scope.blip = _8[i2]
+            scope.blip_value = _9[i2]
+            const subScope_11 = Object.assign(Object.create(context), scope);
             let key2 = i2;
             // Component 'Child'
-            let k11 = \`__11__\${key1}__\${key2}__\`;
-            let w10 = k11 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k11]] : false;
-            let props10 = {blip:scope['blip']};
-            if (w10 && w10.__owl__.currentFiber && !w10.__owl__.vnode) {
-                w10.destroy();
-                w10 = false;
+            let k13 = \`__13__\${key1}__\${key2}__\`;
+            let w12 = k13 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k13]] : false;
+            let props12 = {blip:subScope_11['blip']};
+            if (w12 && w12.__owl__.currentFiber && !w12.__owl__.vnode) {
+                w12.destroy();
+                w12 = false;
             }
-            if (w10) {
-                w10.__updateProps(props10, extra.fiber, undefined);
-                let pvnode = w10.__owl__.pvnode;
+            if (w12) {
+                w12.__updateProps(props12, extra.fiber, undefined);
+                let pvnode = w12.__owl__.pvnode;
                 c1.push(pvnode);
             } else {
-                let componentKey10 = \`Child\`;
-                let W10 = context.constructor.components[componentKey10] || QWeb.components[componentKey10]|| scope['Child'];
-                if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
-                w10 = new W10(parent, props10);
-                parent.__owl__.cmap[k11] = w10.__owl__.id;
-                let fiber = w10.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-                let pvnode = h('dummy', {key: k11, hook: {remove() {},destroy(vn) {w10.destroy();}}});
+                let componentKey12 = \`Child\`;
+                let W12 = context.constructor.components[componentKey12] || QWeb.components[componentKey12]|| subScope_11['Child'];
+                if (!W12) {throw new Error('Cannot find the definition of component \\"' + componentKey12 + '\\"')}
+                w12 = new W12(parent, props12);
+                parent.__owl__.cmap[k13] = w12.__owl__.id;
+                let fiber = w12.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+                let pvnode = h('dummy', {key: k13, hook: {remove() {},destroy(vn) {w12.destroy();}}});
                 c1.push(pvnode);
-                w10.__owl__.pvnode = pvnode;
+                w12.__owl__.pvnode = pvnode;
             }
-            w10.__owl__.parentLastFiberId = extra.fiber.id;
+            w12.__owl__.parentLastFiberId = extra.fiber.id;
         }
-        scope = _origScope9;
+        scope = _origScope10;
     }
     scope = _origScope5;
     return vn1;
@@ -439,33 +441,34 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
         scope.number_index = i1
         scope.number = _3[i1]
         scope.number_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         {
-            let key1 = scope['number'];
+            let key1 = subScope_6['number'];
             // Component 'ChildWidget'
-            let k7 = \`__7__\${key1}__\`;
-            let w6 = k7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k7]] : false;
-            let props6 = {};
-            if (w6 && w6.__owl__.currentFiber && !w6.__owl__.vnode) {
-                w6.destroy();
-                w6 = false;
+            let k8 = \`__8__\${key1}__\`;
+            let w7 = k8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k8]] : false;
+            let props7 = {};
+            if (w7 && w7.__owl__.currentFiber && !w7.__owl__.vnode) {
+                w7.destroy();
+                w7 = false;
             }
-            if (w6) {
-                w6.__updateProps(props6, extra.fiber, undefined);
-                let pvnode = w6.__owl__.pvnode;
+            if (w7) {
+                w7.__updateProps(props7, extra.fiber, undefined);
+                let pvnode = w7.__owl__.pvnode;
                 c1.push(pvnode);
             } else {
-                let componentKey6 = \`ChildWidget\`;
-                let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| scope['ChildWidget'];
-                if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
-                w6 = new W6(parent, props6);
-                parent.__owl__.cmap[k7] = w6.__owl__.id;
-                let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-                let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
+                let componentKey7 = \`ChildWidget\`;
+                let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7]|| subScope_6['ChildWidget'];
+                if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
+                w7 = new W7(parent, props7);
+                parent.__owl__.cmap[k8] = w7.__owl__.id;
+                let fiber = w7.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+                let pvnode = h('dummy', {key: k8, hook: {remove() {},destroy(vn) {w7.destroy();}}});
                 c1.push(pvnode);
-                w6.__owl__.pvnode = pvnode;
+                w7.__owl__.pvnode = pvnode;
             }
-            w6.__owl__.parentLastFiberId = extra.fiber.id;
+            w7.__owl__.parentLastFiberId = extra.fiber.id;
         }
     }
     scope = _origScope5;
@@ -583,6 +586,106 @@ exports[`dynamic t-props basic use 1`] = `
         w2.__owl__.pvnode = pvnode;
     }
     w2.__owl__.parentLastFiberId = extra.fiber.id;
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-on expression in t-foreach 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].values;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.val_first = i1 === 0
+        scope.val_last = i1 === _length3 - 1
+        scope.val_index = i1
+        scope.val = _3[i1]
+        scope.val_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['val'];
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('div', p7, c7);
+        c1.push(vn7);
+        let _8 = subScope_6['val_index'];
+        if (_8 != null) {
+            c7.push({text: _8});
+        }
+        c7.push({text: \`: \`});
+        let _9 = subScope_6['val']+'';
+        if (_9 != null) {
+            c7.push({text: _9});
+        }
+        let c10 = [], p10 = {key:\`\${key1}_10\`,on:{}};
+        let vn10 = h('button', p10, c10);
+        c7.push(vn10);
+        p10.on['click'] = function (e) {if (!context.__owl__.isMounted){return}subScope_6['otherState'].vals.push(subScope_6['val'])};
+        c10.push({text: \`Expr\`});
+    }
+    scope = _origScope5;
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-on method call in t-foreach 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].values;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.assign(Object.create(context), scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.val_first = i1 === 0
+        scope.val_last = i1 === _length3 - 1
+        scope.val_index = i1
+        scope.val = _3[i1]
+        scope.val_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['val'];
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('div', p7, c7);
+        c1.push(vn7);
+        let _8 = subScope_6['val_index'];
+        if (_8 != null) {
+            c7.push({text: _8});
+        }
+        c7.push({text: \`: \`});
+        let _9 = subScope_6['val']+'';
+        if (_9 != null) {
+            c7.push({text: _9});
+        }
+        let c10 = [], p10 = {key:\`\${key1}_10\`,on:{}};
+        let vn10 = h('button', p10, c10);
+        c7.push(vn10);
+        let args11 = [subScope_6['val']];
+        p10.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['addVal'](...args11, e);};
+        c10.push({text: \`meth call\`});
+    }
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -1100,34 +1203,35 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         {
-            let key1 = scope['item'];
+            let key1 = subScope_6['item'];
             // Component 'Child'
-            let k7 = \`__7__\${key1}__\`;
-            let args8 = [scope['item']];
-            let w6 = k7 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k7]] : false;
-            let props6 = {};
-            if (w6 && w6.__owl__.currentFiber && !w6.__owl__.vnode) {
-                w6.destroy();
-                w6 = false;
+            let k8 = \`__8__\${key1}__\`;
+            let args9 = [subScope_6['item']];
+            let w7 = k8 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k8]] : false;
+            let props7 = {};
+            if (w7 && w7.__owl__.currentFiber && !w7.__owl__.vnode) {
+                w7.destroy();
+                w7 = false;
             }
-            if (w6) {
-                w6.__updateProps(props6, extra.fiber, undefined);
-                let pvnode = w6.__owl__.pvnode;
+            if (w7) {
+                w7.__updateProps(props7, extra.fiber, undefined);
+                let pvnode = w7.__owl__.pvnode;
                 c1.push(pvnode);
             } else {
-                let componentKey6 = \`Child\`;
-                let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| scope['Child'];
-                if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
-                w6 = new W6(parent, props6);
-                parent.__owl__.cmap[k7] = w6.__owl__.id;
-                let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args8, e);});}};});
-                let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
+                let componentKey7 = \`Child\`;
+                let W7 = context.constructor.components[componentKey7] || QWeb.components[componentKey7]|| subScope_6['Child'];
+                if (!W7) {throw new Error('Cannot find the definition of component \\"' + componentKey7 + '\\"')}
+                w7 = new W7(parent, props7);
+                parent.__owl__.cmap[k8] = w7.__owl__.id;
+                let fiber = w7.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args9, e);});}};});
+                let pvnode = h('dummy', {key: k8, hook: {remove() {},destroy(vn) {w7.destroy();}}});
                 c1.push(pvnode);
-                w6.__owl__.pvnode = pvnode;
+                w7.__owl__.pvnode = pvnode;
             }
-            w6.__owl__.parentLastFiberId = extra.fiber.id;
+            w7.__owl__.parentLastFiberId = extra.fiber.id;
         }
     }
     scope = _origScope5;
@@ -1349,16 +1453,17 @@ exports[`t-model directive in a t-foreach 1`] = `
         scope.thing_index = i1
         scope.thing = _3[i1]
         scope.thing_value = _4[i1]
-        let key1 = scope['thing'].id;
-        let _6 = 'checkbox';
-        let c7 = [], p7 = {key:\`\${key1}_7\`,attrs:{type: _6},on:{}};
-        let vn7 = h('input', p7, c7);
-        c1.push(vn7);
-        let expr7 = scope['thing'];
-        let k8 = \`__8__\${key1}__\`;
-        p7.props = {checked: expr7.f};
-        extra.handlers[k8] = extra.handlers[k8] || ((ev) => {expr7.f = ev.target.checked});
-        p7.on['input'] = extra.handlers[k8];
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['thing'].id;
+        let _7 = 'checkbox';
+        let c8 = [], p8 = {key:\`\${key1}_8\`,attrs:{type: _7},on:{}};
+        let vn8 = h('input', p8, c8);
+        c1.push(vn8);
+        let expr8 = subScope_6['thing'];
+        let k9 = \`__9__\${key1}__\`;
+        p8.props = {checked: expr8.f};
+        extra.handlers[k9] = extra.handlers[k9] || ((ev) => {expr8.f = ev.target.checked});
+        p8.on['input'] = extra.handlers[k9];
     }
     scope = _origScope5;
     return vn1;

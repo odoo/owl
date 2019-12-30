@@ -323,6 +323,7 @@ QWeb.addDirective({
     ctx.addLine(`scope.${name}_index = ${loopVar}`);
     ctx.addLine(`scope.${name} = _${keysID}[${loopVar}]`);
     ctx.addLine(`scope.${name}_value = _${valuesID}[${loopVar}]`);
+    ctx = ctx.startBlockScope();
     const nodeCopy = <Element>node.cloneNode(true);
     let shouldWarn =
       !nodeCopy.hasAttribute("t-key") &&

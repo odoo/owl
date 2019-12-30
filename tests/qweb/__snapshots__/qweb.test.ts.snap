@@ -428,10 +428,11 @@ exports[`foreach does not pollute the rendering context 1`] = `
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
-        let _6 = scope['item'];
-        if (_6 != null) {
-            c1.push({text: _6});
+        let _7 = subScope_6['item'];
+        if (_7 != null) {
+            c1.push({text: _7});
         }
     }
     scope = _origScope5;
@@ -463,13 +464,14 @@ exports[`foreach iterate on items (on a element node) 1`] = `
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
-        let key1 = scope['item'];
-        let c6 = [], p6 = {key:\`\${key1}_6\`};
-        let vn6 = h('span', p6, c6);
-        c1.push(vn6);
-        let _7 = scope['item'];
-        if (_7 != null) {
-            c6.push({text: _7});
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['item'];
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('span', p7, c7);
+        c1.push(vn7);
+        let _8 = subScope_6['item'];
+        if (_8 != null) {
+            c7.push({text: _8});
         }
     }
     scope = _origScope5;
@@ -501,21 +503,22 @@ exports[`foreach iterate on items 1`] = `
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         c1.push({text: \` [\`});
-        let _6 = scope['item_index'];
-        if (_6 != null) {
-            c1.push({text: _6});
-        }
-        c1.push({text: \`: \`});
-        let _7 = scope['item'];
+        let _7 = subScope_6['item_index'];
         if (_7 != null) {
             c1.push({text: _7});
         }
-        c1.push({text: \` \`});
-        let _8 = scope['item_value'];
+        c1.push({text: \`: \`});
+        let _8 = subScope_6['item'];
         if (_8 != null) {
             c1.push({text: _8});
+        }
+        c1.push({text: \` \`});
+        let _9 = subScope_6['item_value'];
+        if (_9 != null) {
+            c1.push({text: _9});
         }
         c1.push({text: \`] \`});
     }
@@ -548,21 +551,22 @@ exports[`foreach iterate, dict param 1`] = `
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         c1.push({text: \` [\`});
-        let _6 = scope['item_index'];
-        if (_6 != null) {
-            c1.push({text: _6});
-        }
-        c1.push({text: \`: \`});
-        let _7 = scope['item'];
+        let _7 = subScope_6['item_index'];
         if (_7 != null) {
             c1.push({text: _7});
         }
-        c1.push({text: \` \`});
-        let _8 = scope['item_value'];
+        c1.push({text: \`: \`});
+        let _8 = subScope_6['item'];
         if (_8 != null) {
             c1.push({text: _8});
+        }
+        c1.push({text: \` \`});
+        let _9 = subScope_6['item_value'];
+        if (_9 != null) {
+            c1.push({text: _9});
         }
         c1.push({text: \`] \`});
     }
@@ -595,18 +599,19 @@ exports[`foreach iterate, position 1`] = `
         scope.elem_index = i1
         scope.elem = _3[i1]
         scope.elem_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         c1.push({text: \` -\`});
-        if (scope['elem_first']) {
+        if (subScope_6['elem_first']) {
             c1.push({text: \` first\`});
         }
-        if (scope['elem_last']) {
+        if (subScope_6['elem_last']) {
             c1.push({text: \` last\`});
         }
         c1.push({text: \` (\`});
-        let _6 = scope['elem_index'];
-        if (_6 != null) {
-            c1.push({text: _6});
+        let _7 = subScope_6['elem_index'];
+        if (_7 != null) {
+            c1.push({text: _7});
         }
         c1.push({text: \`) \`});
     }
@@ -639,36 +644,38 @@ exports[`foreach t-foreach in t-forach 1`] = `
         scope.number_index = i1
         scope.number = _3[i1]
         scope.number_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
-        let _6 = scope['letters'];
-        if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
-        let _7 = _8 = _6;
-        if (!(_6 instanceof Array)) {
-            _7 = Object.keys(_6);
-            _8 = Object.values(_6);
+        let _7 = subScope_6['letters'];
+        if (!_7) { throw new Error('QWeb error: Invalid loop expression')}
+        let _8 = _9 = _7;
+        if (!(_7 instanceof Array)) {
+            _8 = Object.keys(_7);
+            _9 = Object.values(_7);
         }
-        let _length7 = _7.length;
-        let _origScope9 = scope;
+        let _length8 = _8.length;
+        let _origScope10 = scope;
         scope = Object.assign(Object.create(context), scope);
-        for (let i2 = 0; i2 < _length7; i2++) {
+        for (let i2 = 0; i2 < _length8; i2++) {
             scope.letter_first = i2 === 0
-            scope.letter_last = i2 === _length7 - 1
+            scope.letter_last = i2 === _length8 - 1
             scope.letter_index = i2
-            scope.letter = _7[i2]
-            scope.letter_value = _8[i2]
+            scope.letter = _8[i2]
+            scope.letter_value = _9[i2]
+            const subScope_11 = Object.assign(Object.create(context), scope);
             let key2 = i2;
             c1.push({text: \` [\`});
-            let _10 = scope['number'];
-            if (_10 != null) {
-                c1.push({text: _10});
+            let _12 = subScope_11['number'];
+            if (_12 != null) {
+                c1.push({text: _12});
             }
-            let _11 = scope['letter'];
-            if (_11 != null) {
-                c1.push({text: _11});
+            let _13 = subScope_11['letter'];
+            if (_13 != null) {
+                c1.push({text: _13});
             }
             c1.push({text: \`] \`});
         }
-        scope = _origScope9;
+        scope = _origScope10;
     }
     scope = _origScope5;
     return vn1;
@@ -699,13 +706,14 @@ exports[`foreach warn if no key in some case 1`] = `
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
-        let c6 = [], p6 = {key:\`\${key1}_6\`};
-        let vn6 = h('span', p6, c6);
-        c1.push(vn6);
-        let _7 = scope['item'];
-        if (_7 != null) {
-            c6.push({text: _7});
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('span', p7, c7);
+        c1.push(vn7);
+        let _8 = subScope_6['item'];
+        if (_8 != null) {
+            c7.push({text: _8});
         }
     }
     scope = _origScope5;
@@ -764,41 +772,42 @@ exports[`misc global 1`] = `
         scope.value_index = i1
         scope.value = _3[i1]
         scope.value_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
-        let c6 = [], p6 = {key:\`\${key1}_6\`};
-        let vn6 = h('span', p6, c6);
-        c1.push(vn6);
-        let _7 = scope['value'];
-        if (_7 != null) {
-            c6.push({text: _7});
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('span', p7, c7);
+        c1.push(vn7);
+        let _8 = subScope_6['value'];
+        if (_8 != null) {
+            c7.push({text: _8});
         }
         {
-            let _origScope10 = scope;
+            let _origScope11 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
                 {
-                    let _origScope13 = scope;
+                    let _origScope14 = scope;
                     scope = Object.assign(Object.create(context), scope);
                     {
                         let c__0 = [];
                         scope.foo = 'aaa';
                         scope[utils.zero] = c__0;
                     }
-                    let k14 = \`__14__\${key1}__\`;
-                    this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k14}));
-                    scope = _origScope13;
+                    let k15 = \`__15__\${key1}__\`;
+                    this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k15}));
+                    scope = _origScope14;
                 }
-                let k15 = \`__15__\${key1}__\`;
-                this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k15}));
-                scope.foo = 'bbb';
                 let k16 = \`__16__\${key1}__\`;
                 this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k16}));
+                scope.foo = 'bbb';
+                let k17 = \`__17__\${key1}__\`;
+                this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k17}));
                 scope[utils.zero] = c__0;
             }
-            let k17 = \`__17__\${key1}__\`;
-            this.subTemplates['_callee-asc'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k17}));
-            scope = _origScope10;
+            let k18 = \`__18__\${key1}__\`;
+            this.subTemplates['_callee-asc'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k18}));
+            scope = _origScope11;
         }
     }
     scope = _origScope5;
@@ -1237,7 +1246,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     {
-        let _origScope11 = scope;
+        let _origScope12 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1245,7 +1254,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             scope[utils.zero] = c__0;
         }
         this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
-        scope = _origScope11;
+        scope = _origScope12;
     }
     return vn1;
 }"
@@ -1286,18 +1295,19 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
         scope.subtree_index = i1
         scope.subtree = _6[i1]
         scope.subtree_value = _7[i1]
+        const subScope_9 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         {
-            let _origScope9 = scope;
+            let _origScope10 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
-                scope.node = scope['subtree'];
+                scope.node = subScope_9['subtree'];
                 scope[utils.zero] = c__0;
             }
-            let k10 = \`__10__\${key0}__\${key1}__\`;
-            this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k10}));
-            scope = _origScope9;
+            let k11 = \`__11__\${key0}__\${key1}__\`;
+            this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k11}));
+            scope = _origScope10;
         }
     }
     scope = _origScope8;
@@ -1314,7 +1324,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     {
-        let _origScope11 = scope;
+        let _origScope12 = scope;
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
@@ -1322,7 +1332,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             scope[utils.zero] = c__0;
         }
         this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
-        scope = _origScope11;
+        scope = _origScope12;
     }
     return vn1;
 }"
@@ -1363,18 +1373,19 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
         scope.subtree_index = i1
         scope.subtree = _6[i1]
         scope.subtree_value = _7[i1]
+        const subScope_9 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         {
-            let _origScope9 = scope;
+            let _origScope10 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
-                scope.node = scope['subtree'];
+                scope.node = subScope_9['subtree'];
                 scope[utils.zero] = c__0;
             }
-            let k10 = \`__10__\${key0}__\${key1}__\`;
-            this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k10}));
-            scope = _origScope9;
+            let k11 = \`__11__\${key0}__\${key1}__\`;
+            this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k11}));
+            scope = _origScope10;
         }
     }
     scope = _origScope8;
@@ -1463,19 +1474,20 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
         scope.v_index = i1
         scope.v = _3[i1]
         scope.v_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
-        scope.val = scope['v'].val;
+        scope.val = subScope_6['v'].val;
         {
-            let _origScope8 = scope;
+            let _origScope9 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
                 scope.val3 = scope.val*3;
                 scope[utils.zero] = c__0;
             }
-            let k9 = \`__9__\${key1}__\`;
-            this.subTemplates['sub'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k9}));
-            scope = _origScope8;
+            let k10 = \`__10__\${key1}__\`;
+            this.subTemplates['sub'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k10}));
+            scope = _origScope9;
         }
     }
     scope = _origScope5;
@@ -2163,13 +2175,14 @@ exports[`t-key t-key directive in a list 1`] = `
         scope.beer_index = i1
         scope.beer = _3[i1]
         scope.beer_value = _4[i1]
-        let key1 = scope['beer'].id;
-        let c6 = [], p6 = {key:\`\${key1}_6\`};
-        let vn6 = h('li', p6, c6);
-        c1.push(vn6);
-        let _7 = scope['beer'].name;
-        if (_7 != null) {
-            c6.push({text: _7});
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['beer'].id;
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('li', p7, c7);
+        c1.push(vn7);
+        let _8 = subScope_6['beer'].name;
+        if (_8 != null) {
+            c7.push({text: _8});
         }
     }
     scope = _origScope5;
@@ -2267,16 +2280,17 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
         scope.action_index = i1
         scope.action = _3[i1]
         scope.action_value = _4[i1]
-        let key1 = scope['action_index'];
-        let c6 = [], p6 = {key:\`\${key1}_6\`};
-        let vn6 = h('li', p6, c6);
-        c1.push(vn6);
-        let c7 = [], p7 = {key:\`\${key1}_7\`,on:{}};
-        let vn7 = h('a', p7, c7);
-        c6.push(vn7);
-        let args8 = [scope['action']];
-        p7.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['activate'](...args8, e);};
-        c7.push({text: \`link\`});
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['action_index'];
+        let c7 = [], p7 = {key:\`\${key1}_7\`};
+        let vn7 = h('li', p7, c7);
+        c1.push(vn7);
+        let c8 = [], p8 = {key:\`\${key1}_8\`,on:{}};
+        let vn8 = h('a', p8, c8);
+        c7.push(vn8);
+        let args9 = [subScope_6['action']];
+        p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['activate'](...args9, e);};
+        c8.push({text: \`link\`});
     }
     scope = _origScope5;
     return vn1;
@@ -2524,19 +2538,20 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
         scope.project_index = i1
         scope.project = _3[i1]
         scope.project_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         {
-            let key1 = scope['project'];
-            let _6 = '#';
-            let c7 = [], p7 = {key:\`\${key1}_7\`,attrs:{href: _6},on:{}};
-            let vn7 = h('a', p7, c7);
-            c1.push(vn7);
-            let args8 = [scope['project'].id];
-            p7.on['click'] = function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();utils.getComponent(context)['onEdit'](...args8, e);};
-            c7.push({text: \` Edit \`});
-            let _9 = scope['project'].name;
-            if (_9 != null) {
-                c7.push({text: _9});
+            let key1 = subScope_6['project'];
+            let _7 = '#';
+            let c8 = [], p8 = {key:\`\${key1}_8\`,attrs:{href: _7},on:{}};
+            let vn8 = h('a', p8, c8);
+            c1.push(vn8);
+            let args9 = [subScope_6['project'].id];
+            p8.on['click'] = function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();utils.getComponent(context)['onEdit'](...args9, e);};
+            c8.push({text: \` Edit \`});
+            let _10 = subScope_6['project'].name;
+            if (_10 != null) {
+                c8.push({text: _10});
             }
         }
     }
@@ -2770,24 +2785,25 @@ exports[`t-ref refs in a loop 1`] = `
         scope.item_index = i1
         scope.item = _3[i1]
         scope.item_value = _4[i1]
+        const subScope_6 = Object.assign(Object.create(context), scope);
         let key1 = i1;
         {
-            let key1 = scope['item'];
-            let c6 = [], p6 = {key:\`\${key1}_6\`};
-            let vn6 = h('div', p6, c6);
-            c1.push(vn6);
-            const ref7 = (scope['item']);
-            p6.hook = {
+            let key1 = subScope_6['item'];
+            let c7 = [], p7 = {key:\`\${key1}_7\`};
+            let vn7 = h('div', p7, c7);
+            c1.push(vn7);
+            const ref8 = (subScope_6['item']);
+            p7.hook = {
               create: (_, n) => {
-                context.__owl__.refs[ref7] = n.elm;
+                context.__owl__.refs[ref8] = n.elm;
               },
               destroy: () => {
-                delete context.__owl__.refs[ref7];
+                delete context.__owl__.refs[ref8];
               },
             };
-            let _8 = scope['item'];
-            if (_8 != null) {
-                c6.push({text: _8});
+            let _9 = subScope_6['item'];
+            if (_9 != null) {
+                c7.push({text: _9});
             }
         }
     }
@@ -3011,18 +3027,19 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         scope.elem_index = i1
         scope.elem = _3[i1]
         scope.elem_value = _4[i1]
-        let key1 = scope['elem_index'];
-        let c6 = [], p6 = {key:\`\${key1}_6\`};
-        let vn6 = h('div', p6, c6);
-        c1.push(vn6);
+        const subScope_6 = Object.assign(Object.create(context), scope);
+        let key1 = subScope_6['elem_index'];
         let c7 = [], p7 = {key:\`\${key1}_7\`};
-        let vn7 = h('span', p7, c7);
-        c6.push(vn7);
-        c7.push({text: \`v\`});
+        let vn7 = h('div', p7, c7);
+        c1.push(vn7);
+        let c8 = [], p8 = {key:\`\${key1}_8\`};
+        let vn8 = h('span', p8, c8);
+        c7.push(vn8);
+        c8.push({text: \`v\`});
         if (scope.v != null) {
-            c7.push({text: scope.v});
+            c8.push({text: scope.v});
         }
-        scope.v = scope['elem'];
+        scope.v = subScope_6['elem'];
     }
     scope = _origScope5;
     return vn1;

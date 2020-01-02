@@ -17,6 +17,7 @@ export class CompilationContext {
   rootContext: CompilationContext;
   shouldDefineParent: boolean = false;
   shouldDefineScope: boolean = false;
+  protectedScopeNumber: number = 0;
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
   shouldDefineRefs: boolean = false;
@@ -173,14 +174,17 @@ export class CompilationContext {
     let r = s.replace(/\{\{.*?\}\}/g, s => "${" + this.formatExpression(s.slice(2, -2)) + "}");
     return "`" + r + "`";
   }
-  startProtectScope(): number {
+  startProtectScope(codeBlock?: boolean): number {
     const protectID = this.generateID();
+    this.rootContext.protectedScopeNumber++;
     this.rootContext.shouldDefineScope = true;
+    const scopeExpr = codeBlock ? `Object.create(scope);` : `Object.assign(Object.create(context), scope);`;
     this.addLine(`let _origScope${protectID} = scope;`);
-    this.addLine(`scope = Object.assign(Object.create(context), scope);`);
+    this.addLine(`scope = ${scopeExpr}`);
     return protectID;
   }
   stopProtectScope(protectID: number) {
+    this.rootContext.protectedScopeNumber--;
     this.addLine(`scope = _origScope${protectID};`);
   }
 }

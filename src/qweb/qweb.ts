@@ -86,6 +86,10 @@ interface Utils {
   [key: string]: any;
 }
 
+function isComponent(obj) {
+  return obj && obj.hasOwnProperty("__owl__");
+}
+
 const UTILS: Utils = {
   zero: Symbol("zero"),
   toObj(expr) {
@@ -122,8 +126,19 @@ const UTILS: Utils = {
       .join("");
   },
   getComponent(obj) {
-    while (obj && !obj.hasOwnProperty("__owl__")) {
+    while (obj && !isComponent(obj)) {
       obj = obj.__proto__;
+    }
+    return obj;
+  },
+  getScope(obj, property: string) {
+    const obj0 = obj;
+    while (obj && !obj.hasOwnProperty(property)) {
+      const newObj = obj.__proto__;
+      if (!newObj || isComponent(newObj)) {
+        return obj0;
+      }
+      obj = newObj;
     }
     return obj;
   }

@@ -421,7 +421,7 @@ exports[`foreach does not pollute the rendering context 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -456,7 +456,7 @@ exports[`foreach iterate on items (on a element node) 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -494,7 +494,7 @@ exports[`foreach iterate on items 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -541,7 +541,7 @@ exports[`foreach iterate, dict param 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -588,7 +588,7 @@ exports[`foreach iterate, position 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.elem_first = i1 === 0
         scope.elem_last = i1 === _length3 - 1
@@ -632,7 +632,7 @@ exports[`foreach t-foreach in t-forach 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.number_first = i1 === 0
         scope.number_last = i1 === _length3 - 1
@@ -649,7 +649,7 @@ exports[`foreach t-foreach in t-forach 1`] = `
         }
         let _length7 = _7.length;
         let _origScope9 = scope;
-        scope = Object.assign(Object.create(context), scope);
+        scope = Object.create(scope);
         for (let i2 = 0; i2 < _length7; i2++) {
             scope.letter_first = i2 === 0
             scope.letter_last = i2 === _length7 - 1
@@ -692,7 +692,7 @@ exports[`foreach warn if no key in some case 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -757,7 +757,7 @@ exports[`misc global 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.value_first = i1 === 0
         scope.value_last = i1 === _length3 - 1
@@ -782,7 +782,7 @@ exports[`misc global 1`] = `
                     scope = Object.assign(Object.create(context), scope);
                     {
                         let c__0 = [];
-                        scope.foo = 'aaa';
+                        utils.getScope(scope, 'foo').foo = 'aaa';
                         scope[utils.zero] = c__0;
                     }
                     let k14 = \`__14__\${key1}__\`;
@@ -791,7 +791,7 @@ exports[`misc global 1`] = `
                 }
                 let k15 = \`__15__\${key1}__\`;
                 this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k15}));
-                scope.foo = 'bbb';
+                utils.getScope(scope, 'foo').foo = 'bbb';
                 let k16 = \`__16__\${key1}__\`;
                 this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k16}));
                 scope[utils.zero] = c__0;
@@ -1241,7 +1241,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            scope.node = scope['root'];
+            utils.getScope(scope, 'node').node = scope['root'];
             scope[utils.zero] = c__0;
         }
         this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
@@ -1279,7 +1279,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     }
     let _length6 = _6.length;
     let _origScope8 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length6; i1++) {
         scope.subtree_first = i1 === 0
         scope.subtree_last = i1 === _length6 - 1
@@ -1292,7 +1292,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
-                scope.node = scope['subtree'];
+                utils.getScope(scope, 'node').node = scope['subtree'];
                 scope[utils.zero] = c__0;
             }
             let k10 = \`__10__\${key0}__\${key1}__\`;
@@ -1318,7 +1318,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            scope.node = scope['root'];
+            utils.getScope(scope, 'node').node = scope['root'];
             scope[utils.zero] = c__0;
         }
         this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
@@ -1356,7 +1356,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     }
     let _length6 = _6.length;
     let _origScope8 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length6; i1++) {
         scope.subtree_first = i1 === 0
         scope.subtree_last = i1 === _length6 - 1
@@ -1369,7 +1369,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
-                scope.node = scope['subtree'];
+                utils.getScope(scope, 'node').node = scope['subtree'];
                 scope[utils.zero] = c__0;
             }
             let k10 = \`__10__\${key0}__\${key1}__\`;
@@ -1395,7 +1395,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            scope.foo = 42;
+            utils.getScope(scope, 'foo').foo = 42;
             scope[utils.zero] = c__0;
         }
         this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
@@ -1456,7 +1456,7 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.v_first = i1 === 0
         scope.v_last = i1 === _length3 - 1
@@ -1464,13 +1464,13 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
         scope.v = _3[i1]
         scope.v_value = _4[i1]
         let key1 = i1;
-        scope.val = scope['v'].val;
+        utils.getScope(scope, 'val').val = scope['v'].val;
         {
             let _origScope8 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
-                scope.val3 = scope.val*3;
+                utils.getScope(scope, 'val3').val3 = scope.val*3;
                 scope[utils.zero] = c__0;
             }
             let k9 = \`__9__\${key1}__\`;
@@ -1517,7 +1517,7 @@ exports[`t-call (template calling t-call, conditional and t-set in t-call body 1
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
-                scope.v = 'success';
+                utils.getScope(scope, 'v').v = 'success';
                 scope[utils.zero] = c__0;
             }
             this.subTemplates['callee2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
@@ -1580,7 +1580,7 @@ exports[`t-call (template calling with unused setbody 1`] = `
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            scope.qux = 3;
+            utils.getScope(scope, 'qux').qux = 3;
             scope[utils.zero] = c__0;
         }
         result = []
@@ -1631,7 +1631,7 @@ exports[`t-call (template calling with used set body 1`] = `
         scope = Object.assign(Object.create(context), scope);
         {
             let c__0 = [];
-            scope.foo = 'ok';
+            utils.getScope(scope, 'foo').foo = 'ok';
             scope[utils.zero] = c__0;
         }
         this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
@@ -2156,7 +2156,7 @@ exports[`t-key t-key directive in a list 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.beer_first = i1 === 0
         scope.beer_last = i1 === _length3 - 1
@@ -2260,7 +2260,7 @@ exports[`t-on can bind handlers with loop variable as argument 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.action_first = i1 === 0
         scope.action_last = i1 === _length3 - 1
@@ -2517,7 +2517,7 @@ exports[`t-on t-on with prevent modifier in t-foreach 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.project_first = i1 === 0
         scope.project_last = i1 === _length3 - 1
@@ -2763,7 +2763,7 @@ exports[`t-ref refs in a loop 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -2990,6 +2990,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
+    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
@@ -3004,7 +3005,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.elem_first = i1 === 0
         scope.elem_last = i1 === _length3 - 1
@@ -3022,7 +3023,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
         if (scope.v != null) {
             c7.push({text: scope.v});
         }
-        scope.v = scope['elem'];
+        utils.getScope(scope, 'v').v = scope['elem'];
     }
     scope = _origScope5;
     return vn1;

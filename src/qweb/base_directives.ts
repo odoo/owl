@@ -128,7 +128,12 @@ QWeb.addDirective({
     qwebvar.expr = `scope.${variable}`;
     if (value) {
       const formattedValue = ctx.formatExpression(value);
-      ctx.addLine(`${qwebvar.expr} = ${formattedValue};`);
+      let scopeExpr = `scope`;
+      if (ctx.protectedScopeNumber) {
+        ctx.rootContext.shouldDefineUtils = true;
+        scopeExpr = `utils.getScope(scope, '${variable}')`;
+      }
+      ctx.addLine(`${scopeExpr}.${variable} = ${formattedValue};`);
       qwebvar.value = formattedValue;
     }
 
@@ -313,7 +318,7 @@ QWeb.addDirective({
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
     ctx.closeIf();
     ctx.addLine(`let _length${keysID} = _${keysID}.length;`);
-    let varsID = ctx.startProtectScope();
+    let varsID = ctx.startProtectScope(true);
     const loopVar = `i${ctx.loopNumber}`;
     ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);
     ctx.indent();

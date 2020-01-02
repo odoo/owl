@@ -5,7 +5,9 @@
   "main": "dist/owl/index.js",
   "types": "dist/owl/index.d.ts",
   "prepublish": "npm run build",
-  "files": ["dist/owl/"],
+  "files": [
+    "dist/owl/"
+  ],
   "engines": {
     "node": ">=10.15.3"
   },

@@ -263,7 +263,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
     }
     let _length4 = _4.length;
     let _origScope6 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length4; i1++) {
         scope.user_first = i1 === 0
         scope.user_last = i1 === _length4 - 1
@@ -360,7 +360,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
     }
     let _length4 = _4.length;
     let _origScope6 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length4; i1++) {
         scope.user_first = i1 === 0
         scope.user_last = i1 === _length4 - 1
@@ -371,7 +371,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
         let c7 = [], p7 = {key:\`\${key1}_7\`};
         let vn7 = h('li', p7, c7);
         c2.push(vn7);
-        scope.userdescr = 'User '+scope['user'].name;
+        utils.getScope(scope, 'userdescr').userdescr = 'User '+scope['user'].name;
         // Component 'Link'
         let k9 = \`__9__\${key1}__\`;
         let w8 = k9 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k9]] : false;
@@ -427,7 +427,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    scope.userdescr = 'User '+scope['state'].user.name;
+    utils.getScope(scope, 'userdescr').userdescr = 'User '+scope['state'].user.name;
     // Component 'Link'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {to:'/user/'+scope['state'].user.id};

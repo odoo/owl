@@ -58,7 +58,7 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.section_first = i1 === 0
         scope.section_last = i1 === _length3 - 1
@@ -75,7 +75,7 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
         }
         let _length7 = _7.length;
         let _origScope9 = scope;
-        scope = Object.assign(Object.create(context), scope);
+        scope = Object.create(scope);
         for (let i2 = 0; i2 < _length7; i2++) {
             scope.blip_first = i2 === 0
             scope.blip_last = i2 === _length7 - 1
@@ -432,7 +432,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.number_first = i1 === 0
         scope.number_last = i1 === _length3 - 1
@@ -1017,6 +1017,54 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
 }"
 `;
 
+exports[`other directives with t-component t-set outside modified in t-foreach 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    utils.getScope(scope, 'iter').iter = 0;
+    let _2 = scope['state'].values;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.create(scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.val_first = i1 === 0
+        scope.val_last = i1 === _length3 - 1
+        scope.val_index = i1
+        scope.val = _3[i1]
+        scope.val_value = _4[i1]
+        let key1 = scope['val'];
+        let c6 = [], p6 = {key:\`\${key1}_6\`};
+        let vn6 = h('p', p6, c6);
+        c1.push(vn6);
+        c6.push({text: \`InLoop: \`});
+        if (scope.iter != null) {
+            c6.push({text: scope.iter});
+        }
+        utils.getScope(scope, 'iter').iter = scope.iter+1;
+    }
+    scope = _origScope5;
+    let c7 = [], p7 = {key:7};
+    let vn7 = h('p', p7, c7);
+    c1.push(vn7);
+    c7.push({text: \`EndLoop: \`});
+    if (scope.iter != null) {
+        c7.push({text: scope.iter});
+    }
+    return vn1;
+}"
+`;
+
 exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = `
 "function anonymous(context, extra
 ) {
@@ -1093,7 +1141,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.item_first = i1 === 0
         scope.item_last = i1 === _length3 - 1
@@ -1342,7 +1390,7 @@ exports[`t-model directive in a t-foreach 1`] = `
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
-    scope = Object.assign(Object.create(context), scope);
+    scope = Object.create(scope);
     for (let i1 = 0; i1 < _length3; i1++) {
         scope.thing_first = i1 === 0
         scope.thing_last = i1 === _length3 - 1

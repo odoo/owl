@@ -126,6 +126,13 @@ const UTILS: Utils = {
       obj = obj.__proto__;
     }
     return obj;
+  },
+  getScope(obj, str: string) {
+    const obj0 = obj;
+    while (obj && !obj.hasOwnProperty(str)) {
+      obj = obj.__proto__;
+    }
+    return obj || obj0;
   }
 };
 

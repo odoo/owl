@@ -118,24 +118,25 @@ QWeb.addDirective({
   priority: 60,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldDefineScope = true;
+    ctx.rootContext.shouldDefineUtils = true;
+    const hasBody = node.hasChildNodes();
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
-    ctx.variables[variable] = ctx.variables[variable] || ({} as QWebVar);
-    let qwebvar = ctx.variables[variable];
-    const hasBody = node.hasChildNodes();
-
-    qwebvar.id = variable;
+    let qwebvar = ctx.variables[variable] || ({} as QWebVar);
+    ctx.variables[variable] = qwebvar;
     qwebvar.expr = `scope.${variable}`;
+    qwebvar.id = variable;
+    
     if (value) {
       const formattedValue = ctx.formatExpression(value);
-      ctx.addLine(`${qwebvar.expr} = ${formattedValue};`);
+      ctx.addLine(`utils.getScope(scope, '${variable}').${variable} = ${formattedValue};`);
       qwebvar.value = formattedValue;
     }
 
     if (hasBody) {
       ctx.rootContext.shouldDefineUtils = true;
       if (value) {
-        ctx.addIf(`!(${qwebvar.expr})`);
+        ctx.addIf(`!(scope.${qwebvar.id})`);
       }
       const tempParentNodeID = ctx.generateID();
       const _parentNode = ctx.parentNode;
@@ -148,7 +149,7 @@ QWeb.addDirective({
       }
       qweb._compileNode(nodeCopy, ctx);
 
-      ctx.addLine(`${qwebvar.expr} = c${tempParentNodeID}`);
+      ctx.addLine(`scope.${qwebvar.id} = c${tempParentNodeID}`);
       qwebvar.value = `c${tempParentNodeID}`;
       qwebvar.hasBody = true;
 

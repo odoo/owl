@@ -2670,6 +2670,47 @@ describe("other directives with t-component", () => {
     await nextTick(); // wait for changes triggered in mounted to be applied
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
+
+  test("t-set outside modified in t-foreach", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-foreach="state.values" t-as="val" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="iter + 1"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>`;
+
+      state = useState({values: ['a', 'b']});
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 2</p></div>");
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test.skip("t-set outside modified in t-foreach increment operator", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-foreach="state.values" t-as="val" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="iter++"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>`;
+
+      state = useState({values: ['a', 'b']});
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>Inloop: 0</p><p>Inloop: 1</p><p>EndLoop: 2</p></div>");
+  });
 });
 
 describe("random stuff/miscellaneous", () => {

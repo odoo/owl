@@ -2671,7 +2671,7 @@ describe("other directives with t-component", () => {
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 
-  test("t-set outside modified in t-foreach", async () => {
+  test.only("t-set outside modified in t-foreach", async () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`
       <div>
@@ -2691,7 +2691,7 @@ describe("other directives with t-component", () => {
     expect(fixture.innerHTML).toBe("<div><p>Inloop: 0</p><p>Inloop: 1</p><p>EndLoop: 2<p></div>");
   });
 
-  test("t-set outside modified in t-foreach increment operator", async () => {
+  test.only("t-set outside modified in t-foreach increment operator", async () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`
       <div>

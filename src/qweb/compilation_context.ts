@@ -177,6 +177,10 @@ export class CompilationContext {
     const protectID = this.generateID();
     this.rootContext.shouldDefineScope = true;
     this.addLine(`let _origScope${protectID} = scope;`);
+    this.addLine(`let _origScope${protectID} = scope;`);
+    // dict of origscopes
+    // export protectID in compiled string form
+    // fetch in subsequent code the relevant scope
     this.addLine(`scope = Object.assign(Object.create(context), scope);`);
     return protectID;
   }

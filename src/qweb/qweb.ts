@@ -129,6 +129,9 @@ const UTILS: Utils = {
     while (obj && !obj.hasOwnProperty(str)) {
       obj = obj.__proto__;
     }
+    if (obj && str !== "__owl__" && obj.hasOwnProperty("__owl__")) {
+      return obj0;
+    }
     return obj || obj0;
   }
 };

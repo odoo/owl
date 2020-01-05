@@ -2692,6 +2692,25 @@ describe("other directives with t-component", () => {
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
+  test("t-set can't alter component", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <p><t t-esc="iter"/></p>
+        <t t-set="iter" t-value="5"/>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+
+      iter = 1;
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>1</p><p>5</p></div>");
+    expect(widget.iter).toBe(1);
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
   test.skip("t-set outside modified in t-foreach increment operator", async () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`

@@ -1017,6 +1017,33 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
 }"
 `;
 
+exports[`other directives with t-component t-set can't alter component 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('p', p2, c2);
+    c1.push(vn2);
+    let _3 = scope['iter'];
+    if (_3 != null) {
+        c2.push({text: _3});
+    }
+    utils.getScope(scope, 'iter').iter = 5;
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('p', p4, c4);
+    c1.push(vn4);
+    if (scope.iter != null) {
+        c4.push({text: scope.iter});
+    }
+    return vn1;
+}"
+`;
+
 exports[`other directives with t-component t-set outside modified in t-foreach 1`] = `
 "function anonymous(context, extra
 ) {

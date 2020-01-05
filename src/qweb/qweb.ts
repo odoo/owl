@@ -122,10 +122,7 @@ const UTILS: Utils = {
       .join("");
   },
   getComponent(obj) {
-    while (obj && !obj.hasOwnProperty("__owl__")) {
-      obj = obj.__proto__;
-    }
-    return obj;
+    return this.getScope(obj, "__owl__");
   },
   getScope(obj, str: string) {
     const obj0 = obj;

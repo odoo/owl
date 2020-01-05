@@ -136,7 +136,7 @@ QWeb.addDirective({
     if (hasBody) {
       ctx.rootContext.shouldDefineUtils = true;
       if (value) {
-        ctx.addIf(`!(scope.${qwebvar.id})`);
+        ctx.addIf(`!(${qwebvar.expr})`);
       }
       const tempParentNodeID = ctx.generateID();
       const _parentNode = ctx.parentNode;
@@ -149,7 +149,7 @@ QWeb.addDirective({
       }
       qweb._compileNode(nodeCopy, ctx);
 
-      ctx.addLine(`scope.${qwebvar.id} = c${tempParentNodeID}`);
+      ctx.addLine(`${qwebvar.expr} = c${tempParentNodeID}`);
       qwebvar.value = `c${tempParentNodeID}`;
       qwebvar.hasBody = true;
 

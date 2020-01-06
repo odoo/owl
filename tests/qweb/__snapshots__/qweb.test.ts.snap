@@ -179,7 +179,7 @@ exports[`attributes from object variables set previously 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'o').o = {a:'b'};
+    scope.o = {a:'b'};
     let _2 = utils.toObj(scope.o.a);
     let c3 = [], p3 = {key:3,class:_2};
     let vn3 = h('span', p3, c3);
@@ -197,7 +197,7 @@ exports[`attributes from variables set previously 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'abc').abc = 'def';
+    scope.abc = 'def';
     let _2 = utils.toObj(scope.abc);
     let c3 = [], p3 = {key:3,class:_2};
     let vn3 = h('span', p3, c3);
@@ -394,12 +394,11 @@ exports[`debugging t-log 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'foo').foo = 42;
+    scope.foo = 42;
     console.log(scope.foo+3)
     return vn1;
 }"
@@ -1179,7 +1178,7 @@ exports[`t-call (template calling inherit context 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'foo').foo = 1;
+    scope.foo = 1;
     this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
     return vn1;
 }"
@@ -1493,7 +1492,7 @@ exports[`t-call (template calling t-call with t-set inside and outside. 2 1`] = 
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('p', p1, c1);
-    utils.getScope(scope, 'w').w = 'fromwrapper';
+    scope.w = 'fromwrapper';
     this.subTemplates['main'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
     return vn1;
 }"
@@ -1508,7 +1507,7 @@ exports[`t-call (template calling t-call, conditional and t-set in t-call body 1
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v1').v1 = 'elif';
+    scope.v1 = 'elif';
     if (scope.v1==='if') {
         this.subTemplates['callee1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
     }
@@ -2058,13 +2057,12 @@ exports[`t-if t-set, then t-elif, part 3 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'y').y = false;
-    utils.getScope(scope, 'x').x = scope.y;
+    scope.y = false;
+    scope.x = scope.y;
     if (scope.x) {
         let c2 = [], p2 = {key:2};
         let vn2 = h('span', p2, c2);
@@ -2085,12 +2083,11 @@ exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'title').title = 'test';
+    scope.title = 'test';
     if (scope.title) {
         if (scope.title != null) {
             c1.push({text: scope.title});
@@ -2104,13 +2101,12 @@ exports[`t-if t-set, then t-if, part 2 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'y').y = true;
-    utils.getScope(scope, 'x').x = scope.y;
+    scope.y = true;
+    scope.x = scope.y;
     if (scope.x) {
         let c2 = [], p2 = {key:2};
         let vn2 = h('span', p2, c2);
@@ -2804,12 +2800,11 @@ exports[`t-set evaluate value expression 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'value').value = 1+2;
+    scope.value = 1+2;
     if (scope.value != null) {
         c1.push({text: scope.value});
     }
@@ -2821,12 +2816,11 @@ exports[`t-set evaluate value expression, part 2 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'value').value = scope['somevariable']+2;
+    scope.value = scope['somevariable']+2;
     if (scope.value != null) {
         c1.push({text: scope.value});
     }
@@ -2838,12 +2832,11 @@ exports[`t-set set from attribute literal 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'value').value = 'ok';
+    scope.value = 'ok';
     if (scope.value != null) {
         c1.push({text: scope.value});
     }
@@ -2855,12 +2848,11 @@ exports[`t-set set from attribute lookup 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'stuff').stuff = scope['value'];
+    scope.stuff = scope['value'];
     if (scope.stuff != null) {
         c1.push({text: scope.stuff});
     }
@@ -2921,7 +2913,6 @@ exports[`t-set set from empty body 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
@@ -2937,12 +2928,11 @@ exports[`t-set t-set and t-if 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v').v = scope['value'];
+    scope.v = scope['value'];
     if (scope.v==='ok') {
         c1.push({text: \`grimbergen\`});
     }
@@ -2959,7 +2949,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v1').v1 = 'before';
+    scope.v1 = 'before';
     let c2 = new utils.VDomArray();
     let c3 = [], p3 = {key:3};
     let vn3 = h('span', p3, c3);
@@ -2968,7 +2958,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
         c3.push({text: scope.v1});
     }
     scope.v2 = c2
-    utils.getScope(scope, 'v1').v1 = 'after';
+    scope.v1 = 'after';
     if (scope.v2 != null) {
         const vnodeArray = scope.v2 instanceof utils.VDomArray ? scope.v2 : utils.htmlToVDOM(scope.v2);
         c1.push(...vnodeArray);
@@ -2981,12 +2971,11 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v').v = scope['value']+' artois';
+    scope.v = scope['value']+' artois';
     if (scope.v != null) {
         c1.push({text: scope.v});
     }
@@ -3006,7 +2995,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v').v = 1;
+    scope.v = 1;
     let _2 = scope['list'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
@@ -3077,9 +3066,9 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v3').v3 = false;
-    utils.getScope(scope, 'v1').v1 = 'before';
-    utils.getScope(scope, 'v2').v2 = scope.v3;
+    scope.v3 = false;
+    scope.v1 = 'before';
+    scope.v2 = scope.v3;
     if (!(scope.v2)) {
         let c2 = new utils.VDomArray();
         let c3 = [], p3 = {key:3};
@@ -3090,8 +3079,8 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
         }
         scope.v2 = c2
     }
-    utils.getScope(scope, 'v1').v1 = 'after';
-    utils.getScope(scope, 'v3').v3 = true;
+    scope.v1 = 'after';
+    scope.v3 = true;
     if (scope.v2 != null) {
         const vnodeArray = scope.v2 instanceof utils.VDomArray ? scope.v2 : utils.htmlToVDOM(scope.v2);
         c1.push(...vnodeArray);
@@ -3109,9 +3098,9 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'v3').v3 = 'Truthy';
-    utils.getScope(scope, 'v1').v1 = 'before';
-    utils.getScope(scope, 'v2').v2 = scope.v3;
+    scope.v3 = 'Truthy';
+    scope.v1 = 'before';
+    scope.v2 = scope.v3;
     if (!(scope.v2)) {
         let c2 = new utils.VDomArray();
         let c3 = [], p3 = {key:3};
@@ -3122,8 +3111,8 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
         }
         scope.v2 = c2
     }
-    utils.getScope(scope, 'v1').v1 = 'after';
-    utils.getScope(scope, 'v3').v3 = false;
+    scope.v1 = 'after';
+    scope.v3 = false;
     if (scope.v2 != null) {
         const vnodeArray = scope.v2 instanceof utils.VDomArray ? scope.v2 : utils.htmlToVDOM(scope.v2);
         c1.push(...vnodeArray);
@@ -3147,7 +3136,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
         scope.ourvar = c2
     }
     else {
-        utils.getScope(scope, 'ourvar').ourvar = 0;
+        scope.ourvar = 0;
     }
     if (scope.ourvar != null) {
         let _origScope3 = scope;
@@ -3175,7 +3164,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 2`] = `
         scope.ourvar = c2
     }
     else {
-        utils.getScope(scope, 'ourvar').ourvar = 0;
+        scope.ourvar = 0;
     }
     if (scope.ourvar != null) {
         let _origScope3 = scope;
@@ -3198,7 +3187,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (scope['flag']) {
-        utils.getScope(scope, 'ourvar').ourvar = 1;
+        scope.ourvar = 1;
     }
     else {
         let c2 = new utils.VDomArray();
@@ -3226,7 +3215,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 2`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (scope['flag']) {
-        utils.getScope(scope, 'ourvar').ourvar = 1;
+        scope.ourvar = 1;
     }
     else {
         let c2 = new utils.VDomArray();
@@ -3253,7 +3242,7 @@ exports[`t-set value priority 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'value').value = 1;
+    scope.value = 1;
     if (!(scope.value)) {
         let c2 = new utils.VDomArray();
         c2.push({text: \`2\`});

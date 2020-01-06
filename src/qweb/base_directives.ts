@@ -118,7 +118,6 @@ QWeb.addDirective({
   priority: 60,
   atNodeEncounter({ node, qweb, ctx }): boolean {
     ctx.rootContext.shouldDefineScope = true;
-    ctx.rootContext.shouldDefineUtils = true;
     const hasBody = node.hasChildNodes();
     const variable = node.getAttribute("t-set")!;
     let value = node.getAttribute("t-value")!;
@@ -129,7 +128,12 @@ QWeb.addDirective({
     
     if (value) {
       const formattedValue = ctx.formatExpression(value);
-      ctx.addLine(`utils.getScope(scope, '${variable}').${variable} = ${formattedValue};`);
+      let scopeExpr = `scope`;
+      if (ctx.protectedScopeSet.size) {
+        ctx.rootContext.shouldDefineUtils = true;
+        scopeExpr = `utils.getScope(scope, '${variable}')`;
+      }
+      ctx.addLine(`${scopeExpr}.${variable} = ${formattedValue};`);
       qwebvar.value = formattedValue;
     }
 

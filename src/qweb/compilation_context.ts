@@ -17,6 +17,7 @@ export class CompilationContext {
   rootContext: CompilationContext;
   shouldDefineParent: boolean = false;
   shouldDefineScope: boolean = false;
+  protectedScopeSet: Set<number> = new Set();
   shouldDefineQWeb: boolean = false;
   shouldDefineUtils: boolean = false;
   shouldDefineRefs: boolean = false;
@@ -175,6 +176,7 @@ export class CompilationContext {
   }
   startProtectScope(codeBlock?: boolean): number {
     const protectID = this.generateID();
+    this.rootContext.protectedScopeSet.add(protectID);
     this.rootContext.shouldDefineScope = true;
     const scopeExpr = codeBlock ? `Object.create(scope);` : `Object.assign(Object.create(context), scope);`;
     this.addLine(`let _origScope${protectID} = scope;`);
@@ -182,6 +184,7 @@ export class CompilationContext {
     return protectID;
   }
   stopProtectScope(protectID: number) {
+    this.rootContext.protectedScopeSet.delete(protectID);
     this.addLine(`scope = _origScope${protectID};`);
   }
 }

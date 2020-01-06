@@ -598,7 +598,7 @@ exports[`other directives with t-component slot setted value (with t-set) not ac
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'iter').iter = 'source';
+    scope.iter = 'source';
     let c2 = [], p2 = {key:2};
     let vn2 = h('p', p2, c2);
     c1.push(vn2);
@@ -1073,7 +1073,6 @@ exports[`other directives with t-component t-set can't alter component 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"__template__1\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
@@ -1085,7 +1084,7 @@ exports[`other directives with t-component t-set can't alter component 1`] = `
     if (_3 != null) {
         c2.push({text: _3});
     }
-    utils.getScope(scope, 'iter').iter = 5;
+    scope.iter = 5;
     let c4 = [], p4 = {key:4};
     let vn4 = h('p', p4, c4);
     c1.push(vn4);
@@ -1105,7 +1104,7 @@ exports[`other directives with t-component t-set can't alter from within callee 
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'iter').iter = 'source';
+    scope.iter = 'source';
     let c2 = [], p2 = {key:2};
     let vn2 = h('p', p2, c2);
     c1.push(vn2);
@@ -1132,7 +1131,7 @@ exports[`other directives with t-component t-set can't alter in t-call body 1`] 
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'iter').iter = 'source';
+    scope.iter = 'source';
     let c2 = [], p2 = {key:2};
     let vn2 = h('p', p2, c2);
     c1.push(vn2);
@@ -1171,7 +1170,7 @@ exports[`other directives with t-component t-set not altered by child widget 1`]
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'iter').iter = 'source';
+    scope.iter = 'source';
     let c2 = [], p2 = {key:2};
     let vn2 = h('p', p2, c2);
     c1.push(vn2);
@@ -1220,7 +1219,7 @@ exports[`other directives with t-component t-set outside modified in t-foreach 1
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    utils.getScope(scope, 'iter').iter = 0;
+    scope.iter = 0;
     let _2 = scope['state'].values;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;

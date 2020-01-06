@@ -2711,6 +2711,95 @@ describe("other directives with t-component", () => {
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
+  test("t-set can't alter from within callee", async () => {
+    env.qweb.addTemplate("ChildWidget", `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`);
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="'source'"/>
+        <p><t t-esc="iter"/></p>
+        <t t-call="ChildWidget"/>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>source</p><div>sourcecalled</div><p>source</p></div>");
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-set can't alter in t-call body", async () => {
+    env.qweb.addTemplate("ChildWidget", `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`);
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="'source'"/>
+        <p><t t-esc="iter"/></p>
+        <t t-call="ChildWidget">
+          <t t-set="iter" t-value="'inCall'"/>
+        </t>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>source</p><div>inCallcalled</div><p>source</p></div>");
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("slot setted value (with t-set) not accessible with t-esc", async () => {
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+    }
+    class SomeWidget extends Component<any, any> {
+      static components = { ChildWidget };
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="'source'"/>
+        <p><t t-esc="iter"/></p>
+        <ChildWidget>
+          <t t-set="iter" t-value="'inCall'"/>
+        </ChildWidget>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>source</p><div>called</div><p>source</p></div>");
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-set not altered by child widget", async () => {
+    let child;
+    class ChildWidget extends Component<any, any> {
+      static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+      iter = 'child';
+      constructor() {
+        super(...arguments);
+        child = this;
+      }
+    }
+    class SomeWidget extends Component<any, any> {
+      static components = { ChildWidget };
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="'source'"/>
+        <p><t t-esc="iter"/></p>
+        <ChildWidget/>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>source</p><div>childcalled</div><p>source</p></div>");
+    expect(child.iter).toBe('child');
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
   test.skip("t-set outside modified in t-foreach increment operator", async () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`

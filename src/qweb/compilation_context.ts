@@ -173,11 +173,12 @@ export class CompilationContext {
     let r = s.replace(/\{\{.*?\}\}/g, s => "${" + this.formatExpression(s.slice(2, -2)) + "}");
     return "`" + r + "`";
   }
-  startProtectScope(): number {
+  startProtectScope(codeBlock?: boolean): number {
     const protectID = this.generateID();
     this.rootContext.shouldDefineScope = true;
+    const scopeExpr = codeBlock ? `Object.create(scope);` : `Object.assign(Object.create(context), scope);`;
     this.addLine(`let _origScope${protectID} = scope;`);
-    this.addLine(`scope = Object.create(scope);`);
+    this.addLine(`scope = ${scopeExpr}`);
     return protectID;
   }
   stopProtectScope(protectID: number) {

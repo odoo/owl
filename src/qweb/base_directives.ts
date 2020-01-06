@@ -314,7 +314,7 @@ QWeb.addDirective({
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);
     ctx.closeIf();
     ctx.addLine(`let _length${keysID} = _${keysID}.length;`);
-    let varsID = ctx.startProtectScope();
+    let varsID = ctx.startProtectScope(true);
     const loopVar = `i${ctx.loopNumber}`;
     ctx.addLine(`for (let ${loopVar} = 0; ${loopVar} < _length${keysID}; ${loopVar}++) {`);
     ctx.indent();

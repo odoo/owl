@@ -587,6 +587,58 @@ exports[`dynamic t-props basic use 1`] = `
 }"
 `;
 
+exports[`other directives with t-component slot setted value (with t-set) not accessible with t-esc 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__2\\"
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    utils.getScope(scope, 'iter').iter = 'source';
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('p', p2, c2);
+    c1.push(vn2);
+    if (scope.iter != null) {
+        c2.push({text: scope.iter});
+    }
+    // Component 'ChildWidget'
+    let w3 = '__4__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__4__']] : false;
+    let props3 = {};
+    if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+        w3.destroy();
+        w3 = false;
+    }
+    if (w3) {
+        w3.__updateProps(props3, extra.fiber, Object.assign(Object.create(context), scope));
+        let pvnode = w3.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey3 = \`ChildWidget\`;
+        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['ChildWidget'];
+        if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+        w3 = new W3(parent, props3);
+        parent.__owl__.cmap['__4__'] = w3.__owl__.id;
+        w3.__owl__.slotId = 1;
+        let fiber = w3.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        c1.push(pvnode);
+        w3.__owl__.pvnode = pvnode;
+    }
+    w3.__owl__.parentLastFiberId = extra.fiber.id;
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('p', p5, c5);
+    c1.push(vn5);
+    if (scope.iter != null) {
+        c5.push({text: scope.iter});
+    }
+    return vn1;
+}"
+`;
+
 exports[`other directives with t-component t-on with getter as handler 1`] = `
 "function anonymous(context, extra
 ) {
@@ -1039,6 +1091,121 @@ exports[`other directives with t-component t-set can't alter component 1`] = `
     c1.push(vn4);
     if (scope.iter != null) {
         c4.push({text: scope.iter});
+    }
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-set can't alter from within callee 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    utils.getScope(scope, 'iter').iter = 'source';
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('p', p2, c2);
+    c1.push(vn2);
+    if (scope.iter != null) {
+        c2.push({text: scope.iter});
+    }
+    this.subTemplates['ChildWidget'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('p', p4, c4);
+    c1.push(vn4);
+    if (scope.iter != null) {
+        c4.push({text: scope.iter});
+    }
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-set can't alter in t-call body 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    utils.getScope(scope, 'iter').iter = 'source';
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('p', p2, c2);
+    c1.push(vn2);
+    if (scope.iter != null) {
+        c2.push({text: scope.iter});
+    }
+    {
+        let _origScope4 = scope;
+        scope = Object.assign(Object.create(context), scope);
+        {
+            let c__0 = [];
+            utils.getScope(scope, 'iter').iter = 'inCall';
+            scope[utils.zero] = c__0;
+        }
+        this.subTemplates['ChildWidget'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        scope = _origScope4;
+    }
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('p', p5, c5);
+    c1.push(vn5);
+    if (scope.iter != null) {
+        c5.push({text: scope.iter});
+    }
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-set not altered by child widget 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__2\\"
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    utils.getScope(scope, 'iter').iter = 'source';
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('p', p2, c2);
+    c1.push(vn2);
+    if (scope.iter != null) {
+        c2.push({text: scope.iter});
+    }
+    // Component 'ChildWidget'
+    let w3 = '__4__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__4__']] : false;
+    let props3 = {};
+    if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+        w3.destroy();
+        w3 = false;
+    }
+    if (w3) {
+        w3.__updateProps(props3, extra.fiber, undefined);
+        let pvnode = w3.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey3 = \`ChildWidget\`;
+        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['ChildWidget'];
+        if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+        w3 = new W3(parent, props3);
+        parent.__owl__.cmap['__4__'] = w3.__owl__.id;
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        c1.push(pvnode);
+        w3.__owl__.pvnode = pvnode;
+    }
+    w3.__owl__.parentLastFiberId = extra.fiber.id;
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('p', p5, c5);
+    c1.push(vn5);
+    if (scope.iter != null) {
+        c5.push({text: scope.iter});
     }
     return vn1;
 }"

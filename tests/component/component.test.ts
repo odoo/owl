@@ -2902,6 +2902,90 @@ describe("other directives with t-component", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 1</p></div>");
   });
+
+  test("t-on expression in t-foreach", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <div t-foreach="state.values" t-as="val" t-key="val">
+          <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+          <button t-on-click="otherState.vals.push(val)">Expr</button>
+        </div>
+      </div>`;
+
+      state = useState({values: ['a', 'b']});
+      otherState = {vals: []};
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    console.warn(QWeb.TEMPLATES[SomeWidget.template].fn.toString());
+    expect(fixture.innerHTML).toBe("<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>");
+    expect(widget.otherState.vals).toStrictEqual([]);
+    const buttons = fixture.querySelectorAll('button');
+    buttons[0].click();
+    buttons[1].click();
+    expect(widget.otherState.vals).toStrictEqual(['a', 'b']);
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on expression in t-foreach with t-set", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="bossa" t-value="'nova'"/>
+        <div t-foreach="state.values" t-as="val" t-key="val">
+          <t t-set="bossa" t-value="bossa + '_' + val_index" />
+          <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+          <button t-on-click="otherState.vals.push(val + '_' + bossa)">Expr</button>
+        </div>
+      </div>`;
+
+      state = useState({values: ['a', 'b']});
+      otherState = {vals: []};
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    console.warn(QWeb.TEMPLATES[SomeWidget.template].fn.toString());
+    expect(fixture.innerHTML).toBe("<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>");
+    expect(widget.otherState.vals).toStrictEqual([]);
+    const buttons = fixture.querySelectorAll('button');
+    buttons[0].click();
+    buttons[1].click();
+    expect(widget.otherState.vals).toStrictEqual(['a_nova_0', 'b_nova_0_1']);
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("t-on method call in t-foreach", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <div t-foreach="state.values" t-as="val" t-key="val">
+          <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+          <button t-on-click="addVal(val)">meth call</button>
+        </div>
+      </div>`;
+
+      state = useState({values: ['a', 'b']});
+      otherState = {vals: new Array<string>()};
+
+      addVal(val: string) {
+        this.otherState.vals.push(val);
+      }
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+
+    expect(fixture.innerHTML).toBe("<div><div>0: a<button>meth call</button></div><div>1: b<button>meth call</button></div></div>");
+    expect(widget.otherState.vals).toStrictEqual([]);
+    const buttons = fixture.querySelectorAll('button');
+    buttons[0].click();
+    buttons[1].click();
+    expect(widget.otherState.vals).toStrictEqual(['a', 'b']);
+    expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("random stuff/miscellaneous", () => {

@@ -1,5 +1,6 @@
 import { VNode } from "../vdom/index";
 import { QWeb } from "./qweb";
+import { compileExprToArray , tokenArrayToString } from "./expression_parser";
 
 /**
  * Owl QWeb Extensions
@@ -54,11 +55,11 @@ export function makeHandlerCode(
   const isMethodCall = name.match(FNAMEREGEXP);
 
   // then generate code
+  let argId = ctx.generateID();
   if (isMethodCall) {
     ctx.rootContext.shouldDefineUtils = true;
     const comp = `utils.getComponent(context)`;
     if (args) {
-      let argId = ctx.generateID();
       ctx.addLine(`let args${argId} = [${ctx.formatExpression(args)}];`);
       code = `${comp}['${name}'](...args${argId}, e);`;
       putInCache = false;
@@ -67,8 +68,20 @@ export function makeHandlerCode(
     }
   } else {
     // if we get here, then it is an expression
+    // we need to capture every variable in it
     putInCache = false;
-    code = ctx.formatExpression(value);
+    ctx.rootContext.shouldDefineScope = true;
+    const tokens = compileExprToArray(value, ctx.variables);
+    const doneTokens = new Set();
+    for (let i = 0; i < tokens.length; i++) {
+      const tok = tokens[i];
+      if (tok.varName && !doneTokens.has(tok.varName)) {
+        doneTokens.add(tok.varName);
+        ctx.addLine(`const ${tok.varName}_${argId} = ${tok.value};`)
+        tok.value = `${tok.varName}_${argId}`;
+      }
+    }
+    code = tokenArrayToString(tokens);
   }
   const modCode = mods.map(mod => modcodes[mod]).join("");
   let handler = `function (e) {if (!context.__owl__.isMounted){return}${modCode}${code}}`;

@@ -639,6 +639,160 @@ exports[`other directives with t-component slot setted value (with t-set) not ac
 }"
 `;
 
+exports[`other directives with t-component t-on expression in t-foreach 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].values;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.create(scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.val_first = i1 === 0
+        scope.val_last = i1 === _length3 - 1
+        scope.val_index = i1
+        scope.val = _3[i1]
+        scope.val_value = _4[i1]
+        let key1 = scope['val'];
+        let c6 = [], p6 = {key:\`\${key1}_6\`};
+        let vn6 = h('div', p6, c6);
+        c1.push(vn6);
+        let _7 = scope['val_index'];
+        if (_7 != null) {
+            c6.push({text: _7});
+        }
+        c6.push({text: \`: \`});
+        let _8 = scope['val']+'';
+        if (_8 != null) {
+            c6.push({text: _8});
+        }
+        let c9 = [], p9 = {key:\`\${key1}_9\`,on:{}};
+        let vn9 = h('button', p9, c9);
+        c6.push(vn9);
+        const otherState_10 = scope['otherState'];
+        const val_10 = scope['val'];
+        p9.on['click'] = function (e) {if (!context.__owl__.isMounted){return}otherState_10.vals.push(val_10)};
+        c9.push({text: \`Expr\`});
+    }
+    scope = _origScope5;
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-on expression in t-foreach with t-set 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    scope.bossa = 'nova';
+    let _2 = scope['state'].values;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.create(scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.val_first = i1 === 0
+        scope.val_last = i1 === _length3 - 1
+        scope.val_index = i1
+        scope.val = _3[i1]
+        scope.val_value = _4[i1]
+        let key1 = scope['val'];
+        let c6 = [], p6 = {key:\`\${key1}_6\`};
+        let vn6 = h('div', p6, c6);
+        c1.push(vn6);
+        utils.getScope(scope, 'bossa').bossa = scope.bossa+'_'+scope['val_index'];
+        let _7 = scope['val_index'];
+        if (_7 != null) {
+            c6.push({text: _7});
+        }
+        c6.push({text: \`: \`});
+        let _8 = scope['val']+'';
+        if (_8 != null) {
+            c6.push({text: _8});
+        }
+        let c9 = [], p9 = {key:\`\${key1}_9\`,on:{}};
+        let vn9 = h('button', p9, c9);
+        c6.push(vn9);
+        const otherState_10 = scope['otherState'];
+        const val_10 = scope['val'];
+        const bossa_10 = scope.bossa;
+        p9.on['click'] = function (e) {if (!context.__owl__.isMounted){return}otherState_10.vals.push(val_10+'_'+bossa_10)};
+        c9.push({text: \`Expr\`});
+    }
+    scope = _origScope5;
+    return vn1;
+}"
+`;
+
+exports[`other directives with t-component t-on method call in t-foreach 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'].values;
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.create(scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.val_first = i1 === 0
+        scope.val_last = i1 === _length3 - 1
+        scope.val_index = i1
+        scope.val = _3[i1]
+        scope.val_value = _4[i1]
+        let key1 = scope['val'];
+        let c6 = [], p6 = {key:\`\${key1}_6\`};
+        let vn6 = h('div', p6, c6);
+        c1.push(vn6);
+        let _7 = scope['val_index'];
+        if (_7 != null) {
+            c6.push({text: _7});
+        }
+        c6.push({text: \`: \`});
+        let _8 = scope['val']+'';
+        if (_8 != null) {
+            c6.push({text: _8});
+        }
+        let c9 = [], p9 = {key:\`\${key1}_9\`,on:{}};
+        let vn9 = h('button', p9, c9);
+        c6.push(vn9);
+        let args10 = [scope['val']];
+        p9.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['addVal'](...args10, e);};
+        c9.push({text: \`meth call\`});
+    }
+    scope = _origScope5;
+    return vn1;
+}"
+`;
+
 exports[`other directives with t-component t-on with getter as handler 1`] = `
 "function anonymous(context, extra
 ) {
@@ -853,6 +1007,7 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         c1.push({text: _2});
     }
     // Component 'Child'
+    const state_5 = scope['state'];
     let w3 = '__4__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__4__']] : false;
     let props3 = {};
     if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
@@ -869,7 +1024,7 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
-        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}scope['state'].counter++});}};});
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}state_5.counter++});}};});
         let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
@@ -1387,9 +1542,9 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
     let c2 = [], p2 = {key:\`\${key0}_2\`,on:{}};
     let vn2 = h('p', p2, c2);
     c1.push(vn2);
-    let k3 = \`click__3__\${key0}__\`;
-    extra.handlers[k3] = extra.handlers[k3] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
-    p2.on['click'] = extra.handlers[k3];
+    let k4 = \`click__4__\${key0}__\`;
+    extra.handlers[k4] = extra.handlers[k4] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
+    p2.on['click'] = extra.handlers[k4];
     c2.push({text: \`lucas\`});
 }"
 `;

@@ -66,6 +66,7 @@ interface Token {
   value: string;
   originalValue?: string;
   size?: number;
+  varName?: string;
 }
 
 const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
@@ -234,7 +235,7 @@ export function tokenize(expr: string): Token[] {
  * the arrow operator, then we add the current (or some previous tokens) token to
  * the list of variables so it does not get replaced by a lookup in the context
  */
-export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): string {
+export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar }): Token[] {
   scope = Object.create(scope);
   const tokens = tokenize(expr);
   for (let i = 0; i < tokens.length; i++) {
@@ -269,6 +270,7 @@ export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): st
     }
 
     if (isVar) {
+      token.varName = token.value;
       if (token.value in scope && "id" in scope[token.value]) {
         token.value = scope[token.value].expr!;
       } else {
@@ -277,5 +279,13 @@ export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): st
       }
     }
   }
+  return tokens;
+}
+
+export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): string {
+  return tokenArrayToString(compileExprToArray(expr, scope));
+}
+
+export function tokenArrayToString(tokens: Token[]) {
   return tokens.map(t => t.value).join("");
 }

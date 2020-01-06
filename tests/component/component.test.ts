@@ -2919,7 +2919,6 @@ describe("other directives with t-component", () => {
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
-    console.warn(QWeb.TEMPLATES[SomeWidget.template].fn.toString());
     expect(fixture.innerHTML).toBe("<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>");
     expect(widget.otherState.vals).toStrictEqual([]);
     const buttons = fixture.querySelectorAll('button');
@@ -2947,7 +2946,6 @@ describe("other directives with t-component", () => {
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
-    console.warn(QWeb.TEMPLATES[SomeWidget.template].fn.toString());
     expect(fixture.innerHTML).toBe("<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>");
     expect(widget.otherState.vals).toStrictEqual([]);
     const buttons = fixture.querySelectorAll('button');

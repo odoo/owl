@@ -1542,9 +1542,9 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
     let c2 = [], p2 = {key:\`\${key0}_2\`,on:{}};
     let vn2 = h('p', p2, c2);
     c1.push(vn2);
-    let k4 = \`click__4__\${key0}__\`;
-    extra.handlers[k4] = extra.handlers[k4] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
-    p2.on['click'] = extra.handlers[k4];
+    let k3 = \`click__3__\${key0}__\`;
+    extra.handlers[k3] = extra.handlers[k3] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
+    p2.on['click'] = extra.handlers[k3];
     c2.push({text: \`lucas\`});
 }"
 `;

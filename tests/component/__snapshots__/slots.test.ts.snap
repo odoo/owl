@@ -192,15 +192,15 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     let c8 = [], p8 = {key:8,on:{}};
     let vn8 = h('button', p8, c8);
     c1.push(vn8);
-    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
-    p8.on['click'] = extra.handlers['click__10__'];
-    const ref11 = \`myButton\`;
+    extra.handlers['click__9__'] = extra.handlers['click__9__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
+    p8.on['click'] = extra.handlers['click__9__'];
+    const ref10 = \`myButton\`;
     p8.hook = {
       create: (_, n) => {
-        context.__owl__.refs[ref11] = n.elm;
+        context.__owl__.refs[ref10] = n.elm;
       },
       destroy: () => {
-        delete context.__owl__.refs[ref11];
+        delete context.__owl__.refs[ref10];
       },
     };
     c8.push({text: \`do something\`});
@@ -217,8 +217,8 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
     let c8 = [], p8 = {key:8,on:{}};
     let vn8 = h('button', p8, c8);
     c1.push(vn8);
-    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
-    p8.on['click'] = extra.handlers['click__10__'];
+    extra.handlers['click__9__'] = extra.handlers['click__9__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
+    p8.on['click'] = extra.handlers['click__9__'];
     c8.push({text: \`do something\`});
 }"
 `;

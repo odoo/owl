@@ -2187,8 +2187,8 @@ exports[`t-on can bind event handler 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['add'](e);};
-    p1.on['click'] = extra.handlers['click__3__'];
+    extra.handlers['click__2__'] = extra.handlers['click__2__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['add'](e);};
+    p1.on['click'] = extra.handlers['click__2__'];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2307,10 +2307,10 @@ exports[`t-on can bind two event handlers 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['handleClick'](e);};
-    p1.on['click'] = extra.handlers['click__3__'];
-    extra.handlers['dblclick__5__'] = extra.handlers['dblclick__5__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['handleDblClick'](e);};
-    p1.on['dblclick'] = extra.handlers['dblclick__5__'];
+    extra.handlers['click__2__'] = extra.handlers['click__2__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['handleClick'](e);};
+    p1.on['click'] = extra.handlers['click__2__'];
+    extra.handlers['dblclick__3__'] = extra.handlers['dblclick__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['handleDblClick'](e);};
+    p1.on['dblclick'] = extra.handlers['dblclick__3__'];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2324,8 +2324,8 @@ exports[`t-on handler is bound to proper owner 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1,on:{}};
     let vn1 = h('button', p1, c1);
-    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['add'](e);};
-    p1.on['click'] = extra.handlers['click__3__'];
+    extra.handlers['click__2__'] = extra.handlers['click__2__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['add'](e);};
+    p1.on['click'] = extra.handlers['click__2__'];
     c1.push({text: \`Click\`});
     return vn1;
 }"
@@ -2343,11 +2343,11 @@ exports[`t-on t-on combined with t-esc 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     let vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onClick'](e);};
-    p2.on['click'] = extra.handlers['click__4__'];
-    let _5 = scope['text'];
-    if (_5 != null) {
-        c2.push({text: _5});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let _4 = scope['text'];
+    if (_4 != null) {
+        c2.push({text: _4});
     }
     return vn1;
 }"
@@ -2365,11 +2365,11 @@ exports[`t-on t-on combined with t-raw 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     let vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onClick'](e);};
-    p2.on['click'] = extra.handlers['click__4__'];
-    let _5 = scope['html'];
-    if (_5 != null) {
-        c2.push(...utils.htmlToVDOM(_5));
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let _4 = scope['html'];
+    if (_4 != null) {
+        c2.push(...utils.htmlToVDOM(_4));
     }
     return vn1;
 }"
@@ -2464,12 +2464,12 @@ exports[`t-on t-on with prevent and self modifiers (order matters) 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     let vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();if (e.target !== this.elm) {return}utils.getComponent(context)['onClick'](e);};
-    p2.on['click'] = extra.handlers['click__4__'];
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('span', p5, c5);
-    c2.push(vn5);
-    c5.push({text: \`Button\`});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();if (e.target !== this.elm) {return}utils.getComponent(context)['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('span', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Button\`});
     return vn1;
 }"
 `;
@@ -2485,21 +2485,21 @@ exports[`t-on t-on with prevent and/or stop modifiers 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     let vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();utils.getComponent(context)['onClickPrevented'](e);};
-    p2.on['click'] = extra.handlers['click__4__'];
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();utils.getComponent(context)['onClickPrevented'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
     c2.push({text: \`Button 1\`});
-    let c5 = [], p5 = {key:5,on:{}};
-    let vn5 = h('button', p5, c5);
-    c1.push(vn5);
-    extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}e.stopPropagation();utils.getComponent(context)['onClickStopped'](e);};
-    p5.on['click'] = extra.handlers['click__7__'];
-    c5.push({text: \`Button 2\`});
-    let c8 = [], p8 = {key:8,on:{}};
-    let vn8 = h('button', p8, c8);
-    c1.push(vn8);
-    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();e.stopPropagation();utils.getComponent(context)['onClickPreventedAndStopped'](e);};
-    p8.on['click'] = extra.handlers['click__10__'];
-    c8.push({text: \`Button 3\`});
+    let c4 = [], p4 = {key:4,on:{}};
+    let vn4 = h('button', p4, c4);
+    c1.push(vn4);
+    extra.handlers['click__5__'] = extra.handlers['click__5__'] || function (e) {if (!context.__owl__.isMounted){return}e.stopPropagation();utils.getComponent(context)['onClickStopped'](e);};
+    p4.on['click'] = extra.handlers['click__5__'];
+    c4.push({text: \`Button 2\`});
+    let c6 = [], p6 = {key:6,on:{}};
+    let vn6 = h('button', p6, c6);
+    c1.push(vn6);
+    extra.handlers['click__7__'] = extra.handlers['click__7__'] || function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();e.stopPropagation();utils.getComponent(context)['onClickPreventedAndStopped'](e);};
+    p6.on['click'] = extra.handlers['click__7__'];
+    c6.push({text: \`Button 3\`});
     return vn1;
 }"
 `;
@@ -2561,12 +2561,12 @@ exports[`t-on t-on with self and prevent modifiers (order matters) 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     let vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}e.preventDefault();utils.getComponent(context)['onClick'](e);};
-    p2.on['click'] = extra.handlers['click__4__'];
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('span', p5, c5);
-    c2.push(vn5);
-    c5.push({text: \`Button\`});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}e.preventDefault();utils.getComponent(context)['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('span', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Button\`});
     return vn1;
 }"
 `;
@@ -2582,21 +2582,21 @@ exports[`t-on t-on with self modifier 1`] = `
     let c2 = [], p2 = {key:2,on:{}};
     let vn2 = h('button', p2, c2);
     c1.push(vn2);
-    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onClick'](e);};
-    p2.on['click'] = extra.handlers['click__4__'];
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('span', p5, c5);
-    c2.push(vn5);
-    c5.push({text: \`Button\`});
-    let c6 = [], p6 = {key:6,on:{}};
-    let vn6 = h('button', p6, c6);
-    c1.push(vn6);
-    extra.handlers['click__8__'] = extra.handlers['click__8__'] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}utils.getComponent(context)['onClickSelf'](e);};
-    p6.on['click'] = extra.handlers['click__8__'];
-    let c9 = [], p9 = {key:9};
-    let vn9 = h('span', p9, c9);
-    c6.push(vn9);
-    c9.push({text: \`Button\`});
+    extra.handlers['click__3__'] = extra.handlers['click__3__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onClick'](e);};
+    p2.on['click'] = extra.handlers['click__3__'];
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('span', p4, c4);
+    c2.push(vn4);
+    c4.push({text: \`Button\`});
+    let c5 = [], p5 = {key:5,on:{}};
+    let vn5 = h('button', p5, c5);
+    c1.push(vn5);
+    extra.handlers['click__6__'] = extra.handlers['click__6__'] || function (e) {if (!context.__owl__.isMounted){return}if (e.target !== this.elm) {return}utils.getComponent(context)['onClickSelf'](e);};
+    p5.on['click'] = extra.handlers['click__6__'];
+    let c7 = [], p7 = {key:7};
+    let vn7 = h('span', p7, c7);
+    c5.push(vn7);
+    c7.push({text: \`Button\`});
     return vn1;
 }"
 `;

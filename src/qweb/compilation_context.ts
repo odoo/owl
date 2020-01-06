@@ -1,4 +1,4 @@
-import { compileExpr, QWebVar } from "./expression_parser";
+import { compileExpr , compileExprToArray , tokenArrayToString , QWebVar } from "./expression_parser";
 
 export const INTERP_REGEXP = /\{\{.*?\}\}/g;
 //------------------------------------------------------------------------------
@@ -155,6 +155,21 @@ export class CompilationContext {
   formatExpression(expr: string): string {
     this.rootContext.shouldDefineScope = true;
     return compileExpr(expr, this.variables);
+  }
+  captureExpression(expr: string): string {
+    const argId = this.generateID();
+    this.rootContext.shouldDefineScope = true;
+    const tokens = compileExprToArray(expr, this.variables);
+    const done = new Set();
+    for (let i = 0; i < tokens.length; i++) {
+      const tok = tokens[i];
+      if (tok.varName && !done.has(tok.varName)) {
+        done.add(tok.varName);
+        this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`)
+        tok.value = `${tok.varName}_${argId}`
+      }
+    }
+    return tokenArrayToString(tokens);
   }
 
   /**

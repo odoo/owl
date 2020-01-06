@@ -58,7 +58,7 @@ export function makeHandlerCode(
     ctx.rootContext.shouldDefineUtils = true;
     const comp = `utils.getComponent(context)`;
     if (args) {
-      let argId = ctx.generateID();
+      const argId = ctx.generateID();
       ctx.addLine(`let args${argId} = [${ctx.formatExpression(args)}];`);
       code = `${comp}['${name}'](...args${argId}, e);`;
       putInCache = false;
@@ -67,8 +67,9 @@ export function makeHandlerCode(
     }
   } else {
     // if we get here, then it is an expression
+    // we need to capture every variable in it
     putInCache = false;
-    code = ctx.formatExpression(value);
+    code = ctx.captureExpression(value);
   }
   const modCode = mods.map(mod => modcodes[mod]).join("");
   let handler = `function (e) {if (!context.__owl__.isMounted){return}${modCode}${code}}`;

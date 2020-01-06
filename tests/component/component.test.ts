@@ -2692,6 +2692,71 @@ describe("other directives with t-component", () => {
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
+  test("t-set outside modified in t-if", async () => {
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-set="flag" t-value="state.flag" />
+        <t t-if="flag === 'if'">
+          <t t-set="iter" t-value="2"/>
+        </t>
+        <t t-elif="flag === 'elif'">
+          <t t-set="iter" t-value="3"/>
+        </t>
+        <t t-else="">
+          <t t-set="iter" t-value="4"/>
+        </t>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+
+      state = {flag: 'if'};
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
+    widget.state.flag = 'elif';
+    await widget.render();
+    expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
+    widget.state.flag = 'false';
+    await widget.render();
+    expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
+  });
+
+  test("t-set in t-if", async () => {
+    // Weird that code block within 'if' leaks outside of it
+    // Python does the same   
+    class SomeWidget extends Component<any, any> {
+      static template = xml`
+      <div>
+        <t t-set="flag" t-value="state.flag" />
+        <t t-if="flag === 'if'">
+          <t t-set="iter" t-value="2"/>
+        </t>
+        <t t-elif="flag === 'elif'">
+          <t t-set="iter" t-value="3"/>
+        </t>
+        <t t-else="">
+          <t t-set="iter" t-value="4"/>
+        </t>
+        <p><t t-esc="iter"/></p>
+      </div>`;
+
+      state = {flag: 'if'};
+    }
+    const widget = new SomeWidget();
+    await widget.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
+    widget.state.flag = 'elif';
+    await widget.render();
+    expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
+    widget.state.flag = 'false';
+    await widget.render();
+    expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
+  });
+
   test("t-set can't alter component", async () => {
     class SomeWidget extends Component<any, any> {
       static template = xml`

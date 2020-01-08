@@ -35,7 +35,12 @@
   });
 
   function toStr(obj) {
-    let str = JSON.stringify(obj || {});
+    let str;
+    try {
+      str = JSON.stringify(obj || {});
+    } catch (e) {
+      str = "<JSON error>";
+    }
     if (str.length > 200) {
       str = str.slice(0, 200) + "...";
     }

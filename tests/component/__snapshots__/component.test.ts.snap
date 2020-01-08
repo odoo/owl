@@ -1310,12 +1310,12 @@ exports[`other directives with t-component t-set can't alter from within callee 
     if (scope.iter != null) {
         c2.push({text: scope.iter});
     }
-    this.subTemplates['ChildWidget'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('p', p4, c4);
-    c1.push(vn4);
+    this.subTemplates['ChildWidget'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('p', p5, c5);
+    c1.push(vn5);
     if (scope.iter != null) {
-        c4.push({text: scope.iter});
+        c5.push({text: scope.iter});
     }
     return vn1;
 }"
@@ -1345,14 +1345,14 @@ exports[`other directives with t-component t-set can't alter in t-call body 1`] 
             utils.getScope(scope, 'iter').iter = 'inCall';
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['ChildWidget'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['ChildWidget'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
         scope = _origScope4;
     }
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('p', p5, c5);
-    c1.push(vn5);
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('p', p6, c6);
+    c1.push(vn6);
     if (scope.iter != null) {
-        c5.push({text: scope.iter});
+        c6.push({text: scope.iter});
     }
     return vn1;
 }"

@@ -1026,7 +1026,7 @@ exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = 
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.subTemplates['__template__1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['__template__1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
     return vn1;
 }"
 `;

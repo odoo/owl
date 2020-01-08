@@ -734,7 +734,7 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('ul', p1, c1);
-    this.subTemplates['items'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['items'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
     return vn1;
 }"
 `;
@@ -802,7 +802,7 @@ exports[`misc global 1`] = `
         }
     }
     scope = _origScope5;
-    this.subTemplates['_callee-asc-toto'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['_callee-asc-toto'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__20__'}));
     return vn1;
 }"
 `;
@@ -1041,7 +1041,7 @@ exports[`t-call (template calling basic caller 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.subTemplates['_basic-callee'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['_basic-callee'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
     return vn1;
 }"
 `;
@@ -1069,7 +1069,7 @@ exports[`t-call (template calling basic caller, no parent node 1`] = `
     let result;
     let h = this.h;
     result = []
-    this.subTemplates['_basic-callee'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context)}));
+    this.subTemplates['_basic-callee'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context), key: '__3__'}));
     result = result[0]
     return result;
 }"
@@ -1114,7 +1114,7 @@ exports[`t-call (template calling call with several sub nodes on same line 1`] =
             c5.push({text: \`yay\`});
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['SubTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['SubTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
         scope = _origScope3;
     }
     return vn1;
@@ -1162,7 +1162,7 @@ exports[`t-call (template calling cascading t-call t-raw='0' 1`] = `
             c14.push({text: \`yay\`});
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['SubTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['SubTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__15__'}));
         scope = _origScope12;
     }
     return vn1;
@@ -1179,7 +1179,7 @@ exports[`t-call (template calling inherit context 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     scope.foo = 1;
-    this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['_callee-uses-foo'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__2__'}));
     return vn1;
 }"
 `;
@@ -1198,7 +1198,7 @@ exports[`t-call (template calling recursive template, part 1 1`] = `
     c1.push(vn2);
     c2.push({text: \`hey\`});
     if (false) {
-        this.subTemplates['recursive'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['recursive'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
     }
     return vn1;
 }"
@@ -1244,7 +1244,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             scope.node = scope['root'];
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
         scope = _origScope11;
     }
     return vn1;
@@ -1321,7 +1321,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             scope.node = scope['root'];
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['nodeTemplate'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
         scope = _origScope11;
     }
     return vn1;
@@ -1398,7 +1398,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
             scope.foo = 42;
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
         scope = _origScope2;
     }
     if (scope.foo != null) {
@@ -1418,7 +1418,7 @@ exports[`t-call (template calling t-call with t-if 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (scope['flag']) {
-        this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
     }
     return vn1;
 }"
@@ -1493,7 +1493,7 @@ exports[`t-call (template calling t-call with t-set inside and outside. 2 1`] = 
     let c1 = [], p1 = {key:1};
     let vn1 = h('p', p1, c1);
     scope.w = 'fromwrapper';
-    this.subTemplates['main'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['main'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__11__'}));
     return vn1;
 }"
 `;
@@ -1509,19 +1509,19 @@ exports[`t-call (template calling t-call, conditional and t-set in t-call body 1
     let vn1 = h('div', p1, c1);
     scope.v1 = 'elif';
     if (scope.v1==='if') {
-        this.subTemplates['callee1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['callee1'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
     }
     else if (scope.v1==='elif') {
         {
-            let _origScope5 = scope;
+            let _origScope6 = scope;
             scope = Object.assign(Object.create(context), scope);
             {
                 let c__0 = [];
                 scope.v = 'success';
                 scope[utils.zero] = c__0;
             }
-            this.subTemplates['callee2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
-            scope = _origScope5;
+            this.subTemplates['callee2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
+            scope = _origScope6;
         }
     }
     return vn1;
@@ -1537,7 +1537,7 @@ exports[`t-call (template calling t-call, global templates 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.subTemplates['john'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['john'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
     return vn1;
 }"
 `;
@@ -1559,7 +1559,7 @@ exports[`t-call (template calling with unused body 1`] = `
             scope[utils.zero] = c__0;
         }
         result = []
-        this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context)}));
+        this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context), key: '__4__'}));
         result = result[0]
         scope = _origScope3;
     }
@@ -1584,7 +1584,7 @@ exports[`t-call (template calling with unused setbody 1`] = `
             scope[utils.zero] = c__0;
         }
         result = []
-        this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context)}));
+        this.subTemplates['_basic-callee'].call(this, scope, Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context), key: '__4__'}));
         result = result[0]
         scope = _origScope3;
     }
@@ -1609,7 +1609,7 @@ exports[`t-call (template calling with used body 1`] = `
             scope[utils.zero] = c__0;
         }
         result = []
-        this.subTemplates['_callee-printsbody'].call(this, scope, Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context)}));
+        this.subTemplates['_callee-printsbody'].call(this, scope, Object.assign({}, extra, {parentNode: result, parent: utils.getComponent(context), key: '__4__'}));
         result = result[0]
         scope = _origScope3;
     }
@@ -1634,7 +1634,7 @@ exports[`t-call (template calling with used set body 1`] = `
             scope.foo = 'ok';
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['_callee-uses-foo'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
         scope = _origScope3;
     }
     return vn1;
@@ -1834,7 +1834,7 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
             c4.push({text: \`escaped\`});
             scope[utils.zero] = c__0;
         }
-        this.subTemplates['test'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+        this.subTemplates['test'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
         scope = _origScope3;
     }
     return vn1;
@@ -2605,7 +2605,7 @@ exports[`t-on t-on with t-call 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
     return vn1;
 }"
 `;
@@ -2619,7 +2619,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context)}));
+    this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
     return vn1;
 }"
 `;

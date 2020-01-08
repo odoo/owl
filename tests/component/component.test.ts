@@ -5726,4 +5726,30 @@ describe("t-call", () => {
 
     fixture.querySelector("p")!.click();
   });
+
+  test("sub components in two t-calls", async () => {
+    class Child extends Component<any,any> {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+
+    env.qweb.addTemplate("sub", `<Child val="state.val"/>`);
+    class Parent extends Component<any, any> {
+      static template = xml`
+        <div>
+          <t t-if="state.val===1">
+            <t t-call="sub"/>
+          </t>
+          <div t-else=""><t t-call="sub"/></div>
+        </div>`;
+      static components = { Child };
+      state = useState({val: 1});
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div><span>2</span></div></div>");
+  });
+
 });

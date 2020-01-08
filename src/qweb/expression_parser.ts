@@ -81,7 +81,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
 
 // note that the space after typeof is relevant. It makes sure that the formatted
 // expression has a space after typeof
-const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;".split(",");
+const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ".split(",");
 
 type Tokenizer = (expr: string) => Token | false;
 

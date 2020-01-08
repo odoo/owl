@@ -56,6 +56,12 @@ describe("tokenizer", () => {
       { type: "OPERATOR", value: "..." },
       { type: "VALUE", value: "1" }
     ]);
+
+    expect(tokenize("a in b")).toEqual([
+      { type: "SYMBOL", value: "a" },
+      { type: "OPERATOR", value: "in " },
+      { type: "SYMBOL", value: "b" }
+    ]);
   });
 
   test("strings", () => {
@@ -134,6 +140,7 @@ describe("expression evaluation", () => {
     expect(compileExpr("color === 'black'", {})).toBe("scope['color']==='black'");
     expect(compileExpr("'li_'+item", {})).toBe("'li_'+scope['item']");
     expect(compileExpr("state.val > 1", {})).toBe("scope['state'].val>1");
+    expect(compileExpr("a in b", {})).toBe("scope['a']in scope['b']");
   });
 
   test("boolean operations", () => {

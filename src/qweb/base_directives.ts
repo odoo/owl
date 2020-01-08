@@ -265,9 +265,9 @@ QWeb.addDirective({
     // ------------------------------------------------
     const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
     const parentComponent = `utils.getComponent(context)`;
-    const keyCode = ctx.loopNumber || ctx.hasKey0 ? `, key: ${ctx.generateTemplateKey()}` : "";
+    const key = ctx.generateTemplateKey();
     const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
-    const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}${keyCode}})`;
+    const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}, key: ${key}})`;
     if (ctx.parentNode) {
       ctx.addLine(`this.subTemplates['${subTemplate}'].call(this, ${callingScope}, ${extra});`);
     } else {

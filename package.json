@@ -1,10 +1,9 @@
 {
   "name": "@odoo/owl",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Odoo Web Library (OWL)",
   "main": "dist/owl.js",
   "types": "dist/types/index.d.ts",
-  "prepublish": "npm run buildcommonjs",
   "files": ["dist/types/", "dist/owl.js"],
   "engines": {
     "node": ">=10.15.3"
@@ -21,7 +20,8 @@
     "tools": "npm run build && npm run tools:serve",
     "pretools:watch": "npm run build",
     "tools:watch": "npm-run-all  --parallel tools:serve \"build:* -- --watch\"",
-    "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --write"
+    "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --write",
+    "publish": "npm run buildcommonjs && npm publish"
   },
   "repository": {
     "type": "git",

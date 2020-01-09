@@ -15,13 +15,16 @@ export function processSheet(str: string): string {
   function generateSelector(stackIndex: number, parentSelector?: string) {
     const parts: string[] = [];
     for (const selector of selectorStack[stackIndex]) {
-      let part = parentSelector && parentSelector + ' ' + selector || selector;
+      let part = (parentSelector && parentSelector + " " + selector) || selector;
+      if (part.includes("&")) {
+        part = selector.replace(/&/g, parentSelector || "");
+      }
       if (stackIndex < selectorStack.length - 1) {
         part = generateSelector(stackIndex + 1, part);
       }
       parts.push(part);
     }
-    return parts.join(', ');
+    return parts.join(", ");
   }
   function generateRules() {
     if (rules.length) {

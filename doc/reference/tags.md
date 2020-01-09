@@ -101,6 +101,52 @@ will be formatted as:
 }
 ```
 
+This extension brings another useful feature: the `&` selector which refers to
+the parent selector. For example, we want our component to be red when hovered.
+We would like to write something like:
+
+```scss
+.my-component {
+  display: block;
+  :hover {
+    color: red;
+  }
+}
+```
+
+but it will be formatted as:
+
+```css
+.my-component {
+  display: block;
+}
+.my-component :hover {
+  color: red;
+}
+```
+
+The `&` selector can be used to solve this problem:
+
+```scss
+.my-component {
+  display: block;
+  &:hover {
+    color: red;
+  }
+}
+```
+
+will be formatted as:
+
+```css
+.my-component {
+  display: block;
+}
+.my-component:hover {
+  color: red;
+}
+```
+
 Now, there is no additional processing done by the `css` tag. However, since it
 is done in javascript at runtime, we actually have more power. For example:
 

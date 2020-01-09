@@ -142,4 +142,29 @@ describe("styles and component", () => {
   color: red;
 }`);
   });
+
+  test("handle & selector", async () => {
+    let sheet = processSheet(`.btn {
+      &.danger {
+        color: red;
+      }
+    }`);
+
+    expect(sheet).toBe(`.btn.danger {
+  color: red;
+}`);
+
+    sheet = processSheet(`.some-class {
+      &.btn {
+        .other-class ~ & {
+          color: red;
+        }
+      }
+    }`);
+
+    expect(sheet).toBe(`.other-class ~ .some-class.btn {
+  color: red;
+}`);
+  });
+  
 });

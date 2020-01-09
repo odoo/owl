@@ -225,7 +225,7 @@ to be called in the constructor.
   }
   ```
 
-- **`style`** (string, optional): it should be the return value of the [`css tag](tags.md#css-tag),
+- **`style`** (string, optional): it should be the return value of the [`css` tag](tags.md#css-tag),
   which is used to inject stylesheet whenever the component is visible on the
   screen.
 
@@ -425,7 +425,7 @@ likely via a change in its state/props or environment).
 
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
-component was patched. Note that this hook will not be called if the compoent is
+component was patched. Note that this hook will not be called if the component is
 not in the DOM.
 
 Updating the component state in this hook is possible, but not encouraged.

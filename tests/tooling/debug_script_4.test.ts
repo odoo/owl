@@ -21,18 +21,17 @@ test("log a sub component with non stringifiable props", async () => {
   const log = console.log;
   console.log = arg => steps.push(arg);
 
-  class Child extends Component<any,any> {
-      static template = xml`<span><t t-esc="props.obj.val"/></span>`;
+  class Child extends Component<any, any> {
+    static template = xml`<span><t t-esc="props.obj.val"/></span>`;
   }
 
-  const circularObject: any = {val: 1};
+  const circularObject: any = { val: 1 };
   circularObject.circularObject = circularObject;
 
   class Parent extends Component<any, any> {
     static template = xml`<div><Child obj="obj"/></div>`;
     static components = { Child };
     obj = circularObject;
-
   }
 
   const parent = new Parent(null, {});

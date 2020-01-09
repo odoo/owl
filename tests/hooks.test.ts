@@ -9,7 +9,8 @@ import {
   onWillPatch,
   onWillStart,
   onWillUpdateProps,
-  useSubEnv
+  useSubEnv,
+  useExternalListener
 } from "../src/hooks";
 import { xml } from "../src/tags";
 
@@ -591,5 +592,40 @@ describe("hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
     expect(steps).toEqual(["onWillStart", "onWillUpdateProps"]);
+  });
+
+  test("useExternalListener", async () => {
+    let n = 0;
+
+    class MyComponent extends Component<any, any> {
+      static template = xml`<span><t t-esc="props.value"/></span>`;
+      constructor(parent, props) {
+        super(parent, props);
+        useExternalListener(window as any, "click", this.increment);
+      }
+      increment() {
+        n++;
+      }
+    }
+    class App extends Component<any, any> {
+      static template = xml`<div><MyComponent t-if="state.flag"/></div>`;
+      static components = { MyComponent };
+      state = useState({ flag: false });
+    }
+
+    const app = new App();
+    await app.mount(fixture);
+
+    expect(n).toBe(0);
+    window.dispatchEvent(new Event("click"));
+    expect(n).toBe(0);
+    app.state.flag = true;
+    await nextTick();
+    window.dispatchEvent(new Event("click"));
+    expect(n).toBe(1);
+    app.state.flag = false;
+    await nextTick();
+    window.dispatchEvent(new Event("click"));
+    expect(n).toBe(1);
   });
 });

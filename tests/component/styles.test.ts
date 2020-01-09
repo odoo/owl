@@ -137,8 +137,9 @@ describe("styles and component", () => {
         color: red;
       }
     }`);
-    
-    expect(sheet).toBe(`.parent-a .child-a, .parent-a .child-b, .parent-b .child-a, .parent-b .child-b {
+
+    expect(sheet)
+      .toBe(`.parent-a .child-a, .parent-a .child-b, .parent-b .child-a, .parent-b .child-b {
   color: red;
 }`);
   });
@@ -166,5 +167,4 @@ describe("styles and component", () => {
   color: red;
 }`);
   });
-  
 });

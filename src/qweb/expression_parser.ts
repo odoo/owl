@@ -283,5 +283,7 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
 }
 
 export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): string {
-  return compileExprToArray(expr, scope).map(t => t.value).join("");
+  return compileExprToArray(expr, scope)
+    .map(t => t.value)
+    .join("");
 }

@@ -17,6 +17,7 @@
   - [`useContext`](#usecontext)
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
+  - [`useExternalListener`](#useexternallistener)
   - [`useStore`](#usestore)
   - [`useDispatch`](#usedispatch)
   - [`useGetters`](#usegetters)
@@ -353,6 +354,17 @@ The `useSubEnv` takes one argument: an object which contains some key/value that
 will be added to the parent environment. Note that it will extend, not replace
 the parent environment. And of course, the parent environment will not be
 affected.
+
+### `useExternalListener`
+
+The `useExternalListener` hook helps solve a very common problem: adding and removing
+a listener on some target whenever a component is mounted/unmounted. For example,
+a dropdown menu (or its parent) may need to listen to a `click` event on `window`
+to be closed:
+
+```js
+useExternalListener(window, "click", this.closeMenu);
+```
 
 ### `useStore`
 

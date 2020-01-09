@@ -2683,7 +2683,7 @@ describe("other directives with t-component", () => {
         <p>EndLoop: <t t-esc="iter"/></p>
       </div>`;
 
-      state = useState({values: ['a', 'b']});
+      state = useState({ values: ["a", "b"] });
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
@@ -2710,23 +2710,23 @@ describe("other directives with t-component", () => {
         <p><t t-esc="iter"/></p>
       </div>`;
 
-      state = {flag: 'if'};
+      state = { flag: "if" };
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
-    widget.state.flag = 'elif';
+    widget.state.flag = "elif";
     await widget.render();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
-    widget.state.flag = 'false';
+    widget.state.flag = "false";
     await widget.render();
     expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
   });
 
   test("t-set in t-if", async () => {
     // Weird that code block within 'if' leaks outside of it
-    // Python does the same   
+    // Python does the same
     class SomeWidget extends Component<any, any> {
       static template = xml`
       <div>
@@ -2743,16 +2743,16 @@ describe("other directives with t-component", () => {
         <p><t t-esc="iter"/></p>
       </div>`;
 
-      state = {flag: 'if'};
+      state = { flag: "if" };
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
-    widget.state.flag = 'elif';
+    widget.state.flag = "elif";
     await widget.render();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
-    widget.state.flag = 'false';
+    widget.state.flag = "false";
     await widget.render();
     expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
   });
@@ -2777,7 +2777,10 @@ describe("other directives with t-component", () => {
   });
 
   test("t-set can't alter from within callee", async () => {
-    env.qweb.addTemplate("ChildWidget", `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`);
+    env.qweb.addTemplate(
+      "ChildWidget",
+      `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`
+    );
     class SomeWidget extends Component<any, any> {
       static template = xml`
       <div>
@@ -2795,7 +2798,10 @@ describe("other directives with t-component", () => {
   });
 
   test("t-set can't alter in t-call body", async () => {
-    env.qweb.addTemplate("ChildWidget", `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`);
+    env.qweb.addTemplate(
+      "ChildWidget",
+      `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`
+    );
     class SomeWidget extends Component<any, any> {
       static template = xml`
       <div>
@@ -2841,7 +2847,7 @@ describe("other directives with t-component", () => {
     let child;
     class ChildWidget extends Component<any, any> {
       static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
-      iter = 'child';
+      iter = "child";
       constructor() {
         super(...arguments);
         child = this;
@@ -2861,7 +2867,7 @@ describe("other directives with t-component", () => {
     await widget.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><p>source</p><div>childcalled</div><p>source</p></div>");
-    expect(child.iter).toBe('child');
+    expect(child.iter).toBe("child");
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
@@ -2877,7 +2883,7 @@ describe("other directives with t-component", () => {
         <p>EndLoop: <t t-esc="iter"/></p>
       </div>`;
 
-      state = useState({values: ['a', 'b']});
+      state = useState({ values: ["a", "b"] });
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
@@ -2896,7 +2902,7 @@ describe("other directives with t-component", () => {
         <p>EndLoop: <t t-esc="iter"/></p>
       </div>`;
 
-      state = useState({values: ['a', 'b']});
+      state = useState({ values: ["a", "b"] });
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
@@ -2913,18 +2919,20 @@ describe("other directives with t-component", () => {
         </div>
       </div>`;
 
-      state = useState({values: ['a', 'b']});
-      otherState = {vals: []};
+      state = useState({ values: ["a", "b"] });
+      otherState = { vals: [] };
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
-    expect(fixture.innerHTML).toBe("<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>"
+    );
     expect(widget.otherState.vals).toStrictEqual([]);
-    const buttons = fixture.querySelectorAll('button');
+    const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(widget.otherState.vals).toStrictEqual(['a', 'b']);
+    expect(widget.otherState.vals).toStrictEqual(["a", "b"]);
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
@@ -2940,18 +2948,20 @@ describe("other directives with t-component", () => {
         </div>
       </div>`;
 
-      state = useState({values: ['a', 'b']});
-      otherState = {vals: []};
+      state = useState({ values: ["a", "b"] });
+      otherState = { vals: [] };
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
-    expect(fixture.innerHTML).toBe("<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div>0: a<button>Expr</button></div><div>1: b<button>Expr</button></div></div>"
+    );
     expect(widget.otherState.vals).toStrictEqual([]);
-    const buttons = fixture.querySelectorAll('button');
+    const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(widget.otherState.vals).toStrictEqual(['a_nova_0', 'b_nova_0_1']);
+    expect(widget.otherState.vals).toStrictEqual(["a_nova_0", "b_nova_0_1"]);
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
@@ -2965,8 +2975,8 @@ describe("other directives with t-component", () => {
         </div>
       </div>`;
 
-      state = useState({values: ['a', 'b']});
-      otherState = {vals: new Array<string>()};
+      state = useState({ values: ["a", "b"] });
+      otherState = { vals: new Array<string>() };
 
       addVal(val: string) {
         this.otherState.vals.push(val);
@@ -2975,13 +2985,14 @@ describe("other directives with t-component", () => {
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
-
-    expect(fixture.innerHTML).toBe("<div><div>0: a<button>meth call</button></div><div>1: b<button>meth call</button></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div>0: a<button>meth call</button></div><div>1: b<button>meth call</button></div></div>"
+    );
     expect(widget.otherState.vals).toStrictEqual([]);
-    const buttons = fixture.querySelectorAll('button');
+    const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(widget.otherState.vals).toStrictEqual(['a', 'b']);
+    expect(widget.otherState.vals).toStrictEqual(["a", "b"]);
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 
@@ -2996,19 +3007,20 @@ describe("other directives with t-component", () => {
         </div>
       </div>`;
 
-      arr = ['a', 'b']
-      otherState = {vals: new Array<string>()};
+      arr = ["a", "b"];
+      otherState = { vals: new Array<string>() };
     }
     const widget = new SomeWidget();
     await widget.mount(fixture);
 
-
-    expect(fixture.innerHTML).toBe("<div><div><button>expr</button></div><div><button>expr</button></div></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><div><button>expr</button></div><div><button>expr</button></div></div>"
+    );
     expect(widget.otherState.vals).toStrictEqual([]);
-    const buttons = fixture.querySelectorAll('button');
+    const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(widget.otherState.vals).toStrictEqual(['0_0', '1_1']);
+    expect(widget.otherState.vals).toStrictEqual(["0_0", "1_1"]);
     expect(QWeb.TEMPLATES[SomeWidget.template].fn.toString()).toMatchSnapshot();
   });
 });
@@ -6069,7 +6081,7 @@ describe("t-call", () => {
   });
 
   test("sub components in two t-calls", async () => {
-    class Child extends Component<any,any> {
+    class Child extends Component<any, any> {
       static template = xml`<span><t t-esc="props.val"/></span>`;
     }
 
@@ -6083,7 +6095,7 @@ describe("t-call", () => {
           <div t-else=""><t t-call="sub"/></div>
         </div>`;
       static components = { Child };
-      state = useState({val: 1});
+      state = useState({ val: 1 });
     }
     const parent = new Parent();
     await parent.mount(fixture);
@@ -6092,5 +6104,4 @@ describe("t-call", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div><span>2</span></div></div>");
   });
-
 });

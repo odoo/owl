@@ -1,4 +1,4 @@
-import { compileExpr , compileExprToArray , QWebVar } from "./expression_parser";
+import { compileExpr, compileExprToArray, QWebVar } from "./expression_parser";
 
 export const INTERP_REGEXP = /\{\{.*?\}\}/g;
 //------------------------------------------------------------------------------
@@ -161,16 +161,18 @@ export class CompilationContext {
     const argId = this.generateID();
     const tokens = compileExprToArray(expr, this.variables);
     const done = new Set();
-    return tokens.map((tok) => {
-      if (tok.varName) {
-        if (!done.has(tok.varName)) {
-          done.add(tok.varName);
-          this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`);
+    return tokens
+      .map(tok => {
+        if (tok.varName) {
+          if (!done.has(tok.varName)) {
+            done.add(tok.varName);
+            this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`);
+          }
+          tok.value = `${tok.varName}_${argId}`;
         }
-        tok.value = `${tok.varName}_${argId}`;
-      }
-      return tok.value;
-    }).join("");
+        return tok.value;
+      })
+      .join("");
   }
 
   /**
@@ -194,7 +196,9 @@ export class CompilationContext {
     const protectID = this.generateID();
     this.rootContext.protectedScopeNumber++;
     this.rootContext.shouldDefineScope = true;
-    const scopeExpr = codeBlock ? `Object.create(scope);` : `Object.assign(Object.create(context), scope);`;
+    const scopeExpr = codeBlock
+      ? `Object.create(scope);`
+      : `Object.assign(Object.create(context), scope);`;
     this.addLine(`let _origScope${protectID} = scope;`);
     this.addLine(`scope = ${scopeExpr}`);
     return protectID;

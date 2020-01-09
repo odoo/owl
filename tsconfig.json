@@ -13,7 +13,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "strictPropertyInitialization": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "declarationDir": "dist/types"
   },
   "include": ["src/**/*.ts","src/*.ts"]
 }

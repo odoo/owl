@@ -2,10 +2,10 @@
   "name": "@odoo/owl",
   "version": "1.0.0-beta5",
   "description": "Odoo Web Library (OWL)",
-  "main": "dist/owl/index.js",
-  "types": "dist/owl/index.d.ts",
-  "prepublish": "npm run build",
-  "files": ["dist/owl/"],
+  "main": "dist/owl.js",
+  "types": "dist/types/index.d.ts",
+  "prepublish": "npm run buildcommonjs",
+  "files": ["dist/types/", "dist/owl.js"],
   "engines": {
     "node": ">=10.15.3"
   },

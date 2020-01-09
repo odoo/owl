@@ -455,7 +455,7 @@ const actions = {
         todo.completed = !todo.completed;
     },
     clearCompleted({ state, dispatch }) {
-        for (let todo of state.todos) {
+        for (let todo of state.todos.slice()) {
             if (todo.completed) {
                 dispatch("removeTodo", todo.id);
             }

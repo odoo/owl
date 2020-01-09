@@ -40,8 +40,8 @@ all templates.
 Whenever a root component `App` is mounted, Owl will setup a valid environment by
 following the next steps:
 
-- take the `env` object defined on `App.env` (if no `env` was explicitely setup,
-  this will be return the empty `env` object defined on `Component`)
+- take the `env` object defined on `App.env` (if no `env` was explicitly setup,
+  this will return the empty `env` object defined on `Component`)
 - if `env.qweb` is not set, then Owl will create a `QWeb` instance.
 
 The correct way to customize an environment is to simply set it up on the root

@@ -23,7 +23,7 @@ a rendering that is no longer relevant, restart it, reuse it in some cases.
 But even though using concurrency is quite simple (and is the default behaviour),
 asynchrony is difficult, because it introduces an additional dimension that
 vastly increase the complexity of an application. This section will explain
-how Owl manages this complexity, how concuurent rendering works in a general way.
+how Owl manages this complexity, how concurrent rendering works in a general way.
 
 ## Rendering Components
 
@@ -120,7 +120,7 @@ Here is what Owl will do:
      1. hook `willUpdateProps` is called on `D` (async)
      2. template `D` is rerendered
    - component `F` is created:
-     1. hook `willStart` is called on `E` (async)
+     1. hook `willStart` is called on `F` (async)
      2. template `F` is rendered
 
 3. `willPatch` hooks are called recursively on components `C`, `D` (not on `F`,

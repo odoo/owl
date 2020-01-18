@@ -208,7 +208,11 @@ Note that getters are not cached.
 ### Connecting a Component
 
 At some point, we need a way to interact with the store from a component. This
-can be done with the help of the three store hooks:
+means that the component needs a reference to the store. By default, it looks
+for it in the `env.store` key. However, this can be configured with the `useStore`
+hook.
+
+Every component-store interactions are done with the help of the three store hooks:
 
 - [`useStore`](#usestore) to subscribe a component to some part of the store state,
 - [`useDispatch`](#usedispatch) to get a reference to a dispatch function,
@@ -227,6 +231,14 @@ const state = {
   counter: { value: 0 }
 };
 const store = new owl.Store({ state, actions });
+```
+
+To make it accessible to the complete application, we will put it in the
+environment:
+
+```js
+// in this example, the root component is App
+App.env.store = store;
 ```
 
 A counter component can then select this value and dispatch an action like this:

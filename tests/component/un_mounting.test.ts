@@ -376,4 +376,34 @@ describe("unmounting and remounting", () => {
     expect(fixture.innerHTML).toBe("");
     expect(Child.prototype.__render).toBeCalledTimes(1);
   });
+
+  test("widget can be mounted on different target", async () => {
+    const steps: string[] = [];
+    class MyWidget extends Component<any, any> {
+      static template = xml`<div>Hey</div>`;
+      async willStart() {
+        steps.push("willstart");
+      }
+      mounted() {
+        steps.push("mounted");
+      }
+      willUnmount() {
+        steps.push("willunmount");
+      }
+      patched() {
+        throw new Error("patched should not be called");
+      }
+    }
+    const div = document.createElement("div");
+    const span = document.createElement("span");
+    fixture.appendChild(div);
+    fixture.appendChild(span);
+    const w = new MyWidget();
+    await w.mount(div);
+
+    expect(fixture.innerHTML).toBe("<div><div>Hey</div></div><span></span>");
+
+    await w.mount(span);
+    expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
+  });
 });

@@ -302,7 +302,14 @@ export class Component<T extends Env, Props extends {}> {
     const position = options.position || "last-child";
     const __owl__ = this.__owl__;
     if (__owl__.isMounted) {
-      return Promise.resolve();
+      if (position !== "self" && this.el!.parentNode !== target) {
+        // in this situation, we are trying to mount a component on a different
+        // target. In this case, we need to unmount first, otherwise it will
+        // not work.
+        this.unmount();
+      } else {
+        return Promise.resolve();
+      }
     }
     if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
       let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;

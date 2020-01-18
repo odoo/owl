@@ -149,7 +149,12 @@ export function useSubEnv(nextEnv) {
  *  in the constructor of the OWL component that needs to be notified,
  *  `useExternalListener(window, 'click', this._doSomething);`
  * */
-export function useExternalListener(target: HTMLElement, eventName: string, handler, eventParams?) {
+export function useExternalListener(
+  target: HTMLElement | typeof window,
+  eventName: string,
+  handler,
+  eventParams?
+) {
   const boundHandler = handler.bind(Component.current);
 
   onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));

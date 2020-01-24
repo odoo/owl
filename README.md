@@ -1,4 +1,4 @@
-<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Odoo Web Library</a> 🦉</h1>
+<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">OWL: the Odoo Web Library</a> 🦉</h1>
 
 _Class based components with hooks, reactive state and concurrent mode_
 
@@ -14,14 +14,27 @@ simple and consistent way. Owl's main features are:
 - a store implementation (for state management),
 - a small frontend router
 
-Owl components are defined with ES6 classes, they use QWeb templates, an underlying
-virtual dom, integrates beautifully with hooks, and the rendering is asynchronous.
+Owl components are defined with ES6 classes, they use QWeb templates, an
+underlying virtual dom, integrates beautifully with hooks, and the rendering is
+asynchronous.
 
-**Try it online!** An online playground is available at [https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground) to let you experiment with the Owl framework. There
-are some code examples to showcase some interesting features.
+**Try it online!** An online playground is available at
+[https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground)
+to let you experiment with the Owl framework. There are some code examples to
+showcase some interesting features.
 
-Owl is currently mostly stable.  Possible future changes are explained in the
+Owl is currently stable.  Possible future changes are explained in the
 [roadmap](roadmap.md).
+
+## Why Owl?
+
+Why did Odoo decide to make Yet Another Framework?  This is really a question
+that deserves [a long answer](doc/why_owl.md). But in short, we believe that
+while the current state of the art frameworks are excellent, they are not
+optimized for our use case, and there is still room for something else.
+
+If you are interested in a comparison with React or Vue, you will
+find some more additional information [here](doc/comparison.md).
 
 ## Example
 
@@ -81,8 +94,6 @@ Owl is not designed to be fast nor small (even though it is quite good on those
 two topics). It is a no nonsense framework to build applications. There is only
 one way to define components (with classes).
 
-If you are interested in a comparison with React or Vue, you will
-find some more information [here](doc/comparison.md).
 
 ## Documentation
 

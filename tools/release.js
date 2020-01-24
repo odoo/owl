@@ -52,14 +52,14 @@ async function startRelease() {
     log("Test suite does not pass. Aborting.");
     return;
   }
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------
   log(`Step 3/${STEPS}: updating package.json, readme.md and roadmap.md...`);
   await replaceInFile("./package.json", current, next);
   await replaceInFile("./README.md", current, next);
   await replaceInFile("./roadmap.md", current, next);
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------
   log(`Step 4/${STEPS}: creating git commit...`);
@@ -68,7 +68,7 @@ async function startRelease() {
     log("Git commit failed. Aborting.");
     return;
   }
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // -------------------j--------------------------------------------------------
   log(`Step 5/${STEPS}: building owl (iife version)...`);
@@ -77,7 +77,7 @@ async function startRelease() {
     log("Build failed. Aborting.");
     return;
   }
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------
   log(`Step 6/${STEPS}: minifying owl...`);
@@ -86,7 +86,7 @@ async function startRelease() {
     log("Minify failed. Aborting.");
     return;
   }
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------
   log(`Step 7/${STEPS}: pushing on github...`);
@@ -95,7 +95,7 @@ async function startRelease() {
     log("git push failed. Aborting.");
     return;
   }
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------
   log(`Step 8/${STEPS}: publishing release notes on github...`);
@@ -107,7 +107,7 @@ async function startRelease() {
   };
   const result = await createRelease(token, options);
   console.log(result);
-  ask("Ready for next step...");
+  await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------
   log(`Step 9/${STEPS}: adding assets to release...`);

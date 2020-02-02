@@ -79,7 +79,7 @@ additional tools, we made a lot of effort to make the most of the web platform.
 
 For example, Owl uses the standard `xml` parser that comes with every browser.
 Because of that, Owl did not have to write its own template parser. Another
-example is the [`xml`](reference/tags.md#xml-tag) tag helper function, which makes use of
+example is the [`xml`](../reference/tags.md#xml-tag) tag helper function, which makes use of
 native template literals to allow in a natural way to write `xml` templates
 directly in the javascript code. This can be easily integrated with editor
 plugins to have autocompletion inside the template.
@@ -127,7 +127,7 @@ structured than a template language. Note that the tooling is quite impressive:
 there is a syntax highlighter for jsx here on github!
 
 By comparison, here is the equivalent Owl component, written with the
-[`xml`](reference/tags.md#xml-tag) tag helper:
+[`xml`](../reference/tags.md#xml-tag) tag helper:
 
 ```js
 class Clock extends Component {
@@ -251,7 +251,7 @@ keeps track of who get data, and retrigger a render when it was changed.
 Owl store is a little bit like a mix of redux and vuex: it has actions (but not
 mutations), and like VueX, it keeps track of the state changes. However, it does
 not notify a component when the state changes. Instead, components need to connect
-to the store like in redux, with the `useStore` hook (see the [store documentation](reference/store.md#connecting-a-component)).
+to the store like in redux, with the `useStore` hook (see the [store documentation](../reference/store.md#connecting-a-component)).
 
 ```javascript
 const actions = {
@@ -315,7 +315,7 @@ This work is based on the new ideas introduced by React hooks.
 
 From the way React and Vue introduce their hooks, it may look like hooks are not
 compatible with class components. However, this is not the case, as shown by
-Owl [hooks](reference/hooks.md). They are inspired by both React and Vue. For example,
+Owl [hooks](../reference/hooks.md). They are inspired by both React and Vue. For example,
 the `useState` hook is named after React, but its API is closer to the `reactive`
 Vue hook.
 

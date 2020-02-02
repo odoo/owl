@@ -1,9 +1,24 @@
 # 🦉 OWL Documentation 🦉
 
+## Learning Owl
+
+Are you new to Owl? This is the place to start!
+
+- [Tutorial: create a TodoList application](learning/tutorial_todoapp.md)
+- [Quick Overview](learning/overview.md)
+- [How to start an Owl project](learning/quick_start.md)
+- [How to test Components](learning/how_to_test.md)
+- [How to write Single File Components](learning/how_to_write_sfc.md)
+- [How to write debug Owl applications](learning/how_to_debug.md)
+
 ## Reference
+
+You will find here a complete reference of every feature, class or object
+provided by Owl.
 
 - [Animations](reference/animations.md)
 - [Component](reference/component.md)
+- [Content](reference/content.md)
 - [Concurrency Model](reference/concurrency_model.md)
 - [Configuration](reference/config.md)
 - [Context](reference/context.md)
@@ -21,57 +36,19 @@
 - [Tags](reference/tags.md)
 - [Utils](reference/utils.md)
 
-## Learning Resources
+## Other Topics
 
-- [Quick Start: create an (almost) empty Owl application](learning/quick_start.md)
-- [Tutorial: create a TodoList application](learning/tutorial_todoapp.md)
-- [Testing Owl components](learning/testing_components.md)
+This section provides miscellaneous document that explains some topics
+which cannot be considered either a tutorial, or reference documentation.
 
-## Miscellaneous
+- [Owl architecture: the Virtual DOM](miscellaneous/vdom.md)
+- [Owl architecture: the rendering pipeline](miscellaneous/rendering.md)
+- [Comparison with React/Vue](miscellaneous/comparison.md)
+- [Why did Odoo built Owl?](miscellaneous/why_owl.md)
 
-- [Comparison with React/Vue](comparison.md)
-- [Tooling](tooling.md)
-- [Templates to start Owl applications (external link)](https://github.com/ged-odoo/owl-templates)
 
-## Architecture
+---
 
-This section explains in more detail the inner workings of Owl. It is targeted
-for developers working on Owl itself.
+Found an issue in the documentation? A broken link? Some outdated information?
+Please open an issue or submit a PR!
 
-- [Virtual DOM](architecture/vdom.md)
-- [Rendering](architecture/rendering.md)
-
-## Owl Content
-
-Here is a complete visual representation of everything exported by the `owl`
-global object (so, for example, `Component` is available at `owl.Component`,
-and `EventBus` is exported as `owl.core.EventBus`):
-
-```
-Component                               misc
-Context                                     AsyncRoot
-QWeb                                        Portal
-Store                                   router
-useState                                    Link
-config                                      RouteComponent
-    mode                                    Router
-core                                    tags
-    EventBus                                css
-    Observer                                xml
-hooks                                   utils
-    onWillStart                             debounce
-    onMounted                               escape
-    onWillUpdateProps                       loadJS
-    onWillPatch                             loadFile
-    onPatched                               shallowEqual
-    onWillUnmount                           whenReady
-    useContext
-    useState
-    useRef
-    useSubEnv
-    useStore
-    useDispatch
-    useGetters
-```
-
-Note that for convenience, the `useState` hook is also exported at the root of the `owl` object.

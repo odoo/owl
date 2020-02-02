@@ -137,7 +137,7 @@ Here is what Owl will do:
 
 Tags are very small helpers to make it easy to write inline templates. There is
 only one currently available tag: `xml`, but we plan to add other tags later,
-such as a `css` tag, which will be used to write [single file components](../tooling.md#single-file-component).
+such as a `css` tag, which will be used to write [single file components](../learning/how_to_write_sfc.md).
 
 ### Asynchronous Rendering
 

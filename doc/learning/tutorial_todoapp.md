@@ -37,7 +37,7 @@ todoapp/
     index.html
     app.css
     app.js
-    owl.min.js
+    owl.js
 ```
 
 The entry point for this application is the file `index.html`, which should have

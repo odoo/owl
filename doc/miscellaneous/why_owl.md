@@ -125,7 +125,7 @@ familiar for experienced developers.
 
 ## JIT compilation
 
-There is also a clear trend in the frontent world to compile code
+There is also a clear trend in the frontend world to compile code
 as much as possible ahead of time. Most frameworks will compile templates ahead
 of time. And now Svelte is trying to compile the JS code away, so it can remove
 itself from the bundle.
@@ -170,11 +170,11 @@ now a very strong concurrent mode, which is simple and powerful at the same time
 
 ## Conclusion
 
-This lengthy discussion showed that there are many small and not so small reason
+This lengthy discussion showed that there are many small and not so small reasons
 that current standard frameworks are not tailored to our needs. It is perfectly
-fine, because they chose a different set of tradeoffs.
+fine, because they each chose a different set of tradeoffs.
 
 However, we feel that there is still room in the framework world for something
 that is different. For a framework that make choices compatible with Odoo.
 
-And that is why we built Owl.
+And that is why we built Owl 🦉.

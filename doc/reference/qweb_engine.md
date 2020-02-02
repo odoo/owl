@@ -61,7 +61,7 @@ Its API is quite simple:
   ```
 
 - **`render(name, context, extra)`**: renders a template. This returns a `vnode`,
-  which is a virtual representation of the DOM (see [vdom doc](../architecture/vdom.md)).
+  which is a virtual representation of the DOM (see [vdom doc](../miscellaneous/vdom.md)).
 
   ```js
   const vnode = qweb.render("App", component);

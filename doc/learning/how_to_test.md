@@ -1,4 +1,4 @@
-# 🦉 Testing Owl components 🦉
+# 🦉 How to test Components 🦉
 
 ## Content
 
@@ -11,8 +11,7 @@ It is a good practice to test applications and components to ensure that they
 behave as expected. There are many ways to test a user interface: manual
 testing, integration testing, unit testing, ...
 
-In this section, we will discuss how to write unit tests for components, and
-how to debug them if necessary.
+In this section, we will discuss how to write unit tests for components.
 
 ## Unit Tests
 

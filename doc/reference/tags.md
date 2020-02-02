@@ -10,7 +10,7 @@
 
 Tags are very small helpers intended to make it easy to write inline templates
 or styles. There are currently two tags: `css` and `xml`. With these functions,
-it is possible to write [single file components](../tooling.md#single-file-component).
+it is possible to write [single file components](../learning/how_to_write_sfc.md).
 
 ## XML tag
 

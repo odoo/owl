@@ -11,7 +11,7 @@ reasons discussed in this page are a consequence from a single fact: Odoo is
 extremely modular.
 
 This means, for example, that the core parts of Odoo are not aware, before runtime,
-of what files will be loaded/executed, or what will be the state of the UI. Beause
+of what files will be loaded/executed, or what will be the state of the UI. Because
 of that, Odoo cannot rely on a standard build toolchain. Also, this implies that
 the core parts of Odoo need to be extremely generic. In other words, Odoo is not
 really an application with a user interface. It is an application which generates

@@ -21,11 +21,11 @@ test("can log scheduler start and stop", async () => {
   const log = console.log;
   console.log = arg => steps.push(arg);
 
-  class Child extends Component<any, any> {
+  class Child extends Component {
     static template = xml`<div>child</div>`;
   }
 
-  class Parent extends Component<any, any> {
+  class Parent extends Component {
     static template = xml`<div><Child /></div>`;
     static components = { Child };
   }

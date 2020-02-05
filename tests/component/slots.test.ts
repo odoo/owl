@@ -26,7 +26,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-function children(w: Component<any, any>): Component<any, any>[] {
+function children(w: Component): Component[] {
   const childrenMap = w.__owl__.children;
   return Object.keys(childrenMap).map(id => childrenMap[id]);
 }
@@ -51,8 +51,8 @@ describe("t-slot directive", () => {
             </div>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -68,13 +68,13 @@ describe("t-slot directive", () => {
   });
 
   test("named slots can define a default content", async () => {
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static template = xml`
           <span>
             <t t-slot="header">default content</t>
           </span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Dialog/></div>`;
       static components = { Dialog };
     }
@@ -86,13 +86,13 @@ describe("t-slot directive", () => {
   });
 
   test("dafault slots can define a default content", async () => {
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static template = xml`
           <span>
             <t t-slot="default">default content</t>
           </span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Dialog/></div>`;
       static components = { Dialog };
     }
@@ -104,13 +104,13 @@ describe("t-slot directive", () => {
   });
 
   test("default content is not rendered if slot is provided", async () => {
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static template = xml`
           <span>
             <t t-slot="default">default content</t>
           </span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Dialog>hey</Dialog></div>`;
       static components = { Dialog };
     }
@@ -121,13 +121,13 @@ describe("t-slot directive", () => {
   });
 
   test("default content is not rendered if named slot is provided", async () => {
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static template = xml`
           <span>
             <t t-slot="header">default content</t>
           </span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Dialog><t t-set="header">hey</t></Dialog></div>`;
       static components = { Dialog };
     }
@@ -149,8 +149,8 @@ describe("t-slot directive", () => {
             <span t-name="Dialog"><t t-slot="footer"/></span>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
       state = useState({ val: 0 });
       doSomething() {
@@ -186,9 +186,9 @@ describe("t-slot directive", () => {
               </div>
           </templates>
       `);
-    class Link extends Component<any, any> {}
+    class Link extends Component {}
 
-    class App extends Component<any, any> {
+    class App extends Component {
       state = useState({
         users: [
           { id: 1, name: "Aaron" },
@@ -230,9 +230,9 @@ describe("t-slot directive", () => {
               </div>
           </templates>
       `);
-    class Link extends Component<any, any> {}
+    class Link extends Component {}
 
-    class App extends Component<any, any> {
+    class App extends Component {
       state = useState({
         users: [
           { id: 1, name: "Aaron" },
@@ -272,9 +272,9 @@ describe("t-slot directive", () => {
               </div>
           </templates>
       `);
-    class Link extends Component<any, any> {}
+    class Link extends Component {}
 
-    class App extends Component<any, any> {
+    class App extends Component {
       state = useState({ user: { id: 1, name: "Aaron" } });
       static components = { Link };
     }
@@ -294,10 +294,10 @@ describe("t-slot directive", () => {
   });
 
   test("refs are properly bound in slots", async () => {
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static template = xml`<span><t t-slot="footer"/></span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
             <div>
               <span class="counter"><t t-esc="state.val"/></span>
@@ -340,8 +340,8 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="default"/></div>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -360,8 +360,8 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="default"/></div>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -385,8 +385,8 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="content"/></div>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -408,8 +408,8 @@ describe("t-slot directive", () => {
             <div t-name="Dialog"><t t-slot="default"/></div>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -432,8 +432,8 @@ describe("t-slot directive", () => {
             </span>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -456,8 +456,8 @@ describe("t-slot directive", () => {
             </span>
           </templates>
       `);
-    class Dialog extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Dialog extends Component {}
+    class Parent extends Component {
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -478,9 +478,9 @@ describe("t-slot directive", () => {
             <div t-name="GrandChild">Grand Child</div>
           </templates>
       `);
-    class Child extends Component<any, any> {}
-    class GrandChild extends Component<any, any> {}
-    class Parent extends Component<any, any> {
+    class Child extends Component {}
+    class GrandChild extends Component {}
+    class Parent extends Component {
       static components = { Child, GrandChild };
     }
     const parent = new Parent();
@@ -499,24 +499,24 @@ describe("t-slot directive", () => {
 
   test("nested slots: evaluation context and parented relationship", async () => {
     let slot;
-    class Slot extends Component<any, any> {
+    class Slot extends Component {
       static template = xml`<span t-esc="props.val"/>`;
       constructor(parent, props) {
         super(parent, props);
         slot = this;
       }
     }
-    class GrandChild extends Component<any, any> {
+    class GrandChild extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
     }
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static components = { GrandChild };
       static template = xml`
           <GrandChild>
             <t t-slot="default"/>
           </GrandChild>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child, Slot };
       static template = xml`<Child><Slot val="state.val"/></Child>`;
       state = useState({ val: 3 });
@@ -548,9 +548,9 @@ describe("t-slot directive", () => {
           </div>
       </templates>
       `);
-    class SomeComponent extends Component<any, any> {}
-    class GenericComponent extends Component<any, any> {}
-    class App extends Component<any, any> {
+    class SomeComponent extends Component {}
+    class GenericComponent extends Component {}
+    class App extends Component {
       static components = { GenericComponent, SomeComponent };
       state = useState({ val: 4 });
 
@@ -568,14 +568,14 @@ describe("t-slot directive", () => {
   });
 
   test("slots and wrapper components", async () => {
-    class Link extends Component<any, any> {
+    class Link extends Component {
       static template = xml`
           <a href="abc">
               <t t-slot="default"/>
           </a>`;
     }
 
-    class A extends Component<any, any> {
+    class A extends Component {
       static template = xml`<Link>hey</Link>`;
       static components = { Link: Link };
     }
@@ -587,14 +587,14 @@ describe("t-slot directive", () => {
   });
 
   test("template can just return a slot", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
-    class SlotComponent extends Component<any, any> {
+    class SlotComponent extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
               <SlotComponent><Child value="state.value"/></SlotComponent>
@@ -614,13 +614,13 @@ describe("t-slot directive", () => {
   });
 
   test("multiple slots containing components", async () => {
-    class C extends Component<any, any> {
+    class C extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
     }
-    class B extends Component<any, any> {
+    class B extends Component {
       static template = xml`<div><t t-slot="s1"/><t t-slot="s2"/></div>`;
     }
-    class A extends Component<any, any> {
+    class A extends Component {
       static template = xml`
           <B>
             <t t-set="s1"><C val="1"/></t>
@@ -636,14 +636,14 @@ describe("t-slot directive", () => {
   });
 
   test("slots in t-foreach and re-rendering", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
       state = useState({ val: "A" });
       mounted() {
         this.state.val = "B";
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child };
       static template = xml`
           <div>
@@ -661,7 +661,7 @@ describe("t-slot directive", () => {
   });
 
   test("slots in t-foreach with t-set and re-rendering", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
           <span>
             <t t-esc="state.val"/>
@@ -672,7 +672,7 @@ describe("t-slot directive", () => {
         this.state.val = "B";
       }
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static components = { Child };
       static template = xml`
           <div>
@@ -693,7 +693,7 @@ describe("t-slot directive", () => {
 
   test("nested slots in same template", async () => {
     let child, child2, child3;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
           <span id="c1">
             <div>
@@ -705,7 +705,7 @@ describe("t-slot directive", () => {
         child = this;
       }
     }
-    class Child2 extends Component<any, any> {
+    class Child2 extends Component {
       static template = xml`
           <span id="c2">
             <t t-slot="default"/>
@@ -715,7 +715,7 @@ describe("t-slot directive", () => {
         child2 = this;
       }
     }
-    class Child3 extends Component<any, any> {
+    class Child3 extends Component {
       static template = xml`
           <span>Child 3</span>`;
       constructor(parent, props) {
@@ -723,7 +723,7 @@ describe("t-slot directive", () => {
         child3 = this;
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child, Child2, Child3 };
       static template = xml`
           <span id="parent">
@@ -748,7 +748,7 @@ describe("t-slot directive", () => {
 
   test("t-slot nested within another slot", async () => {
     let portal, modal, child3;
-    class Child3 extends Component<any, any> {
+    class Child3 extends Component {
       static template = xml`
           <span>Child 3</span>`;
       constructor(parent, props) {
@@ -756,7 +756,7 @@ describe("t-slot directive", () => {
         child3 = this;
       }
     }
-    class Modal extends Component<any, any> {
+    class Modal extends Component {
       static template = xml`
           <span id="modal">
             <t t-slot="default"/>
@@ -766,7 +766,7 @@ describe("t-slot directive", () => {
         modal = this;
       }
     }
-    class Portal extends Component<any, any> {
+    class Portal extends Component {
       static template = xml`
           <span id="portal">
             <t t-slot="default"/>
@@ -776,7 +776,7 @@ describe("t-slot directive", () => {
         portal = this;
       }
     }
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static components = { Modal, Portal };
       static template = xml`
           <span id="c2">
@@ -787,7 +787,7 @@ describe("t-slot directive", () => {
              </Modal>
           </span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child3, Dialog };
       static template = xml`
           <span id="c1">
@@ -809,7 +809,7 @@ describe("t-slot directive", () => {
 
   test("t-slot supports many instances", async () => {
     let child3;
-    class Child3 extends Component<any, any> {
+    class Child3 extends Component {
       static template = xml`
           <span>Child 3</span>`;
       constructor(parent, props) {
@@ -817,13 +817,13 @@ describe("t-slot directive", () => {
         child3 = this;
       }
     }
-    class Dialog extends Component<any, any> {
+    class Dialog extends Component {
       static template = xml`
           <span id="c2">
             <t t-slot="default"/>
           </span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child3, Dialog };
       static template = xml`
           <span id="c1">
@@ -845,10 +845,10 @@ describe("t-slot directive", () => {
   });
 
   test("slots in slots, with vars", async () => {
-    class B extends Component<any, any> {
+    class B extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
     }
-    class A extends Component<any, any> {
+    class A extends Component {
       static template = xml`
           <div>
             <B>
@@ -857,7 +857,7 @@ describe("t-slot directive", () => {
           </div>`;
       static components = { B };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <t t-set="test" t-value="state.name"/>

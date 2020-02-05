@@ -41,4 +41,3 @@ Each component has an internal `id`, which is very useful when debugging.
 
 Note that it is certainly useful to run this code at some point in an application,
 just to get a feel of what each user action implies, for the framework.
-

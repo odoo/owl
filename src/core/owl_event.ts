@@ -7,7 +7,7 @@ import { Component } from "../component/component";
  */
 
 export class OwlEvent<T> extends CustomEvent<T> {
-  originalComponent: Component<any, any>;
+  originalComponent: Component;
   constructor(component, eventType, options) {
     super(eventType, options);
     this.originalComponent = component;

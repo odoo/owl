@@ -27,7 +27,7 @@ afterEach(() => {
 
 describe("mount targets", () => {
   test("can attach a component to an existing node (if same tagname)", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div>app</div>`;
     }
     const div = document.createElement("div");
@@ -39,7 +39,7 @@ describe("mount targets", () => {
   });
 
   test("cannot attach a component to an existing node (if not same tagname)", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<span>app</span>`;
     }
     const div = document.createElement("div");
@@ -57,7 +57,7 @@ describe("mount targets", () => {
   });
 
   test("can mount a component (with position='first-child')", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div>app</div>`;
     }
     const span = document.createElement("span");
@@ -69,7 +69,7 @@ describe("mount targets", () => {
   });
 
   test("can mount a component (with position='last-child')", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div>app</div>`;
     }
     const span = document.createElement("span");
@@ -81,7 +81,7 @@ describe("mount targets", () => {
   });
 
   test("default mount option is 'last-child'", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div>app</div>`;
     }
     const span = document.createElement("span");
@@ -96,7 +96,7 @@ describe("mount targets", () => {
 describe("unmounting and remounting", () => {
   test("widget can be unmounted and remounted", async () => {
     const steps: string[] = [];
-    class MyWidget extends Component<any, any> {
+    class MyWidget extends Component {
       static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");
@@ -128,7 +128,7 @@ describe("unmounting and remounting", () => {
 
   test("widget can be mounted twice without ill effect", async () => {
     const steps: string[] = [];
-    class MyWidget extends Component<any, any> {
+    class MyWidget extends Component {
       static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");
@@ -151,7 +151,7 @@ describe("unmounting and remounting", () => {
   test("state changes in willUnmount do not trigger rerender", async () => {
     const steps: string[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
           <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
         `;
@@ -172,7 +172,7 @@ describe("unmounting and remounting", () => {
         this.state.n = 3;
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <Child t-if="state.flag" val="state.val"/>
@@ -193,7 +193,7 @@ describe("unmounting and remounting", () => {
   });
 
   test("state changes in willUnmount will be applied on remount", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`
           <div><t t-esc="state.val"/></div>
         `;
@@ -216,7 +216,7 @@ describe("unmounting and remounting", () => {
   });
 
   test("sub component is still active after being unmounted and remounted", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
           <p t-on-click="state.value++">
             <t t-esc="state.value"/>
@@ -225,7 +225,7 @@ describe("unmounting and remounting", () => {
       state = useState({ value: 1 });
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child };
       static template = xml`<div><Child/></div>`;
     }
@@ -248,7 +248,7 @@ describe("unmounting and remounting", () => {
 
   test("change state just before mounting component", async () => {
     const steps: number[] = [];
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`
           <div><t t-esc="state.val"/></div>
         `;
@@ -278,7 +278,7 @@ describe("unmounting and remounting", () => {
 
   test("change state while mounting component", async () => {
     const steps: number[] = [];
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`
           <div><t t-esc="state.val"/></div>
         `;
@@ -312,7 +312,7 @@ describe("unmounting and remounting", () => {
 
   test("change state while component is unmounted", async () => {
     let child;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span t-esc="state.val"/>`;
       state = useState({
         val: "C1"
@@ -323,7 +323,7 @@ describe("unmounting and remounting", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child };
       static template = xml`<div><t t-esc="state.val"/><Child/></div>`;
       state = useState({ val: "P1" });
@@ -345,7 +345,7 @@ describe("unmounting and remounting", () => {
 
   test("unmount component during a re-rendering", async () => {
     const def = makeDeferred();
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
       willUpdateProps() {
         return def;
@@ -353,7 +353,7 @@ describe("unmounting and remounting", () => {
     }
     Child.prototype.__render = jest.fn(Child.prototype.__render);
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child val="state.val"/></div>`;
       static components = { Child };
       state = useState({ val: 1 });
@@ -379,7 +379,7 @@ describe("unmounting and remounting", () => {
 
   test("widget can be mounted on different target", async () => {
     const steps: string[] = [];
-    class MyWidget extends Component<any, any> {
+    class MyWidget extends Component {
       static template = xml`<div>Hey</div>`;
       async willStart() {
         steps.push("willstart");

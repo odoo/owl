@@ -32,7 +32,7 @@ afterEach(() => {
 
 describe("styles and component", () => {
   test("can define an inline stylesheet", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div class="app">text</div>`;
       static style = css`
         .app {
@@ -54,7 +54,7 @@ describe("styles and component", () => {
   });
 
   test("inherited components properly apply css", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div class="app">text</div>`;
       static style = css`
         .app {
@@ -86,7 +86,7 @@ describe("styles and component", () => {
   });
 
   test("get a meaningful error message if css helper is missing", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div class="app">text</div>`;
       static style = `.app {color: red;}`;
     }
@@ -103,7 +103,7 @@ describe("styles and component", () => {
   });
 
   test("inline stylesheets are processed", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div class="app">text</div>`;
       static style = css`
         .app {

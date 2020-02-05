@@ -46,7 +46,7 @@ interface MountOptions {
  * useful to typecheck and describe the internal keys used by Owl to manage the
  * component tree.
  */
-interface Internal<T extends Env, Props> {
+interface Internal<T extends Env> {
   // each component has a unique id, useful mostly to handle parent/child
   // relationships
   readonly id: number;
@@ -58,8 +58,8 @@ interface Internal<T extends Env, Props> {
 
   // parent and children keys are obviously useful to setup the parent-children
   // relationship.
-  parent: Component<T, any> | null;
-  children: { [key: number]: Component<T, any> };
+  parent: Component<any, T> | null;
+  children: { [key: number]: Component<any, T> };
   // children mapping: from templateID to componentID. templateID identifies a
   // place in a template. The t-component directive needs it to be able to get
   // the component instance back whenever the template is rerendered.
@@ -85,7 +85,7 @@ interface Internal<T extends Env, Props> {
   willStartCB: Function | null;
   willUpdatePropsCB: Function | null;
   classObj: { [key: string]: boolean } | null;
-  refs: { [key: string]: Component<T, any> | HTMLElement | undefined } | null;
+  refs: { [key: string]: Component<any, T> | HTMLElement | undefined } | null;
 }
 
 export const portalSymbol = Symbol("portal"); // FIXME
@@ -95,11 +95,11 @@ export const portalSymbol = Symbol("portal"); // FIXME
 //------------------------------------------------------------------------------
 let nextId = 1;
 
-export class Component<T extends Env, Props extends {}> {
-  readonly __owl__: Internal<Env, Props>;
+export class Component<Props extends {} = any, T extends Env = Env> {
+  readonly __owl__: Internal<T>;
   static template?: string | null = null;
   static _template?: string | null = null;
-  static current: Component<any, any> | null = null;
+  static current: Component | null = null;
   static components = {};
   static props?: any;
   static defaultProps?: any;
@@ -130,7 +130,7 @@ export class Component<T extends Env, Props extends {}> {
    * hand.  Other components should be created automatically by the framework (with
    * the t-component directive in a template)
    */
-  constructor(parent?: Component<T, any> | null, props?: Props) {
+  constructor(parent?: Component<any, T> | null, props?: Props) {
     Component.current = this;
 
     let constr = this.constructor as any;
@@ -441,7 +441,7 @@ export class Component<T extends Env, Props extends {}> {
    * Note that it does not call the __callWillUnmount method to avoid visiting
    * all children many times.
    */
-  __destroy(parent: Component<any, any> | null) {
+  __destroy(parent: Component | null) {
     const __owl__ = this.__owl__;
     const isMounted = __owl__.isMounted;
     if (isMounted) {
@@ -501,7 +501,7 @@ export class Component<T extends Env, Props extends {}> {
    * Private trigger method, allows to choose the component which triggered
    * the event in the first place
    */
-  __trigger(component: Component<any, any>, eventType: string, payload?: any) {
+  __trigger(component: Component, eventType: string, payload?: any) {
     if (this.el) {
       const ev = new OwlEvent(component, eventType, {
         bubbles: true,

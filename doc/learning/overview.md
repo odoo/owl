@@ -1,6 +1,5 @@
 # 🦉 Quick Overview 🦉
 
-
 Owl components in an application are used to define a (dynamic) tree of components.
 
 ```
@@ -110,7 +109,10 @@ class Parent extends Component {
             line="line" />
     </div>`;
   static components = { OrderLine };
-  orders = useState([{ id: 1, name: "Coffee", quantity: 0 }, { id: 2, name: "Tea", quantity: 0 }]);
+  orders = useState([
+    { id: 1, name: "Coffee", quantity: 0 },
+    { id: 2, name: "Tea", quantity: 0 }
+  ]);
 
   addToOrder(event) {
     const line = event.detail.line;

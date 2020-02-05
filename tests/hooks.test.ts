@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe("hooks", () => {
   test("can use a state hook", async () => {
-    class Counter extends Component<any, any> {
+    class Counter extends Component {
       static template = xml`<div><t t-esc="counter.value"/></div>`;
       counter = useState({ value: 42 });
     }
@@ -64,7 +64,7 @@ describe("hooks", () => {
         steps.push("willunmount");
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div>hey</div>`;
       constructor() {
         super();
@@ -92,7 +92,7 @@ describe("hooks", () => {
         steps.push("willunmount");
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div>hey</div>`;
       constructor(parent, props) {
         super(parent, props);
@@ -100,7 +100,7 @@ describe("hooks", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><MyComponent t-if="state.flag"/></div>`;
       static components = { MyComponent };
       state = useState({ flag: true });
@@ -126,7 +126,7 @@ describe("hooks", () => {
         steps.push("hook:willunmount");
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div>hey</div>`;
       constructor() {
         super();
@@ -157,7 +157,7 @@ describe("hooks", () => {
         steps.push("hook:willunmount");
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div>hey</div>`;
       constructor(parent, props) {
         super(parent, props);
@@ -171,7 +171,7 @@ describe("hooks", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><MyComponent t-if="state.flag"/></div>`;
       static components = { MyComponent };
       state = useState({ flag: true });
@@ -197,7 +197,7 @@ describe("hooks", () => {
         steps.push("hook:willunmount" + i);
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div>hey</div>`;
       constructor() {
         super();
@@ -219,7 +219,7 @@ describe("hooks", () => {
   });
 
   test("useRef hook", async () => {
-    class Counter extends Component<any, any> {
+    class Counter extends Component {
       static template = xml`<div><button t-ref="button"><t t-esc="value"/></button></div>`;
       button = useRef("button");
       value = 0;
@@ -241,7 +241,7 @@ describe("hooks", () => {
 
   test("useRef hook is null if ref is removed ", async () => {
     expect.assertions(4);
-    class TestRef extends Component<any, any> {
+    class TestRef extends Component {
       static template = xml`<div><span t-if="state.flag" t-ref="span">owl</span></div>`;
       spanRef = useRef("span");
       state = useState({ flag: true });
@@ -261,10 +261,10 @@ describe("hooks", () => {
   });
 
   test("t-refs on widget are components", async () => {
-    class WidgetB extends Component<any, any> {
+    class WidgetB extends Component {
       static template = xml`<div>b</div>`;
     }
-    class WidgetC extends Component<any, any> {
+    class WidgetC extends Component {
       static template = xml`<div class="outer-div">Hello<WidgetB t-ref="mywidgetb" /></div>`;
       static components = { WidgetB };
       ref = useRef("mywidgetb");
@@ -280,11 +280,11 @@ describe("hooks", () => {
 
   test("t-refs are bound at proper timing", async () => {
     expect.assertions(2);
-    class Widget extends Component<any, any> {
+    class Widget extends Component {
       static template = xml`<div>widget</div>`;
     }
 
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static template = xml`
         <div>
           <t t-foreach="state.list" t-as="elem" t-ref="child" t-key="elem" t-component="Widget"/>
@@ -309,10 +309,10 @@ describe("hooks", () => {
 
   test("t-refs are bound at proper timing (2)", async () => {
     expect.assertions(10);
-    class Widget extends Component<any, any> {
+    class Widget extends Component {
       static template = xml`<div>widget</div>`;
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static template = xml`
         <div>
           <t t-if="state.child1" t-ref="child1" t-component="Widget"/>
@@ -369,7 +369,7 @@ describe("hooks", () => {
       });
     }
 
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div><t t-if="state.flag">hey</t></div>`;
       state = useState({ flag: true });
 
@@ -403,7 +403,7 @@ describe("hooks", () => {
         steps.push("hook:willPatch");
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div><t t-if="state.flag">hey</t></div>`;
       state = useState({ flag: true });
 
@@ -437,7 +437,7 @@ describe("hooks", () => {
         steps.push("hook:willPatch" + i);
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<div>hey<t t-esc="state.value"/></div>`;
       state = useState({ value: 1 });
       constructor() {
@@ -473,7 +473,7 @@ describe("hooks", () => {
     }
 
     test("simple input", async () => {
-      class SomeComponent extends Component<any, any> {
+      class SomeComponent extends Component {
         static template = xml`
             <div>
                 <input t-ref="input1"/>
@@ -494,7 +494,7 @@ describe("hooks", () => {
     });
 
     test("input in a t-if", async () => {
-      class SomeComponent extends Component<any, any> {
+      class SomeComponent extends Component {
         static template = xml`
             <div>
                 <input t-ref="input1"/>
@@ -521,7 +521,7 @@ describe("hooks", () => {
   });
 
   test("can use sub env", async () => {
-    class TestComponent extends Component<any, any> {
+    class TestComponent extends Component {
       static template = xml`<div><t t-esc="env.val"/></div>`;
       constructor() {
         super();
@@ -536,7 +536,7 @@ describe("hooks", () => {
   });
 
   test("parent and child env", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div><t t-esc="env.val"/></div>`;
       constructor(parent, props) {
         super(parent, props);
@@ -544,7 +544,7 @@ describe("hooks", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><t t-esc="env.val"/><Child/></div>`;
       static components = { Child };
       constructor() {
@@ -568,14 +568,14 @@ describe("hooks", () => {
         steps.push("onWillUpdateProps");
       });
     }
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
       constructor(parent, props) {
         super(parent, props);
         useMyHook();
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><MyComponent value="state.value"/></div>`;
       static components = { MyComponent };
       state = useState({ value: 1 });
@@ -597,7 +597,7 @@ describe("hooks", () => {
   test("useExternalListener", async () => {
     let n = 0;
 
-    class MyComponent extends Component<any, any> {
+    class MyComponent extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
       constructor(parent, props) {
         super(parent, props);
@@ -607,7 +607,7 @@ describe("hooks", () => {
         n++;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><MyComponent t-if="state.flag"/></div>`;
       static components = { MyComponent };
       state = useState({ flag: false });

@@ -28,10 +28,10 @@ afterEach(() => {
 
 describe("class and style attributes with t-component", () => {
   test("class is properly added on widget root el", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div class="c"/>`;
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static template = xml`<div><Child class="a b"/></div>`;
       static components = { Child };
     }
@@ -41,10 +41,10 @@ describe("class and style attributes with t-component", () => {
   });
 
   test("empty class attribute is not added on widget root el", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span/>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child class=""/></div>`;
       static components = { Child };
     }
@@ -54,10 +54,10 @@ describe("class and style attributes with t-component", () => {
   });
 
   test("t-att-class is properly added/removed on widget root el", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div class="c"/>`;
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
       static components = { Child };
       state = useState({ a: true, b: false });
@@ -80,8 +80,8 @@ describe("class and style attributes with t-component", () => {
               <Child class="a  b c   d"/>
         </div>`
     );
-    class Child extends Component<any, any> {}
-    class ParentWidget extends Component<any, any> {
+    class Child extends Component {}
+    class ParentWidget extends Component {
       static components = { Child };
     }
     env.qweb.addTemplate("Child", `<div/>`);
@@ -99,10 +99,10 @@ describe("class and style attributes with t-component", () => {
           <span t-name="Child" class="c" t-att-class="{ d: state.d }"/>
         </templates>`);
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       state = useState({ d: true });
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static components = { Child };
       state = useState({ b: true });
       child = useRef("child");
@@ -141,10 +141,10 @@ describe("class and style attributes with t-component", () => {
           <span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>
         </templates>`);
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       state = useState({ d: true });
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static components = { Child };
       state = useState({ b: true });
       child = useRef("child");
@@ -180,7 +180,7 @@ describe("class and style attributes with t-component", () => {
           <div t-name="App" t-att-class="{ c: state.c }" />
         </templates>`);
 
-    class App extends Component<any, any> {
+    class App extends Component {
       state = useState({ c: true });
       mounted() {
         this.el!.classList.add("user");
@@ -207,11 +207,11 @@ describe("class and style attributes with t-component", () => {
           </div>`
     );
 
-    class SomeComponent extends Component<any, any> {
+    class SomeComponent extends Component {
       static template = xml`<div/>`;
     }
 
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static components = { child: SomeComponent };
     }
     const widget = new ParentWidget();
@@ -228,11 +228,11 @@ describe("class and style attributes with t-component", () => {
           </div>`
     );
 
-    class SomeComponent extends Component<any, any> {
+    class SomeComponent extends Component {
       static template = xml`<div/>`;
     }
 
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static components = { child: SomeComponent };
       state = useState({ style: "font-size: 20px" });
     }
@@ -250,10 +250,10 @@ describe("class and style attributes with t-component", () => {
   });
 
   test("error in subcomponent with class", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div t-esc="this.will.crash"/>`;
     }
-    class ParentWidget extends Component<any, any> {
+    class ParentWidget extends Component {
       static template = xml`<div><Child class="a"/></div>`;
       static components = { Child };
     }

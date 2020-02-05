@@ -1,7 +1,7 @@
 import { Component } from "../component/component";
 import { xml } from "../tags";
 
-export class RouteComponent extends Component<any, {}> {
+export class RouteComponent extends Component {
   static template = xml`
     <t>
         <t

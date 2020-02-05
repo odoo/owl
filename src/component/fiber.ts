@@ -50,7 +50,7 @@ export class Fiber {
 
   scope: any;
 
-  component: Component<any, any>;
+  component: Component;
   vnode: VNode | null = null;
 
   root: Fiber;
@@ -61,7 +61,7 @@ export class Fiber {
 
   error?: Error;
 
-  constructor(parent: Fiber | null, component: Component<any, any>, force, inserter) {
+  constructor(parent: Fiber | null, component: Component, force: boolean, inserter) {
     this.component = component;
     this.force = force;
     this.inserter = inserter;

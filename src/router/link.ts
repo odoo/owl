@@ -4,7 +4,7 @@ import { Destination, RouterEnv } from "./router";
 
 type Props = Destination;
 
-export class Link<Env extends RouterEnv> extends Component<Env, Props> {
+export class Link<Env extends RouterEnv> extends Component<Props, Env> {
   static template = xml`
     <a  t-att-class="{'router-link-active': isActive }"
         t-att-href="href"

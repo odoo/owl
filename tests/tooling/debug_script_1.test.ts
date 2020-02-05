@@ -22,11 +22,11 @@ test("can log full lifecycle", async () => {
   const log = console.log;
   console.log = arg => steps.push(arg);
 
-  class Child extends Component<any, any> {
+  class Child extends Component {
     static template = xml`<div>child</div>`;
   }
 
-  class Parent extends Component<any, any> {
+  class Parent extends Component {
     static template = xml`<div><Child t-if="state.flag"/></div>`;
     static components = { Child };
     state = useState({ flag: false });

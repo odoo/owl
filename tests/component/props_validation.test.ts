@@ -25,7 +25,7 @@ afterEach(() => {
   QWeb.dev = dev;
 });
 
-class Widget extends Component<any, any> {}
+class Widget extends Component {}
 
 //------------------------------------------------------------------------------
 // Tests
@@ -96,7 +96,7 @@ describe("props validation", () => {
     ];
 
     let props;
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       get p() {
         return props.p;
@@ -153,14 +153,14 @@ describe("props validation", () => {
     ];
 
     let props;
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       get p() {
         return props.p;
       }
     }
     for (let test of Tests) {
-      let TestWidget = class extends Component<any, any> {
+      let TestWidget = class extends Component {
         static props = { p: { type: test.type } };
         static template = xml`<div>hey</div>`;
       };
@@ -200,11 +200,11 @@ describe("props validation", () => {
   });
 
   test("can validate a prop with multiple types", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = { p: [String, Boolean] };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
@@ -244,11 +244,11 @@ describe("props validation", () => {
   });
 
   test("can validate an optional props", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: String, optional: true } };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
@@ -288,11 +288,11 @@ describe("props validation", () => {
   });
 
   test("can validate an array with given primitive type", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: String } };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
@@ -340,11 +340,11 @@ describe("props validation", () => {
   });
 
   test("can validate an array with multiple sub element types", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = { p: { type: Array, element: [String, Boolean] } };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
@@ -393,13 +393,13 @@ describe("props validation", () => {
   });
 
   test("can validate an object with simple shape", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = {
         p: { type: Object, shape: { id: Number, url: String } }
       };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
@@ -451,7 +451,7 @@ describe("props validation", () => {
   });
 
   test("can validate recursively complicated prop def", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = {
         p: {
@@ -463,7 +463,7 @@ describe("props validation", () => {
         }
       };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="p"/></div>`;
       static components = { TestWidget };
       get p() {
@@ -503,7 +503,7 @@ describe("props validation", () => {
   });
 
   test("can validate optional attributes in nested sub props", () => {
-    class TestComponent extends Component<any, any> {
+    class TestComponent extends Component {
       static props = {
         myprop: {
           type: Array,
@@ -536,7 +536,7 @@ describe("props validation", () => {
   });
 
   test("can validate with a custom validator", () => {
-    class TestComponent extends Component<any, any> {
+    class TestComponent extends Component {
       static props = {
         size: {
           validate: e => ["small", "medium", "large"].includes(e)
@@ -562,7 +562,7 @@ describe("props validation", () => {
 
   test("can validate with a custom validator, and a type", () => {
     const validator = jest.fn(n => 0 <= n && n <= 10);
-    class TestComponent extends Component<any, any> {
+    class TestComponent extends Component {
       static props = {
         n: {
           type: Number,
@@ -738,7 +738,7 @@ describe("props validation", () => {
 
   test("props are validated whenever component is updated", async () => {
     let error;
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static props = { p: { type: Number } };
       static template = xml`<div><t t-esc="props.p"/></div>`;
 
@@ -750,7 +750,7 @@ describe("props validation", () => {
         }
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="state.p"/></div>`;
       static components = { TestWidget };
       state: any = useState({ p: 1 });
@@ -767,12 +767,12 @@ describe("props validation", () => {
   });
 
   test("default values are applied before validating props at update", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static props = { p: { type: Number } };
       static template = xml`<div><t t-esc="props.p"/></div>`;
       static defaultProps = { p: 4 };
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget p="state.p"/></div>`;
       static components = { TestWidget };
       state: any = useState({ p: 1 });
@@ -790,11 +790,11 @@ describe("props validation", () => {
 
 describe("default props", () => {
   test("can set default values", async () => {
-    class TestWidget extends Component<any, any> {
+    class TestWidget extends Component {
       static defaultProps = { p: 4 };
       static template = xml`<div><t t-esc="props.p"/></div>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><TestWidget /></div>`;
       static components = { TestWidget };
     }

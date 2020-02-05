@@ -9,16 +9,16 @@
 
 ## Overview
 
-Each software project has its specific needs.  Many of these needs can be solved 
+Each software project has its specific needs. Many of these needs can be solved
 with some tooling: `webpack`, `gulp`, css preprocessor, bundlers, transpilers, ...
 
-Because of that, it is usually not simple to just start a project.  Some
-frameworks provide their own tooling to help with that.  But then, you have to
+Because of that, it is usually not simple to just start a project. Some
+frameworks provide their own tooling to help with that. But then, you have to
 integrate and learn how these applications work.
 
 Owl is designed to be used with no tooling at all. Because of that, Owl can
-"easily" be integrated in a modern build toolchain.  In this section, we will
-discuss a few different setups to start a project.  Each of these setups has
+"easily" be integrated in a modern build toolchain. In this section, we will
+discuss a few different setups to start a project. Each of these setups has
 advantages and disadvantages in different situations.
 
 ## Simple html file
@@ -74,8 +74,7 @@ whenReady(setup);
 
 Now, simply loading this html file in a browser should display a welcome message.
 This setup is not fancy, but it is extremely simple. There are no tooling at
-all required.  It can be slightly optimized by using the minified build of Owl.
-
+all required. It can be slightly optimized by using the minified build of Owl.
 
 ## With a static server
 
@@ -87,7 +86,7 @@ variables and we lose autocompletion across files.
 
 There is a low tech solution to this issue: using native javascript modules.
 This however has a requirement: for security reasons, browsers will not accept
-modules on content served through the `file` protocol.  This means that we need
+modules on content served through the `file` protocol. This means that we need
 to use a static server.
 
 Let us start a new project with the following file structure:
@@ -100,7 +99,6 @@ hello_owl/
     main.js
     owl.js
 ```
-
 
 As previously, the file `owl.js` can be downloaded from the last release published at
 [https://github.com/odoo/owl/releases](https://github.com/odoo/owl/releases).
@@ -130,9 +128,8 @@ const { Component } = owl;
 const { xml } = owl.tags;
 
 export class App extends Component {
-    static template = xml`<div>Hello Owl</div>`;
+  static template = xml`<div>Hello Owl</div>`;
 }
-
 
 // main.js ---------------------------------------------------------------------
 import { App } from "./app.js";
@@ -145,11 +142,11 @@ function setup() {
 owl.utils.whenReady(setup);
 ```
 
-The `main.js` file import the `app.js` file.  Note that the import statement has
-a `.js` suffix, which is important.  Most text editor can understand this syntax
+The `main.js` file import the `app.js` file. Note that the import statement has
+a `.js` suffix, which is important. Most text editor can understand this syntax
 and will provide autocompletion.
 
-Now, to execute this code, we need to serve the `src` folder statically.  A low
+Now, to execute this code, we need to serve the `src` folder statically. A low
 tech way to do that is to use for example the python `SimpleHTTPServer` feature:
 
 ```
@@ -180,17 +177,15 @@ that, we can add the following `package.json` file at the root of the project:
 We can now install the `serve` tool with the command `npm install`, and then,
 start a static server with the simple `npm run serve` command.
 
-
 ## Standard Javascript project
 
 The previous setup works, and is certainly good for some usecases, including
-quick prototyping.  However, it lacks some useful features, such as livereload,
+quick prototyping. However, it lacks some useful features, such as livereload,
 a test suite, or bundling the code in a single file.
 
 Each of these features, and many others, can be done in many different ways.
 Since it is really not trivial to configure such a project, we provide here an
 example that can be used as a starting point.
-
 
 Our standard Owl project has the following file structure:
 
@@ -244,7 +239,6 @@ export class App extends Component {
   }
 }
 
-
 // src/main.js -----------------------------------------------------------------
 import { utils } from "@odoo/owl";
 import { App } from "./components/App";
@@ -255,7 +249,6 @@ function setup() {
 }
 
 utils.whenReady(setup);
-
 
 // tests/components/App.test.js ------------------------------------------------
 import { App } from "../../src/components/App";
@@ -283,16 +276,13 @@ describe("App", () => {
   });
 });
 
-
 // tests/helpers.js ------------------------------------------------------------
 import { Component } from "@odoo/owl";
 import "regenerator-runtime/runtime";
 
 export async function nextTick() {
   return new Promise(function(resolve) {
-    setTimeout(() =>
-      Component.scheduler.requestAnimationFrame(() => resolve())
-    );
+    setTimeout(() => Component.scheduler.requestAnimationFrame(() => resolve()));
   });
 }
 
@@ -347,9 +337,7 @@ dist/
     "@odoo/owl": "^1.0.4"
   },
   "babel": {
-    "plugins": [
-      "@babel/plugin-proposal-class-properties"
-    ],
+    "plugins": ["@babel/plugin-proposal-class-properties"],
     "env": {
       "test": {
         "plugins": ["transform-es2015-modules-commonjs"]
@@ -359,9 +347,7 @@ dist/
   "jest": {
     "verbose": false,
     "testRegex": "(/tests/.*(test|spec))\\.js?$",
-    "moduleFileExtensions": [
-      "js"
-    ],
+    "moduleFileExtensions": ["js"],
     "transform": {
       "^.+\\.[t|j]sx?$": "babel-jest"
     }

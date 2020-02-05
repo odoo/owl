@@ -46,9 +46,7 @@ which cannot be considered either a tutorial, or reference documentation.
 - [Comparison with React/Vue](miscellaneous/comparison.md)
 - [Why did Odoo built Owl?](miscellaneous/why_owl.md)
 
-
 ---
 
 Found an issue in the documentation? A broken link? Some outdated information?
 Please open an issue or submit a PR!
-

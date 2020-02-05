@@ -25,7 +25,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-function children(w: Component<any, any>): Component<any, any>[] {
+function children(w: Component): Component[] {
   const childrenMap = w.__owl__.children;
   return Object.keys(childrenMap).map(id => childrenMap[id]);
 }
@@ -33,7 +33,7 @@ function children(w: Component<any, any>): Component<any, any>[] {
 describe("async rendering", () => {
   test("destroying a widget before start is over", async () => {
     let def = makeDeferred();
-    class W extends Component<any, any> {
+    class W extends Component {
       static template = xml`<div/>`;
       willStart(): Promise<void> {
         return def;
@@ -53,7 +53,7 @@ describe("async rendering", () => {
   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
     let def = makeDeferred();
     let n = 0;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span>child:<t t-esc="props.val"/></span>`;
       constructor(parent, props) {
         super(parent, props);
@@ -63,7 +63,7 @@ describe("async rendering", () => {
         return def;
       }
     }
-    class W extends Component<any, any> {
+    class W extends Component {
       static template = xml`<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`;
       static components = { Child };
       state = useState({ val: 1 });
@@ -90,7 +90,7 @@ describe("async rendering", () => {
     let defB = makeDeferred();
     let nbRenderings: number = 0;
 
-    class ChildA extends Component<any, any> {
+    class ChildA extends Component {
       static template = xml`<span><t t-esc="getValue()"/></span>`;
       willStart(): Promise<void> {
         return defA;
@@ -101,13 +101,13 @@ describe("async rendering", () => {
       }
     }
 
-    class ChildB extends Component<any, any> {
+    class ChildB extends Component {
       static template = xml`<span>b</span>`;
       willStart(): Promise<void> {
         return defB;
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <t t-if="state.flagA"><ChildA /></t>
@@ -139,20 +139,20 @@ describe("async rendering", () => {
     let defA = makeDeferred();
     let defB = makeDeferred();
 
-    class ChildA extends Component<any, any> {
+    class ChildA extends Component {
       static template = xml`<span>a<t t-esc="props.val"/></span>`;
       willUpdateProps(): Promise<void> {
         return defA;
       }
     }
-    class ChildB extends Component<any, any> {
+    class ChildB extends Component {
       static template = xml`<span>b<t t-esc="props.val"/></span>`;
       willStart(): Promise<void> {
         return defB;
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <ChildA val="state.valA"/>
@@ -182,20 +182,20 @@ describe("async rendering", () => {
     let defA = makeDeferred();
     let defB = makeDeferred();
 
-    class ChildA extends Component<any, any> {
+    class ChildA extends Component {
       static template = xml`<span>a<t t-esc="props.val"/></span>`;
       willUpdateProps(): Promise<void> {
         return defA;
       }
     }
-    class ChildB extends Component<any, any> {
+    class ChildB extends Component {
       static template = xml`<span>b<t t-esc="props.val"/></span>`;
       willStart(): Promise<void> {
         return defB;
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <ChildA val="state.valA"/>
@@ -224,7 +224,7 @@ describe("async rendering", () => {
     const steps: string[] = [];
     const defs = [makeDeferred(), makeDeferred()];
     let index = 0;
-    class ChildA extends Component<any, any> {
+    class ChildA extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
       willUpdateProps(): Promise<void> {
         return defs[index++];
@@ -234,7 +234,7 @@ describe("async rendering", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><ChildA val="state.valA"/></div>`;
       static components = { ChildA };
       state = useState({ valA: 1 });
@@ -258,7 +258,7 @@ describe("async rendering", () => {
 
   test("update a sub-component twice in the same frame, 2", async () => {
     const steps: string[] = [];
-    class ChildA extends Component<any, any> {
+    class ChildA extends Component {
       static template = xml`<span><t t-esc="val()"/></span>`;
       patched() {
         steps.push("patched");
@@ -269,7 +269,7 @@ describe("async rendering", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><ChildA val="state.valA"/></div>`;
       static components = { ChildA };
       state = useState({ valA: 1 });
@@ -302,9 +302,9 @@ describe("async rendering", () => {
   });
 
   test("components in a node in a t-foreach ", async () => {
-    class Child extends Component<any, any> {}
+    class Child extends Component {}
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static components = { Child };
 
       get items() {
@@ -335,7 +335,7 @@ describe("async rendering", () => {
   test("properly behave when destroyed/unmounted while rendering ", async () => {
     const def = makeDeferred();
 
-    class SubChild extends Component<any, any> {
+    class SubChild extends Component {
       static template = xml`<div/>`;
       willPatch() {
         throw new Error("Should not happen!");
@@ -348,12 +348,12 @@ describe("async rendering", () => {
       }
     }
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div><SubChild /></div>`;
       static components = { SubChild };
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><t t-if="state.flag"><Child val="state.val"/></t></div>`;
       static components = { Child };
       state = useState({ flag: true, val: "Framboise Lindemans" });
@@ -396,18 +396,18 @@ describe("async rendering", () => {
       `);
 
     let destroyCount = 0;
-    class ChildA extends Component<any, any> {
+    class ChildA extends Component {
       destroy() {
         destroyCount++;
         super.destroy();
       }
     }
-    class ChildB extends Component<any, any> {
+    class ChildB extends Component {
       willStart(): any {
         return new Promise(function() {});
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { ChildA, ChildB };
       state = useState({ valA: 1, valB: 2, flag: false });
     }
@@ -426,11 +426,11 @@ describe("async rendering", () => {
   });
 
   test("rendering component again in next microtick", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div t-name="Child">Child</div>`;
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
           <div>
             <button t-on-click="onClick">Click</button>
@@ -458,7 +458,7 @@ describe("async rendering", () => {
     const def = makeDeferred();
     let stateB;
 
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><t t-esc="props.fromA"/><t t-esc="someValue()"/></span>`;
       someValue() {
         return this.props.fromB;
@@ -469,7 +469,7 @@ describe("async rendering", () => {
     }
     ComponentC.prototype.someValue = jest.fn(ComponentC.prototype.someValue);
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static components = { ComponentC };
       static template = xml`<p><ComponentC fromA="props.fromA" fromB="state.fromB" /></p>`;
       state = useState({ fromB: "b" });
@@ -480,7 +480,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -514,14 +514,14 @@ describe("async rendering", () => {
     const defs = [makeDeferred(), makeDeferred()];
     let index = 0;
     let stateB;
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromB"/></span>`;
       willUpdateProps() {
         return defs[index++];
       }
     }
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><ComponentC fromA="props.fromA" fromB="state.fromB" /></p>`;
       static components = { ComponentC };
       state = useState({ fromB: "b" });
@@ -532,7 +532,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static template = xml`<div><t t-esc="state.fromA"/><ComponentB fromA="state.fromA"/></div>`;
       static components = { ComponentB };
       state = useState({ fromA: 1 });
@@ -564,14 +564,14 @@ describe("async rendering", () => {
     const defs = [makeDeferred(), makeDeferred()];
     let index = 0;
     let stateB;
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromB"/></span>`;
       willUpdateProps() {
         return defs[index++];
       }
     }
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><ComponentC fromA="props.fromA" fromB="state.fromB" /></p>`;
       static components = { ComponentC };
       state = useState({ fromB: "b" });
@@ -582,7 +582,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       static components = { ComponentB };
       state = useState({ fromA: 1 });
@@ -616,7 +616,7 @@ describe("async rendering", () => {
     let index = 0;
     let stateC;
 
-    class ComponentD extends Component<any, any> {
+    class ComponentD extends Component {
       static template = xml`<i><t t-esc="props.fromA"/><t t-esc="someValue()"/></i>`;
       someValue() {
         return this.props.fromC;
@@ -627,7 +627,7 @@ describe("async rendering", () => {
     }
     ComponentD.prototype.someValue = jest.fn(ComponentD.prototype.someValue);
 
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><ComponentD fromA="props.fromA" fromC="state.fromC" /></span>`;
       static components = { ComponentD };
       state = useState({ fromC: "c" });
@@ -637,7 +637,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><ComponentC fromA="props.fromA" /></p>`;
       static components = { ComponentC };
 
@@ -646,7 +646,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -686,7 +686,7 @@ describe("async rendering", () => {
     let index = 0;
     let stateC;
 
-    class ComponentD extends Component<any, any> {
+    class ComponentD extends Component {
       static template = xml`<i><t t-esc="props.fromA"/><t t-esc="someValue()"/></i>`;
       someValue() {
         return this.props.fromC;
@@ -697,7 +697,7 @@ describe("async rendering", () => {
     }
     ComponentD.prototype.someValue = jest.fn(ComponentD.prototype.someValue);
 
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><ComponentD fromA="props.fromA" fromC="state.fromC" /></span>`;
       static components = { ComponentD };
       state = useState({ fromC: "c" });
@@ -707,7 +707,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><ComponentC fromA="props.fromA" /></p>`;
       static components = { ComponentC };
 
@@ -716,7 +716,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -754,7 +754,7 @@ describe("async rendering", () => {
     const defsB = [makeDeferred(), makeDeferred()];
     let index = 0;
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><t t-esc="someValue()" /></p>`;
       someValue() {
         return this.props.fromA;
@@ -765,7 +765,7 @@ describe("async rendering", () => {
     }
     ComponentB.prototype.someValue = jest.fn(ComponentB.prototype.someValue);
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -799,7 +799,7 @@ describe("async rendering", () => {
     const defsB = [makeDeferred(), makeDeferred()];
     let index = 0;
 
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><t t-esc="someValue()" /></p>`;
       someValue() {
         return this.props.fromA;
@@ -810,7 +810,7 @@ describe("async rendering", () => {
     }
     ComponentB.prototype.someValue = jest.fn(ComponentB.prototype.someValue);
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -841,7 +841,7 @@ describe("async rendering", () => {
   });
 
   test("concurrent renderings scenario 7", async () => {
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><t t-esc="props.fromA" /><t t-esc="someValue()" /></p>`;
       state = useState({ fromB: "b" });
       someValue() {
@@ -853,7 +853,7 @@ describe("async rendering", () => {
     }
     ComponentB.prototype.someValue = jest.fn(ComponentB.prototype.someValue);
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -874,7 +874,7 @@ describe("async rendering", () => {
   test("concurrent renderings scenario 8", async () => {
     const def = makeDeferred();
     let stateB;
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><t t-esc="props.fromA" /><t t-esc="state.fromB" /></p>`;
       state = useState({ fromB: "b" });
       constructor(parent, props) {
@@ -886,7 +886,7 @@ describe("async rendering", () => {
       }
     }
 
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
       state = useState({ fromA: 1 });
@@ -925,10 +925,10 @@ describe("async rendering", () => {
     // re-rendering
     const def = makeDeferred();
     let stateC;
-    class ComponentD extends Component<any, any> {
+    class ComponentD extends Component {
       static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromC"/></span>`;
     }
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<p><ComponentD fromA="props.fromA" fromC="state.fromC" /></p>`;
       static components = { ComponentD };
       state = useState({ fromC: "b1" });
@@ -938,13 +938,13 @@ describe("async rendering", () => {
         stateC = this.state;
       }
     }
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<b><t t-esc="props.fromA"/></b>`;
       willUpdateProps() {
         return def;
       }
     }
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static template = xml`
           <div>
             <t t-esc="state.fromA"/>
@@ -991,14 +991,14 @@ describe("async rendering", () => {
     const defB = makeDeferred();
     const defC = makeDeferred();
     let stateB;
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
       willStart() {
         return defC;
       }
     }
     ComponentC.prototype.__render = jest.fn(ComponentC.prototype.__render);
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static template = xml`<p><ComponentC t-if="state.hasChild" value="props.value"/></p>`;
       state = useState({ hasChild: false });
       static components = { ComponentC };
@@ -1010,7 +1010,7 @@ describe("async rendering", () => {
         return defB;
       }
     }
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static template = xml`<div><ComponentB value="state.value"/></div>`;
       static components = { ComponentB };
       state = useState({ value: 1 });
@@ -1042,7 +1042,7 @@ describe("async rendering", () => {
     // remapped to the promise of the ambient rendering)
     const def = makeDeferred();
     let child;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.val"/>|<t t-esc="val"/></span>`;
       val = 3;
       willUpdateProps() {
@@ -1051,7 +1051,7 @@ describe("async rendering", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child val="state.valA"/></div>`;
       static components = { Child };
       state = useState({ valA: 1 });
@@ -1079,14 +1079,14 @@ describe("async rendering", () => {
     //    rendered but not completed yet)
     const def = makeDeferred();
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
       willUpdateProps() {
         return def;
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child val="state.val"/></div>`;
       static components = { Child };
       state = useState({ val: 1 });
@@ -1117,7 +1117,7 @@ describe("async rendering", () => {
 
   test("concurrent renderings scenario 13", async () => {
     let lastChild;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="state.val"/></span>`;
       state = useState({ val: 0 });
       mounted() {
@@ -1129,7 +1129,7 @@ describe("async rendering", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <Child/>
@@ -1153,7 +1153,7 @@ describe("async rendering", () => {
   });
 
   test("change state and call manually render: no unnecessary rendering", async () => {
-    class Widget extends Component<any, any> {
+    class Widget extends Component {
       static template = xml`<div><t t-esc="state.val"/></div>`;
       state = useState({ val: 1 });
     }

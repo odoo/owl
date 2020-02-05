@@ -29,7 +29,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
             <div>
                 <span t-foreach="todos" t-key="todo.id" t-as="todo"><t t-esc="todo.msg"/></span>
@@ -60,7 +60,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
             <div>
                 <span t-if="isBoolean">ok</span>
@@ -102,7 +102,7 @@ describe("connecting a component to store", () => {
     const state = { smallerArray: [1], biggerArray: [2, 3], useSmallArray: true };
     const store = new Store({ state });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div t-esc="mapAdd"/>`;
       storeProps = {
         array: useStore(state => {
@@ -131,7 +131,7 @@ describe("connecting a component to store", () => {
   });
 
   test("throw error if no store is found", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div></div>`;
       todos = useStore(state => state.todos);
     }
@@ -151,7 +151,7 @@ describe("connecting a component to store", () => {
     const actions = {};
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div/>`;
       storeState = useStore(state => state.a);
     }
@@ -174,7 +174,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
             <div>
                 <span t-esc="a.value"/>
@@ -208,7 +208,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
             <div>
                 <span t-foreach="todos" t-key="todo.id" t-as="todo"><t t-esc="todo.msg"/></span>
@@ -245,7 +245,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="nbrTodos.value"/></div>`;
       nbrTodos = useStore(state => ({ value: state.todos.length }));
     }
@@ -273,7 +273,7 @@ describe("connecting a component to store", () => {
       }
     };
     const store = new Store({ state, actions });
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="nbrTodos.value"/></div>`;
       nbrTodos = useStore(state => ({ value: state.todos.length }), { isEqual: shallowEqual });
     }
@@ -307,7 +307,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
             <div>
                 <span t-foreach="todos" t-key="todo.id" t-as="todo"><t t-esc="todo.msg"/></span>
@@ -336,7 +336,7 @@ describe("connecting a component to store", () => {
     });
     (<any>env).store = store;
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
           <div>
               <button t-on-click="dispatch('inc')">Inc</button>
@@ -365,14 +365,14 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions: {} });
 
-    class TodoItem extends Component<any, any> {
+    class TodoItem extends Component {
       static template = xml`<span><t t-esc="todo.text"/></span>`;
       todo = useStore((state, props) => {
         return state.todos.find(t => t.id === props.todoId);
       });
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><TodoItem todoId="state.currentId"/></div>`;
       static components = { TodoItem };
       state = useState({ currentId: 1 });
@@ -399,14 +399,14 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, actions });
 
-    class TodoItem extends Component<any, any> {
+    class TodoItem extends Component {
       static template = xml`<span><t t-esc="todo.text"/></span>`;
       todo = useStore((state, props) => {
         return state.todos.find(t => t.id === props.id);
       });
     }
 
-    class TodoList extends Component<any, any> {
+    class TodoList extends Component {
       static template = xml`
         <div>
           <TodoItem t-foreach="todos" t-as="todo" id="todo.id" t-key="todo.id"/>
@@ -444,7 +444,7 @@ describe("connecting a component to store", () => {
     };
     const store = new Store({ state, getters });
 
-    class TodoItem extends Component<any, any> {
+    class TodoItem extends Component {
       static template = xml`
         <div>
           <span><t t-esc="storeProps.activeTodoText"/></span>
@@ -460,7 +460,7 @@ describe("connecting a component to store", () => {
       });
     }
 
-    class TodoList extends Component<any, any> {
+    class TodoList extends Component {
       static components = { TodoItem };
       static template = xml`
         <div>
@@ -481,12 +481,12 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component is updated when props are updated", async () => {
-    class Beer extends Component<any, any> {
+    class Beer extends Component {
       static template = xml`<span><t t-esc="beer.name"/></span>`;
       beer = useStore((state, props) => state.beers[props.id]);
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><Beer id="state.beerId"/></div>`;
       static components = { Beer };
       state = useState({ beerId: 1 });
@@ -506,7 +506,7 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component is updated when store is changed", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
         <div>
             <span t-foreach="data.beers" t-as="beer" t-key="beer.name"><t t-esc="beer.name"/></span>
@@ -539,7 +539,7 @@ describe("connecting a component to store", () => {
   test("connected component is updated when mixing store and props changes", async () => {
     let counter = 0;
 
-    class Beer extends Component<any, any> {
+    class Beer extends Component {
       static template = xml`<span><t t-esc="beer.name"/></span>`;
       beer = useStore((state, props) => state.beers[props.id], {
         onUpdate: result => {
@@ -548,7 +548,7 @@ describe("connecting a component to store", () => {
       });
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><Beer id="state.beerId"/></div>`;
       static components = { Beer };
       state = useState({ beerId: 1 });
@@ -580,7 +580,7 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component is properly cleaned up on destroy", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div></div>`;
       state = useStore((state, props) => state);
     }
@@ -599,7 +599,7 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component with undefined, null and string props", async () => {
-    class Beer extends Component<any, any> {
+    class Beer extends Component {
       static template = xml`
             <div t-name="Beer">
                 <span>taster:<t t-esc="data.taster"/></span>
@@ -613,7 +613,7 @@ describe("connecting a component to store", () => {
       }));
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><Beer id="state.beerId"/></div>`;
       static components = { Beer };
       state = useState({ beerId: 0 });
@@ -658,7 +658,7 @@ describe("connecting a component to store", () => {
   });
 
   test("connected component deeply reactive with undefined, null and string props", async () => {
-    class Beer extends Component<any, any> {
+    class Beer extends Component {
       static template = xml`
             <div>
                 <span>taster:<t t-esc="info.taster"/></span>
@@ -674,7 +674,7 @@ describe("connecting a component to store", () => {
       });
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><Beer id="state.beerId"/></div>`;
       static components = { Beer };
       state = useState({ beerId: 0 });
@@ -749,7 +749,7 @@ describe("connecting a component to store", () => {
         state.x.val = val;
       }
     };
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><t t-esc="x.val"/></div>`;
       x = useStore(state => {
         return Object.assign({}, state.x);
@@ -770,7 +770,7 @@ describe("connecting a component to store", () => {
   test("correct update order when parent/children are connected", async () => {
     const steps: string[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="state.msg"/></span>`;
 
       state = useStore((state, props) => {
@@ -778,7 +778,7 @@ describe("connecting a component to store", () => {
         return { msg: state.msg[props.key] };
       });
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child key="state.current"/></div>`;
       static components = { Child };
 
@@ -817,7 +817,7 @@ describe("connecting a component to store", () => {
     let def = makeDeferred();
     def.resolve();
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="state.msg"/></span>`;
       state = useStore((s, props) => {
         steps.push("child");
@@ -825,7 +825,7 @@ describe("connecting a component to store", () => {
       });
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
             <div>
                 <Child t-if="state.flag" someId="state.someId"/>
@@ -885,7 +885,7 @@ describe("connecting a component to store", () => {
       actions
     });
 
-    class TodoItem extends Component<any, any> {
+    class TodoItem extends Component {
       static template = xml`
             <div class="todo">
                 <t t-esc="state.todo.title"/>
@@ -906,7 +906,7 @@ describe("connecting a component to store", () => {
         return super.__render(f);
       }
     }
-    class TodoApp extends Component<any, any> {
+    class TodoApp extends Component {
       static template = xml`
             <div class="todoapp">
                 <t t-foreach="Object.values(state.todos)" t-as="todo">
@@ -958,7 +958,7 @@ describe("connecting a component to store", () => {
       actions
     });
 
-    class TodoItem extends Component<any, any> {
+    class TodoItem extends Component {
       static template = xml`
             <div class="todo">
                 <t t-esc="state.todo.title"/>
@@ -980,7 +980,7 @@ describe("connecting a component to store", () => {
       }
     }
 
-    class TodoApp extends Component<any, any> {
+    class TodoApp extends Component {
       static template = xml`
             <div class="todoapp">
                 <t t-foreach="Object.values(state.todos)" t-as="todo">
@@ -1024,7 +1024,7 @@ describe("connecting a component to store", () => {
   test("connected component willpatch/patch hooks are called on store updates", async () => {
     const steps: string[] = [];
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="store.msg"/></div>`;
       store = useStore(s => ({ msg: s.msg }));
 
@@ -1059,12 +1059,12 @@ describe("connecting a component to store", () => {
   test("connected child components stop listening to store when destroyed", async () => {
     let steps: any = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div><t t-esc="store.val"/></div>`;
       store = useStore(s => s);
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child t-if="state.child" /></div>`;
       static components = { Child };
       state = useState({ child: true });
@@ -1097,14 +1097,14 @@ describe("connecting a component to store", () => {
   test("connected child component destroyed by dispatched action", async () => {
     let steps: any = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div><t t-esc="store.val"/></div>`;
       store = useStore(s => {
         steps.push("child selector");
         return s;
       });
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child t-if="store.child" /></div>`;
       static components = { Child };
       store = useStore(s => {
@@ -1135,7 +1135,7 @@ describe("connecting a component to store", () => {
   });
 
   test("dispatch an action", async () => {
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="store.counter"/></div>`;
       store = useStore(state => state);
       dispatch = useDispatch();
@@ -1203,7 +1203,7 @@ describe("various scenarios", () => {
     };
     const store = new Store({ actions, state });
 
-    class Attachment extends Component<any, any> {
+    class Attachment extends Component {
       static template = xml`
             <div>
                 <span>Attachment <t t-esc="props.id"/></span>
@@ -1213,7 +1213,7 @@ describe("various scenarios", () => {
       attachment = useStore((state, props) => ({ name: state.attachments[props.id].name }));
     }
 
-    class Message extends Component<any, any> {
+    class Message extends Component {
       static template = xml`
             <div>
                 <button t-on-click="doStuff">Do stuff</button>

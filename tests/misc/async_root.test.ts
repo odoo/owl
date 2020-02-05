@@ -27,7 +27,7 @@ afterEach(() => {
 describe("Asyncroot", () => {
   test("delayed component with AsyncRoot component", async () => {
     let def;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
     }
     class AsyncChild extends Child {
@@ -35,7 +35,7 @@ describe("Asyncroot", () => {
         return def;
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <button t-on-click="updateApp">Update App State</button>
@@ -74,7 +74,7 @@ describe("Asyncroot", () => {
 
   test("fast component with AsyncRoot", async () => {
     let def;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
     }
     class AsyncChild extends Child {
@@ -83,7 +83,7 @@ describe("Asyncroot", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
           <div>
             <button t-on-click="updateApp">Update App State</button>
@@ -122,7 +122,7 @@ describe("Asyncroot", () => {
 
   test("asyncroot component: mixed re-renderings", async () => {
     let def;
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
         <span t-on-click="increment">
           <t t-esc="state.val"/>/<t t-esc="props.val"/>
@@ -138,7 +138,7 @@ describe("Asyncroot", () => {
         return def;
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`
         <div>
           <button t-on-click="updateApp">Update App State</button>

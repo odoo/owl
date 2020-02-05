@@ -10,7 +10,7 @@ import { xml } from "../tags";
  * from this coordination.  This is the goal of the AsyncRoot component.
  */
 
-export class AsyncRoot extends Component<any, any> {
+export class AsyncRoot extends Component {
   static template = xml`<t t-slot="default"/>`;
 
   async __updateProps(nextProps, parentFiber) {

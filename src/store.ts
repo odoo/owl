@@ -83,7 +83,7 @@ interface SelectorOptions {
 const isStrictEqual = (a, b) => a === b;
 
 export function useStore(selector, options: SelectorOptions = {}): any {
-  const component: Component<any, any> = Component.current!;
+  const component: Component = Component.current!;
   const componentId = component.__owl__.id;
   const store = options.store || (component.env.store as Store);
   if (!(store instanceof Store)) {

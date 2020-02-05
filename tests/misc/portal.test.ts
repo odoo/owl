@@ -36,7 +36,7 @@ describe("Portal: Props validation", () => {
   test("target is mandatory", async () => {
     const dev = QWeb.dev;
     QWeb.dev = true;
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -61,7 +61,7 @@ describe("Portal: Props validation", () => {
   test("target is not list", async () => {
     const dev = QWeb.dev;
     QWeb.dev = true;
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -88,7 +88,7 @@ describe("Portal: Basic use and DOM placement", () => {
   test("basic use of portal", async () => {
     const dev = QWeb.dev;
     QWeb.dev = true;
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -113,7 +113,7 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("conditional use of Portal", async () => {
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -148,10 +148,10 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("conditional use of Portal (with sub Component)", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div><t t-esc="props.val"/></div>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>
@@ -190,7 +190,7 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("with target in template (before portal)", async () => {
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -210,7 +210,7 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("with target in template (after portal)", async () => {
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -233,7 +233,7 @@ describe("Portal: Basic use and DOM placement", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -260,7 +260,7 @@ describe("Portal: Basic use and DOM placement", () => {
 
   test("portal with child and props", async () => {
     const steps: string[] = [];
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
       mounted() {
         steps.push("mounted");
@@ -271,7 +271,7 @@ describe("Portal: Basic use and DOM placement", () => {
         expect(outside.innerHTML).toBe("<span>2</span>");
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>
@@ -298,7 +298,7 @@ describe("Portal: Basic use and DOM placement", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -326,7 +326,7 @@ describe("Portal: Basic use and DOM placement", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -354,7 +354,7 @@ describe("Portal: Basic use and DOM placement", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -379,7 +379,7 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("portal with dynamic body", async () => {
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -405,7 +405,7 @@ describe("Portal: Basic use and DOM placement", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -439,7 +439,7 @@ describe("Portal: Basic use and DOM placement", () => {
   test("lifecycle hooks of portal sub component are properly called", async () => {
     const steps: any[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span t-esc="props.val"/>`;
       mounted() {
         steps.push("child:mounted");
@@ -454,7 +454,7 @@ describe("Portal: Basic use and DOM placement", () => {
         steps.push("child:willUnmount");
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>
@@ -520,11 +520,11 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("portal destroys on crash", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span t-esc="props.error and this.will.crash" />`;
       state = {};
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>
@@ -550,7 +550,7 @@ describe("Portal: Basic use and DOM placement", () => {
   });
 
   test("portal manual unmount", async () => {
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -577,7 +577,7 @@ describe("Portal: Basic use and DOM placement", () => {
 
   test("portal manual unmount with subcomponent", async () => {
     expect.assertions(9);
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span>gloria</span>`;
       mounted() {
         expect(outside.contains(this.el)).toBeTruthy();
@@ -586,7 +586,7 @@ describe("Portal: Basic use and DOM placement", () => {
         expect(outside.contains(this.el)).toBeTruthy();
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>
@@ -614,7 +614,7 @@ describe("Portal: Basic use and DOM placement", () => {
 
 describe("Portal: Events handling", () => {
   test("events triggered on movable pure node are handled", async () => {
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal };
       static template = xml`
         <div>
@@ -638,8 +638,8 @@ describe("Portal: Events handling", () => {
   });
 
   test("events triggered on movable owl components are redirected", async () => {
-    let childInst: Component<any, any> | null = null;
-    class Child extends Component<any, any> {
+    let childInst: Component | null = null;
+    class Child extends Component {
       static template = xml`
          <span t-on-custom="_onCustom" t-esc="props.val"/>`;
 
@@ -652,7 +652,7 @@ describe("Portal: Events handling", () => {
         this.trigger("custom-portal");
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div t-on-custom-portal="_onCustomPortal">
@@ -677,8 +677,8 @@ describe("Portal: Events handling", () => {
 
   test("events triggered on contained movable owl components are redirected", async () => {
     const steps: string[] = [];
-    let childInst: Component<any, any> | null = null;
-    class Child extends Component<any, any> {
+    let childInst: Component | null = null;
+    class Child extends Component {
       static template = xml`
          <span t-on-custom="_onCustom"/>`;
 
@@ -691,7 +691,7 @@ describe("Portal: Events handling", () => {
         this.trigger("custom-portal");
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div t-on-custom="_handled" t-on-custom-portal="_handled">
@@ -717,9 +717,9 @@ describe("Portal: Events handling", () => {
   });
 
   test("Dom events are not mapped", async () => {
-    let childInst: Component<any, any> | null = null;
+    let childInst: Component | null = null;
     const steps: string[] = [];
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
         <button>child</button>`;
 
@@ -728,7 +728,7 @@ describe("Portal: Events handling", () => {
         childInst = this;
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div t-on-click="_handled">
@@ -760,22 +760,22 @@ describe("Portal: Events handling", () => {
     fixture.appendChild(outside2);
 
     const steps: Array<string> = [];
-    let childInst: Component<any, any> | null = null;
-    class Child2 extends Component<any, any> {
+    let childInst: Component | null = null;
+    class Child2 extends Component {
       static template = xml`<div>child2</div>`;
       constructor(parent, props) {
         super(parent, props);
         childInst = this;
       }
     }
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static components = { Portal, Child2 };
       static template = xml`
         <Portal target="'#outside2'">
           <Child2 />
         </Portal>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div t-on-custom='_handled'>
@@ -797,11 +797,11 @@ describe("Portal: Events handling", () => {
   });
 
   test("portal's parent's env is not polluted", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
         <button>child</button>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>
@@ -818,22 +818,22 @@ describe("Portal: Events handling", () => {
 
   test("Portal composed with t-slot", async () => {
     const steps: Array<string> = [];
-    let childInst: Component<any, any> | null = null;
-    class Child2 extends Component<any, any> {
+    let childInst: Component | null = null;
+    class Child2 extends Component {
       static template = xml`<div>child2</div>`;
       constructor(parent, props) {
         super(parent, props);
         childInst = this;
       }
     }
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static components = { Portal, Child2 };
       static template = xml`
         <Portal target="'#outside'">
           <t t-slot="default"/>
         </Portal>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Child, Child2 };
       static template = xml`
         <div t-on-custom='_handled'>
@@ -857,11 +857,11 @@ describe("Portal: Events handling", () => {
 
 describe("Portal: UI/UX", () => {
   test("focus is kept across re-renders", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`
         <input id="target-me" t-att-placeholder="props.val"/>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
         <div>

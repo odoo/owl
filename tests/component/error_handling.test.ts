@@ -41,10 +41,10 @@ describe("component error handling (catchError)", () => {
     console.error = jest.fn();
     const handler = jest.fn();
     env.qweb.on("error", null, handler);
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
@@ -56,7 +56,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
           <div>
             <ErrorBoundary><ErrorComponent flag="state.flag"/></ErrorBoundary>
@@ -83,11 +83,11 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn();
 
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><ErrorComponent flag="state.flag"/></div>`;
       static components = { ErrorComponent };
       state = useState({ flag: false });
@@ -117,10 +117,10 @@ describe("component error handling (catchError)", () => {
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
     console.error = jest.fn();
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
@@ -132,7 +132,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
           <div>
               <ErrorBoundary><ErrorComponent /></ErrorBoundary>
@@ -153,10 +153,10 @@ describe("component error handling (catchError)", () => {
     env.qweb.on("error", null, handler);
     const consoleError = console.error;
     console.error = jest.fn();
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
@@ -168,7 +168,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
           <div>
               <ErrorBoundary t-if="state.flag"><ErrorComponent /></ErrorBoundary>
@@ -203,20 +203,20 @@ describe("component error handling (catchError)", () => {
               <ErrorBoundary><ErrorComponent /></ErrorBoundary>
           </div>
         </templates>`);
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       constructor(parent) {
         super(parent);
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       state = useState({ error: false });
 
       catchError() {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App();
@@ -231,7 +231,7 @@ describe("component error handling (catchError)", () => {
   test("can catch an error in the willStart call", async () => {
     const consoleError = console.error;
     console.error = jest.fn();
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       static template = xml`<div t-name="ErrorComponent">Some text</div>`;
       async willStart() {
         // we wait a little bit to be in a different stack frame
@@ -239,7 +239,7 @@ describe("component error handling (catchError)", () => {
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
@@ -251,7 +251,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><ErrorBoundary><ErrorComponent /></ErrorBoundary></div>`;
       static components = { ErrorBoundary, ErrorComponent };
     }
@@ -277,19 +277,19 @@ describe("component error handling (catchError)", () => {
               <ErrorBoundary><ErrorComponent /></ErrorBoundary>
           </div>
         </templates>`);
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       mounted() {
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       state = useState({ error: false });
 
       catchError() {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = new App();
@@ -304,13 +304,13 @@ describe("component error handling (catchError)", () => {
     // we do not catch error in willPatch anymore
     const consoleError = console.error;
     console.error = jest.fn();
-    class ErrorComponent extends Component<any, any> {
+    class ErrorComponent extends Component {
       static template = xml`<div><t t-esc="props.message"/></div>`;
       willPatch() {
         throw new Error("NOOOOO");
       }
     }
-    class ErrorBoundary extends Component<any, any> {
+    class ErrorBoundary extends Component {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
@@ -322,7 +322,7 @@ describe("component error handling (catchError)", () => {
         this.state.error = true;
       }
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`
           <div>
               <span><t t-esc="state.message"/></span>
@@ -347,7 +347,7 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
     // we do not catch error in willPatch anymore
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
 
@@ -369,7 +369,7 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div>abc</div>`;
       mounted() {
         throw new Error("boom");
@@ -395,7 +395,7 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
       val = 3;
       willPatch() {
@@ -424,7 +424,7 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
       val = 3;
       patched() {
@@ -453,10 +453,10 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
     // we do not catch error in willPatch anymore
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><Child/></div>`;
       static components = { Child };
     }
@@ -479,7 +479,7 @@ describe("component error handling (catchError)", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
     // we do not catch error in willPatch anymore
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><t t-if="flag" t-esc="this.will.crash"/></div>`;
       flag = false;
     }
@@ -502,10 +502,10 @@ describe("component error handling (catchError)", () => {
   });
 
   test("a rendering error will reject the render promise (with sub components)", async () => {
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span></span>`;
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child/><t t-esc="x.y"/></div>`;
       static components = { Child };
     }

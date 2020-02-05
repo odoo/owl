@@ -32,7 +32,7 @@ describe("Context", () => {
   test("very simple use, with initial value", async () => {
     const testContext = new Context({ value: 123 });
 
-    class Test extends Component<any, any> {
+    class Test extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
       contextObj = useContext(testContext);
     }
@@ -44,7 +44,7 @@ describe("Context", () => {
   test("useContext hook is reactive, for one component", async () => {
     const testContext = new Context({ value: 123 });
 
-    class Test extends Component<any, any> {
+    class Test extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
       contextObj = useContext(testContext);
     }
@@ -59,11 +59,11 @@ describe("Context", () => {
   test("two components can subscribe to same context", async () => {
     const testContext = new Context({ value: 123 });
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       contextObj = useContext(testContext);
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
     }
@@ -80,7 +80,7 @@ describe("Context", () => {
     const def = makeDeferred();
     const steps: string[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       contextObj = useContext(testContext);
       async render() {
@@ -90,7 +90,7 @@ describe("Context", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
     }
@@ -111,13 +111,13 @@ describe("Context", () => {
     const def = makeDeferred();
     const steps: string[] = [];
 
-    class SlowComp extends Component<any, any> {
+    class SlowComp extends Component {
       static template = xml`<p><t t-esc="props.value"/></p>`;
       willUpdateProps() {
         return def;
       }
     }
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><SlowComp value="contextObj.value"/></span>`;
       static components = { SlowComp };
       contextObj = useContext(testContext);
@@ -128,12 +128,12 @@ describe("Context", () => {
       }
     }
 
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
     }
 
-    class App extends Component<any, any> {
+    class App extends Component {
       static template = xml`<div><Child /><Parent /></div>`;
       static components = { Child, Parent };
     }
@@ -166,7 +166,7 @@ describe("Context", () => {
     const testContext = new Context({ a: 1, b: 2 });
     const steps: string[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="contextObj1.a"/><t t-esc="contextObj2.b"/></span>`;
       contextObj1 = useContext(testContext);
       contextObj2 = useContext(testContext);
@@ -175,7 +175,7 @@ describe("Context", () => {
         return super.__render(fiber);
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child /></div>`;
       static components = { Child };
     }
@@ -193,7 +193,7 @@ describe("Context", () => {
     const testContext = new Context({ a: 123, b: 321 });
     const steps: string[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
       contextObj = useContext(testContext);
       __render(fiber) {
@@ -201,7 +201,7 @@ describe("Context", () => {
         return super.__render(fiber);
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child /><t t-esc="contextObj.b"/></div>`;
       static components = { Child };
       contextObj = useContext(testContext);
@@ -227,7 +227,7 @@ describe("Context", () => {
     const testContext = new Context({ a: 123 });
     const steps: string[] = [];
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
       contextObj = useContext(testContext);
       __render(fiber) {
@@ -235,7 +235,7 @@ describe("Context", () => {
         return super.__render(fiber);
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child t-if="state.flag"/></div>`;
       static components = { Child };
       state = useState({ flag: true });
@@ -263,14 +263,14 @@ describe("Context", () => {
   test("destroyed component before being mounted is inactive", async () => {
     const testContext = new Context({ a: 123 });
 
-    class Child extends Component<any, any> {
+    class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
       contextObj = useContext(testContext);
       willStart() {
         return makeDeferred();
       }
     }
-    class Parent extends Component<any, any> {
+    class Parent extends Component {
       static template = xml`<div><Child t-if="state.flag"/></div>`;
       static components = { Child };
       state = useState({ flag: true });
@@ -293,7 +293,7 @@ describe("Context", () => {
     const testContext = new Context({ x: { n: 1 }, key: "x" });
     const def = makeDeferred();
     let stateC;
-    class ComponentC extends Component<any, any> {
+    class ComponentC extends Component {
       static template = xml`<span><t t-esc="context[props.key].n"/><t t-esc="state.x"/></span>`;
       context = useContext(testContext);
       state = useState({ x: "a" });
@@ -303,7 +303,7 @@ describe("Context", () => {
         stateC = this.state;
       }
     }
-    class ComponentB extends Component<any, any> {
+    class ComponentB extends Component {
       static components = { ComponentC };
       static template = xml`<p><ComponentC key="props.key"/></p>`;
 
@@ -311,7 +311,7 @@ describe("Context", () => {
         return def;
       }
     }
-    class ComponentA extends Component<any, any> {
+    class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB key="context.key"/></div>`;
       context = useContext(testContext);

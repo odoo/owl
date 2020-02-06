@@ -373,6 +373,9 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     const fiber = new Fiber(null, this, force, null);
     Promise.resolve().then(() => {
       if (__owl__.isMounted || !isMounted) {
+        if (fiber.isCompleted) {
+          return;
+        }
         // we are mounted (__owl__.isMounted), or if we are currently being
         // mounted (!isMounted), so we call __render
         this.__render(fiber);

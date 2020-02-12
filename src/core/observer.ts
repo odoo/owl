@@ -43,6 +43,7 @@ export class Observer {
 
     const proxy = new Proxy(value, {
       get(target, k) {
+        if (k === '__target') return target;
         const targetValue = target[k];
         return self.observe(targetValue, value);
       },

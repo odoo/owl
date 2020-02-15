@@ -25,6 +25,7 @@ provided by Owl.
 - [Environment](reference/environment.md)
 - [Event Bus](reference/event_bus.md)
 - [Event Handling](reference/event_handling.md)
+- [Error Handling](reference/error_handling.md)
 - [Hooks](reference/hooks.md)
 - [Miscellaneous Components](reference/misc.md)
 - [Observer](reference/observer.md)

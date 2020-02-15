@@ -987,6 +987,30 @@ exports[`static templates properly handle comments 1`] = `
 }"
 `;
 
+exports[`static templates properly handle comments between t-if/t-else 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    if (true) {
+        let c2 = [], p2 = {key:2};
+        let vn2 = h('span', p2, c2);
+        c1.push(vn2);
+        c2.push({text: \`true\`});
+    }
+    else {
+        let c3 = [], p3 = {key:3};
+        let vn3 = h('span', p3, c3);
+        c1.push(vn3);
+        c3.push({text: \`owl\`});
+    }
+    return vn1;
+}"
+`;
+
 exports[`static templates simple dynamic value 1`] = `
 "function anonymous(context, extra
 ) {

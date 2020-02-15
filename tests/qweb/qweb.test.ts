@@ -65,6 +65,19 @@ describe("static templates", () => {
     qweb.addTemplate("test", "<div>hello <!-- comment-->owl</div>");
     expect(renderToString(qweb, "test")).toBe("<div>hello <!-- comment-->owl</div>");
   });
+
+  test("properly handle comments between t-if/t-else", () => {
+    qweb.addTemplate(
+      "test",
+      `
+      <div>
+        <span t-if="true">true</span>
+        <!-- comment-->
+        <span t-else="">owl</span>
+      </div>`
+    );
+    expect(renderToString(qweb, "test")).toBe("<div><span>true</span></div>");
+  });
 });
 
 describe("error handling", () => {

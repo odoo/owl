@@ -446,7 +446,7 @@ Now, this is an interesting situation: the task is displayed by the `Task`
 component, but it is not the owner of its state, so it cannot modify it. Instead,
 we want to communicate the request to toggle a task to the `App` component.
 Since `App` is a parent of `Task`, we can
-[trigger](../reference/component.md#event-handling) an event in `Task` and listen
+[trigger](../reference/event_handling.md) an event in `Task` and listen
 for it in `App`.
 
 In `Task`, change the `input` to:

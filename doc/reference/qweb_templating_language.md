@@ -73,7 +73,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops)                   |
 | `t-on-*`                 | [Event handling](component.md#event-handling)                                   |
 | `t-transition`           | [Defining an animation](animations.md#css-transitions)                          |
-| `t-slot`                 | [Rendering a slot](component.md#slots)                                          |
+| `t-slot`                 | [Rendering a slot](slots.md)                                                    |
 | `t-model`                | [Form input bindings](component.md#form-input-bindings)                         |
 
 ## Reference

@@ -15,7 +15,6 @@
   - [Event Handling](#event-handling)
   - [Form Input Bindings](#form-input-bindings)
   - [References](#references)
-  - [Slots](#slots)
   - [Dynamic sub components](#dynamic-sub-components)
   - [Error Handling](#error-handling)
   - [Functional Components](#functional-components)
@@ -823,75 +822,6 @@ Note that these two examples uses the suffix `ref` to name the reference. This
 is not mandatory, but it is a useful convention, so we do not forget to access
 it with the `el` or `comp` suffix.
 
-### Slots
-
-To make generic components, it is useful to be able for a parent component to _inject_
-some sub template, but still be the owner. For example, a generic dialog component
-will need to render some content, some footer, but with the parent as the
-rendering context.
-
-This is what _slots_ are for.
-
-```xml
-<div t-name="Dialog" class="modal">
-  <div class="modal-title"><t t-esc="props.title"/></div>
-  <div class="modal-content">
-    <t t-slot="content"/>
-  </div>
-  <div class="modal-footer">
-    <t t-slot="footer"/>
-  </div>
-</div>
-```
-
-Slots are defined by the caller, with the `t-set` directive:
-
-```xml
-<div t-name="SomeComponent">
-  <div>some component</div>
-  <Dialog title="Some Dialog">
-    <t t-set="content">
-      <div>hey</div>
-    </t>
-    <t t-set="footer">
-      <button t-on-click="doSomething">ok</button>
-    </t>
-  </Dialog>
-</div>
-```
-
-In this example, the component `Dialog` will render the slots `content` and `footer`
-with its parent as rendering context. This means that clicking on the button
-will execute the `doSomething` method on the parent, not on the dialog.
-
-Default slot: the first element inside the component which is not a named slot will
-be considered the `default` slot. For example:
-
-```xml
-<div t-name="Parent">
-  <Child>
-    <span>some content</span>
-  </Child>
-</div>
-
-<div t-name="Child">
-  <t t-slot="default"/>
-</div>
-```
-
-Slots can define a default content, in case the parent did not define them:
-
-```xml
-<div t-name="Parent">
-  <Child/>
-</div>
-
-<span t-name="Child">
-  <t t-slot="default">default content</t>
-</span>
-<!-- will be rendered as: <div><span>default content</span></div> -->
-```
-
 ### Dynamic sub components
 
 It is not common, but sometimes we need a dynamic component name. In this case,
@@ -983,7 +913,8 @@ Using the `ErrorBoundary` is then extremely simple:
 ```
 
 Note that we need to be careful here: the fallback UI should not throw any
-error, otherwise we risk going into an infinite loop.
+error, otherwise we risk going into an infinite loop (also, see the page on
+[slots](slots.md) for more information on the `t-slot` directive).
 
 Also, it may be useful to know that whenever an error is caught, it is then
 broadcasted to the application by an event on the `qweb` instance. It may be

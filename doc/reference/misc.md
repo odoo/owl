@@ -18,7 +18,7 @@ for modals (as in `bootstrap-modal`).
 ### Usage
 
 The content it will teleport is defined within the `<Portal>` node and
-internally uses the `default` [Slot](component.md#slots).
+internally uses the `default` [Slot](slots.md).
 
 This slot must contain only **one** node, which in turn can have as many children as necessary.
 

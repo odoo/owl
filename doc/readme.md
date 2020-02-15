@@ -33,6 +33,7 @@ provided by Owl.
 - [QWeb Engine](reference/qweb_engine.md)
 - [Router](reference/router.md)
 - [Store](reference/store.md)
+- [Slots](reference/slots.md)
 - [Tags](reference/tags.md)
 - [Utils](reference/utils.md)
 

@@ -71,7 +71,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-component`, `t-props` | [Defining a sub component](component.md#composition)                            |
 | `t-ref`                  | [Setting a reference to a dom node or a sub component](component.md#references) |
 | `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops)                   |
-| `t-on-*`                 | [Event handling](component.md#event-handling)                                   |
+| `t-on-*`                 | [Event handling](event_handling.md)                                             |
 | `t-transition`           | [Defining an animation](animations.md#css-transitions)                          |
 | `t-slot`                 | [Rendering a slot](slots.md)                                                    |
 | `t-model`                | [Form input bindings](component.md#form-input-bindings)                         |

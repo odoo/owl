@@ -95,7 +95,7 @@ The teleported piece is updated as any other `Component`'s DOM and in the same s
 Namely the teleported piece will be updated in function of its parents components, and patched as
 a normal child.
 
-The [_business_ events](component.md#event-handling) triggered by a child component will be stopped
+The [_business_ events](event_handling.md#business-dom-events) triggered by a child component will be stopped
 to not bubble outside of the `target`. They will, on the other hand, be re-directed onto the
 `Portal`'s root node and bubble up the DOM as if it were triggered by a regular child component.
 

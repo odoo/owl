@@ -124,7 +124,7 @@ class Parent extends Component {
 In this example, the `OrderLine` component trigger a `add-to-order` event. This
 will generate a DOM event which will bubble along the DOM tree. It will then be
 intercepted by the parent component, which will then get the line (from the
-`detail` key) and then increment its quantity. See the section on [event handling](../reference/component.md#event-handling)
+`detail` key) and then increment its quantity. See the page on [event handling](../reference/event_handling.md)
 for more details on how events work.
 
 Note that this example would have also worked if the `OrderLine` component

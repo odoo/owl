@@ -368,7 +368,7 @@ QWeb.addDirective({
     if (transition) {
       ctx.addLine(`const __patch${componentID} = w${componentID}.__patch;`);
       ctx.addLine(
-        `w${componentID}.__patch = fiber => {__patch${componentID}.call(w${componentID}, fiber); if(!w${componentID}.__owl__.transitionInserted){w${componentID}.__owl__.transitionInserted = true;utils.transitionInsert(w${componentID}.__owl__.vnode, '${transition}');}};`
+        `w${componentID}.__patch = (t, vn) => {__patch${componentID}.call(w${componentID}, t, vn); if(!w${componentID}.__owl__.transitionInserted){w${componentID}.__owl__.transitionInserted = true;utils.transitionInsert(w${componentID}.__owl__.vnode, '${transition}');}};`
       );
     }
     ctx.addLine(`parent.__owl__.cmap[${templateKey}] = w${componentID}.__owl__.id;`);

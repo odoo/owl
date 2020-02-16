@@ -1,7 +1,7 @@
 import { Component, Env } from "../../src/component/component";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
-import { makeDeferred, makeTestEnv, makeTestFixture, nextTick } from "../helpers";
+import { makeDeferred, makeTestEnv, makeTestFixture, nextTick, nextMicroTick } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -378,18 +378,8 @@ describe("unmounting and remounting", () => {
   });
 
   test("widget can be mounted on different target", async () => {
-    const steps: string[] = [];
     class MyWidget extends Component {
       static template = xml`<div>Hey</div>`;
-      async willStart() {
-        steps.push("willstart");
-      }
-      mounted() {
-        steps.push("mounted");
-      }
-      willUnmount() {
-        steps.push("willunmount");
-      }
       patched() {
         throw new Error("patched should not be called");
       }
@@ -405,5 +395,79 @@ describe("unmounting and remounting", () => {
 
     await w.mount(span);
     expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
+  });
+
+  test("widget can be mounted on different target, another situation", async () => {
+    const def = makeDeferred();
+    const steps: string[] = [];
+
+    class MyWidget extends Component {
+      static template = xml`<div>Hey</div>`;
+      async willStart() {
+        return def;
+      }
+      patched() {
+        throw new Error("patched should not be called");
+      }
+    }
+    const div = document.createElement("div");
+    const span = document.createElement("span");
+    fixture.appendChild(div);
+    fixture.appendChild(span);
+    const w = new MyWidget();
+
+    w.mount(div).catch(() => steps.push("1 catch"));
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div><span></span>");
+
+    w.mount(span).then(() => steps.push("2 resolved"));
+
+    // we wait two microticks because this is the number of internal promises
+    // that need to be resolved/rejected, and because we want to prove here
+    // that the first mount operation is cancelled immediately, and not after
+    // one full tick.
+    await nextMicroTick();
+    await nextMicroTick();
+    expect(steps).toEqual(["1 catch"]);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div><span></span>");
+
+    def.resolve();
+    await nextTick();
+    expect(steps).toEqual(["1 catch", "2 resolved"]);
+    expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
+  });
+
+  test("widget can be mounted on same target, another situation", async () => {
+    const def = makeDeferred();
+    const steps: string[] = [];
+
+    class MyWidget extends Component {
+      static template = xml`<div>Hey</div>`;
+      async willStart() {
+        return def;
+      }
+      patched() {
+        throw new Error("patched should not be called");
+      }
+    }
+    const w = new MyWidget();
+
+    w.mount(fixture).then(() => steps.push("1 resolved"));
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+
+    w.mount(fixture).then(() => steps.push("2 resolved"));
+
+    await nextTick();
+    expect(steps).toEqual([]);
+    expect(fixture.innerHTML).toBe("");
+
+    def.resolve();
+    await nextTick();
+    expect(steps).toEqual(["1 resolved", "2 resolved"]);
+    expect(fixture.innerHTML).toBe("<div>Hey</div>");
   });
 });

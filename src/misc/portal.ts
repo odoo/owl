@@ -124,7 +124,7 @@ export class Portal extends Component<Props> {
    *
    * @override
    */
-  __patch(vnode) {
+  __patch(target, vnode) {
     if (this.doTargetLookUp) {
       const target = document.querySelector(this.props.target);
       if (!target) {
@@ -153,7 +153,7 @@ export class Portal extends Component<Props> {
     this.portal = patch(portalPatch, vnode.children![0] as VNode);
     vnode.children = [];
 
-    super.__patch(vnode);
+    super.__patch(target, vnode);
 
     if (shouldDeploy) {
       this.__deployPortal();

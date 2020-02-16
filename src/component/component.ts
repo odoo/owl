@@ -37,8 +37,10 @@ export interface Env {
   [key: string]: any;
 }
 
+export type MountPosition = "first-child" | "last-child" | "self";
+
 interface MountOptions {
-  position?: "first-child" | "last-child" | "self";
+  position?: MountPosition;
 }
 
 /**
@@ -106,7 +108,6 @@ export class Component<Props extends {} = any, T extends Env = Env> {
   static env: any = {};
   // expose scheduler s.t. it can be mocked for testing purposes
   static scheduler: Scheduler = scheduler;
-  __target: HTMLElement | undefined;
 
   /**
    * The `el` is the root element of the component.  Note that it could be null:
@@ -311,21 +312,20 @@ export class Component<Props extends {} = any, T extends Env = Env> {
         return Promise.resolve();
       }
     }
+    if (__owl__.currentFiber) {
+      const currentFiber = __owl__.currentFiber;
+      if (currentFiber.target === target && currentFiber.position === position) {
+        return scheduler.addFiber(currentFiber);
+      } else {
+        scheduler.rejectFiber(currentFiber, "Mounting operation cancelled");
+      }
+    }
     if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
       let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
-    let inserter =
-      position === "last-child"
-        ? el => target.appendChild(el)
-        : position === "first-child"
-        ? el => target.prepend(el)
-        : el => {};
-    if (position === "self") {
-      this.__target = target as HTMLElement;
-    }
-    const fiber = new Fiber(null, this, false, inserter);
+    const fiber = new Fiber(null, this, false, target, position);
     fiber.shouldPatch = false;
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber, () => {});
@@ -370,7 +370,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     // currentFiber that is already rendered (isRendered is true), so we are
     // about to be mounted
     const isMounted = __owl__.isMounted;
-    const fiber = new Fiber(null, this, force, null);
+    const fiber = new Fiber(null, this, force, null, null);
     Promise.resolve().then(() => {
       if (__owl__.isMounted || !isMounted) {
         if (fiber.isCompleted) {
@@ -527,7 +527,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
     if (shouldUpdate) {
       const __owl__ = this.__owl__;
-      const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
+      const fiber = new Fiber(parentFiber, this, parentFiber.force, null, null);
       if (!parentFiber.child) {
         parentFiber.child = fiber;
       } else {
@@ -559,20 +559,8 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    * Main patching method. We call the virtual dom patch method here to convert
    * a virtual dom vnode into some actual dom.
    */
-  __patch(vnode: VNode) {
-    const __owl__ = this.__owl__;
-    if (this.__target) {
-      if (this.__target.tagName.toLowerCase() !== vnode.sel) {
-        throw new Error(
-          `Cannot attach '${this.constructor.name}' to target node (not same tag name)`
-        );
-      }
-      __owl__.vnode = patch(this.__target, vnode);
-      delete this.__target;
-    } else {
-      const target = __owl__.vnode || document.createElement(vnode.sel!);
-      __owl__.vnode = patch(target, vnode);
-    }
+  __patch(target: HTMLElement | VNode | DocumentFragment, vnode: VNode) {
+    this.__owl__.vnode = patch(target as any, vnode);
   }
 
   /**
@@ -582,7 +570,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    */
   __prepare(parentFiber: Fiber, scope: any, cb: CallableFunction): Fiber {
     this.__owl__.scope = scope;
-    const fiber = new Fiber(parentFiber, this, parentFiber.force, null);
+    const fiber = new Fiber(parentFiber, this, parentFiber.force, null, null);
     fiber.shouldPatch = false;
     if (!parentFiber.child) {
       parentFiber.child = fiber;

@@ -34,7 +34,7 @@ export class Scheduler {
     this.isRunning = false;
   }
 
-  addFiber(fiber): Promise<void> {
+  addFiber(fiber: Fiber): Promise<void> {
     // if the fiber was remapped into a larger rendering fiber, it may not be a
     // root fiber.  But we only want to register root fibers
     fiber = fiber.root;
@@ -55,6 +55,17 @@ export class Scheduler {
         this.start();
       }
     });
+  }
+
+  rejectFiber(fiber: Fiber, reason: string) {
+    fiber = fiber.root;
+    const index = this.tasks.findIndex(t => t.fiber === fiber);
+    if (index >= 0) {
+      const [task] = this.tasks.splice(index, 1);
+      fiber.cancel();
+      fiber.error = new Error(reason);
+      task.callback();
+    }
   }
 
   /**

@@ -28,7 +28,7 @@ exports[`animations t-transition combined with component 1`] = `
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         const __patch2 = w2.__patch;
-        w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
+        w2.__patch = (t, vn) => {__patch2.call(w2, t, vn); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {let finalize = () => {
@@ -73,7 +73,7 @@ exports[`animations t-transition combined with t-component and t-if 1`] = `
             if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
             w2 = new W2(parent, props2);
             const __patch2 = w2.__patch;
-            w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
+            w2.__patch = (t, vn) => {__patch2.call(w2, t, vn); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
             parent.__owl__.cmap['__3__'] = w2.__owl__.id;
             let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {let finalize = () => {
@@ -119,7 +119,7 @@ exports[`animations t-transition combined with t-component, remove and re-add be
             if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
             w2 = new W2(parent, props2);
             const __patch2 = w2.__patch;
-            w2.__patch = fiber => {__patch2.call(w2, fiber); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
+            w2.__patch = (t, vn) => {__patch2.call(w2, t, vn); if(!w2.__owl__.transitionInserted){w2.__owl__.transitionInserted = true;utils.transitionInsert(w2.__owl__.vnode, 'chimay');}};
             parent.__owl__.cmap['__3__'] = w2.__owl__.id;
             let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
             let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {let finalize = () => {

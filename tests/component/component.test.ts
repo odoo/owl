@@ -2814,9 +2814,9 @@ describe("random stuff/miscellaneous", () => {
         steps.push(`${this.name}:render`);
         return super.__render(f);
       }
-      __patch(vnode) {
+      __patch(target, vnode) {
         steps.push(`${this.name}:__patch`);
-        super.__patch(vnode);
+        super.__patch(target, vnode);
       }
       mounted() {
         steps.push(`${this.name}:mounted`);

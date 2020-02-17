@@ -29,7 +29,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){vn.elm.style = _4;}};});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.style = _4;}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -71,7 +71,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){}};});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){}});});
         let pvnode = h('dummy', {key: '__3__', hook: {insert(vn) {context.__owl__.refs[ref4] = w2;},remove() {},destroy(vn) {w2.destroy();delete context.__owl__.refs[ref4];}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -129,7 +129,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; vnode.data.hook = {create(_, vn){}};});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){}});});
         let pvnode = h('dummy', {key: '__3__', hook: {insert(vn) {context.__owl__.refs[ref4] = w2;},remove() {},destroy(vn) {w2.destroy();delete context.__owl__.refs[ref4];}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;

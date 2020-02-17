@@ -1273,6 +1273,35 @@ describe("composition", () => {
     expect(parent.elem4.comp).toBeNull();
   });
 
+  test("t-ref on a node, and t-on-click", async () => {
+    let c;
+    let v = false;
+    class Child extends Component {
+      static template = xml`<div t-ref="nibor">nibor</div>`;
+      nibor = useRef("nibor");
+      mounted() {
+        c = this;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child t-on-click="doSomething"/></div>`;
+      static components = { Child };
+      doSomething() {
+        v = true;
+      }
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>nibor</div></div>");
+    expect(c.nibor.el).toBeInstanceOf(HTMLElement);
+    expect(v).toBe(false);
+    c.nibor.el.dispatchEvent(new Event("click"));
+    expect(v).toBe(true);
+    expect(QWeb.TEMPLATES[Child.template].fn.toString()).toMatchSnapshot();
+    expect(QWeb.TEMPLATES[Parent.template].fn.toString()).toMatchSnapshot();
+  });
+
   test("parent's elm for a children === children's elm, even after rerender", async () => {
     const widget = new WidgetA();
     await widget.mount(fixture);

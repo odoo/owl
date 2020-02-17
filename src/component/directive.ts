@@ -23,6 +23,26 @@ QWeb.utils.defineProxy = function defineProxy(target, source) {
   }
 };
 
+QWeb.utils.assignHooks = function assignHooks(dataObj, hooks) {
+  if ("hook" in dataObj) {
+    const hookObject = dataObj.hook;
+    for (let name in hooks) {
+      const current = hookObject[name];
+      const fn = hooks[name];
+      if (current) {
+        hookObject[name] = (...args) => {
+          current(...args);
+          fn(...args);
+        };
+      } else {
+        hookObject[name] = fn;
+      }
+    }
+  } else {
+    dataObj.hook = hooks;
+  }
+};
+
 /**
  * The t-component directive is certainly a complicated and hard to maintain piece
  * of code.  To help you, fellow developer, if you have to maintain it, I offer
@@ -291,7 +311,7 @@ QWeb.addDirective({
         .join("");
       const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);
       const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
-      createHook = `vnode.data.hook = {create(_, vn){${styleCode}${eventsCode}}};`;
+      createHook = `utils.assignHooks(vnode.data, {create(_, vn){${styleCode}${eventsCode}}});`;
     }
 
     ctx.addLine(

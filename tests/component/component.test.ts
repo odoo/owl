@@ -2192,6 +2192,30 @@ describe("other directives with t-component", () => {
     expect(steps).toEqual(["click"]);
   });
 
+  test("t-on with .capture modifier", async () => {
+    const steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div><span t-on-click="click">hey</span></div>`;
+      click() {
+        steps.push("click");
+      }
+    }
+    class ParentWidget extends Component {
+      static components = { Child };
+      static template = xml`<div><Child t-on-click.capture="capture"/></div>`;
+      capture() {
+        steps.push("captured");
+      }
+    }
+    const widget = new ParentWidget();
+    await widget.mount(fixture);
+
+    fixture.querySelector("span")!.click();
+    expect(env.qweb.templates[ParentWidget.template].fn.toString()).toMatchSnapshot();
+    expect(steps).toEqual(["captured", "click"]);
+  });
+
   test("t-on on destroyed components", async () => {
     const steps: string[] = [];
     let child;

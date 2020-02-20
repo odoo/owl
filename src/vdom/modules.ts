@@ -70,8 +70,12 @@ function handleEvent(event: Event, vnode: VNode) {
     on = (vnode.data as VNodeData).on;
 
   // call event handler(s) if exists
-  if (on && on[name]) {
-    invokeHandler(on[name], vnode, event);
+  if (on) {
+    if (on[name]) {
+      invokeHandler(on[name], vnode, event);
+    } else if (on["!" + name]) {
+      invokeHandler(on["!" + name], vnode, event);
+    }
   }
 }
 
@@ -100,13 +104,17 @@ function updateEventListeners(oldVnode: VNode, vnode?: VNode): void {
     if (!on) {
       for (name in oldOn) {
         // remove listener if element was changed or existing listeners removed
-        oldElm.removeEventListener(name, oldListener, false);
+        const capture = name.charAt(0) === "!";
+        name = capture ? name.slice(1) : name;
+        oldElm.removeEventListener(name, oldListener, capture);
       }
     } else {
       for (name in oldOn) {
         // remove listener if existing listener removed
         if (!on[name]) {
-          oldElm.removeEventListener(name, oldListener, false);
+          const capture = name.charAt(0) === "!";
+          name = capture ? name.slice(1) : name;
+          oldElm.removeEventListener(name, oldListener, capture);
         }
       }
     }
@@ -123,13 +131,17 @@ function updateEventListeners(oldVnode: VNode, vnode?: VNode): void {
     if (!oldOn) {
       for (name in on) {
         // add listener if element was changed or new listeners added
-        elm.addEventListener(name, listener, false);
+        const capture = name.charAt(0) === "!";
+        name = capture ? name.slice(1) : name;
+        elm.addEventListener(name, listener, capture);
       }
     } else {
       for (name in on) {
         // add listener if new listener added
         if (!oldOn[name]) {
-          elm.addEventListener(name, listener, false);
+          const capture = name.charAt(0) === "!";
+          name = capture ? name.slice(1) : name;
+          elm.addEventListener(name, listener, capture);
         }
       }
     }

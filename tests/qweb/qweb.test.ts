@@ -1627,6 +1627,31 @@ describe("t-on", () => {
 
     expect(steps).toEqual(["onClick"]);
   });
+
+  test("t-on with .capture modifier", () => {
+    expect.assertions(2);
+    qweb.addTemplate(
+      "test",
+      `<div t-on-click.capture="onCapture">
+        <button t-on-click="doSomething">Button</button>
+      </div>`
+    );
+
+    const steps: string[] = [];
+    const owner = {
+      onCapture() {
+        steps.push("captured");
+      },
+      doSomething() {
+        steps.push("normal");
+      }
+    };
+    const node = renderToDOM(qweb, "test", owner, { handlers: [] });
+
+    const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+    button.click();
+    expect(steps).toEqual(["captured", "normal"]);
+  });
 });
 
 describe("t-ref", () => {

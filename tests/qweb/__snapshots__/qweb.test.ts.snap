@@ -2425,6 +2425,26 @@ exports[`t-on t-on combined with t-raw 1`] = `
 }"
 `;
 
+exports[`t-on t-on with .capture modifier 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let h = this.h;
+    let c1 = [], p1 = {key:1,on:{}};
+    let vn1 = h('div', p1, c1);
+    extra.handlers['!click__2__'] = extra.handlers['!click__2__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onCapture'](e);};
+    p1.on['!click'] = extra.handlers['!click__2__'];
+    let c3 = [], p3 = {key:3,on:{}};
+    let vn3 = h('button', p3, c3);
+    c1.push(vn3);
+    extra.handlers['click__4__'] = extra.handlers['click__4__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
+    p3.on['click'] = extra.handlers['click__4__'];
+    c3.push({text: \`Button\`});
+    return vn1;
+}"
+`;
+
 exports[`t-on t-on with empty handler (only modifiers) 1`] = `
 "function anonymous(context, extra
 ) {

@@ -40,7 +40,10 @@ export function makeHandlerCode(
   putInCache: boolean,
   modcodes = MODS_CODE
 ): HandlerInfo {
-  const [event, ...mods] = fullName.slice(5).split(".");
+  let [event, ...mods] = fullName.slice(5).split(".");
+  if (mods.includes("capture")) {
+    event = "!" + event;
+  }
   if (!event) {
     throw new Error("Missing event name with t-on directive");
   }

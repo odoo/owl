@@ -111,11 +111,12 @@ In order to remove the DOM event details from the event handlers (like calls to
 `event.preventDefault`) and let them focus on data logic, _modifiers_ can be
 specified as additional suffixes of the `t-on` directive.
 
-| Modifier   | Description                                                       |
-| ---------- | ----------------------------------------------------------------- |
-| `.stop`    | calls `event.stopPropagation()` before calling the method         |
-| `.prevent` | calls `event.preventDefault()` before calling the method          |
-| `.self`    | calls the method only if the `event.target` is the element itself |
+| Modifier   | Description                                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `.stop`    | calls `event.stopPropagation()` before calling the method                                                                |
+| `.prevent` | calls `event.preventDefault()` before calling the method                                                                 |
+| `.self`    | calls the method only if the `event.target` is the element itself                                                        |
+| `.capture` | bind the event handler in [capture](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) mode. |
 
 ```xml
 <button t-on-click.stop="someMethod">Do something</button>

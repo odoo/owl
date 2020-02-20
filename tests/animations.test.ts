@@ -78,11 +78,33 @@ describe("animations", () => {
       def.resolve();
     });
     let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
+    fixture.appendChild(node);
 
     expect(node.className).toBe("chimay-enter chimay-enter-active");
     await def; // wait for the mocked repaint to be done
     node.dispatchEvent(new Event("transitionend")); // mock end of css transition
     expect(node.className).toBe("");
+  });
+
+  test("t-transition, on a simple node, not in the DOM", async () => {
+    expect.assertions(5);
+    qweb.addTemplate("test", `<span t-transition="chimay">blue</span>`);
+
+    let def = makeDeferred();
+    patchNextFrame(cb => {
+      expect(node.className).toBe("chimay-enter chimay-enter-active");
+      cb();
+      expect(node.className).toBe("chimay-enter-active chimay-enter-to");
+      def.resolve();
+    });
+    let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
+
+    expect(node.className).toBe("chimay-enter chimay-enter-active");
+    await def; // wait for the mocked repaint to be done
+    node.dispatchEvent(new Event("transitionend"));
+    // we check here that the css classes have not been removed, since the
+    // element is not in the dom, we actually do not want to do anything.
+    expect(node.className).toBe("chimay-enter-active chimay-enter-to");
   });
 
   test("t-transition with no delay/duration", async () => {
@@ -97,6 +119,7 @@ describe("animations", () => {
       def.resolve();
     });
     let node: HTMLElement = <HTMLElement>renderToDOM(qweb, "test");
+    fixture.appendChild(node);
     expect(node.className).toBe("jupiler-enter jupiler-enter-active");
     await def;
   });

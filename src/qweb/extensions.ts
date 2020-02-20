@@ -183,6 +183,13 @@ function toMs(s: string): number {
 }
 
 function whenTransitionEnd(elm: HTMLElement, cb) {
+  if (!elm.parentNode) {
+    // if we get here, this means that the element was removed for some other
+    // reasons, and in that case, we don't want to work on animation since nothing
+    // will be displayed anyway.
+    return;
+  }
+
   const styles = window.getComputedStyle(elm);
   const delays: Array<string> = (styles.transitionDelay || "").split(", ");
   const durations: Array<string> = (styles.transitionDuration || "").split(", ");

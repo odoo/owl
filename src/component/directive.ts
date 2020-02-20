@@ -299,6 +299,8 @@ QWeb.addDirective({
       }
       let eventsCode = events
         .map(function([name, value]) {
+          const capture = name.match(/\.capture/);
+          name = capture ? name.replace(/\.capture/, "") : name;
           const { event, handler } = makeHandlerCode(
             ctx,
             name,
@@ -306,6 +308,9 @@ QWeb.addDirective({
             false,
             T_COMPONENT_MODS_CODE
           );
+          if (capture) {
+            return `vn.elm.addEventListener('${event}', ${handler}, true);`;
+          }
           return `vn.elm.addEventListener('${event}', ${handler});`;
         })
         .join("");

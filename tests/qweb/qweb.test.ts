@@ -51,6 +51,16 @@ describe("static templates", () => {
     expect(renderToString(qweb, "test")).toBe(`<div class="abc">word</div>`);
   });
 
+  test("div with a class attribute with a quote", () => {
+    qweb.addTemplate("test", `<div class="a'bc">word</div>`);
+    expect(renderToString(qweb, "test")).toBe(`<div class="a'bc">word</div>`);
+  });
+
+  test("div with an arbitrary attribute with a quote", () => {
+    qweb.addTemplate("test", `<div abc="a'bc">word</div>`);
+    expect(renderToString(qweb, "test")).toBe(`<div abc="a'bc">word</div>`);
+  });
+
   test("div with a empty class attribute", () => {
     qweb.addTemplate("test", `<div class="">word</div>`);
     expect(renderToString(qweb, "test")).toBe(`<div>word</div>`);

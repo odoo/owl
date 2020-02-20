@@ -174,6 +174,10 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
+function escapeQuotes(str: string): string {
+  return str.replace(/\'/g, "\\'");
+}
+
 //------------------------------------------------------------------------------
 // QWeb rendering engine
 //------------------------------------------------------------------------------
@@ -694,13 +698,13 @@ export class QWeb extends EventBus {
           if ((value = value.trim())) {
             let classDef = value
               .split(/\s+/)
-              .map(a => `'${a}':true`)
+              .map(a => `'${escapeQuotes(a)}':true`)
               .join(",");
             classObj = `_${ctx.generateID()}`;
             ctx.addLine(`let ${classObj} = {${classDef}};`);
           }
         } else {
-          ctx.addLine(`let _${attID} = '${value}';`);
+          ctx.addLine(`let _${attID} = '${escapeQuotes(value)}';`);
           if (!name.match(/^[a-zA-Z]+$/)) {
             // attribute contains 'non letters' => we want to quote it
             name = '"' + name + '"';

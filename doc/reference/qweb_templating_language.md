@@ -532,7 +532,7 @@ The javascript QWeb implementation provides two useful debugging directives:
 
 ```xml
 <t t-if="a_test">
-    <t t-debug="">
+    <t t-debug=""/>
 </t>
 ```
 

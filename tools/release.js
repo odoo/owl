@@ -106,7 +106,6 @@ async function startRelease() {
     draft: true // todo: remove this someday
   };
   const result = await createRelease(token, options);
-  console.log(result);
   await ask("Ready for next step...");
 
   // ---------------------------------------------------------------------------

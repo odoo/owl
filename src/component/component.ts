@@ -357,14 +357,15 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    */
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
-    if (!__owl__.isMounted && !__owl__.currentFiber) {
+    const currentFiber = __owl__.currentFiber;
+    if (!__owl__.isMounted && !currentFiber) {
       // if we get here, this means that the component was either never mounted,
       // or was unmounted and some state change  triggered a render. Either way,
       // we do not want to actually render anything in this case.
       return;
     }
-    if (__owl__.currentFiber && !__owl__.currentFiber.isRendered) {
-      return scheduler.addFiber(__owl__.currentFiber.root);
+    if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
+      return scheduler.addFiber(currentFiber.root);
     }
     // if we aren't mounted at this point, it implies that there is a
     // currentFiber that is already rendered (isRendered is true), so we are

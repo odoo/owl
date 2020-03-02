@@ -1366,6 +1366,27 @@ describe("async rendering", () => {
     await prom;
   });
 
+  test("concurrent renderings scenario 17", async () => {
+    class Parent extends Component {
+      static template = xml`<span><t t-esc="state.value"/></span>`;
+      state = useState({ value: 1 });
+    }
+
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+
+    parent.state.value = 2;
+    parent.__owl__.currentFiber!.cancel();
+
+    parent.state.value = 3; // update value directly
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>3</span>");
+
+    parent.state.value = 4; // update value after a tick
+    expect(fixture.innerHTML).toBe("<span>4</span>");
+  });
+
   test("change state and call manually render: no unnecessary rendering", async () => {
     class Widget extends Component {
       static template = xml`<div><t t-esc="state.val"/></div>`;

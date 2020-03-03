@@ -1384,6 +1384,7 @@ describe("async rendering", () => {
     expect(fixture.innerHTML).toBe("<span>3</span>");
 
     parent.state.value = 4; // update value after a tick
+    await nextTick();
     expect(fixture.innerHTML).toBe("<span>4</span>");
   });
 

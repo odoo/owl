@@ -133,7 +133,7 @@ const UTILS: Utils = {
   },
   getScope(obj, property: string) {
     const obj0 = obj;
-    while (obj && !obj.hasOwnProperty(property)) {
+    while (obj && !obj.hasOwnProperty(property) && !(obj.hasOwnProperty('__access_mode__') && obj.__access_mode__ === 'ro')) {
       const newObj = obj.__proto__;
       if (!newObj || isComponent(newObj)) {
         return obj0;

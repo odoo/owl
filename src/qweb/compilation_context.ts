@@ -196,11 +196,12 @@ export class CompilationContext {
     const protectID = this.generateID();
     this.rootContext.protectedScopeNumber++;
     this.rootContext.shouldDefineScope = true;
-    const scopeExpr = codeBlock
-      ? `Object.create(scope);`
-      : `Object.assign(Object.create(context), scope);`;
+    const scopeExpr = `Object.create(scope);`;
     this.addLine(`let _origScope${protectID} = scope;`);
     this.addLine(`scope = ${scopeExpr}`);
+    if (!codeBlock) {
+      this.addLine(`scope.__access_mode__ = 'ro';`);
+    }
     return protectID;
   }
   stopProtectScope(protectID: number) {

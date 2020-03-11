@@ -1282,7 +1282,8 @@ exports[`other directives with t-component t-set can't alter in t-call body 1`] 
     }
     {
         let _origScope4 = scope;
-        scope = Object.assign(Object.create(context), scope);
+        scope = Object.create(scope);
+        scope.__access_mode__ = 'ro';
         {
             let c__0 = [];
             utils.getScope(scope, 'iter').iter = 'inCall';

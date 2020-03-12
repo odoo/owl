@@ -3080,6 +3080,15 @@ describe("can deduce template from name", () => {
     expect(fixture.innerHTML).toBe("<span>Orval</span>");
   });
 
+  test("can find template of anonymous component", async () => {
+    class ABC extends Component {}
+    const Anonymous = class extends ABC {};
+    env.qweb.addTemplate("ABC", "<span>Orval</span>");
+    const def = new Anonymous();
+    await def.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>Orval</span>");
+  });
+
   test("can find template of parent component, defined by template key", async () => {
     class ABC extends Component {
       static template = "Achel";

@@ -604,9 +604,10 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       // key. So we fall back on looking for a template matching its name (or
       // one of its subclass).
 
-      let template: string;
-      while ((template = p.name) && !(template in qweb.templates) && p !== Component) {
+      let template: string = p.name;
+      while (!(template in qweb.templates) && p !== Component) {
         p = p.__proto__;
+        template = p.name;
       }
       if (p === Component) {
         throw new Error(`Could not find template for component "${this.constructor.name}"`);

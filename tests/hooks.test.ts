@@ -559,13 +559,31 @@ describe("hooks", () => {
 
   test("can use onWillStart, onWillUpdateProps", async () => {
     const steps: string[] = [];
+    async function slow(): Promise<string> {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve("slow");
+        }, 0);
+      });
+    }
     function useMyHook() {
-      onWillStart(() => {
+      onWillStart(async () => {
+        steps.push(await slow());
         steps.push("onWillStart");
+      });
+      onWillUpdateProps(async nextProps => {
+        expect(nextProps).toEqual({ value: 2 });
+        steps.push(await slow());
+        steps.push("onWillUpdateProps");
+      });
+    }
+    function use2ndHook() {
+      onWillStart(() => {
+        steps.push("on2ndStart");
       });
       onWillUpdateProps(nextProps => {
         expect(nextProps).toEqual({ value: 2 });
-        steps.push("onWillUpdateProps");
+        steps.push("on2ndUpdate");
       });
     }
     class MyComponent extends Component {
@@ -573,6 +591,7 @@ describe("hooks", () => {
       constructor(parent, props) {
         super(parent, props);
         useMyHook();
+        use2ndHook();
       }
     }
     class App extends Component {
@@ -586,12 +605,26 @@ describe("hooks", () => {
     expect(app).not.toHaveProperty("willStart");
     expect(app).not.toHaveProperty("willUpdateProps");
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-    expect(steps).toEqual(["onWillStart"]);
+
+    // NOTE: 'on2ndStart' appears first in the list even though
+    // the 'use2ndHook' is declared after 'useMyHook'. This is
+    // because Promise.all is used to call the callbacks specified
+    // in the hooks, which runs them simultaneously.
+    // Additionally, 'slow' should be listed before 'onWillStart'
+    // because call to `slow` is awaited.
+    expect(steps).toEqual(["on2ndStart", "slow", "onWillStart"]);
 
     app.state.value = 2;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
-    expect(steps).toEqual(["onWillStart", "onWillUpdateProps"]);
+    expect(steps).toEqual([
+      "on2ndStart",
+      "slow",
+      "onWillStart",
+      "on2ndUpdate",
+      "slow",
+      "onWillUpdateProps"
+    ]);
   });
 
   test("useExternalListener", async () => {

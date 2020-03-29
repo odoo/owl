@@ -70,7 +70,7 @@ function makeAsyncHook(method: string) {
     if (component.__owl__[method]) {
       const current = component.__owl__[method];
       component.__owl__[method] = function(...args) {
-        return Promise.all[(current.call(component, ...args), cb.call(component, ...args))];
+        return Promise.all([current.call(component, ...args), cb.call(component, ...args)]);
       };
     } else {
       component.__owl__[method] = cb;

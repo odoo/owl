@@ -29,25 +29,29 @@ describe("mount targets", () => {
   test("can attach a component to an existing node (if same tagname)", async () => {
     class App extends Component {
       static template = xml`<div t-att-class="state.customClass">app<p>another tag</p></div>`;
-      state = useState({customClass: 'custom'});
+      state = useState({ customClass: "custom" });
     }
     const div = document.createElement("div");
-    div.classList.add('arbitrary');
+    div.classList.add("arbitrary");
     div.innerHTML = `<p>pre-existing</p>`;
     fixture.appendChild(div);
 
     const app = new App();
     await app.mount(div, { position: "self" });
 
-    expect(fixture.innerHTML).toBe(`<div class="arbitrary custom"><p>pre-existing</p>app<p>another tag</p></div>`);
+    expect(fixture.innerHTML).toBe(
+      `<div class="arbitrary custom"><p>pre-existing</p>app<p>another tag</p></div>`
+    );
     expect(div).toBe(app.el);
 
-    app.state.customClass = 'custom2';
+    app.state.customClass = "custom2";
     await nextTick();
-    expect(fixture.innerHTML).toBe(`<div class="arbitrary custom2"><p>pre-existing</p>app<p>another tag</p></div>`);
+    expect(fixture.innerHTML).toBe(
+      `<div class="arbitrary custom2"><p>pre-existing</p>app<p>another tag</p></div>`
+    );
     expect(div).toBe(app.el);
 
-    app.unmount()
+    app.unmount();
     // This assert is a best guess
     // The use case it covers was not really thought through
     // and may change in the future

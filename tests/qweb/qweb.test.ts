@@ -965,7 +965,10 @@ describe("t-call (template calling", () => {
 
         </templates>
     `);
-    const root = { val: "a", children: [{ val: "b", children: [{ val: "c" , children: [{val: "d"}] }] }] };
+    const root = {
+      val: "a",
+      children: [{ val: "b", children: [{ val: "c", children: [{ val: "d" }] }] }]
+    };
     const expected =
       "<div><div><p>a 2</p><div><p>b 3</p><div><p>c 4</p><div><p>d 5</p></div></div></div></div></div>";
     expect(renderToString(qweb, "Parent", { root })).toBe(expected);

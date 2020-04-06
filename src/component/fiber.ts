@@ -227,7 +227,7 @@ export class Fiber {
           }
           // In self mode, we *know* we are to take possession of the target
           // Hence we manually create the corresponding VNode and copy the "key" in data
-          const selfVnodeData = fiber.vnode!.data ? {key: fiber.vnode!.data.key} : {};
+          const selfVnodeData = fiber.vnode!.data ? { key: fiber.vnode!.data.key } : {};
           const selfVnode = h(fiber.vnode!.sel, selfVnodeData);
           selfVnode.elm = target;
           target = selfVnode;

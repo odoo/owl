@@ -400,7 +400,16 @@ QWeb.addDirective({
 
     if (hasSlots) {
       const clone = <Element>node.cloneNode(true);
-      const slotNodes: Element[] = [];
+      const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
+
+      // The next code is a fallback for compatibility reason. It accepts t-set
+      // elements that are direct children with a non empty body as nodes defining
+      // the content of a slot.
+      //
+      // This is wrong, but is necessary to prevent breaking all existing Owl
+      // code using slots. This will be removed in v2.0 someday. Meanwhile,
+      // please use t-set-slot everywhere you need to set the content of a
+      // slot.
       for (let el of clone.children) {
         if (el.getAttribute("t-set") && el.hasChildNodes()) {
           slotNodes.push(el);
@@ -412,8 +421,15 @@ QWeb.addDirective({
         for (let i = 0, length = slotNodes.length; i < length; i++) {
           const slotNode = slotNodes[i];
           slotNode.parentElement!.removeChild(slotNode);
-          const key = slotNode.getAttribute("t-set")!;
-          slotNode.removeAttribute("t-set");
+          let key = slotNode.getAttribute("t-set-slot")!;
+          slotNode.removeAttribute("t-set-slot");
+
+          // here again, this code should be removed when we stop supporting
+          // using t-set to define the content of named slots.
+          if (!key) {
+            key = slotNode.getAttribute("t-set")!;
+            slotNode.removeAttribute("t-set");
+          }
           const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
           QWeb.slots[`${slotId}_${key}`] = slotFn;
         }

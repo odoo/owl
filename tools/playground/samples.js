@@ -1169,7 +1169,7 @@ const RESPONSIVE_CSS = `body {
 const SLOTS = `// We show here how slots can be used to create generic components.
 // In this example, the Card component is basically only a container. It is not
 // aware of its content. It just knows where it should be (with t-slot).
-// The parent component define the content with t-set.
+// The parent component define the content with t-set-slot.
 //
 // Note that the t-on-click event, defined in the App template, is executed in
 // the context of the App component, even though it is inside the Card component
@@ -1235,15 +1235,15 @@ const SLOTS_XML = `<templates>
 
   <div t-name="App" class="main">
     <Card title="'Title card A'">
-      <t t-set="content">Content of card 1...  [<t t-esc="state.a"/>]</t>
-      <t t-set="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
+      <t t-set-slot="content">Content of card 1...  [<t t-esc="state.a"/>]</t>
+      <t t-set-slot="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
     </Card>
     <Card title="'Title card B'">
-      <t t-set="content">
+      <t t-set-slot="content">
         <div>Card 2... [<t t-esc="state.b"/>]</div>
         <Counter />
       </t>
-      <t t-set="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
+      <t t-set-slot="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
     </Card>
   </div>
 </templates>`;

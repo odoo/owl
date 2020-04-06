@@ -41,8 +41,8 @@ describe("t-slot directive", () => {
           <templates>
             <div t-name="Parent">
                <Dialog>
-                  <t t-set="header"><span>header</span></t>
-                  <t t-set="footer"><span>footer</span></t>
+                  <t t-set-slot="header"><span>header</span></t>
+                  <t t-set-slot="footer"><span>footer</span></t>
                </Dialog>
             </div>
             <div t-name="Dialog">
@@ -63,6 +63,38 @@ describe("t-slot directive", () => {
     );
     expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
     expect(env.qweb.templates.Dialog.fn.toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_header"].toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
+  });
+
+  test("can define and call slots using old t-set keyword", async () => {
+    // NOTE: this test should be removed once we stop supporting the t-set directive
+    // for defining slot content.
+    class Dialog extends Component {
+      static template = xml`
+        <div>
+          <div><t t-slot="header"/></div>
+          <div><t t-slot="footer"/></div>
+        </div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>
+            <t t-set="header"><span>header</span></t>
+            <t t-set="footer"><span>footer</span></t>
+          </Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
+    );
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
     expect(QWeb.slots["1_header"].toString()).toMatchSnapshot();
     expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
   });
@@ -128,7 +160,7 @@ describe("t-slot directive", () => {
           </span>`;
     }
     class Parent extends Component {
-      static template = xml`<div><Dialog><t t-set="header">hey</t></Dialog></div>`;
+      static template = xml`<div><Dialog><t t-set-slot="header">hey</t></Dialog></div>`;
       static components = { Dialog };
     }
     const parent = new Parent();
@@ -143,7 +175,7 @@ describe("t-slot directive", () => {
             <div t-name="Parent">
               <span class="counter"><t t-esc="state.val"/></span>
               <Dialog>
-                <t t-set="footer"><button t-on-click="doSomething">do something</button></t>
+                <t t-set-slot="footer"><button t-on-click="doSomething">do something</button></t>
               </Dialog>
             </div>
             <span t-name="Dialog"><t t-slot="footer"/></span>
@@ -302,7 +334,7 @@ describe("t-slot directive", () => {
             <div>
               <span class="counter"><t t-esc="state.val"/></span>
               <Dialog>
-                <t t-set="footer"><button t-ref="myButton" t-on-click="doSomething">do something</button></t>
+                <t t-set-slot="footer"><button t-ref="myButton" t-on-click="doSomething">do something</button></t>
               </Dialog>
             </div>
           `;
@@ -376,7 +408,7 @@ describe("t-slot directive", () => {
           <templates>
             <div t-name="Parent">
                <Dialog>
-                  <t t-set="content">
+                  <t t-set-slot="content">
                       <span>sts</span>
                       <span>rocks</span>
                   </t>
@@ -442,14 +474,14 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
   });
 
-  test("t-debug on a t-set (defining a slot)", async () => {
+  test("t-debug on a t-set-slot (defining a slot)", async () => {
     const consoleLog = console.log;
     console.log = jest.fn();
 
     env.qweb.addTemplates(`
           <templates>
             <div t-name="Parent">
-              <Dialog><t t-set="content" t-debug="">abc</t></Dialog>
+              <Dialog><t t-set-slot="content" t-debug="">abc</t></Dialog>
             </div>
             <span t-name="Dialog">
               <t t-slot="content"/>
@@ -623,8 +655,8 @@ describe("t-slot directive", () => {
     class A extends Component {
       static template = xml`
           <B>
-            <t t-set="s1"><C val="1"/></t>
-            <t t-set="s2"><C val="2"/></t>
+            <t t-set-slot="s1"><C val="1"/></t>
+            <t t-set-slot="s2"><C val="2"/></t>
           </B>`;
       static components = { B, C };
     }

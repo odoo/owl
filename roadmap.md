@@ -16,6 +16,8 @@ change!
 
 ### 2.x (2020? 2021? 2022?)
 
+- stop support for `t-set` directive to define the content of a slot
+
 Maybe:
 
 - reimplement vdom to use *block* system, like Vue 3, which should make Owl

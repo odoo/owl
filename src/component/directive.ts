@@ -400,7 +400,12 @@ QWeb.addDirective({
 
     if (hasSlots) {
       const clone = <Element>node.cloneNode(true);
-      const slotNodes = clone.querySelectorAll("[t-set]");
+      const slotNodes: Element[] = [];
+      for (let el of clone.children) {
+        if (el.getAttribute("t-set") && el.hasChildNodes()) {
+          slotNodes.push(el);
+        }
+      }
       const slotId = QWeb.nextSlotId++;
       ctx.addLine(`w${componentID}.__owl__.slotId = ${slotId};`);
       if (slotNodes.length) {

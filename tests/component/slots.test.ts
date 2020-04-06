@@ -873,4 +873,28 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><div><span><p>heyaaron</p></span></div></div>");
   });
+
+  test("t-set t-value in a slot", async () => {
+    class Dialog extends Component {
+      static template = xml`
+          <span>
+            <t t-slot="default"/>
+          </span>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>
+            <t t-set="rainbow" t-value="'dash'"/>
+            <t t-esc="rainbow"/>
+          </Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>dash</span></div>");
+    expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
+  });
 });

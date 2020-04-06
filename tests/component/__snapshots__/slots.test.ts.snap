@@ -469,6 +469,21 @@ exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
 }"
 `;
 
+exports[`t-slot directive t-set t-value in a slot 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let h = this.h;
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('span', p4, c4);
+    const slot5 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot5) {
+        slot5.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c4, parent: extra.parent || context}));
+    }
+    return vn4;
+}"
+`;
+
 exports[`t-slot directive template can just return a slot 1`] = `
 "function anonymous(context, extra
 ) {

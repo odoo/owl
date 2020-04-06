@@ -90,6 +90,96 @@ exports[`t-slot directive can define and call slots 4`] = `
 }"
 `;
 
+exports[`t-slot directive can define and call slots using old t-set keyword 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__2\\"
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    // Component 'Dialog'
+    let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
+    let props2 = {};
+    if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
+        w2.destroy();
+        w2 = false;
+    }
+    if (w2) {
+        w2.__updateProps(props2, extra.fiber, Object.assign(Object.create(context), scope));
+        let pvnode = w2.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey2 = \`Dialog\`;
+        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Dialog'];
+        if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
+        w2 = new W2(parent, props2);
+        parent.__owl__.cmap['__3__'] = w2.__owl__.id;
+        w2.__owl__.slotId = 1;
+        let fiber = w2.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        c1.push(pvnode);
+        w2.__owl__.pvnode = pvnode;
+    }
+    w2.__owl__.parentLastFiberId = extra.fiber.id;
+    return vn1;
+}"
+`;
+
+exports[`t-slot directive can define and call slots using old t-set keyword 2`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let h = this.h;
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('div', p6, c6);
+    let c7 = [], p7 = {key:7};
+    let vn7 = h('div', p7, c7);
+    c6.push(vn7);
+    const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
+    if (slot8) {
+        slot8.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c7, parent: extra.parent || context}));
+    }
+    let c9 = [], p9 = {key:9};
+    let vn9 = h('div', p9, c9);
+    c6.push(vn9);
+    const slot10 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
+    if (slot10) {
+        slot10.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c9, parent: extra.parent || context}));
+    }
+    return vn6;
+}"
+`;
+
+exports[`t-slot directive can define and call slots using old t-set keyword 3`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"slot_header_template\\"
+    let h = this.h;
+    let c1 = extra.parentNode;
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('span', p4, c4);
+    c1.push(vn4);
+    c4.push({text: \`header\`});
+}"
+`;
+
+exports[`t-slot directive can define and call slots using old t-set keyword 4`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"slot_footer_template\\"
+    let h = this.h;
+    let c1 = extra.parentNode;
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('span', p5, c5);
+    c1.push(vn5);
+    c5.push({text: \`footer\`});
+}"
+`;
+
 exports[`t-slot directive content is the default slot 1`] = `
 "function anonymous(context, extra
 ) {

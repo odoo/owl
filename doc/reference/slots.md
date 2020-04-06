@@ -37,16 +37,16 @@ rendering context.
 </div>
 ```
 
-Slots are defined by the caller, with the `t-set` directive:
+Slots are defined by the caller, with the `t-set-slot` directive:
 
 ```xml
 <div t-name="SomeComponent">
   <div>some component</div>
   <Dialog title="Some Dialog">
-    <t t-set="content">
+    <t t-set-slot="content">
       <div>hey</div>
     </t>
-    <t t-set="footer">
+    <t t-set-slot="footer">
       <button t-on-click="doSomething">ok</button>
     </t>
   </Dialog>
@@ -56,6 +56,9 @@ Slots are defined by the caller, with the `t-set` directive:
 In this example, the component `Dialog` will render the slots `content` and `footer`
 with its parent as rendering context. This means that clicking on the button
 will execute the `doSomething` method on the parent, not on the dialog.
+
+Note: Owl previously used the `t-set` directive to define the content of a slot.
+This is deprecated and should no longer be used in new code.
 
 ## Reference
 

@@ -124,7 +124,7 @@ describe("basic widget properties", () => {
     try {
       new SomeWidget();
     } catch (e) {
-      expect(e.message).toBe('Could not find template for component "SomeWidget"');
+      expect(e.message).toBe('Could not find template for component "SomeWidget".\n        However, there is a (instance, not a class) "template" property.\n        Maybe this should simply be defined as a class (or static) property?');
     }
   });
 

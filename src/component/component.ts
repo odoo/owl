@@ -34,7 +34,6 @@ import { activateSheet } from "./styles";
  */
 export interface Env {
   qweb: QWeb;
-  [key: string]: any;
 }
 
 export type MountPosition = "first-child" | "last-child" | "self";

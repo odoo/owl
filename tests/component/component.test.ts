@@ -3484,11 +3484,14 @@ describe("environment and plugins", () => {
   });
 
   test("can define specific env for root components", async () => {
-    class App1 extends Component {
+    interface AppEnv extends Env {
+      test: number;
+    }
+    class App1 extends Component<{}, AppEnv> {
       static template = xml`<span></span>`;
     }
     App1.env = { test: 1 };
-    class App2 extends Component {
+    class App2 extends Component<{}, AppEnv> {
       static template = xml`<span></span>`;
     }
     App2.env = { test: 2 };

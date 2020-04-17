@@ -6,6 +6,7 @@ import { patch } from "../src/vdom";
 import "../src/qweb/base_directives";
 import "../src/qweb/extensions";
 import "../src/component/directive";
+import { browser } from "../src/browser";
 
 // modifies scheduler to make it faster to test components
 scheduler.requestAnimationFrame = function(callback: FrameRequestCallback) {
@@ -75,7 +76,8 @@ export function makeDeferred(): Deferred {
 
 export function makeTestEnv(): Env {
   return {
-    qweb: new QWeb()
+    qweb: new QWeb(),
+    browser: browser
   };
 }
 

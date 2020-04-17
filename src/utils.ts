@@ -10,6 +10,8 @@
  * - debounce
  */
 
+import { browser } from "./browser";
+
 export function whenReady(fn?: any) {
   return new Promise(function(resolve) {
     if (document.readyState !== "loading") {
@@ -44,7 +46,7 @@ export function loadJS(url: string): Promise<void> {
 }
 
 export async function loadFile(url: string): Promise<string> {
-  const result = await fetch(url);
+  const result = await browser.fetch(url);
   if (!result.ok) {
     throw new Error("Error while fetching xml templates");
   }
@@ -83,8 +85,8 @@ export function debounce(func: Function, wait: number, immediate?: boolean): Fun
       }
     }
     const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    browser.clearTimeout(timeout);
+    timeout = browser.setTimeout(later, wait);
     if (callNow) {
       func.apply(context, args);
     }

@@ -1,5 +1,5 @@
 import { Component, Env } from "../src/component/component";
-import { Store, useStore, useDispatch, useGetters } from "../src/store";
+import { Store, useStore, useDispatch, useGetters, EnvWithStore } from "../src/store";
 import { useState } from "../src/hooks";
 import { xml } from "../src/tags";
 import { shallowEqual } from "../src/utils";
@@ -885,7 +885,7 @@ describe("connecting a component to store", () => {
       actions
     });
 
-    class TodoItem extends Component {
+    class TodoItem extends Component<{}, EnvWithStore> {
       static template = xml`
             <div class="todo">
                 <t t-esc="state.todo.title"/>
@@ -958,7 +958,7 @@ describe("connecting a component to store", () => {
       actions
     });
 
-    class TodoItem extends Component {
+    class TodoItem extends Component<{}, EnvWithStore> {
       static template = xml`
             <div class="todo">
                 <t t-esc="state.todo.title"/>

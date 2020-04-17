@@ -49,6 +49,10 @@ interface Options {
   mode: Router["mode"];
 }
 
+export interface EnvWithRouter extends Env {
+  router: Router;
+}
+
 const paramRegexp = /\{\{(.*?)\}\}/;
 
 export class Router {
@@ -60,7 +64,11 @@ export class Router {
   routeIds: string[];
   env: RouterEnv;
 
-  constructor(env: Env, routes: Partial<Route>[], options: Options = { mode: "history" }) {
+  constructor(
+    env: Partial<EnvWithRouter>,
+    routes: Partial<Route>[],
+    options: Options = { mode: "history" }
+  ) {
     env.router = this;
     this.mode = options.mode;
     this.env = env as RouterEnv;

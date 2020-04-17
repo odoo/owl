@@ -24,6 +24,10 @@ import { onWillUpdateProps } from "./hooks";
 // Store Definition
 //------------------------------------------------------------------------------
 
+export interface EnvWithStore extends Env {
+  store: Store;
+}
+
 export type Action = ({ state, dispatch, env, getters }, ...payload: any) => any;
 export type Getter = ({ state: any, getters }, payload?) => any;
 
@@ -83,7 +87,7 @@ interface SelectorOptions {
 const isStrictEqual = (a, b) => a === b;
 
 export function useStore(selector, options: SelectorOptions = {}): any {
-  const component: Component = Component.current!;
+  const component = Component.current as Component<any, EnvWithStore>;
   const componentId = component.__owl__.id;
   const store = options.store || (component.env.store as Store);
   if (!(store instanceof Store)) {
@@ -149,11 +153,11 @@ export function useStore(selector, options: SelectorOptions = {}): any {
 }
 
 export function useDispatch(store?: Store): Store["dispatch"] {
-  store = store || (Component.current!.env.store as Store);
+  store = store || (Component.current!.env as EnvWithStore).store;
   return store.dispatch.bind(store);
 }
 
 export function useGetters(store?: Store): Store["getters"] {
-  store = store || (Component.current!.env.store as Store);
+  store = store || (Component.current!.env as EnvWithStore).store;
   return store.getters;
 }

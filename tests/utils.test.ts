@@ -1,4 +1,5 @@
 import { escape, debounce } from "../src/utils";
+import { browser } from "../src/browser";
 
 describe("escape", () => {
   test("normal strings", () => {
@@ -15,6 +16,10 @@ describe("escape", () => {
 describe("debounce", () => {
   test("works as expected", () => {
     jest.useFakeTimers();
+    // need to reset them on browser because they were mocked in window, but not
+    // on browser object
+    browser.setTimeout = window.setTimeout.bind(window);
+    browser.clearTimeout = window.clearTimeout.bind(window);
     let n = 0;
     let f = debounce(() => n++, 100);
     expect(n).toBe(0);

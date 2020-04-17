@@ -7,6 +7,7 @@ import { Fiber } from "./fiber";
 import "./props_validation";
 import { Scheduler, scheduler } from "./scheduler";
 import { activateSheet } from "./styles";
+import { Browser, browser } from "../browser";
 
 /**
  * Owl Component System
@@ -34,6 +35,7 @@ import { activateSheet } from "./styles";
  */
 export interface Env {
   qweb: QWeb;
+  browser: Browser;
 }
 
 export type MountPosition = "first-child" | "last-child" | "self";
@@ -156,6 +158,9 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       this.env = (this.constructor as any).env;
       if (!this.env.qweb) {
         this.env.qweb = new QWeb();
+      }
+      if (!this.env.browser) {
+        this.env.browser = browser;
       }
       this.env.qweb.on("update", this, () => {
         if (this.__owl__.isMounted) {

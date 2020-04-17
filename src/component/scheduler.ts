@@ -1,4 +1,5 @@
 import { Fiber } from "./fiber";
+import { browser } from "../browser";
 
 /**
  * Owl Scheduler Class
@@ -19,9 +20,9 @@ interface Task {
 export class Scheduler {
   tasks: Task[] = [];
   isRunning: boolean = false;
-  requestAnimationFrame: typeof window.requestAnimationFrame;
+  requestAnimationFrame: Window["requestAnimationFrame"];
 
-  constructor(requestAnimationFrame) {
+  constructor(requestAnimationFrame: Window["requestAnimationFrame"]) {
     this.requestAnimationFrame = requestAnimationFrame;
   }
 
@@ -109,5 +110,4 @@ export class Scheduler {
   }
 }
 
-const raf = window.requestAnimationFrame.bind(window);
-export const scheduler = new Scheduler(raf);
+export const scheduler = new Scheduler(browser.requestAnimationFrame);

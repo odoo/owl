@@ -6,6 +6,7 @@
 - [Setting an Environment](#setting-an-environment)
 - [Using a sub environment](#using-a-sub-environment)
 - [Content of an Environment](#content-of-an-environment)
+- [Special keys](#special-keys)
 
 ## Overview
 
@@ -93,7 +94,7 @@ Some good use cases for additional keys in the environment are:
 
 - some configuration keys,
 - session information,
-- generic services (such as doing rpcs, or accessing local storage).
+- generic services (such as doing rpcs).
 
 Doing it this way means that components are easily testable: we can simply
 create a test environment with mock services.
@@ -125,3 +126,26 @@ async function start() {
   await app.mount(document.body);
 }
 ```
+
+## Special Keys
+
+There are two special key/value added by Owl if not provided in the environment:
+the `QWeb` instance and a `browser` object:
+
+- `qweb` will be set to an empty `QWeb` instance. This is absolutely necessary
+  for Owl to be able to render anything
+- `browser`: this is an object that contains some common access points to the
+  browser methods with a side effect. This is particularly useful when one want
+  to test more advanced components, and be able to mock those methods.
+
+More specifically, the `browser` object contains the following methods and objects:
+
+- `setTimeout`
+- `clearTimeout`
+- `setInterval`
+- `clearInterval`
+- `requestAnimationFrame`
+- `random`
+- `Date`
+- `fetch`
+- `localStorage`

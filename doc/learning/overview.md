@@ -96,7 +96,7 @@ class OrderLine extends Component {
     </div>`;
 
   add() {
-    this.trigger("add-to-order", { line: props.line });
+    this.trigger("add-to-order", { line: this.props.line });
   }
 }
 

@@ -72,7 +72,7 @@ For example, a simple fade in/out effect can be done with this:
 
 ```xml
 <div>
-    <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
+    <div class="square" t-transition="fade">Hello</div>
 </div>
 ```
 

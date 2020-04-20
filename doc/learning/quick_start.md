@@ -383,7 +383,7 @@ module.exports = function(env, argv) {
       extensions: [".js", ".jsx"]
     },
     devServer: {
-      contentBase: path.resolve(__dirname, "public/index.html"),
+      contentBase: path.resolve(__dirname, "public"),
       compress: true,
       hot: true,
       host,

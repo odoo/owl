@@ -715,6 +715,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
+  test("class and t-att-class should combine together", () => {
+    qweb.addTemplate("test", `<div t-att-class="value" class="hello" />`);
+    const result = renderToString(qweb, "test", { value: "world" });
+    expect(result).toBe(`<div class="world hello"></div>`);
+  });
+
   test("class and t-attf-class with ternary operation", () => {
     qweb.addTemplate("test", `<div class="hello" t-attf-class="{{value ? 'world' : ''}}"/>`);
     const result = renderToString(qweb, "test", { value: true });

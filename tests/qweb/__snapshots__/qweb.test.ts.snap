@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`attributes class and t-att-class should combine together 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let _1 = utils.toObj(scope['value']);
+    Object.assign(_1, {'hello':true})
+    let c3 = [], p3 = {key:3,class:_1};
+    let vn3 = h('div', p3, c3);
+    return vn3;
+}"
+`;
+
 exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(context, extra
 ) {

@@ -704,8 +704,12 @@ export class QWeb extends EventBus {
               .split(/\s+/)
               .map(a => `'${escapeQuotes(a)}':true`)
               .join(",");
-            classObj = `_${ctx.generateID()}`;
-            ctx.addLine(`let ${classObj} = {${classDef}};`);
+            if (classObj) {
+              ctx.addLine(`Object.assign(${classObj}, {${classDef}})`);
+            } else {
+              classObj = `_${ctx.generateID()}`;
+              ctx.addLine(`let ${classObj} = {${classDef}};`);
+            }
           }
         } else {
           ctx.addLine(`let _${attID} = '${escapeQuotes(value)}';`);

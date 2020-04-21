@@ -111,7 +111,7 @@ class Parent extends Component {
   static components = { OrderLine };
   orders = useState([
     { id: 1, name: "Coffee", quantity: 0 },
-    { id: 2, name: "Tea", quantity: 0 }
+    { id: 2, name: "Tea", quantity: 0 },
   ]);
 
   addToOrder(event) {

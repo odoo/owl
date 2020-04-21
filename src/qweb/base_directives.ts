@@ -96,7 +96,7 @@ QWeb.addDirective({
     let value = ctx.getValue(node.getAttribute("t-esc")!);
     compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
     return true;
-  }
+  },
 });
 
 QWeb.addDirective({
@@ -106,7 +106,7 @@ QWeb.addDirective({
     let value = ctx.getValue(node.getAttribute("t-raw")!);
     compileValueNode(value, node, qweb, ctx);
     return true;
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ QWeb.addDirective({
       }
     }
     return true;
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ QWeb.addDirective({
   },
   finalize({ ctx }) {
     ctx.closeIf();
-  }
+  },
 });
 
 QWeb.addDirective({
@@ -195,7 +195,7 @@ QWeb.addDirective({
   },
   finalize({ ctx }) {
     ctx.closeIf();
-  }
+  },
 });
 
 QWeb.addDirective({
@@ -208,7 +208,7 @@ QWeb.addDirective({
   },
   finalize({ ctx }) {
     ctx.closeIf();
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ QWeb.addDirective({
     }
 
     return true;
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -353,7 +353,7 @@ QWeb.addDirective({
     ctx.addLine("}");
     ctx.stopProtectScope(varsID);
     return true;
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -364,7 +364,7 @@ QWeb.addDirective({
   priority: 1,
   atNodeEncounter({ ctx }) {
     ctx.addLine("debugger;");
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -376,5 +376,5 @@ QWeb.addDirective({
   atNodeEncounter({ ctx, value }) {
     const expr = ctx.formatExpression(value);
     ctx.addLine(`console.log(${expr})`);
-  }
+  },
 });

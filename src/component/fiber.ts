@@ -193,7 +193,7 @@ export class Fiber {
 
     // build patchQueue
     const patchQueue: Fiber[] = [];
-    const doWork: (Fiber) => Fiber | null = function(f) {
+    const doWork: (Fiber) => Fiber | null = function (f) {
       patchQueue.push(f);
       return f.child;
     };
@@ -280,7 +280,7 @@ export class Fiber {
    * Cancel a fiber and all its children.
    */
   cancel() {
-    this._walk(f => {
+    this._walk((f) => {
       if (!f.isRendered) {
         f.root.counter--;
       }

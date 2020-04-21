@@ -6,12 +6,12 @@ describe("tokenizer", () => {
 
     expect(tokenize("{}")).toEqual([
       { type: "LEFT_BRACE", value: "{" },
-      { type: "RIGHT_BRACE", value: "}" }
+      { type: "RIGHT_BRACE", value: "}" },
     ]);
     expect(tokenize("{ }}")).toEqual([
       { type: "LEFT_BRACE", value: "{" },
       { type: "RIGHT_BRACE", value: "}" },
-      { type: "RIGHT_BRACE", value: "}" }
+      { type: "RIGHT_BRACE", value: "}" },
     ]);
     expect(tokenize("a")).toEqual([{ type: "SYMBOL", value: "a" }]);
     expect(tokenize("true")).toEqual([{ type: "SYMBOL", value: "true" }]);
@@ -25,15 +25,15 @@ describe("tokenizer", () => {
       { type: "SYMBOL", value: "a" },
       { type: "COLON", value: ":" },
       { type: "VALUE", value: "2" },
-      { type: "RIGHT_BRACE", value: "}" }
+      { type: "RIGHT_BRACE", value: "}" },
     ]);
     expect(tokenize("a,")).toEqual([
       { type: "SYMBOL", value: "a" },
-      { type: "COMMA", value: "," }
+      { type: "COMMA", value: "," },
     ]);
     expect(tokenize("][")).toEqual([
       { type: "RIGHT_BRACKET", value: "]" },
-      { type: "LEFT_BRACKET", value: "[" }
+      { type: "LEFT_BRACKET", value: "[" },
     ]);
   });
 
@@ -44,23 +44,23 @@ describe("tokenizer", () => {
       { type: "OPERATOR", value: "<" },
       { type: "OPERATOR", value: ">" },
       { type: "OPERATOR", value: "!==" },
-      { type: "OPERATOR", value: "!=" }
+      { type: "OPERATOR", value: "!=" },
     ]);
     expect(tokenize("typeof a")).toEqual([
       { type: "OPERATOR", value: "typeof " },
-      { type: "SYMBOL", value: "a" }
+      { type: "SYMBOL", value: "a" },
     ]);
 
     expect(tokenize("a...1")).toEqual([
       { type: "SYMBOL", value: "a" },
       { type: "OPERATOR", value: "..." },
-      { type: "VALUE", value: "1" }
+      { type: "VALUE", value: "1" },
     ]);
 
     expect(tokenize("a in b")).toEqual([
       { type: "SYMBOL", value: "a" },
       { type: "OPERATOR", value: "in " },
-      { type: "SYMBOL", value: "b" }
+      { type: "SYMBOL", value: "b" },
     ]);
   });
 
@@ -76,7 +76,7 @@ describe("tokenizer", () => {
     expect(tokenize('"hello ged"')).toEqual([{ type: "VALUE", value: '"hello ged"' }]);
     expect(tokenize('"hello ged"}')).toEqual([
       { type: "VALUE", value: '"hello ged"' },
-      { type: "RIGHT_BRACE", value: "}" }
+      { type: "RIGHT_BRACE", value: "}" },
     ]);
     expect(tokenize('"hello \\"ged\\""')).toEqual([{ type: "VALUE", value: '"hello \\"ged\\""' }]);
   });

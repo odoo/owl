@@ -19,7 +19,7 @@ not ready yet, resolved directly otherwise). If called with a callback as
 argument, it executes it as soon as the DOM ready (or directly).
 
 ```js
-Promise.all([loadFile("templates.xml"), owl.utils.whenReady()]).then(function([templates]) {
+Promise.all([loadFile("templates.xml"), owl.utils.whenReady()]).then(function ([templates]) {
   const qweb = new owl.QWeb({ templates });
   const app = new App({ qweb });
   app.mount(document.body);
@@ -29,7 +29,7 @@ Promise.all([loadFile("templates.xml"), owl.utils.whenReady()]).then(function([t
 or alternatively:
 
 ```js
-owl.utils.whenReady(function() {
+owl.utils.whenReady(function () {
   const qweb = new owl.QWeb();
   const app = new App({ qweb });
   app.mount(document.body);

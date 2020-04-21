@@ -19,5 +19,5 @@ export const browser: Browser = {
   random: Math.random,
   Date: window.Date,
   fetch: (window.fetch || (() => {})).bind(window),
-  localStorage: window.localStorage
+  localStorage: window.localStorage,
 };

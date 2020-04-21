@@ -50,7 +50,7 @@ export class Scheduler {
             return reject(fiber.error);
           }
           resolve();
-        }
+        },
       });
       if (!this.isRunning) {
         this.start();
@@ -60,7 +60,7 @@ export class Scheduler {
 
   rejectFiber(fiber: Fiber, reason: string) {
     fiber = fiber.root;
-    const index = this.tasks.findIndex(t => t.fiber === fiber);
+    const index = this.tasks.findIndex((t) => t.fiber === fiber);
     if (index >= 0) {
       const [task] = this.tasks.splice(index, 1);
       fiber.cancel();
@@ -76,7 +76,7 @@ export class Scheduler {
   flush() {
     let tasks = this.tasks;
     this.tasks = [];
-    tasks = tasks.filter(task => {
+    tasks = tasks.filter((task) => {
       if (task.fiber.isCompleted) {
         task.callback();
         return false;

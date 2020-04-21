@@ -79,9 +79,9 @@ export class Context extends EventBus {
   async __notifyComponents() {
     const rev = ++this.rev;
     const subscriptions = this.subscriptions.update;
-    const groups = partitionBy(subscriptions, s => (s.owner ? s.owner.__owl__.depth : -1));
+    const groups = partitionBy(subscriptions, (s) => (s.owner ? s.owner.__owl__.depth : -1));
     for (let group of groups) {
-      const proms = group.map(sub => sub.callback.call(sub.owner, rev));
+      const proms = group.map((sub) => sub.callback.call(sub.owner, rev));
       // at this point, each component in the current group has registered a
       // top level fiber in the scheduler. It could happen that rendering these
       // components is done (if they have no children).  This is why we manually
@@ -116,7 +116,7 @@ export function useContextWithCB(ctx: Context, component: Component, method): an
     __owl__.observer.notifyCB = component.render.bind(component);
   }
   const currentCB = __owl__.observer.notifyCB;
-  __owl__.observer.notifyCB = function() {
+  __owl__.observer.notifyCB = function () {
     if (ctx.rev > mapping[id]) {
       // in this case, the context has been updated since we were rendering
       // last, and we do not need to render here with the observer. A
@@ -128,18 +128,18 @@ export function useContextWithCB(ctx: Context, component: Component, method): an
 
   mapping[id] = 0;
   const renderFn = __owl__.renderFn;
-  __owl__.renderFn = function(comp, params) {
+  __owl__.renderFn = function (comp, params) {
     mapping[id] = ctx.rev;
     return renderFn(comp, params);
   };
-  ctx.on("update", component, async contextRev => {
+  ctx.on("update", component, async (contextRev) => {
     if (mapping[id] < contextRev) {
       mapping[id] = contextRev;
       await method();
     }
   });
   const __destroy = component.__destroy;
-  component.__destroy = parent => {
+  component.__destroy = (parent) => {
     ctx.off("update", component);
     delete mapping[id];
     __destroy.call(component, parent);

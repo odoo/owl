@@ -23,7 +23,7 @@ import { QWeb } from "./qweb";
 export const MODS_CODE = {
   prevent: "e.preventDefault();",
   self: "if (e.target !== this.elm) {return}",
-  stop: "e.stopPropagation();"
+  stop: "e.stopPropagation();",
 };
 
 interface HandlerInfo {
@@ -50,7 +50,7 @@ export function makeHandlerCode(
   let code: string;
   // check if it is a method with no args, a method with args or an expression
   let args: string = "";
-  const name: string = value.replace(/\(.*\)/, function(_args) {
+  const name: string = value.replace(/\(.*\)/, function (_args) {
     args = _args.slice(1, -1);
     return "";
   });
@@ -74,7 +74,7 @@ export function makeHandlerCode(
     putInCache = false;
     code = ctx.captureExpression(value);
   }
-  const modCode = mods.map(mod => modcodes[mod]).join("");
+  const modCode = mods.map((mod) => modcodes[mod]).join("");
   let handler = `function (e) {if (!context.__owl__.isMounted){return}${modCode}${code}}`;
   if (putInCache) {
     const key = ctx.generateTemplateKey(event);
@@ -90,7 +90,7 @@ QWeb.addDirective({
   atNodeCreation({ ctx, fullName, value, nodeID }) {
     const { event, handler } = makeHandlerCode(ctx, fullName, value, true);
     ctx.addLine(`p${nodeID}.on['${event}'] = ${handler};`);
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -105,17 +105,17 @@ QWeb.addDirective({
     ctx.addLine(`const ${refKey} = ${ctx.interpolate(value)};`);
     addNodeHook("create", `context.__owl__.refs[${refKey}] = n.elm;`);
     addNodeHook("destroy", `delete context.__owl__.refs[${refKey}];`);
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
 // t-transition
 //------------------------------------------------------------------------------
-QWeb.utils.nextFrame = function(cb: () => void) {
+QWeb.utils.nextFrame = function (cb: () => void) {
   requestAnimationFrame(() => requestAnimationFrame(cb));
 };
 
-QWeb.utils.transitionInsert = function(vn: VNode, name: string) {
+QWeb.utils.transitionInsert = function (vn: VNode, name: string) {
   const elm = <HTMLElement>vn.elm;
   // remove potential duplicated vnode that is currently being removed, to
   // prevent from having twice the same node in the DOM during an animation
@@ -139,7 +139,7 @@ QWeb.utils.transitionInsert = function(vn: VNode, name: string) {
   });
 };
 
-QWeb.utils.transitionRemove = function(vn: VNode, name: string, rm: () => void) {
+QWeb.utils.transitionRemove = function (vn: VNode, name: string, rm: () => void) {
   const elm = <HTMLElement>vn.elm;
   elm.setAttribute("data-owl-key", vn.key!);
 
@@ -209,12 +209,12 @@ QWeb.addDirective({
     let name = value;
     const hooks = {
       insert: `utils.transitionInsert(vn, '${name}');`,
-      remove: `utils.transitionRemove(vn, '${name}', rm);`
+      remove: `utils.transitionRemove(vn, '${name}', rm);`,
     };
     for (let hookName in hooks) {
       addNodeHook(hookName, hooks[hookName]);
     }
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -251,13 +251,13 @@ QWeb.addDirective({
     }
     ctx.closeIf();
     return true;
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
 // t-model
 //------------------------------------------------------------------------------
-QWeb.utils.toNumber = function(val: string): number | string {
+QWeb.utils.toNumber = function (val: string): number | string {
   const n = parseFloat(val);
   return isNaN(n) ? val : n;
 };
@@ -305,7 +305,7 @@ QWeb.addDirective({
     }
     ctx.addLine(`extra.handlers[${key}] = extra.handlers[${key}] || (${handler});`);
     ctx.addLine(`p${nodeID}.on['${event}'] = extra.handlers[${key}];`);
-  }
+  },
 });
 
 //------------------------------------------------------------------------------
@@ -329,5 +329,5 @@ QWeb.addDirective({
     if (ctx.loopNumber === 0) {
       ctx.rootContext.hasKey0 = ctx.keyStack.pop() as boolean;
     }
-  }
+  },
 });

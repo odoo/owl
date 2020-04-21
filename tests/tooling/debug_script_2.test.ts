@@ -19,7 +19,7 @@ debugOwl(owl, { logScheduler: true });
 test("can log scheduler start and stop", async () => {
   const steps: string[] = [];
   const log = console.log;
-  console.log = arg => steps.push(arg);
+  console.log = (arg) => steps.push(arg);
 
   class Child extends Component {
     static template = xml`<div>child</div>`;
@@ -44,7 +44,7 @@ test("can log scheduler start and stop", async () => {
     "[OWL_DEBUG] Child<id=2> rendering template",
     "[OWL_DEBUG] Child<id=2> mounted",
     "[OWL_DEBUG] Parent<id=1> mounted",
-    "[OWL_DEBUG] scheduler: stop running tasks queue"
+    "[OWL_DEBUG] scheduler: stop running tasks queue",
   ]);
   console.log = log;
 });

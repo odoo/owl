@@ -67,14 +67,14 @@ export class Observer {
           self.notifyCB();
         }
         return true;
-      }
+      },
     });
 
     const metadata = {
       value,
       proxy,
       rev: this.rev,
-      parent
+      parent,
     };
 
     this.weakMap.set(value, metadata);

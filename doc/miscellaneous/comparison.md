@@ -257,11 +257,11 @@ to the store like in redux, with the `useStore` hook (see the [store documentati
 const actions = {
   increment({ state }, val) {
     state.counter.value += val;
-  }
+  },
 };
 
 const state = {
-  counter: { value: 0 }
+  counter: { value: 0 },
 };
 const store = new owl.Store({ state, actions });
 
@@ -270,7 +270,7 @@ class Counter extends Component {
       <button t-name="Counter" t-on-click="dispatch('increment')">
         Click Me! [<t t-esc="counter.value"/>]
       </button>`;
-  counter = useStore(state => state.counter);
+  counter = useStore((state) => state.counter);
   dispatch = useDispatch();
 }
 

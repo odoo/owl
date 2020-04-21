@@ -44,7 +44,7 @@ export class EventBus {
     }
     this.subscriptions[eventType].push({
       owner,
-      callback
+      callback,
     });
   }
 
@@ -54,7 +54,7 @@ export class EventBus {
   off(eventType: string, owner: any) {
     const subs = this.subscriptions[eventType];
     if (subs) {
-      this.subscriptions[eventType] = subs.filter(s => s.owner !== owner);
+      this.subscriptions[eventType] = subs.filter((s) => s.owner !== owner);
     }
   }
 

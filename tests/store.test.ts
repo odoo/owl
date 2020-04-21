@@ -8,7 +8,7 @@ describe("basic use", () => {
     const actions = {
       inc({ state }, delta) {
         state.n += delta;
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -25,7 +25,7 @@ describe("basic use", () => {
         state.n1 += delta1;
         state.n2 += delta2;
         state.n3 += delta3;
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -47,7 +47,7 @@ describe("basic use", () => {
       },
       inc100({ dispatch }) {
         dispatch("inc", 100);
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -61,7 +61,7 @@ describe("basic use", () => {
     const actions = {
       inc({ state }) {
         return ++state.n;
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -87,7 +87,7 @@ describe("basic use", () => {
       async setTo10({ dispatch }) {
         await Promise.resolve();
         dispatch("setN", 10);
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -115,7 +115,7 @@ describe("basic use", () => {
         await Promise.resolve();
         dispatch("setN", 10);
         return 5;
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -132,7 +132,7 @@ describe("basic use", () => {
     const actions = {
       someaction({ env }) {
         expect(env).toBe(someEnv);
-      }
+      },
     };
     const store = new Store({ state: {}, actions, env: someEnv });
 
@@ -145,15 +145,15 @@ describe("basic use", () => {
         1: {
           id: 1,
           name: "bertinchamps",
-          tasterID: 1
-        }
+          tasterID: 1,
+        },
       },
       tasters: {
         1: {
           id: 1,
-          name: "aaron"
-        }
-      }
+          name: "aaron",
+        },
+      },
     };
     const getters: { [key: string]: Getter } = {
       beerTasterName({ state }, beerID) {
@@ -161,7 +161,7 @@ describe("basic use", () => {
       },
       bestBeerName({ state }) {
         return state.beers[1].name;
-      }
+      },
     };
     const store = new Store({ state, actions: {}, getters });
     expect(store.getters).toBeDefined();
@@ -176,15 +176,15 @@ describe("basic use", () => {
         1: {
           id: 1,
           name: "bertinchamps",
-          tasterID: 1
-        }
+          tasterID: 1,
+        },
       },
       tasters: {
         1: {
           id: 1,
-          name: "aaron"
-        }
-      }
+          name: "aaron",
+        },
+      },
     };
     const getters = {
       beerTasterName({ state }, beerID) {
@@ -192,14 +192,14 @@ describe("basic use", () => {
       },
       bestBeerName({ state }) {
         return state.beers[1].name;
-      }
+      },
     };
     const actions = {
       action({ getters }) {
         expect(getters).toBeDefined();
         expect(getters.bestBeerName()).toBe("bertinchamps");
         expect(getters.beerTasterName(1)).toBe("aaron");
-      }
+      },
     };
     const store = new Store({ state, actions, getters });
     store.dispatch("action");
@@ -215,7 +215,7 @@ describe("basic use", () => {
       },
       c({}, i) {
         return `c${i}`;
-      }
+      },
     };
     const store = new Store({ getters, state: {}, actions: {} });
 
@@ -226,7 +226,7 @@ describe("basic use", () => {
 describe("advanced state properties", () => {
   test("state in the store is reference equal after mutation", async () => {
     const actions = {
-      donothing() {}
+      donothing() {},
     };
     const store = new Store({ state: {}, actions });
     const state = store.state;
@@ -242,7 +242,7 @@ describe("advanced state properties", () => {
         expect(state.a.length).toBe(3);
         const l = state.a.push(53);
         expect(l).toBe(4);
-      }
+      },
     };
     const store = new Store({ state, actions });
     store.dispatch("m");
@@ -253,11 +253,11 @@ describe("advanced state properties", () => {
     const actions = {
       dosomething({ state }) {
         Object.assign(state.westmalle, { a: 3, b: 4 });
-      }
+      },
     };
     const store = new Store({
       state: { westmalle: { a: 1, b: 2 } },
-      actions
+      actions,
     });
     store.dispatch("dosomething");
     expect(store.state.westmalle).toEqual({ a: 3, b: 4 });
@@ -267,7 +267,7 @@ describe("advanced state properties", () => {
     const actions = {
       inc({ state }) {
         state.counter++;
-      }
+      },
     };
     const state = { counter: 0 };
     const store = new Store({ state, actions });
@@ -284,7 +284,7 @@ describe("updates triggered by the store", () => {
     const actions = {
       inc({ state }, delta) {
         state.n += delta;
-      }
+      },
     };
     const store = new Store({ state, actions });
     store.on("update", null, () => updateCounter++);
@@ -308,7 +308,7 @@ describe("updates triggered by the store", () => {
       noop2({ state }) {
         const val = state.n;
         state.n = val;
-      }
+      },
     };
     const store = new Store({ state, actions });
     store.on("update", null, () => updateCounter++);

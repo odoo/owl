@@ -7,7 +7,7 @@ import { makeHandlerCode, MODS_CODE } from "../qweb/extensions";
 //------------------------------------------------------------------------------
 
 const T_COMPONENT_MODS_CODE = Object.assign({}, MODS_CODE, {
-  self: "if (e.target !== vn.elm) {return}"
+  self: "if (e.target !== vn.elm) {return}",
 });
 
 QWeb.utils.defineProxy = function defineProxy(target, source) {
@@ -18,7 +18,7 @@ QWeb.utils.defineProxy = function defineProxy(target, source) {
       },
       set(val) {
         source[k] = val;
-      }
+      },
     });
   }
 };
@@ -238,7 +238,7 @@ QWeb.addDirective({
 
     // computing the props string representing the props object
     let propStr = Object.keys(props)
-      .map(k => k + ":" + props[k])
+      .map((k) => k + ":" + props[k])
       .join(",");
     let componentID = ctx.generateID();
 
@@ -280,7 +280,7 @@ QWeb.addDirective({
         let classDef = classAttr
           .trim()
           .split(/\s+/)
-          .map(a => `'${a}':true`)
+          .map((a) => `'${a}':true`)
           .join(",");
         classObj = `_${ctx.generateID()}`;
         ctx.addLine(`let ${classObj} = {${classDef}};`);
@@ -298,7 +298,7 @@ QWeb.addDirective({
         }
       }
       let eventsCode = events
-        .map(function([name, value]) {
+        .map(function ([name, value]) {
           const capture = name.match(/\.capture/);
           name = capture ? name.replace(/\.capture/, "") : name;
           const { event, handler } = makeHandlerCode(
@@ -469,5 +469,5 @@ QWeb.addDirective({
     ctx.addLine(`w${componentID}.__owl__.parentLastFiberId = extra.fiber.id;`);
 
     return true;
-  }
+  },
 });

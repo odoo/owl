@@ -97,7 +97,7 @@ export class Router {
   //--------------------------------------------------------------------------
 
   async start() {
-    (this as any)._listener = ev => this._navigate(this.currentPath(), ev);
+    (this as any)._listener = (ev) => this._navigate(this.currentPath(), ev);
     window.addEventListener("popstate", (this as any)._listener);
     if (this.mode === "hash") {
       window.addEventListener("hashchange", (this as any)._listener);
@@ -198,7 +198,7 @@ export class Router {
         return {
           type: "match",
           route: route,
-          params: params
+          params: params,
         };
       }
     }
@@ -223,7 +223,7 @@ export class Router {
       const result = await route.beforeRouteEnter({
         env: this.env,
         from: this.currentRoute,
-        to: route
+        to: route,
       });
       if (result === false) {
         return { type: "cancelled" };

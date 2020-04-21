@@ -11,7 +11,7 @@ import { QWeb } from "../qweb/index";
  * This is why it is only done in 'dev' mode.
  */
 
-QWeb.utils.validateProps = function(Widget, props: Object) {
+QWeb.utils.validateProps = function (Widget, props: Object) {
   const propsDef = (<any>Widget).props;
   if (propsDef instanceof Array) {
     // list of strings (prop names)

@@ -259,7 +259,7 @@ function useLoader() {
   }
 
   onWillStart(() => updateRecord(component.props.id));
-  onWillUpdateProps(nextProps => updateRecord(nextProps.id));
+  onWillUpdateProps((nextProps) => updateRecord(nextProps.id));
 
   return record;
 }

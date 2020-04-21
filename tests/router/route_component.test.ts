@@ -41,7 +41,7 @@ describe("RouteComponent", () => {
 
     const routes = [
       { name: "about", path: "/about", component: About },
-      { name: "users", path: "/users", component: Users }
+      { name: "users", path: "/users", component: Users },
     ];
 
     router = new TestRouter(env, routes, { mode: "history" });

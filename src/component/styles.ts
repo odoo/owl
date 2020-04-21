@@ -8,7 +8,7 @@
 export const STYLESHEETS: { [id: string]: HTMLStyleElement } = {};
 
 export function processSheet(str: string): string {
-  const tokens = str.split(/(\{|\}|;)/).map(s => s.trim());
+  const tokens = str.split(/(\{|\}|;)/).map((s) => s.trim());
   const selectorStack: string[][] = [];
   const parts: string[] = [];
   let rules: string[] = [];

@@ -26,5 +26,5 @@ Object.defineProperty(config, "mode", {
     } else {
       console.log(`Owl is now running in 'prod' mode.`);
     }
-  }
+  },
 });

@@ -20,7 +20,7 @@ debugOwl(owl, {});
 test("can log full lifecycle", async () => {
   const steps: string[] = [];
   const log = console.log;
-  console.log = arg => steps.push(arg);
+  console.log = (arg) => steps.push(arg);
 
   class Child extends Component {
     static template = xml`<div>child</div>`;
@@ -51,7 +51,7 @@ test("can log full lifecycle", async () => {
     "[OWL_DEBUG] Child<id=2> rendering template",
     "[OWL_DEBUG] Parent<id=1> willPatch",
     "[OWL_DEBUG] Child<id=2> mounted",
-    "[OWL_DEBUG] Parent<id=1> patched"
+    "[OWL_DEBUG] Parent<id=1> patched",
   ]);
   console.log = log;
 });

@@ -77,7 +77,7 @@ const NODE_HOOKS_PARAMS = {
   create: "(_, n)",
   insert: "vn",
   remove: "(vn, rm)",
-  destroy: "()"
+  destroy: "()",
 };
 
 interface Utils {
@@ -112,9 +112,9 @@ const UTILS: Utils = {
     addNS(vnode.data, vnode.children, vnode.sel);
   },
   VDomArray: class VDomArray extends Array {},
-  vDomToString: function(vdom: VNode[]): string {
+  vDomToString: function (vdom: VNode[]): string {
     return vdom
-      .map(vnode => {
+      .map((vnode) => {
         if (vnode.sel) {
           const node = document.createElement(vnode.sel);
           const result = patch(node, vnode);
@@ -145,7 +145,7 @@ const UTILS: Utils = {
       obj = newObj;
     }
     return obj;
-  }
+  },
 };
 
 function parseXML(xml: string): Document {
@@ -195,7 +195,7 @@ export class QWeb extends EventBus {
     name: 1,
     att: 1,
     attf: 1,
-    translation: 1
+    translation: 1,
   };
   static DIRECTIVES: Directive[] = [];
 
@@ -239,7 +239,7 @@ export class QWeb extends EventBus {
     QWeb.DIRECTIVE_NAMES[directive.name] = 1;
     QWeb.DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
     if (directive.extraNames) {
-      directive.extraNames.forEach(n => (QWeb.DIRECTIVE_NAMES[n] = 1));
+      directive.extraNames.forEach((n) => (QWeb.DIRECTIVE_NAMES[n] = 1));
     }
   }
 
@@ -303,11 +303,11 @@ export class QWeb extends EventBus {
     this._processTemplate(elem);
     const template = {
       elem,
-      fn: function(this: QWeb, context, extra) {
+      fn: function (this: QWeb, context, extra) {
         const compiledFunction = this._compile(name, elem);
         template.fn = compiledFunction;
         return compiledFunction.call(this, context, extra);
-      }
+      },
     };
     this.templates[name] = template;
   }
@@ -317,10 +317,10 @@ export class QWeb extends EventBus {
     for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
       let node = tbranch[i];
       let prevElem = node.previousElementSibling!;
-      let pattr = function(name) {
+      let pattr = function (name) {
         return prevElem.getAttribute(name);
       };
-      let nattr = function(name) {
+      let nattr = function (name) {
         return +!!node.getAttribute(name);
       };
       if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
@@ -330,7 +330,7 @@ export class QWeb extends EventBus {
           );
         }
         if (
-          ["t-if", "t-elif", "t-else"].map(nattr).reduce(function(a, b) {
+          ["t-if", "t-elif", "t-else"].map(nattr).reduce(function (a, b) {
             return a + b;
           }) > 1
         ) {
@@ -582,7 +582,7 @@ export class QWeb extends EventBus {
           qweb: this,
           ctx,
           fullName,
-          value
+          value,
         });
         if (isDone) {
           for (let { directive, value, fullName } of finalizers) {
@@ -597,7 +597,7 @@ export class QWeb extends EventBus {
       let nodeID = this._compileGenericNode(node, ctx, withHandlers);
       ctx = ctx.withParent(nodeID);
       let nodeHooks = {};
-      let addNodeHook = function(hook, handler) {
+      let addNodeHook = function (hook, handler) {
         nodeHooks[hook] = nodeHooks[hook] || [];
         nodeHooks[hook].push(handler);
       };
@@ -611,7 +611,7 @@ export class QWeb extends EventBus {
             fullName,
             value,
             nodeID,
-            addNodeHook
+            addNodeHook,
           });
         }
       }
@@ -702,7 +702,7 @@ export class QWeb extends EventBus {
           if ((value = value.trim())) {
             let classDef = value
               .split(/\s+/)
-              .map(a => `'${escapeQuotes(a)}':true`)
+              .map((a) => `'${escapeQuotes(a)}':true`)
               .join(",");
             if (classObj) {
               ctx.addLine(`Object.assign(${classObj}, {${classDef}})`);
@@ -750,7 +750,7 @@ export class QWeb extends EventBus {
             const attValueID = ctx.generateID();
             ctx.addLine(`let _${attValueID} = ${formattedValue};`);
             formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
-            const attrIndex = attrs.findIndex(att => att.startsWith(attName + ":"));
+            const attrIndex = attrs.findIndex((att) => att.startsWith(attName + ":"));
             attrs.splice(attrIndex, 1);
           }
           ctx.addLine(`let _${attID} = ${formattedValue};`);

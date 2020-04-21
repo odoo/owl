@@ -281,7 +281,7 @@ import { Component } from "@odoo/owl";
 import "regenerator-runtime/runtime";
 
 export async function nextTick() {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     setTimeout(() => Component.scheduler.requestAnimationFrame(() => resolve()));
   });
 }
@@ -361,26 +361,26 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const host = process.env.HOST || "localhost";
 
-module.exports = function(env, argv) {
+module.exports = function (env, argv) {
   const mode = argv.mode || "development";
   return {
     mode: mode,
     entry: "./src/main.js",
     output: {
       filename: "main.js",
-      path: path.resolve(__dirname, "dist")
+      path: path.resolve(__dirname, "dist"),
     },
     module: {
       rules: [
         {
           test: /\.jsx?$/,
           loader: "babel-loader",
-          exclude: /node_modules/
-        }
-      ]
+          exclude: /node_modules/,
+        },
+      ],
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: [".js", ".jsx"],
     },
     devServer: {
       contentBase: path.resolve(__dirname, "public/index.html"),
@@ -388,14 +388,14 @@ module.exports = function(env, argv) {
       hot: true,
       host,
       port: 3000,
-      publicPath: "/"
+      publicPath: "/",
     },
     plugins: [
       new HtmlWebpackPlugin({
         inject: true,
-        template: path.resolve(__dirname, "public/index.html")
-      })
-    ]
+        template: path.resolve(__dirname, "public/index.html"),
+      }),
+    ],
   };
 };
 ```

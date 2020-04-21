@@ -7,7 +7,7 @@ triggering events, and callbacks.
 ```js
 const bus = new owl.core.EventBus();
 
-bus.on("some-event", null, function(...args) {
+bus.on("some-event", null, function (...args) {
   console.log(...args);
 });
 

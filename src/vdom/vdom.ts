@@ -520,7 +520,7 @@ const htmlDomApi = {
   parentNode,
   nextSibling,
   tagName,
-  setTextContent
+  setTextContent,
 } as DOMAPI;
 
 //------------------------------------------------------------------------------

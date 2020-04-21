@@ -204,7 +204,7 @@ to be called in the constructor.
   class Counter extends owl.Component {
     static props = {
       initialValue: Number,
-      optional: true
+      optional: true,
     };
   }
   ```
@@ -217,7 +217,7 @@ to be called in the constructor.
   ```js
   class Counter extends owl.Component {
     static defaultProps = {
-      initialValue: 0
+      initialValue: 0,
     };
   }
   ```
@@ -804,8 +804,8 @@ class RootNode extends Component {
     children: [
       { label: "b" },
       { label: "c", children: [{ label: "d" }, { label: "e" }] },
-      { label: "f", children: [{ label: "g" }] }
-    ]
+      { label: "f", children: [{ label: "g" }] },
+    ],
   };
 }
 ```

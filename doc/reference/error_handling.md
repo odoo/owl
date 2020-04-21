@@ -74,7 +74,7 @@ broadcasted to the application by an event on the `qweb` instance. It may be
 useful, for example, to log the error somewhere.
 
 ```js
-env.qweb.on("error", null, function(error) {
+env.qweb.on("error", null, function (error) {
   // do something
   // react to the error
 });

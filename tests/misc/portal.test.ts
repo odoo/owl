@@ -486,7 +486,7 @@ describe("Portal: Basic use and DOM placement", () => {
       "parent:mounted",
       "parent:willPatch",
       "child:mounted",
-      "parent:patched"
+      "parent:patched",
     ]);
 
     parent.state.val = 2;
@@ -499,7 +499,7 @@ describe("Portal: Basic use and DOM placement", () => {
       "parent:willPatch",
       "child:willPatch",
       "child:patched",
-      "parent:patched"
+      "parent:patched",
     ]);
 
     parent.state.hasChild = false;
@@ -515,7 +515,7 @@ describe("Portal: Basic use and DOM placement", () => {
       "parent:patched",
       "parent:willPatch",
       "child:willUnmount",
-      "parent:patched"
+      "parent:patched",
     ]);
   });
 
@@ -741,7 +741,7 @@ describe("Portal: Events handling", () => {
         steps.push(ev.type as string);
       }
     }
-    const bodyListener = ev => {
+    const bodyListener = (ev) => {
       steps.push(`body: ${ev.type}`);
     };
     document.body.addEventListener("click", bodyListener);

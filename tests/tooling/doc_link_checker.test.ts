@@ -60,14 +60,14 @@ function getFiles(path: string[] = []): FileData[] {
   if (path.length === 0) {
     const baseFiles: FileData[] = [
       { name: "README.md", path: [], links: [], sections: [], fullName: "README.md" },
-      { name: "roadmap.md", path: [], links: [], sections: [], fullName: "roadmap.md" }
+      { name: "roadmap.md", path: [], links: [], sections: [], fullName: "roadmap.md" },
     ];
     const rest = getFiles(["doc"]);
     const result = baseFiles.concat(rest);
     result.forEach(addMardownData);
     return result;
   }
-  const files = fs.readdirSync(path.join("/"), { withFileTypes: true }).map(f => {
+  const files = fs.readdirSync(path.join("/"), { withFileTypes: true }).map((f) => {
     if (f.isDirectory()) {
       return getFiles(path.concat(f.name));
     }
@@ -78,8 +78,8 @@ function getFiles(path: string[] = []): FileData[] {
         path,
         links: [],
         sections: [],
-        fullName
-      }
+        fullName,
+      },
     ];
   });
   return Array.prototype.concat(...files);
@@ -127,7 +127,7 @@ export function isLinkValid(link: MarkDownLink, current: FileData, files: FileDa
   }
 
   // Step 4: check if there is a matching file
-  let target: FileData | undefined = files.find(f => f.fullName === linkFullName);
+  let target: FileData | undefined = files.find((f) => f.fullName === linkFullName);
   if (!target) {
     return false;
   }
@@ -135,7 +135,7 @@ export function isLinkValid(link: MarkDownLink, current: FileData, files: FileDa
   // Step 5: if necessary, check if there is a corresponding link inside the target
   // link name
   if (hash) {
-    if (!target.sections.find(s => s.slug === hash)) {
+    if (!target.sections.find((s) => s.slug === hash)) {
       return false;
     }
   }
@@ -153,7 +153,7 @@ function slugify(str) {
     .toLowerCase()
     .replace(/\//g, "") // remove /
     .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+    .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special characters
     .replace(/&/g, "-and-") // Replace & with ‘and’
     .replace(/[^\w\-]+/g, "") // Remove all non-word characters
     .replace(/\-\-+/g, "-") // Replace multiple - with single -

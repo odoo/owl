@@ -22,7 +22,7 @@ describe("observer", () => {
     expect(observer.rev).toBe(2);
 
     expect(obj2).toEqual({
-      a: 2
+      a: 2,
     });
   });
 
@@ -47,7 +47,7 @@ describe("observer", () => {
     expect(observer.rev).toBe(5);
     expect(obj).toEqual({
       a: null,
-      b: undefined
+      b: undefined,
     });
   });
 

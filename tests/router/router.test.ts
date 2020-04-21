@@ -21,7 +21,7 @@ describe("router miscellaneous", () => {
   test("validate routes shape", () => {
     expect(() => {
       router = new TestRouter(env, [
-        { name: "someroute", path: "/some/path", redirect: { abc: "hey" } as Destination }
+        { name: "someroute", path: "/some/path", redirect: { abc: "hey" } as Destination },
       ]);
     }).toThrow(`Invalid destination: {"abc":"hey"}`);
   });
@@ -133,7 +133,7 @@ describe("getRouteParams", () => {
   test("match some parameterized routes", () => {
     router = new TestRouter(env, []);
     expect(router["getRouteParams"]({ path: "/invoices/{{id}}" } as Route, "/invoices/3")).toEqual({
-      id: "3"
+      id: "3",
     });
   });
 
@@ -141,7 +141,7 @@ describe("getRouteParams", () => {
     router = new TestRouter(env, [], { mode: "hash" });
     expect(router["getRouteParams"]({ path: "/invoices/{{id}}" } as Route, "#/invoices/3")).toEqual(
       {
-        id: "3"
+        id: "3",
       }
     );
   });
@@ -151,7 +151,7 @@ describe("getRouteParams", () => {
     expect(
       router["getRouteParams"]({ path: "/invoices/{{id.number}}" } as Route, "/invoices/3")
     ).toEqual({
-      id: 3
+      id: 3,
     });
   });
 
@@ -160,7 +160,7 @@ describe("getRouteParams", () => {
     expect(
       router["getRouteParams"]({ path: "/invoices/{{id.number}}" } as Route, "#/invoices/3")
     ).toEqual({
-      id: 3
+      id: 3,
     });
   });
 });
@@ -169,7 +169,7 @@ describe("redirect", () => {
   test("can redirect to other route", async () => {
     router = new TestRouter(env, [
       { name: "routea", path: "/some/path" },
-      { name: "routeb", path: "/some/other/path", redirect: { to: "routea" } }
+      { name: "routeb", path: "/some/other/path", redirect: { to: "routea" } },
     ]);
 
     await router.start();
@@ -182,7 +182,7 @@ describe("redirect", () => {
   test("can redirect to other path", async () => {
     router = new TestRouter(env, [
       { name: "routea", path: "/some/path" },
-      { name: "routeb", path: "/some/other/path", redirect: { path: "/some/path" } }
+      { name: "routeb", path: "/some/other/path", redirect: { path: "/some/path" } },
     ]);
     router.navigate = jest.fn(router.navigate);
 
@@ -214,7 +214,7 @@ describe("beforeRouteEnter", () => {
     const guard = jest.fn(() => false);
     router = new TestRouter(env, [
       { name: "routea", path: "/some/patha" },
-      { name: "routeb", path: "/some/pathb", beforeRouteEnter: guard }
+      { name: "routeb", path: "/some/pathb", beforeRouteEnter: guard },
     ]);
 
     await router.start();
@@ -235,7 +235,7 @@ describe("beforeRouteEnter", () => {
     router = new TestRouter(env, [
       { name: "routea", path: "/some/patha" },
       { name: "routeb", path: "/some/pathb", beforeRouteEnter: guard },
-      { name: "routec", path: "/some/pathc" }
+      { name: "routec", path: "/some/pathc" },
     ]);
 
     await router.start();
@@ -255,7 +255,7 @@ describe("beforeRouteEnter", () => {
     });
     router = new TestRouter(env, [
       { name: "landing", path: "/", beforeRouteEnter: guard },
-      { name: "otherroute", path: "/some/other/route" }
+      { name: "otherroute", path: "/some/other/route" },
     ]);
 
     expect(window.location.pathname).toBe("/");

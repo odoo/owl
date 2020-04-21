@@ -203,7 +203,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       renderFn: qweb.render.bind(qweb, template),
       classObj: null,
       refs: null,
-      scope: null
+      scope: null,
     };
     if (constr.style) {
       this.__applyStyles(constr);
@@ -514,7 +514,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       const ev = new OwlEvent(component, eventType, {
         bubbles: true,
         cancelable: true,
-        detail: payload
+        detail: payload,
       });
       const triggerHook = this.env[portalSymbol as any];
       if (triggerHook) {
@@ -549,7 +549,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       }
       await Promise.all([
         this.willUpdateProps(nextProps),
-        __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps)
+        __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps),
       ]);
       if (fiber.isCompleted) {
         return;
@@ -646,7 +646,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     try {
       let vnode = __owl__.renderFn!(this, {
         handlers: __owl__.boundHandlers,
-        fiber: fiber
+        fiber: fiber,
       });
       // we iterate over the children to detect those that no longer belong to the
       // current rendering: those ones, if not mounted yet, can (and have to) be

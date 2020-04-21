@@ -10,7 +10,7 @@ import {
   nextMicroTick,
   nextTick,
   normalize,
-  editInput
+  editInput,
 } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ afterEach(() => {
 
 function children(w: Component): Component[] {
   const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map(id => childrenMap[id]);
+  return Object.keys(childrenMap).map((id) => childrenMap[id]);
 }
 
 // Test components
@@ -133,7 +133,7 @@ describe("basic widget properties", () => {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
       state = useState({
-        counter: 0
+        counter: 0,
       });
     }
 
@@ -167,7 +167,7 @@ describe("basic widget properties", () => {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
       state = useState({
-        counter: 0
+        counter: 0,
       });
     }
 
@@ -537,7 +537,7 @@ describe("lifecycle hooks", () => {
       "child:mounted",
       "parent:willUnmount",
       "child:willUnmount",
-      "childchild:willUnmount"
+      "childchild:willUnmount",
     ]);
   });
 
@@ -589,7 +589,7 @@ describe("lifecycle hooks", () => {
       "childchild:willPatch",
       "childchild:patched",
       "child:patched",
-      "parent:patched"
+      "parent:patched",
     ]);
   });
 
@@ -782,7 +782,7 @@ describe("lifecycle hooks", () => {
       "c mounted",
       "p mounted",
       "p willunmount",
-      "c willunmount"
+      "c willunmount",
     ]);
   });
 
@@ -960,7 +960,7 @@ describe("lifecycle hooks", () => {
       "parent:willPatch",
       "child:willPatch",
       "child:patched",
-      "parent:patched"
+      "parent:patched",
     ]);
   });
 });
@@ -1134,7 +1134,7 @@ describe("composition", () => {
     class App extends Component {
       static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
       state = useState({
-        child: "a"
+        child: "a",
       });
       get myComponent() {
         return this.state.child === "a" ? A : B;
@@ -1158,7 +1158,7 @@ describe("composition", () => {
     class App extends Component {
       static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
       state = useState({
-        child: "a"
+        child: "a",
       });
       get myComponent() {
         return this.state.child === "a" ? A : B;
@@ -1228,7 +1228,7 @@ describe("composition", () => {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
       state = useState({
-        counter: 0
+        counter: 0,
       });
     }
 
@@ -1327,7 +1327,7 @@ describe("composition", () => {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
       state = useState({
-        counter: 0
+        counter: 0,
       });
     }
 
@@ -1350,7 +1350,7 @@ describe("composition", () => {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
       state = useState({
-        counter: 0
+        counter: 0,
       });
     }
 
@@ -1389,7 +1389,7 @@ describe("composition", () => {
     );
     class Parent extends Component {
       state = useState({
-        numbers: [1, 2, 3]
+        numbers: [1, 2, 3],
       });
       static components = { ChildWidget };
     }
@@ -1429,7 +1429,7 @@ describe("composition", () => {
     class Parent extends Component {
       static template = "parent";
       state = useState({
-        numbers: [1, 2, 3]
+        numbers: [1, 2, 3],
       });
       static components = { ChildWidget };
     }
@@ -1513,8 +1513,8 @@ describe("composition", () => {
         blips: [
           { a: "a", id: 1 },
           { b: "b", id: 2 },
-          { c: "c", id: 4 }
-        ]
+          { c: "c", id: 4 },
+        ],
       });
     }
     const parent = new Parent();
@@ -1621,8 +1621,8 @@ describe("composition", () => {
         records: [
           { id: 1, val: 1 },
           { id: 2, val: 2 },
-          { id: 3, val: 3 }
-        ]
+          { id: 3, val: 3 },
+        ],
       });
       static components = { ChildWidget };
     }
@@ -2003,7 +2003,7 @@ describe("other directives with t-component", () => {
     }
     const widget = new ParentWidget();
     await widget.mount(fixture);
-    (<HTMLElement>fixture).addEventListener("ev", function(e) {
+    (<HTMLElement>fixture).addEventListener("ev", function (e) {
       steps.push(e.defaultPrevented);
     });
 
@@ -2038,7 +2038,7 @@ describe("other directives with t-component", () => {
     }
     const widget = new ParentWidget();
     await widget.mount(fixture);
-    (<HTMLElement>fixture).addEventListener("ev", function(e) {
+    (<HTMLElement>fixture).addEventListener("ev", function (e) {
       steps.push(e.defaultPrevented);
     });
 
@@ -2976,7 +2976,7 @@ describe("random stuff/miscellaneous", () => {
       "D:mounted",
       "C:mounted",
       "B:mounted",
-      "A:mounted"
+      "A:mounted",
     ]);
 
     // update
@@ -2999,7 +2999,7 @@ describe("random stuff/miscellaneous", () => {
       "E:destroy",
       "F:mounted",
       "D:patched",
-      "C:patched"
+      "C:patched",
     ]);
   });
 
@@ -3410,7 +3410,7 @@ describe("t-model directive", () => {
       state = useState([
         { f: false, id: 1 },
         { f: false, id: 2 },
-        { f: false, id: 3 }
+        { f: false, id: 3 },
       ]);
     }
     const comp = new SomeComponent();
@@ -3455,7 +3455,7 @@ describe("environment and plugins", () => {
   let bus = new EventBus();
 
   // definition of a plugin
-  const somePlugin = env => {
+  const somePlugin = (env) => {
     env.someFlag = true;
     bus.on("some-event", null, () => {
       env.someFlag = !env.someFlag;

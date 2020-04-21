@@ -13,13 +13,13 @@
 import { browser } from "./browser";
 
 export function whenReady(fn?: any) {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     if (document.readyState !== "loading") {
       resolve();
     } else {
       document.addEventListener("DOMContentLoaded", resolve, false);
     }
-  }).then(fn || function() {});
+  }).then(fn || function () {});
 }
 
 const loadedScripts: { [key: string]: Promise<void> } = {};
@@ -28,14 +28,14 @@ export function loadJS(url: string): Promise<void> {
   if (url in loadedScripts) {
     return loadedScripts[url];
   }
-  const promise: Promise<void> = new Promise(function(resolve, reject) {
+  const promise: Promise<void> = new Promise(function (resolve, reject) {
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.src = url;
-    script.onload = function() {
+    script.onload = function () {
       resolve();
     };
-    script.onerror = function() {
+    script.onerror = function () {
       reject(`Error loading file '${url}'`);
     };
     const head = document.head || document.getElementsByTagName("head")[0];
@@ -75,7 +75,7 @@ export function escape(str: string | number | undefined): string {
  */
 export function debounce(func: Function, wait: number, immediate?: boolean): Function {
   let timeout;
-  return function(this: any) {
+  return function (this: any) {
     const context = this;
     const args = arguments;
     function later() {

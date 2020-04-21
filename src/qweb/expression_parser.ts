@@ -35,7 +35,7 @@ const WORD_REPLACEMENT = {
   gt: ">",
   gte: ">=",
   lt: "<",
-  lte: "<="
+  lte: "<=",
 };
 
 export interface QWebVar {
@@ -77,7 +77,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ":": "COLON",
   ",": "COMMA",
   "(": "LEFT_PAREN",
-  ")": "RIGHT_PAREN"
+  ")": "RIGHT_PAREN",
 };
 
 // note that the space after typeof is relevant. It makes sure that the formatted
@@ -86,7 +86,7 @@ const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,
 
 type Tokenizer = (expr: string) => Token | false;
 
-let tokenizeString: Tokenizer = function(expr) {
+let tokenizeString: Tokenizer = function (expr) {
   let s = expr[0];
   let start = s;
   if (s !== "'" && s !== '"') {
@@ -114,7 +114,7 @@ let tokenizeString: Tokenizer = function(expr) {
   return { type: "VALUE", value: s };
 };
 
-let tokenizeNumber: Tokenizer = function(expr) {
+let tokenizeNumber: Tokenizer = function (expr) {
   let s = expr[0];
   if (s && s.match(/[0-9]/)) {
     let i = 1;
@@ -128,7 +128,7 @@ let tokenizeNumber: Tokenizer = function(expr) {
   }
 };
 
-let tokenizeSymbol: Tokenizer = function(expr) {
+let tokenizeSymbol: Tokenizer = function (expr) {
   let s = expr[0];
   if (s && s.match(/[a-zA-Z_\$]/)) {
     let i = 1;
@@ -145,7 +145,7 @@ let tokenizeSymbol: Tokenizer = function(expr) {
   }
 };
 
-const tokenizeStatic: Tokenizer = function(expr) {
+const tokenizeStatic: Tokenizer = function (expr) {
   const char = expr[0];
   if (char && char in STATIC_TOKEN_MAP) {
     return { type: STATIC_TOKEN_MAP[char], value: char };
@@ -153,7 +153,7 @@ const tokenizeStatic: Tokenizer = function(expr) {
   return false;
 };
 
-const tokenizeOperator: Tokenizer = function(expr) {
+const tokenizeOperator: Tokenizer = function (expr) {
   for (let op of OPERATORS) {
     if (expr.startsWith(op)) {
       return { type: "OPERATOR", value: op };
@@ -167,7 +167,7 @@ const TOKENIZERS = [
   tokenizeNumber,
   tokenizeOperator,
   tokenizeSymbol,
-  tokenizeStatic
+  tokenizeStatic,
 ];
 
 /**
@@ -284,6 +284,6 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
 
 export function compileExpr(expr: string, scope: { [key: string]: QWebVar }): string {
   return compileExprToArray(expr, scope)
-    .map(t => t.value)
+    .map((t) => t.value)
     .join("");
 }

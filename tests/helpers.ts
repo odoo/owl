@@ -9,7 +9,7 @@ import "../src/component/directive";
 import { browser } from "../src/browser";
 
 // modifies scheduler to make it faster to test components
-scheduler.requestAnimationFrame = function(callback: FrameRequestCallback) {
+scheduler.requestAnimationFrame = function (callback: FrameRequestCallback) {
   setTimeout(callback, 1);
   return 1;
 };
@@ -43,7 +43,7 @@ export function nextMicroTick(): Promise<void> {
 }
 
 export async function nextTick(): Promise<void> {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     setTimeout(() => scheduler.requestAnimationFrame(() => resolve()));
   });
 }
@@ -77,7 +77,7 @@ export function makeDeferred(): Deferred {
 export function makeTestEnv(): Env {
   return {
     qweb: new QWeb(),
-    browser: browser
+    browser: browser,
   };
 }
 

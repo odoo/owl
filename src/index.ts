@@ -35,6 +35,6 @@ export const hooks = Object.assign({}, _hooks, {
   useContext: _context.useContext,
   useDispatch: _store.useDispatch,
   useGetters: _store.useGetters,
-  useStore: _store.useStore
+  useStore: _store.useStore,
 });
 export const __info__ = {};

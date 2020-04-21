@@ -25,7 +25,7 @@ describe("connecting a component to store", () => {
     const actions = {
       addTodo({ state }, msg) {
         state.todos.push({ msg, id: nextId++ });
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -34,7 +34,7 @@ describe("connecting a component to store", () => {
             <div>
                 <span t-foreach="todos" t-key="todo.id" t-as="todo"><t t-esc="todo.msg"/></span>
             </div>`;
-      todos = useStore(state => state.todos);
+      todos = useStore((state) => state.todos);
     }
 
     (<any>env).store = store;
@@ -56,7 +56,7 @@ describe("connecting a component to store", () => {
       },
       setNotNull({ state }) {
         state.nullValue = "ok";
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -70,15 +70,15 @@ describe("connecting a component to store", () => {
       nullValue: string;
       constructor() {
         super();
-        this.isBoolean = useStore(state => state.isBoolean, {
-          onUpdate: isBoolean => {
+        this.isBoolean = useStore((state) => state.isBoolean, {
+          onUpdate: (isBoolean) => {
             this.isBoolean = isBoolean;
-          }
+          },
         });
-        this.nullValue = useStore(state => state.nullValue, {
-          onUpdate: nullValue => {
+        this.nullValue = useStore((state) => state.nullValue, {
+          onUpdate: (nullValue) => {
             this.nullValue = nullValue;
-          }
+          },
         });
       }
     }
@@ -105,15 +105,15 @@ describe("connecting a component to store", () => {
     class App extends Component {
       static template = xml`<div t-esc="mapAdd"/>`;
       storeProps = {
-        array: useStore(state => {
+        array: useStore((state) => {
           if (state.useSmallArray) {
             return state.smallerArray;
           }
           return state.biggerArray;
-        })
+        }),
       };
       get mapAdd() {
-        return this.storeProps.array.map(a => {
+        return this.storeProps.array.map((a) => {
           return a + 1;
         });
       }
@@ -133,7 +133,7 @@ describe("connecting a component to store", () => {
   test("throw error if no store is found", async () => {
     class App extends Component {
       static template = xml`<div></div>`;
-      todos = useStore(state => state.todos);
+      todos = useStore((state) => state.todos);
     }
 
     let error;
@@ -153,7 +153,7 @@ describe("connecting a component to store", () => {
 
     class App extends Component {
       static template = xml`<div/>`;
-      storeState = useStore(state => state.a);
+      storeState = useStore((state) => state.a);
     }
 
     (<any>env).store = store;
@@ -170,7 +170,7 @@ describe("connecting a component to store", () => {
       doSomething({ state }) {
         state.a = 2;
         state.b = 3;
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -180,8 +180,8 @@ describe("connecting a component to store", () => {
                 <span t-esc="a.value"/>
                 <span t-esc="b.value"/>
             </div>`;
-      a = useStore(state => ({ value: state.a }));
-      b = useStore(state => ({ value: state.b }));
+      a = useStore((state) => ({ value: state.a }));
+      b = useStore((state) => ({ value: state.b }));
     }
     App.prototype.__render = jest.fn(App.prototype.__render);
 
@@ -204,7 +204,7 @@ describe("connecting a component to store", () => {
     const actions = {
       addTodo({ state }, msg) {
         state.todos.push({ msg, id: nextId++ });
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -213,7 +213,7 @@ describe("connecting a component to store", () => {
             <div>
                 <span t-foreach="todos" t-key="todo.id" t-as="todo"><t t-esc="todo.msg"/></span>
             </div>`;
-      todos = useStore(state => state.todos);
+      todos = useStore((state) => state.todos);
     }
     App.prototype.__render = jest.fn(App.prototype.__render);
 
@@ -241,13 +241,13 @@ describe("connecting a component to store", () => {
     const actions = {
       addTodo({ state }, msg) {
         state.todos.push({ msg, id: nextId++ });
-      }
+      },
     };
     const store = new Store({ state, actions });
 
     class App extends Component {
       static template = xml`<div><t t-esc="nbrTodos.value"/></div>`;
-      nbrTodos = useStore(state => ({ value: state.todos.length }));
+      nbrTodos = useStore((state) => ({ value: state.todos.length }));
     }
 
     (<any>env).store = store;
@@ -270,12 +270,12 @@ describe("connecting a component to store", () => {
       },
       incrementA({ state }) {
         state.a++;
-      }
+      },
     };
     const store = new Store({ state, actions });
     class App extends Component {
       static template = xml`<div><t t-esc="nbrTodos.value"/></div>`;
-      nbrTodos = useStore(state => ({ value: state.todos.length }), { isEqual: shallowEqual });
+      nbrTodos = useStore((state) => ({ value: state.todos.length }), { isEqual: shallowEqual });
     }
     App.prototype.__render = jest.fn(App.prototype.__render);
 
@@ -303,7 +303,7 @@ describe("connecting a component to store", () => {
     const actions = {
       addTodo({ state }, msg) {
         state.todos.push({ msg, id: nextId++ });
-      }
+      },
     };
     const store = new Store({ state, actions });
 
@@ -312,7 +312,7 @@ describe("connecting a component to store", () => {
             <div>
                 <span t-foreach="todos" t-key="todo.id" t-as="todo"><t t-esc="todo.msg"/></span>
             </div>`;
-      todos = useStore(state => state.todos, { store });
+      todos = useStore((state) => state.todos, { store });
     }
 
     const app = new App();
@@ -331,8 +331,8 @@ describe("connecting a component to store", () => {
       actions: {
         inc({ state }) {
           state.value++;
-        }
-      }
+        },
+      },
     });
     (<any>env).store = store;
 
@@ -342,7 +342,7 @@ describe("connecting a component to store", () => {
               <button t-on-click="dispatch('inc')">Inc</button>
               <span><t t-esc="storeState.value"/></span>
           </div>`;
-      storeState = useStore(state => state);
+      storeState = useStore((state) => state);
       dispatch = useDispatch();
     }
     const app = new App();
@@ -360,15 +360,15 @@ describe("connecting a component to store", () => {
     const state = {
       todos: [
         { id: 1, text: "jupiler" },
-        { id: 2, text: "chimay" }
-      ]
+        { id: 2, text: "chimay" },
+      ],
     };
     const store = new Store({ state, actions: {} });
 
     class TodoItem extends Component {
       static template = xml`<span><t t-esc="todo.text"/></span>`;
       todo = useStore((state, props) => {
-        return state.todos.find(t => t.id === props.todoId);
+        return state.todos.find((t) => t.id === props.todoId);
       });
     }
 
@@ -395,14 +395,14 @@ describe("connecting a component to store", () => {
     const actions = {
       addTodo({ state }, text) {
         state.todos.push({ text, id: nextId++ });
-      }
+      },
     };
     const store = new Store({ state, actions });
 
     class TodoItem extends Component {
       static template = xml`<span><t t-esc="todo.text"/></span>`;
       todo = useStore((state, props) => {
-        return state.todos.find(t => t.id === props.id);
+        return state.todos.find((t) => t.id === props.id);
       });
     }
 
@@ -412,7 +412,7 @@ describe("connecting a component to store", () => {
           <TodoItem t-foreach="todos" t-as="todo" id="todo.id" t-key="todo.id"/>
         </div>`;
       static components = { TodoItem };
-      todos = useStore(state => state.todos);
+      todos = useStore((state) => state.todos);
     }
 
     (<any>env).store = store;
@@ -431,16 +431,16 @@ describe("connecting a component to store", () => {
       importantID: 1,
       todos: [
         { id: 1, text: "jupiler" },
-        { id: 2, text: "bertinchamps" }
-      ]
+        { id: 2, text: "bertinchamps" },
+      ],
     };
     const getters = {
       importantTodoText({ state }) {
-        return state.todos.find(todo => todo.id === state.importantID).text;
+        return state.todos.find((todo) => todo.id === state.importantID).text;
       },
       text({ state }, id) {
-        return state.todos.find(todo => todo.id === id).text;
-      }
+        return state.todos.find((todo) => todo.id === id).text;
+      },
     };
     const store = new Store({ state, getters });
 
@@ -452,10 +452,10 @@ describe("connecting a component to store", () => {
         </div>`;
       getters = useGetters();
       storeProps = useStore((state, props) => {
-        const todo = state.todos.find(t => t.id === props.id);
+        const todo = state.todos.find((t) => t.id === props.id);
         return {
           activeTodoText: this.getters.text(todo.id),
-          importantTodoText: this.getters.importantTodoText()
+          importantTodoText: this.getters.importantTodoText(),
         };
       });
     }
@@ -468,7 +468,7 @@ describe("connecting a component to store", () => {
             <TodoItem id="todo.id" t-key="todo.id"/>
           </t>
         </div>`;
-      todos = useStore(state => state.todos);
+      todos = useStore((state) => state.todos);
     }
 
     (<any>env).store = store;
@@ -513,13 +513,13 @@ describe("connecting a component to store", () => {
         </div>`;
 
       // we have here a new object
-      data = useStore(state => ({ beers: state.beers, otherKey: 1 }));
+      data = useStore((state) => ({ beers: state.beers, otherKey: 1 }));
     }
 
     const actions = {
       addBeer({ state }, name) {
         state.beers.push({ name });
-      }
+      },
     };
 
     const state = { beers: [{ name: "jupiler" }] };
@@ -542,9 +542,9 @@ describe("connecting a component to store", () => {
     class Beer extends Component {
       static template = xml`<span><t t-esc="beer.name"/></span>`;
       beer = useStore((state, props) => state.beers[props.id], {
-        onUpdate: result => {
+        onUpdate: (result) => {
           ++counter;
-        }
+        },
       });
     }
 
@@ -558,7 +558,7 @@ describe("connecting a component to store", () => {
     const actions = {
       renameBeer({ state }, { id, name }) {
         state.beers[id].name = name;
-      }
+      },
     };
     const store = new Store({ state, actions });
     (<any>env).store = store;
@@ -609,7 +609,7 @@ describe("connecting a component to store", () => {
       data = useStore((state, props) => ({
         selected: state.beers[props.id],
         consumed: state.beers[state.consumedID] || null,
-        taster: state.taster
+        taster: state.taster,
       }));
     }
 
@@ -622,14 +622,14 @@ describe("connecting a component to store", () => {
     const actions = {
       consume({ state }, beerId) {
         state.consumedID = beerId;
-      }
+      },
     };
     const state = {
       beers: {
-        1: { name: "jupiler" }
+        1: { name: "jupiler" },
       },
       consumedID: null,
-      taster: "aaron"
+      taster: "aaron",
     };
     const store = new Store({ state, actions });
     (<any>env).store = store;
@@ -665,11 +665,11 @@ describe("connecting a component to store", () => {
                 <span t-if="info.selected">selected:<t t-esc="info.selected.name"/></span>
                 <span t-if="info.consumed">consumed:<t t-esc="info.consumed.name"/></span>
             </div>`;
-      info = useStore(function(state, props) {
+      info = useStore(function (state, props) {
         return {
           selected: state.beers[props.id],
           consumed: state.beers[state.consumedID] || null,
-          taster: state.taster
+          taster: state.taster,
         };
       });
     }
@@ -689,14 +689,14 @@ describe("connecting a component to store", () => {
       },
       renameBeer({ state }, { beerId, name }) {
         state.beers[beerId].name = name;
-      }
+      },
     };
     const state = {
       beers: {
-        1: { name: "jupiler" }
+        1: { name: "jupiler" },
       },
       consumedID: null,
-      taster: "aaron"
+      taster: "aaron",
     };
     const store = new Store({ state, actions });
     (<any>env).store = store;
@@ -747,11 +747,11 @@ describe("connecting a component to store", () => {
     const actions = {
       setValue({ state }, val) {
         state.x.val = val;
-      }
+      },
     };
     class Parent extends Component {
       static template = xml`<div><t t-esc="x.val"/></div>`;
-      x = useStore(state => {
+      x = useStore((state) => {
         return Object.assign({}, state.x);
       });
       dispatch = useDispatch();
@@ -782,11 +782,11 @@ describe("connecting a component to store", () => {
       static template = xml`<div><Child key="state.current"/></div>`;
       static components = { Child };
 
-      state = useStore(state => {
+      state = useStore((state) => {
         steps.push("parent");
         return {
           current: state.current,
-          isvisible: state.isvisible
+          isvisible: state.isvisible,
         };
       });
     }
@@ -795,7 +795,7 @@ describe("connecting a component to store", () => {
     const actions = {
       setCurrent({ state }, c) {
         state.current = c;
-      }
+      },
     };
 
     const store = new Store({ state, actions });
@@ -831,7 +831,7 @@ describe("connecting a component to store", () => {
                 <Child t-if="state.flag" someId="state.someId"/>
             </div>`;
       static components = { Child };
-      state = useStore(s => {
+      state = useStore((s) => {
         steps.push("parent");
         return { flag: s.flag, someId: s.someId };
       });
@@ -846,7 +846,7 @@ describe("connecting a component to store", () => {
     const actions = {
       setFlagToFalse({ state }) {
         state.flag = false;
-      }
+      },
     };
 
     const store = new Store({ state, actions });
@@ -874,15 +874,15 @@ describe("connecting a component to store", () => {
     const actions = {
       editTodo({ state }) {
         state.todos[1].title = "abc";
-      }
+      },
     };
     const todos = { 1: { id: 1, title: "kikoou" } };
     const state = {
-      todos
+      todos,
     };
     const store = new Store({
       state,
-      actions
+      actions,
     });
 
     class TodoItem extends Component<{}, EnvWithStore> {
@@ -894,7 +894,7 @@ describe("connecting a component to store", () => {
       state = useStore((state, props) => {
         steps.push("item:usestore");
         return {
-          todo: state.todos[props.id]
+          todo: state.todos[props.id],
         };
       });
 
@@ -914,7 +914,7 @@ describe("connecting a component to store", () => {
                 </t>
             </div>`;
       static components = { TodoItem };
-      state = useStore(state => {
+      state = useStore((state) => {
         steps.push("app:usestore");
         return { todos: state.todos };
       });
@@ -947,15 +947,15 @@ describe("connecting a component to store", () => {
     const actions = {
       removeTodo({ state }) {
         delete state.todos[1];
-      }
+      },
     };
     const todos = { 1: { id: 1, title: "kikoou" } };
     const state = {
-      todos
+      todos,
     };
     const store = new Store({
       state,
-      actions
+      actions,
     });
 
     class TodoItem extends Component<{}, EnvWithStore> {
@@ -967,7 +967,7 @@ describe("connecting a component to store", () => {
       state = useStore((state, props) => {
         steps.push("item:usestore");
         return {
-          todo: state.todos[props.id]
+          todo: state.todos[props.id],
         };
       });
 
@@ -988,7 +988,7 @@ describe("connecting a component to store", () => {
                 </t>
             </div>`;
       static components = { TodoItem };
-      state = useStore(state => {
+      state = useStore((state) => {
         steps.push("app:usestore");
         return { todos: state.todos };
       });
@@ -1016,7 +1016,7 @@ describe("connecting a component to store", () => {
       "item:usestore",
       "item:render",
       "app:usestore",
-      "app:render"
+      "app:render",
     ]);
     expect(fixture.innerHTML).toBe('<div class="todoapp"></div>');
   });
@@ -1026,7 +1026,7 @@ describe("connecting a component to store", () => {
 
     class App extends Component {
       static template = xml`<div><t t-esc="store.msg"/></div>`;
-      store = useStore(s => ({ msg: s.msg }));
+      store = useStore((s) => ({ msg: s.msg }));
 
       willPatch() {
         steps.push("willpatch");
@@ -1040,7 +1040,7 @@ describe("connecting a component to store", () => {
     const actions = {
       setMsg({ state }, c) {
         state.msg = c;
-      }
+      },
     };
 
     const store = new Store({ state, actions });
@@ -1061,7 +1061,7 @@ describe("connecting a component to store", () => {
 
     class Child extends Component {
       static template = xml`<div><t t-esc="store.val"/></div>`;
-      store = useStore(s => s);
+      store = useStore((s) => s);
     }
 
     class Parent extends Component {
@@ -1099,7 +1099,7 @@ describe("connecting a component to store", () => {
 
     class Child extends Component {
       static template = xml`<div><t t-esc="store.val"/></div>`;
-      store = useStore(s => {
+      store = useStore((s) => {
         steps.push("child selector");
         return s;
       });
@@ -1107,7 +1107,7 @@ describe("connecting a component to store", () => {
     class Parent extends Component {
       static template = xml`<div><Child t-if="store.child" /></div>`;
       static components = { Child };
-      store = useStore(s => {
+      store = useStore((s) => {
         steps.push("parent selector");
         return s;
       });
@@ -1118,7 +1118,7 @@ describe("connecting a component to store", () => {
     const actions = {
       toggleChild({ state }) {
         state.child = !state.child;
-      }
+      },
     };
     const store = new Store({ state, actions });
     (<any>env).store = store;
@@ -1137,18 +1137,18 @@ describe("connecting a component to store", () => {
   test("dispatch an action", async () => {
     class App extends Component {
       static template = xml`<div><t t-esc="store.counter"/></div>`;
-      store = useStore(state => state);
+      store = useStore((state) => state);
       dispatch = useDispatch();
     }
 
     const state = {
-      counter: 0
+      counter: 0,
     };
 
     const actions = {
       inc({ state }) {
         return ++state.counter;
-      }
+      },
     };
 
     const store = new Store({ state, actions });
@@ -1185,21 +1185,21 @@ describe("various scenarios", () => {
         await Promise.resolve();
         delete state.attachments[100];
         state.messages[10].attachmentIds = [];
-      }
+      },
     };
     const state = {
       attachments: {
         100: {
           id: 100,
-          name: "text.txt"
-        }
+          name: "text.txt",
+        },
       },
       messages: {
         10: {
           attachmentIds: [100],
-          id: 10
-        }
-      }
+          id: 10,
+        },
+      },
     };
     const store = new Store({ actions, state });
 
@@ -1220,7 +1220,7 @@ describe("various scenarios", () => {
                 <Attachment t-foreach="store.attachmentIds" t-key="attachmentId" t-as="attachmentId" id="attachmentId"/>
             </div>`;
 
-      store = useStore(state => ({ attachmentIds: state.messages[10].attachmentIds }));
+      store = useStore((state) => ({ attachmentIds: state.messages[10].attachmentIds }));
       static components = { Attachment };
       state = { isAttachmentDeleted: false };
       dispatch = useDispatch();

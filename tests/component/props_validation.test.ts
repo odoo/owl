@@ -92,7 +92,7 @@ describe("props validation", () => {
       { type: String, ok: "1", ko: 1 },
       { type: Object, ok: {}, ko: "1" },
       { type: Date, ok: new Date(), ko: "1" },
-      { type: Function, ok: () => {}, ko: "1" }
+      { type: Function, ok: () => {}, ko: "1" },
     ];
 
     let props;
@@ -149,7 +149,7 @@ describe("props validation", () => {
       { type: String, ok: "1", ko: 1 },
       { type: Object, ok: {}, ko: "1" },
       { type: Date, ok: new Date(), ko: "1" },
-      { type: Function, ok: () => {}, ko: "1" }
+      { type: Function, ok: () => {}, ko: "1" },
     ];
 
     let props;
@@ -396,7 +396,7 @@ describe("props validation", () => {
     class TestWidget extends Component {
       static template = xml`<div>hey</div>`;
       static props = {
-        p: { type: Object, shape: { id: Number, url: String } }
+        p: { type: Object, shape: { id: Number, url: String } },
       };
     }
     class Parent extends Component {
@@ -458,9 +458,9 @@ describe("props validation", () => {
           type: Object,
           shape: {
             id: Number,
-            url: [Boolean, { type: Array, element: Number }]
-          }
-        }
+            url: [Boolean, { type: Array, element: Number }],
+          },
+        },
       };
     }
     class Parent extends Component {
@@ -510,10 +510,10 @@ describe("props validation", () => {
           element: {
             type: Object,
             shape: {
-              num: { type: Number, optional: true }
-            }
-          }
-        }
+              num: { type: Number, optional: true },
+            },
+          },
+        },
       };
     }
     let error;
@@ -539,8 +539,8 @@ describe("props validation", () => {
     class TestComponent extends Component {
       static props = {
         size: {
-          validate: e => ["small", "medium", "large"].includes(e)
-        }
+          validate: (e) => ["small", "medium", "large"].includes(e),
+        },
       };
     }
     let error;
@@ -561,13 +561,13 @@ describe("props validation", () => {
   });
 
   test("can validate with a custom validator, and a type", () => {
-    const validator = jest.fn(n => 0 <= n && n <= 10);
+    const validator = jest.fn((n) => 0 <= n && n <= 10);
     class TestComponent extends Component {
       static props = {
         n: {
           type: Number,
-          validate: validator
-        }
+          validate: validator,
+        },
       };
     }
     let error;

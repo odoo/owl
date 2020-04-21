@@ -27,7 +27,7 @@ afterEach(() => {
 
 function children(w: Component): Component[] {
   const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map(id => childrenMap[id]);
+  return Object.keys(childrenMap).map((id) => childrenMap[id]);
 }
 
 describe("async rendering", () => {
@@ -404,7 +404,7 @@ describe("async rendering", () => {
     }
     class ChildB extends Component {
       willStart(): any {
-        return new Promise(function() {});
+        return new Promise(function () {});
       }
     }
     class Parent extends Component {

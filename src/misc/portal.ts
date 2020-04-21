@@ -26,8 +26,8 @@ export class Portal extends Component<Props> {
   static template = xml`<portal><t t-slot="default"/></portal>`;
   static props = {
     target: {
-      type: String
-    }
+      type: String,
+    },
   };
 
   // boolean to indicate whether or not we must listen to 'dom-appended' event
@@ -55,12 +55,12 @@ export class Portal extends Component<Props> {
     // put a callback in the env that is propagated to children s.t. portal can
     // register an handler to those events just before children will trigger them
     useSubEnv({
-      [portalSymbol]: ev => {
+      [portalSymbol]: (ev) => {
         if (!this._handledEvents.has(ev.type)) {
           this.portal!.elm!.addEventListener(ev.type, this._handlerTunnel);
           this._handledEvents.add(ev.type);
         }
-      }
+      },
     });
   }
   /**

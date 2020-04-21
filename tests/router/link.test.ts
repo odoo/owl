@@ -37,7 +37,7 @@ describe("Link component", () => {
 
     const routes = [
       { name: "about", path: "/about" },
-      { name: "users", path: "/users" }
+      { name: "users", path: "/users" },
     ];
 
     router = new TestRouter(env, routes, { mode: "history" });
@@ -71,7 +71,7 @@ describe("Link component", () => {
 
     const routes = [
       { name: "about", path: "/about" },
-      { name: "users", path: "/users" }
+      { name: "users", path: "/users" },
     ];
 
     router = new TestRouter(env, routes, { mode: "history" });
@@ -81,7 +81,7 @@ describe("Link component", () => {
 
     expect(window.location.pathname).toBe("/users");
     var evt = new MouseEvent("click", {
-      button: 1
+      button: 1,
     });
 
     fixture.querySelector("a")!.dispatchEvent(evt);

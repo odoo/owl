@@ -19,7 +19,7 @@ debugOwl(owl, { logScheduler: true });
 test("log a sub component with non stringifiable props", async () => {
   const steps: string[] = [];
   const log = console.log;
-  console.log = arg => steps.push(arg);
+  console.log = (arg) => steps.push(arg);
 
   class Child extends Component {
     static template = xml`<span><t t-esc="props.obj.val"/></span>`;
@@ -51,7 +51,7 @@ test("log a sub component with non stringifiable props", async () => {
     "[OWL_DEBUG] Parent<id=1> mounted",
     "[OWL_DEBUG] scheduler: stop running tasks queue",
     "[OWL_DEBUG] Parent<id=1> willUnmount",
-    "[OWL_DEBUG] Child<id=2> willUnmount"
+    "[OWL_DEBUG] Child<id=2> willUnmount",
   ]);
   console.log = log;
 });

@@ -28,7 +28,7 @@ afterEach(() => {
 
 function children(w: Component): Component[] {
   const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map(id => childrenMap[id]);
+  return Object.keys(childrenMap).map((id) => childrenMap[id]);
 }
 
 //------------------------------------------------------------------------------
@@ -224,8 +224,8 @@ describe("t-slot directive", () => {
       state = useState({
         users: [
           { id: 1, name: "Aaron" },
-          { id: 2, name: "David" }
-        ]
+          { id: 2, name: "David" },
+        ],
       });
       static components = { Link };
     }
@@ -268,8 +268,8 @@ describe("t-slot directive", () => {
       state = useState({
         users: [
           { id: 1, name: "Aaron" },
-          { id: 2, name: "David" }
-        ]
+          { id: 2, name: "David" },
+        ],
       });
       static components = { Link };
     }

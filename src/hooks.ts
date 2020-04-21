@@ -36,11 +36,11 @@ export function useState<T>(state: T): T {
 // -----------------------------------------------------------------------------
 function makeLifecycleHook(method: string, reverse: boolean = false) {
   if (reverse) {
-    return function(cb) {
+    return function (cb) {
       const component: Component = Component.current!;
       if (component.__owl__[method]) {
         const current = component.__owl__[method];
-        component.__owl__[method] = function() {
+        component.__owl__[method] = function () {
           current.call(component);
           cb.call(component);
         };
@@ -49,11 +49,11 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
       }
     };
   } else {
-    return function(cb) {
+    return function (cb) {
       const component: Component = Component.current!;
       if (component.__owl__[method]) {
         const current = component.__owl__[method];
-        component.__owl__[method] = function() {
+        component.__owl__[method] = function () {
           cb.call(component);
           current.call(component);
         };
@@ -65,11 +65,11 @@ function makeLifecycleHook(method: string, reverse: boolean = false) {
 }
 
 function makeAsyncHook(method: string) {
-  return function(cb) {
+  return function (cb) {
     const component: Component = Component.current!;
     if (component.__owl__[method]) {
       const current = component.__owl__[method];
-      component.__owl__[method] = function(...args) {
+      component.__owl__[method] = function (...args) {
         return Promise.all([current.call(component, ...args), cb.call(component, ...args)]);
       };
     } else {
@@ -114,7 +114,7 @@ export function useRef(name: string): Ref {
     get comp(): Component | null {
       const val = __owl__.refs && __owl__.refs[name];
       return val instanceof Component ? val : null;
-    }
+    },
   };
 }
 

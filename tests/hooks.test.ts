@@ -10,7 +10,7 @@ import {
   onWillStart,
   onWillUpdateProps,
   useSubEnv,
-  useExternalListener
+  useExternalListener,
 } from "../src/hooks";
 import { xml } from "../src/tags";
 
@@ -214,7 +214,7 @@ describe("hooks", () => {
       "hook:mounted1",
       "hook:mounted2",
       "hook:willunmount2",
-      "hook:willunmount1"
+      "hook:willunmount1",
     ]);
   });
 
@@ -560,7 +560,7 @@ describe("hooks", () => {
   test("can use onWillStart, onWillUpdateProps", async () => {
     const steps: string[] = [];
     async function slow(): Promise<string> {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           resolve("slow");
         }, 0);
@@ -571,7 +571,7 @@ describe("hooks", () => {
         steps.push(await slow());
         steps.push("onWillStart");
       });
-      onWillUpdateProps(async nextProps => {
+      onWillUpdateProps(async (nextProps) => {
         expect(nextProps).toEqual({ value: 2 });
         steps.push(await slow());
         steps.push("onWillUpdateProps");
@@ -581,7 +581,7 @@ describe("hooks", () => {
       onWillStart(() => {
         steps.push("on2ndStart");
       });
-      onWillUpdateProps(nextProps => {
+      onWillUpdateProps((nextProps) => {
         expect(nextProps).toEqual({ value: 2 });
         steps.push("on2ndUpdate");
       });
@@ -623,7 +623,7 @@ describe("hooks", () => {
       "onWillStart",
       "on2ndUpdate",
       "slow",
-      "onWillUpdateProps"
+      "onWillUpdateProps",
     ]);
   });
 

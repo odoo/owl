@@ -335,7 +335,7 @@ describe("unmounting and remounting", () => {
     class Child extends Component {
       static template = xml`<span t-esc="state.val"/>`;
       state = useState({
-        val: "C1"
+        val: "C1",
       });
       constructor(parent, props) {
         super(parent, props);

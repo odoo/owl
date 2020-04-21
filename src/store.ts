@@ -53,7 +53,7 @@ export class Store extends Context {
     if (config.getters) {
       const firstArg = {
         state: this.state,
-        getters: this.getters
+        getters: this.getters,
       };
       for (let g in config.getters) {
         this.getters[g] = config.getters[g].bind(this, firstArg);
@@ -70,7 +70,7 @@ export class Store extends Context {
         dispatch: this.dispatch.bind(this),
         env: this.env,
         state: this.state,
-        getters: this.getters
+        getters: this.getters,
       },
       ...payload
     );
@@ -113,11 +113,11 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     }
     return false;
   }
-  store.updateFunctions[componentId].push(function(): boolean {
+  store.updateFunctions[componentId].push(function (): boolean {
     return selectCompareUpdate(store!.state, component.props);
   });
 
-  useContextWithCB(store, component, function(): Promise<void> | void {
+  useContextWithCB(store, component, function (): Promise<void> | void {
     let shouldRender = false;
     for (let fn of store.updateFunctions[componentId]) {
       shouldRender = fn() || shouldRender;
@@ -126,12 +126,12 @@ export function useStore(selector, options: SelectorOptions = {}): any {
       return component.render();
     }
   });
-  onWillUpdateProps(props => {
+  onWillUpdateProps((props) => {
     selectCompareUpdate(store.state, props);
   });
 
   const __destroy = component.__destroy;
-  component.__destroy = parent => {
+  component.__destroy = (parent) => {
     delete store.updateFunctions[componentId];
     __destroy.call(component, parent);
   };
@@ -148,7 +148,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     },
     has(target, k) {
       return k in result;
-    }
+    },
   });
 }
 

@@ -9,7 +9,7 @@ import {
   patchNextFrame,
   renderToDOM,
   unpatchNextFrame,
-  nextTick
+  nextTick,
 } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ describe("animations", () => {
     qweb.addTemplate("test", `<span t-transition="chimay">blue</span>`);
 
     let def = makeDeferred();
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(node.className).toBe("chimay-enter chimay-enter-active");
       cb();
       expect(node.className).toBe("chimay-enter-active chimay-enter-to");
@@ -91,7 +91,7 @@ describe("animations", () => {
     qweb.addTemplate("test", `<span t-transition="chimay">blue</span>`);
 
     let def = makeDeferred();
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(node.className).toBe("chimay-enter chimay-enter-active");
       cb();
       expect(node.className).toBe("chimay-enter-active chimay-enter-to");
@@ -112,7 +112,7 @@ describe("animations", () => {
     qweb.addTemplate("test", `<span t-transition="jupiler">blue</span>`);
 
     let def = makeDeferred();
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(node.className).toBe("jupiler-enter jupiler-enter-active");
       cb();
       expect(node.className).toBe("");
@@ -139,7 +139,7 @@ describe("animations", () => {
     // insert widget into the DOM
     let def = makeDeferred();
     var spanNode;
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
       cb();
       expect(spanNode.className).toBe("chimay-enter-active chimay-enter-to");
@@ -155,7 +155,7 @@ describe("animations", () => {
     // remove span from the DOM
     def = makeDeferred();
     widget.state.hide = true;
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(spanNode.className).toBe("chimay-leave chimay-leave-active");
       cb();
       expect(spanNode.className).toBe("chimay-leave-active chimay-leave-to");
@@ -182,7 +182,7 @@ describe("animations", () => {
     // insert widget into the DOM
     let def = makeDeferred();
     var spanNode;
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(spanNode.className).toBe("chimay-enter chimay-enter-active");
       cb();
       expect(spanNode.className).toBe("chimay-enter-active chimay-enter-to");
@@ -210,7 +210,7 @@ describe("animations", () => {
 
     let def = makeDeferred();
     var spanNode;
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(fixture.innerHTML).toBe(
         '<div><span class="chimay-enter chimay-enter-active">blue</span></div>'
       );
@@ -250,7 +250,7 @@ describe("animations", () => {
 
     let def = makeDeferred();
     var spanNode;
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(fixture.innerHTML).toBe(
         '<div><span class="chimay-enter chimay-enter-active">blue</span></div>'
       );
@@ -275,7 +275,7 @@ describe("animations", () => {
     // remove span from the DOM
     def = makeDeferred();
     widget.state.display = false;
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       expect(fixture.innerHTML).toBe(
         '<div><span class="chimay-leave chimay-leave-active" data-owl-key="__3__">blue</span></div>'
       );
@@ -315,7 +315,7 @@ describe("animations", () => {
 
     let def = makeDeferred();
     let phase = "enter";
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       let spans = fixture.querySelectorAll("span");
       expect(spans.length).toBe(1);
       expect(spans[0].className).toBe(`chimay-${phase} chimay-${phase}-active`);
@@ -366,7 +366,7 @@ describe("animations", () => {
 
     let def = makeDeferred();
     let phase = "enter";
-    patchNextFrame(cb => {
+    patchNextFrame((cb) => {
       let spans = fixture.querySelectorAll("span");
       expect(spans.length).toBe(1);
       expect(spans[0].className).toBe(`chimay-${phase} chimay-${phase}-active`);
@@ -413,7 +413,7 @@ describe("animations", () => {
       state = useState({ flag: false });
     }
 
-    patchNextFrame(cb => cb());
+    patchNextFrame((cb) => cb());
 
     const widget = new Parent();
     await widget.mount(fixture);

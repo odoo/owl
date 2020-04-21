@@ -19,7 +19,7 @@ debugOwl(owl, { logScheduler: true });
 test("log a specific message for render method calls if component is not mounted", async () => {
   const steps: string[] = [];
   const log = console.log;
-  console.log = arg => steps.push(arg);
+  console.log = (arg) => steps.push(arg);
 
   class Parent extends Component {
     static template = xml`<div><t t-esc="state.value"/></div>`;
@@ -40,7 +40,7 @@ test("log a specific message for render method calls if component is not mounted
     "[OWL_DEBUG] Parent<id=1> mounted",
     "[OWL_DEBUG] scheduler: stop running tasks queue",
     "[OWL_DEBUG] Parent<id=1> willUnmount",
-    "[OWL_DEBUG] Parent<id=1> render (warning: component is not mounted, this render has no effect)"
+    "[OWL_DEBUG] Parent<id=1> render (warning: component is not mounted, this render has no effect)",
   ]);
   console.log = log;
 });

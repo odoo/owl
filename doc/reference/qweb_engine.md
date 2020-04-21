@@ -114,9 +114,9 @@ For example:
 const translations = {
   hello: "bonjour",
   yes: "oui",
-  no: "non"
+  no: "non",
 };
-const translateFn = str => translations[str] || str;
+const translateFn = (str) => translations[str] || str;
 
 const qweb = new QWeb({ translateFn });
 ```

@@ -62,7 +62,7 @@ our application. `app.js` is where we will write all our code. For now, let's
 just put the following code:
 
 ```js
-(function() {
+(function () {
   console.log("hello owl", owl.__info__.version);
 })();
 ```
@@ -170,13 +170,13 @@ class App extends Component {
     {
       id: 1,
       title: "buy milk",
-      isCompleted: true
+      isCompleted: true,
     },
     {
       id: 2,
       title: "clean house",
-      isCompleted: false
-    }
+      isCompleted: false,
+    },
   ];
 }
 ```
@@ -562,23 +562,23 @@ const actions = {
       const task = {
         id: state.nextId++,
         title: title,
-        isCompleted: false
+        isCompleted: false,
       };
       state.tasks.push(task);
     }
   },
   toggleTask({ state }, id) {
-    const task = state.tasks.find(t => t.id === id);
+    const task = state.tasks.find((t) => t.id === id);
     task.isCompleted = !task.isCompleted;
   },
   deleteTask({ state }, id) {
-    const index = state.tasks.findIndex(t => t.id === id);
+    const index = state.tasks.findIndex((t) => t.id === id);
     state.tasks.splice(index, 1);
-  }
+  },
 };
 const initialState = {
   nextId: 1,
-  tasks: []
+  tasks: [],
 };
 
 // -------------------------------------------------------------------------
@@ -616,7 +616,7 @@ class App extends Component {
   static components = { Task };
 
   inputRef = useRef("add-input");
-  tasks = useStore(state => state.tasks);
+  tasks = useStore((state) => state.tasks);
   dispatch = useDispatch();
 
   mounted() {
@@ -811,7 +811,7 @@ For reference, here is the final code:
 ```
 
 ```js
-(function() {
+(function () {
   const { Component, Store } = owl;
   const { xml } = owl.tags;
   const { whenReady } = owl.utils;
@@ -827,24 +827,24 @@ For reference, here is the final code:
         const task = {
           id: state.nextId++,
           title: title,
-          isCompleted: false
+          isCompleted: false,
         };
         state.tasks.push(task);
       }
     },
     toggleTask({ state }, id) {
-      const task = state.tasks.find(t => t.id === id);
+      const task = state.tasks.find((t) => t.id === id);
       task.isCompleted = !task.isCompleted;
     },
     deleteTask({ state }, id) {
-      const index = state.tasks.findIndex(t => t.id === id);
+      const index = state.tasks.findIndex((t) => t.id === id);
       state.tasks.splice(index, 1);
-    }
+    },
   };
 
   const initialState = {
     nextId: 1,
-    tasks: []
+    tasks: [],
   };
 
   // -------------------------------------------------------------------------
@@ -897,7 +897,7 @@ For reference, here is the final code:
     static components = { Task };
 
     inputRef = useRef("add-input");
-    tasks = useStore(state => state.tasks);
+    tasks = useStore((state) => state.tasks);
     filter = useState({ value: "all" });
     dispatch = useDispatch();
 
@@ -916,9 +916,9 @@ For reference, here is the final code:
     get displayedTasks() {
       switch (this.filter.value) {
         case "active":
-          return this.tasks.filter(t => !t.isCompleted);
+          return this.tasks.filter((t) => !t.isCompleted);
         case "completed":
-          return this.tasks.filter(t => t.isCompleted);
+          return this.tasks.filter((t) => t.isCompleted);
         case "all":
           return this.tasks;
       }

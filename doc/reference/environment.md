@@ -113,10 +113,10 @@ async function myEnv() {
     qweb: qweb,
     services: {
       localStorage: localStorage,
-      rpc: rpc
+      rpc: rpc,
     },
     debug: false,
-    inMobileMode: true
+    inMobileMode: true,
   };
 }
 

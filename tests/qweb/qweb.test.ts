@@ -195,7 +195,7 @@ describe("t-esc", () => {
       v2: undefined,
       v3: null,
       v4: 0,
-      v5: ""
+      v5: "",
     };
     expect(renderToString(qweb, "test", vals)).toBe(
       "<div><p>false</p><p></p><p></p><p>0</p><p></p></div>"
@@ -486,7 +486,7 @@ describe("t-if", () => {
       cond3: false,
       cond4: false,
       m: 5,
-      n: 2
+      n: 2,
     };
     expect(normalize(renderToString(qweb, "test", context))).toBe("<div>andormgtnlt</div>");
   });
@@ -625,7 +625,7 @@ describe("attributes", () => {
   test("object", () => {
     qweb.addTemplate("test", `<div t-att="value"/>`);
     const result = renderToString(qweb, "test", {
-      value: { a: 1, b: 2, c: 3 }
+      value: { a: 1, b: 2, c: 3 },
     });
     expect(result).toBe(`<div a="1" b="2" c="3"></div>`);
   });
@@ -684,7 +684,7 @@ describe("attributes", () => {
     const result = renderToString(qweb, "test", {
       value1: 0,
       value2: 1,
-      value3: 2
+      value3: 2,
     });
     expect(result).toBe(`<div foo="a 0 is 1 of 2 ]"></div>`);
   });
@@ -703,7 +703,7 @@ describe("attributes", () => {
     const result = renderToString(qweb, "test", {
       bar: 0,
       baz: 1,
-      qux: { qux: "<>" }
+      qux: { qux: "<>" },
     });
     const expected = '<div foo="<foo" bar="0" baz="<1>" qux="<>"></div>';
     expect(result).toBe(expected);
@@ -973,7 +973,7 @@ describe("t-call (template calling", () => {
     `);
     const root = {
       val: "a",
-      children: [{ val: "b", children: [{ val: "c", children: [{ val: "d" }] }] }]
+      children: [{ val: "b", children: [{ val: "c", children: [{ val: "d" }] }] }],
     };
     const expected =
       "<div><div><p>a 2</p><div><p>b 3</p><div><p>c 4</p><div><p>d 5</p></div></div></div></div></div>";
@@ -1235,7 +1235,7 @@ describe("t-on", () => {
       {
         add() {
           a = 3;
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1258,7 +1258,7 @@ describe("t-on", () => {
         },
         handleDblClick() {
           steps.push("dblclick");
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1278,7 +1278,7 @@ describe("t-on", () => {
       {
         add(n) {
           a = a + n;
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1295,7 +1295,7 @@ describe("t-on", () => {
       {
         add({ val }) {
           a = a + val;
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1312,7 +1312,7 @@ describe("t-on", () => {
       {
         doSomething(arg) {
           expect(arg).toEqual({});
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1328,7 +1328,7 @@ describe("t-on", () => {
       {
         doSomething(arg) {
           expect(arg).toEqual({});
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1350,7 +1350,7 @@ describe("t-on", () => {
       {
         activate(action) {
           expect(action).toBe("someval");
-        }
+        },
       },
       { handlers: [] }
     );
@@ -1363,7 +1363,7 @@ describe("t-on", () => {
     let owner = {
       add() {
         expect(this).toBe(owner);
-      }
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     (<HTMLElement>node).click();
@@ -1373,8 +1373,8 @@ describe("t-on", () => {
     qweb.addTemplate("test", `<button t-on-click="state.counter++">Click</button>`);
     let owner = {
       state: {
-        counter: 0
-      }
+        counter: 0,
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     expect(owner.state.counter).toBe(0);
@@ -1387,10 +1387,10 @@ describe("t-on", () => {
     let owner = {
       state: {
         counter: 0,
-        incrementCounter: inc => {
+        incrementCounter: (inc) => {
           owner.state.counter += inc;
-        }
-      }
+        },
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     expect(owner.state.counter).toBe(0);
@@ -1402,8 +1402,8 @@ describe("t-on", () => {
     qweb.addTemplate("test", `<button t-on-click="state.flag = !state.flag">Toggle</button>`);
     let owner = {
       state: {
-        flag: true
-      }
+        flag: true,
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     expect(owner.state.flag).toBe(true);
@@ -1420,8 +1420,8 @@ describe("t-on", () => {
         return n + 1;
       },
       state: {
-        n: 11
-      }
+        n: 11,
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
     expect(owner.state.n).toBe(11);
@@ -1437,7 +1437,7 @@ describe("t-on", () => {
     let owner = {
       update() {
         expect(this).toBe(owner);
-      }
+      },
     };
 
     const node = renderToDOM(qweb, "main", owner, { handlers: [] });
@@ -1454,7 +1454,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
         expect(val).toBe(444);
       },
-      value: 444
+      value: 444,
     };
 
     const node = renderToDOM(qweb, "main", owner, { handlers: [] });
@@ -1483,7 +1483,7 @@ describe("t-on", () => {
       onClickPreventedAndStopped(e) {
         expect(e.defaultPrevented).toBe(true);
         expect(e.cancelBubble).toBe(true);
-      }
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
 
@@ -1509,7 +1509,7 @@ describe("t-on", () => {
       },
       onClickSelf(e) {
         steps.push("onClickSelf");
-      }
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
 
@@ -1533,10 +1533,10 @@ describe("t-on", () => {
     );
     let steps: boolean[] = [];
     let owner = {
-      onClick() {}
+      onClick() {},
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
-    (<HTMLElement>node).addEventListener("click", function(e) {
+    (<HTMLElement>node).addEventListener("click", function (e) {
       steps.push(e.defaultPrevented);
     });
 
@@ -1558,10 +1558,10 @@ describe("t-on", () => {
     );
     let steps: boolean[] = [];
     let owner = {
-      onClick() {}
+      onClick() {},
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
-    (<HTMLElement>node).addEventListener("click", function(e) {
+    (<HTMLElement>node).addEventListener("click", function (e) {
       steps.push(e.defaultPrevented);
     });
 
@@ -1589,13 +1589,13 @@ describe("t-on", () => {
     const owner = {
       projects: [
         { id: 1, name: "Project 1" },
-        { id: 2, name: "Project 2" }
+        { id: 2, name: "Project 2" },
       ],
 
       onEdit(projectId, ev) {
         expect(ev.defaultPrevented).toBe(true);
         steps.push(projectId);
-      }
+      },
     };
 
     const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
@@ -1620,7 +1620,7 @@ describe("t-on", () => {
     );
     const node = renderToDOM(qweb, "test", {}, { handlers: [] });
 
-    node.addEventListener("click", e => {
+    node.addEventListener("click", (e) => {
       expect(e.defaultPrevented).toBe(true);
     });
 
@@ -1636,7 +1636,7 @@ describe("t-on", () => {
       text: "Click here",
       onClick() {
         steps.push("onClick");
-      }
+      },
     };
 
     const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
@@ -1655,7 +1655,7 @@ describe("t-on", () => {
       html: "Click <b>here</b>",
       onClick() {
         steps.push("onClick");
-      }
+      },
     };
 
     const node = <HTMLElement>renderToDOM(qweb, "test", owner, { handlers: [] });
@@ -1682,7 +1682,7 @@ describe("t-on", () => {
       },
       doSomething() {
         steps.push("normal");
-      }
+      },
     };
     const node = renderToDOM(qweb, "test", owner, { handlers: [] });
 
@@ -1846,7 +1846,7 @@ describe("t-key", () => {
     );
     expect(
       renderToString(qweb, "test", {
-        beers: [{ id: 12, name: "Chimay Rouge" }]
+        beers: [{ id: 12, name: "Chimay Rouge" }],
       })
     ).toMatchSnapshot();
   });
@@ -1959,9 +1959,9 @@ describe("properly support svg", () => {
 describe("translation support", () => {
   test("can translate node content", () => {
     const translations = {
-      word: "mot"
+      word: "mot",
     };
-    const translateFn = expr => translations[expr] || expr;
+    const translateFn = (expr) => translations[expr] || expr;
     const qweb = new QWeb({ translateFn });
     qweb.addTemplate("test", "<div>word</div>");
     expect(renderToString(qweb, "test")).toBe("<div>mot</div>");
@@ -1969,9 +1969,9 @@ describe("translation support", () => {
 
   test("does not translate node content if disabled", () => {
     const translations = {
-      word: "mot"
+      word: "mot",
     };
-    const translateFn = expr => translations[expr] || expr;
+    const translateFn = (expr) => translations[expr] || expr;
     const qweb = new QWeb({ translateFn });
     qweb.addTemplate(
       "test",
@@ -1986,9 +1986,9 @@ describe("translation support", () => {
 
   test("some attributes are translated", () => {
     const translations = {
-      word: "mot"
+      word: "mot",
     };
-    const translateFn = expr => translations[expr] || expr;
+    const translateFn = (expr) => translations[expr] || expr;
     const qweb = new QWeb({ translateFn });
     qweb.addTemplate(
       "test",

@@ -14,7 +14,7 @@ describe("event bus behaviour", () => {
     expect.assertions(1);
     const bus = new EventBus();
     const owner = {};
-    bus.on("event", owner, function(this: any) {
+    bus.on("event", owner, function (this: any) {
       expect(this).toBe(owner);
     });
     bus.trigger("event");

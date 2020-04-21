@@ -33,7 +33,7 @@ function updateProps(oldVnode: VNode, vnode: VNode): void {
 
 export const propsModule = {
   create: updateProps,
-  update: updateProps
+  update: updateProps,
 } as Module;
 
 //------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ function updateEventListeners(oldVnode: VNode, vnode?: VNode): void {
 export const eventListenersModule = {
   create: updateEventListeners,
   update: updateEventListeners,
-  destroy: updateEventListeners
+  destroy: updateEventListeners,
 } as Module;
 
 //------------------------------------------------------------------------------
@@ -210,7 +210,7 @@ function updateAttrs(oldVnode: VNode, vnode: VNode): void {
 
 export const attrsModule = {
   create: updateAttrs,
-  update: updateAttrs
+  update: updateAttrs,
 } as Module;
 
 //------------------------------------------------------------------------------

@@ -40,14 +40,14 @@ const actions = {
     state.todos.push({
       id: state.nextId++,
       message,
-      isCompleted: false
+      isCompleted: false,
     });
-  }
+  },
 };
 
 const state = {
   todos: [],
-  nextId: 1
+  nextId: 1,
 };
 
 const store = new owl.Store({ state, actions });
@@ -90,7 +90,7 @@ const config = {
   state,
   actions,
   getters,
-  env
+  env,
 };
 const store = new Store(config);
 ```
@@ -110,7 +110,7 @@ const actions = {
     } catch (e) {
       state.loginState = "error";
     }
-  }
+  },
 };
 ```
 
@@ -144,7 +144,7 @@ const actions = {
     state.recordId = recordId;
     const data = await doSomeRPC("/read/", recordId);
     state.recordData = data;
-  }
+  },
 };
 ```
 
@@ -159,7 +159,7 @@ const actions = {
     const data = await doSomeRPC("/read/", recordId);
     state.recordId = recordId;
     state.recordData = data;
-  }
+  },
 };
 ```
 
@@ -187,14 +187,14 @@ transform the data contained in the store.
 ```js
 const getters = {
   getPost({ state }, id) {
-    const post = state.posts.find(p => p.id === id);
-    const author = state.authors.find(a => a.id === post.id);
+    const post = state.posts.find((p) => p.id === id);
+    const author = state.authors.find((a) => a.id === post.id);
     return {
       id,
       author,
-      content: post.content
+      content: post.content,
     };
-  }
+  },
 };
 
 // somewhere else
@@ -224,11 +224,11 @@ Assume we have this store:
 const actions = {
   increment({ state }, val) {
     state.counter.value += val;
-  }
+  },
 };
 
 const state = {
-  counter: { value: 0 }
+  counter: { value: 0 },
 };
 const store = new owl.Store({ state, actions });
 ```
@@ -245,7 +245,7 @@ A counter component can then select this value and dispatch an action like this:
 
 ```js
 class Counter extends Component {
-  counter = useStore(state => state.counter);
+  counter = useStore((state) => state.counter);
   dispatch = useDispatch();
 }
 

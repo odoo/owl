@@ -162,7 +162,7 @@ export class CompilationContext {
     const tokens = compileExprToArray(expr, this.variables);
     const done = new Set();
     return tokens
-      .map(tok => {
+      .map((tok) => {
         if (tok.varName) {
           if (!done.has(tok.varName)) {
             done.add(tok.varName);
@@ -189,7 +189,7 @@ export class CompilationContext {
       return `(${this.formatExpression(s.slice(2, -2))})`;
     }
 
-    let r = s.replace(/\{\{.*?\}\}/g, s => "${" + this.formatExpression(s.slice(2, -2)) + "}");
+    let r = s.replace(/\{\{.*?\}\}/g, (s) => "${" + this.formatExpression(s.slice(2, -2)) + "}");
     return "`" + r + "`";
   }
   startProtectScope(codeBlock?: boolean): number {

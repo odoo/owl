@@ -316,6 +316,9 @@ export class Component<Props extends {} = any, T extends Env = Env> {
         return Promise.resolve();
       }
     }
+    if (__owl__.isDestroyed) {
+      throw new Error("Cannot mount a destroyed component");
+    }
     if (__owl__.currentFiber) {
       const currentFiber = __owl__.currentFiber;
       if (currentFiber.target === target && currentFiber.position === position) {

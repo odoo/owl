@@ -2,6 +2,7 @@ import { Component, Env } from "../../src/component/component";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeDeferred, makeTestEnv, makeTestFixture, nextTick, nextMicroTick } from "../helpers";
+import { scheduler } from "../../src/component/scheduler";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -489,5 +490,23 @@ describe("unmounting and remounting", () => {
     await nextTick();
     expect(steps).toEqual(["1 resolved", "2 resolved"]);
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
+  });
+
+  test("mounting a destroyed widget", async () => {
+    class MyWidget extends Component {
+      static template = xml`<div>Hey</div>`;
+    }
+    const w = new MyWidget();
+    w.destroy(); // because, why not
+
+    let error;
+    try {
+      await w.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(scheduler.tasks.length).toBe(0);
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot mount a destroyed component");
   });
 });

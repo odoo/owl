@@ -1,16 +1,16 @@
 import { Component, Env } from "../../src/component/component";
+import { EventBus } from "../../src/core/event_bus";
+import { useRef, useState } from "../../src/hooks";
 import { QWeb } from "../../src/qweb/qweb";
 import { xml } from "../../src/tags";
-import { useState, useRef } from "../../src/hooks";
-import { EventBus } from "../../src/core/event_bus";
 import {
+  editInput,
   makeDeferred,
-  makeTestFixture,
   makeTestEnv,
+  makeTestFixture,
   nextMicroTick,
   nextTick,
   normalize,
-  editInput,
 } from "../helpers";
 
 //------------------------------------------------------------------------------

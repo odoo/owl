@@ -267,7 +267,7 @@ describe("hooks", () => {
     class WidgetC extends Component {
       static template = xml`<div class="outer-div">Hello<WidgetB t-ref="mywidgetb" /></div>`;
       static components = { WidgetB };
-      ref = useRef("mywidgetb");
+      ref = useRef<WidgetB>("mywidgetb");
     }
 
     const widget = new WidgetC();

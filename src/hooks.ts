@@ -94,12 +94,12 @@ export const onWillUpdateProps = makeAsyncHook("willUpdatePropsCB");
  * The purpose of this hook is to allow components to get a reference to a sub
  * html node or component.
  */
-interface Ref {
+interface Ref<C extends Component = Component> {
   el: HTMLElement | null;
-  comp: Component | null;
+  comp: C | null;
 }
 
-export function useRef(name: string): Ref {
+export function useRef<C extends Component = Component>(name: string): Ref<C> {
   const __owl__ = Component.current!.__owl__;
   return {
     get el(): HTMLElement | null {
@@ -111,9 +111,9 @@ export function useRef(name: string): Ref {
       }
       return null;
     },
-    get comp(): Component | null {
+    get comp(): C | null {
       const val = __owl__.refs && __owl__.refs[name];
-      return val instanceof Component ? val : null;
+      return val instanceof Component ? (val as C) : null;
     },
   };
 }

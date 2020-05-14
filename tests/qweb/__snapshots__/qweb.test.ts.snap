@@ -1937,6 +1937,23 @@ exports[`t-esc literal 1`] = `
 }"
 `;
 
+exports[`t-esc t-esc inside t-call, with t-set outside 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"main\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = new utils.VDomArray();
+    c2.push({text: \`Hi\`});
+    scope.v = c2
+    this.subTemplates['sub'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    return vn1;
+}"
+`;
+
 exports[`t-esc t-esc is escaped 1`] = `
 "function anonymous(context, extra
 ) {

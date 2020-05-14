@@ -207,6 +207,13 @@ describe("t-esc", () => {
     const result = renderToString(qweb, "test", { state: { list: [1, 2] } });
     expect(result).toBe("<span>1,2</span>");
   });
+
+  test("t-esc inside t-call, with t-set outside", () => {
+    qweb.addTemplate("main", `<div><t t-set="v">Hi</t><t t-call="sub"/></div>`);
+    qweb.addTemplate("sub", `<span t-esc="v"/>`);
+    const result = renderToString(qweb, "main");
+    expect(result).toBe("<div><span>Hi</span></div>");
+  });
 });
 
 describe("t-raw", () => {

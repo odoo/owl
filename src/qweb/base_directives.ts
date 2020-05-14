@@ -49,6 +49,7 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
   if (ctx.escaping) {
     let protectID;
     if (value.hasBody) {
+      ctx.rootContext.shouldDefineUtils = true;
       protectID = ctx.startProtectScope();
       ctx.addLine(
         `${exprID} = ${exprID} instanceof utils.VDomArray ? utils.vDomToString(${exprID}) : ${exprID};`

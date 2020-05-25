@@ -1105,4 +1105,11 @@ describe("html to vdom", function () {
     elm = patch(vnode0, nodeList[0]).elm;
     expect(elm.outerHTML).toEqual(`<span a="1" b="2">abc<div>1</div></span>`);
   });
+
+  test("svg", function () {
+      const nodeList = htmlToVDOM(`<svg></svg>`);
+      expect(nodeList).toHaveLength(1);
+      elm = patch(vnode0, nodeList[0]).elm;
+      expect(elm).toBeInstanceOf(SVGSVGElement);
+  });
 });

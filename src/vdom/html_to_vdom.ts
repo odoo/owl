@@ -1,4 +1,4 @@
-import { VNode, h } from "./vdom";
+import { VNode, h, addNS } from "./vdom";
 
 const parser = new DOMParser();
 
@@ -23,5 +23,9 @@ function htmlToVNode(node: ChildNode): VNode {
   for (let c of node.childNodes) {
     children.push(htmlToVNode(c));
   }
-  return h((node as Element).tagName, { attrs }, children);
+  const vnode = h((node as Element).tagName, { attrs }, children);
+  if (vnode.sel === "svg") {
+    addNS(vnode.data, (vnode as any).children, vnode.sel);
+  }
+  return vnode;
 }

@@ -747,7 +747,7 @@ describe("t-call (template calling", () => {
     qweb.addTemplate("caller", '<div><t t-call="_basic-callee"/></div>');
     const expected = "<div><span>ok</span></div>";
     expect(renderToString(qweb, "caller")).toBe(expected);
-    expect(qweb.subTemplates["_basic-callee"].toString()).toMatchSnapshot();
+    expect(qweb.subTemplates["_basic-callee"]).toBeTruthy();
   });
 
   test("basic caller, no parent node", () => {
@@ -755,7 +755,7 @@ describe("t-call (template calling", () => {
     qweb.addTemplate("caller", '<t t-call="_basic-callee"/>');
     const expected = "<div>ok</div>";
     expect(renderToString(qweb, "caller")).toBe(expected);
-    expect(qweb.subTemplates["_basic-callee"].toString()).toMatchSnapshot();
+    expect(qweb.subTemplates["_basic-callee"]).toBeTruthy();
   });
 
   test("t-call with t-if", () => {
@@ -763,7 +763,7 @@ describe("t-call (template calling", () => {
     qweb.addTemplate("caller", '<div><t t-if="flag" t-call="sub"/></div>');
     const expected = "<div><span>ok</span></div>";
     expect(renderToString(qweb, "caller", { flag: true })).toBe(expected);
-    expect(qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+    expect(qweb.subTemplates["sub"]).toBeTruthy();
   });
 
   test("t-call not allowed on a non t node", () => {
@@ -898,7 +898,8 @@ describe("t-call (template calling", () => {
     `);
     const expected = "<div><span>hey</span></div>";
     expect(renderToString(qweb, "recursive")).toBe(expected);
-    const recursiveFn = Object.values(qweb.subTemplates)[0] as any;
+    const subId = qweb.subTemplates["recursive"];
+    const recursiveFn = QWeb.subTemplates[subId] as any;
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
 
@@ -926,7 +927,8 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb, "Parent", { root }, { fiber: { vars: {}, scope: {} } })).toBe(
       expected
     );
-    const recursiveFn = Object.values(qweb.subTemplates)[0] as any;
+    const subId = qweb.subTemplates["nodeTemplate"];
+    const recursiveFn = QWeb.subTemplates[subId] as any;
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
 
@@ -953,7 +955,8 @@ describe("t-call (template calling", () => {
     const expected =
       "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
     expect(renderToString(qweb, "Parent", { root }, { fiber: {} })).toBe(expected);
-    const recursiveFn = Object.values(qweb.subTemplates)[0] as any;
+    const subId = qweb.subTemplates["nodeTemplate"];
+    const recursiveFn = QWeb.subTemplates[subId] as any;
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
 
@@ -985,7 +988,8 @@ describe("t-call (template calling", () => {
     const expected =
       "<div><div><p>a 2</p><div><p>b 3</p><div><p>c 4</p><div><p>d 5</p></div></div></div></div></div>";
     expect(renderToString(qweb, "Parent", { root })).toBe(expected);
-    const recursiveFn = Object.values(qweb.subTemplates)[0] as any;
+    const subId = qweb.subTemplates["nodeTemplate"];
+    const recursiveFn = QWeb.subTemplates[subId] as any;
     expect(recursiveFn.toString()).toMatchSnapshot();
   });
 
@@ -1056,6 +1060,17 @@ describe("t-call (template calling", () => {
       "<p><div><span>3</span>fromwrapper<span>6</span>fromwrapper<span>9</span>fromwrapper</div></p>";
     const context = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
     expect(trim(renderToString(qweb, "wrapper", context))).toBe(expected);
+  });
+
+  test("two different QWeb instances, and shared templates", () => {
+    QWeb.registerTemplate("sub", `<span>ok</span>`);
+    QWeb.registerTemplate("main", `<div><t t-call="sub"/></div>`);
+
+    const qweb1 = new QWeb();
+    const qweb2 = new QWeb();
+
+    expect(renderToString(qweb1, "main")).toBe("<div><span>ok</span></div>");
+    expect(renderToString(qweb2, "main")).toBe("<div><span>ok</span></div>");
   });
 });
 

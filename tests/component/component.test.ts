@@ -3825,7 +3825,9 @@ describe("t-call", () => {
 
     expect(fixture.innerHTML).toBe("<div><p>lucas</p></div>");
     fixture.querySelector("p")!.click();
-    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+    const subId = env.qweb.subTemplates["sub"];
+    const subFn = QWeb.subTemplates[subId] as any;
+    expect(subFn.toString()).toMatchSnapshot();
   });
 
   test("parent is set within t-call", async () => {
@@ -3847,7 +3849,10 @@ describe("t-call", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>lucas</span></div>");
     expect(child.__owl__.parent).toBe(parent);
-    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+    const subId = env.qweb.subTemplates["sub"];
+    const subFn = QWeb.subTemplates[subId] as any;
+
+    expect(subFn.toString()).toMatchSnapshot();
   });
 
   test("t-call in t-foreach and children component", async () => {
@@ -3889,7 +3894,9 @@ describe("t-call", () => {
 
     expect(fixture.innerHTML).toBe("<span>lucas</span>");
     expect(child.__owl__.parent).toBe(parent);
-    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+    const subId = env.qweb.subTemplates["sub"];
+    const subFn = QWeb.subTemplates[subId] as any;
+    expect(subFn.toString()).toMatchSnapshot();
   });
 
   test("handlers with arguments are properly bound through a t-call", async () => {
@@ -3905,7 +3912,9 @@ describe("t-call", () => {
     }
     const parent = new Parent();
     await parent.mount(fixture);
-    expect(env.qweb.subTemplates["sub"].toString()).toMatchSnapshot();
+    const subId = env.qweb.subTemplates["sub"];
+    const subFn = QWeb.subTemplates[subId] as any;
+    expect(subFn.toString()).toMatchSnapshot();
 
     fixture.querySelector("p")!.click();
   });

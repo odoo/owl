@@ -212,10 +212,12 @@ export class QWeb extends EventBus {
   static slots = {};
   static nextSlotId = 1;
 
-  // recursiveTemplates contains sub templates called with t-call, but which
-  // ends up in recursive situations.  This is very similar to the slot situation,
-  // as in we need to propagate the scope.
-  subTemplates = {};
+  // subTemplates are stored in two objects: a (local) mapping from a name to an
+  // id, and a (global) mapping from an id to the compiled function.  This is
+  // necessary to ensure that global templates can be called with more than one
+  // QWeb instance.
+  subTemplates: {[key: string]: number} = {};
+  static subTemplates: {[id: number]: Function} = {};
 
   isUpdating: boolean = false;
   translateFn?: QWebConfig["translateFn"];

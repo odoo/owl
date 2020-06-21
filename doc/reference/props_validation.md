@@ -30,7 +30,7 @@ class ComponentB extends owl.Component {
     count: {type: Number},
     messages: {
       type: Array,
-      element: {type: Object, shape: {id: Boolean, text: 'string' }
+      element: {type: Object, shape: {id: Boolean, text: String }
     },
    date: Date,
    combinedVal: [Number, Boolean]

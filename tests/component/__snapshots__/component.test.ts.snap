@@ -1253,12 +1253,16 @@ exports[`other directives with t-component t-set can't alter from within callee 
     if (scope.iter != null) {
         c2.push({text: scope.iter});
     }
-    this.constructor.subTemplates['2'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('p', p5, c5);
-    c1.push(vn5);
+    let _origScope4 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('p', p6, c6);
+    c1.push(vn6);
     if (scope.iter != null) {
-        c5.push({text: scope.iter});
+        c6.push({text: scope.iter});
     }
     return vn1;
 }"
@@ -1280,18 +1284,18 @@ exports[`other directives with t-component t-set can't alter in t-call body 1`] 
     if (scope.iter != null) {
         c2.push({text: scope.iter});
     }
+    let _origScope4 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
     {
-        let _origScope4 = scope;
-        scope = Object.create(scope);
-        scope.__access_mode__ = 'ro';
         {
             let c__0 = [];
             utils.getScope(scope, 'iter').iter = 'inCall';
             scope[utils.zero] = c__0;
         }
         this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
-        scope = _origScope4;
     }
+    scope = _origScope4;
     let c6 = [], p6 = {key:6};
     let vn6 = h('p', p6, c6);
     c1.push(vn6);
@@ -1410,7 +1414,11 @@ exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = 
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    this.constructor.subTemplates['3'].call(this, Object.assign(Object.create(context), scope), Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
+    let _origScope4 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    this.constructor.subTemplates['3'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;

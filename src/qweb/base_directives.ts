@@ -245,12 +245,11 @@ QWeb.addDirective({
     // Step 3: compile t-call body if necessary
     // ------------------------------------------------
     let hasBody = node.hasChildNodes();
-    let protectID;
+    const protectID = ctx.startProtectScope();
     if (hasBody) {
       // we add a sub scope to protect the ambient scope
       ctx.addLine(`{`);
       ctx.indent();
-      protectID = ctx.startProtectScope();
       const nodeCopy = node.cloneNode(true) as Element;
       for (let attr of ["t-if", "t-else", "t-elif", "t-call"]) {
         nodeCopy.removeAttribute(attr);
@@ -271,21 +270,20 @@ QWeb.addDirective({
 
     // Step 4: add the appropriate function call to current component
     // ------------------------------------------------
-    const callingScope = hasBody ? "scope" : "Object.assign(Object.create(context), scope)";
     const parentComponent = `utils.getComponent(context)`;
     const key = ctx.generateTemplateKey();
     const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
     const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}, key: ${key}})`;
     if (ctx.parentNode) {
       ctx.addLine(
-        `this.constructor.subTemplates['${subId}'].call(this, ${callingScope}, ${extra});`
+        `this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`
       );
     } else {
       // this is a t-call with no parentnode, we need to extract the result
       ctx.rootContext.shouldDefineResult = true;
       ctx.addLine(`result = []`);
       ctx.addLine(
-        `this.constructor.subTemplates['${subId}'].call(this, ${callingScope}, ${extra});`
+        `this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`
       );
       ctx.addLine(`result = result[0]`);
     }
@@ -293,10 +291,10 @@ QWeb.addDirective({
     // Step 5: restore previous scope
     // ------------------------------------------------
     if (hasBody) {
-      ctx.stopProtectScope(protectID);
       ctx.dedent();
       ctx.addLine(`}`);
     }
+    ctx.stopProtectScope(protectID);
 
     return true;
   },

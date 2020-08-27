@@ -61,14 +61,14 @@ because a lot of the state is hidden in their internals.
 
 React or Vue have a huge community, and a lot of effort have been made into their
 tooling. This is wonderful, but at the same time, a pretty big issue for Odoo:
-since the assets are totally dynamic (and could change whenever the user install
-or remove an addon), we need to have all that kind of tooling on the production
+since the assets are totally dynamic (and could change whenever the user installs
+or removes an addon), we need to have all that kind of tooling on the production
 servers. This is certainly not ideal.
 
 Also, this makes it very complicated to setup Vue or React tools: Odoo code is
 not a simple file that import other files. It changes all the time, assets
 are bundled differently in different contexts. This is the reason why Odoo has
-its own module system, which are resolve at runtime, by the browser. The
+its own module system, which are resolved at runtime, by the browser. The
 dynamic nature of Odoo means that we often need to delay work as late as possible
 (in other word, we want a JIT user interface!)
 
@@ -78,12 +78,12 @@ deploy. Using React without JSX, or Vue without vue file is not very appealing.
 At the same time, Owl is designed to solve this issue: it compiles templates
 by the browser, it doesn't need much code for that, since we use the XML parser
 built into each browser. Owl works with or without any additional tooling. It
-can use template strings to write single file component, and is easy to integrate
+can use template strings to write single file components, and is easy to integrate
 in any html page, with a simple `<script>` tag.
 
 ## Template based
 
-Odoo stores template as XML document in a database. This is very powerful, since
+Odoo stores templates as XML documents in a database. This is very powerful, since
 this allow the use of xpaths to customize other templates. This is a very
 important feature of odoo, and one of the key to Odoo modularity.
 
@@ -104,12 +104,12 @@ awkward, and very confusing.
 ## Developer Experience
 
 This brings us to the following point: developer experience. We see this choice
-as an investment for the future, and we want to make onboarding developer as
+as an investment for the future, and we want to make onboarding developers as
 easy as possible.
 
 While many javascript professionals clearly think that react/vue is not difficult
 (which is true to some extent), it is alsy true that many non js specialists are
-overwhelmed with the frontend world: functional component, hooks, and many other
+overwhelmed with the frontend world: functional components, hooks, and many other
 fancy words. Also, what is available in the compilation context may be difficult,
 there is a lot of black magic going on in pretty much every framework. Vue
 somehow join various namespaces into one, under the hood, and add various internal
@@ -135,7 +135,7 @@ needs: Odoo will fetch templates from the database and need to compile them only
 at the last possible moment, so we can apply all necessary xpaths.
 
 Even more: Odoo needs to be able to generate (and compile) templates at runtime.
-Currently, Odoo form views interpret a xml description. But the form view code
+Currently, Odoo form views interpret an xml description. But the form view code
 then needs to do a lot of complicated operations. With Owl, we will be able to
 transform a view description into a QWeb template, then compile that and use it
 immediately.
@@ -147,16 +147,16 @@ For example, the reactivity system. We like the way Vue did it, but it has a
 flaw: it is not really optional. There is actually a way to opt out of the reactivity
 system by freezing the state, but then, it is freezed.
 
-And there certainly are situations where we need a state, which is not readonly,
+And there certainly are situations where we need a state, which is not read-only,
 and not observed. For example, imagine a spreadsheet component. It may have a
 very large internal state, and it knows exactly when it needs to be rendered
-(basically, whenever the user perform some action). Then, observing its state
+(basically, whenever the user performs some action). Then, observing its state
 is a net performance loss, both for the CPU and the memory.
 
 ## Concurrency
 
 Many applications are happy to simply display a spinner whenever a new asynchronous
-action is performed, but Odoo want a different user experience: most asynchronous
+action is performed, but Odoo wants a different user experience: most asynchronous
 state changes are not displayed until ready. This is sometimes called a concurrent
 mode: the UI is rendered in memory, and displayed only when it is ready (and
 only if it has not been cancelled by subsequent user actions).
@@ -175,6 +175,6 @@ that current standard frameworks are not tailored to our needs. It is perfectly
 fine, because they each chose a different set of tradeoffs.
 
 However, we feel that there is still room in the framework world for something
-that is different. For a framework that make choices compatible with Odoo.
+that is different. For a framework that makes choices compatible with Odoo.
 
 And that is why we built Owl 🦉.

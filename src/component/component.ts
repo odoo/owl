@@ -402,7 +402,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    * Destroy the component.  This operation is quite complex:
    *  - it recursively destroy all children
    *  - call the willUnmount hooks if necessary
-   *  - remove the dom node from the dom
+   *  - remove the dom node from the dom and from the vdom of the parent
    *
    * This should only be called manually if you created the component.  Most
    * components will be automatically destroyed.
@@ -411,8 +411,18 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     const __owl__ = this.__owl__;
     if (!__owl__.isDestroyed) {
       const el = this.el;
-      this.__destroy(__owl__.parent);
+      const parent = __owl__.parent;
+      this.__destroy(parent);
       if (el) {
+        if (parent && parent.__owl__.vnode && parent.__owl__.vnode.children) {
+          const childIndex = parent.__owl__.vnode.children.findIndex((n) => {
+            if (!n || typeof n === "string") {
+              return false;
+            }
+            return n.elm === el;
+          });
+          delete parent.__owl__.vnode.children[childIndex];
+        }
         el.remove();
       }
     }

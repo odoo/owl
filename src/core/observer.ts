@@ -56,7 +56,7 @@ export class Observer {
           }
           self._updateRevNumber(target);
           target[key] = newVal;
-          self.notifyCB();
+          Promise.resolve(self.notifyCB()).catch(() => {});
         }
         return true;
       },
@@ -64,7 +64,7 @@ export class Observer {
         if (key in target) {
           delete target[key];
           self._updateRevNumber(target);
-          self.notifyCB();
+          Promise.resolve(self.notifyCB()).catch(() => {});
         }
         return true;
       },

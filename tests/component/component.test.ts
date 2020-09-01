@@ -1105,7 +1105,7 @@ describe("destroy method", () => {
     expect(steps).toEqual(["willStart", "__destroy"]);
   });
 
-  test("destroying a child should not prevent from mounting it again afterwards", async () => {
+  test.only("destroying a child should not prevent from mounting it again afterwards", async () => {
     class MessageList extends Component {
       static template = xml`<ul/>`;
     }
@@ -1120,7 +1120,7 @@ describe("destroy method", () => {
 
     const fixture2 = makeTestFixture();
     threadView.state.hasMessages = false;
-    await threadView.mount(fixture2); // TODO crash here...
+    await threadView.mount(fixture2);
     expect(fixture2.innerHTML).toBe("<div></div>");
 
     threadView.state.hasMessages = true;

@@ -3015,6 +3015,55 @@ describe("random stuff/miscellaneous", () => {
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
+
+  test("update props of component without concrete own node", async () => {
+    class Custom extends Component {
+      static template = xml`
+        <div class="widget-subkey">
+          <t t-esc="props.key"/>__<t t-esc="props.subKey"/>
+        </div>`
+    }
+    class Child extends Component {
+      static components = { Custom };
+      static template = xml`
+        <t t-component="Custom"
+          t-key="props.subKey"
+          key="props.key"
+          subKey="props.subKey"/>`
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <Child t-key="childProps.key" t-props="childProps"/>
+        </div>`;
+      childProps = {
+        key: 1,
+        subKey: 1,
+      };
+    }
+    const parent = new Parent(null);
+    await parent.mount(fixture);
+    expect(fixture.textContent!.trim()).toBe('1__1');
+
+    // First step: change the Custom's instance
+    Object.assign(parent.childProps, {
+        subKey: 2,
+    });
+    parent.render();
+    await nextTick();
+    expect(fixture.textContent!.trim()).toBe('1__2');
+
+    // Second step, change both Child's and Custom's instance
+    Object.assign(parent.childProps, {
+        key: 2,
+        subKey: 3,
+    });
+    parent.render();
+    await nextTick();
+    expect(fixture.textContent!.trim()).toBe('2__3');
+  });
 });
 
 describe("widget and observable state", () => {

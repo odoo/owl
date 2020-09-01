@@ -238,6 +238,12 @@ export class Fiber {
       } else {
         if (fiber.shouldPatch) {
           component.__patch(component.__owl__.vnode!, fiber.vnode!);
+          // When updating a Component's props (in directive),
+          // the component has a pvnode AND should be patched.
+          // However, its pvnode.elm may have changed if it is a High Order Component
+          if (component.__owl__.pvnode) {
+            component.__owl__.pvnode.elm = component.__owl__.vnode!.elm;
+          }
         } else {
           component.__patch(document.createElement(fiber.vnode!.sel!), fiber.vnode!);
           component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;

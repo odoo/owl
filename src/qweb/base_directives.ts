@@ -275,16 +275,12 @@ QWeb.addDirective({
     const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
     const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}, key: ${key}})`;
     if (ctx.parentNode) {
-      ctx.addLine(
-        `this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`
-      );
+      ctx.addLine(`this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`);
     } else {
       // this is a t-call with no parentnode, we need to extract the result
       ctx.rootContext.shouldDefineResult = true;
       ctx.addLine(`result = []`);
-      ctx.addLine(
-        `this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`
-      );
+      ctx.addLine(`this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`);
       ctx.addLine(`result = result[0]`);
     }
 

@@ -656,9 +656,28 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       // destroyed right now, because they are not in the DOM, and thus we won't
       // be notified later on (when patching), that they are removed from the DOM
       for (let childKey in __owl__.children) {
-        let child = __owl__.children[childKey];
-        if (!child.__owl__.isMounted && child.__owl__.parentLastFiberId < fiber.id) {
-          child.destroy();
+        const child = __owl__.children[childKey];
+        const childOwl = child.__owl__;
+        if (!childOwl.isMounted && childOwl.parentLastFiberId < fiber.id) {
+          // we only do here a "soft" destroy, meaning that we leave the child
+          // dom node alone, without removing it.  Most of the time, it does not
+          // matter, because the child component is already unmounted.  However,
+          // if some of its parent have been unmounted, the child could actually
+          // still be attached to its parent, and this may be important if we
+          // want to remount the parent, because the vdom need to match the
+          // actual DOM
+          child.__destroy(childOwl.parent);
+          if (childOwl.pvnode) {
+            // we remove the key here to make sure that the patching algorithm
+            // is able to make the difference between this pvnode and an eventual
+            // other instance of the same component
+            delete childOwl.pvnode.key;
+            // Since the component has been unmounted, we do not want to actually
+            // call a remove hook.  This is pretty important, since the t-component
+            // directive actually disabled it, so the vdom algorithm will just
+            // not remove the child elm if we don't remove the hook.
+            delete childOwl.pvnode.data!.hook!.remove;
+          }
         }
       }
       if (!vnode) {

@@ -1107,9 +1107,9 @@ describe("html to vdom", function () {
   });
 
   test("svg", function () {
-      const nodeList = htmlToVDOM(`<svg></svg>`);
-      expect(nodeList).toHaveLength(1);
-      elm = patch(vnode0, nodeList[0]).elm;
-      expect(elm).toBeInstanceOf(SVGSVGElement);
+    const nodeList = htmlToVDOM(`<svg></svg>`);
+    expect(nodeList).toHaveLength(1);
+    elm = patch(vnode0, nodeList[0]).elm;
+    expect(elm).toBeInstanceOf(SVGSVGElement);
   });
 });

@@ -3021,7 +3021,7 @@ describe("random stuff/miscellaneous", () => {
       static template = xml`
         <div class="widget-subkey">
           <t t-esc="props.key"/>__<t t-esc="props.subKey"/>
-        </div>`
+        </div>`;
     }
     class Child extends Component {
       static components = { Custom };
@@ -3029,7 +3029,7 @@ describe("random stuff/miscellaneous", () => {
         <t t-component="Custom"
           t-key="props.subKey"
           key="props.key"
-          subKey="props.subKey"/>`
+          subKey="props.subKey"/>`;
     }
 
     class Parent extends Component {
@@ -3045,24 +3045,24 @@ describe("random stuff/miscellaneous", () => {
     }
     const parent = new Parent(null);
     await parent.mount(fixture);
-    expect(fixture.textContent!.trim()).toBe('1__1');
+    expect(fixture.textContent!.trim()).toBe("1__1");
 
     // First step: change the Custom's instance
     Object.assign(parent.childProps, {
-        subKey: 2,
+      subKey: 2,
     });
     parent.render();
     await nextTick();
-    expect(fixture.textContent!.trim()).toBe('1__2');
+    expect(fixture.textContent!.trim()).toBe("1__2");
 
     // Second step, change both Child's and Custom's instance
     Object.assign(parent.childProps, {
-        key: 2,
-        subKey: 3,
+      key: 2,
+      subKey: 3,
     });
     parent.render();
     await nextTick();
-    expect(fixture.textContent!.trim()).toBe('2__3');
+    expect(fixture.textContent!.trim()).toBe("2__3");
   });
 });
 

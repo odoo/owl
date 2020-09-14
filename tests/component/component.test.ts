@@ -3064,6 +3064,36 @@ describe("random stuff/miscellaneous", () => {
     await nextTick();
     expect(fixture.textContent!.trim()).toBe("2__3");
   });
+
+  test("two renderings initiated between willPatch and patched", async () => {
+    let app;
+
+    class Panel extends Component {
+      static template = xml`<abc><t t-esc="props.val"/></abc>`;
+      mounted() {
+        app.render();
+      }
+      willUnmount() {
+        app.render();
+      }
+    }
+
+    // Main root component
+    class App extends Component {
+      static components = { Panel };
+      static template = xml`<div><Panel t-key="'panel_' + state.panel" val="state.panel"/></div>`;
+
+      state = useState({ panel: "Panel1" });
+    }
+
+    app = new App();
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><abc>Panel1</abc></div>");
+    app.state.panel = "Panel2";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
+  });
 });
 
 describe("widget and observable state", () => {

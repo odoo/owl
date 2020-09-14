@@ -249,7 +249,9 @@ export class Fiber {
           component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;
         }
       }
-      component.__owl__.currentFiber = null;
+      if (fiber === component.__owl__.currentFiber) {
+        component.__owl__.currentFiber = null;
+      }
     }
 
     // insert into the DOM (mount case)

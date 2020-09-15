@@ -252,7 +252,9 @@ QWeb.addDirective({
       ctx.addLine(`const ${refKey} = ${ctx.interpolate(ref)};`);
       refExpr = `context.__owl__.refs[${refKey}] = w${componentID};`;
     }
-    let finalizeComponentCode = `w${componentID}.destroy();`;
+    let finalizeComponentCode = transition
+      ? `w${componentID}.destroy();`
+      : `w${componentID}.__destroy(parent);`;
     if (ref) {
       finalizeComponentCode += `delete context.__owl__.refs[${refKey}];`;
     }
@@ -450,7 +452,9 @@ QWeb.addDirective({
     // hack: specify empty remove hook to prevent the node from being removed from the DOM
     const insertHook = refExpr ? `insert(vn) {${refExpr}},` : "";
     ctx.addLine(
-      `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}remove() {},destroy(vn) {${finalizeComponentCode}}}});`
+      `let pvnode = h('dummy', {key: ${templateKey}, hook: {${insertHook}${
+        transition ? "remove() {}," : ""
+      }destroy(vn) {${finalizeComponentCode}}}});`
     );
     if (registerCode) {
       ctx.addLine(registerCode);

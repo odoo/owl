@@ -30,7 +30,7 @@ exports[`t-slot directive can define and call slots 1`] = `
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         w2.__owl__.slotId = 1;
         let fiber = w2.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -120,7 +120,7 @@ exports[`t-slot directive can define and call slots using old t-set keyword 1`] 
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         w2.__owl__.slotId = 1;
         let fiber = w2.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -384,7 +384,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
             parent.__owl__.cmap[k9] = w8.__owl__.id;
             w8.__owl__.slotId = 1;
             let fiber = w8.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k9, hook: {remove() {},destroy(vn) {w8.destroy();}}});
+            let pvnode = h('dummy', {key: k9, hook: {destroy(vn) {w8.__destroy(parent);}}});
             c7.push(pvnode);
             w8.__owl__.pvnode = pvnode;
         }
@@ -482,7 +482,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
             parent.__owl__.cmap[k9] = w8.__owl__.id;
             w8.__owl__.slotId = 1;
             let fiber = w8.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k9, hook: {remove() {},destroy(vn) {w8.destroy();}}});
+            let pvnode = h('dummy', {key: k9, hook: {destroy(vn) {w8.__destroy(parent);}}});
             c7.push(pvnode);
             w8.__owl__.pvnode = pvnode;
         }
@@ -537,7 +537,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         w2.__owl__.slotId = 1;
         let fiber = w2.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }

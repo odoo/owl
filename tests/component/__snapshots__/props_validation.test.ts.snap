@@ -29,7 +29,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }

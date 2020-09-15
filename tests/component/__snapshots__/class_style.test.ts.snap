@@ -30,7 +30,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.style = _4;}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -72,7 +72,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {insert(vn) {context.__owl__.refs[ref4] = w2;},remove() {},destroy(vn) {w2.destroy();delete context.__owl__.refs[ref4];}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {insert(vn) {context.__owl__.refs[ref4] = w2;},destroy(vn) {w2.__destroy(parent);delete context.__owl__.refs[ref4];}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -130,7 +130,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {insert(vn) {context.__owl__.refs[ref4] = w2;},remove() {},destroy(vn) {w2.destroy();delete context.__owl__.refs[ref4];}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {insert(vn) {context.__owl__.refs[ref4] = w2;},destroy(vn) {w2.__destroy(parent);delete context.__owl__.refs[ref4];}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }

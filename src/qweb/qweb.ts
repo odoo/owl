@@ -216,8 +216,8 @@ export class QWeb extends EventBus {
   // id, and a (global) mapping from an id to the compiled function.  This is
   // necessary to ensure that global templates can be called with more than one
   // QWeb instance.
-  subTemplates: {[key: string]: number} = {};
-  static subTemplates: {[id: number]: Function} = {};
+  subTemplates: { [key: string]: number } = {};
+  static subTemplates: { [id: number]: Function } = {};
 
   isUpdating: boolean = false;
   translateFn?: QWebConfig["translateFn"];

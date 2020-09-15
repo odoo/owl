@@ -29,7 +29,7 @@ exports[`basic widget properties can handle empty props 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -102,7 +102,7 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
                 w10 = new W10(parent, props10);
                 parent.__owl__.cmap[k11] = w10.__owl__.id;
                 let fiber = w10.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-                let pvnode = h('dummy', {key: k11, hook: {remove() {},destroy(vn) {w10.destroy();}}});
+                let pvnode = h('dummy', {key: k11, hook: {destroy(vn) {w10.__destroy(parent);}}});
                 c1.push(pvnode);
                 w10.__owl__.pvnode = pvnode;
             }
@@ -150,7 +150,7 @@ exports[`basic widget properties same t-keys in two different places 1`] = `
             w3 = new W3(parent, props3);
             parent.__owl__.cmap[k4] = w3.__owl__.id;
             let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {w3.destroy();}}});
+            let pvnode = h('dummy', {key: k4, hook: {destroy(vn) {w3.__destroy(parent);}}});
             c2.push(pvnode);
             w3.__owl__.pvnode = pvnode;
         }
@@ -180,7 +180,7 @@ exports[`basic widget properties same t-keys in two different places 1`] = `
             w6 = new W6(parent, props6);
             parent.__owl__.cmap[k7] = w6.__owl__.id;
             let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
+            let pvnode = h('dummy', {key: k7, hook: {destroy(vn) {w6.__destroy(parent);}}});
             c5.push(pvnode);
             w6.__owl__.pvnode = pvnode;
         }
@@ -223,7 +223,7 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
                 w2 = new W2(parent, props2);
                 parent.__owl__.cmap[k3] = w2.__owl__.id;
                 let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-                let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
+                let pvnode = h('dummy', {key: k3, hook: {destroy(vn) {w2.__destroy(parent);}}});
                 c1.push(pvnode);
                 w2.__owl__.pvnode = pvnode;
             }
@@ -248,7 +248,7 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
         w4 = new W4(parent, props4);
         parent.__owl__.cmap['__5__'] = w4.__owl__.id;
         let fiber = w4.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__5__', hook: {remove() {},destroy(vn) {w4.destroy();}}});
+        let pvnode = h('dummy', {key: '__5__', hook: {destroy(vn) {w4.__destroy(parent);}}});
         c1.push(pvnode);
         w4.__owl__.pvnode = pvnode;
     }
@@ -306,7 +306,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
                 w6 = new W6(parent, props6);
                 parent.__owl__.cmap[k7] = w6.__owl__.id;
                 let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-                let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
+                let pvnode = h('dummy', {key: k7, hook: {destroy(vn) {w6.__destroy(parent);}}});
                 c1.push(pvnode);
                 w6.__owl__.pvnode = pvnode;
             }
@@ -347,7 +347,7 @@ exports[`composition t-component with dynamic value 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -385,7 +385,7 @@ exports[`composition t-component with dynamic value 2 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -445,7 +445,7 @@ exports[`composition t-ref on a node, and t-on-click 2`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('click', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -483,7 +483,7 @@ exports[`dynamic t-props basic use 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -529,7 +529,7 @@ exports[`other directives with t-component slot setted value (with t-set) not ac
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
         w3.__owl__.slotId = 1;
         let fiber = w3.__prepare(extra.fiber, Object.assign(Object.create(context), scope), () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        let pvnode = h('dummy', {key: '__4__', hook: {destroy(vn) {w3.__destroy(parent);}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
     }
@@ -771,7 +771,7 @@ exports[`other directives with t-component t-on with .capture modifier 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('click', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['capture'](e);}, true);}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -813,7 +813,7 @@ exports[`other directives with t-component t-on with getter as handler 1`] = `
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
         let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['handler'](e);});}});});
-        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        let pvnode = h('dummy', {key: '__4__', hook: {destroy(vn) {w3.__destroy(parent);}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
     }
@@ -852,7 +852,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -891,7 +891,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -930,7 +930,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -969,7 +969,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1012,7 +1012,7 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
         let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}state_5.counter++});}});});
-        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        let pvnode = h('dummy', {key: '__4__', hook: {destroy(vn) {w3.__destroy(parent);}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
     }
@@ -1050,7 +1050,7 @@ exports[`other directives with t-component t-on with no handler (only modifiers)
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1088,7 +1088,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();if (e.target !== vn.elm) {return}utils.getComponent(context)['onEv'](e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1126,7 +1126,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}if (e.target !== vn.elm) {return}e.preventDefault();utils.getComponent(context)['onEv'](e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1164,7 +1164,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv1'](e);});vn.elm.addEventListener('ev-2', function (e) {if (!context.__owl__.isMounted){return}if (e.target !== vn.elm) {return}utils.getComponent(context)['onEv2'](e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1202,7 +1202,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if (!context.__owl__.isMounted){return}e.stopPropagation();utils.getComponent(context)['onEv1'](e);});vn.elm.addEventListener('ev-2', function (e) {if (!context.__owl__.isMounted){return}e.preventDefault();utils.getComponent(context)['onEv2'](e);});vn.elm.addEventListener('ev-3', function (e) {if (!context.__owl__.isMounted){return}e.stopPropagation();e.preventDefault();utils.getComponent(context)['onEv3'](e);});}});});
-        let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: '__3__', hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1342,7 +1342,7 @@ exports[`other directives with t-component t-set not altered by child widget 1`]
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
         let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        let pvnode = h('dummy', {key: '__4__', hook: {destroy(vn) {w3.__destroy(parent);}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
     }
@@ -1455,7 +1455,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
             w2 = new W2(parent, props2);
             parent.__owl__.cmap[k3] = w2.__owl__.id;
             let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
+            let pvnode = h('dummy', {key: k3, hook: {destroy(vn) {w2.__destroy(parent);}}});
             c1.push(pvnode);
             w2.__owl__.pvnode = pvnode;
         }
@@ -1515,7 +1515,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
                 w6 = new W6(parent, props6);
                 parent.__owl__.cmap[k7] = w6.__owl__.id;
                 let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['onEv'](...args8, e);});}});});
-                let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
+                let pvnode = h('dummy', {key: k7, hook: {destroy(vn) {w6.__destroy(parent);}}});
                 c1.push(pvnode);
                 w6.__owl__.pvnode = pvnode;
             }
@@ -1593,7 +1593,7 @@ exports[`t-call parent is set within t-call 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: k3, hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1631,7 +1631,7 @@ exports[`t-call parent is set within t-call with no parentNode 1`] = `
         w2 = new W2(parent, props2);
         parent.__owl__.cmap[k3] = w2.__owl__.id;
         let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
+        let pvnode = h('dummy', {key: k3, hook: {destroy(vn) {w2.__destroy(parent);}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
     }
@@ -1959,7 +1959,7 @@ exports[`top level sub widgets basic use 1`] = `
         w1 = new W1(parent, props1);
         parent.__owl__.cmap['__2__'] = w1.__owl__.id;
         let fiber = w1.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: '__2__', hook: {remove() {},destroy(vn) {w1.destroy();}}});
+        let pvnode = h('dummy', {key: '__2__', hook: {destroy(vn) {w1.__destroy(parent);}}});
         utils.defineProxy(vn3, pvnode);
         w1.__owl__.pvnode = pvnode;
     }
@@ -1999,7 +1999,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
             w1 = new W1(parent, props1);
             parent.__owl__.cmap['__2__'] = w1.__owl__.id;
             let fiber = w1.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: '__2__', hook: {remove() {},destroy(vn) {w1.destroy();}}});
+            let pvnode = h('dummy', {key: '__2__', hook: {destroy(vn) {w1.__destroy(parent);}}});
             utils.defineProxy(vn3, pvnode);
             w1.__owl__.pvnode = pvnode;
         }
@@ -2026,7 +2026,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
             w4 = new W4(parent, props4);
             parent.__owl__.cmap['__5__'] = w4.__owl__.id;
             let fiber = w4.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-            let pvnode = h('dummy', {key: '__5__', hook: {remove() {},destroy(vn) {w4.destroy();}}});
+            let pvnode = h('dummy', {key: '__5__', hook: {destroy(vn) {w4.__destroy(parent);}}});
             utils.defineProxy(vn6, pvnode);
             w4.__owl__.pvnode = pvnode;
         }

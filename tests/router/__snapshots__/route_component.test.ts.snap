@@ -34,7 +34,7 @@ exports[`RouteComponent can render simple cases 1`] = `
                 w4 = new W4(parent, props4);
                 parent.__owl__.cmap[k5] = w4.__owl__.id;
                 let fiber = w4.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-                let pvnode = h('dummy', {key: k5, hook: {remove() {},destroy(vn) {w4.destroy();}}});
+                let pvnode = h('dummy', {key: k5, hook: {destroy(vn) {w4.__destroy(parent);}}});
                 utils.defineProxy(vn6, pvnode);
                 w4.__owl__.pvnode = pvnode;
             }

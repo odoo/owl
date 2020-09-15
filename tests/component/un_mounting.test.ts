@@ -509,4 +509,103 @@ describe("unmounting and remounting", () => {
     expect(error).toBeDefined();
     expect(error.message).toBe("Cannot mount a destroyed component");
   });
+
+  test("destroying a sub-component cleans itself from parent's vnode", async () => {
+    class C1 extends Component {
+      static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    }
+    class P extends Component {
+      static components = { C1 };
+      static template = xml`<div><div><C1 t-props="state" t-if="state.a"/></div></div>`;
+      state = {
+        a: "first",
+      };
+    }
+    const parent = new P();
+    await parent.mount(fixture);
+    expect(fixture.textContent).toBe("first");
+    parent.unmount();
+    parent.state.a = "";
+    parent.mount(fixture);
+    parent.state.a = "fixed";
+    await parent.render();
+    expect(fixture.textContent).toBe("fixed");
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode, part 2", async () => {
+    class C1 extends Component {
+      static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    }
+    class P extends Component {
+      static components = { C1 };
+      static template = xml`<div><div><C1 t-props="state" t-if="state.a"/>some text</div></div>`;
+      state = {
+        a: "first",
+      };
+    }
+    const parent = new P();
+    await parent.mount(fixture);
+    expect(fixture.textContent).toBe("firstsome text");
+    parent.unmount();
+    parent.state.a = "";
+    parent.mount(fixture);
+    parent.state.a = "fixed";
+    await parent.render();
+    expect(fixture.textContent).toBe("fixedsome text");
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode, part 3", async () => {
+    class C1 extends Component {
+      static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    }
+
+    class C2 extends Component {
+      static template = xml`<C1 a="props.a"/>`;
+      static components = { C1 };
+    }
+
+    class P extends Component {
+      static components = { C2 };
+      static template = xml`<div><div><C2 t-props="state" t-if="state.a"/></div></div>`;
+      state = {
+        a: "first",
+      };
+    }
+    const parent = new P();
+    await parent.mount(fixture);
+    expect(fixture.textContent).toBe("first");
+    parent.unmount();
+    parent.state.a = "";
+    parent.mount(fixture);
+    parent.state.a = "fixed";
+    await parent.render();
+    expect(fixture.textContent).toBe("fixed");
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode, part 4", async () => {
+    class C1 extends Component {
+      static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    }
+
+    class C2 extends Component {
+      static template = xml`<C1 a="props.a"/>`;
+      static components = { C1 };
+    }
+    class P extends Component {
+      static components = { C2 };
+      static template = xml`<div><div><C2 t-props="state" t-if="state.a"/>some text</div></div>`;
+      state = {
+        a: "first",
+      };
+    }
+    const parent = new P();
+    await parent.mount(fixture);
+    expect(fixture.textContent).toBe("firstsome text");
+    parent.unmount();
+    parent.state.a = "";
+    parent.mount(fixture);
+    parent.state.a = "fixed";
+    await parent.render();
+    expect(fixture.textContent).toBe("fixedsome text");
+  });
 });

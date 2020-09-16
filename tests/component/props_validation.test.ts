@@ -786,6 +786,31 @@ describe("props validation", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
+
+  test("mix of optional and mandatory", async () => {
+    class Child extends Component {
+      static props = {
+        optional: { type: String, optional: true },
+        mandatory: Number,
+      };
+      static template = xml` <div><t t-esc="props.mandatory"/></div>`;
+    }
+
+    class App extends Component {
+      static components = { Child };
+      static template = xml`<div><Child/></div>`;
+    }
+
+    const w = new App(undefined, {});
+    let error;
+    try {
+      await w.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Missing props 'mandatory' (component 'Child')");
+  });
 });
 
 describe("default props", () => {

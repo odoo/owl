@@ -231,7 +231,14 @@ QWeb.addDirective({
       } else if (!name.startsWith("t-")) {
         if (name !== "class" && name !== "style") {
           // this is a prop!
-          props[name] = ctx.formatExpression(value) || "undefined";
+          if (name in ctx.variables && ctx.variables[name].hasBody) {
+            const expr = ctx.variables[name].expr;
+            props[
+              name
+            ] = `${expr} instanceof utils.VDomArray ? utils.vDomToString(${expr}) : ${expr}`;
+          } else {
+            props[name] = ctx.formatExpression(value) || "undefined";
+          }
         }
       }
     }

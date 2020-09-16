@@ -1725,6 +1725,25 @@ describe("props evaluation ", () => {
     await widget.mount(fixture);
     expect(normalize(fixture.innerHTML)).toBe("<div><span>42</span></div>");
   });
+
+  test("t-set with a body expression can be used as textual prop", async () => {
+    class Child extends Component {
+      static template = xml`<span t-esc="props.val"/>`;
+    }
+    class Parent extends Component {
+      static components = { child: Child };
+      static template = xml`
+        <div>
+          <t t-set="val">42</t>
+          <t t-component="child" val="val"/>
+        </div>`;
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+    expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("other directives with t-component", () => {

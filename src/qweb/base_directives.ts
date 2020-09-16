@@ -41,12 +41,6 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
   if (typeof value === "string") {
     exprID = `_${ctx.generateID()}`;
     ctx.addLine(`let ${exprID} = ${ctx.formatExpression(value)};`);
-    if (ctx.isSubTemplate) {
-      ctx.rootContext.shouldDefineUtils = true;
-      ctx.addLine(
-        `${exprID} = ${exprID} instanceof utils.VDomArray ? utils.vDomToString(${exprID}) : ${exprID};`
-      );
-    }
   } else {
     exprID = `scope.${value.id}`;
   }
@@ -244,7 +238,7 @@ QWeb.addDirective({
     if (!subId) {
       subId = QWeb.nextId++;
       qweb.subTemplates[subTemplate] = subId;
-      const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx, true, true);
+      const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx, true);
       QWeb.subTemplates[subId] = subTemplateFn;
     }
 

@@ -8,12 +8,6 @@ import "../src/qweb/extensions";
 import "../src/component/directive";
 import { browser } from "../src/browser";
 
-// modifies scheduler to make it faster to test components
-scheduler.requestAnimationFrame = function (callback: FrameRequestCallback) {
-  setTimeout(callback, 1);
-  return 1;
-};
-
 // Some static cleanup
 let nextSlotId;
 let slots;
@@ -43,9 +37,8 @@ export function nextMicroTick(): Promise<void> {
 }
 
 export async function nextTick(): Promise<void> {
-  return new Promise(function (resolve) {
-    setTimeout(() => scheduler.requestAnimationFrame(() => resolve()));
-  });
+  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
+  await new Promise((resolve) => setTimeout(resolve));
 }
 
 export function makeTestFixture() {

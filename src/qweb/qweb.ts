@@ -90,6 +90,26 @@ function isComponent(obj) {
   return obj && obj.hasOwnProperty("__owl__");
 }
 
+class VDomArray extends Array {
+  toString() {
+    return vDomToString(this);
+  }
+}
+
+function vDomToString(vdom: VNode[]): string {
+  return vdom
+    .map((vnode) => {
+      if (vnode.sel) {
+        const node = document.createElement(vnode.sel);
+        const result = patch(node, vnode);
+        return (<HTMLElement>result.elm).outerHTML;
+      } else {
+        return vnode.text;
+      }
+    })
+    .join("");
+}
+
 const UTILS: Utils = {
   zero: Symbol("zero"),
   toObj(expr) {
@@ -111,20 +131,8 @@ const UTILS: Utils = {
   addNameSpace(vnode) {
     addNS(vnode.data, vnode.children, vnode.sel);
   },
-  VDomArray: class VDomArray extends Array {},
-  vDomToString: function (vdom: VNode[]): string {
-    return vdom
-      .map((vnode) => {
-        if (vnode.sel) {
-          const node = document.createElement(vnode.sel);
-          const result = patch(node, vnode);
-          return (<HTMLElement>result.elm).outerHTML;
-        } else {
-          return vnode.text;
-        }
-      })
-      .join("");
-  },
+  VDomArray,
+  vDomToString,
   getComponent(obj) {
     while (obj && !isComponent(obj)) {
       obj = obj.__proto__;

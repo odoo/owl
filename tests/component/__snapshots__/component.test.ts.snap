@@ -1405,6 +1405,47 @@ exports[`other directives with t-component t-set outside modified in t-foreach 1
 }"
 `;
 
+exports[`props evaluation  t-set with a body expression can be used as textual prop 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__2\\"
+    let utils = this.constructor.utils;
+    let QWeb = this.constructor;
+    let parent = context;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = new utils.VDomArray();
+    c2.push({text: \`42\`});
+    scope.abc = c2
+    // Component 'Child'
+    let w3 = '__4__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__4__']] : false;
+    let props3 = {val:scope.abc};
+    if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+        w3.destroy();
+        w3 = false;
+    }
+    if (w3) {
+        w3.__updateProps(props3, extra.fiber, undefined);
+        let pvnode = w3.__owl__.pvnode;
+        c1.push(pvnode);
+    } else {
+        let componentKey3 = \`Child\`;
+        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+        if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+        w3 = new W3(parent, props3);
+        parent.__owl__.cmap['__4__'] = w3.__owl__.id;
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        c1.push(pvnode);
+        w3.__owl__.pvnode = pvnode;
+    }
+    w3.__owl__.parentLastFiberId = extra.fiber.id;
+    return vn1;
+}"
+`;
+
 exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = `
 "function anonymous(context, extra
 ) {

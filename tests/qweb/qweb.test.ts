@@ -1876,6 +1876,25 @@ describe("special cases for some boolean html attributes/properties", () => {
     );
     renderToString(qweb, "test", { flag: true });
   });
+
+  test("input with t-att-value", () => {
+    // render input with initial value
+    qweb.addTemplate("test", `<input  t-att-value="v"/>`);
+    const vnode1 = qweb.render("test", { v: "zucchini" });
+    const vnode2 = patch(document.createElement("input"), vnode1);
+    let elm = vnode2.elm as HTMLInputElement;
+    expect(elm.value).toBe("zucchini");
+
+    // change value manually in input, to simulate user input
+    elm.value = "tomato";
+    expect(elm.value).toBe("tomato");
+
+    // rerender with a different value, and patch actual dom, to check that
+    // input value was properly reset by owl
+    const vnode3 = qweb.render("test", { v: "potato" });
+    patch(vnode2, vnode3);
+    expect(elm.value).toBe("potato");
+  });
 });
 
 describe("whitespace handling", () => {

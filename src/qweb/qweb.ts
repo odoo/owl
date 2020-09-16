@@ -668,13 +668,16 @@ export class QWeb extends EventBus {
     const props: string[] = [];
     const tattrs: number[] = [];
 
-    function handleBooleanProps(key, val) {
+    function handleProperties(key, val) {
       let isProp = false;
       if (node.nodeName === "input" && key === "checked") {
         let type = (<Element>node).getAttribute("type");
         if (type === "checkbox" || type === "radio") {
           isProp = true;
         }
+      }
+      if (node.nodeName === "input" && key === "value") {
+        isProp = true;
       }
       if (node.nodeName === "option" && key === "selected") {
         isProp = true;
@@ -722,7 +725,7 @@ export class QWeb extends EventBus {
             name = '"' + name + '"';
           }
           attrs.push(`${name}: _${attID}`);
-          handleBooleanProps(name, attID);
+          handleProperties(name, attID);
         }
       }
 
@@ -759,7 +762,7 @@ export class QWeb extends EventBus {
           }
           ctx.addLine(`let _${attID} = ${formattedValue};`);
           attrs.push(`${attName}: _${attID}`);
-          handleBooleanProps(attName, attID);
+          handleProperties(attName, attID);
         }
       }
 

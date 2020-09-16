@@ -1841,7 +1841,7 @@ exports[`t-model directive on an input type=radio 1`] = `
     let _2 = 'radio';
     let _3 = 'one';
     let _4 = 'One';
-    let c5 = [], p5 = {key:5,attrs:{type: _2,id: _3,value: _4},on:{}};
+    let c5 = [], p5 = {key:5,attrs:{type: _2,id: _3,value: _4},props:{value: _4},on:{}};
     let vn5 = h('input', p5, c5);
     c1.push(vn5);
     let expr5 = scope['state'];
@@ -1851,7 +1851,7 @@ exports[`t-model directive on an input type=radio 1`] = `
     let _7 = 'radio';
     let _8 = 'two';
     let _9 = 'Two';
-    let c10 = [], p10 = {key:10,attrs:{type: _7,id: _8,value: _9},on:{}};
+    let c10 = [], p10 = {key:10,attrs:{type: _7,id: _8,value: _9},props:{value: _9},on:{}};
     let vn10 = h('input', p10, c10);
     c1.push(vn10);
     let expr10 = scope['state'];

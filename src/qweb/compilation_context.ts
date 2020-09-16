@@ -22,6 +22,7 @@ export class CompilationContext {
   shouldDefineUtils: boolean = false;
   shouldDefineRefs: boolean = false;
   shouldDefineResult: boolean = true;
+  isSubTemplate: boolean = false;
   loopNumber: number = 0;
   inPreTag: boolean = false;
   templateName: string;

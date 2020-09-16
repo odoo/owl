@@ -413,10 +413,12 @@ export class QWeb extends EventBus {
     name: string,
     elem: Element,
     parentContext?: CompilationContext,
-    defineKey?: boolean
+    defineKey?: boolean,
+    isSubTemplate?: boolean
   ): CompiledTemplate {
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new CompilationContext(name);
+    ctx.isSubTemplate = Boolean(isSubTemplate);
     if (elem.tagName !== "t") {
       ctx.shouldDefineResult = false;
     }

@@ -1502,7 +1502,6 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let _4 = scope['node'].val;
-    _4 = _4 instanceof utils.VDomArray ? utils.vDomToString(_4) : _4;
     if (_4 != null) {
         c3.push({text: _4});
     }
@@ -1582,7 +1581,6 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let _4 = scope['node'].val;
-    _4 = _4 instanceof utils.VDomArray ? utils.vDomToString(_4) : _4;
     if (_4 != null) {
         c3.push({text: _4});
     }
@@ -1664,7 +1662,6 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let _4 = scope['node'].val;
-    _4 = _4 instanceof utils.VDomArray ? utils.vDomToString(_4) : _4;
     if (_4 != null) {
         c3.push({text: _4});
     }

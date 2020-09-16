@@ -1766,7 +1766,6 @@ describe("props evaluation ", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>&lt;p&gt;4343&lt;/p&gt;<p>43</p></span></div>");
   });
-
 });
 
 describe("other directives with t-component", () => {

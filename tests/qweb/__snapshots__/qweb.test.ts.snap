@@ -1502,6 +1502,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let _4 = scope['node'].val;
+    _4 = _4 instanceof utils.VDomArray ? utils.vDomToString(_4) : _4;
     if (_4 != null) {
         c3.push({text: _4});
     }
@@ -1581,6 +1582,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let _4 = scope['node'].val;
+    _4 = _4 instanceof utils.VDomArray ? utils.vDomToString(_4) : _4;
     if (_4 != null) {
         c3.push({text: _4});
     }
@@ -1662,6 +1664,7 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let _4 = scope['node'].val;
+    _4 = _4 instanceof utils.VDomArray ? utils.vDomToString(_4) : _4;
     if (_4 != null) {
         c3.push({text: _4});
     }
@@ -1748,6 +1751,33 @@ exports[`t-call (template calling t-call with t-if 1`] = `
         this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
         scope = _origScope3;
     }
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling t-call with t-set inside and body text content 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"main\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _origScope4 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    {
+        {
+            let c__0 = [];
+            let c5 = new utils.VDomArray();
+            c5.push({text: \`yip yip\`});
+            scope.val = c5
+            scope[utils.zero] = c__0;
+        }
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+    }
+    scope = _origScope4;
     return vn1;
 }"
 `;

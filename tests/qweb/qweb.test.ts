@@ -1072,6 +1072,21 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb1, "main")).toBe("<div><span>ok</span></div>");
     expect(renderToString(qweb2, "main")).toBe("<div><span>ok</span></div>");
   });
+
+  test("t-call with t-set inside and body text content", () => {
+    qweb.addTemplate("sub", `<p><t t-esc="val"/></p>`);
+    qweb.addTemplate(
+      "main",
+      `
+      <div>
+        <t t-call="sub">
+          <t t-set="val">yip yip</t>
+        </t>
+      </div>`
+    );
+    const expected = "<div><p>yip yip</p></div>";
+    expect(renderToString(qweb, "main")).toBe(expected);
+  });
 });
 
 describe("foreach", () => {

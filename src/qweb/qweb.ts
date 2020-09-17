@@ -517,10 +517,17 @@ export class QWeb extends EventBus {
       return;
     }
 
+    if (node.tagName !== "t" && node.hasAttribute("t-call")) {
+      const tCallNode = document.createElement("t");
+      tCallNode.setAttribute("t-call", node.getAttribute("t-call")!);
+      node.removeAttribute("t-call");
+      node.prepend(tCallNode);
+    }
+
     const firstLetter = node.tagName[0];
     if (firstLetter === firstLetter.toUpperCase()) {
       // this is a component, we modify in place the xml document to change
-      // <SomeComponent ... /> to <t t-component="SomeComponent" ... />
+      // <SomeComponent ... /> to <SomeComponent t-component="SomeComponent" ... />
       node.setAttribute("t-component", node.tagName);
     } else if (node.tagName !== "t" && node.hasAttribute("t-component")) {
       throw new Error(

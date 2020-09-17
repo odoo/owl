@@ -766,10 +766,11 @@ describe("t-call (template calling", () => {
     expect(qweb.subTemplates["sub"]).toBeTruthy();
   });
 
-  test("t-call not allowed on a non t node", () => {
-    qweb.addTemplate("_basic-callee", "<t>ok</t>");
+  test("t-call allowed on a non t node", () => {
+    qweb.addTemplate("_basic-callee", "<span>ok</span>");
     qweb.addTemplate("caller", '<div t-call="_basic-callee"/>');
-    expect(() => renderToString(qweb, "caller")).toThrow("Invalid tag");
+    const expected = "<div><span>ok</span></div>";
+    expect(renderToString(qweb, "caller")).toBe(expected);
   });
 
   test("with unused body", () => {

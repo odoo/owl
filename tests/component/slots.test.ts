@@ -929,4 +929,62 @@ describe("t-slot directive", () => {
     expect(fixture.innerHTML).toBe("<div><span>dash</span></div>");
     expect(env.qweb.templates[Dialog.template].fn.toString()).toMatchSnapshot();
   });
+
+  test("slot and t-esc", async () => {
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog><t t-esc="'toph'"/></Dialog></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
+  });
+
+  test("slot and (inline) t-esc", async () => {
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog t-esc="'toph'"/></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
+  });
+
+  test("slot and t-call", async () => {
+    env.qweb.addTemplate("sokka", "<p>sokka</p>");
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog><t t-call="sokka"/></Dialog></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
+  });
+
+  test("slot and (inline) t-call", async () => {
+    env.qweb.addTemplate("sokka", "<p>sokka</p>");
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog t-call="sokka"/></div>`;
+      static components = { Dialog };
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
+  });
 });

@@ -66,8 +66,6 @@ interface QWebConfig {
 // Const/global stuff/helpers
 //------------------------------------------------------------------------------
 
-const DISABLED_TAGS = ["input", "textarea", "button", "select", "option", "optgroup"];
-
 const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
 
 const lineBreakRE = /[\r\n]/;
@@ -683,23 +681,29 @@ export class QWeb extends EventBus {
 
     function handleProperties(key, val) {
       let isProp = false;
-      if (node.nodeName === "input" && key === "checked") {
-        let type = (<Element>node).getAttribute("type");
-        if (type === "checkbox" || type === "radio") {
-          isProp = true;
-        }
-      }
-      if (node.nodeName === "input" && key === "value") {
-        isProp = true;
-      }
-      if (node.nodeName === "option" && key === "selected") {
-        isProp = true;
-      }
-      if (key === "disabled" && DISABLED_TAGS.indexOf(node.nodeName) > -1) {
-        isProp = true;
-      }
-      if ((key === "readonly" && node.nodeName === "input") || node.nodeName === "textarea") {
-        isProp = true;
+      switch (node.nodeName) {
+        case "input":
+          let type = (<Element>node).getAttribute("type");
+          if (type === "checkbox" || type === "radio") {
+            if (key === "checked" || key === "indeterminate") {
+              isProp = true;
+            }
+          }
+          if (key === "value" || key === "readonly" || key === "disabled") {
+            isProp = true;
+          }
+          break;
+        case "option":
+          isProp = key === "selected" || key === "disabled";
+          break;
+        case "textarea":
+          isProp = key === "readonly" || key === "disabled";
+          break;
+        case "button":
+        case "select":
+        case "optgroup":
+          isProp = key === "disabled";
+          break;
       }
       if (isProp) {
         props.push(`${key}: _${val}`);

@@ -68,6 +68,23 @@ describe("observer", () => {
     expect(obj.date).not.toBe(date);
   });
 
+  test("properly handle promises (i.e.: treat them like primitive values", async () => {
+    const observer = new Observer();
+    let resolved = false;
+    const prom = new Promise((r) => r());
+    const obj: any = observer.observe({ prom });
+    expect(obj.prom).toBeInstanceOf(Promise);
+
+    obj.prom.then(() => (resolved = true));
+
+    expect(observer.revNumber(obj)).toBe(1);
+
+    expect(resolved).toBe(false);
+    await Promise.resolve();
+    expect(resolved).toBe(true);
+    expect(observer.revNumber(obj)).toBe(1);
+  });
+
   test("can change values in array", () => {
     const observer = new Observer();
     const obj: any = observer.observe({ arr: [1, 2] });

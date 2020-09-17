@@ -25,7 +25,12 @@ export class Observer {
   notifyCB() {}
 
   observe<T>(value: T, parent?: any): T {
-    if (value === null || typeof value !== "object" || value instanceof Date) {
+    if (
+      value === null ||
+      typeof value !== "object" ||
+      value instanceof Date ||
+      value instanceof Promise
+    ) {
       // fun fact: typeof null === 'object'
       return value;
     }

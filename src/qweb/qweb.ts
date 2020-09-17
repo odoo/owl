@@ -86,7 +86,7 @@ interface Utils {
   [key: string]: any;
 }
 
-function isComponent(obj) {
+function isComponent(obj): boolean {
   return obj && obj.hasOwnProperty("__owl__");
 }
 

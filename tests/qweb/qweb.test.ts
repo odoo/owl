@@ -1850,7 +1850,7 @@ describe("loading templates", () => {
   });
 });
 
-describe("special cases for some boolean html attributes/properties", () => {
+describe("special cases for some specific html attributes/properties", () => {
   test("input type= checkbox, with t-att-checked", () => {
     qweb.addTemplate("test", `<input type="checkbox" t-att-checked="flag"/>`);
     const result = renderToString(qweb, "test", { flag: true });
@@ -1895,6 +1895,14 @@ describe("special cases for some boolean html attributes/properties", () => {
     const vnode3 = qweb.render("test", { v: "potato" });
     patch(vnode2, vnode3);
     expect(elm.value).toBe("potato");
+  });
+
+  test("input of type checkbox with t-att-indeterminate", () => {
+    qweb.addTemplate("test", `<input type="checkbox" t-att-indeterminate="v"/>`);
+    const vnode1 = qweb.render("test", { v: true });
+    const vnode2 = patch(document.createElement("input"), vnode1);
+    let elm = vnode2.elm as HTMLInputElement;
+    expect(elm.indeterminate).toBe(true);
   });
 });
 

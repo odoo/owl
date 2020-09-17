@@ -1732,6 +1732,24 @@ exports[`t-call (template calling scoped parameters 1`] = `
 }"
 `;
 
+exports[`t-call (template calling t-call allowed on a non t node 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"caller\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _origScope3 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
+    scope = _origScope3;
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling t-call with t-if 1`] = `
 "function anonymous(context, extra
 ) {

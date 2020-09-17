@@ -223,9 +223,6 @@ QWeb.addDirective({
     // ------------------------------------------------
     ctx.rootContext.shouldDefineScope = true;
     ctx.rootContext.shouldDefineUtils = true;
-    if (node.nodeName !== "t") {
-      throw new Error("Invalid tag for t-call directive (should be 't')");
-    }
     const subTemplate = node.getAttribute("t-call")!;
     const nodeTemplate = qweb.templates[subTemplate];
     if (!nodeTemplate) {

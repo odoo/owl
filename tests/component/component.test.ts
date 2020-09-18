@@ -3258,6 +3258,46 @@ describe("t-model directive", () => {
     expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
   });
 
+  test("basic use, on an input with bracket expression", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model="state['text']"/>
+          <span><t t-esc="state.text"/></span>
+        </div>`;
+      state = useState({ text: "" });
+    }
+    const comp = new SomeComponent();
+    await comp.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "test");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+    expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("throws if invalid expression", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model="state"/>
+        </div>`;
+      state = useState({ text: "" });
+    }
+    const comp = new SomeComponent();
+    let error;
+    try {
+      await comp.mount(fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(`Invalid t-model expression: "state" (it should be assignable)`);
+  });
+
   test("basic use, on another key in component", async () => {
     env.qweb.addTemplates(`
     <templates>
@@ -3544,6 +3584,28 @@ describe("t-model directive", () => {
     expect(comp.state[1].f).toBe(true);
     expect(comp.state[0].f).toBe(false);
     expect(comp.state[2].f).toBe(false);
+    expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
+  });
+
+  test("in a t-foreach, part 2", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="state" t-as="thing" t-key="thing_index" >
+            <input t-model="state[thing_index]"/>
+          </t>
+        </div>
+      `;
+      state = useState(["zuko", "iroh"]);
+    }
+    const comp = new SomeComponent();
+    await comp.mount(fixture);
+    expect(comp.state).toEqual(["zuko", "iroh"]);
+
+    const input = fixture.querySelectorAll("input")[1]!;
+    input.value = "uncle iroh";
+    input.dispatchEvent(new Event("input"));
+    expect(comp.state).toEqual(["zuko", "uncle iroh"]);
     expect(env.qweb.templates[SomeComponent.template].fn.toString()).toMatchSnapshot();
   });
 

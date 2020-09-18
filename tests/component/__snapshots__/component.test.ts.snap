@@ -1732,6 +1732,33 @@ exports[`t-model directive basic use, on an input 1`] = `
 }"
 `;
 
+exports[`t-model directive basic use, on an input with bracket expression 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2,on:{}};
+    let vn2 = h('input', p2, c2);
+    c1.push(vn2);
+    let expr2 = scope['state'];
+    let exprKey2 = 'text';
+    p2.props = {value: expr2[exprKey2]};
+    extra.handlers['__3__'] = extra.handlers['__3__'] || ((ev) => {expr2[exprKey2] = ev.target.value});
+    p2.on['input'] = extra.handlers['__3__'];
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('span', p4, c4);
+    c1.push(vn4);
+    let _5 = scope['state'].text;
+    if (_5 != null) {
+        c4.push({text: _5});
+    }
+    return vn1;
+}"
+`;
+
 exports[`t-model directive basic use, on another key in component 1`] = `
 "function anonymous(context, extra
 ) {
@@ -1792,6 +1819,46 @@ exports[`t-model directive in a t-foreach 1`] = `
         p7.props = {checked: expr7.f};
         extra.handlers[k8] = extra.handlers[k8] || ((ev) => {expr7.f = ev.target.checked});
         p7.on['input'] = extra.handlers[k8];
+    }
+    scope = _origScope5;
+    return vn1;
+}"
+`;
+
+exports[`t-model directive in a t-foreach, part 2 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['state'];
+    if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
+    let _3 = _4 = _2;
+    if (!(_2 instanceof Array)) {
+        _3 = Object.keys(_2);
+        _4 = Object.values(_2);
+    }
+    let _length3 = _3.length;
+    let _origScope5 = scope;
+    scope = Object.create(scope);
+    for (let i1 = 0; i1 < _length3; i1++) {
+        scope.thing_first = i1 === 0
+        scope.thing_last = i1 === _length3 - 1
+        scope.thing_index = i1
+        scope.thing = _3[i1]
+        scope.thing_value = _4[i1]
+        let key1 = scope['thing_index'];
+        let c6 = [], p6 = {key:\`\${key1}_6\`,on:{}};
+        let vn6 = h('input', p6, c6);
+        c1.push(vn6);
+        let expr6 = scope['state'];
+        let exprKey6 = scope['thing_index'];
+        let k7 = \`__7__\${key1}__\`;
+        p6.props = {value: expr6[exprKey6]};
+        extra.handlers[k7] = extra.handlers[k7] || ((ev) => {expr6[exprKey6] = ev.target.value});
+        p6.on['input'] = extra.handlers[k7];
     }
     scope = _origScope5;
     return vn1;

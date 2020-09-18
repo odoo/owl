@@ -262,6 +262,9 @@ QWeb.utils.toNumber = function (val: string): number | string {
   return isNaN(n) ? val : n;
 };
 
+const hasDotAtTheEnd = /\.[\w_]+\s*$/;
+const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
+
 QWeb.addDirective({
   name: "model",
   priority: 42,
@@ -270,15 +273,41 @@ QWeb.addDirective({
     let handler;
     let event = fullName.includes(".lazy") ? "change" : "input";
 
-    // we keep here a reference to the "base expression" (if the expression
-    // is `t-model="some.expr.value", then the base expression is "some.expr").
-    // This is necessary so we can capture it in the handler closure.
-    let expr = ctx.formatExpression(value);
-    const index = expr.lastIndexOf(".");
-    const baseExpr = expr.slice(0, index);
-    ctx.addLine(`let expr${nodeID} = ${baseExpr};`);
+    // First step: we need to understand the structure of the expression, and
+    // from it, extract a base expression (that we can capture, which is
+    // important because it will be used in a handler later) and a formatted
+    // expression (which uses the captured base expression)
+    //
+    // Also, we support 2 kinds of values: some.expr.value or some.expr[value]
+    // For the first one, we have:
+    // - base expression = scope[some].expr
+    // - expression = exprX.value (where exprX is the var that captures the base expr)
+    // and for the expression with brackets:
+    // - base expression = scope[some].expr
+    // - expression = exprX[keyX] (where exprX is the var that captures the base expr
+    //        and keyX captures scope[value])
+    let expr: string;
+    let baseExpr: string;
 
-    expr = `expr${nodeID}.${expr.slice(index + 1)}`;
+    if (hasDotAtTheEnd.test(value)) {
+      // we manage the case where the expr has a dot: some.expr.value
+      const index = value.lastIndexOf(".");
+      baseExpr = value.slice(0, index);
+      ctx.addLine(`let expr${nodeID} = ${ctx.formatExpression(baseExpr)};`);
+      expr = `expr${nodeID}${value.slice(index)}`;
+    } else if (hasBracketsAtTheEnd.test(value)) {
+      // we manage here the case where the expr ends in a bracket expression:
+      //    some.expr[value]
+      const index = value.lastIndexOf("[");
+      baseExpr = value.slice(0, index);
+      ctx.addLine(`let expr${nodeID} = ${ctx.formatExpression(baseExpr)};`);
+      let exprKey = value.trimRight().slice(index + 1, -1);
+      ctx.addLine(`let exprKey${nodeID} = ${ctx.formatExpression(exprKey)};`);
+      expr = `expr${nodeID}[exprKey${nodeID}]`;
+    } else {
+      throw new Error(`Invalid t-model expression: "${value}" (it should be assignable)`);
+    }
+
     const key = ctx.generateTemplateKey();
     if (node.tagName === "select") {
       ctx.addLine(`p${nodeID}.props = {value: ${expr}};`);

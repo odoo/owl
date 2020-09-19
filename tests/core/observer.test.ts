@@ -1,6 +1,9 @@
 import { Observer } from "../../src/core/observer";
 import { nextMicroTick } from "../helpers";
 
+// disable warning because observer is deprecated
+console.warn = () => {};
+
 describe("observer", () => {
   test("properly observe objects", () => {
     const observer = new Observer();

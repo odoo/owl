@@ -1,7 +1,7 @@
 import { Component } from "./component/component";
 import { scheduler } from "./component/scheduler";
 import { EventBus } from "./core/event_bus";
-import { Observer } from "./core/observer";
+import { observe } from "./core/reactivity";
 
 /**
  * The `Context` object provides a way to share data between an arbitrary number
@@ -37,15 +37,13 @@ function partitionBy<T>(arr: T[], fn: (t: T) => boolean) {
 
 export class Context extends EventBus {
   state: any;
-  observer: Observer;
   rev: number = 1;
   // mapping from component id to last observed context id
   mapping: { [componentId: number]: number } = {};
 
   constructor(state: Object = {}) {
     super();
-    this.observer = new Observer();
-    this.observer.notifyCB = () => {
+    this.state = observe(state, () => {
       // notify components in the next microtask tick to ensure that subscribers
       // are notified only once for all changes that occur in the same micro tick
       let rev = this.rev;
@@ -54,8 +52,7 @@ export class Context extends EventBus {
           this.__notifyComponents();
         }
       });
-    };
-    this.state = this.observer.observe(state);
+    });
     this.subscriptions.update = [];
   }
 
@@ -111,15 +108,11 @@ export function useContextWithCB(ctx: Context, component: Component, method): an
   if (id in mapping) {
     return ctx.state;
   }
-  if (!__owl__.observer) {
-    __owl__.observer = new Observer();
-    __owl__.observer.notifyCB = component.render.bind(component);
-  }
-  const currentCB = __owl__.observer.notifyCB;
-  __owl__.observer.notifyCB = function () {
+  const currentCB = __owl__.render;
+  __owl__.render = function () {
     if (ctx.rev > mapping[id]) {
       // in this case, the context has been updated since we were rendering
-      // last, and we do not need to render here with the observer. A
+      // last, and we do not need to render here. A
       // rendering is coming anyway, with the correct props.
       return;
     }

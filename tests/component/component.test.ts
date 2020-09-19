@@ -3152,34 +3152,6 @@ describe("widget and observable state", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>beer</div>");
   });
-
-  test("subcomponents cannot change observable state received from parent", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
-    env.qweb.addTemplate("Parent", `<div><Child obj="state.obj"/></div>`);
-    class Child extends Component {
-      static template = xml`<div/>`;
-      constructor(parent, props) {
-        super(parent, props);
-        props.obj.coffee = 2;
-      }
-    }
-    class Parent extends Component {
-      state = useState({ obj: { coffee: 1 } });
-      static components = { Child };
-    }
-    const parent = new Parent();
-    let error;
-    try {
-      await parent.mount(fixture);
-    } catch (e) {
-      error = e;
-    }
-    expect(error).toBeDefined();
-    expect(error.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
-  });
 });
 
 describe("can deduce template from name", () => {

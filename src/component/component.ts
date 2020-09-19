@@ -1,4 +1,3 @@
-import { Observer } from "../core/observer";
 import { OwlEvent } from "../core/owl_event";
 import { CompiledTemplate, QWeb } from "../qweb/index";
 import { patch, VNode } from "../vdom/index";
@@ -79,7 +78,7 @@ interface Internal<T extends Env> {
   scope: any;
 
   boundHandlers: { [key: number]: any };
-  observer: Observer | null;
+  render: () => void;
   renderFn: CompiledTemplate;
   mountedCB: Function | null;
   willUnmountCB: Function | null;
@@ -199,7 +198,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       patchedCB: null,
       willStartCB: null,
       willUpdatePropsCB: null,
-      observer: null,
+      render: () => this.render(),
       renderFn: qweb.render.bind(qweb, template),
       classObj: null,
       refs: null,
@@ -642,9 +641,6 @@ export class Component<Props extends {} = any, T extends Env = Env> {
 
   __render(fiber: Fiber) {
     const __owl__ = this.__owl__;
-    if (__owl__.observer) {
-      __owl__.observer.allowMutations = false;
-    }
     let error;
     try {
       let vnode = __owl__.renderFn!(this, {
@@ -693,9 +689,6 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       }
     } catch (e) {
       error = e;
-    }
-    if (__owl__.observer) {
-      __owl__.observer.allowMutations = true;
     }
 
     fiber.root.counter--;

@@ -69,7 +69,7 @@ This example shows how a component should be defined: it simply subclasses the
 Component class. If no static `template` key is defined, then
 Owl will use the component's name as template name. Here,
 a state object is defined, by using the `useState` hook. It is not mandatory to use the state object, but it is certainly encouraged. The result of the `useState` call is
-[observed](observer.md), and any change to it will cause a rerendering.
+[observed](reactivity.md), and any change to it will cause a rerendering.
 
 ## Reference
 
@@ -85,7 +85,7 @@ find a template with the component name (or one of its ancestors).
 ### Reactive system
 
 OWL components are normal javascript classes. So, changing a component internal
-state does nothing more:
+state does not update the component:
 
 ```js
 class Counter extends Component {
@@ -113,10 +113,10 @@ However, it may be simple in this case, but it quickly become cumbersome, as a
 component get more complex, and its internal state is modified by more than one
 method.
 
-A better way is to use the reactive system: by using the `useState` hook (see the
+A better way is to use the [reactive](reactivity.md) system: by using the `useState` hook (see the
 [hooks](hooks.md) section for more details), one can make Owl react to state
 changes. The `useState` hook generates a proxy version of an object
-(this is done by an [observer](observer.md)), which allows the component to
+(this is done by the [observe function](reactivity.md)), which allows the component to
 react to any change. So, the `Counter` example above can be improved like this:
 
 ```js
@@ -132,27 +132,7 @@ class Counter extends Component {
 }
 ```
 
-Obviously, we can call the `useState` hook more than once:
-
-```js
-const { useState } = owl.hooks;
-
-class Counter extends Component {
-  static template = xml`
-      <div>
-        <span t-on-click="increment(counter1)"><t t-esc="counter1.value"/></span>
-        <span t-on-click="increment(counter2)"><t t-esc="counter2.value"/></span>
-      </div>`;
-  counter1 = useState({ value: 0 });
-  counter2 = useState({ value: 0 });
-
-  increment(counter) {
-    counter.value++;
-  }
-}
-```
-
-Note that hooks are subject to one important [rule](hooks.md#one-rule): they need
+Remember that [hooks](hooks.md) are subject to one important [rule](hooks.md#one-rule): they need
 to be called in the constructor.
 
 ### Properties

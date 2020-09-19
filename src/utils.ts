@@ -101,3 +101,11 @@ export function shallowEqual(p1, p2): boolean {
   }
   return true;
 }
+
+const messages = new Set();
+export function deprecated(msg: string) {
+  if (!messages.has(msg)) {
+    console.warn(msg);
+    messages.add(msg);
+  }
+}

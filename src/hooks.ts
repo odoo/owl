@@ -1,5 +1,5 @@
 import { Component } from "./component/component";
-import { Observer } from "./core/observer";
+import { observe } from "./core/reactivity";
 
 /**
  * Owl Hook System
@@ -23,12 +23,7 @@ import { Observer } from "./core/observer";
  */
 export function useState<T>(state: T): T {
   const component: Component = Component.current!;
-  const __owl__ = component.__owl__;
-  if (!__owl__.observer) {
-    __owl__.observer = new Observer();
-    __owl__.observer.notifyCB = component.render.bind(component);
-  }
-  return __owl__.observer.observe(state);
+  return observe(state, component.__owl__.render);
 }
 
 // -----------------------------------------------------------------------------

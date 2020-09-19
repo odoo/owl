@@ -6,6 +6,7 @@
  */
 import { EventBus } from "./core/event_bus";
 import { Observer } from "./core/observer";
+import { observe, unobserve } from "./core/reactivity";
 import { QWeb } from "./qweb/index";
 import { config } from "./config";
 import * as _store from "./store";
@@ -25,7 +26,7 @@ export { config };
 
 export const Context = _context.Context;
 export const useState = _hooks.useState;
-export const core = { EventBus, Observer };
+export const core = { EventBus, Observer, observe, unobserve };
 export const router = { Router, RouteComponent, Link };
 export const Store = _store.Store;
 export const utils = _utils;

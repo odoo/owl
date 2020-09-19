@@ -101,5 +101,5 @@ to context state changes. The `useContext` method returns the context state:
 device = useContext(this.env.deviceContext);
 ```
 
-It is a simple observed state (with an owl `Observer`), which contains the shared
+It is a simple observed state (with the help of the [`observe`` function](reactivity.md#observe)), which contains the shared
 information.

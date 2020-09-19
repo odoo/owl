@@ -69,9 +69,9 @@ whenever its state is changed. Note that these events are triggered only after a
 microtask tick, so only one event will be triggered for any number of state changes in a
 call stack.
 
-Also, it is important to mention that the state is observed (with an `owl.Observer`),
-which is the reason why it is able to know if it was changed. See the
-[Observer](observer.md)'s documentation for more details.
+Also, it is important to mention that the state is observed (with the `observe`
+function), which is the reason why it is able to know if it was changed. See the
+[reactivity page](reactivity.md) for more details.
 
 The `Store` class is quite small. It has two public methods:
 

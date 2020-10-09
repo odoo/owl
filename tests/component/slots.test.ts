@@ -987,4 +987,69 @@ describe("t-slot directive", () => {
 
     expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
   });
+
+  test("named slot inside slot", async () => {
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <t t-slot="brol"/>
+          <t t-slot="default"/>
+        </div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-set-slot="brol">
+              <p>A<t t-esc="value"/></p>
+            </t>
+            <Child>
+              <t t-set-slot="brol">
+                <p>B<t t-esc="value"/></p>
+              </t>
+            </Child>
+          </Child>
+        </div>`;
+      static components = { Child };
+      value = "blip";
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
+  });
+
+  test("named slots inside slot, again", async () => {
+    class Child extends Component {
+      static template = xml`
+        <child>
+          <t t-slot="brol1">default1</t>
+          <t t-slot="brol2">default2</t>
+          <t t-slot="default"/>
+        </child>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-set-slot="brol1">
+              <p>A<t t-esc="value"/></p>
+            </t>
+            <Child>
+              <t t-set-slot="brol2">
+                <p>B<t t-esc="value"/></p>
+              </t>
+            </Child>
+          </Child>
+        </div>`;
+      static components = { Child };
+      value = "blip";
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><child><p>Ablip</p>default2<child>default1<p>Bblip</p></child></child></div>"
+    );
+  });
 });

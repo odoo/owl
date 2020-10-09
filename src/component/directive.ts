@@ -400,7 +400,6 @@ QWeb.addDirective({
 
     if (hasSlots) {
       const clone = <Element>node.cloneNode(true);
-      const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
 
       // The next code is a fallback for compatibility reason. It accepts t-set
       // elements that are direct children with a non empty body as nodes defining
@@ -410,26 +409,43 @@ QWeb.addDirective({
       // code using slots. This will be removed in v2.0 someday. Meanwhile,
       // please use t-set-slot everywhere you need to set the content of a
       // slot.
-      for (let el of clone.children) {
-        if (el.getAttribute("t-set") && el.hasChildNodes()) {
-          slotNodes.push(el);
+      for (let node of clone.children) {
+        if (node.hasAttribute("t-set") && node.hasChildNodes()) {
+          node.setAttribute("t-set-slot", node.getAttribute("t-set")!);
+          node.removeAttribute("t-set");
         }
       }
+      const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
+      const slotNames = new Set<string>();
       const slotId = QWeb.nextSlotId++;
       ctx.addLine(`w${componentID}.__owl__.slotId = ${slotId};`);
       if (slotNodes.length) {
         for (let i = 0, length = slotNodes.length; i < length; i++) {
           const slotNode = slotNodes[i];
-          slotNode.parentElement!.removeChild(slotNode);
-          let key = slotNode.getAttribute("t-set-slot")!;
-          slotNode.removeAttribute("t-set-slot");
-
-          // here again, this code should be removed when we stop supporting
-          // using t-set to define the content of named slots.
-          if (!key) {
-            key = slotNode.getAttribute("t-set")!;
-            slotNode.removeAttribute("t-set");
+          // check if this is defined in a sub component (in which case it should
+          // be ignored)
+          let el = slotNode.parentElement;
+          let isInSubComponent = false;
+          while (el !== clone) {
+            if (
+              el!.hasAttribute("t-component") ||
+              el!.tagName[0] === el!.tagName[0].toUpperCase()
+            ) {
+              isInSubComponent = true;
+              break;
+            }
           }
+          if (isInSubComponent) {
+            continue;
+          }
+          let key = slotNode.getAttribute("t-set-slot")!;
+          if (slotNames.has(key)) {
+            continue;
+          }
+          slotNames.add(key);
+          slotNode.removeAttribute("t-set-slot");
+          slotNode.parentElement!.removeChild(slotNode);
+
           const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
           QWeb.slots[`${slotId}_${key}`] = slotFn;
         }

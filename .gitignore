@@ -27,3 +27,5 @@ node_modules
 /tools/owl.js
 
 release-notes.md
+
+.rpt2_cache

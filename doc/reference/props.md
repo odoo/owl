@@ -18,7 +18,7 @@ class Child extends Component {
 }
 
 class Parent extends Component {
-  static template = xml`<div><ComponentA a="state.a" b="'string'"/></div>`;
+  static template = xml`<div><Child a="state.a" b="'string'"/></div>`;
   static components = { Child };
   state = useState({ a: "fromparent" });
 }

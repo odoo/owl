@@ -53,8 +53,12 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -70,8 +74,12 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
         if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
         let _7 = _8 = _6;
         if (!(_6 instanceof Array)) {
-            _7 = Object.keys(_6);
-            _8 = Object.values(_6);
+            if (typeof _6[Symbol.iterator] === 'function') {
+                _7 = [..._6];
+            } else {
+                _7 = Object.keys(_6);
+                _8 = Object.values(_6);
+            }
         }
         let _length7 = _7.length;
         let _origScope9 = scope;
@@ -272,8 +280,12 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -558,8 +570,12 @@ exports[`other directives with t-component t-on expression captured in t-foreach
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -600,8 +616,12 @@ exports[`other directives with t-component t-on expression in t-foreach 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -652,8 +672,12 @@ exports[`other directives with t-component t-on expression in t-foreach with t-s
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -705,8 +729,12 @@ exports[`other directives with t-component t-on method call in t-foreach 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -1371,8 +1399,12 @@ exports[`other directives with t-component t-set outside modified in t-foreach 1
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -1521,8 +1553,12 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -1797,8 +1833,12 @@ exports[`t-model directive in a t-foreach 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;
@@ -1837,8 +1877,12 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
     let _3 = _4 = _2;
     if (!(_2 instanceof Array)) {
-        _3 = Object.keys(_2);
-        _4 = Object.values(_2);
+        if (typeof _2[Symbol.iterator] === 'function') {
+            _3 = [..._2];
+        } else {
+            _3 = Object.keys(_2);
+            _4 = Object.values(_2);
+        }
     }
     let _length3 = _3.length;
     let _origScope5 = scope;

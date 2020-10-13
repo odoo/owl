@@ -348,8 +348,12 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
     let _4 = _5 = _3;
     if (!(_3 instanceof Array)) {
-        _4 = Object.keys(_3);
-        _5 = Object.values(_3);
+        if (typeof _3[Symbol.iterator] === 'function') {
+            _4 = [..._3];
+        } else {
+            _4 = Object.keys(_3);
+            _5 = Object.values(_3);
+        }
     }
     let _length4 = _4.length;
     let _origScope6 = scope;
@@ -445,8 +449,12 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
     let _4 = _5 = _3;
     if (!(_3 instanceof Array)) {
-        _4 = Object.keys(_3);
-        _5 = Object.values(_3);
+        if (typeof _3[Symbol.iterator] === 'function') {
+            _4 = [..._3];
+        } else {
+            _4 = Object.keys(_3);
+            _5 = Object.values(_3);
+        }
     }
     let _length4 = _4.length;
     let _origScope6 = scope;

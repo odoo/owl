@@ -1263,6 +1263,44 @@ describe("foreach", () => {
     );
     console.warn = consoleWarn;
   });
+
+  test('t-foreach supports custom iterators', () => {
+    qweb.addTemplate(
+      "test",
+      `
+      <div>
+        <t t-foreach="iterator" t-as="item">
+          <t t-esc="item"/>
+        </t>
+    </div>`
+    );
+
+    let iterator: any = [1, 2, 3];
+    let result = trim(renderToString(qweb, "test", { iterator } ));
+    let expected = `<div>123</div>`;
+    expect(result).toBe(expected);
+    
+    iterator = { 1: 1, 2: 2, 3:3 };
+    result = trim(renderToString(qweb, "test", { iterator } ));
+    expected = `<div>123</div>`;
+    expect(result).toBe(expected);
+    
+    iterator = new Set([1, 2, 3]);
+    result = trim(renderToString(qweb, "test", { iterator } ));
+    expected = `<div>123</div>`;
+    expect(result).toBe(expected);
+      
+    iterator = {}
+    iterator[Symbol.iterator] = function* () {
+      yield 1;
+      yield 2;
+      yield 3;
+    }
+    result = trim(renderToString(qweb, "test", { iterator } ));
+    expected = `<div>123</div>`;
+    expect(result).toBe(expected);
+  });
+
 });
 
 describe("misc", () => {

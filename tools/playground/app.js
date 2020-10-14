@@ -206,8 +206,13 @@ class Editor extends owl.Component {
         currentExtension: 'js', 
         js: this.props.js,
         css: this.props.css,
-        xml: this.props.xml
+        xml: this.props.xml,
+        
     })
+
+    jsModel =  null;
+    cssModel =  null;
+    xmlModel =  null;
 
     editor = null;
 
@@ -216,6 +221,11 @@ class Editor extends owl.Component {
         this.state.js = nextProps.js;
         this.state.css = nextProps.css;
         this.state.xml = nextProps.xml;
+        
+        this.jsModel = null;
+        this.cssModel = null;
+        this.xmlModel = null;
+
         this._openFile(this.state.currentExtension, false) 
     }
 
@@ -230,24 +240,69 @@ class Editor extends owl.Component {
 
     _openFile(extension, save = true) {
         if (save) this._saveCodeState();
+
         this.state.currentExtension = extension;
-        let language = 'javascript';
-        switch (extension) {
-            case 'xml':
-                language = 'xml';
-                break;
-            case 'css':
-                language = 'css';
-                break;
+        let language = null;
+        let model = null;
+
+        if (extension === 'js') {
+            console.log("here")
+
+            if (this.jsModel) {
+                model = this.jsModel;
+            }
+
+            else {
+                language = 'javascript'
+            }
         }
 
-        const model = monaco.editor.createModel(
-            this.state[this.state.currentExtension],
-            language,
-            null
-        )
+        if (extension === 'xml') {
+
+            if (this.xmlModel) {
+                model = this.xmlModel;
+            }
+
+            else {
+                language = 'xml'
+            }
+        }
+
+        if (extension === 'css') {
+
+            if (this.cssModel) {
+                model = this.cssModel;
+            }
+
+            else {
+                language = 'css'
+            }
+        }
+
+        console.log(model)
+
+        if (!model) {
+            model = monaco.editor.createModel(
+                this.state[this.state.currentExtension],
+                language,
+                null
+            )
+
+            if (extension === 'js') {
+                this.jsModel = model;
+            }
+    
+            if (extension === 'xml') {
+               this.xmlModel = model;
+            }
+    
+            if (extension === 'css') {
+                this.cssModel = model;
+            }
+        }
 
         this.editor.setModel(model)
+
     }
 
     mounted() {

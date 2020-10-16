@@ -14,9 +14,9 @@ URL = 'http://{0}:{1}/tools'.format(HOST, PORT)
 # With this, we can simply copy the playground folder as is in the gh-page when
 # we want to update the playground.
 class OWLHandler(SimpleHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self): 
         if self.path == '/tools/owl.js':
-            self.path = '/dist/owl.js'
+            self.path = '/dist/owl.iife.js'
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def end_headers(self):

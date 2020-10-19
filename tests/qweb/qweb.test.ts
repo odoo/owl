@@ -238,6 +238,13 @@ describe("t-raw", () => {
       "<span><span>hello</span><ok>world</ok></span>"
     );
   });
+
+  test("t-raw with comment", () => {
+    qweb.addTemplate("test", `<span><t t-raw="var"/></span>`);
+    expect(renderToString(qweb, "test", { var: "<p>text<!-- top secret --></p>" })).toBe(
+      "<span><p>text<!-- top secret --></p></span>"
+    );
+  });
 });
 
 describe("t-set", () => {

@@ -1096,6 +1096,13 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb, "main")).toBe(expected);
   });
 
+  test("t-call with body content as root of a template", () => {
+    qweb.addTemplate("antony", `<foo><t t-raw="0"/></foo>`);
+    qweb.addTemplate("main", `<t><t t-call="antony"><p>antony</p></t></t>`);
+    const expected = "<foo><p>antony</p></foo>";
+    expect(renderToString(qweb, "main")).toBe(expected);
+  });
+
   test("dynamic t-call", () => {
     qweb.addTemplate("foo", `<foo><t t-esc="val"/></foo>`);
     qweb.addTemplate("bar", `<bar><t t-esc="val"/></bar>`);

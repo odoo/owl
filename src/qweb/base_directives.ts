@@ -235,7 +235,7 @@ QWeb.addDirective({
     if (!subId) {
       subId = QWeb.nextId++;
       qweb.subTemplates[subTemplate] = subId;
-      const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx, true);
+      const subTemplateFn = qweb._compile(subTemplate, { hasParent: true, defineKey: true });
       QWeb.subTemplates[subId] = subTemplateFn;
     }
 

@@ -534,11 +534,11 @@ exports[`other directives with t-component slot setted value (with t-set) not ac
         w3.__owl__.pvnode = pvnode;
     }
     w3.__owl__.parentLastFiberId = extra.fiber.id;
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('p', p5, c5);
-    c1.push(vn5);
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('p', p6, c6);
+    c1.push(vn6);
     if (scope.iter != null) {
-        c5.push({text: scope.iter});
+        c6.push({text: scope.iter});
     }
     return vn1;
 }"
@@ -1253,16 +1253,16 @@ exports[`other directives with t-component t-set can't alter from within callee 
     if (scope.iter != null) {
         c2.push({text: scope.iter});
     }
-    let _origScope4 = scope;
+    let _origScope6 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
-    scope = _origScope4;
-    let c6 = [], p6 = {key:6};
-    let vn6 = h('p', p6, c6);
-    c1.push(vn6);
+    this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
+    scope = _origScope6;
+    let c8 = [], p8 = {key:8};
+    let vn8 = h('p', p8, c8);
+    c1.push(vn8);
     if (scope.iter != null) {
-        c6.push({text: scope.iter});
+        c8.push({text: scope.iter});
     }
     return vn1;
 }"
@@ -1284,7 +1284,7 @@ exports[`other directives with t-component t-set can't alter in t-call body 1`] 
     if (scope.iter != null) {
         c2.push({text: scope.iter});
     }
-    let _origScope4 = scope;
+    let _origScope6 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
@@ -1293,14 +1293,14 @@ exports[`other directives with t-component t-set can't alter in t-call body 1`] 
             utils.getScope(scope, 'iter').iter = 'inCall';
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+        this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
     }
-    scope = _origScope4;
-    let c6 = [], p6 = {key:6};
-    let vn6 = h('p', p6, c6);
-    c1.push(vn6);
+    scope = _origScope6;
+    let c8 = [], p8 = {key:8};
+    let vn8 = h('p', p8, c8);
+    c1.push(vn8);
     if (scope.iter != null) {
-        c6.push({text: scope.iter});
+        c8.push({text: scope.iter});
     }
     return vn1;
 }"
@@ -1455,11 +1455,11 @@ exports[`random stuff/miscellaneous can inject values in tagged templates 1`] = 
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope4 = scope;
+    let _origScope5 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['3'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
-    scope = _origScope4;
+    this.constructor.subTemplates['3'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -1574,15 +1574,15 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
     // Template name: \\"sub\\"
     let utils = this.constructor.utils;
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
-    let c2 = [], p2 = {key:\`\${key0}_2\`,on:{}};
-    let vn2 = h('p', p2, c2);
-    c1.push(vn2);
-    let k3 = \`click__3__\${key0}__\`;
-    extra.handlers[k3] = extra.handlers[k3] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
-    p2.on['click'] = extra.handlers[k3];
-    c2.push({text: \`lucas\`});
+    let c3 = [], p3 = {key:\`\${key0}_3\`,on:{}};
+    let vn3 = h('p', p3, c3);
+    c2.push(vn3);
+    let k4 = \`click__4__\${key0}__\`;
+    extra.handlers[k4] = extra.handlers[k4] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](e);};
+    p3.on['click'] = extra.handlers[k4];
+    c3.push({text: \`lucas\`});
 }"
 `;
 
@@ -1593,14 +1593,14 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
-    let c2 = [], p2 = {key:\`\${key0}_2\`,on:{}};
-    let vn2 = h('p', p2, c2);
-    c1.push(vn2);
-    let args3 = [scope['a']];
-    p2.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](...args3, e);};
-    c2.push({text: \`lucas\`});
+    let c3 = [], p3 = {key:\`\${key0}_3\`,on:{}};
+    let vn3 = h('p', p3, c3);
+    c2.push(vn3);
+    let args4 = [scope['a']];
+    p3.on['click'] = function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['update'](...args4, e);};
+    c3.push({text: \`lucas\`});
 }"
 `;
 
@@ -1613,32 +1613,32 @@ exports[`t-call parent is set within t-call 1`] = `
     let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
     // Component 'Child'
-    let k3 = \`__3__\${key0}__\`;
-    let w2 = k3 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k3]] : false;
-    let props2 = {};
-    if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
-        w2.destroy();
-        w2 = false;
+    let k4 = \`__4__\${key0}__\`;
+    let w3 = k4 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k4]] : false;
+    let props3 = {};
+    if (w3 && w3.__owl__.currentFiber && !w3.__owl__.vnode) {
+        w3.destroy();
+        w3 = false;
     }
-    if (w2) {
-        w2.__updateProps(props2, extra.fiber, undefined);
-        let pvnode = w2.__owl__.pvnode;
-        c1.push(pvnode);
+    if (w3) {
+        w3.__updateProps(props3, extra.fiber, undefined);
+        let pvnode = w3.__owl__.pvnode;
+        c2.push(pvnode);
     } else {
-        let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
-        if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
-        w2 = new W2(parent, props2);
-        parent.__owl__.cmap[k3] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
-        let pvnode = h('dummy', {key: k3, hook: {remove() {},destroy(vn) {w2.destroy();}}});
-        c1.push(pvnode);
-        w2.__owl__.pvnode = pvnode;
+        let componentKey3 = \`Child\`;
+        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+        if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
+        w3 = new W3(parent, props3);
+        parent.__owl__.cmap[k4] = w3.__owl__.id;
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; });
+        let pvnode = h('dummy', {key: k4, hook: {remove() {},destroy(vn) {w3.destroy();}}});
+        c2.push(pvnode);
+        w3.__owl__.pvnode = pvnode;
     }
-    w2.__owl__.parentLastFiberId = extra.fiber.id;
+    w3.__owl__.parentLastFiberId = extra.fiber.id;
 }"
 `;
 

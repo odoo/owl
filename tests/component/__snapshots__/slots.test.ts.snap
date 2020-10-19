@@ -44,23 +44,23 @@ exports[`t-slot directive can define and call slots 2`] = `
 ) {
     // Template name: \\"Dialog\\"
     let h = this.h;
-    let c6 = [], p6 = {key:6};
-    let vn6 = h('div', p6, c6);
-    let c7 = [], p7 = {key:7};
-    let vn7 = h('div', p7, c7);
-    c6.push(vn7);
-    const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
-    if (slot8) {
-        slot8.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c7, parent: extra.parent || context}));
-    }
     let c9 = [], p9 = {key:9};
     let vn9 = h('div', p9, c9);
-    c6.push(vn9);
-    const slot10 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
-    if (slot10) {
-        slot10.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c9, parent: extra.parent || context}));
+    let c10 = [], p10 = {key:10};
+    let vn10 = h('div', p10, c10);
+    c9.push(vn10);
+    const slot11 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
+    if (slot11) {
+        slot11.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c10, parent: extra.parent || context}));
     }
-    return vn6;
+    let c12 = [], p12 = {key:12};
+    let vn12 = h('div', p12, c12);
+    c9.push(vn12);
+    const slot13 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
+    if (slot13) {
+        slot13.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c12, parent: extra.parent || context}));
+    }
+    return vn9;
 }"
 `;
 
@@ -69,11 +69,11 @@ exports[`t-slot directive can define and call slots 3`] = `
 ) {
     // Template name: \\"slot_header_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('span', p4, c4);
-    c1.push(vn4);
-    c4.push({text: \`header\`});
+    let c4 = extra.parentNode;
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('span', p5, c5);
+    c4.push(vn5);
+    c5.push({text: \`header\`});
 }"
 `;
 
@@ -82,11 +82,11 @@ exports[`t-slot directive can define and call slots 4`] = `
 ) {
     // Template name: \\"slot_footer_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`footer\`});
+    let c6 = extra.parentNode;
+    let c7 = [], p7 = {key:7};
+    let vn7 = h('span', p7, c7);
+    c6.push(vn7);
+    c7.push({text: \`footer\`});
 }"
 `;
 
@@ -134,23 +134,23 @@ exports[`t-slot directive can define and call slots using old t-set keyword 2`] 
 ) {
     // Template name: \\"__template__1\\"
     let h = this.h;
-    let c6 = [], p6 = {key:6};
-    let vn6 = h('div', p6, c6);
-    let c7 = [], p7 = {key:7};
-    let vn7 = h('div', p7, c7);
-    c6.push(vn7);
-    const slot8 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
-    if (slot8) {
-        slot8.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c7, parent: extra.parent || context}));
-    }
     let c9 = [], p9 = {key:9};
     let vn9 = h('div', p9, c9);
-    c6.push(vn9);
-    const slot10 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
-    if (slot10) {
-        slot10.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c9, parent: extra.parent || context}));
+    let c10 = [], p10 = {key:10};
+    let vn10 = h('div', p10, c10);
+    c9.push(vn10);
+    const slot11 = this.constructor.slots[context.__owl__.slotId + '_' + 'header'];
+    if (slot11) {
+        slot11.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c10, parent: extra.parent || context}));
     }
-    return vn6;
+    let c12 = [], p12 = {key:12};
+    let vn12 = h('div', p12, c12);
+    c9.push(vn12);
+    const slot13 = this.constructor.slots[context.__owl__.slotId + '_' + 'footer'];
+    if (slot13) {
+        slot13.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c12, parent: extra.parent || context}));
+    }
+    return vn9;
 }"
 `;
 
@@ -159,11 +159,11 @@ exports[`t-slot directive can define and call slots using old t-set keyword 3`] 
 ) {
     // Template name: \\"slot_header_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('span', p4, c4);
-    c1.push(vn4);
-    c4.push({text: \`header\`});
+    let c4 = extra.parentNode;
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('span', p5, c5);
+    c4.push(vn5);
+    c5.push({text: \`header\`});
 }"
 `;
 
@@ -172,11 +172,11 @@ exports[`t-slot directive can define and call slots using old t-set keyword 4`] 
 ) {
     // Template name: \\"slot_footer_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c5 = [], p5 = {key:5};
-    let vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`footer\`});
+    let c6 = extra.parentNode;
+    let c7 = [], p7 = {key:7};
+    let vn7 = h('span', p7, c7);
+    c6.push(vn7);
+    c7.push({text: \`footer\`});
 }"
 `;
 
@@ -185,11 +185,11 @@ exports[`t-slot directive content is the default slot 1`] = `
 ) {
     // Template name: \\"slot_default_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('span', p4, c4);
-    c1.push(vn4);
-    c4.push({text: \`sts rocks\`});
+    let c4 = extra.parentNode;
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('span', p5, c5);
+    c4.push(vn5);
+    c5.push({text: \`sts rocks\`});
 }"
 `;
 
@@ -215,8 +215,8 @@ exports[`t-slot directive default slot work with text nodes 1`] = `
 ) {
     // Template name: \\"slot_default_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    c1.push({text: \`sts rocks\`});
+    let c4 = extra.parentNode;
+    c4.push({text: \`sts rocks\`});
 }"
 `;
 
@@ -225,15 +225,15 @@ exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
 ) {
     // Template name: \\"slot_default_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('span', p4, c4);
-    c1.push(vn4);
-    c4.push({text: \`sts\`});
+    let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
     let vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`rocks\`});
+    c4.push(vn5);
+    c5.push({text: \`sts\`});
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('span', p6, c6);
+    c4.push(vn6);
+    c6.push({text: \`rocks\`});
 }"
 `;
 
@@ -242,15 +242,15 @@ exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
 ) {
     // Template name: \\"slot_content_template\\"
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('span', p4, c4);
-    c1.push(vn4);
-    c4.push({text: \`sts\`});
+    let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
     let vn5 = h('span', p5, c5);
-    c1.push(vn5);
-    c5.push({text: \`rocks\`});
+    c4.push(vn5);
+    c5.push({text: \`sts\`});
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('span', p6, c6);
+    c4.push(vn6);
+    c6.push({text: \`rocks\`});
 }"
 `;
 
@@ -278,22 +278,22 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     let utils = this.constructor.utils;
     context.__owl__.refs = context.__owl__.refs || {};
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c8 = [], p8 = {key:8,on:{}};
-    let vn8 = h('button', p8, c8);
-    c1.push(vn8);
-    extra.handlers['click__9__'] = extra.handlers['click__9__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
-    p8.on['click'] = extra.handlers['click__9__'];
-    const ref10 = \`myButton\`;
-    p8.hook = {
+    let c8 = extra.parentNode;
+    let c9 = [], p9 = {key:9,on:{}};
+    let vn9 = h('button', p9, c9);
+    c8.push(vn9);
+    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
+    p9.on['click'] = extra.handlers['click__10__'];
+    const ref11 = \`myButton\`;
+    p9.hook = {
       create: (_, n) => {
-        context.__owl__.refs[ref10] = n.elm;
+        context.__owl__.refs[ref11] = n.elm;
       },
       destroy: () => {
-        delete context.__owl__.refs[ref10];
+        delete context.__owl__.refs[ref11];
       },
     };
-    c8.push({text: \`do something\`});
+    c9.push({text: \`do something\`});
 }"
 `;
 
@@ -303,13 +303,13 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
     // Template name: \\"slot_footer_template\\"
     let utils = this.constructor.utils;
     let h = this.h;
-    let c1 = extra.parentNode;
-    let c8 = [], p8 = {key:8,on:{}};
-    let vn8 = h('button', p8, c8);
-    c1.push(vn8);
-    extra.handlers['click__9__'] = extra.handlers['click__9__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
-    p8.on['click'] = extra.handlers['click__9__'];
-    c8.push({text: \`do something\`});
+    let c8 = extra.parentNode;
+    let c9 = [], p9 = {key:9,on:{}};
+    let vn9 = h('button', p9, c9);
+    c8.push(vn9);
+    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['doSomething'](e);};
+    p9.on['click'] = extra.handlers['click__10__'];
+    c9.push({text: \`do something\`});
 }"
 `;
 
@@ -319,14 +319,14 @@ exports[`t-slot directive slots are rendered with proper context, part 2 1`] = `
     // Template name: \\"Link\\"
     let scope = Object.create(context);
     let h = this.h;
-    let _11 = scope['props'].to;
-    let c12 = [], p12 = {key:12,attrs:{href: _11}};
-    let vn12 = h('a', p12, c12);
-    const slot13 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot13) {
-        slot13.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c12, parent: extra.parent || context}));
+    let _12 = scope['props'].to;
+    let c13 = [], p13 = {key:13,attrs:{href: _12}};
+    let vn13 = h('a', p13, c13);
+    const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot14) {
+        slot14.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || context}));
     }
-    return vn12;
+    return vn13;
 }"
 `;
 
@@ -401,11 +401,11 @@ exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
     // Template name: \\"slot_default_template\\"
     let scope = Object.create(context);
     let h = this.h;
-    let c7 = extra.parentNode;
-    c7.push({text: \`User \`});
-    let _10 = scope['user'].name;
-    if (_10 != null) {
-        c7.push({text: _10});
+    let c10 = extra.parentNode;
+    c10.push({text: \`User \`});
+    let _11 = scope['user'].name;
+    if (_11 != null) {
+        c10.push({text: _11});
     }
 }"
 `;
@@ -416,14 +416,14 @@ exports[`t-slot directive slots are rendered with proper context, part 3 1`] = `
     // Template name: \\"Link\\"
     let scope = Object.create(context);
     let h = this.h;
-    let _10 = scope['props'].to;
-    let c11 = [], p11 = {key:11,attrs:{href: _10}};
-    let vn11 = h('a', p11, c11);
-    const slot12 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot12) {
-        slot12.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c11, parent: extra.parent || context}));
+    let _12 = scope['props'].to;
+    let c13 = [], p13 = {key:13,attrs:{href: _12}};
+    let vn13 = h('a', p13, c13);
+    const slot14 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot14) {
+        slot14.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c13, parent: extra.parent || context}));
     }
-    return vn11;
+    return vn13;
 }"
 `;
 
@@ -499,9 +499,10 @@ exports[`t-slot directive slots are rendered with proper context, part 3 3`] = `
     // Template name: \\"slot_default_template\\"
     let scope = Object.create(context);
     let h = this.h;
-    let c7 = extra.parentNode;
-    if (scope.userdescr != null) {
-        c7.push({text: scope.userdescr});
+    let c10 = extra.parentNode;
+    let _11 = scope['userdescr'];
+    if (_11 != null) {
+        c10.push({text: _11});
     }
 }"
 `;
@@ -552,9 +553,10 @@ exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
     // Template name: \\"slot_default_template\\"
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
-    if (scope.userdescr != null) {
-        c1.push({text: scope.userdescr});
+    let c4 = extra.parentNode;
+    let _5 = scope['userdescr'];
+    if (_5 != null) {
+        c4.push({text: _5});
     }
 }"
 `;
@@ -564,13 +566,13 @@ exports[`t-slot directive t-set t-value in a slot 1`] = `
 ) {
     // Template name: \\"__template__1\\"
     let h = this.h;
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('span', p4, c4);
-    const slot5 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot5) {
-        slot5.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c4, parent: extra.parent || context}));
+    let c5 = [], p5 = {key:5};
+    let vn5 = h('span', p5, c5);
+    const slot6 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot6) {
+        slot6.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c5, parent: extra.parent || context}));
     }
-    return vn4;
+    return vn5;
 }"
 `;
 
@@ -581,12 +583,12 @@ exports[`t-slot directive template can just return a slot 1`] = `
     let utils = this.constructor.utils;
     let result;
     let h = this.h;
-    const slot6 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
-    if (slot6) {
-        let children7= []
+    const slot7 = this.constructor.slots[context.__owl__.slotId + '_' + 'default'];
+    if (slot7) {
+        let children8= []
         result = {}
-        slot6.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: children7, parent: extra.parent || context}));
-        utils.defineProxy(result, children7[0]);
+        slot7.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: children8, parent: extra.parent || context}));
+        utils.defineProxy(result, children8[0]);
     }
     return result;
 }"

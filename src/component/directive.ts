@@ -446,7 +446,7 @@ QWeb.addDirective({
           slotNode.removeAttribute("t-set-slot");
           slotNode.parentElement!.removeChild(slotNode);
 
-          const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
+          const slotFn = qweb._compile(`slot_${key}_template`, { elem: slotNode, hasParent: true });
           QWeb.slots[`${slotId}_${key}`] = slotFn;
         }
       }
@@ -455,7 +455,7 @@ QWeb.addDirective({
         for (let child of Object.values(clone.childNodes)) {
           t.appendChild(child);
         }
-        const slotFn = qweb._compile(`slot_default_template`, t, ctx);
+        const slotFn = qweb._compile(`slot_default_template`, { elem: t, hasParent: true });
         QWeb.slots[`${slotId}_default`] = slotFn;
       }
     }

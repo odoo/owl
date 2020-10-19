@@ -312,7 +312,7 @@ export class QWeb extends EventBus {
     const template = {
       elem,
       fn: function (this: QWeb, context, extra) {
-        const compiledFunction = this._compile(name, elem);
+        const compiledFunction = this._compile(name);
         template.fn = compiledFunction;
         return compiledFunction.call(this, context, extra);
       },
@@ -417,30 +417,33 @@ export class QWeb extends EventBus {
 
   _compile(
     name: string,
-    elem: Element,
-    parentContext?: CompilationContext,
-    defineKey?: boolean
+    options: {
+      elem?: Element;
+      hasParent?: boolean;
+      defineKey?: boolean;
+    } = {}
   ): CompiledTemplate {
+    const elem = options.elem || this.templates[name].elem;
     const isDebug = elem.attributes.hasOwnProperty("t-debug");
     const ctx = new CompilationContext(name);
     if (elem.tagName !== "t") {
       ctx.shouldDefineResult = false;
     }
-    if (parentContext) {
-      ctx.variables = Object.create(parentContext.variables);
-      ctx.parentNode = parentContext.parentNode || ctx.generateID();
+    if (options.hasParent) {
+      ctx.variables = Object.create(null);
+      ctx.parentNode = ctx.generateID();
       ctx.allowMultipleRoots = true;
       ctx.hasParentWidget = true;
       ctx.shouldDefineResult = false;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
-      if (defineKey) {
+      if (options.defineKey) {
         ctx.addLine(`let key0 = extra.key || "";`);
         ctx.hasKey0 = true;
       }
     }
     this._compileNode(elem, ctx);
 
-    if (!parentContext) {
+    if (!options.hasParent) {
       if (ctx.shouldDefineResult) {
         ctx.addLine(`return result;`);
       } else {

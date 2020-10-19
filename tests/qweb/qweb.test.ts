@@ -1111,6 +1111,9 @@ describe("t-call (template calling", () => {
     expect(renderToString(qweb, "main", { template: "foo", val: "foo" })).toBe(expected);
     const expected2 = "<div><bar>quux</bar></div>";
     expect(renderToString(qweb, "main", { template: "bar", val: "quux" })).toBe(expected2);
+    // duplicate call because there was a specific bug with some id that was
+    // incremented each rendering.
+    expect(renderToString(qweb, "main", { template: "bar", val: "quux" })).toBe(expected2);
   });
 });
 

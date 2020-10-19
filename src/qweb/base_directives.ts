@@ -267,16 +267,13 @@ QWeb.addDirective({
       for (let attr of ["t-if", "t-else", "t-elif", "t-call"]) {
         nodeCopy.removeAttribute(attr);
       }
-      const parentNode = ctx.parentNode;
-      ctx.parentNode = "__0";
       // this local scope is intended to trap c__0
       ctx.addLine(`{`);
       ctx.indent();
       ctx.addLine("let c__0 = [];");
-      qweb._compileNode(nodeCopy, ctx);
+      qweb._compileNode(nodeCopy, ctx.subContext("parentNode", "__0"));
       ctx.rootContext.shouldDefineUtils = true;
       ctx.addLine("scope[utils.zero] = c__0;");
-      ctx.parentNode = parentNode;
       ctx.dedent();
       ctx.addLine(`}`);
     }

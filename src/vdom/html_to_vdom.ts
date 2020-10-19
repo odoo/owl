@@ -13,6 +13,9 @@ export function htmlToVDOM(html: string): VNode[] {
 
 function htmlToVNode(node: ChildNode): VNode {
   if (!(node instanceof Element)) {
+    if (node instanceof Comment) {
+      return h("!", node.textContent);
+    }
     return { text: node.textContent! } as VNode;
   }
   const attrs = {};

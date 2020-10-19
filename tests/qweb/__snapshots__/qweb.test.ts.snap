@@ -673,7 +673,7 @@ exports[`foreach t-call with body in t-foreach in t-foreach 1`] = `
             scope.b = _7[i2]
             scope.b_value = _8[i2]
             let key2 = i2;
-            let _origScope13 = scope;
+            let _origScope14 = scope;
             scope = Object.create(scope);
             scope.__access_mode__ = 'ro';
             {
@@ -682,38 +682,38 @@ exports[`foreach t-call with body in t-foreach in t-foreach 1`] = `
                     utils.getScope(scope, 'c').c = 'x'+'_'+scope['a']+'_'+scope['b'];
                     scope[utils.zero] = c__0;
                 }
-                let k14 = \`__14__\${key1}__\${key2}__\`;
-                this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k14}));
+                let k15 = \`__15__\${key1}__\${key2}__\`;
+                this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k15}));
             }
-            scope = _origScope13;
+            scope = _origScope14;
         }
         scope = _origScope9;
-        let c15 = [], p15 = {key:\`\${key1}_15\`};
-        let vn15 = h('span', p15, c15);
-        c1.push(vn15);
+        let c16 = [], p16 = {key:\`\${key1}_16\`};
+        let vn16 = h('span', p16, c16);
+        c1.push(vn16);
         if (scope.c != null) {
-            c15.push({text: scope.c});
+            c16.push({text: scope.c});
         }
     }
     scope = _origScope5;
-    let c16 = [], p16 = {key:16};
-    let vn16 = h('span', p16, c16);
-    c1.push(vn16);
-    c16.push({text: \`[\`});
-    let _17 = scope['a'];
-    if (_17 != null) {
-        c16.push({text: _17});
-    }
-    c16.push({text: \`][\`});
-    let _18 = scope['b'];
+    let c17 = [], p17 = {key:17};
+    let vn17 = h('span', p17, c17);
+    c1.push(vn17);
+    c17.push({text: \`[\`});
+    let _18 = scope['a'];
     if (_18 != null) {
-        c16.push({text: _18});
+        c17.push({text: _18});
     }
-    c16.push({text: \`][\`});
+    c17.push({text: \`][\`});
+    let _19 = scope['b'];
+    if (_19 != null) {
+        c17.push({text: _19});
+    }
+    c17.push({text: \`][\`});
     if (scope.c != null) {
-        c16.push({text: scope.c});
+        c17.push({text: scope.c});
     }
-    c16.push({text: \`]\`});
+    c17.push({text: \`]\`});
     return vn1;
 }"
 `;
@@ -761,42 +761,42 @@ exports[`foreach t-call without body in t-foreach in t-foreach 1`] = `
             scope.b = _7[i2]
             scope.b_value = _8[i2]
             let key2 = i2;
-            let _origScope12 = scope;
+            let _origScope13 = scope;
             scope = Object.create(scope);
             scope.__access_mode__ = 'ro';
-            let k13 = \`__13__\${key1}__\${key2}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k13}));
-            scope = _origScope12;
+            let k14 = \`__14__\${key1}__\${key2}__\`;
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k14}));
+            scope = _origScope13;
         }
         scope = _origScope9;
-        let c14 = [], p14 = {key:\`\${key1}_14\`};
-        let vn14 = h('span', p14, c14);
-        c1.push(vn14);
-        let _15 = scope['c'];
-        if (_15 != null) {
-            c14.push({text: _15});
+        let c15 = [], p15 = {key:\`\${key1}_15\`};
+        let vn15 = h('span', p15, c15);
+        c1.push(vn15);
+        let _16 = scope['c'];
+        if (_16 != null) {
+            c15.push({text: _16});
         }
     }
     scope = _origScope5;
-    let c16 = [], p16 = {key:16};
-    let vn16 = h('span', p16, c16);
-    c1.push(vn16);
-    c16.push({text: \`[\`});
-    let _17 = scope['a'];
-    if (_17 != null) {
-        c16.push({text: _17});
-    }
-    c16.push({text: \`][\`});
-    let _18 = scope['b'];
+    let c17 = [], p17 = {key:17};
+    let vn17 = h('span', p17, c17);
+    c1.push(vn17);
+    c17.push({text: \`[\`});
+    let _18 = scope['a'];
     if (_18 != null) {
-        c16.push({text: _18});
+        c17.push({text: _18});
     }
-    c16.push({text: \`][\`});
-    let _19 = scope['c'];
+    c17.push({text: \`][\`});
+    let _19 = scope['b'];
     if (_19 != null) {
-        c16.push({text: _19});
+        c17.push({text: _19});
     }
-    c16.push({text: \`]\`});
+    c17.push({text: \`][\`});
+    let _20 = scope['c'];
+    if (_20 != null) {
+        c17.push({text: _20});
+    }
+    c17.push({text: \`]\`});
     return vn1;
 }"
 `;
@@ -920,11 +920,11 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('ul', p1, c1);
-    let _origScope4 = scope;
+    let _origScope5 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
-    scope = _origScope4;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -962,13 +962,13 @@ exports[`misc global 1`] = `
         if (_7 != null) {
             c6.push({text: _7});
         }
-        let _origScope10 = scope;
+        let _origScope11 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         {
             {
                 let c__0 = [];
-                let _origScope13 = scope;
+                let _origScope15 = scope;
                 scope = Object.create(scope);
                 scope.__access_mode__ = 'ro';
                 {
@@ -977,36 +977,36 @@ exports[`misc global 1`] = `
                         utils.getScope(scope, 'foo').foo = 'aaa';
                         scope[utils.zero] = c__0;
                     }
-                    let k14 = \`__14__\${key1}__\`;
-                    this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k14}));
+                    let k16 = \`__16__\${key1}__\`;
+                    this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k16}));
                 }
-                scope = _origScope13;
-                let _origScope15 = scope;
-                scope = Object.create(scope);
-                scope.__access_mode__ = 'ro';
-                let k16 = \`__16__\${key1}__\`;
-                this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k16}));
                 scope = _origScope15;
-                utils.getScope(scope, 'foo').foo = 'bbb';
                 let _origScope17 = scope;
                 scope = Object.create(scope);
                 scope.__access_mode__ = 'ro';
                 let k18 = \`__18__\${key1}__\`;
                 this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k18}));
                 scope = _origScope17;
+                utils.getScope(scope, 'foo').foo = 'bbb';
+                let _origScope19 = scope;
+                scope = Object.create(scope);
+                scope.__access_mode__ = 'ro';
+                let k20 = \`__20__\${key1}__\`;
+                this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c__0, parent: utils.getComponent(context), key: k20}));
+                scope = _origScope19;
                 scope[utils.zero] = c__0;
             }
-            let k19 = \`__19__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k19}));
+            let k21 = \`__21__\${key1}__\`;
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k21}));
         }
-        scope = _origScope10;
+        scope = _origScope11;
     }
     scope = _origScope5;
-    let _origScope22 = scope;
+    let _origScope25 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['3'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__23__'}));
-    scope = _origScope22;
+    this.constructor.subTemplates['3'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__26__'}));
+    scope = _origScope25;
     return vn1;
 }"
 `;
@@ -1295,11 +1295,11 @@ exports[`t-call (template calling basic caller 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-    scope = _origScope3;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -1332,26 +1332,26 @@ exports[`t-call (template calling call with several sub nodes on same line 1`] =
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
         {
             let c__0 = [];
-            let c4 = [], p4 = {key:4};
-            let vn4 = h('span', p4, c4);
-            c__0.push(vn4);
-            c4.push({text: \`hey\`});
-            c__0.push({text: \` \`});
             let c5 = [], p5 = {key:5};
             let vn5 = h('span', p5, c5);
             c__0.push(vn5);
-            c5.push({text: \`yay\`});
+            c5.push({text: \`hey\`});
+            c__0.push({text: \` \`});
+            let c6 = [], p6 = {key:6};
+            let vn6 = h('span', p6, c6);
+            c__0.push(vn6);
+            c6.push({text: \`yay\`});
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
     }
-    scope = _origScope3;
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -1367,26 +1367,26 @@ exports[`t-call (template calling cascading t-call t-raw='0' 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope12 = scope;
+    let _origScope15 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
         {
             let c__0 = [];
-            let c13 = [], p13 = {key:13};
-            let vn13 = h('span', p13, c13);
-            c__0.push(vn13);
-            c13.push({text: \`hey\`});
+            let c16 = [], p16 = {key:16};
+            let vn16 = h('span', p16, c16);
+            c__0.push(vn16);
+            c16.push({text: \`hey\`});
             c__0.push({text: \` \`});
-            let c14 = [], p14 = {key:14};
-            let vn14 = h('span', p14, c14);
-            c__0.push(vn14);
-            c14.push({text: \`yay\`});
+            let c17 = [], p17 = {key:17};
+            let vn17 = h('span', p17, c17);
+            c__0.push(vn17);
+            c17.push({text: \`yay\`});
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__15__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__18__'}));
     }
-    scope = _origScope12;
+    scope = _origScope15;
     return vn1;
 }"
 `;
@@ -1401,11 +1401,11 @@ exports[`t-call (template calling inherit context 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     scope.foo = 1;
-    let _origScope2 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
-    scope = _origScope2;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -1424,11 +1424,11 @@ exports[`t-call (template calling recursive template, part 1 1`] = `
     c1.push(vn2);
     c2.push({text: \`hey\`});
     if (false) {
-        let _origScope7 = scope;
+        let _origScope8 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__8__'}));
-        scope = _origScope7;
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__9__'}));
+        scope = _origScope8;
     }
     return vn1;
 }"
@@ -1441,22 +1441,22 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c3 = extra.parentNode;
     let key0 = extra.key || \\"\\";
-    let c3 = [], p3 = {key:\`\${key0}_3\`};
-    let vn3 = h('div', p3, c3);
-    c1.push(vn3);
     let c4 = [], p4 = {key:\`\${key0}_4\`};
-    let vn4 = h('span', p4, c4);
+    let vn4 = h('div', p4, c4);
     c3.push(vn4);
-    c4.push({text: \`hey\`});
+    let c5 = [], p5 = {key:\`\${key0}_5\`};
+    let vn5 = h('span', p5, c5);
+    c4.push(vn5);
+    c5.push({text: \`hey\`});
     if (false) {
-        let _origScope5 = scope;
+        let _origScope6 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
-        let k6 = \`__6__\${key0}__\`;
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k6}));
-        scope = _origScope5;
+        let k7 = \`__7__\${key0}__\`;
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c4, parent: utils.getComponent(context), key: k7}));
+        scope = _origScope6;
     }
 }"
 `;
@@ -1470,7 +1470,7 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope11 = scope;
+    let _origScope12 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
@@ -1479,9 +1479,9 @@ exports[`t-call (template calling recursive template, part 2 1`] = `
             utils.getScope(scope, 'node').node = scope['root'];
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__13__'}));
     }
-    scope = _origScope11;
+    scope = _origScope12;
     return vn1;
 }"
 `;
@@ -1493,36 +1493,36 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
-    let c2 = [], p2 = {key:\`\${key0}_2\`};
-    let vn2 = h('div', p2, c2);
-    c1.push(vn2);
     let c3 = [], p3 = {key:\`\${key0}_3\`};
-    let vn3 = h('p', p3, c3);
+    let vn3 = h('div', p3, c3);
     c2.push(vn3);
-    let _4 = scope['node'].val;
-    if (_4 != null) {
-        c3.push({text: _4});
+    let c4 = [], p4 = {key:\`\${key0}_4\`};
+    let vn4 = h('p', p4, c4);
+    c3.push(vn4);
+    let _5 = scope['node'].val;
+    if (_5 != null) {
+        c4.push({text: _5});
     }
-    let _5 = scope['node'].children||[];
-    if (!_5) { throw new Error('QWeb error: Invalid loop expression')}
-    let _6 = _7 = _5;
-    if (!(_5 instanceof Array)) {
-        _6 = Object.keys(_5);
-        _7 = Object.values(_5);
+    let _6 = scope['node'].children||[];
+    if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
+    let _7 = _8 = _6;
+    if (!(_6 instanceof Array)) {
+        _7 = Object.keys(_6);
+        _8 = Object.values(_6);
     }
-    let _length6 = _6.length;
-    let _origScope8 = scope;
+    let _length7 = _7.length;
+    let _origScope9 = scope;
     scope = Object.create(scope);
-    for (let i1 = 0; i1 < _length6; i1++) {
+    for (let i1 = 0; i1 < _length7; i1++) {
         scope.subtree_first = i1 === 0
-        scope.subtree_last = i1 === _length6 - 1
+        scope.subtree_last = i1 === _length7 - 1
         scope.subtree_index = i1
-        scope.subtree = _6[i1]
-        scope.subtree_value = _7[i1]
+        scope.subtree = _7[i1]
+        scope.subtree_value = _8[i1]
         let key1 = i1;
-        let _origScope9 = scope;
+        let _origScope10 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         {
@@ -1531,12 +1531,12 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
                 utils.getScope(scope, 'node').node = scope['subtree'];
                 scope[utils.zero] = c__0;
             }
-            let k10 = \`__10__\${key0}__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k10}));
+            let k11 = \`__11__\${key0}__\${key1}__\`;
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k11}));
         }
-        scope = _origScope9;
+        scope = _origScope10;
     }
-    scope = _origScope8;
+    scope = _origScope9;
 }"
 `;
 
@@ -1549,7 +1549,7 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope11 = scope;
+    let _origScope12 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
@@ -1558,9 +1558,9 @@ exports[`t-call (template calling recursive template, part 3 1`] = `
             utils.getScope(scope, 'node').node = scope['root'];
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__13__'}));
     }
-    scope = _origScope11;
+    scope = _origScope12;
     return vn1;
 }"
 `;
@@ -1572,36 +1572,36 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
-    let c2 = [], p2 = {key:\`\${key0}_2\`};
-    let vn2 = h('div', p2, c2);
-    c1.push(vn2);
     let c3 = [], p3 = {key:\`\${key0}_3\`};
-    let vn3 = h('p', p3, c3);
+    let vn3 = h('div', p3, c3);
     c2.push(vn3);
-    let _4 = scope['node'].val;
-    if (_4 != null) {
-        c3.push({text: _4});
+    let c4 = [], p4 = {key:\`\${key0}_4\`};
+    let vn4 = h('p', p4, c4);
+    c3.push(vn4);
+    let _5 = scope['node'].val;
+    if (_5 != null) {
+        c4.push({text: _5});
     }
-    let _5 = scope['node'].children||[];
-    if (!_5) { throw new Error('QWeb error: Invalid loop expression')}
-    let _6 = _7 = _5;
-    if (!(_5 instanceof Array)) {
-        _6 = Object.keys(_5);
-        _7 = Object.values(_5);
+    let _6 = scope['node'].children||[];
+    if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
+    let _7 = _8 = _6;
+    if (!(_6 instanceof Array)) {
+        _7 = Object.keys(_6);
+        _8 = Object.values(_6);
     }
-    let _length6 = _6.length;
-    let _origScope8 = scope;
+    let _length7 = _7.length;
+    let _origScope9 = scope;
     scope = Object.create(scope);
-    for (let i1 = 0; i1 < _length6; i1++) {
+    for (let i1 = 0; i1 < _length7; i1++) {
         scope.subtree_first = i1 === 0
-        scope.subtree_last = i1 === _length6 - 1
+        scope.subtree_last = i1 === _length7 - 1
         scope.subtree_index = i1
-        scope.subtree = _6[i1]
-        scope.subtree_value = _7[i1]
+        scope.subtree = _7[i1]
+        scope.subtree_value = _8[i1]
         let key1 = i1;
-        let _origScope9 = scope;
+        let _origScope10 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         {
@@ -1610,12 +1610,12 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
                 utils.getScope(scope, 'node').node = scope['subtree'];
                 scope[utils.zero] = c__0;
             }
-            let k10 = \`__10__\${key0}__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k10}));
+            let k11 = \`__11__\${key0}__\${key1}__\`;
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k11}));
         }
-        scope = _origScope9;
+        scope = _origScope10;
     }
-    scope = _origScope8;
+    scope = _origScope9;
 }"
 `;
 
@@ -1628,7 +1628,7 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope11 = scope;
+    let _origScope12 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
@@ -1638,9 +1638,9 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
             utils.getScope(scope, 'node').node = scope['root'];
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__13__'}));
     }
-    scope = _origScope11;
+    scope = _origScope12;
     return vn1;
 }"
 `;
@@ -1652,41 +1652,41 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let c1 = extra.parentNode;
+    let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
-    let c2 = [], p2 = {key:\`\${key0}_2\`};
-    let vn2 = h('div', p2, c2);
-    c1.push(vn2);
-    scope.recursive_idx = scope.recursive_idx+1;
     let c3 = [], p3 = {key:\`\${key0}_3\`};
-    let vn3 = h('p', p3, c3);
+    let vn3 = h('div', p3, c3);
     c2.push(vn3);
-    let _4 = scope['node'].val;
-    if (_4 != null) {
-        c3.push({text: _4});
+    scope.recursive_idx = scope.recursive_idx+1;
+    let c4 = [], p4 = {key:\`\${key0}_4\`};
+    let vn4 = h('p', p4, c4);
+    c3.push(vn4);
+    let _5 = scope['node'].val;
+    if (_5 != null) {
+        c4.push({text: _5});
     }
-    c3.push({text: \` \`});
+    c4.push({text: \` \`});
     if (scope.recursive_idx != null) {
-        c3.push({text: scope.recursive_idx});
+        c4.push({text: scope.recursive_idx});
     }
-    let _5 = scope['node'].children||[];
-    if (!_5) { throw new Error('QWeb error: Invalid loop expression')}
-    let _6 = _7 = _5;
-    if (!(_5 instanceof Array)) {
-        _6 = Object.keys(_5);
-        _7 = Object.values(_5);
+    let _6 = scope['node'].children||[];
+    if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
+    let _7 = _8 = _6;
+    if (!(_6 instanceof Array)) {
+        _7 = Object.keys(_6);
+        _8 = Object.values(_6);
     }
-    let _length6 = _6.length;
-    let _origScope8 = scope;
+    let _length7 = _7.length;
+    let _origScope9 = scope;
     scope = Object.create(scope);
-    for (let i1 = 0; i1 < _length6; i1++) {
+    for (let i1 = 0; i1 < _length7; i1++) {
         scope.subtree_first = i1 === 0
-        scope.subtree_last = i1 === _length6 - 1
+        scope.subtree_last = i1 === _length7 - 1
         scope.subtree_index = i1
-        scope.subtree = _6[i1]
-        scope.subtree_value = _7[i1]
+        scope.subtree = _7[i1]
+        scope.subtree_value = _8[i1]
         let key1 = i1;
-        let _origScope9 = scope;
+        let _origScope10 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         {
@@ -1695,12 +1695,12 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
                 utils.getScope(scope, 'node').node = scope['subtree'];
                 scope[utils.zero] = c__0;
             }
-            let k10 = \`__10__\${key0}__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c2, parent: utils.getComponent(context), key: k10}));
+            let k11 = \`__11__\${key0}__\${key1}__\`;
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k11}));
         }
-        scope = _origScope9;
+        scope = _origScope10;
     }
-    scope = _origScope8;
+    scope = _origScope9;
 }"
 `;
 
@@ -1713,7 +1713,7 @@ exports[`t-call (template calling scoped parameters 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope2 = scope;
+    let _origScope3 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
@@ -1722,9 +1722,9 @@ exports[`t-call (template calling scoped parameters 1`] = `
             utils.getScope(scope, 'foo').foo = 42;
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__3__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
     }
-    scope = _origScope2;
+    scope = _origScope3;
     if (scope.foo != null) {
         c1.push({text: scope.foo});
     }
@@ -1741,11 +1741,11 @@ exports[`t-call (template calling t-call allowed on a non t node 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-    scope = _origScope3;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -1760,11 +1760,11 @@ exports[`t-call (template calling t-call with t-if 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     if (scope['flag']) {
-        let _origScope3 = scope;
+        let _origScope4 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-        scope = _origScope3;
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+        scope = _origScope4;
     }
     return vn1;
 }"
@@ -1779,20 +1779,20 @@ exports[`t-call (template calling t-call with t-set inside and body text content
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope4 = scope;
+    let _origScope5 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
         {
             let c__0 = [];
-            let c5 = new utils.VDomArray();
-            c5.push({text: \`yip yip\`});
-            scope.val = c5
+            let c6 = new utils.VDomArray();
+            c6.push({text: \`yip yip\`});
+            scope.val = c6
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
     }
-    scope = _origScope4;
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -1824,7 +1824,7 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
         scope.v_value = _4[i1]
         let key1 = i1;
         utils.getScope(scope, 'val').val = scope['v'].val;
-        let _origScope8 = scope;
+        let _origScope9 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         {
@@ -1833,10 +1833,10 @@ exports[`t-call (template calling t-call with t-set inside and outside 1`] = `
                 utils.getScope(scope, 'val3').val3 = scope.val*3;
                 scope[utils.zero] = c__0;
             }
-            let k9 = \`__9__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k9}));
+            let k10 = \`__10__\${key1}__\`;
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: k10}));
         }
-        scope = _origScope8;
+        scope = _origScope9;
     }
     scope = _origScope5;
     return vn1;
@@ -1853,11 +1853,11 @@ exports[`t-call (template calling t-call with t-set inside and outside. 2 1`] = 
     let c1 = [], p1 = {key:1};
     let vn1 = h('p', p1, c1);
     scope.w = 'fromwrapper';
-    let _origScope11 = scope;
+    let _origScope14 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__12__'}));
-    scope = _origScope11;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__15__'}));
+    scope = _origScope14;
     return vn1;
 }"
 `;
@@ -1873,14 +1873,14 @@ exports[`t-call (template calling t-call, conditional and t-set in t-call body 1
     let vn1 = h('div', p1, c1);
     scope.v1 = 'elif';
     if (scope.v1==='if') {
-        let _origScope3 = scope;
+        let _origScope4 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-        scope = _origScope3;
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+        scope = _origScope4;
     }
     else if (scope.v1==='elif') {
-        let _origScope7 = scope;
+        let _origScope9 = scope;
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         {
@@ -1889,9 +1889,9 @@ exports[`t-call (template calling t-call, conditional and t-set in t-call body 1
                 utils.getScope(scope, 'v').v = 'success';
                 scope[utils.zero] = c__0;
             }
-            this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__8__'}));
+            this.constructor.subTemplates['2'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__10__'}));
         }
-        scope = _origScope7;
+        scope = _origScope9;
     }
     return vn1;
 }"
@@ -1906,11 +1906,11 @@ exports[`t-call (template calling t-call, global templates 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-    scope = _origScope3;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -1924,11 +1924,11 @@ exports[`t-call (template calling two different QWeb instances, and shared templ
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-    scope = _origScope3;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -1942,11 +1942,11 @@ exports[`t-call (template calling two different QWeb instances, and shared templ
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
-    scope = _origScope3;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -2038,7 +2038,7 @@ exports[`t-call (template calling with used set body 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
@@ -2047,9 +2047,9 @@ exports[`t-call (template calling with used set body 1`] = `
             utils.getScope(scope, 'foo').foo = 'ok';
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
     }
-    scope = _origScope3;
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -2197,11 +2197,11 @@ exports[`t-esc t-esc inside t-call, with t-set outside 1`] = `
     let c2 = new utils.VDomArray();
     c2.push({text: \`Hi\`});
     scope.v = c2
-    let _origScope5 = scope;
+    let _origScope6 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
-    scope = _origScope5;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
+    scope = _origScope6;
     return vn1;
 }"
 `;
@@ -2258,21 +2258,21 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope3 = scope;
+    let _origScope4 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
     {
         {
             let c__0 = [];
-            let c4 = [], p4 = {key:4};
-            let vn4 = h('p', p4, c4);
-            c__0.push(vn4);
-            c4.push({text: \`escaped\`});
+            let c5 = [], p5 = {key:5};
+            let vn5 = h('p', p5, c5);
+            c__0.push(vn5);
+            c5.push({text: \`escaped\`});
             scope[utils.zero] = c__0;
         }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
     }
-    scope = _origScope3;
+    scope = _origScope4;
     return vn1;
 }"
 `;
@@ -3066,11 +3066,11 @@ exports[`t-on t-on with t-call 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope4 = scope;
+    let _origScope5 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
-    scope = _origScope4;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+    scope = _origScope5;
     return vn1;
 }"
 `;
@@ -3084,11 +3084,11 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
-    let _origScope4 = scope;
+    let _origScope5 = scope;
     scope = Object.create(scope);
     scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__5__'}));
-    scope = _origScope4;
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+    scope = _origScope5;
     return vn1;
 }"
 `;

@@ -1,15 +1,15 @@
 import { Component, Env } from "../src/component/component";
+import { useRef, useState } from "../src/hooks";
 import { QWeb } from "../src/qweb/index";
-import { useState, useRef } from "../src/hooks";
 import { xml } from "../src/tags";
 import {
   makeDeferred,
-  makeTestFixture,
   makeTestEnv,
+  makeTestFixture,
+  nextFrame,
   patchNextFrame,
   renderToDOM,
   unpatchNextFrame,
-  nextTick,
 } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -420,29 +420,29 @@ describe("animations", () => {
 
     widget.state.flag = true;
 
-    await nextTick();
+    await nextFrame();
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend"));
     expect(fixture.innerHTML).toBe('<div><span class="">blue</span></div>');
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(1);
 
     widget.state.flag = false;
-    await nextTick();
+    await nextFrame();
     expect(fixture.innerHTML).toBe(
       '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__3__">blue</span></div>'
     );
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(1);
 
     widget.state.flag = true;
-    await nextTick();
+    await nextFrame();
     expect(fixture.innerHTML).toBe(
       '<div><span class="chimay-enter-active chimay-enter-to" data-owl-key="__3__">blue</span></div>'
     );
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(2);
 
     widget.state.flag = false;
-    await nextTick();
+    await nextFrame();
     widget.state.flag = true;
-    await nextTick();
+    await nextFrame();
 
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(3);
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend"));

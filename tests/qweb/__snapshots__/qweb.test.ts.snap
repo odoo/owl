@@ -1391,6 +1391,54 @@ exports[`t-call (template calling cascading t-call t-raw='0' 1`] = `
 }"
 `;
 
+exports[`t-call (template calling dynamic t-call 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"main\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let tname2 = (scope['template']);
+    let tid2 = this.constructor.nextId++;
+    if (!(tname2 in this.subTemplates)) {
+        this.subTemplates[tname2] = tid2;
+        this.constructor.subTemplates[tid2] = this._compile(tname2, {hasParent: true, defineKey: true});
+    }
+    let _origScope3 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    this.constructor.subTemplates[tid2].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
+    scope = _origScope3;
+    return vn1;
+}"
+`;
+
+exports[`t-call (template calling dynamic t-call 2`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"main\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let tname2 = (scope['template']);
+    let tid2 = this.constructor.nextId++;
+    if (!(tname2 in this.subTemplates)) {
+        this.subTemplates[tname2] = tid2;
+        this.constructor.subTemplates[tid2] = this._compile(tname2, {hasParent: true, defineKey: true});
+    }
+    let _origScope3 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    this.constructor.subTemplates[tid2].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__4__'}));
+    scope = _origScope3;
+    return vn1;
+}"
+`;
+
 exports[`t-call (template calling inherit context 1`] = `
 "function anonymous(context, extra
 ) {

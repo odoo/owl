@@ -236,8 +236,9 @@ QWeb.addDirective({
     if (isDynamic) {
       const _id = ctx.generateID();
       ctx.addLine(`let tname${_id} = ${ctx.interpolate(subTemplate)};`);
-      ctx.addLine(`let tid${_id} = this.constructor.nextId++;`);
-      ctx.addIf(`!(tname${_id} in this.subTemplates)`);
+      ctx.addLine(`let tid${_id} = this.subTemplates[tname${_id}];`);
+      ctx.addIf(`!tid${_id}`);
+      ctx.addLine(`tid${_id} = this.constructor.nextId++;`);
       ctx.addLine(`this.subTemplates[tname${_id}] = tid${_id};`);
       ctx.addLine(
         `this.constructor.subTemplates[tid${_id}] = this._compile(tname${_id}, {hasParent: true, defineKey: true});`

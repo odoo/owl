@@ -37,8 +37,13 @@ export function nextMicroTick(): Promise<void> {
 }
 
 export async function nextTick(): Promise<void> {
-  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
   await new Promise((resolve) => setTimeout(resolve));
+  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
+}
+
+export async function nextFrame(): Promise<void> {
+  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
+  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
 }
 
 export function makeTestFixture() {
@@ -127,7 +132,7 @@ export function renderToString(
 // is useful for animations tests, as we hook before repaints to trigger
 // animations (thanks to requestAnimationFrame). Patching nextFrame allows to
 // simulate calls to this hook. One must not forget to unpatch afterwards.
-let nextFrame = QWeb.utils.nextFrame;
+let _nextFrame = QWeb.utils.nextFrame;
 export function patchNextFrame(f: Function) {
   QWeb.utils.nextFrame = (cb: () => void) => {
     setTimeout(() => f(cb));
@@ -135,7 +140,7 @@ export function patchNextFrame(f: Function) {
 }
 
 export function unpatchNextFrame() {
-  QWeb.utils.nextFrame = nextFrame;
+  QWeb.utils.nextFrame = _nextFrame;
 }
 
 export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, value: string) {

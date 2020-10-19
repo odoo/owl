@@ -1,4 +1,4 @@
-import { CompilationContext } from "./compilation_context";
+import { CompilationContext, INTERP_REGEXP } from "./compilation_context";
 import { QWeb } from "./qweb";
 import { htmlToVDOM } from "../vdom/html_to_vdom";
 import { QWebVar } from "./expression_parser";
@@ -224,19 +224,35 @@ QWeb.addDirective({
     ctx.rootContext.shouldDefineScope = true;
     ctx.rootContext.shouldDefineUtils = true;
     const subTemplate = node.getAttribute("t-call")!;
+    const isDynamic = INTERP_REGEXP.test(subTemplate);
     const nodeTemplate = qweb.templates[subTemplate];
-    if (!nodeTemplate) {
+    if (!isDynamic && !nodeTemplate) {
       throw new Error(`Cannot find template "${subTemplate}" (t-call)`);
     }
 
     // Step 2: compile target template in sub templates
     // ------------------------------------------------
-    let subId = qweb.subTemplates[subTemplate];
-    if (!subId) {
-      subId = QWeb.nextId++;
-      qweb.subTemplates[subTemplate] = subId;
-      const subTemplateFn = qweb._compile(subTemplate, { hasParent: true, defineKey: true });
-      QWeb.subTemplates[subId] = subTemplateFn;
+    let subIdstr: string;
+    if (isDynamic) {
+      const _id = ctx.generateID();
+      ctx.addLine(`let tname${_id} = ${ctx.interpolate(subTemplate)};`);
+      ctx.addLine(`let tid${_id} = this.constructor.nextId++;`);
+      ctx.addIf(`!(tname${_id} in this.subTemplates)`);
+      ctx.addLine(`this.subTemplates[tname${_id}] = tid${_id};`);
+      ctx.addLine(
+        `this.constructor.subTemplates[tid${_id}] = this._compile(tname${_id}, {hasParent: true, defineKey: true});`
+      );
+      ctx.closeIf();
+      subIdstr = `tid${_id}`;
+    } else {
+      let subId = qweb.subTemplates[subTemplate];
+      if (!subId) {
+        subId = QWeb.nextId++;
+        qweb.subTemplates[subTemplate] = subId;
+        const subTemplateFn = qweb._compile(subTemplate, { hasParent: true, defineKey: true });
+        QWeb.subTemplates[subId] = subTemplateFn;
+      }
+      subIdstr = `'${subId}'`;
     }
 
     // Step 3: compile t-call body if necessary
@@ -272,12 +288,12 @@ QWeb.addDirective({
     const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
     const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}, key: ${key}})`;
     if (ctx.parentNode) {
-      ctx.addLine(`this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`);
+      ctx.addLine(`this.constructor.subTemplates[${subIdstr}].call(this, scope, ${extra});`);
     } else {
       // this is a t-call with no parentnode, we need to extract the result
       ctx.rootContext.shouldDefineResult = true;
       ctx.addLine(`result = []`);
-      ctx.addLine(`this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`);
+      ctx.addLine(`this.constructor.subTemplates[${subIdstr}].call(this, scope, ${extra});`);
       ctx.addLine(`result = result[0]`);
     }
 

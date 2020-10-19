@@ -1095,6 +1095,16 @@ describe("t-call (template calling", () => {
     const expected = "<div><p>yip yip</p></div>";
     expect(renderToString(qweb, "main")).toBe(expected);
   });
+
+  test("dynamic t-call", () => {
+    qweb.addTemplate("foo", `<foo><t t-esc="val"/></foo>`);
+    qweb.addTemplate("bar", `<bar><t t-esc="val"/></bar>`);
+    qweb.addTemplate("main", `<div><t t-call="{{template}}"/></div>`);
+    const expected = "<div><foo>foo</foo></div>";
+    expect(renderToString(qweb, "main", { template: "foo", val: "foo" })).toBe(expected);
+    const expected2 = "<div><bar>quux</bar></div>";
+    expect(renderToString(qweb, "main", { template: "bar", val: "quux" })).toBe(expected2);
+  });
 });
 
 describe("foreach", () => {

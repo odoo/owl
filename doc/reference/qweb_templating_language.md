@@ -15,6 +15,7 @@
   - [Dynamic Attributes](#dynamic-attributes)
   - [Loops](#loops)
   - [Rendering Sub Templates](#rendering-sub-templates)
+  - [Dynamic Sub Templates](#dynamic-sub-templates)
   - [Translations](#translations)
   - [Debugging](#debugging)
 
@@ -508,6 +509,22 @@ This can be used to define variables scoped to a sub template:
 </t>
 <!-- "var" does not exist here -->
 ```
+
+### Dynamic sub templates
+
+The `t-call` directive can also be used to dynamically call a sub template,
+using string interpolation. For example:
+
+```xml
+<div t-name="main-template">
+    <t t-call="{{template}}">
+        <em>content</em>
+    </t>
+</div>
+```
+
+Here, the name of the template is obtained from the `template` value in the
+template rendering context.
 
 ### Translations
 

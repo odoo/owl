@@ -453,6 +453,17 @@ are all equivalent:
 
 If there is no `t-key` directive, Owl will use the index as a default key.
 
+Note: the `t-foreach` directive only accepts arrays (lists) or objects. It does
+not work with other iterables, such as `Set`. However, it is only a matter of
+using the `...` javascript operator. For example:
+
+```xml
+<t t-foreach="...items" t-as="item">...</t>
+```
+
+The `...` operator will convert the `Set` (or any other iterables) into a list,
+which will work with Owl QWeb.
+
 ### Rendering Sub Templates
 
 QWeb templates can be used for top level rendering, but they can also be used

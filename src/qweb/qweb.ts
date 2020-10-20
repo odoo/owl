@@ -212,6 +212,7 @@ export class QWeb extends EventBus {
   h = h;
   // dev mode enables better error messages or more costly validations
   static dev: boolean = false;
+  static enableTransitions: boolean = true;
 
   // slots contains sub templates defined with t-set inside t-component nodes, and
   // are meant to be used by the t-slot directive.

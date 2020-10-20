@@ -205,6 +205,9 @@ QWeb.addDirective({
   name: "transition",
   priority: 96,
   atNodeCreation({ ctx, value, addNodeHook }) {
+    if (!QWeb.enableTransitions) {
+      return;
+    }
     ctx.rootContext.shouldDefineUtils = true;
     let name = value;
     const hooks = {

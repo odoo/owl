@@ -433,8 +433,8 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    * up to the parent DOM nodes. Thus, it must be called between mounted() and
    * willUnmount().
    */
-  trigger(eventType: string, payload?: any) {
-    this.__trigger(this, eventType, payload);
+  trigger<T=any>(eventType: string, payload?: T) {
+    this.__trigger<T>(this, eventType, payload);
   }
 
   //--------------------------------------------------------------------------
@@ -512,9 +512,9 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    * Private trigger method, allows to choose the component which triggered
    * the event in the first place
    */
-  __trigger(component: Component, eventType: string, payload?: any) {
+  __trigger<T>(component: Component, eventType: string, payload?: T) {
     if (this.el) {
-      const ev = new OwlEvent(component, eventType, {
+      const ev = new OwlEvent<T>(component, eventType, {
         bubbles: true,
         cancelable: true,
         detail: payload,

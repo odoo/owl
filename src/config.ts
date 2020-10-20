@@ -8,6 +8,7 @@ import { QWeb } from "./qweb/index";
 
 interface Config {
   mode: string;
+  enableTransitions: boolean;
 }
 
 export const config = {} as Config;
@@ -26,5 +27,14 @@ Object.defineProperty(config, "mode", {
     } else {
       console.log(`Owl is now running in 'prod' mode.`);
     }
+  },
+});
+
+Object.defineProperty(config, "enableTransitions", {
+  get() {
+    return QWeb.enableTransitions;
+  },
+  set(value: boolean) {
+    QWeb.enableTransitions = value;
   },
 });

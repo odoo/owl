@@ -433,7 +433,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
    * up to the parent DOM nodes. Thus, it must be called between mounted() and
    * willUnmount().
    */
-  trigger<T=any>(eventType: string, payload?: T) {
+  trigger<T = any>(eventType: string, payload?: T) {
     this.__trigger<T>(this, eventType, payload);
   }
 

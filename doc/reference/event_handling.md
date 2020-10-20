@@ -85,8 +85,9 @@ Note that if you work with Typescript, the `trigger` method is generic on the ty
 You can then describe the type of the event, so you will see typing errors...
 
 ```typescript
-this.trigger<MyCustomPayload>('my-custom-event', payload);
+this.trigger<MyCustomPayload>("my-custom-event", payload);
 ```
+
 ```typescript
 myCustomEventHandler(ev: OwlEvent<MyCustomPayload>) { ... }
 ```

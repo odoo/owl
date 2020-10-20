@@ -227,7 +227,9 @@ QWeb.addDirective({
       if (name.startsWith("t-on-")) {
         events.push([name, value]);
       } else if (name === "t-transition") {
-        transition = value;
+        if (QWeb.enableTransitions) {
+          transition = value;
+        }
       } else if (!name.startsWith("t-")) {
         if (name !== "class" && name !== "style") {
           // this is a prop!

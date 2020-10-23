@@ -1052,4 +1052,37 @@ describe("t-slot directive", () => {
       "<div><child><p>Ablip</p>default2<child>default1<p>Bblip</p></child></child></div>"
     );
   });
+
+  test("named slot inside slot, part 3", async () => {
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <t t-slot="brol"/>
+          <t t-slot="default"/>
+        </div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-set-slot="brol">
+              <p>A<t t-esc="value"/></p>
+            </t>
+            <Child>
+              <t>
+                <t t-set-slot="brol">
+                  <p>B<t t-esc="value"/></p>
+                </t>
+              </t>
+            </Child>
+          </Child>
+        </div>`;
+      static components = { Child };
+      value = "blip";
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
+  });
 });

@@ -87,7 +87,7 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
 
-  log('Step 7/${STEPS}: Creating the release...');
+  log(`Step 7/${STEPS}: Creating the release...`);
   const relaseResult = await execCommand(`gh release create v${next} dist/*.js ${draft} -F release-notes.md`);
   if (relaseResult !== 0) {
     log("github release failed. Aborting.");

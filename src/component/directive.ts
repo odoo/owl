@@ -436,6 +436,7 @@ QWeb.addDirective({
               isInSubComponent = true;
               break;
             }
+            el = el.parentElement;
           }
           if (isInSubComponent) {
             continue;

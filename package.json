@@ -1,6 +1,6 @@
 {
   "name": "@odoo/owl",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Odoo Web Library (OWL)",
   "main": "dist/owl.cjs.js",
   "browser": "dist/owl.iife.js",

@@ -49,15 +49,14 @@ The correct way to customize an environment is to simply set it up on the root
 component class, before the first component is created:
 
 ```js
-App.env = {
+const env = {
     _t: myTranslateFunction,
     user: {...},
     services: {
         ...
     },
 };
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body, env });
 ```
 
 It is also possible to simply share an environment between all root components,
@@ -121,9 +120,8 @@ async function myEnv() {
 }
 
 async function start() {
-  App.env = await myEnv();
-  const app = new App();
-  await app.mount(document.body);
+  const env = await myEnv();
+  mount(App, { target: document.body, env });
 }
 ```
 

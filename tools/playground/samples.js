@@ -1,5 +1,5 @@
 const COMPONENTS = `// In this example, we show how components can be defined and created.
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 
 class Greeter extends Component {
     constructor() {
@@ -22,8 +22,7 @@ class App extends Component {
 App.components = { Greeter };
 
 // Application setup
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const COMPONENTS_XML = `<templates>
@@ -50,7 +49,7 @@ const COMPONENTS_CSS = `.greeter {
 
 const ANIMATION = `// The goal of this component is to see how the t-transition directive can be
 // used to generate simple transition effects.
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 
 class Counter extends Component {
     constructor() {
@@ -80,8 +79,7 @@ class App extends Component {
 }
 App.components = { Counter };
 
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const ANIMATION_XML = `<templates>
@@ -193,7 +191,7 @@ const LIFECYCLE_DEMO = `// This example shows all the possible lifecycle hooks
 // methods in the console.  Try modifying its state by clicking on it, or by
 // clicking on the two main buttons, and look into the console to see what
 // happens.
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 
 class DemoComponent extends Component {
     constructor() {
@@ -240,8 +238,7 @@ class App extends Component {
 }
 App.components = { DemoComponent };
 
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const LIFECYCLE_DEMO_XML = `<templates>
@@ -273,7 +270,8 @@ const LIFECYCLE_CSS = `button {
 }`;
 
 const HOOKS_DEMO = `// In this example, we show how hooks can be used or defined.
-const {useState, onMounted, onWillUnmount} = owl.hooks;
+const { hooks, mount } = owl;
+const {useState, onMounted, onWillUnmount} = hooks;
 
 // We define here a custom behaviour: this hook tracks the state of the mouse
 // position
@@ -312,8 +310,7 @@ class App extends owl.Component {
 }
 
 // Application setup
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const HOOKS_DEMO_XML = `<templates>
@@ -332,7 +329,7 @@ const HOOKS_CSS = `button {
 
 const CONTEXT_JS = `// In this example, we show how components can use the Context and 'useContext'
 // hook to share information between them.
-const { Component, Context } = owl;
+const { Component, Context, mount } = owl;
 const { useContext } = owl.hooks;
 
 class ToolbarButton extends Component {
@@ -367,8 +364,7 @@ const themeContext = new Context({
 });
 // Add the themeContext the environment to make it available to all components
 App.env.themeContext = themeContext;
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const CONTEXT_XML = `<templates>
@@ -395,7 +391,7 @@ const TODO_APP_STORE = `// This example is an implementation of the TodoList app
 //
 // In this implementation, we use the owl Store class to manage the state.  It
 // is very similar to the VueX store.
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 const { useRef, useStore, useDispatch, onPatched, onMounted } = owl.hooks;
 
 //------------------------------------------------------------------------------
@@ -568,8 +564,7 @@ function makeStore() {
 }
 
 TodoApp.env.store = makeStore();
-const app = new TodoApp();
-app.mount(document.body);
+mount(TodoApp, { target: document.body });
 `;
 
 const TODO_APP_STORE_XML = `<templates>
@@ -1060,8 +1055,7 @@ function setupResponsivePlugin(env) {
 //------------------------------------------------------------------------------
 setupResponsivePlugin(App.env);
 
-const app = new App();
-app.mount(document.body);
+owl.mount(App, { target: document.body });
 `;
 
 const RESPONSIVE_XML = `<templates>
@@ -1173,7 +1167,7 @@ const SLOTS = `// We show here how slots can be used to create generic component
 //
 // Note that the t-on-click event, defined in the App template, is executed in
 // the context of the App component, even though it is inside the Card component
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 
 class Card extends Component {
     constructor() {
@@ -1211,8 +1205,8 @@ class App extends Component {
 App.components = {Card, Counter};
 
 // Application setup
-const app = new App();
-app.mount(document.body);`;
+mount(App, { target: document.body });
+`;
 
 const SLOTS_XML = `<templates>
   <div t-name="Card" class="card" t-att-class="state.showContent ? 'full' : 'small'">
@@ -1298,7 +1292,7 @@ const ASYNC_COMPONENTS = `// This example will not work if your browser does not
 // However, we don't want renderings of the other sub component to be delayed
 // because of the slow component. We use the AsyncRoot component for this
 // purpose. Try removing it to see the difference.
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 const { AsyncRoot } = owl.misc;
 
 class SlowComponent extends Component {
@@ -1329,8 +1323,7 @@ class App extends Component {
 }
 App.components = {SlowComponent, NotificationList, AsyncRoot};
 
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const ASYNC_COMPONENTS_XML = `<templates>
@@ -1385,7 +1378,7 @@ const FORM = `// This example illustrate how the t-model directive can be used t
 // data between html inputs (and select/textareas) and the state of a component.
 // Note that there are two controls with t-model="color": they are totally
 // synchronized.
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 
 class Form extends Component {
     constructor() {
@@ -1401,8 +1394,7 @@ class Form extends Component {
 }
 
 // Application setup
-const form = new Form();
-form.mount(document.body);
+mount(Form, { target: document.body });
 `;
 
 const FORM_XML = `<templates>
@@ -1448,7 +1440,7 @@ const PORTAL_COMPONENTS = `
 // This shows the expected use case of Portal
 // which is to implement something similar
 // to bootstrap modal
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 const { Portal } = owl.misc;
 
 class Modal extends Component {}
@@ -1470,8 +1462,7 @@ class App extends Component {
 App.components = { Dialog , Interstellar };
 
 // Application setup
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const PORTAL_XML = `
@@ -1559,7 +1550,7 @@ const WMS = `// This example is slightly more complex than usual. We demonstrate
 // - minimal width/height
 // - better heuristic for initial window position
 // - ...
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 const { useRef } = owl.hooks;
 
 class HelloWorld extends Component {}
@@ -1699,8 +1690,7 @@ const windows = [
 ];
 
 App.env.windows = windows;
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 const WMS_XML = `<templates>
@@ -1818,7 +1808,7 @@ const SFC = `// This example illustrates how Owl enables single file components,
 // Note that this example has no external xml or css file, everything is
 // contained in a single js file.
 
-const { Component, useState, tags } = owl;
+const { Component, useState, tags, mount } = owl;
 const { xml, css } = tags;
 
 // Counter component
@@ -1850,8 +1840,7 @@ App.template = APP_TEMPLATE;
 App.components = { Counter };
 
 // Application setup
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 `;
 
 export const SAMPLES = [

@@ -54,7 +54,7 @@ Now, `index.html` should contain the following:
 And `app.js` should look like this:
 
 ```js
-const { Component } = owl;
+const { Component, mount } = owl;
 const { xml } = owl.tags;
 const { whenReady } = owl.utils;
 
@@ -65,8 +65,7 @@ class App extends Component {
 
 // Setup code
 function setup() {
-  const app = new App();
-  app.mount(document.body);
+  mount(App, target: { document.body })
 }
 
 whenReady(setup);
@@ -124,7 +123,7 @@ Here is the content of `app.js` and `main.js`:
 
 ```js
 // app.js ----------------------------------------------------------------------
-const { Component } = owl;
+const { Component, mount } = owl;
 const { xml } = owl.tags;
 
 export class App extends Component {
@@ -135,8 +134,7 @@ export class App extends Component {
 import { App } from "./app.js";
 
 function setup() {
-  const app = new App();
-  app.mount(document.body);
+  mount(App, { target: document.body });
 }
 
 owl.utils.whenReady(setup);
@@ -240,12 +238,11 @@ export class App extends Component {
 }
 
 // src/main.js -----------------------------------------------------------------
-import { utils } from "@odoo/owl";
+import { utils, mount } from "@odoo/owl";
 import { App } from "./components/App";
 
 function setup() {
-  const app = new App();
-  app.mount(document.body);
+  mount(App, { target: document.body });
 }
 
 utils.whenReady(setup);
@@ -253,6 +250,7 @@ utils.whenReady(setup);
 // tests/components/App.test.js ------------------------------------------------
 import { App } from "../../src/components/App";
 import { makeTestFixture, nextTick, click } from "../helpers";
+import { mount } from "@odoo/owl";
 
 let fixture;
 
@@ -266,8 +264,7 @@ afterEach(() => {
 
 describe("App", () => {
   test("Works as expected...", async () => {
-    const app = new App();
-    await app.mount(fixture);
+    await mount(App, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>Hello Owl</div>");
 
     click(fixture, "div");

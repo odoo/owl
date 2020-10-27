@@ -83,7 +83,7 @@ a single root component. Let us start by defining an `App` component. Replace th
 content of the function in `app.js` by the following code:
 
 ```js
-const { Component } = owl;
+const { Component, mount } = owl;
 const { xml } = owl.tags;
 const { whenReady } = owl.utils;
 
@@ -94,8 +94,7 @@ class App extends Component {
 
 // Setup code
 function setup() {
-  const app = new App();
-  app.mount(document.body);
+  mount(App, { target: document.body });
 }
 
 whenReady(setup);
@@ -279,8 +278,7 @@ class App extends Component {
 // -------------------------------------------------------------------------
 function setup() {
     owl.config.mode = "dev";
-    const app = new App();
-    app.mount(document.body);
+    mount(App, { target: document.body });
 }
 
 whenReady(setup);
@@ -639,8 +637,7 @@ function setup() {
   owl.config.mode = "dev";
   const store = new Store({ actions, state: initialState });
   App.env.store = store;
-  const app = new App();
-  app.mount(document.body);
+  mount(App, { target: document.body });
 }
 
 whenReady(setup);
@@ -666,9 +663,8 @@ function makeStore() {
 
 function setup() {
   owl.config.mode = "dev";
-  App.env.store = makeStore();
-  const app = new App();
-  app.mount(document.body);
+  const env = {store = makeStore()};
+  mount(App, { target: document.body, env });
 }
 ```
 
@@ -943,9 +939,8 @@ For reference, here is the final code:
 
   function setup() {
     owl.config.mode = "dev";
-    App.env.store = makeStore();
-    const app = new App();
-    app.mount(document.body);
+    const env = {store = makeStore()};
+    mount(App, { target: document.body, env });
   }
 
   whenReady(setup);

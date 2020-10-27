@@ -270,6 +270,10 @@ We explain here all the public methods of the `Component` class.
   // app is now visible
   ```
 
+  Note that the normal way of mounting an application is by using the `mount`
+  method on a component class, not by creating the instance by hand. See the
+  documentation on [mounting applications](mounting.md).
+
 * **`unmount()`**: in case a component needs to be detached/removed from the DOM, this
   method can be used. Most applications should not call `unmount`, this is more
   useful to the underlying component system.

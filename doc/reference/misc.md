@@ -43,7 +43,7 @@ workflow to help the user put in some data, which it could use later on.
 JavaScript:
 
 ```js
-const { Component } = owl;
+const { Component, mount } = owl;
 const { Portal } = owl.misc;
 
 class TeleportedComponent extends Component {}
@@ -51,8 +51,7 @@ class App extends Component {
   static components = { Portal, TeleportedComponent };
 }
 
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 ```
 
 XML:

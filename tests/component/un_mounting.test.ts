@@ -1,4 +1,4 @@
-import { Component, Env } from "../../src/component/component";
+import { Component, Env, mount } from "../../src/component/component";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeDeferred, makeTestEnv, makeTestFixture, nextTick, nextMicroTick } from "../helpers";
@@ -37,8 +37,7 @@ describe("mount targets", () => {
     div.innerHTML = `<p>pre-existing</p>`;
     fixture.appendChild(div);
 
-    const app = new App();
-    await app.mount(div, { position: "self" });
+    const app = await mount(App, { target: div, position: "self" });
 
     expect(fixture.innerHTML).toBe(
       `<div class="arbitrary custom"><p>pre-existing</p>app<p>another tag</p></div>`
@@ -66,10 +65,9 @@ describe("mount targets", () => {
     const div = document.createElement("div");
     fixture.appendChild(div);
 
-    const app = new App();
     let error;
     try {
-      await app.mount(div, { position: "self" });
+      await mount(App, { target: div, position: "self" });
     } catch (e) {
       error = e;
     }
@@ -84,8 +82,7 @@ describe("mount targets", () => {
     const span = document.createElement("span");
     fixture.appendChild(span);
 
-    const app = new App();
-    await app.mount(fixture, { position: "first-child" });
+    await mount(App, { target: fixture, position: "first-child" });
     expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
   });
 
@@ -96,8 +93,7 @@ describe("mount targets", () => {
     const span = document.createElement("span");
     fixture.appendChild(span);
 
-    const app = new App();
-    await app.mount(fixture, { position: "last-child" });
+    await mount(App, { target: fixture, position: "last-child" });
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 
@@ -108,8 +104,7 @@ describe("mount targets", () => {
     const span = document.createElement("span");
     fixture.appendChild(span);
 
-    const app = new App();
-    await app.mount(fixture);
+    await mount(App, { target: fixture });
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 });
@@ -133,8 +128,7 @@ describe("unmounting and remounting", () => {
       }
     }
 
-    const w = new MyWidget();
-    await w.mount(fixture);
+    const w = await mount(MyWidget, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
     expect(steps).toEqual(["willstart", "mounted"]);
 
@@ -162,8 +156,7 @@ describe("unmounting and remounting", () => {
       }
     }
 
-    const w = new MyWidget();
-    await w.mount(fixture);
+    const w = await mount(MyWidget, { target: fixture });
     await w.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
     expect(steps).toEqual(["willstart", "mounted"]);
@@ -203,8 +196,7 @@ describe("unmounting and remounting", () => {
       state = useState({ val: 1, flag: true });
     }
 
-    const widget = new Parent();
-    await widget.mount(fixture);
+    const widget = await mount(Parent, { target: fixture });
     expect(steps).toEqual(["render"]);
     expect(fixture.innerHTML).toBe("<div><span>12</span></div>");
     widget.state.flag = false;

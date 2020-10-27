@@ -41,7 +41,7 @@ find some more additional information [here](doc/miscellaneous/comparison.md).
 Here is a short example to illustrate interactive components:
 
 ```javascript
-const { Component, useState } = owl;
+const { Component, useState, mount } = owl;
 const { xml } = owl.tags;
 
 class Counter extends Component {
@@ -63,8 +63,7 @@ class App extends Component {
   static components = { Counter };
 }
 
-const app = new App();
-app.mount(document.body);
+mount(App, { target: document.body });
 ```
 
 Note that the counter component is made reactive with the [`useState` hook](doc/reference/hooks.md#usestate).

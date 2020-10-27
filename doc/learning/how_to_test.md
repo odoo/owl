@@ -85,8 +85,7 @@ afterEach(() => {
 describe("SomeComponent", () => {
   test("component behaves as expected", async () => {
     const props = {...}; // depends on the component
-    const comp = new SomeComponent(null, props);
-    await comp.mount(fixture);
+    const comp = await mount(SomeComponent, { target: fixture, props });
 
     // do some assertions
     expect(...).toBe(...);

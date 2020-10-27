@@ -1,4 +1,4 @@
-import { Component, Env } from "../../src/component/component";
+import { Component, Env, mount } from "../../src/component/component";
 import { EventBus } from "../../src/core/event_bus";
 import { useRef, useState } from "../../src/hooks";
 import { QWeb } from "../../src/qweb/qweb";
@@ -69,18 +69,23 @@ describe("basic widget properties", () => {
     class SomeWidget extends Component {
       static template = xml`<div>content</div>`;
     }
-    const widget = new SomeWidget();
-    widget.mount(fixture);
-    await nextTick();
+    await mount(SomeWidget, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>content</div>");
+  });
+
+  test("can be mounted with props", async () => {
+    class SomeWidget extends Component {
+      static template = xml`<div><t t-esc="props.content"/></div>`;
+    }
+    await mount(SomeWidget, { target: fixture, props: { content: "foo" } });
+    expect(fixture.innerHTML).toBe("<div>foo</div>");
   });
 
   test("can be mounted on a documentFragment", async () => {
     class SomeWidget extends Component {
       static template = xml`<div>content</div>`;
     }
-    const widget = new SomeWidget();
-    await widget.mount(document.createDocumentFragment());
+    const widget = await mount(SomeWidget, { target: document.createDocumentFragment() });
     expect(fixture.innerHTML).toBe("");
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>content</div>");
@@ -90,10 +95,9 @@ describe("basic widget properties", () => {
     class SomeWidget extends Component {
       static template = xml`<div>content</div>`;
     }
-    const widget = new SomeWidget();
     let error;
     try {
-      await widget.mount(null as any);
+      await mount(SomeWidget, { target: null as any });
     } catch (e) {
       error = e;
     }
@@ -107,10 +111,9 @@ describe("basic widget properties", () => {
     class SomeWidget extends Component {
       static template = xml`<t/>`;
     }
-    const widget = new SomeWidget();
     let error;
     try {
-      await widget.mount(fixture);
+      await mount(SomeWidget, { target: fixture });
     } catch (e) {
       error = e;
     }
@@ -137,8 +140,7 @@ describe("basic widget properties", () => {
       });
     }
 
-    const counter = new Counter();
-    counter.mount(fixture);
+    const counter = await mount(Counter, { target: fixture });
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
@@ -156,8 +158,7 @@ describe("basic widget properties", () => {
       static components = { Child };
     }
 
-    const parent = new Parent();
-    await parent.mount(fixture);
+    await mount(Parent, { target: fixture });
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
     expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
@@ -171,9 +172,8 @@ describe("basic widget properties", () => {
       });
     }
 
-    const counter = new Counter();
     const target = document.createElement("div");
-    await counter.mount(target);
+    const counter = await mount(Counter, { target: target });
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     button.click();
@@ -188,8 +188,7 @@ describe("basic widget properties", () => {
         <div style="font-weight:bold;" class="some-class">world</div>
       `;
     }
-    const widget = new StyledWidget();
-    await widget.mount(fixture);
+    await mount(StyledWidget, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
   });
 
@@ -212,8 +211,8 @@ describe("basic widget properties", () => {
         steps.push("patched");
       }
     }
-    const widget = new TestW();
-    await widget.mount(fixture);
+    await mount(TestW, { target: fixture });
+
     expect(steps).toEqual(["__render", "mounted"]);
   });
 

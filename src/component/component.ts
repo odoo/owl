@@ -729,3 +729,34 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     }
   }
 }
+
+interface MountParameters {
+  env?: Env;
+  target: HTMLElement | DocumentFragment;
+  props?: any;
+  position?: MountOptions["position"];
+}
+
+interface Type<T> extends Function {
+  new (...args: any[]): T;
+}
+
+export async function mount<T extends Type<Component>>(
+  C: T,
+  params: MountParameters
+): Promise<InstanceType<T>> {
+  const { env, props, target } = params;
+  let origEnv = C.hasOwnProperty("env") ? (C as any).env : null;
+  if (env) {
+    ((C as any) as typeof Component).env = env;
+  }
+  const component: Component = new C(null, props);
+  if (origEnv) {
+    (C as any).env = origEnv;
+  } else {
+    delete (C as any).env;
+  }
+  const position = params.position || "last-child";
+  await component.mount(target, { position });
+  return component as any;
+}

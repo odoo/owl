@@ -10,10 +10,11 @@ exported as `owl.core.EventBus`.
 Component                               misc
 Context                                     AsyncRoot
 QWeb                                        Portal
-Store                                   router
-useState                                    Link
-config                                      RouteComponent
-    mode                                    Router
+mount                                   router
+Store                                       Link
+useState                                    RouteComponent
+config                                      Router
+    mode
 core                                    tags
     EventBus                                css
     Observer                                xml

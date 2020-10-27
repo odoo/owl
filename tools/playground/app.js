@@ -1,5 +1,6 @@
 import { SAMPLES } from "./samples.js";
-const { useState, useRef, onMounted, onWillUnmount } = owl.hooks;
+const { mount, hooks } = owl;
+const { useState, useRef, onMounted, onWillUnmount } = hooks;
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
 //------------------------------------------------------------------------------
@@ -419,9 +420,8 @@ async function start() {
     owl.utils.whenReady()
   ]);
   const qweb = new owl.QWeb({ templates });
-  owl.Component.env = { qweb };
-  const app = new App();
-  app.mount(document.body);
+  const env = { qweb };
+  await mount(App, {target: document.body, env});
 }
 
 start();

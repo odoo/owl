@@ -19,7 +19,7 @@ import { Link } from "./router/link";
 import { RouteComponent } from "./router/route_component";
 import { Router } from "./router/router";
 
-export { Component } from "./component/component";
+export { Component, mount } from "./component/component";
 export { QWeb };
 export { config };
 
@@ -37,4 +37,5 @@ export const hooks = Object.assign({}, _hooks, {
   useGetters: _store.useGetters,
   useStore: _store.useStore,
 });
+
 export const __info__ = {};

@@ -27,6 +27,7 @@ provided by Owl.
 - [Event Handling](reference/event_handling.md)
 - [Error Handling](reference/error_handling.md)
 - [Hooks](reference/hooks.md)
+- [Mounting a component](reference/mounting.md)
 - [Miscellaneous Components](reference/misc.md)
 - [Observer](reference/observer.md)
 - [Props](reference/props.md)

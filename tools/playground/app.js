@@ -1,4 +1,4 @@
-import { SAMPLES } from "./samples.js";
+import { SAMPLES as samples }  from "./samples.js" ;
 const { useState, useRef, onMounted, onWillUnmount } = owl.hooks;
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
@@ -6,18 +6,18 @@ const { useState, useRef, onMounted, onWillUnmount } = owl.hooks;
 let owlJS;
 
 async function owlSourceCode() {
-  if (owlJS) {
+    if (owlJS) {
+        return owlJS;
+    }
+    const result = await fetch("../owl.js");
+    owlJS = await result.text();
     return owlJS;
-  }
-  const result = await fetch("../owl.js");
-  owlJS = await result.text();
-  return owlJS;
 }
 
 const MODES = {
-  js: "ace/mode/javascript",
-  css: "ace/mode/css",
-  xml: "ace/mode/xml"
+    js: "ace/mode/javascript",
+    css: "ace/mode/css",
+    xml: "ace/mode/xml"
 };
 
 const DEFAULT_XML = `<templates>
@@ -71,22 +71,23 @@ if __name__ == "__main__":
  * Make an iframe, with all the js, css and xml properly injected.
  */
 function makeCodeIframe(js, css, xml) {
-  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "");
+    const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "");
 
 
-  // create iframe
-  const iframe = document.createElement("iframe");
+    // create iframe
+    const iframe = document.createElement("iframe");
+    iframe.className += "h-full w-full";
 
-  iframe.onload = () => {
-    const doc = iframe.contentDocument;
-    // inject js
-    const owlScript = doc.createElement("script");
-    owlScript.type = "text/javascript";
-    owlScript.src = "../owl.js";
-    owlScript.addEventListener("load", () => {
-      const script = doc.createElement("script");
-      script.type = "text/javascript";
-      const content = `
+    iframe.onload = () => {
+        const doc = iframe.contentDocument;
+        // inject js
+        const owlScript = doc.createElement("script");
+        owlScript.type = "text/javascript";
+        owlScript.src = "../owl.js";
+        owlScript.addEventListener("load", () => {
+            const script = doc.createElement("script");
+            script.type = "text/javascript";
+            const content = `
         {
           owl.config.mode = 'dev';
           let templates = \`${sanitizedXML}\`;
@@ -94,32 +95,32 @@ function makeCodeIframe(js, css, xml) {
           owl.Component.env = { qweb };
         }
         ${js}`;
-      script.innerHTML = content;
-      doc.body.appendChild(script);
-    });
-    doc.head.appendChild(owlScript);
+            script.innerHTML = content;
+            doc.body.appendChild(script);
+        });
+        doc.head.appendChild(owlScript);
 
-    // inject css
-    const style = document.createElement("style");
-    style.innerHTML = css;
-    doc.head.appendChild(style);
-  };
-  return iframe;
+        // inject css
+        const style = document.createElement("style");
+        style.innerHTML = css;
+        doc.head.appendChild(style);
+    };
+    return iframe;
 }
 
 /**
  * Make a zip file containing a functioning application
  */
 async function makeApp(js, css, xml) {
-  await owl.utils.loadJS("libs/jszip.min.js");
+    await owl.utils.loadJS("libs/jszip.min.js");
 
-  const zip = new JSZip();
-  const processedJS = js
-    .split("\n")
-    .map(l => (l === "" ? "" : "  " + l))
-    .join("\n");
+    const zip = new JSZip();
+    const processedJS = js
+        .split("\n")
+        .map(l => (l === "" ? "" : "  " + l))
+        .join("\n");
 
-  const JS = `
+    const JS = `
 /**
  * This is the javascript code defined in the playground.
  * In a larger application, this code should probably be moved in different
@@ -150,278 +151,248 @@ async function start() {
 start();
 `;
 
-  zip.file("app.js", JS);
-  zip.file("app.css", css);
-  zip.file("app.py", APP_PY);
-  zip.file("app.xml", xml);
-  zip.file("index.html", DEFAULT_HTML);
-  zip.file("owl.js", owlSourceCode());
-  return zip.generateAsync({ type: "blob" });
+    zip.file("app.js", JS);
+    zip.file("app.css", css);
+    zip.file("app.py", APP_PY);
+    zip.file("app.xml", xml);
+    zip.file("index.html", DEFAULT_HTML);
+    zip.file("owl.js", owlSourceCode());
+    return zip.generateAsync({ type: "blob" });
 }
 
 //------------------------------------------------------------------------------
 // SAMPLES
 //------------------------------------------------------------------------------
 function loadSamples() {
-  let result = SAMPLES.slice();
-  const localSample = localStorage.getItem("owl-playground-local-sample");
-  if (localSample) {
-    const { js, css, xml } = JSON.parse(localSample);
-    result.unshift({
-      description: "Local Storage Code",
-      code: js,
-      xml,
-      css
-    });
-  }
-  return result;
+    let result = samples.slice();
+    const localSample = localStorage.getItem("owl-playground-local-sample");
+    if (localSample) {
+        const { js, css, xml } = JSON.parse(localSample);
+        result.unshift({
+            description: "Local Storage Code",
+            code: js,
+            xml,
+            css
+        });
+    }
+    return result;
 }
 
 function saveLocalSample(js, css, xml) {
-  const str = JSON.stringify({ js, css, xml });
-  localStorage.setItem("owl-playground-local-sample", str);
+    const str = JSON.stringify({ js, css, xml });
+    localStorage.setItem("owl-playground-local-sample", str);
 }
 
 function deleteLocalSample() {
-  localStorage.removeItem("owl-playground-local-sample");
+    localStorage.removeItem("owl-playground-local-sample");
 }
 
 function useSamples() {
-  const samples = loadSamples();
-  const component = owl.Component.current;
-  let interval;
-
-  onMounted(() => {
-    const state = component.state;
-    interval = setInterval(() => {
-      if (component.isDirty) {
-        saveLocalSample(state.js, state.css, state.xml);
-      }
-    }, 1000);
-  });
-  onWillUnmount(() => {
-    clearInterval(interval);
-  });
-  return samples;
-}
-//------------------------------------------------------------------------------
-// Tabbed editor
-//------------------------------------------------------------------------------
-class TabbedEditor extends owl.Component {
-  constructor(parent, props) {
-    super(parent, props);
-    this.state = useState({
-      currentTab: props.js !== false ? "js" : props.xml ? "xml" : "css"
-    });
-    this.setTab = owl.utils.debounce(this.setTab, 250, true);
-
-    this.sessions = {};
-    this._setupSessions(props);
-    this.editorNode = useRef("editor");
-    this._updateCode = this._updateCode.bind(this);
-  }
-
-  mounted() {
-    this.editor = this.editor || ace.edit(this.editorNode.el);
-
-    this.editor.setValue(this.props[this.state.currentTab], -1);
-    this.editor.setFontSize("12px");
-    this.editor.setTheme("ace/theme/monokai");
-    this.editor.setSession(this.sessions[this.state.currentTab]);
-    const tabSize = this.state.currentTab === "xml" ? 2 : 4;
-    this.editor.session.setOption("tabSize", tabSize);
-    this.editor.on("blur", this._updateCode);
-    this.interval = setInterval(this._updateCode, 3000);
-  }
-
-  willUnmount() {
-    clearInterval(this.interval);
-    this.editor.off("blur", this._updateCode);
-  }
-  willUpdateProps(nextProps) {
-    this._setupSessions(nextProps);
-  }
-
-  patched() {
-    const session = this.sessions[this.state.currentTab];
-    let content = this.props[this.state.currentTab];
-    if (content === false) {
-      const tab = this.props.js !== false ? "js" : this.props.xml ? "xml" : "css";
-      content = this.props[tab];
-      this.state.currentTab = tab;
-    }
-    if (this.editor.getValue() !== content) {
-      session.setValue(content, -1);
-      this.editor.setSession(session);
-      this.editor.resize();
-    }
-  }
-
-  setTab(tab) {
-    if (this.state.currentTab !== tab) {
-      this.state.currentTab = tab;
-      const session = this.sessions[this.state.currentTab];
-      session.doc.setValue(this.props[tab], -1);
-      this.editor.setSession(session);
-    }
-  }
-
-  onMouseDown(ev) {
-    if (ev.target.tagName === "DIV") {
-      let y = ev.clientY;
-      const resizer = ev => {
-        const delta = ev.clientY - y;
-        y = ev.clientY;
-        this.trigger("updatePanelHeight", { delta });
-      };
-      document.body.addEventListener("mousemove", resizer);
-      document.body.addEventListener("mouseup", () => {
-        document.body.removeEventListener("mousemove", resizer);
-      });
-    }
-  }
-
-  _setupSessions(props) {
-    for (let tab of ["js", "xml", "css"]) {
-      if (props[tab] !== false && !this.sessions[tab]) {
-        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
-        this.sessions[tab].setOption("useWorker", false);
-        const tabSize = tab === "xml" ? 2 : 4;
-        this.sessions[tab].setOption("tabSize", tabSize);
-        this.sessions[tab].setUndoManager(new ace.UndoManager());
-      }
-    }
-  }
-
-  _updateCode() {
-    const editorValue = this.editor.getValue();
-    const propsValue = this.props[this.state.currentTab];
-    if (editorValue !== propsValue) {
-      this.trigger("updateCode", {
-        type: this.state.currentTab,
-        value: editorValue
-      });
-    }
-  }
+    return loadSamples();
 }
 
 //------------------------------------------------------------------------------
 // MAIN APP
 //------------------------------------------------------------------------------
-class App extends owl.Component {
-  constructor(...args) {
-    super(...args);
-    this.version = owl.__info__.version;
-    this.SAMPLES = useSamples();
-    this.isDirty = false;
 
-    this.state = useState({
-      js: this.SAMPLES[0].code,
-      css: this.SAMPLES[0].css || "",
-      xml: this.SAMPLES[0].xml || DEFAULT_XML,
-      displayWelcome: true,
-      splitLayout: true,
-      leftPaneWidth: Math.ceil(window.innerWidth / 2),
-      topPanelHeight: null
-    });
-
-    this.toggleLayout = owl.utils.debounce(this.toggleLayout, 250, true);
-    this.runCode = owl.utils.debounce(this.runCode, 250, true);
-    this.downloadCode = owl.utils.debounce(this.downloadCode, 250, true);
-    this.content = useRef("content");
-  }
-
-  runCode() {
-    this.content.el.innerHTML = "";
-    this.state.displayWelcome = false;
-
-    const { js, css, xml } = this.state;
-    const subiframe = makeCodeIframe(js, css, xml);
-    this.content.el.appendChild(subiframe);
-  }
-
-  setSample(ev) {
-    const sample = this.SAMPLES.find(s => s.description === ev.target.value);
-    this.state.js = sample.code;
-    this.state.css = sample.css || "";
-    this.state.xml = sample.xml || DEFAULT_XML;
-    deleteLocalSample();
-    this.isDirty = false;
-  }
-
-  get leftPaneStyle() {
-    return `width:${this.state.leftPaneWidth}px`;
-  }
-
-  get rightPaneStyle() {
-    return `width:${window.innerWidth - 6 - this.state.leftPaneWidth}px`;
-  }
-
-  get topEditorStyle() {
-    return `flex: 0 0 ${this.state.topPanelHeight}px`;
-  }
-
-  onMouseDown() {
-    const resizer = ev => {
-      this.state.leftPaneWidth = ev.clientX;
-    };
-
-    document.body.addEventListener("mousemove", resizer);
-    for (let iframe of document.getElementsByTagName("iframe")) {
-      iframe.classList.add("disabled");
-    }
-
-    document.body.addEventListener("mouseup", () => {
-      document.body.removeEventListener("mousemove", resizer);
-      for (let iframe of document.getElementsByTagName("iframe")) {
-        iframe.classList.remove("disabled");
-      }
-    });
-  }
-  updateCode(ev) {
-    if (this.state[ev.detail.type] !== ev.detail.value) {
-      this.state[ev.detail.type] = ev.detail.value;
-      this.isDirty = true;
-    }
-  }
-  toggleLayout() {
-    this.state.splitLayout = !this.state.splitLayout;
-  }
-  updatePanelHeight(ev) {
-    if (!ev.detail.delta) {
-      return;
-    }
-    let height = this.state.topPanelHeight;
-    if (!height) {
-      height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
-    }
-    this.state.topPanelHeight = height + ev.detail.delta;
-  }
-
-  async downloadCode() {
-    const { js, css, xml } = this.state;
-    const content = await makeApp(js, css, xml);
-    await owl.utils.loadJS("libs/FileSaver.min.js");
-    saveAs(content, "app.zip");
-  }
+class Tab extends owl.Component {
 }
-App.components = { TabbedEditor };
+
+class Editor extends owl.Component {
+
+    static props = ['js', 'xml', 'css']
+
+    state = useState({ 
+        currentExtension: 'js', 
+        js: this.props.js,
+        css: this.props.css,
+        xml: this.props.xml,
+        
+    })
+
+    jsModel =  null;
+    cssModel =  null;
+    xmlModel =  null;
+
+    editor = null;
+
+    willUpdateProps(nextProps) {
+        console.log(nextProps);
+        this.state.js = nextProps.js;
+        this.state.css = nextProps.css;
+        this.state.xml = nextProps.xml;
+        
+        this.jsModel = null;
+        this.cssModel = null;
+        this.xmlModel = null;
+
+        this._openFile(this.state.currentExtension, false) 
+    }
+
+    _run(ev) {
+        this._saveCodeState();
+        this.trigger('run-project', {
+            js: this.state.js,
+            xml: this.state.xml,
+            css: this.state.css
+        })
+    }
+
+    _openFile(extension, save = true) {
+        if (save) this._saveCodeState();
+
+        this.state.currentExtension = extension;
+        let language = null;
+        let model = null;
+
+        if (extension === 'js') {
+            console.log("here")
+
+            if (this.jsModel) {
+                model = this.jsModel;
+            }
+
+            else {
+                language = 'javascript'
+            }
+        }
+
+        if (extension === 'xml') {
+
+            if (this.xmlModel) {
+                model = this.xmlModel;
+            }
+
+            else {
+                language = 'xml'
+            }
+        }
+
+        if (extension === 'css') {
+
+            if (this.cssModel) {
+                model = this.cssModel;
+            }
+
+            else {
+                language = 'css'
+            }
+        }
+
+        console.log(model)
+
+        if (!model) {
+            model = monaco.editor.createModel(
+                this.state[this.state.currentExtension],
+                language,
+                null
+            )
+
+            if (extension === 'js') {
+                this.jsModel = model;
+            }
+    
+            if (extension === 'xml') {
+               this.xmlModel = model;
+            }
+    
+            if (extension === 'css') {
+                this.cssModel = model;
+            }
+        }
+
+        this.editor.setModel(model)
+
+    }
+
+    mounted() {
+        this.editor = monaco.editor.create(document.getElementById('container'), {
+            value: this.state[this.state.currentExtension],
+            language: 'javascript',
+            automaticLayout: true,
+            minimap: {
+                enabled: false
+            }
+        });
+    }
+
+    _saveCodeState() {
+        this.state[this.state.currentExtension] = this.editor.getValue();
+    }
+
+    _openCSS(ev) {
+        this._openFile('css')
+    }
+
+    _openXML(ev) {
+        this._openFile('xml')
+    }
+
+    _openJS(ev) {
+        this._openFile('js')
+    }
+
+}
+
+Editor.components = { Tab }
+
+
+class App extends owl.Component {
+
+    samples = [];
+
+    constructor(...args) {
+        super(...args);
+        this.version = owl.__info__.version;
+        this.samples = useSamples();
+
+        this.state = useState({ 
+            js: this.samples[0].code,
+            css: this.samples[0].css || "",
+            xml: this.samples[0].xml || DEFAULT_XML,
+        });
+
+        this.runCode = owl.utils.debounce(this.runCode, 250, true);
+        this.downloadCode = owl.utils.debounce(this.downloadCode, 250, true);
+        this.content = useRef("iframe-container");
+    }
+
+
+    _run(ev) {
+        this.content.el.innerHTML = "";
+        const { js, css, xml } = ev.detail;
+        const subiframe = makeCodeIframe(js, css, xml);
+        this.content.el.appendChild(subiframe);
+    }
+
+    _setSample(ev) {
+        const sample = this.samples.find(s => s.description === ev.target.value);
+        this.state.js = sample.code;
+        this.state.css = sample.css || "";
+        this.state.xml = sample.xml || DEFAULT_XML;
+        deleteLocalSample();
+    }
+
+
+}
+
+App.components = { Editor }
 
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
 async function start() {
-  document.title = `${document.title} (v${owl.__info__.version})`;
-  const commit = `https://github.com/odoo/owl/commit/${owl.__info__.hash}`;
-  console.info(`This application is using Owl built with the following commit:`, commit);
-  const [templates] = await Promise.all([
-    owl.utils.loadFile("templates.xml"),
-    owl.utils.whenReady()
-  ]);
-  const qweb = new owl.QWeb({ templates });
-  owl.Component.env = { qweb };
-  const app = new App();
-  app.mount(document.body);
+    document.title = `${document.title} (v${owl.__info__.version})`;
+    const commit = `https://github.com/odoo/owl/commit/${owl.__info__.hash}`;
+    console.info(`This application is using Owl built with the following commit:`, commit);
+    const [templates] = await Promise.all([
+        owl.utils.loadFile("templates.xml"),
+        owl.utils.whenReady()
+    ]);
+    const qweb = new owl.QWeb({ templates });
+    owl.Component.env = { qweb };
+    const app = new App();
+    app.mount(document.body);
 }
 
 start();

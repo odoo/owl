@@ -131,7 +131,7 @@ class SomeComponent extends Component {
 ### One rule
 
 There is only one rule: every hook for a component has to be called in the
-constructor (or in class fields):
+constructor, in the _setup_ method, or in class fields:
 
 ```js
 // ok
@@ -143,6 +143,13 @@ class SomeComponent extends Component {
 class SomeComponent extends Component {
   constructor(...args) {
     super(...args);
+    this.state = useState({ value: 0 });
+  }
+}
+
+// also ok
+class SomeComponent extends Component {
+  setup() {
     this.state = useState({ value: 0 });
   }
 }

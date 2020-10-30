@@ -209,7 +209,19 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     if (constr.style) {
       this.__applyStyles(constr);
     }
+    this.setup();
   }
+
+  /**
+   * setup is run just after the component is constructed. This is the standard
+   * location where the component can setup its hooks. It has some advantages
+   * over the constructor:
+   *  - it can be patched (useful in odoo ecosystem)
+   *  - it does not need to propagate the arguments to the super call
+   *
+   * Note: this method should not be called manually.
+   */
+  setup() {}
 
   /**
    * willStart is an asynchronous hook that can be implemented to perform some

@@ -11,6 +11,7 @@
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
     - [`constructor(parent, props)`](#constructorparent-props)
+    - [`setup()`](#setup)
     - [`willStart()`](#willstart)
     - [`mounted()`](#mounted)
     - [`willUpdateProps(nextProps)`](#willupdatepropsnextprops)
@@ -324,7 +325,7 @@ a owl component:
 
 | Method                                           | Description                                                 |
 | ------------------------------------------------ | ----------------------------------------------------------- |
-| **[constructor](#constructorparent-props)**      | constructor                                                 |
+| **[setup](#setup)**                              | setup                                                       |
 | **[willStart](#willstart)**                      | async, before first rendering                               |
 | **[mounted](#mounted)**                          | just after component is rendered and added to the DOM       |
 | **[willUpdateProps](#willupdatepropsnextprops)** | async, before props update                                  |
@@ -366,6 +367,23 @@ class ClickCounter extends owl.Component {
   state = useState({ value: 0 });
 
   ...
+}
+```
+
+Hook functions can be called in the constructor.
+
+#### `setup()`
+
+_setup_ is run just after the component is constructed. It is a lifecycle method,
+very similar to the _constructor_, except that it does not receive any argument.
+
+It is a valid method to call hook functions. Note that one of the main reason to
+have the `setup` hook in the component lifecycle is to make it possible to
+monkey patch it. It is a common need in the Odoo ecosystem.
+
+```javascript
+setup() {
+  useSetupAutofocus();
 }
 ```
 

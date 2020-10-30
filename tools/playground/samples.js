@@ -2,8 +2,7 @@ const COMPONENTS = `// In this example, we show how components can be defined an
 const { Component, useState, mount } = owl;
 
 class Greeter extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ word: 'Hello' });
     }
 
@@ -14,10 +13,9 @@ class Greeter extends Component {
 
 // Main root component
 class App extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({ name: 'World'});
-    }
+  setup() {
+    this.state = useState({ name: 'World'});
+  }
 }
 App.components = { Greeter };
 
@@ -52,8 +50,7 @@ const ANIMATION = `// The goal of this component is to see how the t-transition 
 const { Component, useState, mount } = owl;
 
 class Counter extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ value: 0 });
     }
 
@@ -63,8 +60,7 @@ class Counter extends Component {
 }
 
 class App extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ flag: false, componentFlag: false, numbers: [] });
     }
 
@@ -194,10 +190,9 @@ const LIFECYCLE_DEMO = `// This example shows all the possible lifecycle hooks
 const { Component, useState, mount } = owl;
 
 class DemoComponent extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ n: 0 });
-        console.log("constructor");
+        console.log("setup");
     }
     async willStart() {
         console.log("willstart");
@@ -223,8 +218,7 @@ class DemoComponent extends Component {
 }
 
 class App extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ n: 0, flag: true });
     }
 
@@ -295,8 +289,7 @@ function useMouse() {
 
 // Main root component
 class App extends owl.Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         // simple state hook (reactive object)
         this.counter = useState({ value: 0 });
 
@@ -333,8 +326,7 @@ const { Component, Context, mount } = owl;
 const { useContext } = owl.hooks;
 
 class ToolbarButton extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.theme = useContext(this.env.themeContext);
     }
 
@@ -468,8 +460,7 @@ const actions = {
 // TodoItem
 //------------------------------------------------------------------------------
 class TodoItem extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         useAutofocus("input");
         this.state = useState({ isEditing: false });
         this.dispatch = useDispatch();
@@ -499,8 +490,7 @@ class TodoItem extends Component {
 // TodoApp
 //------------------------------------------------------------------------------
 class TodoApp extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ filter: "all" });
         this.todos = useStore(state => state.todos);
         this.dispatch = useDispatch();
@@ -1026,8 +1016,7 @@ class FormView extends owl.Component {}
 FormView.components = { AdvancedComponent };
 
 class Chatter extends owl.Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.messages = Array.from(Array(100).keys());
     }
 }
@@ -1170,8 +1159,7 @@ const SLOTS = `// We show here how slots can be used to create generic component
 const { Component, useState, mount } = owl;
 
 class Card extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ showContent: true });
     }
 
@@ -1181,8 +1169,7 @@ class Card extends Component {
 }
 
 class Counter extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({val: 1});
     }
 
@@ -1193,8 +1180,7 @@ class Counter extends Component {
 
 // Main root component
 class App extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({a: 1, b: 3});
     }
 
@@ -1306,8 +1292,7 @@ class SlowComponent extends Component {
 class NotificationList extends Component {}
 
 class App extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({ value: 0, notifs: [] });
     }
 
@@ -1381,8 +1366,7 @@ const FORM = `// This example illustrate how the t-model directive can be used t
 const { Component, useState, mount } = owl;
 
 class Form extends Component {
-    constructor() {
-        super(...arguments);
+    setup() {
         this.state = useState({
             text: "",
             othertext: "",
@@ -1556,8 +1540,7 @@ const { useRef } = owl.hooks;
 class HelloWorld extends Component {}
 
 class Counter extends Component {
-  constructor() {
-    super(...arguments);
+  setup() {
     this.state = useState({ value: 0 });
   }
 
@@ -1610,8 +1593,7 @@ class Window extends Component {
 }
 
 class WindowManager extends Component {
-  constructor() {
-    super(...arguments);
+  setup() {
     this.windows = [];
     this.nextId = 1;
     this.currentZindex = 1;
@@ -1661,8 +1643,7 @@ class WindowManager extends Component {
 WindowManager.components = { Window };
 
 class App extends Component {
-  constructor() {
-    super(...arguments);
+  setup() {
     this.wmRef = useRef("wm");
   }
 

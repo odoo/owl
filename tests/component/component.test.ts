@@ -661,9 +661,8 @@ describe("lifecycle hooks", () => {
 
     class ChildWidget extends Component {
       static template = xml`<div/>`;
-      constructor(parent) {
-        super(parent);
-        steps.push("init");
+      setup() {
+        steps.push("setup");
       }
       async willStart() {
         steps.push("willstart");
@@ -687,10 +686,10 @@ describe("lifecycle hooks", () => {
 
     const widget = new ParentWidget();
     await widget.mount(fixture);
-    expect(steps).toEqual(["init", "willstart", "mounted"]);
+    expect(steps).toEqual(["setup", "willstart", "mounted"]);
     widget.state.ok = false;
     await nextTick();
-    expect(steps).toEqual(["init", "willstart", "mounted", "willunmount"]);
+    expect(steps).toEqual(["setup", "willstart", "mounted", "willunmount"]);
   });
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
@@ -738,8 +737,7 @@ describe("lifecycle hooks", () => {
 
     class ChildWidget extends Component {
       static template = xml`<div/>`;
-      constructor(parent) {
-        super(parent);
+      setup() {
         steps.push("c init");
       }
       async willStart() {
@@ -755,8 +753,7 @@ describe("lifecycle hooks", () => {
     class ParentWidget extends Component {
       static template = xml`<div><t t-component="child"/></div>`;
       static components = { child: ChildWidget };
-      constructor(parent?) {
-        super(parent);
+      setup() {
         steps.push("p init");
       }
       async willStart() {

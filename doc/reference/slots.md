@@ -25,6 +25,8 @@ some sub template, but still be the owner. For example, a generic dialog compone
 will need to render some content, some footer, but with the parent as the
 rendering context.
 
+Slots are inserted with the `t-slot` directive:
+
 ```xml
 <div t-name="Dialog" class="modal">
   <div class="modal-title"><t t-esc="props.title"/></div>
@@ -62,7 +64,9 @@ This is deprecated and should no longer be used in new code.
 
 ## Reference
 
-Default slot: the first element inside the component which is not a named slot will
+### Default Slot
+
+The first element inside the component which is not a named slot will
 be considered the `default` slot. For example:
 
 ```xml
@@ -77,7 +81,9 @@ be considered the `default` slot. For example:
 </div>
 ```
 
-Default content: slots can define a default content, in case the parent did not define them:
+### Default content
+
+Slots can define a default content, in case the parent did not define them:
 
 ```xml
 <div t-name="Parent">
@@ -94,3 +100,12 @@ Rendering context: the content of the slots is actually rendered with the
 rendering context corresponding to where it was defined, not where it is
 positioned. This allows the user to define event handlers that will be bound
 to the correct component (usually, the grandparent of the slot content).
+
+### Dynamic Slots
+
+The `t-slot` directive is actually able to use any expressions, using string
+interplolation:
+
+```xml
+ <t t-slot="{{current}}" />
+```

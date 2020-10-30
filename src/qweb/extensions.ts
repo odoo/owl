@@ -1,4 +1,5 @@
 import { VNode } from "../vdom/index";
+import { INTERP_REGEXP } from "./compilation_context";
 import { QWeb } from "./qweb";
 
 /**
@@ -228,8 +229,9 @@ QWeb.addDirective({
   priority: 80,
   atNodeEncounter({ ctx, value, node, qweb }): boolean {
     const slotKey = ctx.generateID();
+    const valueExpr = value.match(INTERP_REGEXP) ? ctx.interpolate(value) : `'${value}'`;
     ctx.addLine(
-      `const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`
+      `const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + ${valueExpr}];`
     );
     ctx.addIf(`slot${slotKey}`);
     let parentNode = `c${ctx.parentNode}`;

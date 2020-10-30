@@ -1,4 +1,4 @@
-import { Component, Env } from "../../src/component/component";
+import { Component, Env, mount } from "../../src/component/component";
 import { QWeb } from "../../src/qweb/qweb";
 import { xml } from "../../src/tags";
 import { useState, useRef } from "../../src/hooks";
@@ -1084,5 +1084,38 @@ describe("t-slot directive", () => {
     await parent.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
+  });
+
+  test("dynamic t-slot call", async () => {
+    class Toggler extends Component {
+      static template = xml`<button t-on-click="toggle"><t t-slot="{{current.slot}}"/></button>`;
+      current = useState({ slot: "slot1" });
+      toggle() {
+        this.current.slot = this.current.slot === "slot1" ? "slot2" : "slot1";
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Toggler>
+            <t t-set-slot="slot1"><p>slot1</p><span>content</span></t>
+            <t t-set-slot="slot2"><h1>slot2</h1></t>
+          </Toggler>
+        </div>`;
+      static components = { Toggler };
+    }
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
+
+    fixture.querySelector<HTMLElement>("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button><h1>slot2</h1></button></div>");
+
+    fixture.querySelector<HTMLElement>("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
+
+    expect(env.qweb.templates[Toggler.template].fn.toString()).toMatchSnapshot();
   });
 });

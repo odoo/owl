@@ -220,6 +220,25 @@ exports[`t-slot directive default slot work with text nodes 1`] = `
 }"
 `;
 
+exports[`t-slot directive dynamic t-slot call 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"__template__1\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c10 = [], p10 = {key:10,on:{}};
+    let vn10 = h('button', p10, c10);
+    extra.handlers['click__11__'] = extra.handlers['click__11__'] || function (e) {if (!context.__owl__.isMounted){return}utils.getComponent(context)['toggle'](e);};
+    p10.on['click'] = extra.handlers['click__11__'];
+    const slot12 = this.constructor.slots[context.__owl__.slotId + '_' + (scope['current'].slot)];
+    if (slot12) {
+        slot12.call(this, context.__owl__.scope, Object.assign({}, extra, {parentNode: c10, parent: extra.parent || context}));
+    }
+    return vn10;
+}"
+`;
+
 exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
 "function anonymous(context, extra
 ) {

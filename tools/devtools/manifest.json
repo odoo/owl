@@ -4,8 +4,8 @@
     "manifest_version": 2,
     "description": "Chrome Extension starter Kit with es6 standards",
     "browser_action": {
-        "default_icon": "assets/images/icon.png",
-        "default_popup": "src/popup/popup.html"
+        "default_icon": "build/assets/images/icon.png",
+        "default_popup": "build/popup/popup.html"
     },
     "permissions": [
         "cookies",
@@ -19,8 +19,8 @@
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
-        "page": "src/background.html",
+        "page": "build/background.html",
         "persistent": false
     },
-    "devtools_page": "src/devtools/devtools.html"
+    "devtools_page": "build/devtools/devtools.html"
 }

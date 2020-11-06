@@ -7,5 +7,5 @@ const TEMPLATE = tags.xml/*xml*/ `
 `;
 
 export class PopUpApp extends Component {
-  static template = TEMPLATE;
+    static template = TEMPLATE;
 }

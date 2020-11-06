@@ -3,7 +3,7 @@ export const tabUtils = {
         // console.log('newURL ', newURL);
         // chrome.tabs.create({url: newURL}, callback);
         return new Promise((resolve, reject) => {
-            chrome.tabs.create({url: newURL}, (response) => {
+            chrome.tabs.create({ url: newURL }, (response) => {
                 return resolve(response);
             });
         });
@@ -16,5 +16,5 @@ export const tabUtils = {
                 return resolve(response);
             });
         });
-    }
+    },
 };

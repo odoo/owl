@@ -1,38 +1,38 @@
 {
-  "name": "owl-extension",
-  "version": "1.0.0",
-  "description": "Chrome Extension starter Kit with es6 standards",
-  "author": "Simon Genin, ges @ odoo",
-  "scripts": {
-    "build": "NODE_ENV=production rollup -c",
-    "dev": "rollup -c -w",
-    "prettier": "prettier * --write"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "endOfLine": "auto"
-  },
-  "dependencies": {
-    "@odoo/owl": "^1.1.0",
-    "@types/chrome": "0.0.126"
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.11.5",
-    "@fullhuman/postcss-purgecss": "^1.2.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
-    "autoprefixer": "^9.6.1",
-    "postcss-import": "^12.0.1",
-    "postcss-nested": "^4.1.2",
-    "postcss-preset-env": "^6.7.0",
-    "prettier": "^2.1.2",
-    "rollup": "^2.29.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-serve": "^1.0.4",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.27.3",
-    "typescript": "^4.0.3",
-    "rollup-plugin-postcss": "^3.1.8",
-    "tailwindcss": "^1.9.6"
-  }
+    "name": "owl-extension",
+    "version": "1.0.0",
+    "description": "Chrome Extension starter Kit with es6 standards",
+    "author": "Simon Genin, ges @ odoo",
+    "scripts": {
+        "build": "NODE_ENV=production rollup -c",
+        "dev": "rollup -c -w",
+        "prettier": "prettier --write src './*.js' './*.json'"
+    },
+    "prettier": {
+        "printWidth": 100,
+        "endOfLine": "auto"
+    },
+    "dependencies": {
+        "@odoo/owl": "^1.1.0",
+        "@types/chrome": "0.0.126"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "^7.11.5",
+        "@fullhuman/postcss-purgecss": "^1.2.0",
+        "@rollup/plugin-node-resolve": "^9.0.0",
+        "autoprefixer": "^9.6.1",
+        "postcss-import": "^12.0.1",
+        "postcss-nested": "^4.1.2",
+        "postcss-preset-env": "^6.7.0",
+        "prettier": "^2.1.2",
+        "rollup": "^2.29.0",
+        "rollup-plugin-livereload": "^2.0.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-serve": "^1.0.4",
+        "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-typescript2": "^0.27.3",
+        "typescript": "^4.0.3",
+        "rollup-plugin-postcss": "^3.1.8",
+        "tailwindcss": "^1.9.6"
+    }
 }

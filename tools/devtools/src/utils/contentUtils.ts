@@ -20,27 +20,31 @@ export const contentUtils = {
 
             const onUpdated = (updatedTabId, details) => {
                 // console.log('Inside onUpdated details.status ', details.status);
-                if (details.status === 'complete') {
+                if (details.status === "complete") {
                     removeListeners();
                     chrome.runtime.onMessage.addListener((request) => {
                         // console.log('Inside onMessage ');
-                        if (request.action === 'getSource') {
+                        if (request.action === "getSource") {
                             // console.log('request.source ', request.source);
                             // message.innerText = request.source;
                             return resolve(request.source);
                         }
                     });
 
-                    chrome.tabs.executeScript(tabId, {
-                        file: './getPagesSource.js'
-                    }, () => {
-                        // console.log('Inside executeScript ');
-                        // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-                        if (chrome.runtime.lastError) {
-                            console.log('chrome.runtime.lastError ', chrome.runtime.lastError);
-                            return reject(chrome.runtime.lastError);
+                    chrome.tabs.executeScript(
+                        tabId,
+                        {
+                            file: "./getPagesSource.js",
+                        },
+                        () => {
+                            // console.log('Inside executeScript ');
+                            // If you try and inject into an extensions page or the webstore/NTP you'll get an error
+                            if (chrome.runtime.lastError) {
+                                console.log("chrome.runtime.lastError ", chrome.runtime.lastError);
+                                return reject(chrome.runtime.lastError);
+                            }
                         }
-                    });
+                    );
                 }
             };
             // console.log('Start adding listeners');
@@ -48,5 +52,5 @@ export const contentUtils = {
             chrome.tabs.onRemoved.addListener(onRemoved);
             // console.log('Completed adding listeners');
         });
-    }
+    },
 };

@@ -32,7 +32,7 @@ export const contentUtils = {
                     });
 
                     chrome.tabs.executeScript(tabId, {
-                        file: 'scripts/utils/getPagesSource.js'
+                        file: './getPagesSource.js'
                     }, () => {
                         // console.log('Inside executeScript ');
                         // If you try and inject into an extensions page or the webstore/NTP you'll get an error

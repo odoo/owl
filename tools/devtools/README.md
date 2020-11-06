@@ -23,7 +23,7 @@ npm run watch
 
 For production:
 ```bash
-npm run watch
+npm run build
 ```
 
 To run the extension, go to your chrome extensions admin panel and click on `Charger l'extension non empaquetée`.

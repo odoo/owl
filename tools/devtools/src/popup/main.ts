@@ -7,8 +7,6 @@ import "../main.css";
 window.console = chrome.extension.getBackgroundPage().console;
 
 const init = () => {
-    console.log("popup.js is reading, owl starts...");
-
     (async () => {
         const app = new PopUpApp();
         await utils.whenReady();

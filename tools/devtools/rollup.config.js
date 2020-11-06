@@ -65,10 +65,10 @@ export default [
     },
 
     {
-        input: "src/popup/main.ts",
+        input: "src/background.ts",
         output: [
             {
-                file: "build/popup/devtools.js",
+                file: "build/background.js",
                 format: "esm",
             },
         ],

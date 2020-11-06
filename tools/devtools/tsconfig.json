@@ -1,12 +1,12 @@
 {
-  "compilerOptions": {
-    "module": "esnext",
-    "target": "esnext",
-    "alwaysStrict": true,
-    "moduleResolution": "node"
-  },
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext",
+        "alwaysStrict": true,
+        "moduleResolution": "node"
+    },
 
-  "include": ["src"],
+    "include": ["src"],
 
-  "types": ["@odoo/owl/dist/types/index.d.ts"]
+    "types": ["@odoo/owl/dist/types/index.d.ts"]
 }

@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 /* eslint-disable prefer-template */
 const readStringFromDom = (documentRoot) => {
-    let html = '';
+    let html = "";
     let node = documentRoot.firstChild;
     while (node) {
         switch (node.nodeType) {
@@ -21,11 +21,17 @@ const readStringFromDom = (documentRoot) => {
                 break;
             case Node.DOCUMENT_TYPE_NODE:
                 // (X)HTML documents are identified by public identifiers
-                html = html + ('<!DOCTYPE ' + node.name + (node.publicId ? " PUBLIC '" + node.publicId + "'" : "") +
-                    (!node.publicId && node.systemId ? ' SYSTEM' : '') + (node.systemId ? " '" + node.systemId + "'" : "") + ">\n");
+                html =
+                    html +
+                    ("<!DOCTYPE " +
+                        node.name +
+                        (node.publicId ? " PUBLIC '" + node.publicId + "'" : "") +
+                        (!node.publicId && node.systemId ? " SYSTEM" : "") +
+                        (node.systemId ? " '" + node.systemId + "'" : "") +
+                        ">\n");
                 break;
             default:
-                console.error('This is went into default case.');
+                console.error("This is went into default case.");
         }
         node = node.nextSibling;
     }
@@ -33,6 +39,6 @@ const readStringFromDom = (documentRoot) => {
 };
 
 chrome.runtime.sendMessage({
-    action: 'getSource',
-    source: readStringFromDom(document)
+    action: "getSource",
+    source: readStringFromDom(document),
 });

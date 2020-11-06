@@ -14,8 +14,6 @@ const init = () => {
         await utils.whenReady();
         await app.mount(document.body);
     })();
-
 };
 
 window.onload = init;
-

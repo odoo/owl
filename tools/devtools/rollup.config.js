@@ -2,8 +2,7 @@ import typescript from "rollup-plugin-typescript2";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import terser from "rollup-plugin-terser";
 import postcss from "rollup-plugin-postcss";
-import copy from 'rollup-plugin-copy'
-
+import copy from "rollup-plugin-copy";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -29,10 +28,8 @@ export default [
             }),
             isProduction && terser.terser(),
             copy({
-                targets: [
-                  { src: 'src/devtools/devtools.html', dest: 'build/devtools' }
-                ]
-              })
+                targets: [{ src: "src/devtools/devtools.html", dest: "build/devtools" }],
+            }),
         ],
     },
 
@@ -57,10 +54,8 @@ export default [
             }),
             isProduction && terser.terser(),
             copy({
-                targets: [
-                  { src: 'src/popup/popup.html', dest: 'build/popup' }
-                ]
-              })
+                targets: [{ src: "src/popup/popup.html", dest: "build/popup" }],
+            }),
         ],
     },
 
@@ -86,14 +81,13 @@ export default [
             isProduction && terser.terser(),
             copy({
                 targets: [
-                  { src: 'src/background.html', dest: 'build' },
-                  { src: 'assets/images/**/*', dest: 'build/assets/images' },
-                  { src: 'manifest.json', dest: 'build' }
-                ]
-              })
+                    { src: "src/background.html", dest: "build" },
+                    { src: "assets/images/**/*", dest: "build/assets/images" },
+                    { src: "manifest.json", dest: "build" },
+                ],
+            }),
         ],
     },
-
 ];
 
 //

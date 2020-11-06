@@ -1,3 +1,4 @@
+// @ts-ignore
 window.console = chrome.extension.getBackgroundPage().console;
 
 const init = () => {

@@ -1,10 +1,10 @@
-import { App } from "./components/app";
+import { DevtoolsApp } from "./components/devtools_app";
 import { utils } from "@odoo/owl";
 
-import './main.css'
+import '../main.css'
 
 (async () => {
-  const app = new App();
+  const app = new DevtoolsApp();
   await utils.whenReady();
   await app.mount(document.body);
 })();

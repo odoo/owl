@@ -13,8 +13,8 @@
     "node": ">=10.15.3"
   },
   "scripts": {
-    "build:bundle": "rollup -c",
-    "build": "npm run build:bundle",
+    "dev": "rollup -c",
+    "build": "NODE_ENV=production rollup -c",
     "test": "jest",
     "test:watch": "jest --watch",
     "tools:serve": "python3 tools/server.py || python tools/server.py",

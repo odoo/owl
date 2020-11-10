@@ -88,6 +88,29 @@ export default [
             }),
         ],
     },
+
+    {
+        input: "src/content.ts",
+        output: [
+            {
+                file: "build/content.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            typescript(),
+            nodeResolve(),
+            postcss({
+                config: {
+                    path: "./postcss.config.js",
+                },
+                extensions: [".css"],
+                extract: true,
+                minimize: isProduction,
+            }),
+            isProduction && terser.terser(),
+        ],
+    },
 ];
 
 //

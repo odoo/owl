@@ -8,19 +8,18 @@
         "default_popup": "popup/popup.html"
     },
     "permissions": [
-        "cookies",
-        "tabs",
-        "activeTab",
-        "declarativeContent",
-        "<all_urls>",
-        "storage",
-        "http://*/*",
-        "https://*/*"
+        "<all_urls>"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
         "page": "background.html",
         "persistent": false
     },
-    "devtools_page": "devtools/devtools.html"
+    "devtools_page": "devtools/devtools.html",
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["content.js"]
+        }
+    ]
 }

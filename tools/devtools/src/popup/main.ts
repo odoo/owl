@@ -4,7 +4,7 @@ import { utils } from "@odoo/owl";
 import "../main.css";
 
 // @ts-ignore
-window.console = chrome.extension.getBackgroundPage().console;
+// window.console = chrome.extension.getBackgroundPage().console;
 
 const init = () => {
     (async () => {
@@ -12,6 +12,7 @@ const init = () => {
         await utils.whenReady();
         await app.mount(document.body);
     })();
+
 };
 
 window.onload = init;

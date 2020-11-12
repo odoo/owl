@@ -553,6 +553,11 @@ with a class object:
 <MyComponent t-att-class="{a: state.flagA, b: state.flagB}" />
 ```
 
+**Custom data attributes:** The `data-*` attributes are also passed to the sub component root element.
+`data-*`, `t-att-data-*` or `t-attf-data-*` can be used.
+Caution: you should not declare the same `data-*` attribute on a component with more than one technique.
+Only one of them would get through and it is not guaranteed which one will.
+
 ### Form Input Bindings
 
 It is very common to need to be able to read the value out of an html `input` (or

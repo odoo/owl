@@ -8,6 +8,8 @@
  * - loadFile
  * - escape
  * - debounce
+ * - shallowEqual
+ * - kebabToCamel
  */
 
 import { browser } from "./browser";
@@ -100,4 +102,8 @@ export function shallowEqual(p1, p2): boolean {
     }
   }
   return true;
+}
+
+export function kebabToCamel(str: string): string {
+  return str.replace(/(\-[a-z])/g, (val) => val.toUpperCase()).replace("-", "");
 }

@@ -1,6 +1,7 @@
 import { QWeb } from "../qweb/index";
 import { INTERP_REGEXP } from "../qweb/compilation_context";
 import { makeHandlerCode, MODS_CODE } from "../qweb/extensions";
+import { kebabToCamel } from "../utils";
 
 //------------------------------------------------------------------------------
 // t-component
@@ -231,7 +232,7 @@ QWeb.addDirective({
           transition = value;
         }
       } else if (!name.startsWith("t-")) {
-        if (name !== "class" && name !== "style") {
+        if (name !== "class" && name !== "style" && !name.startsWith("data-")) {
           // this is a prop!
           props[name] = ctx.formatExpression(value) || "undefined";
         }
@@ -271,13 +272,57 @@ QWeb.addDirective({
     let tattClass = node.getAttribute("t-att-class");
     let styleAttr = node.getAttribute("style");
     let tattStyle = node.getAttribute("t-att-style");
+
+    const dataAttrs = [...node.attributes].filter(({ name }) => /^(t-attf?-)?data-.+$/.test(name));
+    if (dataAttrs.length) {
+      ctx.addLine("const dataAttrMap = {};");
+      let attName = "";
+      let attValue = "";
+      for (const { name, value: v } of dataAttrs) {
+        let shouldWarn = false;
+        if (name.startsWith("t-att-")) {
+          attName = kebabToCamel(name.slice(11));
+          attValue = ctx.formatExpression(v);
+          shouldWarn =
+            QWeb.dev &&
+            dataAttrs.some(({ name }) =>
+              [`data-${attName}`, `t-attf-data-${attName}`].includes(name)
+            );
+        } else if (name.startsWith("t-attf-")) {
+          attName = kebabToCamel(name.slice(12));
+          attValue = ctx.interpolate(v);
+          shouldWarn =
+            QWeb.dev &&
+            dataAttrs.some(({ name }) =>
+              [`data-${attName}`, `t-att-data-${attName}`].includes(name)
+            );
+        } else {
+          attName = kebabToCamel(name.slice(5));
+          attValue = `"${v}"`;
+          shouldWarn =
+            QWeb.dev &&
+            dataAttrs.some(({ name }) =>
+              [`t-att-data-${attName}`, `t-attf-data-${attName}`].includes(name)
+            );
+        }
+        ctx.addLine(
+          `dataAttrMap.${attName} = dataAttrMap.${attName} ? dataAttrMap.${attName} + " " + ${attValue} : ${attValue};`
+        );
+        if (shouldWarn) {
+          console.warn(
+            `Multiple data-${attName} detection: '${name}'! (in template: '${ctx.templateName}')`
+          );
+        }
+      }
+    }
+
     if (tattStyle) {
       const attVar = `_${ctx.generateID()}`;
       ctx.addLine(`const ${attVar} = ${ctx.formatExpression(tattStyle)};`);
       tattStyle = attVar;
     }
     let classObj = "";
-    if (classAttr || tattClass || styleAttr || tattStyle || events.length) {
+    if (classAttr || tattClass || styleAttr || tattStyle || events.length || dataAttrs.length) {
       if (classAttr) {
         let classDef = classAttr
           .trim()
@@ -318,7 +363,10 @@ QWeb.addDirective({
         .join("");
       const styleExpr = tattStyle || (styleAttr ? `'${styleAttr}'` : false);
       const styleCode = styleExpr ? `vn.elm.style = ${styleExpr};` : "";
-      createHook = `utils.assignHooks(vnode.data, {create(_, vn){${styleCode}${eventsCode}}});`;
+      const datasetCode = dataAttrs.length
+        ? `vn.elm.dataset = Object.assign(vn.elm.dataset || {}, dataAttrMap);`
+        : "";
+      createHook = `utils.assignHooks(vnode.data, {create(_, vn){${styleCode}${datasetCode}${eventsCode}}});`;
     }
 
     ctx.addLine(

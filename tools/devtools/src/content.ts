@@ -21,5 +21,6 @@ const isOwlDetectedOnThePage = detectOwl();
 
 if (isOwlDetectedOnThePage) {
     alert('Owl has been detected on this page.')
+    console.log('Owl has been detected on this page.')
 }
 

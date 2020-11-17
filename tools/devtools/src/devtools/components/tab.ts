@@ -3,6 +3,7 @@ import { Component, tags } from "@odoo/owl";
 const TEMPLATE = tags.xml/*xml*/ `
    <div 
     t-name="Tab"
+    t-on-click="clicked"
     class="cursor-pointer px-3 py-2 font-medium text-sm leading-5 rounded-md ml-4 focus:outline-none"
     t-att-class="props.active 
                 ? 'text-indigo-700 bg-indigo-100 focus:text-indigo-800 focus:bg-indigo-200'
@@ -14,8 +15,12 @@ const TEMPLATE = tags.xml/*xml*/ `
 
 export default class Tab extends Component {
 
-    static props = ['name', 'active']
+    static props = ['name', 'active', 'componentName']
     
     static template = TEMPLATE;
+
+    private clicked() {
+        this.trigger('tab-clicked', { component:  this.props.componentName })
+    }
 
 }

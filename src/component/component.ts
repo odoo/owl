@@ -159,6 +159,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       if (!this.env.qweb) {
         this.env.qweb = new QWeb();
       }
+      // TODO: remove this in owl 2.0
       if (!this.env.browser) {
         this.env.browser = browser;
       }

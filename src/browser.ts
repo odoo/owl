@@ -10,6 +10,8 @@ export interface Browser {
   localStorage: Window["localStorage"];
 }
 
+let localStorage: Window["localStorage"] | null = null;
+
 export const browser: Browser = {
   setTimeout: window.setTimeout.bind(window),
   clearTimeout: window.clearTimeout.bind(window),
@@ -19,5 +21,10 @@ export const browser: Browser = {
   random: Math.random,
   Date: window.Date,
   fetch: (window.fetch || (() => {})).bind(window),
-  localStorage: window.localStorage,
+  get localStorage() {
+    return localStorage || window.localStorage;
+  },
+  set localStorage(newLocalStorage: Window["localStorage"]) {
+    localStorage = newLocalStorage;
+  },
 };

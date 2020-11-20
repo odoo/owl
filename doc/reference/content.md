@@ -7,6 +7,7 @@ For example, `Component` is available at `owl.Component` and `EventBus` is
 exported as `owl.core.EventBus`.
 
 ```
+browser
 Component                               misc
 Context                                     AsyncRoot
 QWeb                                        Portal

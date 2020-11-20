@@ -17,6 +17,7 @@ You will find here a complete reference of every feature, class or object
 provided by Owl.
 
 - [Animations](reference/animations.md)
+- [Browser](reference/browser.md)
 - [Component](reference/component.md)
 - [Content](reference/content.md)
 - [Concurrency Model](reference/concurrency_model.md)

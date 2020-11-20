@@ -22,6 +22,7 @@ import { Router } from "./router/router";
 export { Component, mount } from "./component/component";
 export { QWeb };
 export { config };
+export { browser } from "./browser";
 
 export const Context = _context.Context;
 export const useState = _hooks.useState;

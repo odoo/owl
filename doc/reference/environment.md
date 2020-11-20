@@ -133,17 +133,4 @@ the `QWeb` instance and a `browser` object:
 - `qweb` will be set to an empty `QWeb` instance. This is absolutely necessary
   for Owl to be able to render anything
 - `browser`: this is an object that contains some common access points to the
-  browser methods with a side effect. This is particularly useful when one want
-  to test more advanced components, and be able to mock those methods.
-
-More specifically, the `browser` object contains the following methods and objects:
-
-- `setTimeout`
-- `clearTimeout`
-- `setInterval`
-- `clearInterval`
-- `requestAnimationFrame`
-- `random`
-- `Date`
-- `fetch`
-- `localStorage`
+  browser methods with a side effect. See [browser](browser.md) for more information. Note that the browser object will be removed from the environment in Owl 2.0.

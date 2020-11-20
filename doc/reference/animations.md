@@ -52,7 +52,7 @@ sequence of events will happen:
 At node insertion:
 
 - the css classes `name-enter` and `name-enter-active` will be added directly
-  when the node is inserted into the DOM. 
+  when the node is inserted into the DOM.
 - on the next animation frame: the css class `name-enter` will be removed and the
   class `name-enter-to` will be added (so they can be used to trigger css
   transition effects).
@@ -115,11 +115,13 @@ If you use SCSS, you can use mixins to make generic animations. Here is an exemp
 ```
 
 Usage:
+
 ```scss
 @include animation-fade(0.5s, "o_notification");
 ```
 
-You can now have in your template: 
+You can now have in your template:
+
 ```xml
 <SomeTag  t-transition="o_notification_fade"/>
 ```

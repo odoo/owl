@@ -47,7 +47,7 @@ export class Component {
   async willStart(): Promise<void> {}
   mounted() {}
 
-  get el(): HTMLElement | Text | null {
+  get el(): ChildNode | null {
     const bdom = this.__owl__.bdom;
     return bdom ? bdom.el : null;
   }
@@ -75,6 +75,12 @@ class BComponent extends Block {
     const fiber = new ChildFiber(ctx.__owl__, ctx.__owl__.fiber);
     internalRender(component, fiber);
   }
+
+  firstChildNode(): ChildNode | null {
+    const bdom = this.component.__owl__.bdom;
+    return bdom ? bdom.firstChildNode() : null;
+  }
+
   mountBefore(anchor: Text) {
     this.component.__owl__!.bdom = this.component.__owl__!.fiber!.bdom;
     this.component.__owl__!.bdom!.mountBefore(anchor);

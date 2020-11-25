@@ -12,7 +12,7 @@ export type BDom = BNode | BMulti | BHtml;
 // -----------------------------------------------------------------------------
 
 export abstract class Block {
-  el: HTMLElement | Text | null = null;
+  el: ChildNode | null | null = null;
   refs?: { [name: string]: HTMLElement };
 
   mount(parent: HTMLElement | DocumentFragment) {
@@ -22,9 +22,11 @@ export abstract class Block {
     anchor.remove();
   }
 
-  abstract mountBefore(anchor: Text): void;
+  abstract mountBefore(anchor: ChildNode): void;
 
   abstract patch(other: Block): void;
+
+  abstract firstChildNode(): ChildNode | null;
 
   remove() {}
 
@@ -35,7 +37,7 @@ export abstract class Block {
     anchor.remove();
   }
 
-  moveBefore(anchor: Text): void {
+  moveBefore(anchor: ChildNode): void {
     this.mountBefore(anchor);
   }
 }
@@ -47,14 +49,18 @@ export abstract class Block {
 export class BHtml extends Block {
   html: string;
   content: ChildNode[] = [];
-  anchor: Text;
+  anchor: ChildNode;
   constructor(html: any) {
     super();
     this.html = String(html);
     this.anchor = document.createTextNode("");
   }
 
-  mountBefore(anchor: Text) {
+  firstChildNode(): ChildNode | null {
+    return this.content[0];
+  }
+
+  mountBefore(anchor: ChildNode) {
     this.build();
     anchor.before(this.anchor);
     for (let elem of this.content) {
@@ -62,7 +68,7 @@ export class BHtml extends Block {
     }
   }
 
-  moveBefore(anchor: Text): void {
+  moveBefore(anchor: ChildNode): void {
     anchor.before(this.anchor);
     for (let elem of this.content) {
       this.anchor.before(elem);
@@ -73,7 +79,7 @@ export class BHtml extends Block {
     const div = document.createElement("div");
     div.innerHTML = this.html;
     this.content = [...div.childNodes];
-    this.el = this.content[0] as any;
+    this.el = this.content[0];
   }
 
   remove() {
@@ -111,7 +117,11 @@ export class BText extends Block {
     this.text = text;
   }
 
-  mountBefore(anchor: Text) {
+  firstChildNode(): ChildNode | null {
+    return this.el;
+  }
+
+  mountBefore(anchor: ChildNode) {
     anchor.before(this.el);
   }
 
@@ -132,12 +142,16 @@ export class BText extends Block {
 // -----------------------------------------------------------------------------
 
 export class BNode extends Block {
-  static el: HTMLElement | Text;
+  static el: ChildNode;
   // el?: HTMLElement | Text;
   children: (BNode | null)[] | null = null;
-  anchors?: Text[] | null = null;
+  anchors?: ChildNode[] | null = null;
   data?: any[] | null = null;
   handlers?: any[] | null = null;
+
+  firstChildNode(): ChildNode | null {
+    return this.el;
+  }
 
   toString(): string {
     const div = document.createElement("div");
@@ -145,7 +159,7 @@ export class BNode extends Block {
     return div.innerHTML;
   }
 
-  mountBefore(anchor: Text) {
+  mountBefore(anchor: ChildNode) {
     this.build();
     if (this.children) {
       for (let i = 0; i < this.children.length; i++) {
@@ -159,7 +173,7 @@ export class BNode extends Block {
     anchor.before(this.el!);
   }
 
-  moveBefore(anchor: Text) {
+  moveBefore(anchor: ChildNode) {
     anchor.before(this.el!);
   }
 
@@ -243,7 +257,7 @@ export class BNode extends Block {
 
 export class BMulti extends Block {
   children: (BDom | undefined | null)[];
-  anchors?: Text[];
+  anchors?: ChildNode[];
 
   constructor(n: number) {
     super();
@@ -251,7 +265,16 @@ export class BMulti extends Block {
     this.anchors = new Array(n);
   }
 
-  mountBefore(anchor: Text) {
+  firstChildNode(): ChildNode | null {
+    for (let child of this.children) {
+      if (child) {
+        return child.firstChildNode();
+      }
+    }
+    return null;
+  }
+
+  mountBefore(anchor: ChildNode) {
     for (let i = 0; i < this.children.length; i++) {
       let child: any = this.children[i];
       const childAnchor = document.createTextNode("");
@@ -263,7 +286,7 @@ export class BMulti extends Block {
     }
   }
 
-  moveBefore(anchor: Text) {
+  moveBefore(anchor: ChildNode) {
     for (let i = 0; i < this.children.length; i++) {
       let child: any = this.children[i];
       const childAnchor = document.createTextNode("");
@@ -311,7 +334,7 @@ export class BMulti extends Block {
 
 export class BCollection extends Block {
   children: Block[];
-  anchor?: Text;
+  anchor?: ChildNode;
   keys: (string | number)[];
 
   constructor(n: number) {
@@ -320,7 +343,11 @@ export class BCollection extends Block {
     this.children = new Array(n);
   }
 
-  mountBefore(anchor: Text) {
+  firstChildNode(): ChildNode | null {
+    return this.children.length ? this.children[0].firstChildNode() : null;
+  }
+
+  mountBefore(anchor: ChildNode) {
     const _anchor = document.createTextNode("");
     anchor.before(_anchor);
     this.anchor = _anchor;
@@ -329,7 +356,7 @@ export class BCollection extends Block {
     }
   }
 
-  moveBefore(anchor: Text) {
+  moveBefore(anchor: ChildNode) {
     const _anchor = document.createTextNode("");
     anchor.before(_anchor);
     this.anchor = _anchor;
@@ -337,9 +364,79 @@ export class BCollection extends Block {
       child.moveBefore(_anchor);
     }
   }
-  patch() {}
+  patch(other: any) {
+    const oldKeys = this.keys;
+    const newKeys = other.keys;
+    const oldCh = this.children;
+    const newCh: Block[] = other.children;
+    let oldStartIdx = 0;
+    let newStartIdx = 0;
+    let oldEndIdx = oldCh.length - 1;
+    let newEndIdx = newCh.length - 1;
+    let mapping: any = undefined;
+
+    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+      if (oldCh[oldStartIdx] === null) {
+        oldStartIdx++;
+      } else if (oldKeys[oldStartIdx] === newKeys[newStartIdx]) {
+        oldCh[oldStartIdx].patch(newCh[newStartIdx]);
+        newCh[newStartIdx] = oldCh[oldStartIdx];
+        oldStartIdx++;
+        newStartIdx++;
+      } else if (oldKeys[oldEndIdx] === newKeys[newEndIdx]) {
+        oldCh[oldEndIdx].patch(newCh[newEndIdx]);
+        newCh[newEndIdx] = oldCh[oldEndIdx];
+        oldEndIdx--;
+        newEndIdx--;
+      } else {
+        mapping = mapping || createMapping(oldKeys, oldStartIdx, oldEndIdx);
+        let idxInOld = mapping[newKeys[newStartIdx]];
+        if (idxInOld === undefined) {
+          // new element
+          newCh[newStartIdx].mountBefore(oldCh[oldStartIdx].firstChildNode()!);
+          newStartIdx++;
+        } else {
+          const elmToMove = oldCh[idxInOld];
+          elmToMove.moveBefore(oldCh[oldStartIdx].firstChildNode()!);
+          elmToMove.patch(newCh[newStartIdx]);
+          newCh[newStartIdx] = elmToMove;
+          oldCh[idxInOld] = null as any;
+          newStartIdx++;
+        }
+      }
+    }
+    if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
+      if (oldStartIdx > oldEndIdx) {
+        const nextChild = newCh[newEndIdx + 1];
+        const anchor = nextChild ? nextChild.firstChildNode()! : this.anchor!;
+        for (let i = newStartIdx; i <= newEndIdx; i++) {
+          newCh[i].mountBefore(anchor);
+        }
+      } else {
+        for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+          let ch = oldCh[i];
+          if (ch) {
+            ch.remove();
+          }
+        }
+      }
+    }
+    this.children = newCh;
+    this.keys = newKeys;
+  }
 }
 
+function createMapping(
+  oldKeys: any[],
+  oldStartIdx: number,
+  oldEndIdx: number
+): { [key: string]: any } {
+  let mapping: any = {};
+  for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+    mapping[oldKeys[i]] = i;
+  }
+  return mapping;
+}
 interface Type<T> extends Function {
   new (...args: any[]): T;
 }

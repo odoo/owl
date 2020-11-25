@@ -1,5 +1,5 @@
-import { BNode, BMulti } from "../src/bdom";
-import { makeTestFixture } from "./helpers";
+import { BNode, BMulti } from "../../src/bdom";
+import { makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

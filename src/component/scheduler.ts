@@ -1,24 +1,12 @@
-import { Fiber } from "./fiber";
-import { browser } from "../browser";
+import { Fiber, RootFiber } from "./fibers";
+import { STATUS } from "./status";
 
-/**
- * Owl Scheduler Class
- *
- * The scheduler is the part of Owl that will effectively apply a rendering
- * whenever a fiber is ready.
- *
- * Briefly, it can be used to register root fibers.  Whenever there is an
- * active root fiber, it will poll continuously each animation frame (so, about
- * once every 16ms) and whenever a root fiber is ready, it will apply it.
- */
-
-interface Task {
-  fiber: Fiber;
-  callback: (err?: Error) => void;
-}
+// -----------------------------------------------------------------------------
+//  Scheduler
+// -----------------------------------------------------------------------------
 
 export class Scheduler {
-  tasks: Task[] = [];
+  tasks: Set<RootFiber> = new Set();
   isRunning: boolean = false;
   requestAnimationFrame: Window["requestAnimationFrame"];
 
@@ -35,37 +23,10 @@ export class Scheduler {
     this.isRunning = false;
   }
 
-  addFiber(fiber: Fiber): Promise<void> {
-    // if the fiber was remapped into a larger rendering fiber, it may not be a
-    // root fiber.  But we only want to register root fibers
-    fiber = fiber.root;
-    return new Promise((resolve, reject) => {
-      if (fiber.error) {
-        return reject(fiber.error);
-      }
-      this.tasks.push({
-        fiber,
-        callback: () => {
-          if (fiber.error) {
-            return reject(fiber.error);
-          }
-          resolve();
-        },
-      });
-      if (!this.isRunning) {
-        this.start();
-      }
-    });
-  }
-
-  rejectFiber(fiber: Fiber, reason: string) {
-    fiber = fiber.root;
-    const index = this.tasks.findIndex((t) => t.fiber === fiber);
-    if (index >= 0) {
-      const [task] = this.tasks.splice(index, 1);
-      fiber.cancel();
-      fiber.error = new Error(reason);
-      task.callback();
+  addFiber(fiber: Fiber) {
+    this.tasks.add(fiber.root);
+    if (!this.isRunning) {
+      this.start();
     }
   }
 
@@ -74,28 +35,35 @@ export class Scheduler {
    * Other tasks are left unchanged.
    */
   flush() {
-    let tasks = this.tasks;
-    this.tasks = [];
-    tasks = tasks.filter((task) => {
-      if (task.fiber.isCompleted) {
-        task.callback();
-        return false;
+    this.tasks.forEach((fiber) => {
+      if (fiber.root !== fiber) {
+        // this is wrong! should be something like
+        // if (this.tasks.has(fiber.root)) {
+        //   // parent rendering has completed
+        //   fiber.resolve();
+        //   this.tasks.delete(fiber);
+        // }
+        this.tasks.delete(fiber);
+        return;
       }
-      if (task.fiber.counter === 0) {
-        if (!task.fiber.error) {
-          try {
-            task.fiber.complete();
-          } catch (e) {
-            task.fiber.handleError(e);
-          }
+      if (fiber.error) {
+        this.tasks.delete(fiber);
+        fiber.reject(fiber.error);
+        return;
+      }
+      if (fiber.node.status === STATUS.DESTROYED) {
+        this.tasks.delete(fiber);
+        return;
+      }
+      if (fiber.counter === 0) {
+        if (!fiber.error) {
+          fiber.complete();
         }
-        task.callback();
-        return false;
+        fiber.resolve();
+        this.tasks.delete(fiber);
       }
-      return true;
     });
-    this.tasks = tasks.concat(this.tasks);
-    if (this.tasks.length === 0) {
+    if (this.tasks.size === 0) {
       this.stop();
     }
   }
@@ -109,5 +77,3 @@ export class Scheduler {
     });
   }
 }
-
-export const scheduler = new Scheduler(browser.requestAnimationFrame);

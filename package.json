@@ -36,31 +36,33 @@
   },
   "homepage": "https://github.com/odoo/owl#readme",
   "devDependencies": {
-    "@types/jest": "^23.3.14",
+    "@types/jest": "^27.0.1",
     "@types/node": "^14.11.8",
     "chalk": "^3.0.0",
     "cpx": "^1.5.0",
     "git-rev-sync": "^1.12.0",
     "github-api": "^3.3.0",
-    "jest": "^23.6.0",
-    "jest-environment-jsdom": "^24.7.1",
+    "jest": "^27.1.0",
+    "jest-environment-jsdom": "^27.1.0",
     "live-server": "^1.2.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
-    "rollup": "^1.6.0",
+    "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.27.3",
+    "rollup-plugin-typescript2": "^0.30.0",
     "sass": "^1.16.1",
     "source-map-support": "^0.5.10",
-    "ts-jest": "^23.10.5",
-    "typescript": "^3.7.2",
+    "ts-jest": "^27.0.5",
+    "typescript": "3.9.6",
     "uglify-es": "^3.3.9"
   },
   "jest": {
+    "testEnvironment": "jsdom",
     "roots": [
       "<rootDir>/src",
       "<rootDir>/tests"
     ],
+    "setupFiles": ["./tests/mocks/mockEventTarget.js"],
     "transform": {
       "^.+\\.ts?$": "ts-jest"
     },

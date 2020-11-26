@@ -176,9 +176,9 @@ const uuid = generateUUID();
 class MyComponent extends Component {
   static template = xml`<div data-o-${uuid}="">...</div>`;
   static style = css`
-        [data-o-${uuid}] {
-            color: red;
-        }
-    `;
+    [data-o-${uuid}] {
+      color: red;
+    }
+  `;
 }
 ```

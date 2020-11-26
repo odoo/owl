@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`event handling can set handler on sub component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div>simple vnode</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`event handling can set handler on sub component 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let h2 = [\`click\`, ctx, 'inc'];
+    let b2 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {handlers: [h2]});
+    let b3 = text(ctx['state'].value);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`event handling handler receive the event as argument 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div>simple vnode</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`event handling handler receive the event as argument 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let h2 = [\`click\`, ctx, 'inc'];
+    let b2 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {handlers: [h2]});
+    let b3 = text(ctx['state'].value);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`event handling support for callable expression in event handler 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/><input type=\\"text\\" block-handler-1=\\"input\\"/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].value;
+    const v1 = ctx['obj'];
+    let d2 = (e) => {const res = (() => { return v1.onInput })(); if (typeof res === 'function') { res(e) }};
+    return block1([d1, d2]);
+  }
+}"
+`;

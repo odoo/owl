@@ -115,6 +115,34 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
 }"
 `;
 
+exports[`t-raw t-raw with a <t/> in body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(1);
+    b1.children[0] = new BHtml(ctx['var']);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(1);
+    b1.children[0] = new BHtml(ctx['var']);
+    return b1;
+  }
+}"
+`;
+
 exports[`t-raw variable 1`] = `
 "function anonymous(Blocks, utils
 ) {

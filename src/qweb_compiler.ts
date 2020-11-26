@@ -175,6 +175,13 @@ class QWebCompiler {
     return `Block${this.blocks.length + 1}`;
   }
 
+  getNextBlockId(): () => string | null {
+    const id = this.nextBlockId;
+    return () => {
+      return this.nextBlockId !== id ? `b${id}` : null;
+    };
+  }
+
   insertAnchor(block: BlockDescription) {
     const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
     block.insert(anchor);
@@ -618,10 +625,13 @@ class QWebCompiler {
     this.insertAnchor(block);
     let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
     if (ast.body) {
-      const nextId = this.nextBlockId;
+      const nextIdCb = this.getNextBlockId();
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      expr = `withDefault(${expr}, b${nextId})`;
+      const nextId = nextIdCb();
+      if (nextId) {
+        expr = `withDefault(${expr}, ${nextId})`;
+      }
     }
     this.addLine(`${block.varName}.children[${index}] = new BHtml(${expr});`);
   }
@@ -723,7 +733,7 @@ class QWebCompiler {
     let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
       const n = ast.content.filter((c) => c.type !== ASTType.TSet).length;
-      if (n === 1) {
+      if (n <= 1) {
         for (let child of ast.content) {
           this.compileAST(child, ctx);
         }
@@ -752,18 +762,12 @@ class QWebCompiler {
     if (ast.body) {
       const targetRoot = this.target.rootBlock;
       this.addLine(`ctx = Object.create(ctx);`);
-      // check if all content is t-set
-      const hasContent = ast.body.filter((elem) => elem.type !== ASTType.TSet).length;
-      if (hasContent) {
-        const nextId = this.nextBlockId;
-        const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
-        this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-        this.addLine(`ctx[zero] = b${nextId};`);
-      } else {
-        for (let elem of ast.body) {
-          const subCtx: Context = { block: block, index: 0, forceNewBlock: false };
-          this.compileAST(elem, subCtx);
-        }
+      const nextIdCb = this.getNextBlockId();
+      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
+      this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
+      const nextId = nextIdCb();
+      if (nextId) {
+        this.addLine(`ctx[zero] = ${nextId};`);
       }
       this.target.rootBlock = targetRoot;
     }
@@ -786,10 +790,11 @@ class QWebCompiler {
     this.shouldProtectScope = true;
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
-      const nextId = this.nextBlockId;
+      const nextIdCb = this.getNextBlockId();
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      const value = ast.value ? `withDefault(${expr}, b${nextId})` : `b${nextId}`;
+      const nextId = nextIdCb();
+      const value = ast.value ? (nextId ? `withDefault(${expr}, ${nextId})` : expr) : nextId;
       this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
     } else {
       let value: string;

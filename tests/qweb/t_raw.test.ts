@@ -50,6 +50,18 @@ describe("t-raw", () => {
     expect(renderToString(template)).toBe("<span>nope</span>");
   });
 
+  test("t-raw with a <t/> in body", () => {
+    const template = `<t t-raw="var"><t></t></t>`;
+    snapshotTemplateCode(template);
+    expect(renderToString(template, { var: "coucou" })).toBe("coucou");
+  });
+
+  test("t-raw with just a t-set t-value in body", () => {
+    const template = `<t t-raw="var"><t t-set="a" t-value="1" /></t>`;
+    snapshotTemplateCode(template);
+    expect(renderToString(template, { var: "coucou" })).toBe("coucou");
+  });
+
   test("t-raw on a node with a dom node in body, as a default", () => {
     const template = `<span t-raw="var"><div>nope</div></span>`;
     snapshotTemplateCode(template);

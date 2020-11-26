@@ -1,0 +1,529 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-set evaluate value expression 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`value\`] = 1+2;
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set evaluate value expression, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`value\`] = ctx['somevariable']+2;
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set set from attribute literal (no outside div) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[\`value\`] = 'ok';
+    const b1 = new BText(ctx['value'])
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set set from attribute literal 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`value\`] = 'ok';
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set set from attribute lookup 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`stuff\`] = ctx['value'];
+    b1.data[0] = ctx['stuff'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set set from body literal 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[\`value\`] = \`ok\`;
+    const b1 = new BText(ctx['value'])
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set set from body lookup 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    const b2 = new BText(ctx['value'])
+    ctx[\`stuff\`] = b2;
+    b1.data[0] = ctx['stuff'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set set from empty body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`stuff\`] = null;
+    b1.data[0] = ctx['stuff'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set and t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`v\`] = ctx['value'];
+    if (ctx['v']==='ok') {
+      b1.children[0] = new BText(\`grimbergen\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set body is evaluated immediately 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`v1\`] = 'before';
+    const b2 = new Block2();
+    b2.data[0] = ctx['v1'];
+    ctx[\`v2\`] = b2;
+    ctx[\`v1\`] = 'after';
+    b1.children[0] = new BHtml(ctx['v2']);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set evaluates an expression only once 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/><owl-text/></div>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`v\`] = ctx['value']+' artois';
+    b1.data[0] = ctx['v'];
+    b1.data[1] = ctx['v'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set should reuse variable if possible 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<div><span>v<owl-text/></span></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`v\`] = 1;
+    const [v2, k2, l2] = getValues(ctx['list']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`elem\`] = v2[i1];
+      ctx[\`elem_first\`] = i1 === 0;
+      ctx[\`elem_last\`] = i1 === v2.length - 1;
+      ctx[\`elem_index\`] = i1;
+      ctx[\`elem_value\`] = k2[i1];
+      const k4 = ctx['elem_index'];
+      const b5 = b3.children[i1] = new Block2();
+      b5.data[0] = ctx['v'];
+      ctx[\`v\`] = ctx['elem'];
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set with content and sub t-esc 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    const b2 = new BMulti(2);
+    b2.children[0] = new BText(ctx['beep'])
+    b2.children[1] = new BText(\` boop\`)
+    ctx[\`setvar\`] = b2;
+    b1.data[0] = ctx['setvar'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set with t-value (falsy) and body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`v3\`] = false;
+    ctx[\`v1\`] = 'before';
+    const b2 = new Block2();
+    b2.data[0] = ctx['v1'];
+    ctx[\`v2\`] = withDefault(ctx['v3'], b2);
+    ctx[\`v1\`] = 'after';
+    ctx[\`v3\`] = true;
+    b1.children[0] = new BHtml(ctx['v2']);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set with t-value (truthy) and body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`v3\`] = 'Truthy';
+    ctx[\`v1\`] = 'before';
+    const b2 = new Block2();
+    b2.data[0] = ctx['v1'];
+    ctx[\`v2\`] = withDefault(ctx['v3'], b2);
+    ctx[\`v1\`] = 'after';
+    ctx[\`v3\`] = false;
+    b1.children[0] = new BHtml(ctx['v2']);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-text/></div>\`);
+    children = new Array(2);
+    data = new Array(1);
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    if (ctx['flag']) {
+      ctx[\`ourvar\`] = \`1\`;
+    } else {
+      ctx[\`ourvar\`] = 0;
+    }
+    b1.data[0] = ctx['ourvar'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-text/></div>\`);
+    children = new Array(2);
+    data = new Array(1);
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    if (ctx['flag']) {
+      ctx[\`ourvar\`] = 1;
+    } else {
+      ctx[\`ourvar\`] = \`0\`;
+    }
+    b1.data[0] = ctx['ourvar'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new BMulti(2);
+    if (ctx['flag']) {
+      ctx[\`ourvar\`] = 1;
+    } else {
+      ctx[\`ourvar\`] = \`0\`;
+    }
+    b1.children[1] = new BText(ctx['ourvar'])
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set value priority (with non text body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>2</span>\`);
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    const b2 = new Block2();
+    ctx[\`value\`] = withDefault(1, b2);
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-set value priority 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`value\`] = withDefault(1, \`2\`);
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;

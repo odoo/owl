@@ -1,0 +1,1044 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-call (template calling) basic caller 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.children[0] = call(\`_basic-callee\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) basic caller, no parent node 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = call(\`_basic-callee\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) call with several sub nodes on same line 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) call with several sub nodes on same line 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<span>yay</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    const b2 = new BMulti(3);
+    const b3 = b2.children[0] = new Block2();
+    b2.children[1] = new BText(\` \`)
+    const b4 = b2.children[2] = new Block3();
+    ctx[zero] = b2;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0' 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span>cascade 2</span><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0' 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>cascade 0</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    const b2 = new BMulti(2);
+    const b3 = b2.children[0] = new Block2();
+    b2.children[1] = new BHtml(ctx[zero]);
+    ctx[zero] = b2;
+    b1.children[0] = call(\`subSubTemplate\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0' 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>cascade 1</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    const b2 = new BMulti(2);
+    const b3 = b2.children[0] = new Block2();
+    b2.children[1] = new BHtml(ctx[zero]);
+    ctx[zero] = b2;
+    b1.children[0] = call(\`finalTemplate\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0' 4`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<span>yay</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    const b2 = new BMulti(3);
+    const b3 = b2.children[0] = new Block2();
+    b2.children[1] = new BText(\` \`)
+    const b4 = b2.children[2] = new Block3();
+    ctx[zero] = b2;
+    b1.children[0] = call(\`subTemplate\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0', without external divs 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>cascade 2</span>\`);
+  }
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    b1.children[1] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0', without external divs 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>cascade 0</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    b1.children[1] = new BHtml(ctx[zero]);
+    ctx[zero] = b1;
+    const b3 = call(\`subSubTemplate\`, ctx, refs);
+    b3.refs = refs;
+    return b3;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0', without external divs 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>cascade 1</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    b1.children[1] = new BHtml(ctx[zero]);
+    ctx[zero] = b1;
+    const b3 = call(\`finalTemplate\`, ctx, refs);
+    b3.refs = refs;
+    return b3;
+  }
+}"
+`;
+
+exports[`t-call (template calling) cascading t-call t-raw='0', without external divs 4`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>yay</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    const b1 = new BMulti(3);
+    const b2 = b1.children[0] = new Block1();
+    b1.children[1] = new BText(\` \`)
+    const b3 = b1.children[2] = new Block2();
+    ctx[zero] = b1;
+    const b4 = call(\`subTemplate\`, ctx, refs);
+    b4.refs = refs;
+    return b4;
+  }
+}"
+`;
+
+exports[`t-call (template calling) dynamic t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.children[0] = call((ctx['template']), ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) inherit context 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx[\`foo\`] = 1;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 1 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span>hey</span><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    if (false) {
+      b1.children[0] = call(\`recursive\`, ctx, refs);
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    ctx[\`node\`] = ctx['root'];
+    b1.children[0] = call(\`nodeTemplate\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 2 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><p><owl-text/></p><owl-anchor/></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.data[0] = ctx['node'].val;
+    const [v2, k2, l2] = getValues(ctx['node'].children||[]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`subtree\`] = v2[i1];
+      ctx[\`subtree_first\`] = i1 === 0;
+      ctx[\`subtree_last\`] = i1 === v2.length - 1;
+      ctx[\`subtree_index\`] = i1;
+      ctx[\`subtree_value\`] = k2[i1];
+      ctx = Object.create(ctx);
+      ctx[\`node\`] = ctx['subtree'];
+      b3.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    ctx[\`node\`] = ctx['root'];
+    b1.children[0] = call(\`nodeTemplate\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 3 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><p><owl-text/></p><owl-anchor/></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.data[0] = ctx['node'].val;
+    const [v2, k2, l2] = getValues(ctx['node'].children||[]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`subtree\`] = v2[i1];
+      ctx[\`subtree_first\`] = i1 === 0;
+      ctx[\`subtree_last\`] = i1 === v2.length - 1;
+      ctx[\`subtree_index\`] = i1;
+      ctx[\`subtree_value\`] = k2[i1];
+      ctx = Object.create(ctx);
+      ctx[\`node\`] = ctx['subtree'];
+      b3.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 4: with t-set recursive index 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    ctx[\`recursive_idx\`] = 1;
+    ctx[\`node\`] = ctx['root'];
+    b1.children[0] = call(\`nodeTemplate\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) recursive template, part 4: with t-set recursive index 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><p><owl-text/> <owl-text/></p><owl-anchor/></div>\`);
+    children = new Array(1);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx[\`recursive_idx\`] = ctx['recursive_idx']+1;
+    b1.data[0] = ctx['node'].val;
+    b1.data[1] = ctx['recursive_idx'];
+    const [v2, k2, l2] = getValues(ctx['node'].children||[]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`subtree\`] = v2[i1];
+      ctx[\`subtree_first\`] = i1 === 0;
+      ctx[\`subtree_last\`] = i1 === v2.length - 1;
+      ctx[\`subtree_index\`] = i1;
+      ctx[\`subtree_value\`] = k2[i1];
+      ctx = Object.create(ctx);
+      ctx[\`node\`] = ctx['subtree'];
+      b3.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) scoped parameters 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    ctx[\`foo\`] = 42;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    ctx = ctx.__proto__;
+    b1.data[0] = ctx['foo'];
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) scoped parameters, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx[\`foo\`] = 11;
+    ctx = Object.create(ctx);
+    ctx[\`foo\`] = 42;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    ctx = ctx.__proto__;
+    b1.data[0] = ctx['foo'];
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call allowed on a non t node 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with body content as root of a template 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<foo><owl-anchor/></foo>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with body content as root of a template 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p>antony</p>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[zero] = b1;
+    const b2 = call(\`antony\`, ctx, refs);
+    b2.refs = refs;
+    return b2;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    if (ctx['flag']) {
+      b1.children[0] = call(\`sub\`, ctx, refs);
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-set inside and body text content 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    ctx[\`val\`] = \`yip yip\`;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-set inside and body text content 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['val'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['list']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`v\`] = v2[i1];
+      ctx[\`v_first\`] = i1 === 0;
+      ctx[\`v_last\`] = i1 === v2.length - 1;
+      ctx[\`v_index\`] = i1;
+      ctx[\`v_value\`] = k2[i1];
+      ctx[\`val\`] = ctx['v'].val;
+      ctx = Object.create(ctx);
+      ctx[\`val3\`] = ctx['val']*3;
+      b3.children[i1] = call(\`sub\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['val3'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['list']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`v\`] = v2[i1];
+      ctx[\`v_first\`] = i1 === 0;
+      ctx[\`v_last\`] = i1 === v2.length - 1;
+      ctx[\`v_index\`] = i1;
+      ctx[\`v_value\`] = k2[i1];
+      ctx[\`val\`] = ctx['v'].val;
+      ctx = Object.create(ctx);
+      ctx[\`val3\`] = ctx['val']*3;
+      b3.children[i1] = call(\`sub\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    b2.data[0] = ctx['val3'];
+    b1.children[1] = new BText(ctx['w'])
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-call, conditional and t-set in t-call body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx[\`v1\`] = 'elif';
+    if (ctx['v1']==='if') {
+      b1.children[0] = call(\`callee1\`, ctx, refs);
+    } else if (ctx['v1']==='elif') {
+      ctx = Object.create(ctx);
+      ctx[\`v\`] = 'success';
+      b1.children[1] = call(\`callee2\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-esc inside t-call, with t-set outside 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx[\`v\`] = \`Hi\`;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) with unused body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    const b1 = new BText(\`WHEEE\`)
+    ctx[zero] = b1;
+    const b2 = call(\`sub\`, ctx, refs);
+    b2.refs = refs;
+    return b2;
+  }
+}"
+`;
+
+exports[`t-call (template calling) with unused setbody 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    ctx[\`qux\`] = 3;
+    const b1 = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) with used body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    ctx = Object.create(ctx);
+    const b1 = new BText(\`ok\`)
+    ctx[zero] = b1;
+    const b2 = call(\`sub\`, ctx, refs);
+    b2.refs = refs;
+    return b2;
+  }
+}"
+`;
+
+exports[`t-call (template calling) with used body 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<h1><owl-text/></h1>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = this.data[0];
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx[zero];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call (template calling) with used setbody 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/></span>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    ctx[\`foo\`] = 'ok';
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;

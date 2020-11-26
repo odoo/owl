@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-ref can get a dynamic ref on a node 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span/></div>\`);
+    data = new Array(1);
+    update() {
+      this.refs[this.data[0]] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    const b1 = new Block1();
+    const v2 = ctx['id'];
+    b1.data[0] = \`myspan\${v2}\`;
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-ref can get a ref on a node 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span/></div>\`);
+    update() {
+      this.refs[\`myspan\`] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    const b1 = new Block1();
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-ref ref in a t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-ref ref in a t-call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div>1<span/>2</div>\`);
+    update() {
+      this.refs[\`name\`] = this.el.firstChild.nextSibling;
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    const b1 = new Block1();
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-ref ref in a t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span/>\`);
+    update() {
+      this.refs[\`name\`] = this.el;
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      const b2 = b1.children[0] = new Block2();
+      b2.refs = refs;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-ref refs in a loop 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el;
+      this.refs[this.data[0]] = el1;
+      el1.firstChild.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['items']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      const k4 = ctx['item'];
+      const b5 = b3.children[i1] = new Block2();
+      b5.refs = refs;
+      const v6 = ctx['item'];
+      b5.data[0] = \`\${v6}\`;
+      b5.data[1] = ctx['item'];
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-ref two refs, one in a t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><p/></div>\`);
+    children = new Array(1);
+    update() {
+      this.refs[\`p\`] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span/>\`);
+    update() {
+      this.refs[\`name\`] = this.el;
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      const b2 = b1.children[0] = new Block2();
+      b2.refs = refs;
+    }
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;

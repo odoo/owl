@@ -1,0 +1,559 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-if a t-if next to a div 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div>foo</div>\`);
+  }
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    if (ctx['cond']) {
+      b1.children[1] = new BText(\`1\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if a t-if with two inner nodes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>yip</span>\`);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<div>yip</div>\`);
+  }
+  
+  return ctx => {
+    const b1 = new BMulti(1);
+    if (ctx['condition']) {
+      const b2 = b1.children[0] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      const b4 = b2.children[1] = new Block2();
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if boolean value condition elif (no outside node) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(4);
+    if (ctx['color']=='black') {
+      b1.children[0] = new BText(\`black pearl\`)
+    } else if (ctx['color']=='yellow') {
+      b1.children[1] = new BText(\`yellow submarine\`)
+    } else if (ctx['color']=='red') {
+      b1.children[2] = new BText(\`red is dead\`)
+    } else {
+      b1.children[3] = new BText(\`beer\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if boolean value condition elif 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(4);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['color']=='black') {
+      b1.children[0] = new BText(\`black pearl\`)
+    } else if (ctx['color']=='yellow') {
+      b1.children[1] = new BText(\`yellow submarine\`)
+    } else if (ctx['color']=='red') {
+      b1.children[2] = new BText(\`red is dead\`)
+    } else {
+      b1.children[3] = new BText(\`beer\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if boolean value condition else 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span>begin</span><owl-anchor/><owl-anchor/><span>end</span></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`ok\`)
+    } else {
+      b1.children[1] = new BText(\`ok-else\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if boolean value condition false else 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span>begin</span><owl-anchor/><owl-anchor/><span>end</span></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`fail\`)
+    } else {
+      b1.children[1] = new BText(\`fail-else\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if can use some boolean operators in expressions 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(8);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['cond1']&&ctx['cond2']) {
+      b1.children[0] = new BText(\`and\`)
+    }
+    if (ctx['cond1']&&ctx['cond3']) {
+      b1.children[1] = new BText(\`nope\`)
+    }
+    if (ctx['cond1']||ctx['cond3']) {
+      b1.children[2] = new BText(\`or\`)
+    }
+    if (ctx['cond3']||ctx['cond4']) {
+      b1.children[3] = new BText(\`nope\`)
+    }
+    if (ctx['m']>3) {
+      b1.children[4] = new BText(\`mgt\`)
+    }
+    if (ctx['n']>3) {
+      b1.children[5] = new BText(\`ngt\`)
+    }
+    if (ctx['m']<3) {
+      b1.children[6] = new BText(\`mlt\`)
+    }
+    if (ctx['n']<3) {
+      b1.children[7] = new BText(\`nlt\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if div containing a t-if with two inner nodes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>yip</span>\`);
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<div>yip</div>\`);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      const b2 = b1.children[0] = new BMulti(2);
+      const b3 = b2.children[0] = new Block2();
+      const b4 = b2.children[1] = new Block3();
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if dynamic content after t-if with two children nodes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p>1</p>\`);
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      const b2 = b1.children[0] = new BMulti(2);
+      const b3 = b2.children[0] = new Block2();
+      const b4 = b2.children[1] = new Block3();
+    }
+    b1.data[0] = ctx['text'];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if just a t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(1);
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`ok\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if simple t-if/t-else 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`1\`)
+    } else {
+      b1.children[1] = new BText(\`2\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if simple t-if/t-else in a div 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`1\`)
+    } else {
+      b1.children[1] = new BText(\`2\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-esc with t-elif 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (false) {
+      b1.children[0] = new BText(\`abc\`)
+    } else {
+      b1.children[1] = new BText('x')
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-esc with t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (true) {
+      b1.children[0] = new BText('x')
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-if and t-else with two nodes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>a</span>\`);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>b</span>\`);
+  }
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`1\`)
+    } else {
+      const b2 = b1.children[1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      const b4 = b2.children[1] = new Block2();
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-if in a div 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      b1.children[0] = new BText(\`ok\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-if in a t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>1<owl-anchor/></span>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['cond1']) {
+      const b2 = b1.children[0] = new Block2();
+      if (ctx['cond2']) {
+        b2.children[0] = new BText(\`2\`)
+      }
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-set, then t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`title\`] = 'test';
+    if (ctx['title']) {
+      b1.children[0] = new BText(ctx['title'])
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-set, then t-if, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>COUCOU</span>\`);
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`y\`] = true;
+    ctx[\`x\`] = ctx['y'];
+    if (ctx['x']) {
+      const b2 = b1.children[0] = new Block2();
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if t-set, then t-if, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>AAA</span>\`);
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<span>BBB</span>\`);
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`y\`] = false;
+    ctx[\`x\`] = ctx['y'];
+    if (ctx['x']) {
+      const b2 = b1.children[0] = new Block2();
+    } else if (!ctx['x']) {
+      const b3 = b1.children[1] = new Block3();
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if two consecutive t-if 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    if (ctx['cond1']) {
+      b1.children[0] = new BText(\`1\`)
+    }
+    if (ctx['cond2']) {
+      b1.children[1] = new BText(\`2\`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if two consecutive t-if in a div 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (ctx['cond1']) {
+      b1.children[0] = new BText(\`1\`)
+    }
+    if (ctx['cond2']) {
+      b1.children[1] = new BText(\`2\`)
+    }
+    return b1;
+  }
+}"
+`;

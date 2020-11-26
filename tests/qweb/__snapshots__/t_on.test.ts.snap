@@ -1,0 +1,553 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-on can bind event handler 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with arguments 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const arg2 = [5];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](...arg2, e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with empty  object 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const arg2 = [{}];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](...arg2, e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with empty object (with non empty inner string) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const arg2 = [{}];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](...arg2, e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with empty object (with non empty inner string) 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<ul><owl-anchor/></ul>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<li><a>link</a></li>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el.firstChild, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(['someval']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`action\`] = v2[i1];
+      ctx[\`action_first\`] = i1 === 0;
+      ctx[\`action_last\`] = i1 === v2.length - 1;
+      ctx[\`action_index\`] = i1;
+      ctx[\`action_value\`] = k2[i1];
+      const k4 = ctx['action_index'];
+      const b5 = b3.children[i1] = new Block2();
+      const arg6 = [ctx['action']];
+      b5.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg6, e), ctx];
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with object arguments 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const arg2 = [{val:5}];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](...arg2, e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on can bind two event handlers 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(2);
+    build() {
+      super.build();
+      const el1 = this.el;
+      this.setupHandler(el1, 0);
+      this.setupHandler(el1, 1);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['handleClick'](e), ctx];
+    b1.handlers[1] = [\`dblclick\`, (e) => owner(ctx)['handleDblClick'](e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const [v1, k1, l1] = getValues([1]);
+    const b2 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
+      ctx[\`value_first\`] = i1 === 0;
+      ctx[\`value_last\`] = i1 === v1.length - 1;
+      ctx[\`value_index\`] = i1;
+      ctx[\`value_value\`] = k1[i1];
+      const b3 = b2.children[i1] = new Block1();
+      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
+    }
+    return b2;
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 3 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 4 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 4 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const [v1, k1, l1] = getValues([1]);
+    const b2 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
+      ctx[\`value_first\`] = i1 === 0;
+      ctx[\`value_last\`] = i1 === v1.length - 1;
+      ctx[\`value_index\`] = i1;
+      ctx[\`value_value\`] = k1[i1];
+      b2.children[i1] = call(\`sub\`, ctx, refs);
+    }
+    b2.refs = refs;
+    return b2;
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement (function call) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const v2 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v2.incrementCounter(2), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Click</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const v2 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v2.counter++, ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Toggle</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const v2 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v2.flag=!v2.flag, ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button>Toggle</button>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const v2 = ctx['state'];
+    const v3 = ctx['someFunction'];
+    b1.handlers[0] = [\`click\`, (e) => v2.n=v3(3), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on with t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p>lucas</p>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['update'](e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on with t-call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on, with arguments and t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p>lucas</p>\`);
+    handlers = new Array(1);
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const arg2 = [ctx['value']];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['update'](...arg2, e), ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-on t-on, with arguments and t-call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;

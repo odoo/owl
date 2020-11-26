@@ -1,0 +1,502 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-foreach does not pollute the rendering context 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues([1]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      b3.children[i1] = new BText(ctx['item'])
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach iterate on items (on a element node) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues([1,2]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      const k4 = ctx['item'];
+      const b5 = b3.children[i1] = new Block2();
+      b5.data[0] = ctx['item'];
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach iterate on items 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues([3,2,1]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      const b4 = b3.children[i1] = new BMulti(7);
+      b4.children[0] = new BText(\` [\`)
+      b4.children[1] = new BText(ctx['item_index'])
+      b4.children[2] = new BText(\`: \`)
+      b4.children[3] = new BText(ctx['item'])
+      b4.children[4] = new BText(\` \`)
+      b4.children[5] = new BText(ctx['item_value'])
+      b4.children[6] = new BText(\`] \`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach iterate, dict param 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['value']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      const b4 = b3.children[i1] = new BMulti(7);
+      b4.children[0] = new BText(\` [\`)
+      b4.children[1] = new BText(ctx['item_index'])
+      b4.children[2] = new BText(\`: \`)
+      b4.children[3] = new BText(ctx['item'])
+      b4.children[4] = new BText(\` \`)
+      b4.children[5] = new BText(ctx['item_value'])
+      b4.children[6] = new BText(\`] \`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach iterate, position 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(Array(5));
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`elem\`] = v2[i1];
+      ctx[\`elem_first\`] = i1 === 0;
+      ctx[\`elem_last\`] = i1 === v2.length - 1;
+      ctx[\`elem_index\`] = i1;
+      ctx[\`elem_value\`] = k2[i1];
+      const b4 = b3.children[i1] = new BMulti(6);
+      b4.children[0] = new BText(\` -\`)
+      if (ctx['elem_first']) {
+        b4.children[1] = new BText(\` first\`)
+      }
+      if (ctx['elem_last']) {
+        b4.children[2] = new BText(\` last\`)
+      }
+      b4.children[3] = new BText(\` (\`)
+      b4.children[4] = new BText(ctx['elem_index'])
+      b4.children[5] = new BText(\`) \`)
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach multiple calls to t-raw 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><div>Greeter</div><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = new BHtml(ctx[zero]);
+    b1.children[1] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach multiple calls to t-raw 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>coucou</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    const b2 = new Block2();
+    ctx[zero] = b2;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach simple iteration (in a node) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues([3,2,1]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      b3.children[i1] = new BText(ctx['item'])
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach simple iteration 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues([3,2,1]);
+    const b2 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      b2.children[i1] = new BText(ctx['item'])
+    }
+    return b2;
+  }
+}"
+`;
+
+exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(7);
+    b1.children[0] = new BText(\` [\`)
+    b1.children[1] = new BText(ctx['a'])
+    b1.children[2] = new BText(\`] [\`)
+    b1.children[3] = new BText(ctx['b'])
+    b1.children[4] = new BText(\`] [\`)
+    b1.children[5] = new BText(ctx['c'])
+    b1.children[6] = new BText(\`] \`)
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><span>[<owl-text/>][<owl-text/>][<owl-text/>]</span></div>\`);
+    children = new Array(1);
+    data = new Array(3);
+    update() {
+      const el1 = this.anchors[0].nextSibling.firstChild.nextSibling;
+      const el2 = el1.nextSibling.nextSibling;
+      el1.textContent = toString(this.data[0]);
+      el2.textContent = toString(this.data[1]);
+      el2.nextSibling.nextSibling.textContent = toString(this.data[2]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['numbers']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`a\`] = v2[i1];
+      ctx[\`a_first\`] = i1 === 0;
+      ctx[\`a_last\`] = i1 === v2.length - 1;
+      ctx[\`a_index\`] = i1;
+      ctx[\`a_value\`] = k2[i1];
+      const b4 = b3.children[i1] = new BMulti(2);
+      const [v5, k5, l5] = getValues(ctx['letters']);
+      const b6 = b4.children[0] = new BCollection(l5);
+      ctx = Object.create(ctx);
+      for (let i2 = 0; i2 < l5; i2++) {
+        ctx[\`b\`] = v5[i2];
+        ctx[\`b_first\`] = i2 === 0;
+        ctx[\`b_last\`] = i2 === v5.length - 1;
+        ctx[\`b_index\`] = i2;
+        ctx[\`b_value\`] = k5[i2];
+        ctx = Object.create(ctx);
+        ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
+        b6.children[i2] = call(\`sub\`, ctx, refs);
+        ctx = ctx.__proto__;
+      }
+      ctx = ctx.__proto__;
+      const b7 = b4.children[1] = new Block2();
+      b7.data[0] = ctx['c'];
+    }
+    ctx = ctx.__proto__;
+    b1.data[0] = ctx['a'];
+    b1.data[1] = ctx['b'];
+    b1.data[2] = ctx['c'];
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new BMulti(7);
+    ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
+    b1.children[0] = new BText(\` [\`)
+    b1.children[1] = new BText(ctx['a'])
+    b1.children[2] = new BText(\`] [\`)
+    b1.children[3] = new BText(ctx['b'])
+    b1.children[4] = new BText(\`] [\`)
+    b1.children[5] = new BText(ctx['c'])
+    b1.children[6] = new BText(\`] \`)
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><span>[<owl-text/>][<owl-text/>][<owl-text/>]</span></div>\`);
+    children = new Array(1);
+    data = new Array(3);
+    update() {
+      const el1 = this.anchors[0].nextSibling.firstChild.nextSibling;
+      const el2 = el1.nextSibling.nextSibling;
+      el1.textContent = toString(this.data[0]);
+      el2.textContent = toString(this.data[1]);
+      el2.nextSibling.nextSibling.textContent = toString(this.data[2]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['numbers']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`a\`] = v2[i1];
+      ctx[\`a_first\`] = i1 === 0;
+      ctx[\`a_last\`] = i1 === v2.length - 1;
+      ctx[\`a_index\`] = i1;
+      ctx[\`a_value\`] = k2[i1];
+      const b4 = b3.children[i1] = new BMulti(2);
+      const [v5, k5, l5] = getValues(ctx['letters']);
+      const b6 = b4.children[0] = new BCollection(l5);
+      ctx = Object.create(ctx);
+      for (let i2 = 0; i2 < l5; i2++) {
+        ctx[\`b\`] = v5[i2];
+        ctx[\`b_first\`] = i2 === 0;
+        ctx[\`b_last\`] = i2 === v5.length - 1;
+        ctx[\`b_index\`] = i2;
+        ctx[\`b_value\`] = k5[i2];
+        b6.children[i2] = call(\`sub\`, ctx, refs);
+      }
+      ctx = ctx.__proto__;
+      const b7 = b4.children[1] = new Block2();
+      b7.data[0] = ctx['c'];
+    }
+    ctx = ctx.__proto__;
+    b1.data[0] = ctx['a'];
+    b1.data[1] = ctx['b'];
+    b1.data[2] = ctx['c'];
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach t-foreach in t-foreach 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues(ctx['numbers']);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`number\`] = v2[i1];
+      ctx[\`number_first\`] = i1 === 0;
+      ctx[\`number_last\`] = i1 === v2.length - 1;
+      ctx[\`number_index\`] = i1;
+      ctx[\`number_value\`] = k2[i1];
+      const [v4, k4, l4] = getValues(ctx['letters']);
+      const b5 = b3.children[i1] = new BCollection(l4);
+      ctx = Object.create(ctx);
+      for (let i2 = 0; i2 < l4; i2++) {
+        ctx[\`letter\`] = v4[i2];
+        ctx[\`letter_first\`] = i2 === 0;
+        ctx[\`letter_last\`] = i2 === v4.length - 1;
+        ctx[\`letter_index\`] = i2;
+        ctx[\`letter_value\`] = k4[i2];
+        const b6 = b5.children[i2] = new BMulti(4);
+        b6.children[0] = new BText(\` [\`)
+        b6.children[1] = new BText(ctx['number'])
+        b6.children[2] = new BText(ctx['letter'])
+        b6.children[3] = new BText(\`] \`)
+      }
+      ctx = ctx.__proto__;
+    }
+    return b1;
+  }
+}"
+`;

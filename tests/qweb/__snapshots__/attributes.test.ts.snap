@@ -1,0 +1,180 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`attributes dynamic attribute falsy variable  1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`foo\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes dynamic attribute with a dash 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`data-action-id\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['id'];
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes dynamic attributes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`foo\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = 'bar';
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes dynamic class attribute 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateClass(this.el, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['c'];
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes dynamic empty class attribute 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateClass(this.el, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['c'];
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes dynamic formatted attributes with a dash 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`aria-label\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = \`Some text \${ctx['id']}\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes fixed variable 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`foo\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes two dynamic attributes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el;
+      this.updateAttr(el1, \`foo\`, this.data[0]);
+      this.updateAttr(el1, \`bar\`, this.data[1]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = 'bar';
+    b1.data[1] = 'foo';
+    return b1;
+  }
+}"
+`;

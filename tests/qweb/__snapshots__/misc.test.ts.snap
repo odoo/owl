@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`misc global 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const [v2, k2, l2] = getValues([4,5,6]);
+    const b3 = b1.children[0] = new BCollection(l2);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`value\`] = v2[i1];
+      ctx[\`value_first\`] = i1 === 0;
+      ctx[\`value_last\`] = i1 === v2.length - 1;
+      ctx[\`value_index\`] = i1;
+      ctx[\`value_value\`] = k2[i1];
+      const b4 = b3.children[i1] = new BMulti(2);
+      const b5 = b4.children[0] = new Block2();
+      b5.data[0] = ctx['value'];
+      ctx = Object.create(ctx);
+      const b6 = new BMulti(3);
+      ctx = Object.create(ctx);
+      ctx[\`foo\`] = 'aaa';
+      b6.children[0] = call(\`_callee-uses-foo\`, ctx, refs);
+      ctx = ctx.__proto__;
+      b6.children[1] = call(\`_callee-uses-foo\`, ctx, refs);
+      ctx[\`foo\`] = 'bbb';
+      b6.children[2] = call(\`_callee-uses-foo\`, ctx, refs);
+      ctx[zero] = b6;
+      b4.children[1] = call(\`_callee-asc\`, ctx, refs);
+      ctx = ctx.__proto__;
+    }
+    ctx = ctx.__proto__;
+    b1.children[1] = call(\`_callee-asc-toto\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`misc global 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const b2 = new BText(\`toto default\`)
+    b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
+    return b1;
+  }
+}"
+`;
+
+exports[`misc global 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<año><owl-anchor/></año>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`falló\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = 'agüero';
+    b1.children[0] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`misc global 4`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
+    return b1;
+  }
+}"
+`;

@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`comments properly handle comments 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div>hello <!-- comment-->owl</div>\`);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`comments properly handle comments between t-if/t-else 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>true</span>\`);
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<span>owl</span>\`);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    if (true) {
+      const b2 = b1.children[0] = new Block2();
+    } else {
+      const b3 = b1.children[1] = new Block3();
+    }
+    return b1;
+  }
+}"
+`;

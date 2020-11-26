@@ -882,7 +882,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     b2.data[0] = ctx['val3'];
-    b1.children[1] = new BText(ctx['w'])
+    b1.children[1] = new BText(ctx['w']);
     return b1;
   }
 }"

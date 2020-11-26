@@ -22,7 +22,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
       ctx[\`item_last\`] = i1 === v2.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k2[i1];
-      b3.children[i1] = new BText(ctx['item'])
+      b3.children[i1] = new BText(ctx['item']);
     }
     return b1;
   }
@@ -92,11 +92,11 @@ exports[`t-foreach iterate on items 1`] = `
       ctx[\`item_value\`] = k2[i1];
       const b4 = b3.children[i1] = new BMulti(7);
       b4.children[0] = new BText(\` [\`);
-      b4.children[1] = new BText(ctx['item_index'])
+      b4.children[1] = new BText(ctx['item_index']);
       b4.children[2] = new BText(\`: \`);
-      b4.children[3] = new BText(ctx['item'])
+      b4.children[3] = new BText(ctx['item']);
       b4.children[4] = new BText(\` \`);
-      b4.children[5] = new BText(ctx['item_value'])
+      b4.children[5] = new BText(ctx['item_value']);
       b4.children[6] = new BText(\`] \`);
     }
     return b1;
@@ -128,11 +128,11 @@ exports[`t-foreach iterate, dict param 1`] = `
       ctx[\`item_value\`] = k2[i1];
       const b4 = b3.children[i1] = new BMulti(7);
       b4.children[0] = new BText(\` [\`);
-      b4.children[1] = new BText(ctx['item_index'])
+      b4.children[1] = new BText(ctx['item_index']);
       b4.children[2] = new BText(\`: \`);
-      b4.children[3] = new BText(ctx['item'])
+      b4.children[3] = new BText(ctx['item']);
       b4.children[4] = new BText(\` \`);
-      b4.children[5] = new BText(ctx['item_value'])
+      b4.children[5] = new BText(ctx['item_value']);
       b4.children[6] = new BText(\`] \`);
     }
     return b1;
@@ -171,7 +171,7 @@ exports[`t-foreach iterate, position 1`] = `
         b4.children[2] = new BText(\` last\`);
       }
       b4.children[3] = new BText(\` (\`);
-      b4.children[4] = new BText(ctx['elem_index'])
+      b4.children[4] = new BText(ctx['elem_index']);
       b4.children[5] = new BText(\`) \`);
     }
     return b1;
@@ -250,7 +250,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
       ctx[\`item_last\`] = i1 === v2.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k2[i1];
-      b3.children[i1] = new BText(ctx['item'])
+      b3.children[i1] = new BText(ctx['item']);
     }
     return b1;
   }
@@ -273,7 +273,7 @@ exports[`t-foreach simple iteration 1`] = `
       ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
-      b2.children[i1] = new BText(ctx['item'])
+      b2.children[i1] = new BText(ctx['item']);
     }
     return b2;
   }
@@ -289,11 +289,11 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
   return ctx => {
     const b1 = new BMulti(7);
     b1.children[0] = new BText(\` [\`);
-    b1.children[1] = new BText(ctx['a'])
+    b1.children[1] = new BText(ctx['a']);
     b1.children[2] = new BText(\`] [\`);
-    b1.children[3] = new BText(ctx['b'])
+    b1.children[3] = new BText(ctx['b']);
     b1.children[4] = new BText(\`] [\`);
-    b1.children[5] = new BText(ctx['c'])
+    b1.children[5] = new BText(ctx['c']);
     b1.children[6] = new BText(\`] \`);
     return b1;
   }
@@ -380,11 +380,11 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
     const b1 = new BMulti(7);
     ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
     b1.children[0] = new BText(\` [\`);
-    b1.children[1] = new BText(ctx['a'])
+    b1.children[1] = new BText(ctx['a']);
     b1.children[2] = new BText(\`] [\`);
-    b1.children[3] = new BText(ctx['b'])
+    b1.children[3] = new BText(ctx['b']);
     b1.children[4] = new BText(\`] [\`);
-    b1.children[5] = new BText(ctx['c'])
+    b1.children[5] = new BText(ctx['c']);
     b1.children[6] = new BText(\`] \`);
     return b1;
   }
@@ -490,8 +490,8 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
         ctx[\`letter_value\`] = k4[i2];
         const b6 = b5.children[i2] = new BMulti(4);
         b6.children[0] = new BText(\` [\`);
-        b6.children[1] = new BText(ctx['number'])
-        b6.children[2] = new BText(ctx['letter'])
+        b6.children[1] = new BText(ctx['number']);
+        b6.children[2] = new BText(ctx['letter']);
         b6.children[3] = new BText(\`] \`);
       }
       ctx = ctx.__proto__;

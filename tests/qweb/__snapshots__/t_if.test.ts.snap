@@ -324,7 +324,7 @@ exports[`t-if t-esc with t-elif 1`] = `
     if (false) {
       b1.children[0] = new BText(\`abc\`);
     } else {
-      b1.children[1] = new BText('x')
+      b1.children[1] = new BText('x');
     }
     return b1;
   }
@@ -345,7 +345,7 @@ exports[`t-if t-esc with t-if 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (true) {
-      b1.children[0] = new BText('x')
+      b1.children[0] = new BText('x');
     }
     return b1;
   }
@@ -446,7 +446,7 @@ exports[`t-if t-set, then t-if 1`] = `
     const b1 = new Block1();
     ctx[\`title\`] = 'test';
     if (ctx['title']) {
-      b1.children[0] = new BText(ctx['title'])
+      b1.children[0] = new BText(ctx['title']);
     }
     return b1;
   }

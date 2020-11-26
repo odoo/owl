@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`comments only a comment 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<!-- comment-->\`);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
 exports[`comments properly handle comments 1`] = `
 "function anonymous(Blocks, utils
 ) {

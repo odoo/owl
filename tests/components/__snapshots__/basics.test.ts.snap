@@ -37,7 +37,7 @@ exports[`basics a class component inside a class component 1`] = `
   
   return ctx => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(ctx, \`Child\`, {})
+    b1.children[0] = new BComponent(ctx, \`Child\`, {});
     return b1;
   }
 }"
@@ -50,7 +50,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(ctx, \`Child\`, {})
+    const b1 = new BComponent(ctx, \`Child\`, {});
     return b1;
   }
 }"
@@ -69,7 +69,7 @@ exports[`basics can handle empty props 1`] = `
   
   return ctx => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(ctx, \`Child\`, {val: undefined})
+    b1.children[0] = new BComponent(ctx, \`Child\`, {val: undefined});
     return b1;
   }
 }"
@@ -152,7 +152,7 @@ exports[`basics class parent, class child component with props 1`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(ctx, \`Child\`, {value: 42})
+    const b1 = new BComponent(ctx, \`Child\`, {value: 42});
     return b1;
   }
 }"
@@ -187,7 +187,7 @@ exports[`basics parent, child and grandchild 1`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(ctx, \`Child\`, {})
+    const b1 = new BComponent(ctx, \`Child\`, {});
     return b1;
   }
 }"
@@ -201,8 +201,8 @@ exports[`basics two child components 1`] = `
   
   return ctx => {
     const b1 = new BMulti(2);
-    b1.children[0] = new BComponent(ctx, \`Child\`, {})
-    b1.children[1] = new BComponent(ctx, \`Child\`, {})
+    b1.children[0] = new BComponent(ctx, \`Child\`, {});
+    b1.children[1] = new BComponent(ctx, \`Child\`, {});
     return b1;
   }
 }"
@@ -217,7 +217,7 @@ exports[`basics zero or one child components 1`] = `
   return ctx => {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BComponent(ctx, \`Child\`, {})
+      b1.children[0] = new BComponent(ctx, \`Child\`, {});
     }
     return b1;
   }

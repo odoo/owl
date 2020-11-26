@@ -52,7 +52,7 @@ exports[`slots can define and call slots 2`] = `
   return ctx => {
     const b1 = new Block1();
     const slots2 = {'header': slot3(ctx), 'footer': slot5(ctx)};
-    const b7 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {})
+    const b7 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {});
     b7.component.__owl__.slots = slots2;
     return b1;
   }
@@ -126,7 +126,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
   return ctx => {
     const b1 = new Block1();
     const slots2 = {'header': slot3(ctx)};
-    const b5 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {})
+    const b5 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {});
     b5.component.__owl__.slots = slots2;
     return b1;
   }
@@ -176,7 +176,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
   return ctx => {
     const b1 = new Block1();
     const slots2 = {'default': slot3(ctx)};
-    const b5 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {})
+    const b5 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {});
     b5.component.__owl__.slots = slots2;
     return b1;
   }
@@ -196,7 +196,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
   
   return ctx => {
     const slots1 = {'default': slot2(ctx)};
-    const b4 = new BComponent(ctx, \`Child\`, {})
+    const b4 = new BComponent(ctx, \`Child\`, {});
     b4.component.__owl__.slots = slots1;
     return b4;
   }
@@ -255,7 +255,7 @@ exports[`slots named slots can define a default content 2`] = `
   
   return ctx => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(ctx, \`Dialog\`, {})
+    b1.children[0] = new BComponent(ctx, \`Dialog\`, {});
     return b1;
   }
 }"
@@ -287,7 +287,7 @@ exports[`slots no named slot content => just no children 2`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(ctx, \`Dialog\`, {})
+    const b1 = new BComponent(ctx, \`Dialog\`, {});
     return b1;
   }
 }"
@@ -306,7 +306,7 @@ exports[`slots simple default slot 1`] = `
   
   return ctx => {
     const slots1 = {'default': slot2(ctx)};
-    const b4 = new BComponent(ctx, \`Child\`, {})
+    const b4 = new BComponent(ctx, \`Child\`, {});
     b4.component.__owl__.slots = slots1;
     return b4;
   }
@@ -345,7 +345,7 @@ exports[`slots simple default slot, variation 1`] = `
   
   return ctx => {
     const slots1 = {'default': slot2(ctx)};
-    const b4 = new BComponent(ctx, \`Child\`, {})
+    const b4 = new BComponent(ctx, \`Child\`, {});
     b4.component.__owl__.slots = slots1;
     return b4;
   }
@@ -359,7 +359,7 @@ exports[`slots simple default slot, variation 2`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = callSlot(ctx, 'default')
+    const b1 = callSlot(ctx, 'default');
     return b1;
   }
 }"
@@ -390,7 +390,7 @@ exports[`slots slot content is bound to caller 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const slots1 = {'default': slot2(ctx)};
-    const b4 = new BComponent(ctx, \`Child\`, {})
+    const b4 = new BComponent(ctx, \`Child\`, {});
     b4.component.__owl__.slots = slots1;
     return b4;
   }
@@ -471,7 +471,7 @@ exports[`slots slots are rendered with proper context 2`] = `
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
     const slots2 = {'footer': slot3(ctx)};
-    const b5 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {})
+    const b5 = b1.children[0] = new BComponent(ctx, \`Dialog\`, {});
     b5.component.__owl__.slots = slots2;
     return b1;
   }

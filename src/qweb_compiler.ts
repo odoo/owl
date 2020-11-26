@@ -139,12 +139,6 @@ interface Context {
   forceNewBlock: boolean;
 }
 
-interface MakeBlockParams {
-  multi?: number;
-  parentBlock?: string | null;
-  parentIndex?: number | string | null;
-}
-
 interface CodeGroup {
   name: string;
   signature: string;
@@ -176,18 +170,35 @@ class QWebCompiler {
     return `${prefix}${this.nextId++}`;
   }
 
-  makeBlock({ multi, parentBlock, parentIndex }: MakeBlockParams = {}): BlockDescription {
-    const name = multi ? "BMulti" : `Block${this.blocks.length + 1}`;
-    const block = new BlockDescription(this.generateId("b"), name);
-    if (!multi) {
-      this.blocks.push(block);
+  generateBlockName(): string {
+    return `Block${this.blocks.length + 1}`;
+  }
+
+  insertAnchor(block: BlockDescription) {
+    const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
+    block.insert(anchor);
+    block.currentPath = [`anchors[${block.childNumber}]`];
+    block.childNumber++;
+  }
+
+  insertBlock(expression: string, ctx: Context): string | null {
+    const { block, index, forceNewBlock } = ctx;
+    const shouldBindVar = forceNewBlock || !this.target.rootBlock;
+    let prefix = "";
+    let parentStr = "";
+    let id: string | null = null;
+    if (shouldBindVar) {
+      id = this.generateId("b");
+      prefix = `const ${id} = `;
     }
+    if (block) {
+      parentStr = `${block.varName}.children[${index}] = `;
+    }
+    this.addLine(`${prefix}${parentStr}${expression};`);
     if (!this.target.rootBlock) {
-      this.target.rootBlock = block.varName;
+      this.target.rootBlock = id;
     }
-    const parentStr = parentBlock ? `${parentBlock}.children[${parentIndex}] = ` : "";
-    this.addLine(`const ${block.varName} = ${parentStr}new ${name}(${multi || ""});`);
-    return block;
+    return id;
   }
 
   generateCode(): string {
@@ -440,29 +451,24 @@ class QWebCompiler {
     }
   }
   compileComment(ast: ASTComment, ctx: Context) {
-    let { block, index, forceNewBlock } = ctx;
+    let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
-      block = this.makeBlock({
-        parentIndex: index,
-        parentBlock: block ? block.varName : undefined,
-      });
+      const name = this.generateBlockName();
+      const id = this.insertBlock(`new ${name}()`, ctx)!;
+      block = new BlockDescription(id, name);
+      this.blocks.push(block);
     }
     const text: Dom = { type: DomType.Comment, value: ast.value };
     block.insert(text);
   }
 
   compileText(ast: ASTText, ctx: Context) {
-    let { block, index, forceNewBlock } = ctx;
+    let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
-      if (block) {
-        this.addLine(`${block.varName}.children[${index}] = new BText(\`${ast.value}\`);`);
-      } else {
-        const id = this.generateId("b");
-        this.addLine(`const ${id} = new BText(\`${ast.value}\`);`);
-        if (!this.target.rootBlock) {
-          this.target.rootBlock = id;
-        }
-      }
+      this.insertBlock(`new BText(\`${ast.value}\`)`, {
+        ...ctx,
+        forceNewBlock: forceNewBlock && !block,
+      });
     } else {
       const type = ast.type === ASTType.Text ? DomType.Text : DomType.Comment;
       const text: Dom = { type, value: ast.value };
@@ -471,12 +477,12 @@ class QWebCompiler {
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context) {
-    let { block, index, forceNewBlock } = ctx;
+    let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
-      block = this.makeBlock({
-        parentIndex: index,
-        parentBlock: block ? block.varName : undefined,
-      });
+      const name = this.generateBlockName();
+      const id = this.insertBlock(`new ${name}()`, ctx)!;
+      block = new BlockDescription(id, name);
+      this.blocks.push(block);
     }
 
     // attributes
@@ -576,7 +582,7 @@ class QWebCompiler {
   }
 
   compileTEsc(ast: ASTTEsc, ctx: Context) {
-    let { block, index, forceNewBlock } = ctx;
+    let { block, forceNewBlock } = ctx;
     let expr: string;
     if (ast.expr === "0") {
       expr = `ctx[zero]`;
@@ -587,15 +593,7 @@ class QWebCompiler {
       }
     }
     if (!block || forceNewBlock) {
-      if (block) {
-        this.addLine(`${block.varName}.children[${index}] = new BText(${expr})`);
-      } else {
-        const id = this.generateId("b");
-        this.addLine(`const ${id} = new BText(${expr})`);
-        if (!this.target.rootBlock) {
-          this.target.rootBlock = id;
-        }
-      }
+      this.insertBlock(`new BText(${expr})`, { ...ctx, forceNewBlock: forceNewBlock && !block });
     } else {
       const text: Dom = { type: DomType.Node, tag: "owl-text", attrs: {}, content: [] };
       block.insert(text);
@@ -613,12 +611,10 @@ class QWebCompiler {
   compileTRaw(ast: ASTTRaw, ctx: Context) {
     let { block, index } = ctx;
     if (!block) {
-      block = this.makeBlock({ multi: 1, parentBlock: null, parentIndex: index });
+      const id = this.insertBlock("new BMulti(1)", ctx)!;
+      block = new BlockDescription(id, "BMulti");
     }
-    const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-    block.insert(anchor);
-    block.currentPath = [`anchors[${block.childNumber}]`];
-    block.childNumber++;
+    this.insertAnchor(block);
     let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
     if (ast.body) {
       const nextId = this.nextId;
@@ -633,14 +629,12 @@ class QWebCompiler {
     let { block, index } = ctx;
     if (!block) {
       const n = 1 + (ast.tElif ? ast.tElif.length : 0) + (ast.tElse ? 1 : 0);
-      block = this.makeBlock({ multi: n, parentBlock: null, parentIndex: index });
+      const id = this.insertBlock(`new BMulti(${n})`, ctx)!;
+      block = new BlockDescription(id, "BMulti");
     }
     this.addLine(`if (${compileExpr(ast.condition)}) {`);
     this.target.indentLevel++;
-    const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-    block.insert(anchor);
-    block.currentPath = [`anchors[${block.childNumber}]`];
-    block.childNumber++;
+    this.insertAnchor(block);
     const subCtx: Context = { block: block, index: index, forceNewBlock: true };
 
     this.compileAST(ast.content, subCtx);
@@ -680,28 +674,17 @@ class QWebCompiler {
   }
 
   compileTForeach(ast: ASTTForEach, ctx: Context) {
-    const { block, index } = ctx;
+    const { block } = ctx;
     const cId = this.generateId();
     const vals = `v${cId}`;
     const keys = `k${cId}`;
     const l = `l${cId}`;
     this.addLine(`const [${vals}, ${keys}, ${l}] = getValues(${compileExpr(ast.collection)});`);
 
-    const id = this.generateId("b");
-
     if (block) {
-      const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-      block.insert(anchor);
-      block.currentPath = [`anchors[${block.childNumber}]`];
-      block.childNumber++;
-
-      this.addLine(`const ${id} = ${block.varName}.children[${index}] = new BCollection(${l});`);
-    } else {
-      this.addLine(`const ${id} = new BCollection(${l});`);
-      if (!this.target.rootBlock) {
-        this.target.rootBlock = id;
-      }
+      this.insertAnchor(block);
     }
+    const id = this.insertBlock(`new BCollection(${l})`, { ...ctx, forceNewBlock: true })!;
     this.loopLevel++;
     const loopVar = `i${this.loopLevel}`;
     this.addLine(`ctx = Object.create(ctx);`);
@@ -736,7 +719,7 @@ class QWebCompiler {
   }
 
   compileMulti(ast: ASTMulti, ctx: Context) {
-    let { block, index: currentIndex, forceNewBlock } = ctx;
+    let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
       const n = ast.content.filter((c) => c.type !== ASTType.TSet).length;
       if (n === 1) {
@@ -745,11 +728,8 @@ class QWebCompiler {
         }
         return;
       }
-      block = this.makeBlock({
-        multi: n,
-        parentBlock: block ? block.varName : undefined,
-        parentIndex: currentIndex,
-      });
+      const id = this.insertBlock(`new BMulti(${n})`, ctx)!;
+      block = new BlockDescription(id, "BMulti");
     }
 
     let index = 0;
@@ -765,10 +745,11 @@ class QWebCompiler {
   }
 
   compileTCall(ast: ASTTCall, ctx: Context) {
-    const { block, index, forceNewBlock } = ctx;
+    const { block, forceNewBlock } = ctx;
     this.shouldDefineOwner = true;
     this.hasTCall = true;
     if (ast.body) {
+      const targetRoot = this.target.rootBlock;
       this.addLine(`ctx = Object.create(ctx);`);
       // check if all content is t-set
       const hasContent = ast.body.filter((elem) => elem.type !== ASTType.TSet).length;
@@ -783,6 +764,7 @@ class QWebCompiler {
           this.compileAST(elem, subCtx);
         }
       }
+      this.target.rootBlock = targetRoot;
     }
 
     const isDynamic = INTERP_REGEXP.test(ast.name);
@@ -790,18 +772,10 @@ class QWebCompiler {
 
     if (block) {
       if (!forceNewBlock) {
-        const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-        block.insert(anchor);
-        block.currentPath = [`anchors[${block.childNumber}]`];
-        block.childNumber++;
+        this.insertAnchor(block);
       }
-
-      this.addLine(`${block.varName}.children[${index}] = call(${subTemplate}, ctx, refs);`);
-    } else {
-      const id = this.generateId("b");
-      this.target.rootBlock = id;
-      this.addLine(`const ${id} = call(${subTemplate}, ctx, refs);`);
     }
+    this.insertBlock(`call(${subTemplate}, ctx, refs)`, { ...ctx, forceNewBlock: !block });
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
     }
@@ -832,7 +806,7 @@ class QWebCompiler {
   }
 
   compileComponent(ast: ASTComponent, ctx: Context) {
-    const { block, index } = ctx;
+    const { block } = ctx;
     // props
     const props: string[] = [];
     for (let p in ast.props) {
@@ -842,7 +816,7 @@ class QWebCompiler {
     const blockString = `new BComponent(ctx, \`${ast.name}\`, ${propString})`;
 
     // slots
-    const hasSlot = Object.keys(ast.slots).length;
+    const hasSlot = !!Object.keys(ast.slots).length;
     let slotId: string;
     if (hasSlot) {
       slotId = this.generateId("slots");
@@ -867,26 +841,10 @@ class QWebCompiler {
       this.addLine(`const ${slotId} = {${slotStr.join(", ")}};`);
     }
 
-    let id: string;
-
     if (block) {
-      const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-      block.insert(anchor);
-      block.currentPath = [`anchors[${block.childNumber}]`];
-      block.childNumber++;
-      let prefix: string = "";
-      if (hasSlot) {
-        id = this.generateId("b");
-        prefix = `const ${id} = `;
-      }
-      this.addLine(`${prefix}${block.varName}.children[${index}] = ${blockString}`);
-    } else {
-      id = this.generateId("b");
-      if (!this.target.rootBlock) {
-        this.target.rootBlock = id;
-      }
-      this.addLine(`const ${id} = ${blockString}`);
+      this.insertAnchor(block);
     }
+    const id = this.insertBlock(blockString, { ...ctx, forceNewBlock: hasSlot });
 
     if (hasSlot) {
       this.addLine(`${id!}.component.__owl__.slots = ${slotId!};`);
@@ -894,7 +852,7 @@ class QWebCompiler {
   }
 
   compileTSlot(ast: ASTSlot, ctx: Context) {
-    const { block, index } = ctx;
+    const { block } = ctx;
 
     let blockString: string;
     if (ast.defaultContent) {
@@ -918,17 +876,8 @@ class QWebCompiler {
     }
 
     if (block) {
-      const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-      block.insert(anchor);
-      block.currentPath = [`anchors[${block.childNumber}]`];
-      block.childNumber++;
-      this.addLine(`${block.varName}.children[${index}] = ${blockString};`);
-    } else {
-      const id = this.generateId("b");
-      if (!this.target.rootBlock) {
-        this.target.rootBlock = id;
-      }
-      this.addLine(`const ${id} = ${blockString}`);
+      this.insertAnchor(block);
     }
+    this.insertBlock(blockString, {...ctx, forceNewBlock: false});
   }
 }

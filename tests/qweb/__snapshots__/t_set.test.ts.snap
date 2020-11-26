@@ -57,7 +57,7 @@ exports[`t-set set from attribute literal (no outside div) 1`] = `
   return ctx => {
     ctx = Object.create(ctx);
     ctx[\`value\`] = 'ok';
-    const b1 = new BText(ctx['value'])
+    const b1 = new BText(ctx['value']);
     return b1;
   }
 }"
@@ -120,7 +120,7 @@ exports[`t-set set from body literal 1`] = `
   return ctx => {
     ctx = Object.create(ctx);
     ctx[\`value\`] = \`ok\`;
-    const b1 = new BText(ctx['value'])
+    const b1 = new BText(ctx['value']);
     return b1;
   }
 }"
@@ -143,7 +143,7 @@ exports[`t-set set from body lookup 1`] = `
   return ctx => {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = new BText(ctx['value'])
+    const b2 = new BText(ctx['value']);
     ctx[\`stuff\`] = b2;
     b1.data[0] = ctx['stuff'];
     return b1;
@@ -318,7 +318,7 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = new BMulti(2);
-    b2.children[0] = new BText(ctx['beep'])
+    b2.children[0] = new BText(ctx['beep']);
     b2.children[1] = new BText(\` boop\`);
     ctx[\`setvar\`] = b2;
     b1.data[0] = ctx['setvar'];
@@ -469,7 +469,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
     } else {
       ctx[\`ourvar\`] = \`0\`;
     }
-    b1.children[1] = new BText(ctx['ourvar'])
+    b1.children[1] = new BText(ctx['ourvar']);
     return b1;
   }
 }"

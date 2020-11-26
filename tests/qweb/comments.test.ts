@@ -11,6 +11,12 @@ describe("comments", () => {
     snapshotTemplateCode(template);
   });
 
+  test("only a comment", () => {
+    const template = `<!-- comment-->`;
+    expect(renderToString(template)).toBe(`<!-- comment-->`);
+    snapshotTemplateCode(template);
+  });
+
   test("properly handle comments between t-if/t-else", () => {
     const template = `
         <div>

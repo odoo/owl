@@ -40,6 +40,7 @@ function getConfigForFormat(format, generatedFileName, minified = false) {
     name: name,
     extend: extend,
     outro: outro,
+    freeze: false,
     plugins: minified ? [terser()] : [],
     indent: '    ', // indent with 4 spaces
   };

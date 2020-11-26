@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`refs refs are properly bound in slots 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'footer');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`refs refs are properly bound in slots 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
+  let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
+  
+  const slot3 = ctx => node => {
+    const refs = ctx.__owl__.refs
+    let d2 = [ctx, 'doSomething'];
+    let d3 = (el) => refs[\`myButton\`] = el;
+    return block2([d2, d3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
+    let d1 = ctx['state'].val;
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    return block1([d1], [b3]);
+  }
+}"
+`;

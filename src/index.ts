@@ -1,42 +1,73 @@
-/**
- * This file is the main file packaged by rollup (see rollup.config.js).  From
- * this file, we export all public owl elements.
- *
- * Note that dynamic values, such as a date or a commit hash are added by rollup
- */
-import { EventBus } from "./core/event_bus";
-import { Observer } from "./core/observer";
-import { QWeb } from "./qweb/index";
-import { config } from "./config";
-import * as _store from "./store";
-import * as _utils from "./utils";
-import * as _tags from "./tags";
-import { AsyncRoot } from "./misc/async_root";
-import { Portal } from "./misc/portal";
-import * as _hooks from "./hooks";
-import * as _context from "./context";
-import { Link } from "./router/link";
-import { RouteComponent } from "./router/route_component";
-import { Router } from "./router/router";
+import {
+  config,
+  createBlock,
+  html,
+  list,
+  mount as blockMount,
+  multi,
+  patch,
+  remove,
+  text,
+  toggler,
+} from "./blockdom";
+import { mainEventHandler } from "./component/handler";
 
-export { Component, mount } from "./component/component";
-export { QWeb };
-export { config };
-export { browser } from "./browser";
+config.shouldNormalizeDom = false;
+config.mainEventHandler = mainEventHandler;
 
-export const Context = _context.Context;
-export const useState = _hooks.useState;
-export const core = { EventBus, Observer };
-export const router = { Router, RouteComponent, Link };
-export const Store = _store.Store;
-export const utils = _utils;
-export const tags = _tags;
-export const misc = { AsyncRoot, Portal };
-export const hooks = Object.assign({}, _hooks, {
-  useContext: _context.useContext,
-  useDispatch: _store.useDispatch,
-  useGetters: _store.useGetters,
-  useStore: _store.useStore,
-});
+export const blockDom = {
+  config,
+  // bdom entry points
+  mount: blockMount,
+  patch,
+  remove,
+  // bdom block types
+  list,
+  multi,
+  text,
+  toggler,
+  createBlock,
+  html,
+};
+
+// import { makeBlockClass } from "./_old_bdom/element";
+import { App } from "./app";
+import { Component } from "./component/component";
+import { getCurrent } from "./component/component_node";
+// import { getCurrent } from "./b_node";
+
+export { App, Component };
+
+export async function mount<T extends typeof Component>(
+  C: T,
+  target: HTMLElement
+): Promise<InstanceType<T>> {
+  const app = new App(C);
+  return app.mount(target);
+}
+
+export function useComponent(): Component {
+  const current = getCurrent();
+  return current!.component;
+}
+
+export { status } from "./component/status";
+export { Portal } from "./misc/portal";
+export { Memo } from "./misc/memo";
+export { xml } from "./tags";
+export { useState } from "./reactivity";
+export { useRef } from "./refs";
+export { EventBus } from "./event_bus";
+
+export {
+  onWillStart,
+  onMounted,
+  onWillUnmount,
+  onWillUpdateProps,
+  onWillPatch,
+  onPatched,
+  onRender,
+  onDestroyed,
+} from "./lifecycle_hooks";
 
 export const __info__ = {};

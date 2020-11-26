@@ -34,7 +34,7 @@
     // "traceResolution": false,                                // Enable tracing of the name resolution process.
     // "tsBuildInfoFile": ".tsbuildinfo",                       // Specify file to store incremental compilation information.
                                                                 // Strict typechecking options
-    // "strict": false,                                         // Enable all strict type-checking options.
+    "strict": true,                                             // Enable all strict type-checking options.
     // "noImplicitAny": true,                                   // Raise error on expressions and declarations with an implied 'any' type.
     // "noImplicitThis": true,                                  // Raise error on 'this' expressions with an implied 'any' type.
     // "strictBindCallApply": true,                             // Enable stricter checking of of the `bind`, `call`, and `apply` methods on functions.

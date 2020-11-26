@@ -55,7 +55,7 @@
     "sass": "^1.16.1",
     "source-map-support": "^0.5.10",
     "ts-jest": "^27.0.5",
-    "typescript": "^3.7.2",
+    "typescript": "3.9.6",
     "uglify-es": "^3.3.9"
   },
   "jest": {
@@ -64,6 +64,7 @@
       "<rootDir>/src",
       "<rootDir>/tests"
     ],
+    "setupFiles": ["./tests/mocks/mockEventTarget.js"],
     "transform": {
       "^.+\\.ts?$": "ts-jest"
     },

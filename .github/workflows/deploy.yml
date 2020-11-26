@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ master, owl-next ]
 
 jobs:
   build:

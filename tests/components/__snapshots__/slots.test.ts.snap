@@ -1,0 +1,2202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`slots can define and call slots 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'header');
+    let b3 = callSlot(ctx, node, key, 'footer');
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`slots can define and call slots 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<span>header</span>\`);
+  let block3 = createBlock(\`<span>footer</span>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return block2();
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b4 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'header': slot3(ctx2), 'footer': slot4(ctx2)}});
+    return block1([], [b4]);
+  }
+}"
+`;
+
+exports[`slots content is the default slot (variation) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots content is the default slot (variation) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<span>sts rocks</span>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return block1();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots content is the default slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots content is the default slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<span>sts rocks</span>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return block2();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots dafault slots can define a default content 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\`default content\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = callSlot(ctx, node, key, 'default', defaultSlot1, false);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots dafault slots can define a default content 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots default content is not rendered if named slot is provided 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\`default content\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = callSlot(ctx, node, key, 'header', defaultSlot1, false);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots default content is not rendered if named slot is provided 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return text(\`hey\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'header': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots default content is not rendered if slot is provided 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\`default content\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = callSlot(ctx, node, key, 'default', defaultSlot1, false);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots default content is not rendered if slot is provided 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`hey\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots default slot next to named slot, with default content 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div class=\\"Dialog\\"><div class=\\"content\\"><block-child-0/></div><div class=\\"footer\\"><block-child-1/></div></div>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\` Default content \`);
+  }
+  
+  const defaultSlot2 = ctx => {
+    return text(\` Default footer \`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = callSlot(ctx, node, key, 'default', defaultSlot1, false);
+    let b5 = callSlot(ctx, node, key, 'footer', defaultSlot2, false);
+    return block1([], [b3, b5]);
+  }
+}"
+`;
+
+exports[`slots default slot next to named slot, with default content 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return text(\` Overridden footer \`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots default slot work with text nodes (variation) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots default slot work with text nodes (variation) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`sts rocks\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots default slot work with text nodes 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots default slot work with text nodes 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`sts rocks\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots dynamic t-slot call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'toggle'];
+    const slot1 = (ctx['current'].slot);
+    let b2 = toggler(slot1, callSlot(ctx, node, key, slot1));
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`slots dynamic t-slot call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<p>slot1</p>\`);
+  let block4 = createBlock(\`<span>content</span>\`);
+  let block5 = createBlock(\`<h1>slot2</h1>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let b3 = block3();
+    let b4 = block4();
+    return multi([b3, b4]);
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    return block5();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b6 = assign(component(\`Toggler\`, {}, key + \`__1\`, node, ctx), {slots: {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)}});
+    return block1([], [b6]);
+  }
+}"
+`;
+
+exports[`slots dynamic t-slot call with default 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\` owl \`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'toggle'];
+    let b3 = callSlot(ctx, node, key, (ctx['current'].slot), defaultSlot1, true);
+    return block1([d1], [b3]);
+  }
+}"
+`;
+
+exports[`slots dynamic t-slot call with default 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<p>slot1</p>\`);
+  let block4 = createBlock(\`<span>content</span>\`);
+  let block5 = createBlock(\`<h1>slot2</h1>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let b3 = block3();
+    let b4 = block4();
+    return multi([b3, b4]);
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    return block5();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b6 = assign(component(\`Toggler\`, {}, key + \`__1\`, node, ctx), {slots: {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)}});
+    return block1([], [b6]);
+  }
+}"
+`;
+
+exports[`slots fun: two calls to the same slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    let b3 = callSlot(ctx, node, key, 'default');
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`slots fun: two calls to the same slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`some text\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots missing slots are ignored 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/><span>some content</span><block-child-1/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    let b3 = callSlot(ctx, node, key, 'footer');
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`slots missing slots are ignored 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots multiple roots are allowed in a default slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots multiple roots are allowed in a default slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span>sts</span>\`);
+  let block4 = createBlock(\`<span>rocks</span>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    let b3 = block3();
+    let b4 = block4();
+    return multi([b3, b4]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b5 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b5]);
+  }
+}"
+`;
+
+exports[`slots multiple roots are allowed in a named slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'content');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots multiple roots are allowed in a named slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span>sts</span>\`);
+  let block4 = createBlock(\`<span>rocks</span>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let b3 = block3();
+    let b4 = block4();
+    return multi([b3, b4]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b5 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'content': slot3(ctx2)}});
+    return block1([], [b5]);
+  }
+}"
+`;
+
+exports[`slots multiple slots containing components 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`slots multiple slots containing components 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 's1');
+    let b3 = callSlot(ctx, node, key, 's2');
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`slots multiple slots containing components 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot3 = ctx => (node, key) => {
+    return component(\`C\`, {val: 1}, key + \`__4\`, node, ctx);
+  }
+  
+  const slot5 = ctx => (node, key) => {
+    return component(\`C\`, {val: 2}, key + \`__6\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    return assign(component(\`B\`, {}, key + \`__1\`, node, ctx), {slots: {'s1': slot3(ctx2), 's2': slot5(ctx2)}});
+  }
+}"
+`;
+
+exports[`slots named slot inside slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'brol');
+    let b3 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`slots named slot inside slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
+  let block3 = createBlock(\`<p>B<block-text-0/></p>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let d1 = ctx['value'];
+    return block2([d1]);
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    const ctx6 = capture(ctx);
+    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx), {slots: {'brol': slot7(ctx6)}});
+  }
+  
+  const slot7 = ctx => (node, key) => {
+    let d2 = ctx['value'];
+    return block3([d2]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'brol': slot3(ctx2), 'default': slot4(ctx2)}});
+    return block1([], [b5]);
+  }
+}"
+`;
+
+exports[`slots named slot inside slot, part 3 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'brol');
+    let b3 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`slots named slot inside slot, part 3 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
+  let block3 = createBlock(\`<p>B<block-text-0/></p>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let d1 = ctx['value'];
+    return block2([d1]);
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    const ctx6 = capture(ctx);
+    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx), {slots: {'brol': slot7(ctx6)}});
+  }
+  
+  const slot7 = ctx => (node, key) => {
+    let d2 = ctx['value'];
+    return block3([d2]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'brol': slot3(ctx2), 'default': slot4(ctx2)}});
+    return block1([], [b5]);
+  }
+}"
+`;
+
+exports[`slots named slots can define a default content 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\`default content\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = callSlot(ctx, node, key, 'header', defaultSlot1, false);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots named slots can define a default content 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots named slots inside slot, again 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<child><block-child-0/><block-child-1/><block-child-2/></child>\`);
+  
+  const defaultSlot1 = ctx => {
+    return text(\`default1\`);
+  }
+  
+  const defaultSlot2 = ctx => {
+    return text(\`default2\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = callSlot(ctx, node, key, 'brol1', defaultSlot1, false);
+    let b5 = callSlot(ctx, node, key, 'brol2', defaultSlot2, false);
+    let b6 = callSlot(ctx, node, key, 'default');
+    return block1([], [b3, b5, b6]);
+  }
+}"
+`;
+
+exports[`slots named slots inside slot, again 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
+  let block3 = createBlock(\`<p>B<block-text-0/></p>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let d1 = ctx['value'];
+    return block2([d1]);
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    const ctx6 = capture(ctx);
+    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx), {slots: {'brol2': slot7(ctx6)}});
+  }
+  
+  const slot7 = ctx => (node, key) => {
+    let d2 = ctx['value'];
+    return block3([d2]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'brol1': slot3(ctx2), 'default': slot4(ctx2)}});
+    return block1([], [b5]);
+  }
+}"
+`;
+
+exports[`slots nested slots in same template 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span id=\\"c1\\"><div><block-child-0/></div></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots nested slots in same template 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots nested slots in same template 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span>Child 3</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`slots nested slots in same template 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<span id=\\"parent\\"><block-child-0/></span>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return assign(component(\`Child2\`, {}, key + \`__3\`, node, ctx), {slots: {'default': slot4(ctx)}});
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    return component(\`Child3\`, {}, key + \`__5\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b4 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b4]);
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return callSlot(ctx, node, key, 'default');
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`GrandChild\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return component(\`Slot\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots no named slot content => just no children 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'header');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots no named slot content => just no children 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots simple default slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots simple default slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`some text\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots simple default slot, variation 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots simple default slot, variation 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`some text\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots slot and (inline) t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<p>sokka</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`slots slot and (inline) t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot and (inline) t-call 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  const callTemplate_5 = getTemplate(\`__template__9\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return callTemplate_5(ctx, node, key + \`__4\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slot and (inline) t-esc 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot and (inline) t-esc 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return text('toph');
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slot and t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<p>sokka</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`slots slot and t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot and t-call 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  const callTemplate_5 = getTemplate(\`__template__9\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return callTemplate_5(ctx, node, key + \`__4\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slot and t-esc 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot and t-esc 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return text('toph');
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slot are properly rendered if inner props are changed 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div> SC:<block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`slots slot are properly rendered if inner props are changed 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot are properly rendered if inner props are changed 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Inc[<block-text-1/>]</button><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return component(\`SomeComponent\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'inc'];
+    let d2 = ctx['state'].val;
+    let b3 = assign(component(\`GenericComponent\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([d1, d2], [b3]);
+  }
+}"
+`;
+
+exports[`slots slot content is bound to caller 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot content is bound to caller 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">some text</button>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    let d1 = [ctx, 'inc'];
+    return block1([d1]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`Grand Child\`);
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return component(\`GrandChild\`, {}, key + \`__3\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`Grand Child\`);
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  const callTemplate_5 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return callTemplate_5(ctx, node, key + \`__4\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slots and wrapper components 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<a href=\\"abc\\"><block-child-0/></a>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots and wrapper components 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  const slot2 = ctx => (node, key) => {
+    return text(\`hey\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Link\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'footer');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
+  let block2 = createBlock(\`<button block-handler-0=\\"click\\">do something</button>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let d2 = [ctx, 'doSomething'];
+    return block2([d2]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].val;
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    return block1([d1], [b3]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].to;
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 2 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
+  let block3 = createBlock(\`<li><block-child-0/></li>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let b5 = text(\`User \`);
+    let b6 = text(ctx['user'].name);
+    return multi([b5, b6]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['state'].users);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`user\`] = v2[i1];
+      let key1 = ctx['user'].id;
+      const ctx2 = capture(ctx);
+      let b7 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+      c2[i1] = withKey(block3([], [b7]), key1);
+    }
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 3 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].to;
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 3 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
+  let block3 = createBlock(\`<li><block-child-0/></li>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return text(ctx['userdescr']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['state'].users);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`user\`] = v2[i1];
+      let key1 = ctx['user'].id;
+      ctx[\`userdescr\`] = 'User '+ctx['user'].name;
+      const ctx2 = capture(ctx);
+      let b5 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+      c2[i1] = withKey(block3([], [b5]), key1);
+    }
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 4 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].to;
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 4 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return text(ctx['userdescr']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[\`userdescr\`] = 'User '+ctx['state'].user.name;
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Link\`, {to: '/user/'+ctx['state'].user.id}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slots in slots, with vars 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots in slots, with vars 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return callSlot(ctx, node, key, 'default');
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`B\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slots in slots, with vars 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>hey<block-text-0/></p>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let d1 = ctx['test'];
+    return block2([d1]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[\`test\`] = ctx['state'].name;
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`A\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots slots in t-foreach and re-rendering 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].val;
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots in t-foreach and re-rendering 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return text(ctx['n_index']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(Array(2));
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`n\`] = v2[i1];
+      ctx[\`n_index\`] = i1;
+      let key1 = ctx['n_index'];
+      const ctx2 = capture(ctx);
+      c2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
+    }
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots in t-foreach in t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots in t-foreach in t-foreach 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block4 = createBlock(\`<div><block-text-0/></div>\`);
+  let block5 = createBlock(\`<ul><block-child-0/></ul>\`);
+  let block7 = createBlock(\`<li><block-text-0/></li>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let d2 = ctx['node1'].value;
+    return block7([d2]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['tree']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`node1\`] = v2[i1];
+      let key1 = ctx['node1'].key;
+      let d1 = ctx['node1'].value;
+      let b4 = block4([d1]);
+      ctx = Object.create(ctx);
+      const [k6, v6, l6, c6] = prepareList(ctx['node1'].nodes);
+      for (let i2 = 0; i2 < l6; i2++) {
+        ctx[\`node2\`] = v6[i2];
+        let key2 = ctx['node2'].key;
+        const ctx2 = capture(ctx);
+        c6[i2] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}__\${key2}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key2);
+      }
+      ctx = ctx.__proto__;
+      let b6 = list(c6);
+      let b5 = block5([], [b6]);
+      c2[i1] = withKey(multi([b4, b5]), key1);
+    }
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].val;
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    return text(ctx['dummy']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(Array(2));
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`n\`] = v2[i1];
+      ctx[\`n_index\`] = i1;
+      let key1 = ctx['n_index'];
+      ctx[\`dummy\`] = ctx['n_index'];
+      const ctx2 = capture(ctx);
+      c2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
+    }
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'content');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    debugger;
+    return text(\`abc\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'content': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots t-set t-value in a slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-set t-value in a slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    ctx[\`rainbow\`] = 'dash';
+    return text(ctx['rainbow']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots t-slot in recursive templates 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<wrapper><block-child-0/></wrapper>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-slot in recursive templates 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  const callTemplate_5 = getTemplate(\`_test_recursive_template\`);
+  
+  const slot3 = ctx => (node, key) => {
+    let b2 = text(ctx['name']);
+    ctx = Object.create(ctx);
+    const [k3, v3, l3, c3] = prepareList(ctx['items']);
+    for (let i1 = 0; i1 < l3; i1++) {
+      ctx[\`item\`] = v3[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v3.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k3[i1];
+      let key1 = ctx['item'].name;
+      let b5,b6;
+      if (!ctx['item'].children.length) {
+        b5 = text(ctx['item'].name);
+      } else {
+        ctx = Object.create(ctx);
+        ctx[\`name\`] = ctx['item'].name;
+        ctx[\`items\`] = ctx['item'].children;
+        b6 = callTemplate_5(ctx, node, key + \`__4__\${key1}\`);
+        ctx = ctx.__proto__;
+      }
+      c3[i1] = withKey(multi([b5, b6]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b3 = list(c3);
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const ctx2 = capture(ctx);
+    return assign(component(\`Wrapper\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+  }
+}"
+`;
+
+exports[`slots t-slot nested within another slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span>Child 3</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`slots t-slot nested within another slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span id=\\"modal\\"><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-slot nested within another slot 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span id=\\"portal\\"><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-slot nested within another slot 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return assign(component(\`Portal\`, {}, key + \`__3\`, node, ctx), {slots: {'default': slot4(ctx)}});
+  }
+  
+  const slot4 = ctx => (node, key) => {
+    return callSlot(ctx, node, key, 'default');
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b4 = assign(component(\`Modal\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b4]);
+  }
+}"
+`;
+
+exports[`slots t-slot nested within another slot 5`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<span id=\\"c1\\"><block-child-0/></span>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return component(\`Child3\`, {}, key + \`__3\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots t-slot scope context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots t-slot scope context 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    let d1 = [ctx, 'onClick'];
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([d1], [b2]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Wrapper\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots t-slot scope context 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<button>The Button</button>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return block1();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
+exports[`slots t-slot within dynamic t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div class=\\"child\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`slots t-slot within dynamic t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div class=\\"slotted\\"><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default');
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-slot within dynamic t-call 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div class=\\"slot\\"><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots t-slot within dynamic t-call 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot3 = ctx => (node, key) => {
+    const template5 = (ctx['tcallTemplate']);
+    return call(template5, ctx, node, key + \`__4\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx2 = capture(ctx);
+    let b3 = assign(component(\`Slotted\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots template can just return a slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`slots template can just return a slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots template can just return a slot 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return component(\`Child\`, {value: ctx['state'].value}, key + \`__3\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`SlotComponent\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;

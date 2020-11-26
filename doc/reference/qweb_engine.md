@@ -105,6 +105,8 @@ between Owl classes. This is the reason why `QWeb` actually extends [EventBus](e
 
 ### Translations
 
+take care of this and "cherry-pick" 8464a1b04e7469434f9dcb3d68a543f58cb61b8e
+
 If properly setup, Owl QWeb engine can translate all rendered templates. To do
 so, it needs a translate function, which takes a string and returns a string.
 

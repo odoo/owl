@@ -69,7 +69,7 @@ exports[`misc global 2`] = `
   
   return ctx => {
     const b1 = new Block1();
-    const b2 = new BText(\`toto default\`)
+    const b2 = new BText(\`toto default\`);
     b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
     return b1;
   }

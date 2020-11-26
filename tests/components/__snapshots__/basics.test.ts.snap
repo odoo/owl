@@ -17,7 +17,7 @@ exports[`basics Multi root component 1`] = `
   return ctx => {
     const b1 = new BMulti(3);
     const b2 = b1.children[0] = new Block1();
-    b1.children[1] = new BText(\`text\`)
+    b1.children[1] = new BText(\`text\`);
     const b3 = b1.children[2] = new Block2();
     return b1;
   }

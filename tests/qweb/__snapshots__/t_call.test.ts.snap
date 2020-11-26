@@ -83,7 +83,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
     ctx = Object.create(ctx);
     const b2 = new BMulti(3);
     const b3 = b2.children[0] = new Block2();
-    b2.children[1] = new BText(\` \`)
+    b2.children[1] = new BText(\` \`);
     const b4 = b2.children[2] = new Block3();
     ctx[zero] = b2;
     b1.children[0] = call(\`sub\`, ctx, refs);
@@ -200,7 +200,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 4`] = `
     ctx = Object.create(ctx);
     const b2 = new BMulti(3);
     const b3 = b2.children[0] = new Block2();
-    b2.children[1] = new BText(\` \`)
+    b2.children[1] = new BText(\` \`);
     const b4 = b2.children[2] = new Block3();
     ctx[zero] = b2;
     b1.children[0] = call(\`subTemplate\`, ctx, refs);
@@ -299,7 +299,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     ctx = Object.create(ctx);
     const b1 = new BMulti(3);
     const b2 = b1.children[0] = new Block1();
-    b1.children[1] = new BText(\` \`)
+    b1.children[1] = new BText(\` \`);
     const b3 = b1.children[2] = new Block2();
     ctx[zero] = b1;
     const b4 = call(\`subTemplate\`, ctx, refs);
@@ -951,7 +951,7 @@ exports[`t-call (template calling) with unused body 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
-    const b1 = new BText(\`WHEEE\`)
+    const b1 = new BText(\`WHEEE\`);
     ctx[zero] = b1;
     const b2 = call(\`sub\`, ctx, refs);
     b2.refs = refs;
@@ -988,7 +988,7 @@ exports[`t-call (template calling) with used body 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
-    const b1 = new BText(\`ok\`)
+    const b1 = new BText(\`ok\`);
     ctx[zero] = b1;
     const b2 = call(\`sub\`, ctx, refs);
     b2.refs = refs;

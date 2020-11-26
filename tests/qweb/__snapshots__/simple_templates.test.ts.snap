@@ -178,7 +178,7 @@ exports[`simple templates, mostly static empty string 1`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BText(\`\`)
+    const b1 = new BText(\`\`);
     return b1;
   }
 }"
@@ -214,7 +214,7 @@ exports[`simple templates, mostly static simple string 1`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BText(\`hello vdom\`)
+    const b1 = new BText(\`hello vdom\`);
     return b1;
   }
 }"
@@ -227,7 +227,7 @@ exports[`simple templates, mostly static simple string in t tag 1`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BText(\`hello vdom\`)
+    const b1 = new BText(\`hello vdom\`);
     return b1;
   }
 }"
@@ -241,7 +241,7 @@ exports[`simple templates, mostly static static text and dynamic text (no t tag)
   
   return ctx => {
     const b1 = new BMulti(2);
-    b1.children[0] = new BText(\`hello \`)
+    b1.children[0] = new BText(\`hello \`);
     b1.children[1] = new BText(ctx['text'])
     return b1;
   }
@@ -256,7 +256,7 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
   
   return ctx => {
     const b1 = new BMulti(2);
-    b1.children[0] = new BText(\`hello \`)
+    b1.children[0] = new BText(\`hello \`);
     b1.children[1] = new BText(ctx['text'])
     return b1;
   }

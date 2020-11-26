@@ -455,10 +455,10 @@ class QWebCompiler {
     let { block, index, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
       if (block) {
-        this.addLine(`${block.varName}.children[${index}] = new BText(\`${ast.value}\`)`);
+        this.addLine(`${block.varName}.children[${index}] = new BText(\`${ast.value}\`);`);
       } else {
         const id = this.generateId("b");
-        this.addLine(`const ${id} = new BText(\`${ast.value}\`)`);
+        this.addLine(`const ${id} = new BText(\`${ast.value}\`);`);
         if (!this.target.rootBlock) {
           this.target.rootBlock = id;
         }

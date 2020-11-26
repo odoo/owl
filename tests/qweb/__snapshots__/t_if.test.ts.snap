@@ -14,7 +14,7 @@ exports[`t-if a t-if next to a div 1`] = `
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['cond']) {
-      b1.children[1] = new BText(\`1\`)
+      b1.children[1] = new BText(\`1\`);
     }
     return b1;
   }
@@ -56,13 +56,13 @@ exports[`t-if boolean value condition elif (no outside node) 1`] = `
   return ctx => {
     const b1 = new BMulti(4);
     if (ctx['color']=='black') {
-      b1.children[0] = new BText(\`black pearl\`)
+      b1.children[0] = new BText(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
-      b1.children[1] = new BText(\`yellow submarine\`)
+      b1.children[1] = new BText(\`yellow submarine\`);
     } else if (ctx['color']=='red') {
-      b1.children[2] = new BText(\`red is dead\`)
+      b1.children[2] = new BText(\`red is dead\`);
     } else {
-      b1.children[3] = new BText(\`beer\`)
+      b1.children[3] = new BText(\`beer\`);
     }
     return b1;
   }
@@ -83,13 +83,13 @@ exports[`t-if boolean value condition elif 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['color']=='black') {
-      b1.children[0] = new BText(\`black pearl\`)
+      b1.children[0] = new BText(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
-      b1.children[1] = new BText(\`yellow submarine\`)
+      b1.children[1] = new BText(\`yellow submarine\`);
     } else if (ctx['color']=='red') {
-      b1.children[2] = new BText(\`red is dead\`)
+      b1.children[2] = new BText(\`red is dead\`);
     } else {
-      b1.children[3] = new BText(\`beer\`)
+      b1.children[3] = new BText(\`beer\`);
     }
     return b1;
   }
@@ -110,9 +110,9 @@ exports[`t-if boolean value condition else 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`ok\`)
+      b1.children[0] = new BText(\`ok\`);
     } else {
-      b1.children[1] = new BText(\`ok-else\`)
+      b1.children[1] = new BText(\`ok-else\`);
     }
     return b1;
   }
@@ -133,9 +133,9 @@ exports[`t-if boolean value condition false else 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`fail\`)
+      b1.children[0] = new BText(\`fail\`);
     } else {
-      b1.children[1] = new BText(\`fail-else\`)
+      b1.children[1] = new BText(\`fail-else\`);
     }
     return b1;
   }
@@ -156,28 +156,28 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['cond1']&&ctx['cond2']) {
-      b1.children[0] = new BText(\`and\`)
+      b1.children[0] = new BText(\`and\`);
     }
     if (ctx['cond1']&&ctx['cond3']) {
-      b1.children[1] = new BText(\`nope\`)
+      b1.children[1] = new BText(\`nope\`);
     }
     if (ctx['cond1']||ctx['cond3']) {
-      b1.children[2] = new BText(\`or\`)
+      b1.children[2] = new BText(\`or\`);
     }
     if (ctx['cond3']||ctx['cond4']) {
-      b1.children[3] = new BText(\`nope\`)
+      b1.children[3] = new BText(\`nope\`);
     }
     if (ctx['m']>3) {
-      b1.children[4] = new BText(\`mgt\`)
+      b1.children[4] = new BText(\`mgt\`);
     }
     if (ctx['n']>3) {
-      b1.children[5] = new BText(\`ngt\`)
+      b1.children[5] = new BText(\`ngt\`);
     }
     if (ctx['m']<3) {
-      b1.children[6] = new BText(\`mlt\`)
+      b1.children[6] = new BText(\`mlt\`);
     }
     if (ctx['n']<3) {
-      b1.children[7] = new BText(\`nlt\`)
+      b1.children[7] = new BText(\`nlt\`);
     }
     return b1;
   }
@@ -260,7 +260,7 @@ exports[`t-if just a t-if 1`] = `
   return ctx => {
     const b1 = new BMulti(1);
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`ok\`)
+      b1.children[0] = new BText(\`ok\`);
     }
     return b1;
   }
@@ -276,9 +276,9 @@ exports[`t-if simple t-if/t-else 1`] = `
   return ctx => {
     const b1 = new BMulti(2);
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`1\`)
+      b1.children[0] = new BText(\`1\`);
     } else {
-      b1.children[1] = new BText(\`2\`)
+      b1.children[1] = new BText(\`2\`);
     }
     return b1;
   }
@@ -299,9 +299,9 @@ exports[`t-if simple t-if/t-else in a div 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`1\`)
+      b1.children[0] = new BText(\`1\`);
     } else {
-      b1.children[1] = new BText(\`2\`)
+      b1.children[1] = new BText(\`2\`);
     }
     return b1;
   }
@@ -322,7 +322,7 @@ exports[`t-if t-esc with t-elif 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (false) {
-      b1.children[0] = new BText(\`abc\`)
+      b1.children[0] = new BText(\`abc\`);
     } else {
       b1.children[1] = new BText('x')
     }
@@ -369,7 +369,7 @@ exports[`t-if t-if and t-else with two nodes 1`] = `
   return ctx => {
     const b1 = new BMulti(2);
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`1\`)
+      b1.children[0] = new BText(\`1\`);
     } else {
       const b2 = b1.children[1] = new BMulti(2);
       const b3 = b2.children[0] = new Block1();
@@ -394,7 +394,7 @@ exports[`t-if t-if in a div 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`ok\`)
+      b1.children[0] = new BText(\`ok\`);
     }
     return b1;
   }
@@ -422,7 +422,7 @@ exports[`t-if t-if in a t-if 1`] = `
     if (ctx['cond1']) {
       const b2 = b1.children[0] = new Block2();
       if (ctx['cond2']) {
-        b2.children[0] = new BText(\`2\`)
+        b2.children[0] = new BText(\`2\`);
       }
     }
     return b1;
@@ -524,10 +524,10 @@ exports[`t-if two consecutive t-if 1`] = `
   return ctx => {
     const b1 = new BMulti(2);
     if (ctx['cond1']) {
-      b1.children[0] = new BText(\`1\`)
+      b1.children[0] = new BText(\`1\`);
     }
     if (ctx['cond2']) {
-      b1.children[1] = new BText(\`2\`)
+      b1.children[1] = new BText(\`2\`);
     }
     return b1;
   }
@@ -548,10 +548,10 @@ exports[`t-if two consecutive t-if in a div 1`] = `
   return ctx => {
     const b1 = new Block1();
     if (ctx['cond1']) {
-      b1.children[0] = new BText(\`1\`)
+      b1.children[0] = new BText(\`1\`);
     }
     if (ctx['cond2']) {
-      b1.children[1] = new BText(\`2\`)
+      b1.children[1] = new BText(\`2\`);
     }
     return b1;
   }

@@ -84,7 +84,7 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
   
   return ctx => {
     const b1 = new Block1();
-    const b2 = new BText(\`nope\`)
+    const b2 = new BText(\`nope\`);
     b1.children[0] = new BHtml(withDefault(ctx['var'], b2));
     return b1;
   }

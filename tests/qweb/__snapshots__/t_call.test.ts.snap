@@ -433,8 +433,9 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
       ctx[\`subtree_value\`] = k1[i1];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      const b3 = b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
       ctx = ctx.__proto__;
+      b3.key = i1;
     }
     b1.refs = refs;
     return b1;
@@ -497,8 +498,9 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
       ctx[\`subtree_value\`] = k1[i1];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      const b3 = b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
       ctx = ctx.__proto__;
+      b3.key = i1;
     }
     b1.refs = refs;
     return b1;
@@ -566,8 +568,9 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
       ctx[\`subtree_value\`] = k1[i1];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      const b3 = b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
       ctx = ctx.__proto__;
+      b3.key = i1;
     }
     b1.refs = refs;
     return b1;
@@ -797,8 +800,9 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
       ctx[\`val3\`] = ctx['val']*3;
-      b2.children[i1] = call(\`sub\`, ctx, refs);
+      const b3 = b2.children[i1] = call(\`sub\`, ctx, refs);
       ctx = ctx.__proto__;
+      b3.key = i1;
     }
     b1.refs = refs;
     return b1;
@@ -855,8 +859,9 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
       ctx[\`val3\`] = ctx['val']*3;
-      b2.children[i1] = call(\`sub\`, ctx, refs);
+      const b3 = b2.children[i1] = call(\`sub\`, ctx, refs);
       ctx = ctx.__proto__;
+      b3.key = i1;
     }
     b1.refs = refs;
     return b1;

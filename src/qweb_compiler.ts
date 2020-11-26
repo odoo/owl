@@ -153,6 +153,7 @@ class QWebCompiler {
   nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineOwner: boolean = false;
+  shouldBindNextBlock: boolean = false;
   hasRef: boolean = false;
   hasTCall: boolean = false;
   refBlocks: string[] = [];
@@ -191,7 +192,8 @@ class QWebCompiler {
 
   insertBlock(expression: string, ctx: Context): string | null {
     const { block, index, forceNewBlock } = ctx;
-    const shouldBindVar = forceNewBlock || !this.target.rootBlock;
+    const shouldBindVar = forceNewBlock || !this.target.rootBlock || this.shouldBindNextBlock;
+    this.shouldBindNextBlock = false;
     let prefix = "";
     let parentStr = "";
     let id: string | null = null;
@@ -713,7 +715,18 @@ class QWebCompiler {
       index: loopVar,
       forceNewBlock: true,
     };
+    const nextIdCb = this.getNextBlockId();
+    const currentKey = this.key;
+    this.shouldBindNextBlock = true;
     this.compileAST(ast.body, subCtx);
+    this.shouldBindNextBlock = false;
+    this.key = currentKey;
+    const nextId = nextIdCb();
+    if (nextId) {
+      const key = this.key || loopVar;
+      this.addLine(`${nextId}.key = ${key};`);
+    }
+
     this.target.indentLevel--;
     this.addLine(`}`);
     this.loopLevel--;
@@ -723,10 +736,8 @@ class QWebCompiler {
   compileTKey(ast: ASTTKey, ctx: Context) {
     const id = this.generateId("k");
     this.addLine(`const ${id} = ${compileExpr(ast.expr)};`);
-    const currentKey = this.key;
     this.key = id;
     this.compileAST(ast.content, ctx);
-    this.key = currentKey;
   }
 
   compileMulti(ast: ASTMulti, ctx: Context) {

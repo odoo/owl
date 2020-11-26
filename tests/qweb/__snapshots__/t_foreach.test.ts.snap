@@ -22,7 +22,8 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
       ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
-      b2.children[i1] = new BText(ctx['item']);
+      const b3 = b2.children[i1] = new BText(ctx['item']);
+      b3.key = i1;
     }
     return b1;
   }
@@ -62,6 +63,7 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
       const k2 = ctx['item'];
       const b3 = b2.children[i1] = new Block2();
       b3.data[0] = ctx['item'];
+      b3.key = i1;
     }
     return b1;
   }
@@ -98,6 +100,7 @@ exports[`t-foreach iterate on items 1`] = `
       b3.children[4] = new BText(\` \`);
       b3.children[5] = new BText(ctx['item_value']);
       b3.children[6] = new BText(\`] \`);
+      b3.key = i1;
     }
     return b1;
   }
@@ -134,6 +137,7 @@ exports[`t-foreach iterate, dict param 1`] = `
       b3.children[4] = new BText(\` \`);
       b3.children[5] = new BText(ctx['item_value']);
       b3.children[6] = new BText(\`] \`);
+      b3.key = i1;
     }
     return b1;
   }
@@ -173,6 +177,7 @@ exports[`t-foreach iterate, position 1`] = `
       b3.children[3] = new BText(\` (\`);
       b3.children[4] = new BText(ctx['elem_index']);
       b3.children[5] = new BText(\`) \`);
+      b3.key = i1;
     }
     return b1;
   }
@@ -250,7 +255,8 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
       ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
-      b2.children[i1] = new BText(ctx['item']);
+      const b3 = b2.children[i1] = new BText(ctx['item']);
+      b3.key = i1;
     }
     return b1;
   }
@@ -273,7 +279,52 @@ exports[`t-foreach simple iteration 1`] = `
       ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
-      b1.children[i1] = new BText(ctx['item']);
+      const b2 = b1.children[i1] = new BText(ctx['item']);
+      b2.key = i1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-foreach simple iteration with two nodes inside 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>a<owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>b<owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues([3,2,1]);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b2.key = i1;
     }
     return b1;
   }
@@ -352,12 +403,14 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
         ctx[\`b_value\`] = k2[i2];
         ctx = Object.create(ctx);
         ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
-        b4.children[i2] = call(\`sub\`, ctx, refs);
+        const b5 = b4.children[i2] = call(\`sub\`, ctx, refs);
         ctx = ctx.__proto__;
+        b5.key = i2;
       }
       ctx = ctx.__proto__;
-      const b5 = b3.children[1] = new Block2();
-      b5.data[0] = ctx['c'];
+      const b6 = b3.children[1] = new Block2();
+      b6.data[0] = ctx['c'];
+      b3.key = i1;
     }
     ctx = ctx.__proto__;
     b1.data[0] = ctx['a'];
@@ -441,11 +494,13 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
         ctx[\`b_last\`] = i2 === v2.length - 1;
         ctx[\`b_index\`] = i2;
         ctx[\`b_value\`] = k2[i2];
-        b4.children[i2] = call(\`sub\`, ctx, refs);
+        const b5 = b4.children[i2] = call(\`sub\`, ctx, refs);
+        b5.key = i2;
       }
       ctx = ctx.__proto__;
-      const b5 = b3.children[1] = new Block2();
-      b5.data[0] = ctx['c'];
+      const b6 = b3.children[1] = new Block2();
+      b6.data[0] = ctx['c'];
+      b3.key = i1;
     }
     ctx = ctx.__proto__;
     b1.data[0] = ctx['a'];
@@ -493,8 +548,10 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
         b4.children[1] = new BText(ctx['number']);
         b4.children[2] = new BText(ctx['letter']);
         b4.children[3] = new BText(\`] \`);
+        b4.key = i2;
       }
       ctx = ctx.__proto__;
+      b3.key = i1;
     }
     return b1;
   }

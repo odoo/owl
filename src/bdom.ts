@@ -14,6 +14,7 @@ export type BDom = BNode | BMulti | BHtml;
 export abstract class Block {
   el: HTMLElement | Text | null = null;
   refs?: { [name: string]: HTMLElement };
+  key?: string | number;
 
   mount(parent: HTMLElement | DocumentFragment) {
     const anchor = document.createTextNode("");

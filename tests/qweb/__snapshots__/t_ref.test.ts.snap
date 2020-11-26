@@ -156,6 +156,7 @@ exports[`t-ref refs in a loop 1`] = `
       const v3 = ctx['item'];
       b3.data[0] = \`\${v3}\`;
       b3.data[1] = ctx['item'];
+      b3.key = i1;
     }
     b1.refs = refs;
     return b1;

@@ -11,6 +11,17 @@ describe("t-foreach", () => {
     expect(renderToString(template)).toBe("321");
   });
 
+  test("simple iteration with two nodes inside", () => {
+    const template = `
+      <t t-foreach="[3, 2, 1]" t-as="item">
+        <span>a<t t-esc="item"/></span>
+        <span>b<t t-esc="item"/></span>
+      </t>`;
+    snapshotTemplateCode(template);
+    const expected = "<span>a3</span><span>b3</span><span>a2</span><span>b2</span><span>a1</span><span>b1</span>";
+    expect(renderToString(template)).toBe(expected);
+  });
+
   test("simple iteration (in a node)", () => {
     const template = `
         <div>

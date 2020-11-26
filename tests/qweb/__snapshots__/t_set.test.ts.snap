@@ -281,18 +281,18 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v\`] = 1;
-    const [v2, k2, l2] = getValues(ctx['list']);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['list']);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`elem\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`elem\`] = v1[i1];
       ctx[\`elem_first\`] = i1 === 0;
-      ctx[\`elem_last\`] = i1 === v2.length - 1;
+      ctx[\`elem_last\`] = i1 === v1.length - 1;
       ctx[\`elem_index\`] = i1;
-      ctx[\`elem_value\`] = k2[i1];
-      const k4 = ctx['elem_index'];
-      const b5 = b3.children[i1] = new Block2();
-      b5.data[0] = ctx['v'];
+      ctx[\`elem_value\`] = k1[i1];
+      const k2 = ctx['elem_index'];
+      const b3 = b2.children[i1] = new Block2();
+      b3.data[0] = ctx['v'];
       ctx[\`v\`] = ctx['elem'];
     }
     return b1;

@@ -23,29 +23,29 @@ exports[`misc global 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const [v2, k2, l2] = getValues([4,5,6]);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues([4,5,6]);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`value\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
       ctx[\`value_first\`] = i1 === 0;
-      ctx[\`value_last\`] = i1 === v2.length - 1;
+      ctx[\`value_last\`] = i1 === v1.length - 1;
       ctx[\`value_index\`] = i1;
-      ctx[\`value_value\`] = k2[i1];
-      const b4 = b3.children[i1] = new BMulti(2);
-      const b5 = b4.children[0] = new Block2();
-      b5.data[0] = ctx['value'];
+      ctx[\`value_value\`] = k1[i1];
+      const b3 = b2.children[i1] = new BMulti(2);
+      const b4 = b3.children[0] = new Block2();
+      b4.data[0] = ctx['value'];
       ctx = Object.create(ctx);
-      const b6 = new BMulti(3);
+      const b5 = new BMulti(3);
       ctx = Object.create(ctx);
       ctx[\`foo\`] = 'aaa';
-      b6.children[0] = call(\`_callee-uses-foo\`, ctx, refs);
+      b5.children[0] = call(\`_callee-uses-foo\`, ctx, refs);
       ctx = ctx.__proto__;
-      b6.children[1] = call(\`_callee-uses-foo\`, ctx, refs);
+      b5.children[1] = call(\`_callee-uses-foo\`, ctx, refs);
       ctx[\`foo\`] = 'bbb';
-      b6.children[2] = call(\`_callee-uses-foo\`, ctx, refs);
-      ctx[zero] = b6;
-      b4.children[1] = call(\`_callee-asc\`, ctx, refs);
+      b5.children[2] = call(\`_callee-uses-foo\`, ctx, refs);
+      ctx[zero] = b5;
+      b3.children[1] = call(\`_callee-asc\`, ctx, refs);
       ctx = ctx.__proto__;
     }
     ctx = ctx.__proto__;

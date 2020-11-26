@@ -150,6 +150,7 @@ interface CodeGroup {
 class QWebCompiler {
   blocks: BlockDescription[] = [];
   nextId = 1;
+  nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineOwner: boolean = false;
   hasRef: boolean = false;
@@ -188,7 +189,7 @@ class QWebCompiler {
     let parentStr = "";
     let id: string | null = null;
     if (shouldBindVar) {
-      id = this.generateId("b");
+      id = "b" + this.nextBlockId++;
       prefix = `const ${id} = `;
     }
     if (block) {
@@ -617,7 +618,7 @@ class QWebCompiler {
     this.insertAnchor(block);
     let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
     if (ast.body) {
-      const nextId = this.nextId;
+      const nextId = this.nextBlockId;
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       expr = `withDefault(${expr}, b${nextId})`;
@@ -754,7 +755,7 @@ class QWebCompiler {
       // check if all content is t-set
       const hasContent = ast.body.filter((elem) => elem.type !== ASTType.TSet).length;
       if (hasContent) {
-        const nextId = this.nextId;
+        const nextId = this.nextBlockId;
         const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
         this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
         this.addLine(`ctx[zero] = b${nextId};`);
@@ -785,7 +786,7 @@ class QWebCompiler {
     this.shouldProtectScope = true;
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
-      const nextId = this.nextId;
+      const nextId = this.nextBlockId;
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       const value = ast.value ? `withDefault(${expr}, b${nextId})` : `b${nextId}`;
@@ -878,6 +879,6 @@ class QWebCompiler {
     if (block) {
       this.insertAnchor(block);
     }
-    this.insertBlock(blockString, {...ctx, forceNewBlock: false});
+    this.insertBlock(blockString, { ...ctx, forceNewBlock: false });
   }
 }

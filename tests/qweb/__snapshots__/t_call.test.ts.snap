@@ -422,18 +422,18 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
     ctx[scope] = 1;
     const b1 = new Block1();
     b1.data[0] = ctx['node'].val;
-    const [v2, k2, l2] = getValues(ctx['node'].children||[]);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['node'].children||[]);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`subtree\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`subtree\`] = v1[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === v2.length - 1;
+      ctx[\`subtree_last\`] = i1 === v1.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = k2[i1];
+      ctx[\`subtree_value\`] = k1[i1];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b3.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
       ctx = ctx.__proto__;
     }
     b1.refs = refs;
@@ -486,18 +486,18 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
     ctx[scope] = 1;
     const b1 = new Block1();
     b1.data[0] = ctx['node'].val;
-    const [v2, k2, l2] = getValues(ctx['node'].children||[]);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['node'].children||[]);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`subtree\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`subtree\`] = v1[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === v2.length - 1;
+      ctx[\`subtree_last\`] = i1 === v1.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = k2[i1];
+      ctx[\`subtree_value\`] = k1[i1];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b3.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
       ctx = ctx.__proto__;
     }
     b1.refs = refs;
@@ -555,18 +555,18 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     ctx[\`recursive_idx\`] = ctx['recursive_idx']+1;
     b1.data[0] = ctx['node'].val;
     b1.data[1] = ctx['recursive_idx'];
-    const [v2, k2, l2] = getValues(ctx['node'].children||[]);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['node'].children||[]);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`subtree\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`subtree\`] = v1[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === v2.length - 1;
+      ctx[\`subtree_last\`] = i1 === v1.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = k2[i1];
+      ctx[\`subtree_value\`] = k1[i1];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b3.children[i1] = call(\`nodeTemplate\`, ctx, refs);
+      b2.children[i1] = call(\`nodeTemplate\`, ctx, refs);
       ctx = ctx.__proto__;
     }
     b1.refs = refs;
@@ -785,19 +785,19 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const [v2, k2, l2] = getValues(ctx['list']);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['list']);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`v\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`v\`] = v1[i1];
       ctx[\`v_first\`] = i1 === 0;
-      ctx[\`v_last\`] = i1 === v2.length - 1;
+      ctx[\`v_last\`] = i1 === v1.length - 1;
       ctx[\`v_index\`] = i1;
-      ctx[\`v_value\`] = k2[i1];
+      ctx[\`v_value\`] = k1[i1];
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
       ctx[\`val3\`] = ctx['val']*3;
-      b3.children[i1] = call(\`sub\`, ctx, refs);
+      b2.children[i1] = call(\`sub\`, ctx, refs);
       ctx = ctx.__proto__;
     }
     b1.refs = refs;
@@ -843,19 +843,19 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const [v2, k2, l2] = getValues(ctx['list']);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['list']);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`v\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`v\`] = v1[i1];
       ctx[\`v_first\`] = i1 === 0;
-      ctx[\`v_last\`] = i1 === v2.length - 1;
+      ctx[\`v_last\`] = i1 === v1.length - 1;
       ctx[\`v_index\`] = i1;
-      ctx[\`v_value\`] = k2[i1];
+      ctx[\`v_value\`] = k1[i1];
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
       ctx[\`val3\`] = ctx['val']*3;
-      b3.children[i1] = call(\`sub\`, ctx, refs);
+      b2.children[i1] = call(\`sub\`, ctx, refs);
       ctx = ctx.__proto__;
     }
     b1.refs = refs;

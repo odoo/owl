@@ -116,8 +116,8 @@ exports[`basics cannot be clicked on and updated if not in DOM 1`] = `
     ctx[scope] = 1;
     const b1 = new Block1();
     b1.data[0] = ctx['state'].counter;
-    const v2 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v2.counter++, ctx];
+    const v1 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v1.counter++, ctx];
     return b1;
   }
 }"

@@ -16,8 +16,8 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
   
   return (ctx, refs = {}) => {
     const b1 = new Block1();
-    const v2 = ctx['id'];
-    b1.data[0] = \`myspan\${v2}\`;
+    const v1 = ctx['id'];
+    b1.data[0] = \`myspan\${v1}\`;
     b1.refs = refs;
     return b1;
   }
@@ -141,21 +141,21 @@ exports[`t-ref refs in a loop 1`] = `
   
   return (ctx, refs = {}) => {
     const b1 = new Block1();
-    const [v2, k2, l2] = getValues(ctx['items']);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`item\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
       ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v2.length - 1;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k2[i1];
-      const k4 = ctx['item'];
-      const b5 = b3.children[i1] = new Block2();
-      b5.refs = refs;
-      const v6 = ctx['item'];
-      b5.data[0] = \`\${v6}\`;
-      b5.data[1] = ctx['item'];
+      ctx[\`item_value\`] = k1[i1];
+      const k2 = ctx['item'];
+      const b3 = b2.children[i1] = new Block2();
+      b3.refs = refs;
+      const v3 = ctx['item'];
+      b3.data[0] = \`\${v3}\`;
+      b3.data[1] = ctx['item'];
     }
     b1.refs = refs;
     return b1;

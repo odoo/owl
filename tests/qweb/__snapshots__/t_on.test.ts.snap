@@ -44,8 +44,8 @@ exports[`t-on can bind handlers with arguments 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const arg2 = [5];
-    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](...arg2, e), ctx];
+    const arg1 = [5];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](...arg1, e), ctx];
     return b1;
   }
 }"
@@ -70,8 +70,8 @@ exports[`t-on can bind handlers with empty  object 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const arg2 = [{}];
-    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](...arg2, e), ctx];
+    const arg1 = [{}];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](...arg1, e), ctx];
     return b1;
   }
 }"
@@ -96,8 +96,8 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const arg2 = [{}];
-    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](...arg2, e), ctx];
+    const arg1 = [{}];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](...arg1, e), ctx];
     return b1;
   }
 }"
@@ -127,19 +127,19 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const [v2, k2, l2] = getValues(['someval']);
-    const b3 = b1.children[0] = new BCollection(l2);
+    const [v1, k1, l1] = getValues(['someval']);
+    const b2 = b1.children[0] = new BCollection(l1);
     ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`action\`] = v2[i1];
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`action\`] = v1[i1];
       ctx[\`action_first\`] = i1 === 0;
-      ctx[\`action_last\`] = i1 === v2.length - 1;
+      ctx[\`action_last\`] = i1 === v1.length - 1;
       ctx[\`action_index\`] = i1;
-      ctx[\`action_value\`] = k2[i1];
-      const k4 = ctx['action_index'];
-      const b5 = b3.children[i1] = new Block2();
-      const arg6 = [ctx['action']];
-      b5.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg6, e), ctx];
+      ctx[\`action_value\`] = k1[i1];
+      const k2 = ctx['action_index'];
+      const b3 = b2.children[i1] = new Block2();
+      const arg3 = [ctx['action']];
+      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg3, e), ctx];
     }
     return b1;
   }
@@ -165,8 +165,8 @@ exports[`t-on can bind handlers with object arguments 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const arg2 = [{val:5}];
-    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](...arg2, e), ctx];
+    const arg1 = [{val:5}];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](...arg1, e), ctx];
     return b1;
   }
 }"
@@ -244,7 +244,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const [v1, k1, l1] = getValues([1]);
-    const b2 = new BCollection(l1);
+    const b1 = new BCollection(l1);
     ctx = Object.create(ctx);
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`value\`] = v1[i1];
@@ -252,10 +252,10 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
       ctx[\`value_last\`] = i1 === v1.length - 1;
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = k1[i1];
-      const b3 = b2.children[i1] = new Block1();
-      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
+      const b2 = b1.children[i1] = new Block1();
+      b2.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
     }
-    return b2;
+    return b1;
   }
 }"
 `;
@@ -336,7 +336,7 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const [v1, k1, l1] = getValues([1]);
-    const b2 = new BCollection(l1);
+    const b1 = new BCollection(l1);
     ctx = Object.create(ctx);
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`value\`] = v1[i1];
@@ -344,10 +344,10 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
       ctx[\`value_last\`] = i1 === v1.length - 1;
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = k1[i1];
-      b2.children[i1] = call(\`sub\`, ctx, refs);
+      b1.children[i1] = call(\`sub\`, ctx, refs);
     }
-    b2.refs = refs;
-    return b2;
+    b1.refs = refs;
+    return b1;
   }
 }"
 `;
@@ -371,8 +371,8 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const v2 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v2.incrementCounter(2), ctx];
+    const v1 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v1.incrementCounter(2), ctx];
     return b1;
   }
 }"
@@ -397,8 +397,8 @@ exports[`t-on t-on with inline statement 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const v2 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v2.counter++, ctx];
+    const v1 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v1.counter++, ctx];
     return b1;
   }
 }"
@@ -423,8 +423,8 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const v2 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v2.flag=!v2.flag, ctx];
+    const v1 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => v1.flag=!v1.flag, ctx];
     return b1;
   }
 }"
@@ -449,9 +449,9 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const v2 = ctx['state'];
-    const v3 = ctx['someFunction'];
-    b1.handlers[0] = [\`click\`, (e) => v2.n=v3(3), ctx];
+    const v1 = ctx['state'];
+    const v2 = ctx['someFunction'];
+    b1.handlers[0] = [\`click\`, (e) => v1.n=v2(3), ctx];
     return b1;
   }
 }"
@@ -523,8 +523,8 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const arg2 = [ctx['value']];
-    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['update'](...arg2, e), ctx];
+    const arg1 = [ctx['value']];
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['update'](...arg1, e), ctx];
     return b1;
   }
 }"

@@ -1,4 +1,4 @@
-import { renderToString, snapshotTemplateCode } from "../helpers";
+import { renderToString, snapshotTemplateCode, TestTemplateSet } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // t-raw
@@ -66,5 +66,30 @@ describe("t-raw", () => {
     const template = `<span t-raw="var"><div>nope</div></span>`;
     snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<span><div>nope</div></span>");
+  });
+
+  test("multiple calls to t-raw", () => {
+    const templateSet = new TestTemplateSet();
+    const sub = `
+        <div>
+          <t t-raw="0"/>
+          <div>Greeter</div>
+          <t t-raw="0"/>
+        </div>`;
+
+    const main = `
+        <div>
+          <t t-call="sub">
+            <span>coucou</span>
+          </t>
+        </div>`;
+
+    templateSet.add("sub", sub);
+    templateSet.add("main", main);
+    snapshotTemplateCode(sub);
+    snapshotTemplateCode(main);
+    const expected =
+      "<div><div><span>coucou</span><div>Greeter</div><span>coucou</span></div></div>";
+    expect(templateSet.renderToString("main")).toBe(expected);
   });
 });

@@ -33,6 +33,55 @@ exports[`t-raw literal, no outside html element 1`] = `
 }"
 `;
 
+exports[`t-raw multiple calls to t-raw 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><div>Greeter</div><owl-anchor/></div>\`);
+    children = new Array(2);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = new BHtml(ctx[zero]);
+    b1.children[1] = new BHtml(ctx[zero]);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-raw multiple calls to t-raw 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span>coucou</span>\`);
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    ctx = Object.create(ctx);
+    const b2 = new Block2();
+    ctx[zero] = b2;
+    b1.children[0] = call(\`sub\`, ctx, refs);
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
 exports[`t-raw not escaping 1`] = `
 "function anonymous(Blocks, utils
 ) {

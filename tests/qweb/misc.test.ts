@@ -12,7 +12,7 @@ describe("misc", () => {
     const _calleeAscToto = `<div t-raw="toto">toto default</div>`;
     const caller = `
         <div>
-          <t t-foreach="[4,5,6]" t-as="value">
+          <t t-foreach="[4,5,6]" t-as="value" t-key="value">
             <span t-esc="value"/>
             <t t-call="_callee-asc">
               <t t-call="_callee-uses-foo">

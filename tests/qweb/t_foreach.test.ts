@@ -6,26 +6,27 @@ import { renderToString, snapshotTemplateCode, TestTemplateSet } from "../helper
 
 describe("t-foreach", () => {
   test("simple iteration", () => {
-    const template = `<t t-foreach="[3, 2, 1]" t-as="item"><t t-esc="item"/></t>`;
+    const template = `<t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-esc="item"/></t>`;
     snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("321");
   });
 
   test("simple iteration with two nodes inside", () => {
     const template = `
-      <t t-foreach="[3, 2, 1]" t-as="item">
+      <t t-foreach="[3, 2, 1]" t-as="item" t-key="item">
         <span>a<t t-esc="item"/></span>
         <span>b<t t-esc="item"/></span>
       </t>`;
     snapshotTemplateCode(template);
-    const expected = "<span>a3</span><span>b3</span><span>a2</span><span>b2</span><span>a1</span><span>b1</span>";
+    const expected =
+      "<span>a3</span><span>b3</span><span>a2</span><span>b2</span><span>a1</span><span>b1</span>";
     expect(renderToString(template)).toBe(expected);
   });
 
   test("simple iteration (in a node)", () => {
     const template = `
         <div>
-          <t t-foreach="[3, 2, 1]" t-as="item"><t t-esc="item"/></t>
+          <t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-esc="item"/></t>
         </div>`;
     snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div>321</div>");
@@ -34,7 +35,7 @@ describe("t-foreach", () => {
   test("iterate on items", () => {
     const template = `
         <div>
-          <t t-foreach="[3, 2, 1]" t-as="item">
+          <t t-foreach="[3, 2, 1]" t-as="item" t-key="item">
             [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
           </t>
         </div>`;
@@ -55,7 +56,7 @@ describe("t-foreach", () => {
   test("iterate, position", () => {
     const template = `
         <div>
-          <t t-foreach="Array(5)" t-as="elem">
+          <t t-foreach="Array(5)" t-as="elem" t-key="elem">
             -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-esc="elem_index"/>)
           </t>
         </div>`;
@@ -67,7 +68,7 @@ describe("t-foreach", () => {
   test("iterate, dict param", () => {
     const template = `
         <div>
-          <t t-foreach="value" t-as="item">
+          <t t-foreach="value" t-as="item" t-key="item_index">
             [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
           </t>
         </div>`;
@@ -80,7 +81,7 @@ describe("t-foreach", () => {
   test("does not pollute the rendering context", () => {
     const template = `
         <div>
-          <t t-foreach="[1]" t-as="item"><t t-esc="item"/></t>
+          <t t-foreach="[1]" t-as="item" t-key="item"><t t-esc="item"/></t>
         </div>`;
     snapshotTemplateCode(template);
     const context = { __owl__: {} };
@@ -91,7 +92,7 @@ describe("t-foreach", () => {
   test("t-foreach in t-foreach", () => {
     const template = `
         <div>
-          <t t-foreach="numbers" t-as="number">
+          <t t-foreach="numbers" t-as="number" t-key="number">
             <t t-foreach="letters" t-as="letter">
               [<t t-esc="number"/><t t-esc="letter"/>]
             </t>
@@ -117,8 +118,8 @@ describe("t-foreach", () => {
 
     const main = `
         <div>
-          <t t-foreach="numbers" t-as="a">
-            <t t-foreach="letters" t-as="b">
+          <t t-foreach="numbers" t-as="a" t-key="a">
+            <t t-foreach="letters" t-as="b" t-key="b">
               <t t-call="sub" />
             </t>
             <span t-esc="c"/>
@@ -148,8 +149,8 @@ describe("t-foreach", () => {
 
     const main = `
         <div>
-          <t t-foreach="numbers" t-as="a">
-            <t t-foreach="letters" t-as="b">
+          <t t-foreach="numbers" t-as="a" t-key="a">
+            <t t-foreach="letters" t-as="b"  t-key="b">
               <t t-call="sub" >
                 <t t-set="c" t-value="'x' + '_' + a + '_'+ b" />
               </t>
@@ -171,11 +172,11 @@ describe("t-foreach", () => {
   });
 
   test("throws error if invalid loop expression", () => {
-    const test = `<div><t t-foreach="abc" t-as="item"><span t-key="item_index"/></t></div>`;
+    const test = `<div><t t-foreach="abc" t-as="item" t-key="item"><span t-key="item_index"/></t></div>`;
     expect(() => renderToString(test)).toThrow("Invalid loop expression");
   });
 
-  test.skip("warn if no key in some case", () => {
+  test("warn if no key in some case", () => {
     const consoleWarn = console.warn;
     console.warn = jest.fn();
 
@@ -188,33 +189,13 @@ describe("t-foreach", () => {
     renderToString(template);
     expect(console.warn).toHaveBeenCalledTimes(1);
     expect(console.warn).toHaveBeenCalledWith(
-      "Directive t-foreach should always be used with a t-key! (in template: 'test')"
+      `\"Directive t-foreach should always be used with a t-key! (in template: '
+        <div>
+          <t t-foreach=\"[1, 2]\" t-as=\"item\">
+            <span><t t-esc=\"item\"/></span>
+          </t>
+        </div>')\"`
     );
     console.warn = consoleWarn;
-  });
-
-  test("multiple calls to t-raw", () => {
-    const templateSet = new TestTemplateSet();
-    const sub = `
-        <div>
-          <t t-raw="0"/>
-          <div>Greeter</div>
-          <t t-raw="0"/>
-        </div>`;
-
-    const main = `
-        <div>
-          <t t-call="sub">
-            <span>coucou</span>
-          </t>
-        </div>`;
-
-    templateSet.add("sub", sub);
-    templateSet.add("main", main);
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
-    const expected =
-      "<div><div><span>coucou</span><div>Greeter</div><span>coucou</span></div></div>";
-    expect(templateSet.renderToString("main")).toBe(expected);
   });
 });

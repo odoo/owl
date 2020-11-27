@@ -140,7 +140,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
       const b3 = b2.children[i1] = new Block2();
       const arg3 = [ctx['action']];
       b3.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg3, e), ctx];
-      b3.key = i1;
+      b3.key = k2;
     }
     return b1;
   }

@@ -276,7 +276,7 @@ describe("t-call (template calling)", () => {
     const nodeTemplate = `
         <div>
           <p><t t-esc="node.val"/></p>
-          <t t-foreach="node.children or []" t-as="subtree">
+          <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
               <t t-call="nodeTemplate">
                   <t t-set="node" t-value="subtree"/>
               </t>
@@ -305,7 +305,7 @@ describe("t-call (template calling)", () => {
     const nodeTemplate = `
         <div>
           <p><t t-esc="node.val"/></p>
-          <t t-foreach="node.children or []" t-as="subtree">
+          <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
             <t t-call="nodeTemplate">
               <t t-set="node" t-value="subtree"/>
             </t>
@@ -337,7 +337,7 @@ describe("t-call (template calling)", () => {
         <div>
           <t t-set="recursive_idx" t-value="recursive_idx + 1"/>
           <p><t t-esc="node.val"/> <t t-esc="recursive_idx"/></p>
-          <t t-foreach="node.children or []" t-as="subtree">
+          <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
             <t t-call="nodeTemplate">
               <t t-set="node" t-value="subtree"/>
             </t>
@@ -384,7 +384,7 @@ describe("t-call (template calling)", () => {
     const templateSet = new TestTemplateSet();
     const main = `
         <div>
-          <t t-foreach="list" t-as="v">
+          <t t-foreach="list" t-as="v" t-key="v_index">
             <t t-set="val" t-value="v.val"/>
             <t t-call="sub">
               <t t-set="val3" t-value="val*3"/>
@@ -410,7 +410,7 @@ describe("t-call (template calling)", () => {
     const templateSet = new TestTemplateSet();
     const main = `
         <div>
-          <t t-foreach="list" t-as="v">
+          <t t-foreach="list" t-as="v" t-key="v_index">
             <t t-set="val" t-value="v.val"/>
             <t t-call="sub">
               <t t-set="val3" t-value="val*3"/>

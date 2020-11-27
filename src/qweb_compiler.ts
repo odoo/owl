@@ -40,14 +40,9 @@ export function compile(template: string, utils: typeof UTILS = UTILS): RenderFu
   return templateFunction(Blocks, utils);
 }
 
-export function compileTemplate(template: string): TemplateFunction {
-  const ast = parse(template);
-  // console.warn(ast);
-  const compiler = new QWebCompiler();
-  compiler.compile(ast);
-  const code = compiler.generateCode();
-  // console.warn(code);
-  return new Function("Blocks, utils", code) as TemplateFunction;
+export function compileTemplate(template: string, name?: string): TemplateFunction {
+  const compiler = new QWebCompiler(template, name);
+  return compiler.compile();
 }
 
 export class TemplateSet {
@@ -77,7 +72,7 @@ export class TemplateSet {
       if (!template) {
         throw new Error(`Missing template: "${name}"`);
       }
-      const templateFn = compileTemplate(template);
+      const templateFn = compileTemplate(template, name);
       const renderFn = templateFn(Blocks, this.utils);
       this.compiledTemplates[name] = renderFn;
     }
@@ -162,6 +157,31 @@ class QWebCompiler {
   isDebug: boolean = false;
   functions: CodeGroup[] = [];
   target: CodeGroup = { name: "main", signature: "", indentLevel: 0, code: [], rootBlock: null };
+  templateName: string;
+  ast: AST;
+
+  constructor(template: string, name?: string) {
+    this.ast = parse(template);
+    // console.warn(this.ast);
+    if (name) {
+      this.templateName = name;
+    } else {
+      if (template.length > 250) {
+        this.templateName = template.slice(0, 250) + "...";
+      } else {
+        this.templateName = template;
+      }
+    }
+  }
+
+  compile(): TemplateFunction {
+    const ast = this.ast;
+    this.isDebug = ast.type === ASTType.TDebug;
+    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false });
+    const code = this.generateCode();
+    // console.warn(this.code);
+    return new Function("Blocks, utils", code) as TemplateFunction;
+  }
 
   addLine(line: string) {
     const prefix = new Array(this.target.indentLevel + 2).join("  ");
@@ -390,11 +410,6 @@ class QWebCompiler {
         return tok.value;
       })
       .join("");
-  }
-
-  compile(ast: AST) {
-    this.isDebug = ast.type === ASTType.TDebug;
-    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false });
   }
 
   compileAST(ast: AST, ctx: Context) {
@@ -720,12 +735,17 @@ class QWebCompiler {
     this.shouldBindNextBlock = true;
     this.compileAST(ast.body, subCtx);
     this.shouldBindNextBlock = false;
-    this.key = currentKey;
     const nextId = nextIdCb();
     if (nextId) {
       const key = this.key || loopVar;
+      if (!this.key) {
+        console.warn(
+          `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
+        );
+      }
       this.addLine(`${nextId}.key = ${key};`);
     }
+    this.key = currentKey;
 
     this.target.indentLevel--;
     this.addLine(`}`);

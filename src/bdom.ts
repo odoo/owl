@@ -104,9 +104,11 @@ export class BHtml extends Block {
 
 export class BText extends Block {
   el: Text;
+  text: string;
   constructor(text: string) {
     super();
     this.el = document.createTextNode(text);
+    this.text = text;
   }
 
   mountBefore(anchor: Text) {
@@ -114,7 +116,10 @@ export class BText extends Block {
   }
 
   patch(other: any) {
-    this.el.textContent = other.el.textContent;
+    if (other.text !== this.text) {
+      this.el.textContent = other.el.textContent;
+      this.text = other.text;
+    }
   }
 
   toString() {

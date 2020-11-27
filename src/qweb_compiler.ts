@@ -848,6 +848,8 @@ class QWebCompiler {
     const hasSlot = !!Object.keys(ast.slots).length;
     let slotId: string;
     if (hasSlot) {
+      const ctxId = this.generateId("ctx");
+      this.addLine(`const ${ctxId} = Object.assign(Object.create(ctx), ctx);`);
       slotId = this.generateId("slots");
       let slotStr: string[] = [];
       const initialTarget = this.target;
@@ -861,7 +863,7 @@ class QWebCompiler {
           rootBlock: null,
         };
         this.functions.push(slot);
-        slotStr.push(`'${slotName}': ${name}(ctx)`);
+        slotStr.push(`'${slotName}': ${name}(${ctxId})`);
         this.target = slot;
         const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
         this.compileAST(ast.slots[slotName], subCtx);

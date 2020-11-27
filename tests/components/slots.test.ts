@@ -229,4 +229,45 @@ describe("slots", () => {
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
   });
+
+  test.skip("slots are rendered with proper context, part 2", async () => {
+    class Link extends Component {
+      static template = xml`
+          <a t-att-href="props.to">
+            <t t-slot="default"/>
+          </a>`;
+    }
+
+    class App extends Component {
+      static template = xml`
+        <div>
+          <u><li t-foreach="state.users" t-as="user" t-key="user.id">
+              <Link to="'/user/' + user.id">User <t t-esc="user.name"/></Link>
+          </li></u>
+        </div>`;
+
+      state = useState({
+        users: [
+          { id: 1, name: "Aaron" },
+          { id: 2, name: "David" },
+        ],
+      });
+      static components = { Link };
+    }
+    snapshotTemplateCode(fromName(App.template));
+    snapshotTemplateCode(fromName(Link.template));
+
+    const app = await mount(App, { target: fixture });
+
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
+    );
+
+    // test updateprops here
+    app.state.users[1].name = "Mathieu";
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
+    );
+  });
 });

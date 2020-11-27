@@ -27,6 +27,7 @@ interface ComponentData {
   willStartCB: Function;
   mountedCB: Function;
   isMounted: boolean;
+  children: { [key: string]: Component };
   slots?: any;
 }
 
@@ -45,6 +46,7 @@ export class Component {
 
   setup() {}
   async willStart(): Promise<void> {}
+  async willUpdateProps(props: any): Promise<void> {}
   mounted() {}
 
   get el(): ChildNode | null {
@@ -66,14 +68,23 @@ export class Component {
 
 class BComponent extends Block {
   component: Component;
-  constructor(ctx: any, name: string, props: any) {
+  constructor(name: string, props: any, key: string, ctx: any) {
     super();
-    const components = ctx.constructor.components || ctx.components;
-    const C = components[name];
-    const component = prepare(C, props);
+    const parentData: ComponentData = ctx.__owl__;
+    const fiber = new ChildFiber(parentData, parentData.fiber!);
+    let component = parentData.children[key];
+    if (component) {
+      // update
+      updateAndRender(component, fiber, props);
+    } else {
+      // new component
+      const components = ctx.constructor.components || ctx.components;
+      const C = components[name];
+      component = prepare(C, props);
+      parentData.children[key] = component;
+      internalRender(component, fiber);
+    }
     this.component = component;
-    const fiber = new ChildFiber(ctx.__owl__, ctx.__owl__.fiber);
-    internalRender(component, fiber);
   }
 
   firstChildNode(): ChildNode | null {
@@ -81,11 +92,22 @@ class BComponent extends Block {
     return bdom ? bdom.firstChildNode() : null;
   }
 
-  mountBefore(anchor: Text) {
+  mountBefore(anchor: ChildNode) {
     this.component.__owl__!.bdom = this.component.__owl__!.fiber!.bdom;
     this.component.__owl__!.bdom!.mountBefore(anchor);
   }
-  patch() {}
+  patch() {
+    this.component.__owl__!.bdom!.patch(this.component.__owl__!.fiber!.bdom);
+  }
+}
+
+async function updateAndRender(component: Component, fiber: ChildFiber, props: any) {
+  const componentData = component.__owl__;
+  componentData.fiber = fiber;
+  await component.willUpdateProps(props);
+  component.props = props;
+  fiber.bdom = componentData.render();
+  fiber.root.counter--;
 }
 
 Blocks.BComponent = BComponent;
@@ -273,6 +295,7 @@ function prepare(C: any, props: any): Component {
     willStartCB: null as any,
     mountedCB: null as any,
     isMounted: false,
+    children: {},
   };
   currentData = __owl__;
 

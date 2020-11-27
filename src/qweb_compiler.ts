@@ -842,7 +842,10 @@ class QWebCompiler {
       props.push(`${p}: ${compileExpr(ast.props[p]) || undefined}`);
     }
     const propString = `{${props.join(",")}}`;
-    const blockString = `new BComponent(ctx, \`${ast.name}\`, ${propString})`;
+
+    // cmap key
+    const key = "`" + this.generateId("_") + "`";
+    const blockString = `new BComponent(\`${ast.name}\`, ${propString}, ${key}, ctx)`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;

@@ -298,4 +298,28 @@ describe("basics", () => {
     expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
     expect(counter.state.counter).toBe(0);
   });
+
+  test("child can be updated", async () => {
+    class Child extends Component {
+      static template = xml`<t t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child value="state.counter"/>`;
+      static components = { Child };
+      state = useState({
+        counter: 0,
+      });
+    }
+
+    snapshotTemplateCode(fromName(Child.template));
+    snapshotTemplateCode(fromName(Parent.template));
+
+    const parent = await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("0");
+
+    parent.state.counter = 1;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1");
+  });
 });

@@ -294,7 +294,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
       const b3 = b2.children[i1] = new Block2();
       b3.data[0] = ctx['v'];
       ctx[\`v\`] = ctx['elem'];
-      b3.key = k2;
+      b2.keys[i1] = k2;
     }
     return b1;
   }

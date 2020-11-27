@@ -121,7 +121,7 @@ describe("t-on", () => {
     expect.assertions(2);
     const template = `
         <t t-foreach="[1]" t-as="value">
-          <button t-on-click="add">Click</button>
+          <button t-key="value" t-on-click="add">Click</button>
         </t>`;
     snapshotTemplateCode(template);
     let owner = {
@@ -160,7 +160,7 @@ describe("t-on", () => {
     const templateSet = new TemplateSet();
     const sub = `<button t-on-click="add">Click</button>`;
     const main = `
-        <t t-foreach="[1]" t-as="value">
+        <t t-foreach="[1]" t-as="value" t-key="value">
           <t t-call="sub"/>
         </t>`;
     templateSet.add("sub", sub);

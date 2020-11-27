@@ -148,7 +148,6 @@ class QWebCompiler {
   nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineOwner: boolean = false;
-  shouldBindNextBlock: boolean = false;
   hasRef: boolean = false;
   hasTCall: boolean = false;
   refBlocks: string[] = [];
@@ -212,8 +211,7 @@ class QWebCompiler {
 
   insertBlock(expression: string, ctx: Context): string | null {
     const { block, index, forceNewBlock } = ctx;
-    const shouldBindVar = forceNewBlock || !this.target.rootBlock || this.shouldBindNextBlock;
-    this.shouldBindNextBlock = false;
+    const shouldBindVar = forceNewBlock || !this.target.rootBlock;
     let prefix = "";
     let parentStr = "";
     let id: string | null = null;
@@ -730,21 +728,15 @@ class QWebCompiler {
       index: loopVar,
       forceNewBlock: true,
     };
-    const nextIdCb = this.getNextBlockId();
     const currentKey = this.key;
-    this.shouldBindNextBlock = true;
     this.compileAST(ast.body, subCtx);
-    this.shouldBindNextBlock = false;
-    const nextId = nextIdCb();
-    if (nextId) {
-      const key = this.key || loopVar;
-      if (!this.key) {
-        console.warn(
-          `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
-        );
-      }
-      this.addLine(`${nextId}.key = ${key};`);
+    const key = this.key || loopVar;
+    if (!this.key) {
+      console.warn(
+        `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
+      );
     }
+    this.addLine(`${id}.keys[${loopVar}] = ${key};`);
     this.key = currentKey;
 
     this.target.indentLevel--;

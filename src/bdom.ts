@@ -14,7 +14,6 @@ export type BDom = BNode | BMulti | BHtml;
 export abstract class Block {
   el: HTMLElement | Text | null = null;
   refs?: { [name: string]: HTMLElement };
-  key?: string | number;
 
   mount(parent: HTMLElement | DocumentFragment) {
     const anchor = document.createTextNode("");
@@ -308,9 +307,11 @@ export class BMulti extends Block {
 export class BCollection extends Block {
   children: Block[];
   anchor?: Text;
+  keys: (string | number)[];
 
   constructor(n: number) {
     super();
+    this.keys = new Array(n);
     this.children = new Array(n);
   }
 

@@ -96,6 +96,7 @@ export interface ASTComponent {
   type: ASTType.TComponent;
   name: string;
   props: { [name: string]: string };
+  handlers: { [event: string]: string };
   slots: { [name: string]: AST };
 }
 
@@ -521,8 +522,14 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     return null;
   }
   const props: ASTComponent["props"] = {};
+  const handlers: ASTComponent["handlers"] = {};
   for (let name of node.getAttributeNames()) {
-    props[name] = node.getAttribute(name)!;
+    const value = node.getAttribute(name)!;
+    if (name.startsWith("t-on-")) {
+      handlers[name.slice(5)] = value;
+    } else {
+      props[name] = value;
+    }
   }
 
   const slots: ASTComponent["slots"] = {};
@@ -547,7 +554,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slots.default = defaultContent;
     }
   }
-  return { type: ASTType.TComponent, name: node.tagName, props, slots };
+  return { type: ASTType.TComponent, name: node.tagName, props, handlers, slots };
 }
 
 // -----------------------------------------------------------------------------

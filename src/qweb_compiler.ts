@@ -94,12 +94,14 @@ class BlockDescription {
   blockName: string;
   buildFn: FunctionLine[] = [];
   updateFn: FunctionLine[] = [];
+  mountFn: FunctionLine[] = [];
   currentPath: string[] = ["el"];
   dataNumber: number = 0;
   handlerNumber: number = 0;
   dom?: Dom;
   currentDom?: DomNode;
   childNumber: number = 0;
+  baseClass: string = "BNode";
 
   constructor(varName: string, blockName: string) {
     this.varName = varName;
@@ -120,6 +122,10 @@ class BlockDescription {
 
   insertBuild(inserter: (target: string) => string) {
     this.buildFn.push({ path: this.currentPath.slice(), inserter });
+  }
+
+  insertMount(inserter: (target: string) => string) {
+    this.mountFn.push({ path: this.currentPath.slice(), inserter });
   }
 }
 
@@ -294,9 +300,11 @@ class QWebCompiler {
 
   generateBlockCode(block: BlockDescription) {
     this.addLine(``);
-    this.addLine(`class ${block.blockName} extends BNode {`);
+    this.addLine(`class ${block.blockName} extends ${block.baseClass} {`);
     this.target.indentLevel++;
-    this.addLine(`static el = elem(\`${block.dom ? domToString(block.dom) : ""}\`);`);
+    if (block.dom) {
+      this.addLine(`static el = elem(\`${domToString(block.dom)}\`);`);
+    }
     if (block.childNumber) {
       this.addLine(`children = new Array(${block.childNumber});`);
     }
@@ -332,6 +340,18 @@ class QWebCompiler {
         this.addLine(inserter(target));
       } else {
         this.generateFunctionCode(block.buildFn);
+      }
+      this.target.indentLevel--;
+      this.addLine(`}`);
+    }
+
+    if (block.mountFn.length) {
+      const mountInfo = block.mountFn;
+      this.addLine(`mountBefore(anchor) {`);
+      this.target.indentLevel++;
+      this.addLine(`super.mountBefore(anchor);`);
+      for (let line of mountInfo) {
+        this.addLine(line.inserter(""));
       }
       this.target.indentLevel--;
       this.addLine(`}`);
@@ -503,6 +523,40 @@ class QWebCompiler {
     }
   }
 
+  generateHandlerCode(
+    block: BlockDescription,
+    handlers: { [key: string]: string },
+    insert: (index: number) => void,
+    ctx: Context
+  ) {
+    for (let event in handlers) {
+      this.shouldDefineOwner = true;
+      const index = block.handlerNumber;
+      block.handlerNumber++;
+      insert(index);
+      const value = handlers[event];
+      let args: string = "";
+      let code: string = "";
+      const name: string = value.replace(/\(.*\)/, function (_args) {
+        args = _args.slice(1, -1);
+        return "";
+      });
+      const isMethodCall = name.match(FNAMEREGEXP);
+      if (isMethodCall) {
+        if (args) {
+          const argId = this.generateId("arg");
+          this.addLine(`const ${argId} = [${compileExpr(args)}];`);
+          code = `owner(ctx)['${name}'](...${argId}, e)`;
+        } else {
+          code = `owner(ctx)['${name}'](e)`;
+        }
+      } else {
+        code = this.captureExpression(value);
+      }
+      this.addLine(`${block.varName}.handlers[${index}] = [\`${event}\`, (e) => ${code}, ctx];`);
+    }
+  }
+
   compileTDomNode(ast: ASTDomNode, ctx: Context) {
     let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
@@ -538,32 +592,9 @@ class QWebCompiler {
     }
 
     // event handlers
-    for (let event in ast.on) {
-      this.shouldDefineOwner = true;
-      const index = block.handlerNumber;
-      block.handlerNumber++;
-      block.insertBuild((el) => `this.setupHandler(${el}, ${index});`);
-      const value = ast.on[event];
-      let args: string = "";
-      let code: string = "";
-      const name: string = value.replace(/\(.*\)/, function (_args) {
-        args = _args.slice(1, -1);
-        return "";
-      });
-      const isMethodCall = name.match(FNAMEREGEXP);
-      if (isMethodCall) {
-        if (args) {
-          const argId = this.generateId("arg");
-          this.addLine(`const ${argId} = [${compileExpr(args)}];`);
-          code = `owner(ctx)['${name}'](...${argId}, e)`;
-        } else {
-          code = `owner(ctx)['${name}'](e)`;
-        }
-      } else {
-        code = this.captureExpression(value);
-      }
-      this.addLine(`${block.varName}.handlers[${index}] = [\`${event}\`, (e) => ${code}, ctx];`);
-    }
+    const insert = (index: number) =>
+      block!.insertBuild((el) => `this.setupHandler(${el}, ${index});`);
+    this.generateHandlerCode(block, ast.on, insert, ctx);
 
     // t-ref
     if (ast.ref) {
@@ -856,7 +887,7 @@ class QWebCompiler {
       parts.push(`\${key${i + 1}}`);
     }
     const key = parts.join("__");
-    const blockString = `new BComponent(\`${ast.name}\`, ${propString}, \`${key}\`, ctx)`;
+    const blockArgs = `\`${ast.name}\`, ${propString}, \`${key}\`, ctx`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -889,7 +920,23 @@ class QWebCompiler {
     if (block) {
       this.insertAnchor(block);
     }
-    const id = this.insertBlock(blockString, { ...ctx, forceNewBlock: hasSlot });
+
+    let id: string;
+    if (Object.keys(ast.handlers).length) {
+      // event handlers
+      // const block = new BlockDescription()
+      const name = this.generateBlockName();
+      id = this.insertBlock(`new ${name}(${blockArgs})`, { ...ctx, forceNewBlock: true })!;
+      // const id = this.insertBlock(`new ${name}()`, ctx)!;
+      const block = new BlockDescription(id, name);
+      block.baseClass = "BComponent";
+      this.blocks.push(block);
+      const insert = (index: number) => block!.insertMount(() => `this.setupHandler(${index});`);
+
+      this.generateHandlerCode(block, ast.handlers, insert, ctx);
+    } else {
+      id = this.insertBlock(`new BComponent(${blockArgs})`, { ...ctx, forceNewBlock: hasSlot })!;
+    }
 
     if (hasSlot) {
       this.addLine(`${id!}.component.__owl__.slots = ${slotId!};`);

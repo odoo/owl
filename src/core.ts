@@ -68,6 +68,8 @@ export class Component {
 
 class BComponent extends Block {
   component: Component;
+  handlers?: any[];
+
   constructor(name: string, props: any, key: string, ctx: any) {
     super();
     const parentData: ComponentData = ctx.__owl__;
@@ -98,6 +100,19 @@ class BComponent extends Block {
   }
   patch() {
     this.component.__owl__!.bdom!.patch(this.component.__owl__!.fiber!.bdom);
+  }
+
+  setupHandler(index: number) {
+    const eventType = this.handlers![index][0];
+    const el = this.component.el!;
+    el.addEventListener(eventType, () => {
+      const info = this.handlers![index];
+      const [, callback, ctx] = info;
+      if (ctx.__owl__ && !ctx.__owl__.isMounted) {
+        return;
+      }
+      callback();
+    });
   }
 }
 
@@ -174,7 +189,7 @@ export class Scheduler {
   }
 }
 
-const scheduler = new Scheduler(window.requestAnimationFrame);
+const scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
 
 // -----------------------------------------------------------------------------
 //  Internal rendering stuff

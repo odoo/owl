@@ -589,6 +589,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: {},
+      handlers: {},
       slots: {},
     });
   });
@@ -598,6 +599,17 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: { a: "1", b: "'b'" },
+      handlers: {},
+      slots: {},
+    });
+  });
+
+  test("component with event handler", async () => {
+    expect(parse(`<MyComponent t-on-click="someMethod"/>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      props: {},
+      handlers: { click: "someMethod" },
       slots: {},
     });
   });
@@ -607,6 +619,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: {},
+      handlers: {},
       slots: { default: { type: ASTType.Text, value: "foo" } },
     });
   });
@@ -616,6 +629,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: {},
+      handlers: {},
       slots: {
         default: {
           type: ASTType.Multi,
@@ -633,6 +647,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: {},
+      handlers: {},
       slots: { name: { type: ASTType.Text, value: "foo" } },
     });
   });
@@ -642,6 +657,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: {},
+      handlers: {},
       slots: {
         default: { type: ASTType.Text, value: " " },
         name: { type: ASTType.Text, value: "foo" },
@@ -659,6 +675,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       props: {},
+      handlers: {},
       slots: {
         a: { type: ASTType.Text, value: "foo" },
         b: { type: ASTType.Text, value: "bar" },

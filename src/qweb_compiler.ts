@@ -69,7 +69,7 @@ export class TemplateSet {
   getFunction(name: string): RenderFunction {
     if (!(name in this.compiledTemplates)) {
       const template = this.templates[name];
-      if (!template) {
+      if (template === undefined) {
         throw new Error(`Missing template: "${name}"`);
       }
       const templateFn = compileTemplate(template, name);

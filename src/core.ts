@@ -35,6 +35,7 @@ export class Component {
   static template: string;
   __owl__: ComponentData = currentData;
   props: any;
+  env: any = currentEnv;
 
   constructor(props: any) {
     current = this;
@@ -287,11 +288,8 @@ interface Type<T> extends Function {
 
 let current: Component | null = null;
 let currentData: ComponentData;
+let currentEnv: any;
 
-export function mount<T extends Type<Component>>(
-  C: T,
-  params: MountParameters
-): Promise<InstanceType<T>>;
 export function mount<T extends Type<Component>>(
   C: T | Component,
   params: MountParameters
@@ -305,7 +303,8 @@ export async function mount(C: any, params: MountParameters) {
     C.__owl__.bdom!.move(params.target);
     return;
   }
-  const { target, props } = params;
+  const { target, props, env } = params;
+  currentEnv = env || {};
   const component = prepare(C, props || {});
   const fiber = new MountingFiber(component.__owl__!, target);
   scheduler.addFiber(fiber);

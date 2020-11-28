@@ -182,16 +182,16 @@ describe("basic widget properties", () => {
   //   expect(counter.state.counter).toBe(0);
   // });
 
-  test("widget style and classname", async () => {
-    class StyledWidget extends Component {
-      static template = xml`
-        <div style="font-weight:bold;" class="some-class">world</div>
-      `;
-    }
-    const widget = new StyledWidget();
-    await widget.mount(fixture);
-    expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
-  });
+  // test("widget style and classname", async () => {
+  //   class StyledWidget extends Component {
+  //     static template = xml`
+  //       <div style="font-weight:bold;" class="some-class">world</div>
+  //     `;
+  //   }
+  //   const widget = new StyledWidget();
+  //   await widget.mount(fixture);
+  //   expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
+  // });
 
   test("changing state before first render does not trigger a render", async () => {
     const steps: string[] = [];

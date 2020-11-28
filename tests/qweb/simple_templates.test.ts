@@ -1,4 +1,4 @@
-import { renderToString, snapshotTemplateCode } from "../helpers";
+import { renderToString, snapshotTemplateCode, TestTemplateSet } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // Simple templates, mostly static
@@ -21,6 +21,13 @@ describe("simple templates, mostly static", () => {
     const template = ``;
     expect(renderToString(template)).toBe("");
     snapshotTemplateCode(template);
+  });
+
+  test("empty string in a template set", () => {
+    const template = ``;
+    const templateSet = new TestTemplateSet();
+    templateSet.add("potato", template);
+    expect(templateSet.renderToString("potato")).toBe("");
   });
 
   test("empty div", () => {

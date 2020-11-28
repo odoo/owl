@@ -3,7 +3,7 @@
 exports[`t-if a t-if next to a div 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -24,7 +24,7 @@ exports[`t-if a t-if next to a div 1`] = `
 exports[`t-if a t-if with two inner nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -50,7 +50,7 @@ exports[`t-if a t-if with two inner nodes 1`] = `
 exports[`t-if boolean value condition elif (no outside node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -72,7 +72,7 @@ exports[`t-if boolean value condition elif (no outside node) 1`] = `
 exports[`t-if boolean value condition elif 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -99,7 +99,7 @@ exports[`t-if boolean value condition elif 1`] = `
 exports[`t-if boolean value condition else 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -122,7 +122,7 @@ exports[`t-if boolean value condition else 1`] = `
 exports[`t-if boolean value condition false else 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -145,7 +145,7 @@ exports[`t-if boolean value condition false else 1`] = `
 exports[`t-if can use some boolean operators in expressions 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -187,7 +187,7 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
 exports[`t-if div containing a t-if with two inner nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -218,7 +218,7 @@ exports[`t-if div containing a t-if with two inner nodes 1`] = `
 exports[`t-if dynamic content after t-if with two children nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -254,7 +254,7 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
 exports[`t-if just a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -270,7 +270,7 @@ exports[`t-if just a t-if 1`] = `
 exports[`t-if simple t-if/t-else 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -288,7 +288,7 @@ exports[`t-if simple t-if/t-else 1`] = `
 exports[`t-if simple t-if/t-else in a div 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -311,7 +311,7 @@ exports[`t-if simple t-if/t-else in a div 1`] = `
 exports[`t-if t-esc with t-elif 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -334,7 +334,7 @@ exports[`t-if t-esc with t-elif 1`] = `
 exports[`t-if t-esc with t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -355,7 +355,7 @@ exports[`t-if t-esc with t-if 1`] = `
 exports[`t-if t-if and t-else with two nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -383,7 +383,7 @@ exports[`t-if t-if and t-else with two nodes 1`] = `
 exports[`t-if t-if in a div 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -404,7 +404,7 @@ exports[`t-if t-if in a div 1`] = `
 exports[`t-if t-if in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -433,7 +433,7 @@ exports[`t-if t-if in a t-if 1`] = `
 exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -456,7 +456,7 @@ exports[`t-if t-set, then t-if 1`] = `
 exports[`t-if t-set, then t-if, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -484,7 +484,7 @@ exports[`t-if t-set, then t-if, part 2 1`] = `
 exports[`t-if t-set, then t-if, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -518,7 +518,7 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
 exports[`t-if two consecutive t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -537,7 +537,7 @@ exports[`t-if two consecutive t-if 1`] = `
 exports[`t-if two consecutive t-if in a div 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

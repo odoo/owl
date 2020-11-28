@@ -3,7 +3,7 @@
 exports[`debugging t-debug 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -30,7 +30,7 @@ exports[`debugging t-debug 1`] = `
 exports[`debugging t-log 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

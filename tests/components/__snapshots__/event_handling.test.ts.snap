@@ -3,22 +3,14 @@
 exports[`event handling can set handler on sub component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  class Block1 extends BComponent {
-    handlers = new Array(1);
-    mountBefore(anchor) {
-      super.mountBefore(anchor);
-      this.setupHandler(0);
-    }
-  }
   
   return ctx => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new Block1(\`Child\`, {}, \`__1\`, ctx);
+    const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, \`__1\`, ctx);
     b2.handlers[0] = [\`click\`, (e) => owner(ctx)['inc'](e), ctx];
     b1.children[1] = new BText(ctx['state'].value);
     return b1;

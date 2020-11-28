@@ -123,10 +123,6 @@ class BlockDescription {
   insertBuild(inserter: (target: string) => string) {
     this.buildFn.push({ path: this.currentPath.slice(), inserter });
   }
-
-  insertMount(inserter: (target: string) => string) {
-    this.mountFn.push({ path: this.currentPath.slice(), inserter });
-  }
 }
 
 // -----------------------------------------------------------------------------
@@ -241,7 +237,9 @@ class QWebCompiler {
     this.target.code = [];
     this.target.indentLevel = 0;
     // define blocks and utility functions
-    this.addLine(`let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;`);
+    this.addLine(
+      `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;`
+    );
     this.addLine(
       `let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;`
     );
@@ -340,18 +338,6 @@ class QWebCompiler {
         this.addLine(inserter(target));
       } else {
         this.generateFunctionCode(block.buildFn);
-      }
-      this.target.indentLevel--;
-      this.addLine(`}`);
-    }
-
-    if (block.mountFn.length) {
-      const mountInfo = block.mountFn;
-      this.addLine(`mountBefore(anchor) {`);
-      this.target.indentLevel++;
-      this.addLine(`super.mountBefore(anchor);`);
-      for (let line of mountInfo) {
-        this.addLine(line.inserter(""));
       }
       this.target.indentLevel--;
       this.addLine(`}`);
@@ -526,14 +512,15 @@ class QWebCompiler {
   generateHandlerCode(
     block: BlockDescription,
     handlers: { [key: string]: string },
-    insert: (index: number) => void,
-    ctx: Context
+    insert?: (index: number) => void
   ) {
     for (let event in handlers) {
       this.shouldDefineOwner = true;
       const index = block.handlerNumber;
       block.handlerNumber++;
-      insert(index);
+      if (insert) {
+        insert(index);
+      }
       const value = handlers[event];
       let args: string = "";
       let code: string = "";
@@ -594,7 +581,7 @@ class QWebCompiler {
     // event handlers
     const insert = (index: number) =>
       block!.insertBuild((el) => `this.setupHandler(${el}, ${index});`);
-    this.generateHandlerCode(block, ast.on, insert, ctx);
+    this.generateHandlerCode(block, ast.on, insert);
 
     // t-ref
     if (ast.ref) {
@@ -922,18 +909,16 @@ class QWebCompiler {
     }
 
     let id: string;
+
     if (Object.keys(ast.handlers).length) {
       // event handlers
-      // const block = new BlockDescription()
-      const name = this.generateBlockName();
-      id = this.insertBlock(`new ${name}(${blockArgs})`, { ...ctx, forceNewBlock: true })!;
-      // const id = this.insertBlock(`new ${name}()`, ctx)!;
-      const block = new BlockDescription(id, name);
-      block.baseClass = "BComponent";
-      this.blocks.push(block);
-      const insert = (index: number) => block!.insertMount(() => `this.setupHandler(${index});`);
-
-      this.generateHandlerCode(block, ast.handlers, insert, ctx);
+      const n = Object.keys(ast.handlers).length;
+      id = this.insertBlock(`new BComponentH(${n}, ${blockArgs})`, {
+        ...ctx,
+        forceNewBlock: true,
+      })!;
+      const cblock = { varName: id, handlerNumber: 0 } as BlockDescription;
+      this.generateHandlerCode(cblock, ast.handlers);
     } else {
       id = this.insertBlock(`new BComponent(${blockArgs})`, { ...ctx, forceNewBlock: hasSlot })!;
     }

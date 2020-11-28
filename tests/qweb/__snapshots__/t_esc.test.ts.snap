@@ -3,7 +3,7 @@
 exports[`t-esc div with falsy values 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -37,7 +37,7 @@ exports[`t-esc div with falsy values 1`] = `
 exports[`t-esc escaping 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -59,7 +59,7 @@ exports[`t-esc escaping 1`] = `
 exports[`t-esc escaping on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -81,7 +81,7 @@ exports[`t-esc escaping on a node 1`] = `
 exports[`t-esc escaping on a node with a body 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -103,7 +103,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
 exports[`t-esc escaping on a node with a body, as a default 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -125,7 +125,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
 exports[`t-esc literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -147,7 +147,7 @@ exports[`t-esc literal 1`] = `
 exports[`t-esc t-esc is escaped 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -176,7 +176,7 @@ exports[`t-esc t-esc is escaped 1`] = `
 exports[`t-esc t-esc work with spread operator 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -198,7 +198,7 @@ exports[`t-esc t-esc work with spread operator 1`] = `
 exports[`t-esc t-esc=0 is escaped 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -227,7 +227,7 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
 exports[`t-esc t-esc=0 is escaped 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -249,7 +249,7 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
 exports[`t-esc variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

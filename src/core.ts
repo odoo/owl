@@ -101,18 +101,34 @@ class BComponent extends Block {
   patch() {
     this.component.__owl__!.bdom!.patch(this.component.__owl__!.fiber!.bdom);
   }
+}
 
-  setupHandler(index: number) {
-    const eventType = this.handlers![index][0];
-    const el = this.component.el!;
-    el.addEventListener(eventType, () => {
-      const info = this.handlers![index];
-      const [, callback, ctx] = info;
-      if (ctx.__owl__ && !ctx.__owl__.isMounted) {
-        return;
-      }
-      callback();
-    });
+export class BComponentH extends BComponent {
+  handlers: any[];
+  constructor(handlers: number, name: string, props: any, key: string, ctx: any) {
+    super(name, props, key, ctx);
+    this.handlers = new Array(handlers);
+  }
+
+  mountBefore(anchor: ChildNode) {
+    super.mountBefore(anchor);
+    this.setupHandlers();
+  }
+
+  setupHandlers() {
+    for (let i = 0; i < this.handlers.length; i++) {
+      const handler = this.handlers[i];
+      const eventType = handler[0];
+      const el = this.component.el!;
+      el.addEventListener(eventType, () => {
+        const info = this.handlers![i];
+        const [, callback, ctx] = info;
+        if (ctx.__owl__ && !ctx.__owl__.isMounted) {
+          return;
+        }
+        callback();
+      });
+    }
   }
 }
 
@@ -126,6 +142,7 @@ async function updateAndRender(component: Component, fiber: ChildFiber, props: a
 }
 
 Blocks.BComponent = BComponent;
+Blocks.BComponentH = BComponentH;
 
 // -----------------------------------------------------------------------------
 //  Scheduler

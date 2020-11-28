@@ -3,7 +3,7 @@
 exports[`t-on can bind event handler 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -28,7 +28,7 @@ exports[`t-on can bind event handler 1`] = `
 exports[`t-on can bind handlers with arguments 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -54,7 +54,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
 exports[`t-on can bind handlers with empty  object 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -80,7 +80,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
 exports[`t-on can bind handlers with empty object (with non empty inner string) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -106,7 +106,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 exports[`t-on can bind handlers with empty object (with non empty inner string) 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -150,7 +150,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 exports[`t-on can bind handlers with object arguments 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -176,7 +176,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
 exports[`t-on can bind two event handlers 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -204,7 +204,7 @@ exports[`t-on can bind two event handlers 1`] = `
 exports[`t-on handler is bound to proper owner 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -229,7 +229,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
 exports[`t-on handler is bound to proper owner, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -267,7 +267,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
 exports[`t-on handler is bound to proper owner, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -292,7 +292,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 exports[`t-on handler is bound to proper owner, part 3 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return (ctx, refs = {}) => {
@@ -308,7 +308,7 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 exports[`t-on handler is bound to proper owner, part 4 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -333,7 +333,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 exports[`t-on handler is bound to proper owner, part 4 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return (ctx, refs = {}) => {
@@ -361,7 +361,7 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 exports[`t-on t-on with inline statement (function call) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -387,7 +387,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
 exports[`t-on t-on with inline statement 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -413,7 +413,7 @@ exports[`t-on t-on with inline statement 1`] = `
 exports[`t-on t-on with inline statement, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -439,7 +439,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
 exports[`t-on t-on with inline statement, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -466,7 +466,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
 exports[`t-on t-on with t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -491,7 +491,7 @@ exports[`t-on t-on with t-call 1`] = `
 exports[`t-on t-on with t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -513,7 +513,7 @@ exports[`t-on t-on with t-call 2`] = `
 exports[`t-on t-on, with arguments and t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -539,7 +539,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 exports[`t-on t-on, with arguments and t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

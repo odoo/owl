@@ -1877,61 +1877,61 @@ describe("loading templates", () => {
   });
 });
 
-describe("special cases for some specific html attributes/properties", () => {
-  test("input type= checkbox, with t-att-checked", () => {
-    qweb.addTemplate("test", `<input type="checkbox" t-att-checked="flag"/>`);
-    const result = renderToString(qweb, "test", { flag: true });
-    expect(result).toBe(`<input type="checkbox" checked="">`);
-  });
+// describe("special cases for some specific html attributes/properties", () => {
+//   test("input type= checkbox, with t-att-checked", () => {
+//     qweb.addTemplate("test", `<input type="checkbox" t-att-checked="flag"/>`);
+//     const result = renderToString(qweb, "test", { flag: true });
+//     expect(result).toBe(`<input type="checkbox" checked="">`);
+//   });
 
-  test("various boolean html attributes", () => {
-    // the unique assertion here is the code snapshot automatically done by
-    // renderToString
-    expect.assertions(1);
-    qweb.addTemplate(
-      "test",
-      `
-      <div>
-        <input type="checkbox" checked="checked"/>
-        <input checked="checked"/>
-        <div checked="checked"/>
-        <div selected="selected"/>
-        <option selected="selected" other="1"/>
-        <input readonly="readonly"/>
-        <button disabled="disabled"/>
-      </div>
-      `
-    );
-    renderToString(qweb, "test", { flag: true });
-  });
+//   test("various boolean html attributes", () => {
+//     // the unique assertion here is the code snapshot automatically done by
+//     // renderToString
+//     expect.assertions(1);
+//     qweb.addTemplate(
+//       "test",
+//       `
+//       <div>
+//         <input type="checkbox" checked="checked"/>
+//         <input checked="checked"/>
+//         <div checked="checked"/>
+//         <div selected="selected"/>
+//         <option selected="selected" other="1"/>
+//         <input readonly="readonly"/>
+//         <button disabled="disabled"/>
+//       </div>
+//       `
+//     );
+//     renderToString(qweb, "test", { flag: true });
+//   });
 
-  test("input with t-att-value", () => {
-    // render input with initial value
-    qweb.addTemplate("test", `<input  t-att-value="v"/>`);
-    const vnode1 = qweb.render("test", { v: "zucchini" });
-    const vnode2 = patch(document.createElement("input"), vnode1);
-    let elm = vnode2.elm as HTMLInputElement;
-    expect(elm.value).toBe("zucchini");
+//   test("input with t-att-value", () => {
+//     // render input with initial value
+//     qweb.addTemplate("test", `<input  t-att-value="v"/>`);
+//     const vnode1 = qweb.render("test", { v: "zucchini" });
+//     const vnode2 = patch(document.createElement("input"), vnode1);
+//     let elm = vnode2.elm as HTMLInputElement;
+//     expect(elm.value).toBe("zucchini");
 
-    // change value manually in input, to simulate user input
-    elm.value = "tomato";
-    expect(elm.value).toBe("tomato");
+//     // change value manually in input, to simulate user input
+//     elm.value = "tomato";
+//     expect(elm.value).toBe("tomato");
 
-    // rerender with a different value, and patch actual dom, to check that
-    // input value was properly reset by owl
-    const vnode3 = qweb.render("test", { v: "potato" });
-    patch(vnode2, vnode3);
-    expect(elm.value).toBe("potato");
-  });
+//     // rerender with a different value, and patch actual dom, to check that
+//     // input value was properly reset by owl
+//     const vnode3 = qweb.render("test", { v: "potato" });
+//     patch(vnode2, vnode3);
+//     expect(elm.value).toBe("potato");
+//   });
 
-  test("input of type checkbox with t-att-indeterminate", () => {
-    qweb.addTemplate("test", `<input type="checkbox" t-att-indeterminate="v"/>`);
-    const vnode1 = qweb.render("test", { v: true });
-    const vnode2 = patch(document.createElement("input"), vnode1);
-    let elm = vnode2.elm as HTMLInputElement;
-    expect(elm.indeterminate).toBe(true);
-  });
-});
+//   test("input of type checkbox with t-att-indeterminate", () => {
+//     qweb.addTemplate("test", `<input type="checkbox" t-att-indeterminate="v"/>`);
+//     const vnode1 = qweb.render("test", { v: true });
+//     const vnode2 = patch(document.createElement("input"), vnode1);
+//     let elm = vnode2.elm as HTMLInputElement;
+//     expect(elm.indeterminate).toBe(true);
+//   });
+// });
 
 // describe("whitespace handling", () => {
 //   test("white space only text nodes are condensed into a single space", () => {

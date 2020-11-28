@@ -200,7 +200,11 @@ export class BNode extends Block {
 
   updateAttr(elem: HTMLElement, attr: string, value: any) {
     if (value !== false) {
-      elem.setAttribute(attr, value);
+      if (value === true) {
+        elem.setAttribute(attr, "");
+      } else {
+        elem.setAttribute(attr, value);
+      }
     }
   }
 
@@ -212,6 +216,10 @@ export class BNode extends Block {
         elem.setAttribute(key, attrs[key]);
       }
     }
+  }
+
+  updateProp(elem: HTMLElement, prop: string, value: any) {
+    (elem as any)[prop] = value;
   }
 
   setupHandler(el: HTMLElement, index: number) {

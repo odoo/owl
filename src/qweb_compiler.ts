@@ -575,6 +575,9 @@ class QWebCompiler {
         } else {
           if (key) {
             block.insertUpdate((el) => `this.updateAttr(${el}, \`${key}\`, this.data[${idx}]);`);
+            if (isProp(ast.tag, key)) {
+              block.insertUpdate((el) => `this.updateProp(${el}, \`${key}\`, this.data[${idx}]);`);
+            }
           } else {
             block.insertUpdate((el) => `this.updateAttrs(${el}, this.data[${idx}]);`);
           }
@@ -961,4 +964,27 @@ class QWebCompiler {
     }
     this.insertBlock(blockString, { ...ctx, forceNewBlock: false });
   }
+}
+
+function isProp(tag: string, key: string): boolean {
+  switch (tag) {
+    case "input":
+      return (
+        key === "checked" ||
+        key === "indeterminate" ||
+        key === "value" ||
+        key === "readonly" ||
+        key === "disabled"
+      );
+    case "option":
+      return key === "selected" || key === "disabled";
+    case "textarea":
+      return key === "readonly" || key === "disabled";
+      break;
+    case "button":
+    case "select":
+    case "optgroup":
+      return key === "disabled";
+  }
+  return false;
 }

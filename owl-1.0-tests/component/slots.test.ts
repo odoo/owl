@@ -205,125 +205,125 @@ describe("t-slot directive", () => {
   //   expect(QWeb.slots["1_footer"].toString()).toMatchSnapshot();
   // });
 
-  test("slots are rendered with proper context, part 2", async () => {
-    env.qweb.addTemplates(`
-          <templates>
-              <a t-name="Link" t-att-href="props.to">
-                  <t t-slot="default"/>
-              </a>
-              <div t-name="App">
-                  <u><li t-foreach="state.users" t-as="user" t-key="user.id">
-                      <Link to="'/user/' + user.id">User <t t-esc="user.name"/></Link>
-                  </li></u>
-              </div>
-          </templates>
-      `);
-    class Link extends Component {}
+  // test("slots are rendered with proper context, part 2", async () => {
+  //   env.qweb.addTemplates(`
+  //         <templates>
+  //             <a t-name="Link" t-att-href="props.to">
+  //                 <t t-slot="default"/>
+  //             </a>
+  //             <div t-name="App">
+  //                 <u><li t-foreach="state.users" t-as="user" t-key="user.id">
+  //                     <Link to="'/user/' + user.id">User <t t-esc="user.name"/></Link>
+  //                 </li></u>
+  //             </div>
+  //         </templates>
+  //     `);
+  //   class Link extends Component {}
 
-    class App extends Component {
-      state = useState({
-        users: [
-          { id: 1, name: "Aaron" },
-          { id: 2, name: "David" },
-        ],
-      });
-      static components = { Link };
-    }
+  //   class App extends Component {
+  //     state = useState({
+  //       users: [
+  //         { id: 1, name: "Aaron" },
+  //         { id: 2, name: "David" },
+  //       ],
+  //     });
+  //     static components = { Link };
+  //   }
 
-    const app = new App();
-    await app.mount(fixture);
+  //   const app = new App();
+  //   await app.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
-    );
-    expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
-    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+  //   expect(fixture.innerHTML).toBe(
+  //     '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
+  //   );
+  //   expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
+  //   expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
 
-    // test updateprops here
-    app.state.users[1].name = "Mathieu";
-    await nextTick();
-    expect(fixture.innerHTML).toBe(
-      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
-    );
-    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-  });
+  //   // test updateprops here
+  //   app.state.users[1].name = "Mathieu";
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe(
+  //     '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
+  //   );
+  //   expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  // });
 
-  test("slots are rendered with proper context, part 3", async () => {
-    env.qweb.addTemplates(`
-          <templates>
-              <a t-name="Link" t-att-href="props.to">
-                  <t t-slot="default"/>
-              </a>
-              <div t-name="App">
-                  <u><li t-foreach="state.users" t-as="user" t-key="user.id" >
-                      <t t-set="userdescr" t-value="'User ' + user.name"/>
-                      <Link to="'/user/' + user.id"><t t-esc="userdescr"/></Link>
-                  </li></u>
-              </div>
-          </templates>
-      `);
-    class Link extends Component {}
+  // test("slots are rendered with proper context, part 3", async () => {
+  //   env.qweb.addTemplates(`
+  //         <templates>
+  //             <a t-name="Link" t-att-href="props.to">
+  //                 <t t-slot="default"/>
+  //             </a>
+  //             <div t-name="App">
+  //                 <u><li t-foreach="state.users" t-as="user" t-key="user.id" >
+  //                     <t t-set="userdescr" t-value="'User ' + user.name"/>
+  //                     <Link to="'/user/' + user.id"><t t-esc="userdescr"/></Link>
+  //                 </li></u>
+  //             </div>
+  //         </templates>
+  // //     `);
+  //   class Link extends Component {}
 
-    class App extends Component {
-      state = useState({
-        users: [
-          { id: 1, name: "Aaron" },
-          { id: 2, name: "David" },
-        ],
-      });
-      static components = { Link };
-    }
+  //   class App extends Component {
+  //     state = useState({
+  //       users: [
+  //         { id: 1, name: "Aaron" },
+  //         { id: 2, name: "David" },
+  //       ],
+  //     });
+  //     static components = { Link };
+  //   }
 
-    const app = new App();
-    await app.mount(fixture);
+  //   const app = new App();
+  //   await app.mount(fixture);
 
-    expect(fixture.innerHTML).toBe(
-      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
-    );
-    expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
-    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+  //   expect(fixture.innerHTML).toBe(
+  //     '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
+  //   );
+  //   expect(env.qweb.templates.Link.fn.toString()).toMatchSnapshot();
+  //   expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
 
-    // test updateprops here
-    app.state.users[1].name = "Mathieu";
-    await nextTick();
-    expect(fixture.innerHTML).toBe(
-      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
-    );
-    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-  });
+  //   // test updateprops here
+  //   app.state.users[1].name = "Mathieu";
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe(
+  //     '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
+  //   );
+  //   expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  // });
 
-  test("slots are rendered with proper context, part 4", async () => {
-    env.qweb.addTemplates(`
-          <templates>
-              <a t-name="Link" t-att-href="props.to">
-                  <t t-slot="default"/>
-              </a>
-              <div t-name="App">
-                  <t t-set="userdescr" t-value="'User ' + state.user.name"/>
-                  <Link to="'/user/' + state.user.id"><t t-esc="userdescr"/></Link>
-              </div>
-          </templates>
-      `);
-    class Link extends Component {}
+  // test("slots are rendered with proper context, part 4", async () => {
+  //   env.qweb.addTemplates(`
+  //         <templates>
+  //             <a t-name="Link" t-att-href="props.to">
+  //                 <t t-slot="default"/>
+  //             </a>
+  //             <div t-name="App">
+  //                 <t t-set="userdescr" t-value="'User ' + state.user.name"/>
+  //                 <Link to="'/user/' + state.user.id"><t t-esc="userdescr"/></Link>
+  //             </div>
+  //         </templates>
+  //     `);
+  //   class Link extends Component {}
 
-    class App extends Component {
-      state = useState({ user: { id: 1, name: "Aaron" } });
-      static components = { Link };
-    }
+  //   class App extends Component {
+  //     state = useState({ user: { id: 1, name: "Aaron" } });
+  //     static components = { Link };
+  //   }
 
-    const app = new App();
-    await app.mount(fixture);
+  //   const app = new App();
+  //   await app.mount(fixture);
 
-    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
+  //   expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
 
-    expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
+  //   expect(env.qweb.templates.App.fn.toString()).toMatchSnapshot();
 
-    // test updateprops here
-    app.state.user.name = "David";
-    await nextTick();
-    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
-    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
-  });
+  //   // test updateprops here
+  //   app.state.user.name = "David";
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
+  //   expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+  // });
 
   test("refs are properly bound in slots", async () => {
     class Dialog extends Component {

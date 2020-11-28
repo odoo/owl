@@ -556,3 +556,103 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   }
 }"
 `;
+
+exports[`slots slots are rendered with proper context, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><u><owl-anchor/></u></div>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<li><owl-anchor/></li>\`);
+    children = new Array(1);
+  }
+  
+  const slot5 = ctx => () => {
+    const b4 = new BText(ctx['userdescr']);
+    return b4;
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    const [v1, k1, l1] = getValues(ctx['state'].users);
+    const b2 = b1.children[0] = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`user\`] = v1[i1];
+      ctx[\`user_first\`] = i1 === 0;
+      ctx[\`user_last\`] = i1 === v1.length - 1;
+      ctx[\`user_index\`] = i1;
+      ctx[\`user_value\`] = k1[i1];
+      let key1 = ctx['user'].id;
+      const b3 = b2.children[i1] = new Block2();
+      ctx[\`userdescr\`] = 'User '+ctx['user'].name;
+      const ctx3 = Object.assign(Object.create(ctx), ctx);
+      const slots4 = {'default': slot5(ctx3)};
+      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, \`__2__\${key1}\`, ctx);
+      b5.component.__owl__.slots = slots4;
+      b2.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 3 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<a><owl-anchor/></a>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`href\`, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].to;
+    b1.children[0] = callSlot(ctx, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slots are rendered with proper context, part 4 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+  }
+  
+  const slot4 = ctx => () => {
+    const b2 = new BText(ctx['userdescr']);
+    return b2;
+  }
+  
+  return ctx => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    ctx[\`userdescr\`] = 'User '+ctx['state'].user.name;
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const slots3 = {'default': slot4(ctx2)};
+    const b3 = b1.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['state'].user.id}, \`__1\`, ctx);
+    b3.component.__owl__.slots = slots3;
+    return b1;
+  }
+}"
+`;

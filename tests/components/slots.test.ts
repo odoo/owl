@@ -270,4 +270,76 @@ describe("slots", () => {
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
     );
   });
+
+  test("slots are rendered with proper context, part 3", async () => {
+    class Link extends Component {
+      static template = xml`
+          <a t-att-href="props.to">
+            <t t-slot="default"/>
+          </a>`;
+    }
+
+    class App extends Component {
+      static template = xml`
+        <div>
+          <u><li t-foreach="state.users" t-as="user" t-key="user.id" >
+              <t t-set="userdescr" t-value="'User ' + user.name"/>
+              <Link to="'/user/' + user.id"><t t-esc="userdescr"/></Link>
+          </li></u>
+        </div>`;
+      state = useState({
+        users: [
+          { id: 1, name: "Aaron" },
+          { id: 2, name: "David" },
+        ],
+      });
+      static components = { Link };
+    }
+
+    snapshotTemplateCode(fromName(App.template));
+    snapshotTemplateCode(fromName(Link.template));
+
+    const app = await mount(App, { target: fixture });
+
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
+    );
+
+    // test updateprops here
+    app.state.users[1].name = "Mathieu";
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
+    );
+  });
+
+  test("slots are rendered with proper context, part 4", async () => {
+    class Link extends Component {
+      static template = xml`
+          <a t-att-href="props.to">
+            <t t-slot="default"/>
+          </a>`;
+    }
+
+    class App extends Component {
+      static template = xml`
+        <div>
+          <t t-set="userdescr" t-value="'User ' + state.user.name"/>
+          <Link to="'/user/' + state.user.id"><t t-esc="userdescr"/></Link>
+        </div>`;
+      static components = { Link };
+      state = useState({ user: { id: 1, name: "Aaron" } });
+    }
+
+    snapshotTemplateCode(fromName(App.template));
+
+    const app = await mount(App, { target: fixture });
+
+    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
+
+    // test updateprops here
+    app.state.user.name = "David";
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
+  });
 });

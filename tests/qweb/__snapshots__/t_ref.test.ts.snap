@@ -150,13 +150,14 @@ exports[`t-ref refs in a loop 1`] = `
       ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
-      const k2 = ctx['item'];
+      let key1 = i1;
+      key1 = ctx['item'];
       const b3 = b2.children[i1] = new Block2();
       b3.refs = refs;
-      const v3 = ctx['item'];
-      b3.data[0] = \`\${v3}\`;
+      const v2 = ctx['item'];
+      b3.data[0] = \`\${v2}\`;
       b3.data[1] = ctx['item'];
-      b2.keys[i1] = k2;
+      b2.keys[i1] = key1;
     }
     b1.refs = refs;
     return b1;

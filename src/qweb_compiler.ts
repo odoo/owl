@@ -148,10 +148,11 @@ class QWebCompiler {
   nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineOwner: boolean = false;
+  shouldDefineKey0: boolean = false;
+  hasDefinedKey: boolean = false;
   hasRef: boolean = false;
   hasTCall: boolean = false;
   refBlocks: string[] = [];
-  key: string | null = null;
   loopLevel: number = 0;
   isDebug: boolean = false;
   functions: CodeGroup[] = [];
@@ -178,7 +179,7 @@ class QWebCompiler {
     this.isDebug = ast.type === ASTType.TDebug;
     this.compileAST(ast, { block: null, index: 0, forceNewBlock: false });
     const code = this.generateCode();
-    // console.warn(this.code);
+    // console.warn(code);
     return new Function("Blocks, utils", code) as TemplateFunction;
   }
 
@@ -267,6 +268,9 @@ class QWebCompiler {
     }
     if (this.shouldDefineOwner) {
       this.addLine(`  ctx[scope] = 1;`);
+    }
+    if (this.shouldDefineKey0) {
+      this.addLine(`  let key0;`);
     }
     for (let line of mainCode) {
       this.addLine(line);
@@ -721,23 +725,24 @@ class QWebCompiler {
     this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${vals}.length - 1;`);
     this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
     this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
-
+    this.addLine(`let key${this.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
     const collectionBlock = new BlockDescription(id, "Collection");
     const subCtx: Context = {
       block: collectionBlock,
       index: loopVar,
       forceNewBlock: true,
     };
-    const currentKey = this.key;
+    const initialState = this.hasDefinedKey;
+    this.hasDefinedKey = false;
     this.compileAST(ast.body, subCtx);
-    const key = this.key || loopVar;
-    if (!this.key) {
+    // const key = this.key || loopVar;
+    if (!ast.key && !this.hasDefinedKey) {
       console.warn(
         `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
       );
     }
-    this.addLine(`${id}.keys[${loopVar}] = ${key};`);
-    this.key = currentKey;
+    this.addLine(`${id}.keys[${loopVar}] = key${this.loopLevel};`);
+    this.hasDefinedKey = initialState;
 
     this.target.indentLevel--;
     this.addLine(`}`);
@@ -746,9 +751,11 @@ class QWebCompiler {
   }
 
   compileTKey(ast: ASTTKey, ctx: Context) {
-    const id = this.generateId("k");
-    this.addLine(`const ${id} = ${compileExpr(ast.expr)};`);
-    this.key = id;
+    if (this.loopLevel === 0) {
+      this.shouldDefineKey0 = true;
+    }
+    this.addLine(`key${this.loopLevel} = ${compileExpr(ast.expr)};`);
+    this.hasDefinedKey = true;
     this.compileAST(ast.content, ctx);
   }
 
@@ -844,8 +851,12 @@ class QWebCompiler {
     const propString = `{${props.join(",")}}`;
 
     // cmap key
-    const key = "`" + this.generateId("_") + "`";
-    const blockString = `new BComponent(\`${ast.name}\`, ${propString}, ${key}, ctx)`;
+    const parts = [this.generateId("__")];
+    for (let i = 0; i < this.loopLevel; i++) {
+      parts.push(`\${key${i + 1}}`);
+    }
+    const key = parts.join("__");
+    const blockString = `new BComponent(\`${ast.name}\`, ${propString}, \`${key}\`, ctx)`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;

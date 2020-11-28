@@ -32,7 +32,7 @@ exports[`misc global 1`] = `
       ctx[\`value_last\`] = i1 === v1.length - 1;
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = k1[i1];
-      const k2 = ctx['value'];
+      let key1 = ctx['value'];
       const b3 = b2.children[i1] = new BMulti(2);
       const b4 = b3.children[0] = new Block2();
       b4.data[0] = ctx['value'];
@@ -48,7 +48,7 @@ exports[`misc global 1`] = `
       ctx[zero] = b5;
       b3.children[1] = call(\`_callee-asc\`, ctx, refs);
       ctx = ctx.__proto__;
-      b2.keys[i1] = k2;
+      b2.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
     b1.children[1] = call(\`_callee-asc-toto\`, ctx, refs);

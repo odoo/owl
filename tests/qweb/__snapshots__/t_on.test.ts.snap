@@ -136,11 +136,11 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
       ctx[\`action_last\`] = i1 === v1.length - 1;
       ctx[\`action_index\`] = i1;
       ctx[\`action_value\`] = k1[i1];
-      const k2 = ctx['action_index'];
+      let key1 = ctx['action_index'];
       const b3 = b2.children[i1] = new Block2();
-      const arg3 = [ctx['action']];
-      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg3, e), ctx];
-      b2.keys[i1] = k2;
+      const arg2 = [ctx['action']];
+      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg2, e), ctx];
+      b2.keys[i1] = key1;
     }
     return b1;
   }
@@ -253,10 +253,11 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
       ctx[\`value_last\`] = i1 === v1.length - 1;
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = k1[i1];
-      const k2 = ctx['value'];
+      let key1 = i1;
+      key1 = ctx['value'];
       const b2 = b1.children[i1] = new Block1();
       b2.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
-      b1.keys[i1] = k2;
+      b1.keys[i1] = key1;
     }
     return b1;
   }
@@ -347,9 +348,9 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
       ctx[\`value_last\`] = i1 === v1.length - 1;
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = k1[i1];
-      const k2 = ctx['value'];
+      let key1 = ctx['value'];
       b1.children[i1] = call(\`sub\`, ctx, refs);
-      b1.keys[i1] = k2;
+      b1.keys[i1] = key1;
     }
     b1.refs = refs;
     return b1;

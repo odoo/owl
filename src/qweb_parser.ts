@@ -76,6 +76,7 @@ export interface ASTTForEach {
   type: ASTType.TForEach;
   collection: string;
   elem: string;
+  key: string | null;
   body: AST;
 }
 
@@ -377,7 +378,10 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-foreach");
   const elem = node.getAttribute("t-as") || "";
   node.removeAttribute("t-as");
+  const key = node.getAttribute("t-key");
+  node.removeAttribute("t-key");
   const body = parseNode(node, ctx);
+
   if (!body) {
     return null;
   }
@@ -386,6 +390,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     collection,
     elem,
     body,
+    key,
   };
 }
 

@@ -469,6 +469,17 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
+      key: null,
+      body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+    });
+  });
+
+  test("simple keyed t-foreach expression", async () => {
+    expect(parse(`<t t-foreach="list" t-as="item" t-key="item.id"><t t-esc="item"/></t>`)).toEqual({
+      type: ASTType.TForEach,
+      collection: "list",
+      elem: "item",
+      key: "item.id",
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
     });
   });
@@ -478,6 +489,7 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
+      key: null,
       body: {
         type: ASTType.DomNode,
         tag: "span",
@@ -504,17 +516,14 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
+      key: "item_index",
       body: {
-        type: ASTType.TKey,
-        expr: "item_index",
-        content: {
-          type: ASTType.DomNode,
-          tag: "span",
-          on: {},
-          ref: null,
-          attrs: {},
-          content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
-        },
+        type: ASTType.DomNode,
+        tag: "span",
+        on: {},
+        ref: null,
+        attrs: {},
+        content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
     });
   });

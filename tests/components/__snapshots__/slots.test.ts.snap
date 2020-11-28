@@ -53,7 +53,7 @@ exports[`slots can define and call slots 2`] = `
     const b1 = new Block1();
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'header': slot4(ctx2), 'footer': slot5(ctx2)};
-    const b4 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`_1\`, ctx);
+    const b4 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     b4.component.__owl__.slots = slots3;
     return b1;
   }
@@ -128,7 +128,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
     const b1 = new Block1();
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'header': slot4(ctx2)};
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`_1\`, ctx);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     b3.component.__owl__.slots = slots3;
     return b1;
   }
@@ -179,7 +179,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
     const b1 = new Block1();
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'default': slot4(ctx2)};
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`_1\`, ctx);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     b3.component.__owl__.slots = slots3;
     return b1;
   }
@@ -200,7 +200,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
   return ctx => {
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'default': slot4(ctx2)};
-    const b2 = new BComponent(\`Child\`, {}, \`_1\`, ctx);
+    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
     b2.component.__owl__.slots = slots3;
     return b2;
   }
@@ -259,7 +259,7 @@ exports[`slots named slots can define a default content 2`] = `
   
   return ctx => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Dialog\`, {}, \`_1\`, ctx);
+    b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     return b1;
   }
 }"
@@ -291,7 +291,7 @@ exports[`slots no named slot content => just no children 2`] = `
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(\`Dialog\`, {}, \`_1\`, ctx);
+    const b1 = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     return b1;
   }
 }"
@@ -311,7 +311,7 @@ exports[`slots simple default slot 1`] = `
   return ctx => {
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'default': slot4(ctx2)};
-    const b2 = new BComponent(\`Child\`, {}, \`_1\`, ctx);
+    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
     b2.component.__owl__.slots = slots3;
     return b2;
   }
@@ -351,7 +351,7 @@ exports[`slots simple default slot, variation 1`] = `
   return ctx => {
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'default': slot4(ctx2)};
-    const b2 = new BComponent(\`Child\`, {}, \`_1\`, ctx);
+    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
     b2.component.__owl__.slots = slots3;
     return b2;
   }
@@ -397,7 +397,7 @@ exports[`slots slot content is bound to caller 1`] = `
     ctx[scope] = 1;
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'default': slot4(ctx2)};
-    const b2 = new BComponent(\`Child\`, {}, \`_1\`, ctx);
+    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
     b2.component.__owl__.slots = slots3;
     return b2;
   }
@@ -479,7 +479,7 @@ exports[`slots slots are rendered with proper context 2`] = `
     b1.data[0] = ctx['state'].val;
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'footer': slot4(ctx2)};
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`_1\`, ctx);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     b3.component.__owl__.slots = slots3;
     return b1;
   }
@@ -502,7 +502,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
     children = new Array(1);
   }
   
-  const slot6 = ctx => () => {
+  const slot5 = ctx => () => {
     const b4 = new BMulti(2);
     b4.children[0] = new BText(\`User \`);
     b4.children[1] = new BText(ctx['user'].name);
@@ -520,13 +520,13 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
       ctx[\`user_last\`] = i1 === v1.length - 1;
       ctx[\`user_index\`] = i1;
       ctx[\`user_value\`] = k1[i1];
-      const k2 = ctx['user'].id;
+      let key1 = ctx['user'].id;
       const b3 = b2.children[i1] = new Block2();
-      const ctx4 = Object.assign(Object.create(ctx), ctx);
-      const slots5 = {'default': slot6(ctx4)};
-      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, \`_3\`, ctx);
-      b5.component.__owl__.slots = slots5;
-      b2.keys[i1] = k2;
+      const ctx3 = Object.assign(Object.create(ctx), ctx);
+      const slots4 = {'default': slot5(ctx3)};
+      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, \`__2__\${key1}\`, ctx);
+      b5.component.__owl__.slots = slots4;
+      b2.keys[i1] = key1;
     }
     return b1;
   }

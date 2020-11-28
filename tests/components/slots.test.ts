@@ -230,7 +230,7 @@ describe("slots", () => {
     );
   });
 
-  test.skip("slots are rendered with proper context, part 2", async () => {
+  test("slots are rendered with proper context, part 2", async () => {
     class Link extends Component {
       static template = xml`
           <a t-att-href="props.to">

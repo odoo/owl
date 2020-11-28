@@ -290,11 +290,11 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
       ctx[\`elem_last\`] = i1 === v1.length - 1;
       ctx[\`elem_index\`] = i1;
       ctx[\`elem_value\`] = k1[i1];
-      const k2 = ctx['elem_index'];
+      let key1 = ctx['elem_index'];
       const b3 = b2.children[i1] = new Block2();
       b3.data[0] = ctx['v'];
       ctx[\`v\`] = ctx['elem'];
-      b2.keys[i1] = k2;
+      b2.keys[i1] = key1;
     }
     return b1;
   }

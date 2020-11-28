@@ -378,6 +378,8 @@ export class BCollection extends Block {
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (oldCh[oldStartIdx] === null) {
         oldStartIdx++;
+      } else if (oldCh[oldEndIdx] === null) {
+        oldEndIdx--;
       } else if (oldKeys[oldStartIdx] === newKeys[newStartIdx]) {
         oldCh[oldStartIdx].patch(newCh[newStartIdx]);
         newCh[newStartIdx] = oldCh[oldStartIdx];
@@ -388,6 +390,26 @@ export class BCollection extends Block {
         newCh[newEndIdx] = oldCh[oldEndIdx];
         oldEndIdx--;
         newEndIdx--;
+      } else if (oldKeys[oldStartIdx] === newKeys[newEndIdx]) {
+        // bnode moved right
+        const elm = oldCh[oldStartIdx];
+        elm.patch(newCh[newEndIdx]);
+        const nextChild = newCh[newEndIdx + 1];
+        const anchor = nextChild ? nextChild.firstChildNode()! : this.anchor!;
+        elm.moveBefore(anchor);
+        newCh[newEndIdx] = elm;
+        oldStartIdx++;
+        newEndIdx--;
+      } else if (oldKeys[oldEndIdx] === newKeys[newStartIdx]) {
+        // bnode moved left
+        const elm = oldCh[oldEndIdx];
+        elm.patch(newCh[newStartIdx]);
+        const nextChild = oldCh[oldStartIdx];
+        const anchor = nextChild ? nextChild.firstChildNode()! : this.anchor!;
+        elm.moveBefore(anchor);
+        newCh[newStartIdx] = elm;
+        oldEndIdx--;
+        newStartIdx++;
       } else {
         mapping = mapping || createMapping(oldKeys, oldStartIdx, oldEndIdx);
         let idxInOld = mapping[newKeys[newStartIdx]];

@@ -1,5 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2,3,4,5 (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2,3,4,5 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -27,6 +72,51 @@ exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`adding/removing elements add element in middle: 1,2,4,5 => 1,2,3,4,5 (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
       b1.keys[i1] = key1;
     }
     return b1;
@@ -68,6 +158,51 @@ exports[`adding/removing elements add element in middle: 1,2,4,5 => 1,2,3,4,5 1`
 }"
 `;
 
+exports[`adding/removing elements adding one element at the end (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`adding/removing elements adding one element at the end 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -95,6 +230,51 @@ exports[`adding/removing elements adding one element at the end 1`] = `
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`adding/removing elements adding two elements at the end (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
       b1.keys[i1] = key1;
     }
     return b1;
@@ -130,6 +310,57 @@ exports[`adding/removing elements adding two elements at the end 1`] = `
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
       b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b2 = b1.children[0] = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b3 = b2.children[i1] = new BMulti(2);
+      const b4 = b3.children[0] = new Block2();
+      b4.data[0] = ctx['item'];
+      const b5 = b3.children[1] = new Block3();
+      b5.data[0] = ctx['item'];
+      b2.keys[i1] = key1;
     }
     return b1;
   }
@@ -176,6 +407,51 @@ exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] 1`]
 }"
 `;
 
+exports[`adding/removing elements adds children: [] => [1,2,3] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`adding/removing elements adds children: [] => [1,2,3] 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -203,6 +479,51 @@ exports[`adding/removing elements adds children: [] => [1,2,3] 1`] = `
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`adding/removing elements prepend elements: 4,5 => 1,2,3,4,5 (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
       b1.keys[i1] = key1;
     }
     return b1;
@@ -278,6 +599,51 @@ exports[`adding/removing elements remove children (inside elem): [1,2,3] => [] 1
       const b3 = b2.children[i1] = new Block2();
       b3.data[0] = ctx['item'];
       b2.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`adding/removing elements remove children from the beginning: [1,2,3,4,5] => [3,4,5] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
     }
     return b1;
   }
@@ -386,6 +752,51 @@ exports[`adding/removing elements remove children from the middle: [1,2,3,4,5] =
 }"
 `;
 
+exports[`adding/removing elements remove children: [1,2,3] => [] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`adding/removing elements remove children: [1,2,3] => [] 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -413,6 +824,51 @@ exports[`adding/removing elements remove children: [1,2,3] => [] 1`] = `
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`adding/removing elements removing elements (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
       b1.keys[i1] = key1;
     }
     return b1;
@@ -488,6 +944,51 @@ exports[`element reordering move element backward: [1,2,3,4] => [1,4,2,3] 1`] = 
 }"
 `;
 
+exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -515,6 +1016,51 @@ exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] 1`] = `
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`element reordering move element to end: [1,2,3] => [2,3,1] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
       b1.keys[i1] = key1;
     }
     return b1;
@@ -651,6 +1197,51 @@ exports[`miscellaneous operations move to left and leave hole: [1,4,5] => [4,6] 
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
       b2.data[0] = ctx['item'];
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`miscellaneous operations move to left and replace: [1,2,3,4,5] => [4,1,2,3,6] (2 nodes) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      const b2 = b1.children[i1] = new BMulti(2);
+      const b3 = b2.children[0] = new Block1();
+      b3.data[0] = ctx['item'];
+      const b4 = b2.children[1] = new Block2();
+      b4.data[0] = ctx['item'];
       b1.keys[i1] = key1;
     }
     return b1;

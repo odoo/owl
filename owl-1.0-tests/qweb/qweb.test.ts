@@ -624,25 +624,25 @@ describe("attributes", () => {
   //   expect(result).toBe(`<div></div>`);
   // });
 
-  test("tuple literal", () => {
-    qweb.addTemplate("test", `<div t-att="['foo', 'bar']"/>`);
-    const result = renderToString(qweb, "test");
-    expect(result).toBe(`<div foo="bar"></div>`);
-  });
+  // test("tuple literal", () => {
+  //   qweb.addTemplate("test", `<div t-att="['foo', 'bar']"/>`);
+  //   const result = renderToString(qweb, "test");
+  //   expect(result).toBe(`<div foo="bar"></div>`);
+  // });
 
-  test("tuple variable", () => {
-    qweb.addTemplate("test", `<div t-att="value"/>`);
-    const result = renderToString(qweb, "test", { value: ["foo", "bar"] });
-    expect(result).toBe(`<div foo="bar"></div>`);
-  });
+  // test("tuple variable", () => {
+  //   qweb.addTemplate("test", `<div t-att="value"/>`);
+  //   const result = renderToString(qweb, "test", { value: ["foo", "bar"] });
+  //   expect(result).toBe(`<div foo="bar"></div>`);
+  // });
 
-  test("object", () => {
-    qweb.addTemplate("test", `<div t-att="value"/>`);
-    const result = renderToString(qweb, "test", {
-      value: { a: 1, b: 2, c: 3 },
-    });
-    expect(result).toBe(`<div a="1" b="2" c="3"></div>`);
-  });
+  // test("object", () => {
+  //   qweb.addTemplate("test", `<div t-att="value"/>`);
+  //   const result = renderToString(qweb, "test", {
+  //     value: { a: 1, b: 2, c: 3 },
+  //   });
+  //   expect(result).toBe(`<div a="1" b="2" c="3"></div>`);
+  // });
 
   test("format literal", () => {
     qweb.addTemplate("test", `<div t-attf-foo="bar"/>`);

@@ -573,7 +573,11 @@ class QWebCompiler {
         if (key === "class") {
           block.insertUpdate((el) => `this.updateClass(${el}, this.data[${idx}]);`);
         } else {
-          block.insertUpdate((el) => `this.updateAttr(${el}, \`${key}\`, this.data[${idx}]);`);
+          if (key) {
+            block.insertUpdate((el) => `this.updateAttr(${el}, \`${key}\`, this.data[${idx}]);`);
+          } else {
+            block.insertUpdate((el) => `this.updateAttrs(${el}, this.data[${idx}]);`);
+          }
         }
       }
     }

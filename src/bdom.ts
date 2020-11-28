@@ -193,6 +193,16 @@ export class BNode extends Block {
     }
   }
 
+  updateAttrs(elem: HTMLElement, attrs: [string, string] | { [key: string]: string }) {
+    if (Array.isArray(attrs)) {
+      elem.setAttribute(attrs[0], attrs[1]);
+    } else {
+      for (let key in attrs) {
+        elem.setAttribute(key, attrs[key]);
+      }
+    }
+  }
+
   setupHandler(el: HTMLElement, index: number) {
     const eventType = this.handlers![index][0];
     el.addEventListener(eventType, () => {

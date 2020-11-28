@@ -75,4 +75,27 @@ describe("attributes", () => {
     const result = renderToString(template, { value: false });
     expect(result).toBe(`<div></div>`);
   });
+
+  test("tuple literal", () => {
+    const template = `<div t-att="['foo', 'bar']"/>`;
+    snapshotTemplateCode(template);
+    const result = renderToString(template);
+    expect(result).toBe(`<div foo="bar"></div>`);
+  });
+
+  test("tuple variable", () => {
+    const template = `<div t-att="value"/>`;
+    snapshotTemplateCode(template);
+    const result = renderToString(template, { value: ["foo", "bar"] });
+    expect(result).toBe(`<div foo="bar"></div>`);
+  });
+
+  test("object", () => {
+    const template = `<div t-att="value"/>`;
+    snapshotTemplateCode(template);
+    const result = renderToString(template, {
+      value: { a: 1, b: 2, c: 3 },
+    });
+    expect(result).toBe(`<div a="1" b="2" c="3"></div>`);
+  });
 });

@@ -179,17 +179,28 @@ export class BNode extends Block {
 
   update() {}
 
-  updateClass(elem: HTMLElement, _class: string) {
-    if (_class) {
-      elem.classList.add(_class);
+  updateClass(elem: HTMLElement, _class: any) {
+    switch (typeof _class) {
+      case "object":
+        for (let k in _class) {
+          if (_class[k]) {
+            elem.classList.add(k);
+          }
+        }
+        break;
+      case "string":
+        if (_class) {
+          elem.classList.add(_class);
+        }
+        break;
+      default:
+        elem.classList.add(_class);
     }
   }
 
   updateAttr(elem: HTMLElement, attr: string, value: any) {
-    if (value) {
+    if (value !== false) {
       elem.setAttribute(attr, value);
-    } else {
-      elem.removeAttribute(attr);
     }
   }
 

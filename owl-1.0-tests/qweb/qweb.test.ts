@@ -644,108 +644,108 @@ describe("attributes", () => {
   //   expect(result).toBe(`<div a="1" b="2" c="3"></div>`);
   // });
 
-  test("format literal", () => {
-    qweb.addTemplate("test", `<div t-attf-foo="bar"/>`);
-    const result = renderToString(qweb, "test");
-    expect(result).toBe(`<div foo="bar"></div>`);
-  });
+  // test("format literal", () => {
+  //   qweb.addTemplate("test", `<div t-attf-foo="bar"/>`);
+  //   const result = renderToString(qweb, "test");
+  //   expect(result).toBe(`<div foo="bar"></div>`);
+  // });
 
-  test("t-attf-class should combine with class", () => {
-    qweb.addTemplate("test", `<div class="hello" t-attf-class="world"/>`);
-    const result = renderToString(qweb, "test");
-    expect(result).toBe(`<div class="hello world"></div>`);
-  });
+  // test("t-attf-class should combine with class", () => {
+  //   qweb.addTemplate("test", `<div class="hello" t-attf-class="world"/>`);
+  //   const result = renderToString(qweb, "test");
+  //   expect(result).toBe(`<div class="hello world"></div>`);
+  // });
 
-  test("format value", () => {
-    qweb.addTemplate("test", `<div t-attf-foo="b{{value}}r"/>`);
-    const result = renderToString(qweb, "test", { value: "a" });
-    expect(result).toBe(`<div foo="bar"></div>`);
-  });
+  // test("format value", () => {
+  //   qweb.addTemplate("test", `<div t-attf-foo="b{{value}}r"/>`);
+  //   const result = renderToString(qweb, "test", { value: "a" });
+  //   expect(result).toBe(`<div foo="bar"></div>`);
+  // });
 
-  test("from variables set previously", () => {
-    qweb.addTemplate(
-      "test",
-      `<div><t t-set="abc" t-value="'def'"/><span t-att-class="abc"/></div>`
-    );
-    const result = renderToString(qweb, "test");
-    expect(result).toBe('<div><span class="def"></span></div>');
-  });
+  // test("from variables set previously", () => {
+  //   qweb.addTemplate(
+  //     "test",
+  //     `<div><t t-set="abc" t-value="'def'"/><span t-att-class="abc"/></div>`
+  //   );
+  //   const result = renderToString(qweb, "test");
+  //   expect(result).toBe('<div><span class="def"></span></div>');
+  // });
 
-  test("from object variables set previously", () => {
-    // Note: standard qweb does not allow this...
-    qweb.addTemplate(
-      "test",
-      `<div><t t-set="o" t-value="{a:'b'}"/><span t-att-class="o.a"/></div>`
-    );
-    const result = renderToString(qweb, "test");
-    expect(result).toBe('<div><span class="b"></span></div>');
-  });
+  // test("from object variables set previously", () => {
+  //   // Note: standard qweb does not allow this...
+  //   qweb.addTemplate(
+  //     "test",
+  //     `<div><t t-set="o" t-value="{a:'b'}"/><span t-att-class="o.a"/></div>`
+  //   );
+  //   const result = renderToString(qweb, "test");
+  //   expect(result).toBe('<div><span class="b"></span></div>');
+  // });
 
-  test("format expression", () => {
-    qweb.addTemplate("test", `<div t-attf-foo="{{value + 37}}"/>`);
-    const result = renderToString(qweb, "test", { value: 5 });
-    expect(result).toBe(`<div foo="42"></div>`);
-  });
+  // test("format expression", () => {
+  //   qweb.addTemplate("test", `<div t-attf-foo="{{value + 37}}"/>`);
+  //   const result = renderToString(qweb, "test", { value: 5 });
+  //   expect(result).toBe(`<div foo="42"></div>`);
+  // });
 
-  test("format expression, other format", () => {
-    qweb.addTemplate("test", `<div t-attf-foo="{{value + 37}}"/>`);
-    const result = renderToString(qweb, "test", { value: 5 });
-    expect(result).toBe(`<div foo="42"></div>`);
-  });
+  // test("format expression, other format", () => {
+  //   qweb.addTemplate("test", `<div t-attf-foo="{{value + 37}}"/>`);
+  //   const result = renderToString(qweb, "test", { value: 5 });
+  //   expect(result).toBe(`<div foo="42"></div>`);
+  // });
 
-  test("format multiple", () => {
-    qweb.addTemplate("test", `<div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>`);
-    const result = renderToString(qweb, "test", {
-      value1: 0,
-      value2: 1,
-      value3: 2,
-    });
-    expect(result).toBe(`<div foo="a 0 is 1 of 2 ]"></div>`);
-  });
+  // test("format multiple", () => {
+  //   qweb.addTemplate("test", `<div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>`);
+  //   const result = renderToString(qweb, "test", {
+  //     value1: 0,
+  //     value2: 1,
+  //     value3: 2,
+  //   });
+  //   expect(result).toBe(`<div foo="a 0 is 1 of 2 ]"></div>`);
+  // });
 
-  test("various escapes", () => {
-    // not needed??
-    qweb.addTemplate(
-      "test",
-      `
-         <div foo="&lt;foo"
-            t-att-bar="bar"
-            t-attf-baz="&lt;{{baz}}&gt;"
-            t-att="qux"/>
-        `
-    );
-    const result = renderToString(qweb, "test", {
-      bar: 0,
-      baz: 1,
-      qux: { qux: "<>" },
-    });
-    const expected = '<div foo="<foo" bar="0" baz="<1>" qux="<>"></div>';
-    expect(result).toBe(expected);
-  });
+  // test("various escapes", () => {
+  //   // not needed??
+  //   qweb.addTemplate(
+  //     "test",
+  //     `
+  //        <div foo="&lt;foo"
+  //           t-att-bar="bar"
+  //           t-attf-baz="&lt;{{baz}}&gt;"
+  //           t-att="qux"/>
+  //       `
+  //   );
+  //   const result = renderToString(qweb, "test", {
+  //     bar: 0,
+  //     baz: 1,
+  //     qux: { qux: "<>" },
+  //   });
+  //   const expected = '<div foo="<foo" bar="0" baz="<1>" qux="<>"></div>';
+  //   expect(result).toBe(expected);
+  // });
 
-  test("t-att-class and class should combine together", () => {
-    qweb.addTemplate("test", `<div class="hello" t-att-class="value"/>`);
-    const result = renderToString(qweb, "test", { value: "world" });
-    expect(result).toBe(`<div class="hello world"></div>`);
-  });
+  // test("t-att-class and class should combine together", () => {
+  //   qweb.addTemplate("test", `<div class="hello" t-att-class="value"/>`);
+  //   const result = renderToString(qweb, "test", { value: "world" });
+  //   expect(result).toBe(`<div class="hello world"></div>`);
+  // });
 
-  test("class and t-att-class should combine together", () => {
-    qweb.addTemplate("test", `<div t-att-class="value" class="hello" />`);
-    const result = renderToString(qweb, "test", { value: "world" });
-    expect(result).toBe(`<div class="world hello"></div>`);
-  });
+  // test("class and t-att-class should combine together", () => {
+  //   qweb.addTemplate("test", `<div t-att-class="value" class="hello" />`);
+  //   const result = renderToString(qweb, "test", { value: "world" });
+  //   expect(result).toBe(`<div class="world hello"></div>`);
+  // });
 
-  test("class and t-attf-class with ternary operation", () => {
-    qweb.addTemplate("test", `<div class="hello" t-attf-class="{{value ? 'world' : ''}}"/>`);
-    const result = renderToString(qweb, "test", { value: true });
-    expect(result).toBe(`<div class="hello world"></div>`);
-  });
+  // test("class and t-attf-class with ternary operation", () => {
+  //   qweb.addTemplate("test", `<div class="hello" t-attf-class="{{value ? 'world' : ''}}"/>`);
+  //   const result = renderToString(qweb, "test", { value: true });
+  //   expect(result).toBe(`<div class="hello world"></div>`);
+  // });
 
-  test("t-att-class with object", () => {
-    qweb.addTemplate("test", `<div class="static" t-att-class="{a: b, c: d, e: f}"/>`);
-    const result = renderToString(qweb, "test", { b: true, d: false, f: true });
-    expect(result).toBe(`<div class="static a e"></div>`);
-  });
+  // test("t-att-class with object", () => {
+  //   qweb.addTemplate("test", `<div class="static" t-att-class="{a: b, c: d, e: f}"/>`);
+  //   const result = renderToString(qweb, "test", { b: true, d: false, f: true });
+  //   expect(result).toBe(`<div class="static a e"></div>`);
+  // });
 });
 
 describe("t-call (template calling", () => {
@@ -1270,26 +1270,26 @@ describe("foreach", () => {
   //   expect(() => qweb.render("test")).toThrow("Invalid loop expression");
   // });
 
-  test("warn if no key in some case", () => {
-    const consoleWarn = console.warn;
-    console.warn = jest.fn();
+  // test("warn if no key in some case", () => {
+  //   const consoleWarn = console.warn;
+  //   console.warn = jest.fn();
 
-    qweb.addTemplate(
-      "test",
-      `
-      <div>
-        <t t-foreach="[1, 2]" t-as="item">
-          <span><t t-esc="item"/></span>
-        </t>
-    </div>`
-    );
-    renderToString(qweb, "test");
-    expect(console.warn).toHaveBeenCalledTimes(1);
-    expect(console.warn).toHaveBeenCalledWith(
-      "Directive t-foreach should always be used with a t-key! (in template: 'test')"
-    );
-    console.warn = consoleWarn;
-  });
+  //   qweb.addTemplate(
+  //     "test",
+  //     `
+  //     <div>
+  //       <t t-foreach="[1, 2]" t-as="item">
+  //         <span><t t-esc="item"/></span>
+  //       </t>
+  //   </div>`
+  //   );
+  //   renderToString(qweb, "test");
+  //   expect(console.warn).toHaveBeenCalledTimes(1);
+  //   expect(console.warn).toHaveBeenCalledWith(
+  //     "Directive t-foreach should always be used with a t-key! (in template: 'test')"
+  //   );
+  //   console.warn = consoleWarn;
+  // });
 });
 
 describe("misc", () => {

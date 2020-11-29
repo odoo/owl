@@ -91,4 +91,43 @@ describe("lifecycle hooks", () => {
     await mount(Test, { target: fixture });
     expect(mounted).toBe(true);
   });
+
+  test("willStart hook is called on subwidget", async () => {
+    let ok = false;
+    class Child extends Component {
+      static template = xml`<div/>`;
+      async willStart() {
+        ok = true;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child />`;
+      static components = { Child };
+    }
+    await mount(Parent, { target: fixture });
+    expect(ok).toBe(true);
+  });
+
+  test("mounted hook is called on subcomponents, in proper order", async () => {
+    const steps: any[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      mounted() {
+        expect(document.body.contains(this.el)).toBe(true);
+        steps.push("child:mounted");
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child />`;
+      static components = { Child };
+      mounted() {
+        steps.push("parent:mounted");
+      }
+    }
+    await mount(Parent, { target: fixture });
+    expect(steps).toEqual(["child:mounted", "parent:mounted"]);
+  });
 });

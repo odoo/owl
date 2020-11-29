@@ -270,10 +270,10 @@ describe("basic widget properties", () => {
     expect(fixture.innerHTML).toBe("<div>2</div>");
   });
 
-  test("keeps a reference to env", async () => {
-    const widget = new Component();
-    expect(widget.env).toBe(env);
-  });
+  // test("keeps a reference to env", async () => {
+  //   const widget = new Component();
+  //   expect(widget.env).toBe(env);
+  // });
 
   test("do not remove previously rendered dom if not necessary", async () => {
     class SomeComponent extends Component {
@@ -449,23 +449,23 @@ describe("lifecycle hooks", () => {
   //   expect(mounted).toBe(true);
   // });
 
-  test("willStart hook is called on subwidget", async () => {
-    let ok = false;
-    class ChildWidget extends Component {
-      static template = xml`<div/>`;
-      async willStart() {
-        ok = true;
-      }
-    }
+  // test("willStart hook is called on subwidget", async () => {
+  //   let ok = false;
+  //   class ChildWidget extends Component {
+  //     static template = xml`<div/>`;
+  //     async willStart() {
+  //       ok = true;
+  //     }
+  //   }
 
-    class ParentWidget extends Component {
-      static template = xml`<div><t t-component="child"/></div>`;
-      static components = { child: ChildWidget };
-    }
-    const widget = new ParentWidget();
-    await widget.mount(fixture);
-    expect(ok).toBe(true);
-  });
+  //   class ParentWidget extends Component {
+  //     static template = xml`<div><t t-component="child"/></div>`;
+  //     static components = { child: ChildWidget };
+  //   }
+  //   const widget = new ParentWidget();
+  //   await widget.mount(fixture);
+  //   expect(ok).toBe(true);
+  // });
 
   test("mounted hook is called on subcomponents, in proper order", async () => {
     const steps: any[] = [];

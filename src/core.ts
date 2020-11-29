@@ -74,10 +74,12 @@ class BComponent extends Block {
   constructor(name: string, props: any, key: string, ctx: any) {
     super();
     const parentData: ComponentData = ctx.__owl__;
-    const fiber = new ChildFiber(parentData, parentData.fiber!);
     let component = parentData.children[key];
     if (component) {
       // update
+      const fiber = new ChildFiber(component.__owl__, parentData.fiber!);
+      const parentFiber = parentData.fiber!;
+      parentFiber.child = fiber; // wrong!
       updateAndRender(component, fiber, props);
     } else {
       // new component
@@ -85,6 +87,9 @@ class BComponent extends Block {
       const C = components[name];
       component = prepare(C, props);
       parentData.children[key] = component;
+      const fiber = new ChildFiber(component.__owl__, parentData.fiber!);
+      const parentFiber = parentData.fiber!;
+      parentFiber.child = fiber; // wrong!
       internalRender(component, fiber);
     }
     this.component = component;
@@ -217,8 +222,23 @@ class BaseFiber {
   bdom: BDom | null = null;
   error?: Error;
   __owl__: ComponentData;
+
+  child: Fiber | null = null;
+  sibling: Fiber | null = null;
+
   constructor(__owl__: ComponentData) {
     this.__owl__ = __owl__;
+  }
+
+  mountComponents() {
+    if (this.child) {
+      this.child.mountComponents();
+    }
+    if (this.sibling) {
+      this.sibling.mountComponents();
+    }
+    this.__owl__.mountedCB();
+    this.__owl__.isMounted = true;
   }
 }
 
@@ -265,11 +285,11 @@ class MountingFiber extends RootFiber {
     this.target = target;
   }
   complete() {
-    this.__owl__!.bdom! = this.__owl__!.fiber!.bdom!;
-    this.__owl__!.bdom!.mount(this.target);
+    const __owl__ = this.__owl__!;
+    __owl__.bdom! = __owl__.fiber!.bdom!;
+    __owl__.bdom!.mount(this.target);
     if (document.body.contains(this.target)) {
-      this.__owl__.mountedCB();
-      this.__owl__.isMounted = true;
+      this.mountComponents();
     }
   }
 }

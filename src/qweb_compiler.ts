@@ -902,10 +902,20 @@ class QWebCompiler {
           rootBlock: null,
         };
         this.functions.push(slot);
-        slotStr.push(`'${slotName}': ${name}(${ctxId})`);
         this.target = slot;
         const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
+        const nextId = this.getNextBlockId();
         this.compileAST(ast.slots[slotName], subCtx);
+        if (this.hasRef) {
+          slot.signature = "(ctx, refs) => () => {";
+          slotStr.push(`'${slotName}': ${name}(${ctxId}, refs)`);
+          const id = nextId();
+          if (id) {
+            this.addLine(`${id}.refs = refs;`);
+          }
+        } else {
+          slotStr.push(`'${slotName}': ${name}(${ctxId})`);
+        }
       }
       this.target = initialTarget;
       this.addLine(`const ${slotId} = {${slotStr.join(", ")}};`);

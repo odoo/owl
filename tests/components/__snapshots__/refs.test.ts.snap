@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`refs refs are properly bound in slots 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<button>do something</button>\`);
+    handlers = new Array(1);
+    update() {
+      this.refs[\`myButton\`] = this.el;
+    }
+    build() {
+      super.build();
+      this.setupHandler(this.el, 0);
+    }
+  }
+  
+  const slot4 = (ctx, refs) => () => {
+    const b2 = new Block2();
+    b2.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](e), ctx];
+    b2.refs = refs;
+    return b2;
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].val;
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const slots3 = {'footer': slot4(ctx2, refs)};
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
+    b3.component.__owl__.slots = slots3;
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;

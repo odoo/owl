@@ -151,6 +151,7 @@ class QWebCompiler {
   shouldProtectScope: boolean = false;
   shouldDefineOwner: boolean = false;
   shouldDefineKey0: boolean = false;
+  hasSafeContext: boolean | null = null;
   hasDefinedKey: boolean = false;
   hasRef: boolean = false;
   hasTCall: boolean = false;
@@ -160,9 +161,11 @@ class QWebCompiler {
   functions: CodeGroup[] = [];
   target: CodeGroup = { name: "main", signature: "", indentLevel: 0, code: [], rootBlock: null };
   templateName: string;
+  template: string;
   ast: AST;
 
   constructor(template: string, name?: string) {
+    this.template = template;
     this.ast = parse(template);
     // console.warn(this.ast);
     if (name) {
@@ -887,8 +890,14 @@ class QWebCompiler {
     const hasSlot = !!Object.keys(ast.slots).length;
     let slotId: string;
     if (hasSlot) {
-      const ctxId = this.generateId("ctx");
-      this.addLine(`const ${ctxId} = Object.assign(Object.create(ctx), ctx);`);
+      if (this.hasSafeContext === null) {
+        this.hasSafeContext = !this.template.includes("t-set") && !this.template.includes("t-call");
+      }
+      let ctxStr = "ctx";
+      if (this.loopLevel || !this.hasSafeContext) {
+        ctxStr = this.generateId("ctx");
+        this.addLine(`const ${ctxStr} = Object.assign(Object.create(ctx), ctx);`);
+      }
       slotId = this.generateId("slots");
       let slotStr: string[] = [];
       const initialTarget = this.target;
@@ -908,13 +917,13 @@ class QWebCompiler {
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
           slot.signature = "(ctx, refs) => () => {";
-          slotStr.push(`'${slotName}': ${name}(${ctxId}, refs)`);
+          slotStr.push(`'${slotName}': ${name}(${ctxStr}, refs)`);
           const id = nextId();
           if (id) {
             this.addLine(`${id}.refs = refs;`);
           }
         } else {
-          slotStr.push(`'${slotName}': ${name}(${ctxId})`);
+          slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
         }
       }
       this.target = initialTarget;

@@ -342,4 +342,40 @@ describe("slots", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
   });
+
+  test("content is the default slot", async () => {
+    class Dialog extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>
+            <span>sts rocks</span>
+          </Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
+  });
+
+  test("content is the default slot (variation)", async () => {
+    class Dialog extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+          <Dialog>
+            <span>sts rocks</span>
+          </Dialog>`;
+      static components = { Dialog };
+    }
+
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<span>sts rocks</span>");
+  });
 });

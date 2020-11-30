@@ -273,6 +273,56 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 }"
 `;
 
+exports[`slots default slot work with text nodes (variation) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  const slot3 = ctx => () => {
+    const b1 = new BText(\`sts rocks\`);
+    return b1;
+  }
+  
+  return ctx => {
+    const slots2 = {'default': slot3(ctx)};
+    const b2 = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
+    b2.component.__owl__.slots = slots2;
+    return b2;
+  }
+}"
+`;
+
+exports[`slots default slot work with text nodes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot3 = ctx => () => {
+    const b2 = new BText(\`sts rocks\`);
+    return b2;
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const slots2 = {'default': slot3(ctx)};
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
+    b3.component.__owl__.slots = slots2;
+    return b1;
+  }
+}"
+`;
+
 exports[`slots fun: two calls to the same slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -303,6 +353,112 @@ exports[`slots fun: two calls to the same slot 2`] = `
     const b1 = new BMulti(2);
     b1.children[0] = callSlot(ctx, 'default');
     b1.children[1] = callSlot(ctx, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots missing slots are ignored 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/><span>some content</span><owl-anchor/></span>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling.nextSibling;
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, 'default');
+    b1.children[1] = callSlot(ctx, 'footer');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots multiple roots are allowed in a default slot 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<span>sts</span>\`);
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<span>rocks</span>\`);
+  }
+  
+  const slot3 = ctx => () => {
+    const b2 = new BMulti(2);
+    const b3 = b2.children[0] = new Block2();
+    const b4 = b2.children[1] = new Block3();
+    return b2;
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const slots2 = {'default': slot3(ctx)};
+    const b5 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
+    b5.component.__owl__.slots = slots2;
+    return b1;
+  }
+}"
+`;
+
+exports[`slots multiple roots are allowed in a named slot 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<span>sts</span>\`);
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<span>rocks</span>\`);
+  }
+  
+  const slot4 = ctx => () => {
+    const b2 = new BMulti(2);
+    const b3 = b2.children[0] = new Block2();
+    const b4 = b2.children[1] = new Block3();
+    return b2;
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const slots3 = {'content': slot4(ctx2)};
+    const b5 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
+    b5.component.__owl__.slots = slots3;
     return b1;
   }
 }"
@@ -520,6 +676,96 @@ exports[`slots slot content is bound to caller 2`] = `
   return ctx => {
     const b1 = new Block1();
     b1.children[0] = callSlot(ctx, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot3 = ctx => () => {
+    const b2 = new BComponent(\`GrandChild\`, {}, \`__4\`, ctx);
+    return b2;
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const slots2 = {'default': slot3(ctx)};
+    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b3.component.__owl__.slots = slots2;
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = callSlot(ctx, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot4 = ctx => () => {
+    const b2 = call(\`__template__50\`, ctx, refs);
+    return b2;
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const slots3 = {'default': slot4(ctx2)};
+    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b3.component.__owl__.slots = slots3;
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = callSlot(ctx, 'default');
     return b1;
   }
 }"
@@ -788,6 +1034,38 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'default': slot4(ctx2)};
     const b3 = b1.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['state'].user.id}, \`__1\`, ctx);
+    b3.component.__owl__.slots = slots3;
+    return b1;
+  }
+}"
+`;
+
+exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot4 = ctx => () => {
+    debugger;
+    const b2 = new BText(\`abc\`);
+    return b2;
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const slots3 = {'content': slot4(ctx2)};
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
     b3.component.__owl__.slots = slots3;
     return b1;
   }

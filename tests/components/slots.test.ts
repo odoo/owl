@@ -3,6 +3,11 @@ import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../he
 
 let fixture: HTMLElement;
 
+function children(w: Component): Component[] {
+  const childrenMap = w.__owl__.children;
+  return Object.keys(childrenMap).map((id) => childrenMap[id]);
+}
+
 beforeEach(() => {
   fixture = makeTestFixture();
 });
@@ -377,5 +382,185 @@ describe("slots", () => {
     snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<span>sts rocks</span>");
+  });
+
+  test("default slot work with text nodes", async () => {
+    class Dialog extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>sts rocks</Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
+  });
+
+  test("default slot work with text nodes (variation)", async () => {
+    class Dialog extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Dialog>sts rocks</Dialog>`;
+      static components = { Dialog };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("sts rocks");
+  });
+
+  test("multiple roots are allowed in a named slot", async () => {
+    class Dialog extends Component {
+      static template = xml`<div><t t-slot="content"/></div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>
+            <t t-set-slot="content">
+                <span>sts</span>
+                <span>rocks</span>
+            </t>
+          </Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
+  });
+
+  test("multiple roots are allowed in a default slot", async () => {
+    class Dialog extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>
+            <span>sts</span>
+            <span>rocks</span>
+          </Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
+  });
+
+  test("missing slots are ignored", async () => {
+    class Dialog extends Component {
+      static template = xml` 
+        <span>
+          <t t-slot="default"/>
+          <span>some content</span>
+          <t t-slot="footer"/>
+        </span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog /></div>`;
+      static components = { Dialog };
+    }
+
+    snapshotTemplateCode(fromName(Dialog.template));
+    await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
+  });
+
+  test("t-debug on a t-set-slot (defining a slot)", async () => {
+    const consoleLog = console.log;
+    console.log = jest.fn();
+
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="content"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog><t t-set-slot="content" t-debug="">abc</t></Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+    expect(console.log).toHaveBeenCalledTimes(0);
+    console.log = consoleLog;
+  });
+
+  test.skip("slot preserves properly parented relationship", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+    class GrandChild extends Component {
+      static template = xml`Grand Child`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <GrandChild/>
+          </Child>
+        </div>`;
+      static components = { Child, GrandChild };
+    }
+
+    snapshotTemplateCode(fromName(Parent.template));
+    snapshotTemplateCode(fromName(Child.template));
+    const parent = await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
+
+    const parentChildren = children(parent);
+    expect(parentChildren.length).toBe(1);
+    expect(parentChildren[0]).toBeInstanceOf(Child);
+
+    const childrenChildren = children(parentChildren[0]);
+    expect(childrenChildren.length).toBe(1);
+    expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
+  });
+
+  test.skip("slot preserves properly parented relationship, even through t-call", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+    class GrandChild extends Component {
+      static template = xml`Grand Child`;
+    }
+    const sub = xml`<GrandChild />`
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-call="${sub}"/>
+          </Child>
+        </div>`;
+      static components = { Child, GrandChild };
+    }
+
+    snapshotTemplateCode(fromName(Parent.template));
+    snapshotTemplateCode(fromName(Child.template));
+    // throw new Error("boom")
+    const parent = await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
+
+    const parentChildren = children(parent);
+    expect(parentChildren.length).toBe(1);
+    expect(parentChildren[0]).toBeInstanceOf(Child);
+
+    const childrenChildren = children(parentChildren[0]);
+    expect(childrenChildren.length).toBe(1);
+    expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
 });

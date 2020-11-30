@@ -252,11 +252,12 @@ export class BNode extends Block {
   patch(newTree: any) {
     this.data = newTree.data;
     this.refs = newTree.refs;
+    const anchors = this.anchors;
     this.update();
     if (this.children) {
       const children = this.children;
       const newChildren = newTree.children!;
-      for (let i = 0; i < newChildren.length; i++) {
+      for (let i = 0, l = newChildren.length; i < l; i++) {
         const newChild = newChildren[i];
         const child = children[i];
         if (child) {
@@ -268,7 +269,7 @@ export class BNode extends Block {
           }
         } else if (newChild) {
           children[i] = newChild;
-          const anchor = this.anchors![i];
+          const anchor = anchors![i];
           newChild.mountBefore(anchor);
         }
       }
@@ -304,11 +305,13 @@ export class BMulti extends Block {
   }
 
   mountBefore(anchor: ChildNode) {
-    for (let i = 0; i < this.children.length; i++) {
-      let child: any = this.children[i];
+    const children = this.children;
+    const anchors = this.anchors;
+    for (let i = 0, l = children.length; i < l; i++) {
+      let child: any = children[i];
       const childAnchor = document.createTextNode("");
       anchor.before(childAnchor);
-      this.anchors![i] = childAnchor;
+      anchors![i] = childAnchor;
       if (child) {
         child.mountBefore(childAnchor);
       }
@@ -328,19 +331,22 @@ export class BMulti extends Block {
   }
 
   patch(newTree: any) {
-    for (let i = 0; i < this.children.length; i++) {
-      const block = this.children[i];
-      const newBlock = newTree.children[i];
+    const children = this.children;
+    const newChildren = newTree.children;
+    const anchors = this.anchors!;
+    for (let i = 0, l = children.length; i < l; i++) {
+      const block = children[i];
+      const newBlock = newChildren[i];
       if (block) {
         if (newBlock) {
           block.patch(newBlock);
         } else {
-          this.children[0] = null;
+          children[0] = null;
           block.remove();
         }
       } else if (newBlock) {
-        this.children[i] = newBlock;
-        newBlock.mountBefore(this.anchors![i]);
+        children[i] = newBlock;
+        newBlock.mountBefore(anchors[i]);
       }
     }
   }
@@ -403,6 +409,7 @@ export class BCollection extends Block {
     let oldEndIdx = oldCh.length - 1;
     let newEndIdx = newCh.length - 1;
     let mapping: any = undefined;
+    const _anchor = this.anchor!;
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (oldCh[oldStartIdx] === null) {
@@ -424,7 +431,7 @@ export class BCollection extends Block {
         const elm = oldCh[oldStartIdx];
         elm.patch(newCh[newEndIdx]);
         const nextChild = newCh[newEndIdx + 1];
-        const anchor = nextChild ? nextChild.firstChildNode()! : this.anchor!;
+        const anchor = nextChild ? nextChild.firstChildNode()! : _anchor;
         elm.moveBefore(anchor);
         newCh[newEndIdx] = elm;
         oldStartIdx++;
@@ -434,7 +441,7 @@ export class BCollection extends Block {
         const elm = oldCh[oldEndIdx];
         elm.patch(newCh[newStartIdx]);
         const nextChild = oldCh[oldStartIdx];
-        const anchor = nextChild ? nextChild.firstChildNode()! : this.anchor!;
+        const anchor = nextChild ? nextChild.firstChildNode()! : _anchor;
         elm.moveBefore(anchor);
         newCh[newStartIdx] = elm;
         oldEndIdx--;
@@ -459,7 +466,7 @@ export class BCollection extends Block {
     if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
       if (oldStartIdx > oldEndIdx) {
         const nextChild = newCh[newEndIdx + 1];
-        const anchor = nextChild ? nextChild.firstChildNode()! : this.anchor!;
+        const anchor = nextChild ? nextChild.firstChildNode()! : _anchor;
         for (let i = newStartIdx; i <= newEndIdx; i++) {
           newCh[i].mountBefore(anchor);
         }

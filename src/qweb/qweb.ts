@@ -496,7 +496,8 @@ export class QWeb extends EventBus {
       }
       if (this.translateFn) {
         if ((node.parentNode as any).getAttribute("t-translation") !== "off") {
-          text = this.translateFn(text);
+          let match = /^(\s*)([\s\S]+?)(\s*)$/.exec(text);
+          text = match[1] + this.translateFn(match[2]) + match[3];
         }
       }
       if (ctx.parentNode) {

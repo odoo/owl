@@ -70,6 +70,7 @@ const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
 
 const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
+const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
 const NODE_HOOKS_PARAMS = {
   create: "(_, n)",
@@ -496,7 +497,8 @@ export class QWeb extends EventBus {
       }
       if (this.translateFn) {
         if ((node.parentNode as any).getAttribute("t-translation") !== "off") {
-          text = this.translateFn(text);
+          const match = translationRE.exec(text);
+          text = match[1] + this.translateFn(match[2]) + match[3];
         }
       }
       if (ctx.parentNode) {

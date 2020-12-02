@@ -2154,6 +2154,17 @@ describe("translation support", () => {
       '<div><p label="mot">mot</p><p title="mot">mot</p><p placeholder="mot">mot</p><p alt="mot">mot</p><p something="word">mot</p></div>'
     );
   });
+
+  test("translation is done on the trimmed text, with extra spaces readded after", () => {
+    const translations = {
+      word: "mot",
+    };
+    const translateFn = jest.fn((expr) => translations[expr] || expr);
+    const qweb = new QWeb({ translateFn });
+    qweb.addTemplate("test", "<div> word </div>");
+    expect(renderToString(qweb, "test")).toBe("<div> mot </div>");
+    expect(translateFn).toHaveBeenCalledWith("word");
+  });
 });
 
 describe("t-key tests", () => {

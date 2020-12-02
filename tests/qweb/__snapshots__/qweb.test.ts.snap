@@ -3924,6 +3924,18 @@ exports[`translation support some attributes are translated 1`] = `
 }"
 `;
 
+exports[`translation support translation is done on the trimmed text, with extra spaces readded after 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    c1.push({text: \` mot \`});
+    return vn1;
+}"
+`;
+
 exports[`whitespace handling consecutives whitespaces are condensed into a single space 1`] = `
 "function anonymous(context, extra
 ) {

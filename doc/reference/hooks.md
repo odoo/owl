@@ -21,6 +21,8 @@
   - [`useStore`](#usestore)
   - [`useDispatch`](#usedispatch)
   - [`useGetters`](#usegetters)
+  - [`useComponent`](#usecomponent)
+  - [`useEnv`](#useenv)
   - [Making customized hooks](#making-customized-hooks)
 
 ## Overview
@@ -381,6 +383,16 @@ The `useDispatch` hook is the way for components to get a reference to the store
 The `useGetters` hook is the way for components to get a reference to the store
 getters. See the [store documentation](store.md) for more information.
 
+### `useComponent`
+
+The `useComponent` hook is useful as a building block for some customized hooks,
+that may need a reference to the component calling them.
+
+### `useEnv`
+
+The `useEnv` hook is useful as a building block for some customized hooks,
+that may need a reference to the env of the component calling them.
+
 ### Making customized hooks
 
 Hooks are a wonderful way to organize the code of a complex component by feature
@@ -435,13 +447,11 @@ not the solution to every problem.
 
   ```js
   function useRouter() {
-    return Component.current.env.router;
+    const env = useEnv();
+    return env.router;
   }
   ```
 
   This means that we give control to the application developer to create the
   router, which is good, so they can set it up, subclass it, ... And then, to
   test our components, we can just add a mock router in the environment.
-
-Note: the code above makes use of the `Component.current` property. This is the
-way hooks are able to get a reference to the component currently being created.

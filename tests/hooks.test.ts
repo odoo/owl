@@ -9,8 +9,10 @@ import {
   onWillPatch,
   onWillStart,
   onWillUpdateProps,
+  useEnv,
   useSubEnv,
   useExternalListener,
+  useComponent,
 } from "../src/hooks";
 import { xml } from "../src/tags";
 
@@ -520,6 +522,19 @@ describe("hooks", () => {
     });
   });
 
+  test("can use useEnv", async () => {
+    expect.assertions(1);
+    class TestComponent extends Component {
+      static template = xml`<div><t t-esc="env.val"/></div>`;
+      constructor() {
+        super();
+        expect(useEnv()).toBe(env);
+      }
+    }
+    const component = new TestComponent();
+    await component.mount(fixture);
+  });
+
   test("can use sub env", async () => {
     class TestComponent extends Component {
       static template = xml`<div><t t-esc="env.val"/></div>`;
@@ -533,6 +548,19 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div>3</div>");
     expect(env).not.toHaveProperty("val");
     expect(component.env).toHaveProperty("val");
+  });
+
+  test("can use useComponent", async () => {
+    expect.assertions(1);
+    class TestComponent extends Component {
+      static template = xml`<div></div>`;
+      constructor() {
+        super();
+        expect(useComponent()).toBe(this);
+      }
+    }
+    const component = new TestComponent();
+    await component.mount(fixture);
   });
 
   test("parent and child env", async () => {

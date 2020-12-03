@@ -1,4 +1,4 @@
-import { Component } from "./component/component";
+import { Component, Env } from "./component/component";
 import { Observer } from "./core/observer";
 
 /**
@@ -116,6 +116,26 @@ export function useRef<C extends Component = Component>(name: string): Ref<C> {
       return val instanceof Component ? (val as C) : null;
     },
   };
+}
+
+// -----------------------------------------------------------------------------
+// "Builder" hooks
+// -----------------------------------------------------------------------------
+
+/**
+ * This hook is useful as a building block for some customized hooks, that may
+ * need a reference to the component calling them.
+ */
+export function useComponent<P, E extends Env>(): Component<P, E> {
+  return Component.current as any;
+}
+
+/**
+ * This hook is useful as a building block for some customized hooks, that may
+ * need a reference to the env of the component calling them.
+ */
+export function useEnv<E extends Env>(): E {
+  return Component.current.env as any;
 }
 
 // -----------------------------------------------------------------------------

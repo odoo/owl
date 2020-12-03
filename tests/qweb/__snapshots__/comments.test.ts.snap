@@ -43,6 +43,11 @@ exports[`comments properly handle comments between t-if/t-else 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   class Block2 extends BNode {

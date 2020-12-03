@@ -9,6 +9,11 @@ exports[`misc global 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   class Block2 extends BNode {
@@ -67,6 +72,10 @@ exports[`misc global 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -87,9 +96,13 @@ exports[`misc global 3`] = `
   class Block1 extends BNode {
     static el = elem(\`<año><owl-anchor/></año>\`);
     children = new Array(1);
+    anchors = new Array(1);
     data = new Array(1);
     update() {
       this.updateAttr(this.el, \`falló\`, this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
     }
   }
   

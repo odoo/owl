@@ -325,6 +325,10 @@ exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] (2 
   class Block1 extends BNode {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -376,6 +380,10 @@ exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] 1`]
   class Block1 extends BNode {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -574,6 +582,10 @@ exports[`adding/removing elements remove children (inside elem): [1,2,3] => [] 1
   class Block1 extends BNode {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {

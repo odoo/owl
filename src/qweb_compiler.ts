@@ -201,6 +201,10 @@ class QWebCompiler {
     return `Block${this.blocks.length + 1}`;
   }
 
+  generateSafeCtx(): string {
+    return `Object.assign(Object.create(ctx), ctx)`;
+  }
+
   getNextBlockId(): () => string | null {
     const id = this.nextBlockId;
     return () => {
@@ -209,8 +213,10 @@ class QWebCompiler {
   }
 
   insertAnchor(block: BlockDescription) {
+    const index = block.childNumber;
     const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
     block.insert(anchor);
+    block.insertBuild((el) => `this.anchors[${index}] = ${el};`);
     block.currentPath = [`anchors[${block.childNumber}]`];
     block.childNumber++;
   }
@@ -308,6 +314,7 @@ class QWebCompiler {
     }
     if (block.childNumber) {
       this.addLine(`children = new Array(${block.childNumber});`);
+      this.addLine(`anchors = new Array(${block.childNumber});`);
     }
     if (block.dataNumber) {
       this.addLine(`data = new Array(${block.dataNumber});`);
@@ -334,7 +341,6 @@ class QWebCompiler {
       const updateInfo = block.buildFn;
       this.addLine(`build() {`);
       this.target.indentLevel++;
-      this.addLine(`super.build();`);
       if (updateInfo.length === 1) {
         const { path, inserter } = updateInfo[0];
         const target = `this.${path.join(".")}`;
@@ -701,9 +707,8 @@ class QWebCompiler {
       for (let clause of ast.tElif) {
         this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
         this.target.indentLevel++;
-        const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-        block.insert(anchor);
-        block.childNumber++;
+        block.currentPath.push("nextSibling");
+        this.insertAnchor(block);
         const subCtx: Context = {
           block: block,
           index: block.childNumber - 1,
@@ -716,9 +721,8 @@ class QWebCompiler {
     if (ast.tElse) {
       this.addLine(`} else {`);
       this.target.indentLevel++;
-      const anchor: Dom = { type: DomType.Node, tag: "owl-anchor", attrs: {}, content: [] };
-      block.insert(anchor);
-      block.childNumber++;
+      block.currentPath.push("nextSibling");
+      this.insertAnchor(block);
       const subCtx: Context = {
         block: block,
         index: block.childNumber - 1,
@@ -896,7 +900,7 @@ class QWebCompiler {
       let ctxStr = "ctx";
       if (this.loopLevel || !this.hasSafeContext) {
         ctxStr = this.generateId("ctx");
-        this.addLine(`const ${ctxStr} = Object.assign(Object.create(ctx), ctx);`);
+        this.addLine(`const ${ctxStr} = ${this.generateSafeCtx()};`);
       }
       slotId = this.generateId("slots");
       let slotStr: string[] = [];

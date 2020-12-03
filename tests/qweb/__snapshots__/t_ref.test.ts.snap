@@ -54,6 +54,10 @@ exports[`t-ref ref in a t-call 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return (ctx, refs = {}) => {
@@ -97,6 +101,10 @@ exports[`t-ref ref in a t-if 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -127,6 +135,10 @@ exports[`t-ref refs in a loop 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -174,8 +186,12 @@ exports[`t-ref two refs, one in a t-if 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><p/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
     update() {
       this.refs[\`p\`] = this.anchors[0].nextSibling;
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
     }
   }
   

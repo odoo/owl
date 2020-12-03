@@ -33,6 +33,10 @@ exports[`basics a class component inside a class component 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -65,6 +69,10 @@ exports[`basics can handle empty props 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -106,7 +114,6 @@ exports[`basics cannot be clicked on and updated if not in DOM 1`] = `
       this.el.firstChild.textContent = toString(this.data[0]);
     }
     build() {
-      super.build();
       this.setupHandler(this.el.firstChild.nextSibling, 0);
     }
   }

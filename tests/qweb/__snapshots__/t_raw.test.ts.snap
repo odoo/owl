@@ -9,6 +9,10 @@ exports[`t-raw literal 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -42,6 +46,11 @@ exports[`t-raw multiple calls to t-raw 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><div>Greeter</div><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling.nextSibling;
+    }
   }
   
   return ctx => {
@@ -62,6 +71,10 @@ exports[`t-raw multiple calls to t-raw 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -91,6 +104,10 @@ exports[`t-raw not escaping 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -110,6 +127,10 @@ exports[`t-raw t-raw and another sibling node 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><span>hello</span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+    }
   }
   
   return ctx => {
@@ -129,6 +150,10 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -149,6 +174,10 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -201,6 +230,10 @@ exports[`t-raw variable 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {

@@ -78,6 +78,13 @@ exports[`t-if boolean value condition elif 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(4);
+    anchors = new Array(4);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+      this.anchors[2] = this.anchors[1].nextSibling;
+      this.anchors[3] = this.anchors[2].nextSibling;
+    }
   }
   
   return ctx => {
@@ -105,6 +112,11 @@ exports[`t-if boolean value condition else 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><span>begin</span><owl-anchor/><owl-anchor/><span>end</span></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   return ctx => {
@@ -128,6 +140,11 @@ exports[`t-if boolean value condition false else 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><span>begin</span><owl-anchor/><owl-anchor/><span>end</span></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   return ctx => {
@@ -151,6 +168,17 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(8);
+    anchors = new Array(8);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+      this.anchors[2] = this.anchors[1].nextSibling;
+      this.anchors[3] = this.anchors[2].nextSibling;
+      this.anchors[4] = this.anchors[3].nextSibling;
+      this.anchors[5] = this.anchors[4].nextSibling;
+      this.anchors[6] = this.anchors[5].nextSibling;
+      this.anchors[7] = this.anchors[6].nextSibling;
+    }
   }
   
   return ctx => {
@@ -193,6 +221,10 @@ exports[`t-if div containing a t-if with two inner nodes 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -224,9 +256,13 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
     data = new Array(1);
     update() {
       this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
     }
   }
   
@@ -294,6 +330,11 @@ exports[`t-if simple t-if/t-else in a div 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   return ctx => {
@@ -317,6 +358,11 @@ exports[`t-if t-esc with t-elif 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   return ctx => {
@@ -340,6 +386,10 @@ exports[`t-if t-esc with t-if 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -389,6 +439,10 @@ exports[`t-if t-if in a div 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -410,11 +464,19 @@ exports[`t-if t-if in a t-if 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<span>1<owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+    }
   }
   
   return ctx => {
@@ -439,6 +501,10 @@ exports[`t-if t-set, then t-if 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -462,6 +528,10 @@ exports[`t-if t-set, then t-if, part 2 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -490,6 +560,11 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   class Block2 extends BNode {
@@ -543,6 +618,11 @@ exports[`t-if two consecutive t-if in a div 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
   }
   
   return ctx => {

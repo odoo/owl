@@ -60,6 +60,12 @@ describe("simple templates, mostly static", () => {
     snapshotTemplateCode(template);
   });
 
+  test("two t-escs next to each other", () => {
+    const template = `<t t-esc="text1"/><t t-esc="text2"/>`;
+    expect(renderToString(template, { text1: "hello", text2: "owl" })).toBe("helloowl");
+    snapshotTemplateCode(template);
+  });
+
   test("two t-escs next to each other, in a div", () => {
     const template = `<div><t t-esc="text1"/><t t-esc="text2"/></div>`;
     snapshotTemplateCode(template);

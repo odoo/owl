@@ -204,6 +204,10 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {

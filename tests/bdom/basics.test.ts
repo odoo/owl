@@ -1,5 +1,6 @@
 import { BNode, BMulti } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
+import { UTILS } from "../../src/qweb_utils";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -15,10 +16,12 @@ afterEach(() => {
   fixture.remove();
 });
 
+const elem = UTILS.elem;
+
 function el(html: string): HTMLElement {
   const div = document.createElement("div");
   div.innerHTML = html;
-  return div.firstChild as HTMLElement;
+  return elem(div.outerHTML).firstChild as HTMLElement;
 }
 //------------------------------------------------------------------------------
 // Tests
@@ -111,7 +114,11 @@ describe("mount", () => {
     class Block1 extends BNode {
       static el = el("<div><span></span><owl-anchor></owl-anchor></div>");
       children = new Array(1);
+      anchors = new Array(1);
       data = new Array(1);
+      build() {
+        this.anchors[0] = (this.el as any).firstChild!.nextSibling;
+      }
       update() {
         this.el!.firstChild!.textContent = this.data[0];
       }
@@ -133,6 +140,10 @@ describe("mount", () => {
     class Block1 extends BNode {
       static el = el("<div><p>1</p><owl-anchor></owl-anchor><p>2</p></div>");
       children = new Array(1);
+      anchors = new Array(1);
+      build() {
+        this.anchors[0] = (this.el as any).firstChild!.nextSibling;
+      }
     }
 
     class Block2 extends BNode {
@@ -150,6 +161,10 @@ describe("mount", () => {
     class Block1 extends BNode {
       static el = el(`<div><owl-anchor></owl-anchor></div>`);
       children = new Array(1);
+      anchors = new Array(1);
+      build() {
+        this.anchors[0] = (this.el as any).firstChild!;
+      }
     }
 
     class Block2 extends BNode {
@@ -190,6 +205,10 @@ describe("update", () => {
     class Block1 extends BNode {
       static el = el("<div><p><owl-anchor></owl-anchor></p></div>");
       children = new Array(1);
+      anchors = new Array(1);
+      build() {
+        this.anchors[0] = (this.el as any).firstChild!.firstChild!;
+      }
     }
     class Block2 extends BNode {
       static el = el("<span>foo</span>");
@@ -213,6 +232,10 @@ describe("update", () => {
     class Block1 extends BNode {
       static el = el("<div><owl-anchor></owl-anchor></div>");
       children = new Array(1);
+      anchors = new Array(1);
+      build() {
+        this.anchors[0] = (this.el as any).firstChild!;
+      }
     }
 
     class Block2 extends BNode {
@@ -243,6 +266,11 @@ describe("update", () => {
       static el = el("<div><owl-anchor></owl-anchor><p></p></div>");
       children = new Array(1);
       data = new Array(1);
+      anchors = new Array(1);
+      build() {
+        this.anchors[0] = (this.el as any).firstChild!;
+      }
+
       update() {
         this.anchors![0].nextSibling!.textContent = this.data[0];
       }

@@ -160,7 +160,9 @@ export class BNode extends Block {
   }
 
   mountBefore(anchor: ChildNode) {
+    this.el = (this.constructor as any).el.cloneNode(true);
     this.build();
+    this.update();
     if (this.children) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
@@ -234,27 +236,14 @@ export class BNode extends Block {
     });
   }
 
-  protected build() {
-    this.el = (this.constructor as any).el.cloneNode(true);
-    if (this.children) {
-      const anchorElems = (this.el as HTMLElement).getElementsByTagName("owl-anchor");
-      const anchors = new Array(anchorElems.length);
-      for (let i = 0; i < anchors.length; i++) {
-        const text = document.createTextNode("");
-        anchorElems[0].replaceWith(text); // the 0 is not a mistake: anchorElems is live collection
-        anchors[i] = text;
-      }
-      this.anchors = anchors;
-    }
-    this.update();
-  }
+  protected build() {}
 
   patch(newTree: any) {
     this.data = newTree.data;
     this.refs = newTree.refs;
-    const anchors = this.anchors;
     this.update();
     if (this.children) {
+      const anchors = this.anchors!;
       const children = this.children;
       const newChildren = newTree.children!;
       for (let i = 0, l = newChildren.length; i < l; i++) {
@@ -269,8 +258,7 @@ export class BNode extends Block {
           }
         } else if (newChild) {
           children[i] = newChild;
-          const anchor = anchors![i];
-          newChild.mountBefore(anchor);
+          newChild.mountBefore(anchors[i]);
         }
       }
     }

@@ -184,6 +184,10 @@ exports[`t-set t-set and t-if 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -207,6 +211,10 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -267,6 +275,10 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -337,6 +349,10 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -372,6 +388,10 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -407,9 +427,14 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-text/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
     data = new Array(1);
     update() {
-      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+      this.anchors[1].nextSibling.textContent = toString(this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
     }
   }
   
@@ -436,9 +461,14 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-text/></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
     data = new Array(1);
     update() {
-      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
+      this.anchors[1].nextSibling.textContent = toString(this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
     }
   }
   

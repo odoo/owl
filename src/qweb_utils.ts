@@ -8,7 +8,8 @@ function toDom(node: ChildNode): HTMLElement | Text | Comment {
   switch (node.nodeType) {
     case 1: {
       // HTMLElement
-      if ((node as Element).tagName === "owl-text") {
+      const tagName = (node as Element).tagName;
+      if (tagName === "owl-text" || tagName === "owl-anchor") {
         return document.createTextNode("");
       }
       const result = document.createElement((node as Element).tagName);

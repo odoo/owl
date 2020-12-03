@@ -9,6 +9,12 @@ exports[`slots can define and call slots 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><div><owl-anchor/></div><div><owl-anchor/></div></div>\`);
     children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      const el1 = this.el.firstChild;
+      this.anchors[0] = el1.firstChild;
+      this.anchors[1] = el1.nextSibling.firstChild;
+    }
   }
   
   return ctx => {
@@ -29,6 +35,10 @@ exports[`slots can define and call slots 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -93,6 +103,10 @@ exports[`slots content is the default slot 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   class Block2 extends BNode {
@@ -123,6 +137,10 @@ exports[`slots dafault slots can define a default content 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const defaultSlot1 = ctx => {
@@ -147,6 +165,10 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const defaultSlot1 = ctx => {
@@ -171,6 +193,10 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const slot4 = ctx => () => {
@@ -198,6 +224,10 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const defaultSlot1 = ctx => {
@@ -222,6 +252,10 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const slot3 = ctx => () => {
@@ -283,6 +317,10 @@ exports[`slots named slots can define a default content 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const defaultSlot1 = ctx => {
@@ -307,6 +345,10 @@ exports[`slots named slots can define a default content 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -326,6 +368,10 @@ exports[`slots no named slot content => just no children 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -378,6 +424,10 @@ exports[`slots simple default slot 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -431,7 +481,6 @@ exports[`slots slot content is bound to caller 1`] = `
     static el = elem(\`<button>some text</button>\`);
     handlers = new Array(1);
     build() {
-      super.build();
       this.setupHandler(this.el, 0);
     }
   }
@@ -462,6 +511,10 @@ exports[`slots slot content is bound to caller 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -481,6 +534,10 @@ exports[`slots slots are rendered with proper context 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   return ctx => {
@@ -500,9 +557,13 @@ exports[`slots slots are rendered with proper context 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
     data = new Array(1);
     update() {
       this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
     }
   }
   
@@ -510,7 +571,6 @@ exports[`slots slots are rendered with proper context 2`] = `
     static el = elem(\`<button>do something</button>\`);
     handlers = new Array(1);
     build() {
-      super.build();
       this.setupHandler(this.el, 0);
     }
   }
@@ -544,11 +604,19 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><u><owl-anchor/></u></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.firstChild;
+    }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<li><owl-anchor/></li>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const slot5 = ctx => () => {
@@ -591,9 +659,13 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<a><owl-anchor/></a>\`);
     children = new Array(1);
+    anchors = new Array(1);
     data = new Array(1);
     update() {
       this.updateAttr(this.el, \`href\`, this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
     }
   }
   
@@ -615,11 +687,19 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><u><owl-anchor/></u></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.firstChild;
+    }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<li><owl-anchor/></li>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const slot5 = ctx => () => {
@@ -662,9 +742,13 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   class Block1 extends BNode {
     static el = elem(\`<a><owl-anchor/></a>\`);
     children = new Array(1);
+    anchors = new Array(1);
     data = new Array(1);
     update() {
       this.updateAttr(this.el, \`href\`, this.data[0]);
+    }
+    build() {
+      this.anchors[0] = this.el.firstChild;
     }
   }
   
@@ -686,6 +770,10 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
   }
   
   const slot4 = ctx => () => {

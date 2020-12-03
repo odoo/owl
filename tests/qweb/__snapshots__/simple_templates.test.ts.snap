@@ -344,6 +344,21 @@ exports[`simple templates, mostly static two t-escs next to each other 1`] = `
 }"
 `;
 
+exports[`simple templates, mostly static two t-escs next to each other 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    b1.children[0] = new BText(ctx['text1']);
+    b1.children[1] = new BText(ctx['text2']);
+    return b1;
+  }
+}"
+`;
+
 exports[`simple templates, mostly static two t-escs next to each other, in a div 1`] = `
 "function anonymous(Blocks, utils
 ) {

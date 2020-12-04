@@ -1,7 +1,64 @@
+import { RenderFunction, compileTemplate } from "./compiler/index";
 import { BDom, Block, Blocks } from "./bdom";
-import { TemplateSet } from "./qweb_compiler";
 import { observe } from "./reactivity";
+import { elem, withDefault, scope, getValues, owner, callSlot, toString } from "./qweb_utils";
 
+// -----------------------------------------------------------------------------
+//  TemplateSet
+// -----------------------------------------------------------------------------
+
+export const UTILS = {
+  elem,
+  toString,
+  withDefault,
+  call: (name: string) => {
+    throw new Error(`Missing template: ${name}`);
+  },
+  zero: Symbol("zero"),
+  scope,
+  getValues,
+  owner,
+  callSlot,
+};
+
+// -----------------------------------------------------------------------------
+//  TemplateSet
+// -----------------------------------------------------------------------------
+
+export class TemplateSet {
+  templates: { [name: string]: string } = {};
+  compiledTemplates: { [name: string]: RenderFunction } = {};
+  utils: typeof UTILS;
+
+  constructor() {
+    const call = (subTemplate: string, ctx: any, refs: any) => {
+      const renderFn = this.getFunction(subTemplate);
+      return renderFn(ctx, refs);
+    };
+
+    this.utils = Object.assign({}, UTILS, { call });
+  }
+
+  add(name: string, template: string, allowDuplicate: boolean = false) {
+    if (name in this.templates && !allowDuplicate) {
+      throw new Error(`Template ${name} already defined`);
+    }
+    this.templates[name] = template;
+  }
+
+  getFunction(name: string): RenderFunction {
+    if (!(name in this.compiledTemplates)) {
+      const template = this.templates[name];
+      if (template === undefined) {
+        throw new Error(`Missing template: "${name}"`);
+      }
+      const templateFn = compileTemplate(template, name);
+      const renderFn = templateFn(Blocks, this.utils);
+      this.compiledTemplates[name] = renderFn;
+    }
+    return this.compiledTemplates[name];
+  }
+}
 // -----------------------------------------------------------------------------
 //  Global templates
 // -----------------------------------------------------------------------------

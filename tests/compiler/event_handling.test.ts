@@ -1,4 +1,4 @@
-import { TemplateSet } from "../../src/qweb_compiler";
+import { TemplateSet } from "../../src/core";
 import { makeTestFixture, renderToBdom, renderToString, snapshotTemplateCode } from "../helpers";
 
 // -----------------------------------------------------------------------------

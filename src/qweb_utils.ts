@@ -34,12 +34,12 @@ function toDom(node: ChildNode): HTMLElement | Text | Comment {
   throw new Error("boom");
 }
 
-function elem(html: string): HTMLElement | Text | Comment {
+export function elem(html: string): HTMLElement | Text | Comment {
   const doc = new DOMParser().parseFromString(html, "text/xml");
   return toDom(doc.firstChild!);
 }
 
-function toString(value: any): string {
+export function toString(value: any): string {
   switch (typeof value) {
     case "string":
       return value;
@@ -55,15 +55,11 @@ function toString(value: any): string {
   throw new Error("not yet working" + value);
 }
 
-function withDefault(value: any, defaultValue: any): any {
+export function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
 
-function call(name: string): BDom {
-  throw new Error(`Missing template: "${name}"`);
-}
-
-function getValues(collection: any): [any[], any[], number] {
+export function getValues(collection: any): [any[], any[], number] {
   if (Array.isArray(collection)) {
     return [collection, collection, collection.length];
   } else if (collection) {
@@ -73,65 +69,7 @@ function getValues(collection: any): [any[], any[], number] {
   throw new Error("Invalid loop expression");
 }
 
-const scope = Symbol("scope");
-
-export const UTILS = {
-  elem,
-  toString,
-  withDefault,
-  call,
-  zero: Symbol("zero"),
-  scope,
-  getValues,
-  owner,
-  callSlot,
-};
-
-export const enum DomType {
-  Text,
-  Comment,
-  Node,
-}
-
-export interface DomText {
-  type: DomType.Text;
-  value: string;
-}
-
-export interface DomComment {
-  type: DomType.Comment;
-  value: string;
-}
-export interface DomNode {
-  type: DomType.Node;
-  tag: string;
-  attrs: { [key: string]: string };
-  content: Dom[];
-}
-
-export type Dom = DomText | DomComment | DomNode;
-
-export function domToString(dom: Dom): string {
-  switch (dom.type) {
-    case DomType.Text:
-      return dom.value;
-    case DomType.Comment:
-      return `<!--${dom.value}-->`;
-    case DomType.Node:
-      const content = dom.content.map(domToString).join("");
-      const attrs: string[] = [];
-      for (let [key, value] of Object.entries(dom.attrs)) {
-        if (!(key === "class" && value === "")) {
-          attrs.push(`${key}="${value}"`);
-        }
-      }
-      if (content) {
-        return `<${dom.tag}${attrs.length ? " " + attrs.join(" ") : ""}>${content}</${dom.tag}>`;
-      } else {
-        return `<${dom.tag}${attrs.length ? " " + attrs.join(" ") : ""}/>`;
-      }
-  }
-}
+export const scope = Symbol("scope");
 
 export function owner(obj: any): any | null {
   while (obj && obj[scope]) {

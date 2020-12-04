@@ -1,11 +1,11 @@
-import { BDom, Blocks } from "./bdom";
+import type { BDom } from "../bdom";
 import {
   compileExpr,
   compileExprToArray,
   interpolate,
   INTERP_GROUP_REGEXP,
   INTERP_REGEXP,
-} from "./qweb_expressions";
+} from "./expressions";
 import {
   AST,
   ASTComment,
@@ -25,60 +25,17 @@ import {
   ASTTSet,
   ASTType,
   parse,
-} from "./qweb_parser";
-import { Dom, DomNode, domToString, DomType, UTILS } from "./qweb_utils";
+} from "./parser";
 
-// -----------------------------------------------------------------------------
-// Compile functions
-// -----------------------------------------------------------------------------
+import { isProp, domToString, DomType, Dom, DomNode } from "./utils";
 
 export type RenderFunction = (context: any, refs?: any) => BDom;
-export type TemplateFunction = (blocks: typeof Blocks, utils: typeof UTILS) => RenderFunction;
+export type TemplateFunction = (blocks: any, utils: any) => RenderFunction;
 
-export function compile(template: string, utils: typeof UTILS = UTILS): RenderFunction {
-  const templateFunction = compileTemplate(template);
-  return templateFunction(Blocks, utils);
-}
-
-export function compileTemplate(template: string, name?: string): TemplateFunction {
-  const compiler = new QWebCompiler(template, name);
-  return compiler.compile();
-}
-
-export class TemplateSet {
-  templates: { [name: string]: string } = {};
-  compiledTemplates: { [name: string]: RenderFunction } = {};
-  utils: typeof UTILS;
-
-  constructor() {
-    const call = (subTemplate: string, ctx: any, refs: any) => {
-      const renderFn = this.getFunction(subTemplate);
-      return renderFn(ctx, refs);
-    };
-
-    this.utils = Object.assign({}, UTILS, { call });
-  }
-
-  add(name: string, template: string, allowDuplicate: boolean = false) {
-    if (name in this.templates && !allowDuplicate) {
-      throw new Error(`Template ${name} already defined`);
-    }
-    this.templates[name] = template;
-  }
-
-  getFunction(name: string): RenderFunction {
-    if (!(name in this.compiledTemplates)) {
-      const template = this.templates[name];
-      if (template === undefined) {
-        throw new Error(`Missing template: "${name}"`);
-      }
-      const templateFn = compileTemplate(template, name);
-      const renderFn = templateFn(Blocks, this.utils);
-      this.compiledTemplates[name] = renderFn;
-    }
-    return this.compiledTemplates[name];
-  }
-}
+// export function compile(template: string, utils: typeof UTILS = UTILS): RenderFunction {
+//   const templateFunction = compileTemplate(template);
+//   return templateFunction(Blocks, utils);
+// }
 
 // -----------------------------------------------------------------------------
 // BlockDescription
@@ -144,7 +101,7 @@ interface CodeGroup {
   rootBlock: string | null;
 }
 
-class QWebCompiler {
+export class QWebCompiler {
   blocks: BlockDescription[] = [];
   nextId = 1;
   nextBlockId = 1;
@@ -429,7 +386,7 @@ class QWebCompiler {
       .join("");
   }
 
-  compileAST(ast: AST, ctx: Context) {
+  compileAST(ast: AST, ctx: Context, nextNode?: ASTDomNode) {
     switch (ast.type) {
       case ASTType.Comment:
         this.compileComment(ast, ctx);
@@ -447,7 +404,7 @@ class QWebCompiler {
         this.compileTRaw(ast, ctx);
         break;
       case ASTType.TIf:
-        this.compileTIf(ast, ctx);
+        this.compileTIf(ast, ctx, nextNode);
         break;
       case ASTType.TForEach:
         this.compileTForeach(ast, ctx);
@@ -626,13 +583,19 @@ class QWebCompiler {
       block.currentDom = dom;
       const path = block.currentPath.slice();
       block.currentPath.push("firstChild");
-      for (let child of ast.content) {
+      const children = ast.content;
+      for (let i = 0; i < children.length; i++) {
+        const child = ast.content[i];
         const subCtx: Context = {
           block: block,
           index: block.childNumber,
           forceNewBlock: false,
         };
-        this.compileAST(child, subCtx);
+        const next =
+          children[i + 1] && children[i + 1].type === ASTType.DomNode
+            ? children[i + 1]
+            : (undefined as any);
+        this.compileAST(child, subCtx, next);
         if (child.type !== ASTType.TSet) {
           block.currentPath.push("nextSibling");
         }
@@ -689,7 +652,7 @@ class QWebCompiler {
     this.addLine(`${block.varName}.children[${index}] = new BHtml(${expr});`);
   }
 
-  compileTIf(ast: ASTTif, ctx: Context) {
+  compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {
     let { block, index } = ctx;
     if (!block) {
       const n = 1 + (ast.tElif ? ast.tElif.length : 0) + (ast.tElse ? 1 : 0);
@@ -987,27 +950,4 @@ class QWebCompiler {
     }
     this.insertBlock(blockString, { ...ctx, forceNewBlock: false });
   }
-}
-
-function isProp(tag: string, key: string): boolean {
-  switch (tag) {
-    case "input":
-      return (
-        key === "checked" ||
-        key === "indeterminate" ||
-        key === "value" ||
-        key === "readonly" ||
-        key === "disabled"
-      );
-    case "option":
-      return key === "selected" || key === "disabled";
-    case "textarea":
-      return key === "readonly" || key === "disabled";
-      break;
-    case "button":
-    case "select":
-    case "optgroup":
-      return key === "disabled";
-  }
-  return false;
 }

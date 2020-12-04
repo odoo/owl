@@ -1,6 +1,6 @@
-import { BDom } from "../src/bdom";
-import { globalTemplates } from "../src/core";
-import { compile, compileTemplate, TemplateSet } from "../src/qweb_compiler";
+import { BDom, Blocks } from "../src/bdom";
+import { globalTemplates, TemplateSet, UTILS } from "../src/core";
+import { compileTemplate, RenderFunction } from "../src/compiler/index";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
@@ -35,6 +35,11 @@ export function trim(str: string): string {
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
+
+export function compile(template: string): RenderFunction {
+  const templateFunction = compileTemplate(template);
+  return templateFunction(Blocks, UTILS);
+}
 
 export function renderToBdom(template: string, context: any = {}): BDom {
   return compile(template)(context);

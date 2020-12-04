@@ -1,6 +1,6 @@
 import { BNode, BMulti } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-import { UTILS } from "../../src/qweb_utils";
+import { UTILS } from "../../src/core";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

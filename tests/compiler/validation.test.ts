@@ -1,5 +1,5 @@
-import { compile, TemplateSet } from "../../src/qweb_compiler";
-import { renderToString, TestTemplateSet } from "../helpers";
+import { TemplateSet } from "../../src/core";
+import { renderToString, TestTemplateSet, compile } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // basic validation

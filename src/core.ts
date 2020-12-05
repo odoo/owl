@@ -1,12 +1,13 @@
 import { App } from "./app";
 import { BDom, Block, Blocks } from "./bdom";
+import { ChildFiber, Fiber, MountingFiber, RootFiber } from "./fibers";
 import { observe } from "./reactivity";
 
 // -----------------------------------------------------------------------------
 //  Component
 // -----------------------------------------------------------------------------
 
-interface ComponentData {
+export interface ComponentData {
   bdom: null | BDom;
   render: () => BDom;
   fiber: Fiber | null;
@@ -43,8 +44,9 @@ export class Component {
   }
 
   async render(): Promise<void> {
-    const fiber = new RootFiber(this.__owl__!);
-    scheduler.addFiber(fiber);
+    const __owl__ = this.__owl__;
+    const fiber = new RootFiber(__owl__!);
+    __owl__.app.scheduler.addFiber(fiber);
     internalRender(this, fiber);
     await fiber.promise;
   }
@@ -137,150 +139,6 @@ async function updateAndRender(component: Component, fiber: ChildFiber, props: a
 Blocks.BComponent = BComponent;
 Blocks.BComponentH = BComponentH;
 
-// -----------------------------------------------------------------------------
-//  Scheduler
-// -----------------------------------------------------------------------------
-
-export class Scheduler {
-  tasks: RootFiber[] = [];
-  isRunning: boolean = false;
-  requestAnimationFrame: Window["requestAnimationFrame"];
-
-  constructor(requestAnimationFrame: Window["requestAnimationFrame"]) {
-    this.requestAnimationFrame = requestAnimationFrame;
-  }
-
-  start() {
-    this.isRunning = true;
-    this.scheduleTasks();
-  }
-
-  stop() {
-    this.isRunning = false;
-  }
-
-  addFiber(fiber: RootFiber) {
-    this.tasks.push(fiber);
-    if (!this.isRunning) {
-      this.start();
-    }
-  }
-
-  /**
-   * Process all current tasks. This only applies to the fibers that are ready.
-   * Other tasks are left unchanged.
-   */
-  flush() {
-    let tasks = this.tasks;
-    this.tasks = [];
-    tasks = tasks.filter((fiber) => {
-      if (fiber.counter === 0) {
-        if (!fiber.error) {
-          fiber.complete();
-        }
-        fiber.resolve();
-        return false;
-      }
-      return true;
-    });
-    this.tasks = tasks.concat(this.tasks);
-    if (this.tasks.length === 0) {
-      this.stop();
-    }
-  }
-
-  scheduleTasks() {
-    this.requestAnimationFrame(() => {
-      this.flush();
-      if (this.isRunning) {
-        this.scheduleTasks();
-      }
-    });
-  }
-}
-
-const scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
-
-// -----------------------------------------------------------------------------
-//  Internal rendering stuff
-// -----------------------------------------------------------------------------
-
-class BaseFiber {
-  bdom: BDom | null = null;
-  error?: Error;
-  __owl__: ComponentData;
-
-  child: Fiber | null = null;
-  sibling: Fiber | null = null;
-
-  constructor(__owl__: ComponentData) {
-    this.__owl__ = __owl__;
-  }
-
-  mountComponents() {
-    if (this.child) {
-      this.child.mountComponents();
-    }
-    if (this.sibling) {
-      this.sibling.mountComponents();
-    }
-    this.__owl__.mountedCB();
-    this.__owl__.isMounted = true;
-  }
-}
-
-type Fiber = ChildFiber | RootFiber;
-
-class ChildFiber extends BaseFiber {
-  bdom: BDom | null = null;
-  error?: Error;
-  root: RootFiber;
-  parent: BaseFiber;
-
-  constructor(__owl__: ComponentData, parent: Fiber) {
-    super(__owl__);
-    this.parent = parent;
-    const root = parent.root;
-    root.counter++;
-    root.childNumber++;
-    this.root = root;
-  }
-}
-
-class RootFiber extends BaseFiber {
-  counter: number = 1;
-  childNumber: number = 1;
-  root: RootFiber = this;
-
-  resolve!: () => void;
-  reject!: (error: Error) => void;
-  promise = new Promise((resolve, reject) => {
-    this.resolve = resolve;
-    this.reject = reject;
-  });
-
-  complete() {
-    this.__owl__!.bdom!.patch(this.bdom);
-  }
-}
-
-class MountingFiber extends RootFiber {
-  target: HTMLElement | DocumentFragment;
-
-  constructor(__owl__: ComponentData, target: HTMLElement | DocumentFragment) {
-    super(__owl__);
-    this.target = target;
-  }
-  complete() {
-    const __owl__ = this.__owl__!;
-    __owl__.bdom! = __owl__.fiber!.bdom!;
-    __owl__.bdom!.mount(this.target);
-    if (document.body.contains(this.target)) {
-      this.mountComponents();
-    }
-  }
-}
-
 type Env = any;
 
 interface MountParameters {
@@ -315,8 +173,9 @@ export async function mount(C: any, params: MountParameters) {
   currentEnv = env || {};
   const componentApp = app ? (app instanceof App ? app : app.__owl__.app) : new App();
   const component = prepare(C, props || {}, componentApp);
-  const fiber = new MountingFiber(component.__owl__!, target);
-  scheduler.addFiber(fiber);
+  const __owl__ = component.__owl__!;
+  const fiber = new MountingFiber(__owl__, target);
+  __owl__.app.scheduler.addFiber(fiber);
   internalRender(component, fiber);
   await fiber.promise;
   return component;

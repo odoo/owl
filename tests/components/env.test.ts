@@ -1,4 +1,5 @@
-import { Component, mount, xml } from "../../src/core";
+import { Component, mount } from "../../src/core";
+import { xml } from "../../src/index";
 import { makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;

@@ -1,6 +1,6 @@
 import { BNode, BMulti } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-import { UTILS } from "../../src/core";
+import { elem } from "../../src/qweb_utils";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -15,8 +15,6 @@ beforeEach(() => {
 afterEach(() => {
   fixture.remove();
 });
-
-const elem = UTILS.elem;
 
 function el(html: string): HTMLElement {
   const div = document.createElement("div");

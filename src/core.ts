@@ -1,77 +1,6 @@
-import { RenderFunction, compileTemplate } from "./compiler/index";
+import { App } from "./app";
 import { BDom, Block, Blocks } from "./bdom";
 import { observe } from "./reactivity";
-import { elem, withDefault, scope, getValues, owner, callSlot, toString } from "./qweb_utils";
-
-// -----------------------------------------------------------------------------
-//  TemplateSet
-// -----------------------------------------------------------------------------
-
-export const UTILS = {
-  elem,
-  toString,
-  withDefault,
-  call: (name: string) => {
-    throw new Error(`Missing template: ${name}`);
-  },
-  zero: Symbol("zero"),
-  scope,
-  getValues,
-  owner,
-  callSlot,
-};
-
-// -----------------------------------------------------------------------------
-//  TemplateSet
-// -----------------------------------------------------------------------------
-
-export class TemplateSet {
-  templates: { [name: string]: string } = {};
-  compiledTemplates: { [name: string]: RenderFunction } = {};
-  utils: typeof UTILS;
-
-  constructor() {
-    const call = (subTemplate: string, ctx: any, refs: any) => {
-      const renderFn = this.getFunction(subTemplate);
-      return renderFn(ctx, refs);
-    };
-
-    this.utils = Object.assign({}, UTILS, { call });
-  }
-
-  add(name: string, template: string, allowDuplicate: boolean = false) {
-    if (name in this.templates && !allowDuplicate) {
-      throw new Error(`Template ${name} already defined`);
-    }
-    this.templates[name] = template;
-  }
-
-  getFunction(name: string): RenderFunction {
-    if (!(name in this.compiledTemplates)) {
-      const template = this.templates[name];
-      if (template === undefined) {
-        throw new Error(`Missing template: "${name}"`);
-      }
-      const templateFn = compileTemplate(template, name);
-      const renderFn = templateFn(Blocks, this.utils);
-      this.compiledTemplates[name] = renderFn;
-    }
-    return this.compiledTemplates[name];
-  }
-}
-// -----------------------------------------------------------------------------
-//  Global templates
-// -----------------------------------------------------------------------------
-
-let nextId = 1;
-export const globalTemplates = new TemplateSet();
-
-export function xml(strings: TemplateStringsArray, ...args: any[]) {
-  const name = `__template__${nextId++}`;
-  const value = String.raw(strings, ...args);
-  globalTemplates.add(name, value);
-  return name;
-}
 
 // -----------------------------------------------------------------------------
 //  Component
@@ -86,6 +15,7 @@ interface ComponentData {
   isMounted: boolean;
   children: { [key: string]: Component };
   slots?: any;
+  app: App;
 }
 
 export class Component {
@@ -142,7 +72,7 @@ class BComponent extends Block {
       // new component
       const components = ctx.constructor.components || ctx.components;
       const C = components[name];
-      component = prepare(C, props);
+      component = prepare(C, props, parentData.app);
       parentData.children[key] = component;
       const fiber = new ChildFiber(component.__owl__, parentData.fiber!);
       const parentFiber = parentData.fiber!;
@@ -357,6 +287,7 @@ interface MountParameters {
   env?: Env;
   target: HTMLElement | DocumentFragment;
   props?: any;
+  app?: App | Component;
 }
 
 interface Type<T> extends Function {
@@ -380,9 +311,10 @@ export async function mount(C: any, params: MountParameters) {
     C.__owl__.bdom!.move(params.target);
     return;
   }
-  const { target, props, env } = params;
+  const { target, props, env, app } = params;
   currentEnv = env || {};
-  const component = prepare(C, props || {});
+  const componentApp = app ? (app instanceof App ? app : app.__owl__.app) : new App();
+  const component = prepare(C, props || {}, componentApp);
   const fiber = new MountingFiber(component.__owl__!, target);
   scheduler.addFiber(fiber);
   internalRender(component, fiber);
@@ -390,7 +322,7 @@ export async function mount(C: any, params: MountParameters) {
   return component;
 }
 
-function prepare(C: any, props: any): Component {
+function prepare(C: any, props: any, app: App): Component {
   let component: Component;
   let template: string = (C as any).template;
   if (!template) {
@@ -404,12 +336,13 @@ function prepare(C: any, props: any): Component {
     mountedCB: null as any,
     isMounted: false,
     children: {},
+    app,
   };
   currentData = __owl__;
 
   component = new C(props);
   component.setup();
-  __owl__.render = globalTemplates.getFunction(template).bind(null, component);
+  __owl__.render = app.getTemplate(template).bind(null, component);
   return component;
 }
 

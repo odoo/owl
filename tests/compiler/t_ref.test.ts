@@ -1,4 +1,4 @@
-import { TemplateSet } from "../../src/core";
+import { App } from "../../src/app";
 import { renderToBdom, snapshotTemplateCode } from "../helpers";
 
 // -----------------------------------------------------------------------------
@@ -96,11 +96,11 @@ describe("t-ref", () => {
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
 
-    const templateSet = new TemplateSet();
-    templateSet.add("main", main);
-    templateSet.add("sub", sub);
+    const app = new App();
+    app.addTemplate("main", main);
+    app.addTemplate("sub", sub);
 
-    const bdom = templateSet.getFunction("main")({});
+    const bdom = app.getTemplate("main")({});
     bdom.mount(document.createElement("div"));
 
     expect(bdom.refs!.name.tagName).toBe("SPAN");

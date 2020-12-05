@@ -1,5 +1,6 @@
 import { BDom, Blocks } from "../src/bdom";
-import { globalTemplates, TemplateSet, UTILS } from "../src/core";
+import { App, UTILS } from "../src/app";
+import { globalTemplates } from "../src/tags";
 import { compileTemplate, RenderFunction } from "../src/compiler/index";
 
 export function nextMicroTick(): Promise<void> {
@@ -25,7 +26,7 @@ export async function nextTick(): Promise<void> {
  * Return the global template xml string corresponding to the given name
  */
 export function fromName(name: string): string {
-  return globalTemplates.templates[name];
+  return globalTemplates[name];
 }
 
 export function trim(str: string): string {
@@ -52,9 +53,9 @@ export function renderToString(template: string, context: any = {}): string {
   return fixture.innerHTML;
 }
 
-export class TestTemplateSet extends TemplateSet {
+export class TestApp extends App {
   renderToString(name: string, context: any = {}): string {
-    const renderFn = this.getFunction(name);
+    const renderFn = this.getTemplate(name);
     const bdom = renderFn(context);
     const fixture = makeTestFixture();
     bdom.mount(fixture);

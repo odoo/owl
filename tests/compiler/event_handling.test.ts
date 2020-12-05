@@ -1,4 +1,4 @@
-import { TemplateSet } from "../../src/core";
+import { App } from "../../src/app";
 import { makeTestFixture, renderToBdom, renderToString, snapshotTemplateCode } from "../helpers";
 
 // -----------------------------------------------------------------------------
@@ -135,11 +135,11 @@ describe("t-on", () => {
 
   test("handler is bound to proper owner, part 3", () => {
     expect.assertions(3);
-    const templateSet = new TemplateSet();
+    const templateSet = new App();
     const sub = `<button t-on-click="add">Click</button>`;
     const main = `<t t-call="sub"/>`;
-    templateSet.add("sub", sub);
-    templateSet.add("main", main);
+    templateSet.addTemplate("sub", sub);
+    templateSet.addTemplate("main", main);
 
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
@@ -149,7 +149,7 @@ describe("t-on", () => {
       },
     };
     const fixture = makeTestFixture();
-    const render = templateSet.getFunction("main");
+    const render = templateSet.getTemplate("main");
     const bdom = render(owner);
     bdom.mount(fixture);
     fixture.querySelector("button")!.click();
@@ -157,14 +157,14 @@ describe("t-on", () => {
 
   test("handler is bound to proper owner, part 4", () => {
     expect.assertions(3);
-    const templateSet = new TemplateSet();
+    const templateSet = new App();
     const sub = `<button t-on-click="add">Click</button>`;
     const main = `
         <t t-foreach="[1]" t-as="value" t-key="value">
           <t t-call="sub"/>
         </t>`;
-    templateSet.add("sub", sub);
-    templateSet.add("main", main);
+    templateSet.addTemplate("sub", sub);
+    templateSet.addTemplate("main", main);
 
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
@@ -174,7 +174,7 @@ describe("t-on", () => {
       },
     };
     const fixture = makeTestFixture();
-    const render = templateSet.getFunction("main");
+    const render = templateSet.getTemplate("main");
     const bdom = render(owner);
     bdom.mount(fixture);
     fixture.querySelector("button")!.click();
@@ -243,11 +243,11 @@ describe("t-on", () => {
 
   test("t-on with t-call", async () => {
     expect.assertions(3);
-    const templateSet = new TemplateSet();
+    const templateSet = new App();
     const sub = `<p t-on-click="update">lucas</p>`;
     const main = `<div><t t-call="sub"/></div>`;
-    templateSet.add("sub", sub);
-    templateSet.add("main", main);
+    templateSet.addTemplate("sub", sub);
+    templateSet.addTemplate("main", main);
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
 
@@ -258,7 +258,7 @@ describe("t-on", () => {
     };
 
     const fixture = makeTestFixture();
-    const render = templateSet.getFunction("main");
+    const render = templateSet.getTemplate("main");
     const bdom = render(owner);
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();
@@ -266,11 +266,11 @@ describe("t-on", () => {
 
   test("t-on, with arguments and t-call", async () => {
     expect.assertions(4);
-    const templateSet = new TemplateSet();
+    const templateSet = new App();
     const sub = `<p t-on-click="update(value)">lucas</p>`;
     const main = `<div><t t-call="sub"/></div>`;
-    templateSet.add("sub", sub);
-    templateSet.add("main", main);
+    templateSet.addTemplate("sub", sub);
+    templateSet.addTemplate("main", main);
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
 
@@ -283,7 +283,7 @@ describe("t-on", () => {
     };
 
     const fixture = makeTestFixture();
-    const render = templateSet.getFunction("main");
+    const render = templateSet.getTemplate("main");
     const bdom = render(owner);
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();

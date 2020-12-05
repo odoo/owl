@@ -29,8 +29,8 @@ import {
 
 import { isProp, domToString, DomType, Dom, DomNode } from "./utils";
 
-export type RenderFunction = (context: any, refs?: any) => BDom;
-export type TemplateFunction = (blocks: any, utils: any) => RenderFunction;
+export type Template = (context: any, refs?: any) => BDom;
+export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 // export function compile(template: string, utils: typeof UTILS = UTILS): RenderFunction {
 //   const templateFunction = compileTemplate(template);

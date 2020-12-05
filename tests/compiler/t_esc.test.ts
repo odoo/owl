@@ -3,7 +3,7 @@ import {
   renderToBdom,
   renderToString,
   snapshotTemplateCode,
-  TestTemplateSet,
+  TestApp,
 } from "../helpers";
 
 // -----------------------------------------------------------------------------
@@ -88,15 +88,15 @@ describe("t-esc", () => {
   });
 
   test("t-esc=0 is escaped", () => {
-    const templateSet = new TestTemplateSet();
+    const app = new TestApp();
     const sub = '<span><t t-esc="0"/></span>';
     const main = `<div><t t-call="sub"><p>escaped</p></t></div>`;
-    templateSet.add("sub", sub);
-    templateSet.add("main", main);
+    app.addTemplate("sub", sub);
+    app.addTemplate("main", main);
 
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
-    const bdom = templateSet.getFunction("main")({});
+    const bdom = app.getTemplate("main")({});
     const fixture = makeTestFixture();
     bdom.mount(fixture);
     expect(fixture.querySelector("span")!.textContent).toBe("<p>escaped</p>");

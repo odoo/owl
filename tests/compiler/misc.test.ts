@@ -1,4 +1,4 @@
-import { snapshotTemplateCode, TestTemplateSet, trim } from "../helpers";
+import { snapshotTemplateCode, TestApp, trim } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // misc
@@ -6,7 +6,7 @@ import { snapshotTemplateCode, TestTemplateSet, trim } from "../helpers";
 
 describe("misc", () => {
   test("global", () => {
-    const templateSet = new TestTemplateSet();
+    const app = new TestApp();
     const _calleeAsc = `<año t-att-falló="'agüero'" t-raw="0"/>`;
     const _calleeUsesFoo = `<span t-esc="foo">foo default</span>`;
     const _calleeAscToto = `<div t-raw="toto">toto default</div>`;
@@ -25,17 +25,17 @@ describe("misc", () => {
           </t>
           <t t-call="_callee-asc-toto"/>
         </div>`;
-    templateSet.add("_callee-asc", _calleeAsc);
-    templateSet.add("_callee-uses-foo", _calleeUsesFoo);
-    templateSet.add("_callee-asc-toto", _calleeAscToto);
-    templateSet.add("caller", caller);
+    app.addTemplate("_callee-asc", _calleeAsc);
+    app.addTemplate("_callee-uses-foo", _calleeUsesFoo);
+    app.addTemplate("_callee-asc-toto", _calleeAscToto);
+    app.addTemplate("caller", caller);
 
     snapshotTemplateCode(caller);
     snapshotTemplateCode(_calleeAscToto);
     snapshotTemplateCode(_calleeAsc);
     snapshotTemplateCode(_calleeUsesFoo);
 
-    const result = trim(templateSet.renderToString("caller"));
+    const result = trim(app.renderToString("caller"));
     const expected = trim(`
         <div>
           <span>4</span>

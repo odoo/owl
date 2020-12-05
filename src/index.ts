@@ -5,6 +5,7 @@
  * Note that dynamic values, such as a date or a commit hash are added by rollup
  */
 
-export { Component, mount, xml } from "./core";
+export { Component, mount } from "./core";
+export { xml } from "./tags";
 
 export const __info__ = {};

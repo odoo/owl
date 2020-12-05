@@ -258,11 +258,11 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
     }
   }
   

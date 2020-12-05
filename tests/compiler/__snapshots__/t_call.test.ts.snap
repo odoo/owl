@@ -457,11 +457,11 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
     }
   }
   
@@ -531,11 +531,11 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
     }
   }
   
@@ -606,13 +606,13 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+    }
     update() {
       const el1 = this.el.firstChild.firstChild;
       el1.textContent = toString(this.data[0]);
       el1.nextSibling.nextSibling.textContent = toString(this.data[1]);
-    }
-    build() {
-      this.anchors[0] = this.el.firstChild.nextSibling;
     }
   }
   
@@ -656,11 +656,11 @@ exports[`t-call (template calling) scoped parameters 1`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
     }
   }
   
@@ -690,11 +690,11 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.anchors[0].nextSibling.textContent = toString(this.data[0]);
     }
   }
   

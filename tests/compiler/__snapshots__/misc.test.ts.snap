@@ -98,11 +98,11 @@ exports[`misc global 3`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.updateAttr(this.el, \`falló\`, this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.updateAttr(this.el, \`falló\`, this.data[0]);
     }
   }
   

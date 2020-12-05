@@ -187,11 +187,11 @@ exports[`t-ref two refs, one in a t-if 1`] = `
     static el = elem(\`<div><owl-anchor/><p/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
-    update() {
-      this.refs[\`p\`] = this.anchors[0].nextSibling;
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.refs[\`p\`] = this.anchors[0].nextSibling;
     }
   }
   

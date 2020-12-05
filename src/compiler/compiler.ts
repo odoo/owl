@@ -283,21 +283,6 @@ export class QWebCompiler {
     if (block.handlerNumber) {
       this.addLine(`handlers = new Array(${block.handlerNumber});`);
     }
-    if (block.updateFn.length) {
-      const updateInfo = block.updateFn;
-      this.addLine(`update() {`);
-      this.target.indentLevel++;
-      if (updateInfo.length === 1) {
-        const { path, inserter } = updateInfo[0];
-        const target = `this.${path.join(".")}`;
-        this.addLine(inserter(target));
-      } else {
-        this.generateFunctionCode(block.updateFn);
-      }
-      this.target.indentLevel--;
-      this.addLine(`}`);
-    }
-
     if (block.buildFn.length) {
       const updateInfo = block.buildFn;
       this.addLine(`build() {`);
@@ -308,6 +293,20 @@ export class QWebCompiler {
         this.addLine(inserter(target));
       } else {
         this.generateFunctionCode(block.buildFn);
+      }
+      this.target.indentLevel--;
+      this.addLine(`}`);
+    }
+    if (block.updateFn.length) {
+      const updateInfo = block.updateFn;
+      this.addLine(`update() {`);
+      this.target.indentLevel++;
+      if (updateInfo.length === 1) {
+        const { path, inserter } = updateInfo[0];
+        const target = `this.${path.join(".")}`;
+        this.addLine(inserter(target));
+      } else {
+        this.generateFunctionCode(block.updateFn);
       }
       this.target.indentLevel--;
       this.addLine(`}`);

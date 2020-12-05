@@ -429,12 +429,12 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
     children = new Array(2);
     anchors = new Array(2);
     data = new Array(1);
-    update() {
-      this.anchors[1].nextSibling.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
+    }
+    update() {
+      this.anchors[1].nextSibling.textContent = toString(this.data[0]);
     }
   }
   
@@ -463,12 +463,12 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
     children = new Array(2);
     anchors = new Array(2);
     data = new Array(1);
-    update() {
-      this.anchors[1].nextSibling.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
+    }
+    update() {
+      this.anchors[1].nextSibling.textContent = toString(this.data[0]);
     }
   }
   

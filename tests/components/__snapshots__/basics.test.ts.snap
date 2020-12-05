@@ -110,11 +110,11 @@ exports[`basics cannot be clicked on and updated if not in DOM 1`] = `
     static el = elem(\`<div><owl-text/><button>Inc</button></div>\`);
     data = new Array(1);
     handlers = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
-    }
     build() {
       this.setupHandler(this.el.firstChild.nextSibling, 0);
+    }
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
     }
   }
   

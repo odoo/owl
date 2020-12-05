@@ -344,15 +344,15 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(3);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
     update() {
       const el1 = this.anchors[0].nextSibling.firstChild.nextSibling;
       const el2 = el1.nextSibling.nextSibling;
       el1.textContent = toString(this.data[0]);
       el2.textContent = toString(this.data[1]);
       el2.nextSibling.nextSibling.textContent = toString(this.data[2]);
-    }
-    build() {
-      this.anchors[0] = this.el.firstChild;
     }
   }
   
@@ -443,15 +443,15 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(3);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
     update() {
       const el1 = this.anchors[0].nextSibling.firstChild.nextSibling;
       const el2 = el1.nextSibling.nextSibling;
       el1.textContent = toString(this.data[0]);
       el2.textContent = toString(this.data[1]);
       el2.nextSibling.nextSibling.textContent = toString(this.data[2]);
-    }
-    build() {
-      this.anchors[0] = this.el.firstChild;
     }
   }
   

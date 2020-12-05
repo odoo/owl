@@ -559,11 +559,11 @@ exports[`slots slots are rendered with proper context 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
     }
   }
   
@@ -661,11 +661,11 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.updateAttr(this.el, \`href\`, this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.updateAttr(this.el, \`href\`, this.data[0]);
     }
   }
   
@@ -744,11 +744,11 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.updateAttr(this.el, \`href\`, this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild;
+    }
+    update() {
+      this.updateAttr(this.el, \`href\`, this.data[0]);
     }
   }
   

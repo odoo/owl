@@ -11,22 +11,22 @@ exports[`refs refs are properly bound in slots 1`] = `
     children = new Array(1);
     anchors = new Array(1);
     data = new Array(1);
-    update() {
-      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
-    }
     build() {
       this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
     }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<button>do something</button>\`);
     handlers = new Array(1);
-    update() {
-      this.refs[\`myButton\`] = this.el;
-    }
     build() {
       this.setupHandler(this.el, 0);
+    }
+    update() {
+      this.refs[\`myButton\`] = this.el;
     }
   }
   

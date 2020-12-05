@@ -4,8 +4,14 @@
  *
  * Note that dynamic values, such as a date or a commit hash are added by rollup
  */
+import * as _hooks from "./hooks";
+import { useComponent } from "./core";
 
-export { Component, mount } from "./core";
+export { Component, mount, useComponent } from "./core";
 export { xml } from "./tags";
+
+export { useState } from "./hooks";
+
+export const hooks = Object.assign(_hooks, { useComponent: useComponent });
 
 export const __info__ = {};

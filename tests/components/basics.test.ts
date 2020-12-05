@@ -1,5 +1,5 @@
 import { fromName, makeTestFixture, snapshotTemplateCode, nextTick } from "../helpers";
-import { mount, Component, useState } from "../../src/core";
+import { mount, Component, useState } from "../../src/index";
 import { xml } from "../../src/index";
 
 let fixture: HTMLElement;

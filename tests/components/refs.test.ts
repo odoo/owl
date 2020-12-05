@@ -1,7 +1,8 @@
-import { Component, mount, useRef, useState } from "../../src/core";
+import { Component, mount, hooks, useState } from "../../src/index";
 import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 import { xml } from "../../src/index";
 
+const { useRef } = hooks;
 let fixture: HTMLElement;
 
 beforeEach(() => {

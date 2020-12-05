@@ -1,7 +1,8 @@
-import { Component, mount, onMounted, onWillStart } from "../../src/core";
+import { Component, mount, hooks } from "../../src/index";
 import { xml } from "../../src/index";
 import { makeTestFixture } from "../helpers";
 
+const { onMounted, onWillStart } = hooks;
 let fixture: HTMLElement;
 
 beforeEach(() => {

@@ -1,5 +1,4 @@
-import { Component, mount, useState } from "../../src/core";
-import { xml } from "../../src/index";
+import { Component, mount, useState, xml } from "../../src/index";
 import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;

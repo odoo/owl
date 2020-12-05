@@ -3,14 +3,14 @@
 exports[`basics Multi root component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<span>1</span>\`);
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BStatic {
     static el = elem(\`<span>2</span>\`);
   }
   
@@ -27,7 +27,7 @@ exports[`basics Multi root component 1`] = `
 exports[`basics a class component inside a class component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -50,7 +50,7 @@ exports[`basics a class component inside a class component 1`] = `
 exports[`basics a class component inside a class component, no external dom 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -63,7 +63,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
 exports[`basics can handle empty props 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -86,10 +86,10 @@ exports[`basics can handle empty props 1`] = `
 exports[`basics can mount a simple class component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<span>simple vnode</span>\`);
   }
   
@@ -103,7 +103,7 @@ exports[`basics can mount a simple class component 1`] = `
 exports[`basics cannot be clicked on and updated if not in DOM 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -133,7 +133,7 @@ exports[`basics cannot be clicked on and updated if not in DOM 1`] = `
 exports[`basics child can be updated 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -146,7 +146,7 @@ exports[`basics child can be updated 1`] = `
 exports[`basics child can be updated 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -159,7 +159,7 @@ exports[`basics child can be updated 2`] = `
 exports[`basics class component with dynamic text 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -181,7 +181,7 @@ exports[`basics class component with dynamic text 1`] = `
 exports[`basics class parent, class child component with props 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -194,7 +194,7 @@ exports[`basics class parent, class child component with props 1`] = `
 exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -216,7 +216,7 @@ exports[`basics class parent, class child component with props 2`] = `
 exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -229,7 +229,7 @@ exports[`basics parent, child and grandchild 1`] = `
 exports[`basics two child components 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -244,7 +244,7 @@ exports[`basics two child components 1`] = `
 exports[`basics zero or one child components 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {

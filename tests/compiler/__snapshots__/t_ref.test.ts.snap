@@ -3,7 +3,7 @@
 exports[`t-ref can get a dynamic ref on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -27,7 +27,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -48,7 +48,7 @@ exports[`t-ref can get a ref on a node 1`] = `
 exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -74,7 +74,7 @@ exports[`t-ref ref in a t-call 1`] = `
 exports[`t-ref ref in a t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -95,7 +95,7 @@ exports[`t-ref ref in a t-call 2`] = `
 exports[`t-ref ref in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -129,7 +129,7 @@ exports[`t-ref ref in a t-if 1`] = `
 exports[`t-ref refs in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -180,7 +180,7 @@ exports[`t-ref refs in a loop 1`] = `
 exports[`t-ref two refs, one in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

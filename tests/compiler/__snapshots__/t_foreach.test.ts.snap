@@ -3,7 +3,7 @@
 exports[`t-foreach does not pollute the rendering context 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -38,7 +38,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
 exports[`t-foreach iterate on items (on a element node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -82,7 +82,7 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
 exports[`t-foreach iterate on items 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -124,7 +124,7 @@ exports[`t-foreach iterate on items 1`] = `
 exports[`t-foreach iterate, dict param 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -166,7 +166,7 @@ exports[`t-foreach iterate, dict param 1`] = `
 exports[`t-foreach iterate, position 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -211,7 +211,7 @@ exports[`t-foreach iterate, position 1`] = `
 exports[`t-foreach simple iteration (in a node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -246,7 +246,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
 exports[`t-foreach simple iteration 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -271,7 +271,7 @@ exports[`t-foreach simple iteration 1`] = `
 exports[`t-foreach simple iteration with two nodes inside 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -316,7 +316,7 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
 exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -336,7 +336,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
 exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -413,7 +413,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
 exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
@@ -435,7 +435,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
 exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -509,7 +509,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
 exports[`t-foreach t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -561,7 +561,7 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
 exports[`t-foreach t-key on an inside node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

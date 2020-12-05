@@ -3,7 +3,7 @@
 exports[`misc global 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -66,7 +66,7 @@ exports[`misc global 1`] = `
 exports[`misc global 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -90,7 +90,7 @@ exports[`misc global 2`] = `
 exports[`misc global 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -118,7 +118,7 @@ exports[`misc global 3`] = `
 exports[`misc global 4`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {

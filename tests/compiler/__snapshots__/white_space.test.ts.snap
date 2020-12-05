@@ -3,10 +3,10 @@
 exports[`white space handling consecutives whitespaces are condensed into a single space 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<div> abc </div>\`);
   }
   
@@ -20,10 +20,10 @@ exports[`white space handling consecutives whitespaces are condensed into a sing
 exports[`white space handling nothing is done in pre tags 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<pre>
           some text
         </pre>\`);
@@ -39,10 +39,10 @@ exports[`white space handling nothing is done in pre tags 1`] = `
 exports[`white space handling white space only text nodes are condensed into a single space 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<div> </div>\`);
   }
   
@@ -56,10 +56,10 @@ exports[`white space handling white space only text nodes are condensed into a s
 exports[`white space handling whitespace only text nodes with newlines are removed 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<div><span>abc</span></div>\`);
   }
   

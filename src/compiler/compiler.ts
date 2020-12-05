@@ -51,7 +51,6 @@ class BlockDescription {
   blockName: string;
   buildFn: FunctionLine[] = [];
   updateFn: FunctionLine[] = [];
-  mountFn: FunctionLine[] = [];
   currentPath: string[] = ["el"];
   dataNumber: number = 0;
   handlerNumber: number = 0;
@@ -204,7 +203,7 @@ export class QWebCompiler {
     this.target.indentLevel = 0;
     // define blocks and utility functions
     this.addLine(
-      `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;`
+      `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;`
     );
     this.addLine(
       `let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;`
@@ -263,6 +262,11 @@ export class QWebCompiler {
   }
 
   generateBlockCode(block: BlockDescription) {
+    const isStatic =
+      block.buildFn.length === 0 && block.updateFn.length === 0 && block.childNumber === 0;
+    if (isStatic) {
+      block.baseClass = "BStatic";
+    }
     this.addLine(``);
     this.addLine(`class ${block.blockName} extends ${block.baseClass} {`);
     this.target.indentLevel++;

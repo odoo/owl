@@ -3,10 +3,10 @@
 exports[`comments only a comment 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<!-- comment-->\`);
   }
   
@@ -20,10 +20,10 @@ exports[`comments only a comment 1`] = `
 exports[`comments properly handle comments 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BStatic {
     static el = elem(\`<div>hello <!-- comment-->owl</div>\`);
   }
   
@@ -37,7 +37,7 @@ exports[`comments properly handle comments 1`] = `
 exports[`comments properly handle comments between t-if/t-else 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
@@ -50,11 +50,11 @@ exports[`comments properly handle comments between t-if/t-else 1`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BStatic {
     static el = elem(\`<span>true</span>\`);
   }
   
-  class Block3 extends BNode {
+  class Block3 extends BStatic {
     static el = elem(\`<span>owl</span>\`);
   }
   

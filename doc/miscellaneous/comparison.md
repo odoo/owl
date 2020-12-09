@@ -4,7 +4,7 @@ OWL, React and Vue have the same main feature: they allow developers to build
 declarative user interfaces. To do that, all these frameworks uses a virtual dom. However, there are still obviously many differences.
 
 In this page, we try to highlight some of these differences. Obviously, a lot of
-effort was done to be fair. However, if you disagree with some of the points
+effort was put to be fair. However, if you disagree with some of the points
 discussed, feel free to open an issue/submit a PR to correct this text.
 
 ## Content
@@ -47,7 +47,7 @@ components are fast enough for all our usecases, and making it as simple as
 possible for developers is more valuable (for us).
 
 Also, functions or class based components are more than just syntax. Functions
-comes with a mindset of composition and class are about inheritance. Clearly,
+come with a mindset of composition and class are about inheritance. Clearly,
 both of these are important mechanisms for reusing code. Also, one does not
 exclude the other.
 

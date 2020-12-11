@@ -600,4 +600,51 @@ describe("unmounting and remounting", () => {
     await parent.render();
     expect(fixture.textContent).toBe("fixedsome text");
   });
+
+  test("remounting component tree where a component implement shouldupdate", async () => {
+    let state: any;
+    const steps = [];
+    class Child extends Component {
+      static template = xml`<div><t t-esc="state.word"/><t t-esc="props.name"/></div>`;
+
+      state = useState({ word: "hello" });
+
+      constructor(parent, props) {
+        super(parent, props);
+        state = this.state;
+      }
+      patched() {
+        steps.push("patched");
+      }
+      mounted() {
+        steps.push("mounted");
+      }
+      willUnmount() {
+        steps.push("willUnmount");
+      }
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child name="state.name"/></div>`;
+      static components = { Child };
+      state = useState({ name: "World" });
+    }
+
+    const parent = await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div><div>helloWorld</div></div>");
+
+    parent.unmount();
+    expect(fixture.innerHTML).toBe("");
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><div>helloWorld</div></div>");
+
+    state.word = "test";
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>testWorld</div></div>");
+    expect(steps).toEqual(["mounted", "willUnmount", "mounted", "patched"]);
+  });
 });

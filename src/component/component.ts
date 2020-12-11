@@ -333,7 +333,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
       message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
       throw new Error(message);
     }
-    const fiber = new Fiber(null, this, false, target, position);
+    const fiber = new Fiber(null, this, true, target, position);
     fiber.shouldPatch = false;
     if (!__owl__.vnode) {
       this.__prepareAndRender(fiber, () => {});

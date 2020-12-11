@@ -115,16 +115,6 @@ export function useContextWithCB(ctx: Context, component: Component, method): an
     __owl__.observer = new Observer();
     __owl__.observer.notifyCB = component.render.bind(component);
   }
-  const currentCB = __owl__.observer.notifyCB;
-  __owl__.observer.notifyCB = function () {
-    if (ctx.rev > mapping[id]) {
-      // in this case, the context has been updated since we were rendering
-      // last, and we do not need to render here with the observer. A
-      // rendering is coming anyway, with the correct props.
-      return;
-    }
-    currentCB();
-  };
 
   mapping[id] = 0;
   const renderFn = __owl__.renderFn;

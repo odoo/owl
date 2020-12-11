@@ -1,4 +1,4 @@
-import { Component, Env } from "../src/component/component";
+import { Component, Env, mount } from "../src/component/component";
 import { Store, useStore, useDispatch, useGetters, EnvWithStore } from "../src/store";
 import { useState } from "../src/hooks";
 import { xml } from "../src/tags";
@@ -1240,5 +1240,109 @@ describe("various scenarios", () => {
     fixture.querySelector("button")!.click();
     await nextTick();
     expect(fixture.innerHTML).toMatchSnapshot();
+  });
+
+  test("component with store, useState and shouldUpdate=false", async () => {
+    let state: any;
+
+    const store = new Store({ state: { rev: 0 } });
+
+    class Child extends Component {
+      static template = xml`<div><t t-esc="state.word"/><t t-esc="props.name"/></div>`;
+
+      state = useState({ word: "hello" });
+
+      constructor(parent, props) {
+        super(parent, props);
+        state = this.state;
+        useStore((props) => {
+          return 1;
+        });
+      }
+
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child name="state.name"/></div>`;
+      static components = { Child };
+
+      state = useState({ name: "World" });
+
+      constructor(parent, props) {
+        super(parent, props);
+        useStore((props) => store.state.rev);
+      }
+    }
+    (env as any).store = store;
+
+    await mount(Parent, { target: fixture, env });
+    expect(fixture.innerHTML).toBe("<div><div>helloWorld</div></div>");
+
+    store.state.rev++;
+    // this is the key to the bug, it makes Parent be in "render" state but not
+    // yet rendered while the change of state happens
+    await Promise.resolve();
+    state.word = "test";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>testWorld</div></div>");
+  });
+
+  test("component with store, useState, shouldUpdate=false and child with shouldupdate false", async () => {
+    let state: any;
+
+    const store = new Store({ state: { rev: 0 } });
+
+    class ChildChild extends Component {
+      static template = xml`<div><t t-esc="props.value"/></div>`;
+
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<div><t t-esc="state.word"/><t t-esc="props.name"/><ChildChild value="state.value"/></div>`;
+      static components = { ChildChild };
+      state = useState({ word: "hello", value: 3 });
+
+      constructor(parent, props) {
+        super(parent, props);
+        state = this.state;
+        useStore((props) => {
+          return 1;
+        });
+      }
+
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child name="state.name"/></div>`;
+      static components = { Child };
+
+      state = useState({ name: "World" });
+      constructor(parent, props) {
+        super(parent, props);
+        useStore((props) => store.state.rev);
+      }
+    }
+    (env as any).store = store;
+
+    await mount(Parent, { target: fixture, env });
+    expect(fixture.innerHTML).toBe("<div><div>helloWorld<div>3</div></div></div>");
+
+    store.state.rev++;
+    // this is the key to the bug, it makes Parent be in "render" state but not
+    // yet rendered while the change of state happens
+    await Promise.resolve();
+    state.word = "test";
+    state.value = 44;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>testWorld<div>3</div></div></div>");
   });
 });

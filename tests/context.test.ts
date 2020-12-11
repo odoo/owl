@@ -289,7 +289,26 @@ describe("Context", () => {
     expect(testContext.subscriptions.update.length).toBe(0);
   });
 
-  test("concurrent renderings", async () => {
+  test.skip("concurrent renderings", async () => {
+    /**
+     * Note: this test is interesting, but sadly just an incomplete attempt at
+     * protecting users against themselves.  With the context API, it is not
+     * possible for the framework to protect completely against crashes.  Maybe
+     * like in this case, when a component is in a simple hierarchy where all
+     * renderings come from the context changes, but in a real case, where some
+     * code can trigger a rendering independently, it is insufficient.
+     *
+     * The main problem is that the sub component depends on some external state,
+     * which may be modified, and then incompatible with the component actual
+     * state (for example, if the sub component has an id key related to some
+     * object that has been removed from the context).
+     *
+     * For now, sadly, the only solution is that components that depends on external
+     * state should guarantee their own integrity themselves. Then maybe this
+     * could be solved at the level of a state management solution that has a
+     * more advanced API, to let components determine if they should be updated
+     * or not (so, something slightly more advanced that the useStore hook).
+     */
     const testContext = new Context({ x: { n: 1 }, key: "x" });
     const def = makeDeferred();
     let stateC;

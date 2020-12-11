@@ -1,5 +1,4 @@
-import { Component } from "./component/component";
-import { Env } from "./component/component";
+import { Component, Env } from "./component/component";
 import { Context, useContextWithCB } from "./context";
 import { onWillUpdateProps } from "./hooks";
 

@@ -2,6 +2,7 @@ import { Component } from "./component/component";
 import { Env } from "./component/component";
 import { Context, useContextWithCB } from "./context";
 import { onWillUpdateProps } from "./hooks";
+import { observe, unobserve } from "./core/reactivity";
 
 /**
  * Owl Store
@@ -94,8 +95,10 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     throw new Error(`No store found when connecting '${component.constructor.name}'`);
   }
   let result = selector(store.state, component.props);
-  const hashFn = store.observer.revNumber.bind(store.observer);
-  let revNumber = hashFn(result);
+  let n = 0;
+  const observeFn = () => n++;
+  observe(result, observeFn);
+  let revNumber = n;
   const isEqual = options.isEqual || isStrictEqual;
   if (!store.updateFunctions[componentId]) {
     store.updateFunctions[componentId] = [];
@@ -103,7 +106,11 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   function selectCompareUpdate(state, props): boolean {
     const oldResult = result;
     result = selector(state, props);
-    const newRevNumber = hashFn(result);
+    if (oldResult !== result) {
+      unobserve(oldResult, observeFn);
+      observe(result, observeFn);
+    }
+    const newRevNumber = n;
     if ((newRevNumber > 0 && revNumber !== newRevNumber) || !isEqual(oldResult, result)) {
       revNumber = newRevNumber;
       if (options.onUpdate) {
@@ -133,6 +140,7 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   const __destroy = component.__destroy;
   component.__destroy = (parent) => {
     delete store.updateFunctions[componentId];
+    unobserve(result, observeFn);
     __destroy.call(component, parent);
   };
 

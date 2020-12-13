@@ -189,7 +189,30 @@ class Counter extends owl.Component {
 ```
 
 It is important to remember that `useState` only works with objects or arrays. It
-is necessary, since Owl needs to react to a change in state.
+is a necessary constraint, since Owl needs to react to a change in state.
+
+Obviously, we can call the `useState` hook more than once:
+
+```js
+const { useState } = owl.hooks;
+
+class Counter extends Component {
+  static template = xml`
+      <div>
+        <span t-on-click="increment(counter1)"><t t-esc="counter1.value"/></span>
+        <span t-on-click="increment(counter2)"><t t-esc="counter2.value"/></span>
+      </div>`;
+  counter1 = useState({ value: 0 });
+  counter2 = useState({ value: 0 });
+
+  increment(counter) {
+    counter.value++;
+  }
+}
+```
+
+Under the hood, the `useState` hook uses the reactivity [`observe`](reactivity.md#observe)
+function.
 
 ### `onMounted`
 

@@ -14,6 +14,8 @@
  * Note that this code is loosely inspired by Vue.
  */
 
+import { deprecated } from "../utils";
+
 //------------------------------------------------------------------------------
 // Observer
 //------------------------------------------------------------------------------
@@ -21,6 +23,12 @@ export class Observer {
   rev: number = 1;
   allowMutations: boolean = true;
   weakMap: WeakMap<any, any> = new WeakMap();
+
+  constructor() {
+    deprecated(
+      `The 'Observer' class is deprecated, and will be removed in Owl 2.0.  Please consider using the reactivity primitives instead.`
+    );
+  }
 
   notifyCB() {}
 

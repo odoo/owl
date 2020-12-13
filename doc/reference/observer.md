@@ -1,14 +1,20 @@
 # 🦉 Observer 🦉
 
+## Warning: this feature is deprecated
+
+The `Observer` class is now deprecated. It has been replace by more powerful
+abstractions: the [reactivity](reactivity.md) primitives `observe` and `unobserve`.
+
+Please consider removing any uses of the `Observer` class. It will be removed
+in the future, when Owl 2.0 is released.
+
+## Overview
+
 Owl needs to be able to react to state changes. For example, whenever the state
 of a component is changed, Owl needs to rerender it. To help with that, there is
 an Observer class. Its job is to observe the state of an object (or array), and
 to react to any change. The observer is implemented with the native `Proxy`
 object. Note that this means that it will not work on older browsers.
-
-Note that the `Observer` is used by the `useState` and `useContext` hooks. This
-is the way most Owl applications will create observers. For the majority of
-use cases, there is no need to directly instantiate an observer.
 
 ## Example
 

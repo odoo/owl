@@ -19,13 +19,15 @@ config                                      Router
 core                                    tags
     EventBus                                css
     Observer                                xml
-hooks                                   utils
-    onWillStart                             debounce
-    onMounted                               escape
-    onWillUpdateProps                       loadJS
-    onWillPatch                             loadFile
-    onPatched                               shallowEqual
-    onWillUnmount                           whenReady
+    observe                             utils
+    unobserve                               debounce
+hooks                                       escape
+    onWillStart                             loadJS
+    onMounted                               loadFile
+    onWillUpdateProps                       shallowEqual
+    onWillPatch                             whenReady
+    onPatched
+    onWillUnmount
     useContext
     useState
     useRef

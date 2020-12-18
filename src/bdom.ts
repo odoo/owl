@@ -192,7 +192,9 @@ export class BNode extends Block {
         break;
       case "string":
         if (_class) {
-          elem.classList.add(_class);
+          for (let cl of _class.trim().split(/\s+/)) {
+            elem.classList.add(cl);
+          }
         }
         break;
       default:
@@ -226,13 +228,13 @@ export class BNode extends Block {
 
   setupHandler(el: HTMLElement, index: number) {
     const eventType = this.handlers![index][0];
-    el.addEventListener(eventType, () => {
+    el.addEventListener(eventType, (ev) => {
       const info = this.handlers![index];
       const [, callback, ctx] = info;
       if (ctx.__owl__ && !ctx.__owl__.isMounted) {
         return;
       }
-      callback();
+      callback(ev);
     });
   }
 

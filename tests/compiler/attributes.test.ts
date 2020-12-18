@@ -132,6 +132,27 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
+  test("t-attf-class", () => {
+    const template = `<div t-attf-class="hello"/>`;
+    const result = renderToString(template);
+    snapshotTemplateCode(template);
+    expect(result).toBe(`<div class="hello"></div>`);
+  });
+
+  test("t-attf-class with multiple classes", () => {
+    const template = `<div t-attf-class="hello {{word}}"/>`;
+    const result = renderToString(template, { word: "world" });
+    snapshotTemplateCode(template);
+    expect(result).toBe(`<div class="hello world"></div>`);
+  });
+
+  test("t-attf-class with multiple classes separated by multiple spaces", () => {
+    const template = `<div t-attf-class="hello  {{word}}"/>`;
+    const result = renderToString(template, { word: "world" });
+    snapshotTemplateCode(template);
+    expect(result).toBe(`<div class="hello world"></div>`);
+  });
+
   test("t-attf-class should combine with class", () => {
     const template = `<div class="hello" t-attf-class="world"/>`;
     const result = renderToString(template);

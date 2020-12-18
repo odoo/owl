@@ -204,4 +204,38 @@ describe("t-foreach", () => {
     );
     console.warn = consoleWarn;
   });
+
+  test("t-foreach with t-if inside", () => {
+    const template = `
+        <div>
+          <t t-foreach="elems" t-as="elem" t-key="elem.id">
+            <span t-if="elem.id < 3"><t t-esc="elem.text"/></span>
+          </t>
+        </div>`;
+    snapshotTemplateCode(template);
+    const ctx = {
+      elems: [
+        { id: 1, text: "a" },
+        { id: 2, text: "b" },
+        { id: 3, text: "c" },
+      ],
+    };
+    expect(renderToString(template, ctx)).toBe("<div><span>a</span><span>b</span></div>");
+  });
+
+  test("t-foreach with t-if inside (no external node)", () => {
+    const template = `
+          <t t-foreach="elems" t-as="elem" t-key="elem.id">
+            <span t-if="elem.id < 3"><t t-esc="elem.text"/></span>
+          </t>`;
+    snapshotTemplateCode(template);
+    const ctx = {
+      elems: [
+        { id: 1, text: "a" },
+        { id: 2, text: "b" },
+        { id: 3, text: "c" },
+      ],
+    };
+    expect(renderToString(template, ctx)).toBe("<span>a</span><span>b</span>");
+  });
 });

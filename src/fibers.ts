@@ -52,7 +52,7 @@ export class RootFiber extends BaseFiber {
   childNumber: number = 1;
   root: RootFiber = this;
 
-  resolve!: () => void;
+  resolve!: any;
   reject!: (error: Error) => void;
   promise = new Promise((resolve, reject) => {
     this.resolve = resolve;

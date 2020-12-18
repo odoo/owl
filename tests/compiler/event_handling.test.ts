@@ -23,6 +23,18 @@ describe("t-on", () => {
     expect(a).toBe(3);
   });
 
+  test("receive event in first argument", () => {
+    expect.assertions(2);
+    const template = `<button t-on-click="add">Click</button>`;
+    snapshotTemplateCode(template);
+    const fixture = mountToFixture(template, {
+      add: (ev: any) => {
+        expect(ev).toBeInstanceOf(Event);
+      },
+    });
+    fixture.querySelector("button")!.click();
+  });
+
   test("can bind two event handlers", () => {
     const template = `
         <button t-on-click="handleClick" t-on-dblclick="handleDblClick">Click</button>`;

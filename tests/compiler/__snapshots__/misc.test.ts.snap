@@ -1,5 +1,163 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`misc complex template 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
+    children = new Array(5);
+    anchors = new Array(5);
+    data = new Array(5);
+    build() {
+      const el1 = this.el.firstChild.firstChild;
+      this.anchors[0] = el1.firstChild.firstChild.nextSibling;
+      this.anchors[1] = el1.nextSibling;
+      const el2 = this.anchors[1].nextSibling;
+      this.anchors[2] = el2.firstChild;
+      this.anchors[3] = this.anchors[2].nextSibling;
+      this.anchors[4] = el2.nextSibling.firstChild;
+    }
+    update() {
+      const el1 = this.el;
+      this.updateClass(el1, this.data[0]);
+      const el2 = el1.firstChild;
+      this.updateClass(el2, this.data[1]);
+      const el3 = el2.firstChild.firstChild;
+      this.updateAttr(el3, \`href\`, this.data[2]);
+      this.updateClass(el3, this.data[3]);
+      el3.firstChild.textContent = toString(this.data[4]);
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<i class=\\"fa fa-exclamation-triangle\\"/>\`);
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<span><i class=\\"fa fa-cog fa-spin fa-fw\\"/> preparing</span>\`);
+  }
+  
+  class Block4 extends BStatic {
+    static el = elem(\`<div class=\\"slot_filler\\"/>\`);
+  }
+  
+  class Block5 extends BNode {
+    static el = elem(\`<div class=\\"one_line\\"><a><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-text/></a><a class=\\"badge badge-light\\" title=\\"View Commit on Github\\"><i class=\\"fa fa-github\\"/></a><span><owl-text/></span></div>\`);
+    children = new Array(4);
+    anchors = new Array(4);
+    data = new Array(5);
+    build() {
+      this.anchors[0] = this.el.firstChild.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+      this.anchors[2] = this.anchors[1].nextSibling;
+      this.anchors[3] = this.anchors[2].nextSibling;
+    }
+    update() {
+      const el1 = this.el.firstChild;
+      this.updateAttr(el1, \`href\`, this.data[0]);
+      this.updateClass(el1, this.data[1]);
+      this.anchors[3].nextSibling.textContent = toString(this.data[2]);
+      const el2 = el1.nextSibling;
+      this.updateAttr(el2, \`href\`, this.data[3]);
+      el2.nextSibling.firstChild.textContent = toString(this.data[4]);
+    }
+  }
+  
+  class Block6 extends BStatic {
+    static el = elem(\`<i class=\\"fa fa-fw fa-hashtag\\" title=\\"This commit is a new head\\"/>\`);
+  }
+  
+  class Block7 extends BStatic {
+    static el = elem(\`<i class=\\"fa fa-fw fa-link\\" title=\\"This commit is an existing head from bundle branches\\"/>\`);
+  }
+  
+  class Block8 extends BStatic {
+    static el = elem(\`<i class=\\"fa fa-fw fa-code-fork\\" title=\\"This commit is matched from a base batch with matching merge_base\\"/>\`);
+  }
+  
+  class Block9 extends BStatic {
+    static el = elem(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
+    b1.data[1] = \`card bg-\${ctx['klass']}-light\`;
+    b1.data[2] = \`/runbot/batch/\${ctx['batch'].id}\`;
+    b1.data[3] = \`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`;
+    b1.data[4] = ctx['batch'].formated_age;
+    if (ctx['batch'].has_warning) {
+      const b2 = b1.children[0] = new Block2();
+    }
+    if (ctx['batch'].state=='preparing') {
+      const b3 = b1.children[1] = new Block3();
+    }
+    const [v1, k1, l1] = getValues(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])));
+    const b4 = b1.children[2] = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`slot\`] = v1[i1];
+      ctx[\`slot_first\`] = i1 === 0;
+      ctx[\`slot_last\`] = i1 === v1.length - 1;
+      ctx[\`slot_index\`] = i1;
+      ctx[\`slot_value\`] = k1[i1];
+      let key1 = ctx['slot'].id;
+      b4.children[i1] = new BComponent(\`SlotButton\`, {class: ctx['slot_container'],slot: ctx['slot']}, \`__2__\${key1}\`, ctx);
+      b4.keys[i1] = key1;
+    }
+    ctx = ctx.__proto__;
+    const [v3, k3, l3] = getValues([1,2,3,4]);
+    const b5 = b1.children[3] = new BCollection(l3);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l3; i1++) {
+      ctx[\`x\`] = v3[i1];
+      ctx[\`x_first\`] = i1 === 0;
+      ctx[\`x_last\`] = i1 === v3.length - 1;
+      ctx[\`x_index\`] = i1;
+      ctx[\`x_value\`] = k3[i1];
+      let key1 = ctx['x'];
+      const b6 = b5.children[i1] = new Block4();
+      b5.keys[i1] = key1;
+    }
+    ctx = ctx.__proto__;
+    const [v4, k4, l4] = getValues(ctx['commit_links']);
+    const b7 = b1.children[4] = new BCollection(l4);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l4; i1++) {
+      ctx[\`commit_link\`] = v4[i1];
+      ctx[\`commit_link_first\`] = i1 === 0;
+      ctx[\`commit_link_last\`] = i1 === v4.length - 1;
+      ctx[\`commit_link_index\`] = i1;
+      ctx[\`commit_link_value\`] = k4[i1];
+      let key1 = ctx['commit_link'].id;
+      const b8 = b7.children[i1] = new Block5();
+      b8.data[0] = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
+      b8.data[1] = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
+      if (ctx['commit_link'].match_type=='new') {
+        const b9 = b8.children[0] = new Block6();
+      }
+      if (ctx['commit_link'].match_type=='head') {
+        const b10 = b8.children[1] = new Block7();
+      }
+      if (ctx['commit_link'].match_type=='base_match') {
+        const b11 = b8.children[2] = new Block8();
+      }
+      if (ctx['commit_link'].match_type=='base_head') {
+        const b12 = b8.children[3] = new Block9();
+      }
+      b8.data[2] = ctx['commit_link'].commit_dname;
+      b8.data[3] = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
+      b8.data[4] = ctx['commit_link'].commit_subject;
+      b7.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`misc global 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -132,6 +290,323 @@ exports[`misc global 4`] = `
   return ctx => {
     const b1 = new Block1();
     b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
+    return b1;
+  }
+}"
+`;
+
+exports[`misc other complex template 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a><b style=\\"color:#777;\\"><owl-text/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-anchor/><li class=\\"nav-item divider\\"/><owl-anchor/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\"/><button class=\\"btn btn-default\\"> More </button><owl-anchor/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
+                      <h5>Search options</h5>
+                      <input class=\\"form-control\\" type=\\"text\\" name=\\"default_search\\" id=\\"default_search\\" t-att-checked=\\"default_search\\" placeholder=\\"Default search\\"/>
+      
+                      <h5>Display options</h5>
+                      <div class=\\"form-check\\">
+                          <input class=\\"form-check-input\\" type=\\"checkbox\\" name=\\"display_sticky\\"/>
+                          <label class=\\"form-check-label\\" for=\\"display_sticky\\">Display sticky</label>
+                      </div>
+                      <div class=\\"form-check\\">
+                          <input class=\\"form-check-input\\" type=\\"checkbox\\" name=\\"display_dev\\"/>
+                          <label class=\\"form-check-label\\" for=\\"display_dev\\">Display dev</label>
+                      </div>
+                  </div--><div class=\\"form-group col-md-6\\"><h5>Triggers</h5><owl-anchor/></div></div></div><div class=\\"container-fluid frontend\\"><div class=\\"row\\"><div class=\\"col-md-12\\"><owl-anchor/></div><div class=\\"col-md-12\\"><owl-anchor/><owl-anchor/><owl-anchor/></div></div></div></div>\`);
+    children = new Array(8);
+    anchors = new Array(8);
+    data = new Array(3);
+    handlers = new Array(5);
+    build() {
+      const el1 = this.el.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild;
+      const el6 = this.el.firstChild;
+      this.anchors[0] = el1.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling.nextSibling;
+      const el2 = el1.nextSibling.firstChild.firstChild.firstChild;
+      const el4 = el1.nextSibling.firstChild.firstChild;
+      this.setupHandler(el2, 0);
+      const el3 = el2.nextSibling;
+      this.setupHandler(el3, 1);
+      this.anchors[2] = el3.nextSibling;
+      const el5 = el4.nextSibling;
+      this.setupHandler(el5, 2);
+      this.setupHandler(el5, 3);
+      this.setupHandler(el5.nextSibling.firstChild, 4);
+      const el7 = el6.nextSibling;
+      this.anchors[3] = el7.firstChild.firstChild.nextSibling.firstChild.nextSibling;
+      const el8 = el7.nextSibling.firstChild.firstChild;
+      this.anchors[4] = el8.firstChild;
+      this.anchors[5] = el8.nextSibling.firstChild;
+      this.anchors[6] = this.anchors[5].nextSibling;
+      this.anchors[7] = this.anchors[6].nextSibling;
+    }
+    update() {
+      const el1 = this.el.firstChild.firstChild.firstChild;
+      const el3 = this.el.firstChild;
+      this.updateAttr(el1, \`href\`, this.data[0]);
+      el1.firstChild.firstChild.textContent = toString(this.data[1]);
+      const el2 = el1.nextSibling.nextSibling.firstChild.nextSibling.firstChild.firstChild.nextSibling;
+      this.updateAttr(el2, \`value\`, this.data[2]);
+      this.updateProp(el2, \`value\`, this.data[2]);
+      this.refs[\`search_input\`] = el2;
+      this.refs[\`settings_menu\`] = el3.nextSibling;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<li class=\\"nav-item\\"><a class=\\"nav-link\\" href=\\"#\\"><owl-text/></a></li>\`);
+    data = new Array(1);
+    handlers = new Array(1);
+    build() {
+      this.setupHandler(this.el.firstChild, 0);
+    }
+    update() {
+      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<li class=\\"nav-item dropdown\\"><b><a class=\\"nav-link\\">Login</a></b></li>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el.firstChild.firstChild, \`href\`, this.data[0]);
+    }
+  }
+  
+  class Block4 extends BNode {
+    static el = elem(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link text-danger\\"><i class=\\"fa fa-bug\\"/><owl-text/></a></li>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      this.updateAttr(el1, \`title\`, this.data[0]);
+      el1.firstChild.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  class Block5 extends BStatic {
+    static el = elem(\`<li class=\\"nav-item divider\\"/>\`);
+  }
+  
+  class Block6 extends BStatic {
+    static el = elem(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link\\" title=\\"Random Bugs\\"><i class=\\"fa fa-bug\\"/></a></li>\`);
+  }
+  
+  class Block7 extends BStatic {
+    static el = elem(\`<li class=\\"nav-item divider\\"/>\`);
+  }
+  
+  class Block8 extends BNode {
+    static el = elem(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><owl-text/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\">Web</a></div></li>\`);
+    data = new Array(3);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.firstChild.firstChild.firstChild.textContent = toString(this.data[0]);
+      const el2 = el1.nextSibling.firstChild;
+      this.updateAttr(el2, \`href\`, this.data[1]);
+      this.updateAttr(el2.nextSibling, \`href\`, this.data[2]);
+    }
+  }
+  
+  class Block9 extends BNode {
+    static el = elem(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><owl-anchor/></select>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block10 extends BNode {
+    static el = elem(\`<option><owl-text/></option>\`);
+    data = new Array(3);
+    update() {
+      const el1 = this.el;
+      this.updateAttr(el1, \`value\`, this.data[0]);
+      this.updateAttr(el1, \`selected\`, this.data[1]);
+      this.updateProp(el1, \`selected\`, this.data[1]);
+      el1.firstChild.textContent = toString(this.data[2]);
+    }
+  }
+  
+  class Block11 extends BNode {
+    static el = elem(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\"/><label class=\\"form-check-label\\"><owl-text/></label></div>\`);
+    data = new Array(6);
+    handlers = new Array(1);
+    build() {
+      this.setupHandler(this.el.firstChild, 0);
+    }
+    update() {
+      const el1 = this.el.firstChild;
+      this.updateAttr(el1, \`name\`, this.data[0]);
+      this.updateAttr(el1, \`id\`, this.data[1]);
+      this.updateAttr(el1, \`checked\`, this.data[2]);
+      this.updateProp(el1, \`checked\`, this.data[2]);
+      this.updateAttr(el1, \`data-trigger_id\`, this.data[3]);
+      const el2 = el1.nextSibling;
+      this.updateAttr(el2, \`for\`, this.data[4]);
+      el2.firstChild.textContent = toString(this.data[5]);
+    }
+  }
+  
+  class Block12 extends BNode {
+    static el = elem(\`<div><button class=\\"btn btn-sm btn-default\\">All</button><button class=\\"btn btn-sm btn-default\\">None</button><button class=\\"btn btn-sm btn-info\\">Default</button><button class=\\"btn btn-sm btn-default\\">Close</button></div>\`);
+    handlers = new Array(4);
+    build() {
+      const el1 = this.el.firstChild;
+      this.setupHandler(el1, 0);
+      const el2 = el1.nextSibling;
+      this.setupHandler(el2, 1);
+      const el3 = el2.nextSibling;
+      this.setupHandler(el3, 2);
+      this.setupHandler(el3.nextSibling, 3);
+    }
+  }
+  
+  class Block13 extends BNode {
+    static el = elem(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><owl-text/> <!-- todo fixme--></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block14 extends BStatic {
+    static el = elem(\`<div class=\\"mb32\\"><h1>No project</h1></div>\`);
+  }
+  
+  class Block15 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    b1.data[0] = \`/runbot/\${ctx['project'].slug}\`;
+    b1.data[1] = ctx['project'].name;
+    const [v1, k1, l1] = getValues(ctx['projects']);
+    const b2 = b1.children[0] = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`project\`] = v1[i1];
+      ctx[\`project_first\`] = i1 === 0;
+      ctx[\`project_last\`] = i1 === v1.length - 1;
+      ctx[\`project_index\`] = i1;
+      ctx[\`project_value\`] = k1[i1];
+      let key1 = ctx['project'].id;
+      const b3 = b2.children[i1] = new Block2();
+      const arg2 = [ctx['project']];
+      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['selectProject'](...arg2, e), ctx];
+      b3.data[0] = ctx['project'].name;
+      b2.keys[i1] = key1;
+    }
+    ctx = ctx.__proto__;
+    if (ctx['user']) {
+      const b4 = b1.children[1] = new BMulti(2);
+      if (ctx['user'].public) {
+        const b5 = b4.children[1] = new Block3();
+        b5.data[0] = \`/web/login?redirect=/\`;
+      } else {
+        const b6 = b4.children[1] = new BMulti(2);
+        if (ctx['nb_assigned_errors']&&ctx['nb_assigned_errors']>0) {
+          const b7 = b6.children[0] = new BMulti(2);
+          const b8 = b7.children[0] = new Block4();
+          b8.data[0] = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
+          b8.data[1] = ctx['nb_assigned_errors'];
+          const b9 = b7.children[1] = new Block5();
+        } else if (ctx['nb_build_errors']&&ctx['nb_build_errors']>0) {
+          const b10 = b6.children[1] = new BMulti(2);
+          const b11 = b10.children[0] = new Block6();
+          const b12 = b10.children[1] = new Block7();
+        }
+        const b13 = b6.children[1] = new Block8();
+        b13.data[0] = ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name;
+        b13.data[1] = \`/web/session/logout?redirect=/\`;
+        b13.data[2] = \`/web\`;
+      }
+    }
+    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['toggleSettingsMenu'](e), ctx];
+    b1.handlers[1] = [\`click\`, (e) => owner(ctx)['toggleMore'](e), ctx];
+    if (ctx['categories']&&ctx['categories'].length>1) {
+      const b14 = b1.children[2] = new Block9();
+      const [v3, k3, l3] = getValues(ctx['categories']);
+      const b15 = b14.children[0] = new BCollection(l3);
+      ctx = Object.create(ctx);
+      for (let i1 = 0; i1 < l3; i1++) {
+        ctx[\`category\`] = v3[i1];
+        ctx[\`category_first\`] = i1 === 0;
+        ctx[\`category_last\`] = i1 === v3.length - 1;
+        ctx[\`category_index\`] = i1;
+        ctx[\`category_value\`] = k3[i1];
+        let key1 = ctx['category'].id;
+        const b16 = b15.children[i1] = new Block10();
+        b16.data[0] = ctx['category'].id;
+        b16.data[1] = ctx['category'].id==ctx['options'].active_category_id;
+        b16.data[2] = ctx['category'].name;
+        b15.keys[i1] = key1;
+      }
+      ctx = ctx.__proto__;
+    }
+    b1.data[2] = ctx['search'].value;
+    b1.handlers[2] = [\`keyup\`, (e) => owner(ctx)['updateFilter'](e), ctx];
+    b1.handlers[3] = [\`change\`, (e) => owner(ctx)['updateFilter'](e), ctx];
+    b1.handlers[4] = [\`click\`, (e) => owner(ctx)['clearSearch'](e), ctx];
+    if (ctx['triggers']) {
+      const b17 = b1.children[3] = new BMulti(2);
+      const [v4, k4, l4] = getValues(ctx['triggers']);
+      const b18 = b17.children[0] = new BCollection(l4);
+      ctx = Object.create(ctx);
+      for (let i1 = 0; i1 < l4; i1++) {
+        ctx[\`trigger\`] = v4[i1];
+        ctx[\`trigger_first\`] = i1 === 0;
+        ctx[\`trigger_last\`] = i1 === v4.length - 1;
+        ctx[\`trigger_index\`] = i1;
+        ctx[\`trigger_value\`] = k4[i1];
+        let key1 = ctx['trigger'].id;
+        const b19 = b18.children[i1] = new BMulti(1);
+        if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
+          const b20 = b19.children[i1] = new Block11();
+          b20.data[0] = \`trigger_\${ctx['trigger'].id}\`;
+          b20.data[1] = \`trigger_\${ctx['trigger'].id}\`;
+          b20.data[2] = ctx['options'].trigger_display[ctx['trigger'].id];
+          b20.data[3] = ctx['trigger'].id;
+          b20.handlers[0] = [\`change\`, (e) => owner(ctx)['updateTriggerDisplay'](e), ctx];
+          b20.data[4] = \`trigger_\${ctx['trigger'].id}\`;
+          b20.data[5] = ctx['trigger'].name;
+        }
+        b18.keys[i1] = key1;
+      }
+      ctx = ctx.__proto__;
+      const b21 = b17.children[1] = new Block12();
+      b21.handlers[0] = [\`click\`, (e) => owner(ctx)['triggerAll'](e), ctx];
+      b21.handlers[1] = [\`click\`, (e) => owner(ctx)['triggerNone'](e), ctx];
+      b21.handlers[2] = [\`click\`, (e) => owner(ctx)['triggerDefault'](e), ctx];
+      b21.handlers[3] = [\`click\`, (e) => owner(ctx)['toggleSettingsMenu'](e), ctx];
+    }
+    if (ctx['load_infos']) {
+      b1.children[4] = call(\`LOAD_INFOS_TEMPLATE\`, ctx, refs);
+    }
+    if (ctx['message']) {
+      const b22 = b1.children[5] = new Block13();
+      b22.data[0] = ctx['message'];
+    }
+    if (!ctx['project']) {
+      const b23 = b1.children[6] = new Block14();
+    } else {
+      const b24 = b1.children[7] = new Block15();
+      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__5\`, ctx);
+      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__6\`, ctx);
+    }
+    b1.refs = refs;
     return b1;
   }
 }"

@@ -468,6 +468,28 @@ exports[`attributes t-att-class with object 1`] = `
 }"
 `;
 
+exports[`attributes t-attf-class 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateClass(this.el, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = \`hello\`;
+    return b1;
+  }
+}"
+`;
+
 exports[`attributes t-attf-class should combine with class 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -485,6 +507,50 @@ exports[`attributes t-attf-class should combine with class 1`] = `
   return ctx => {
     const b1 = new Block1();
     b1.data[0] = \`world\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes t-attf-class with multiple classes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateClass(this.el, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = \`hello \${ctx['word']}\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes t-attf-class with multiple classes separated by multiple spaces 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update() {
+      this.updateClass(this.el, this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = \`hello  \${ctx['word']}\`;
     return b1;
   }
 }"

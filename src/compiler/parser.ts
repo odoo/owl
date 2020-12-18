@@ -158,10 +158,10 @@ function parseNode(node: ChildNode, ctx: ParsingContext): AST | null {
   }
   return (
     parseTDebugLog(node, ctx) ||
-    parseTIf(node, ctx) ||
-    parseTEscNode(node, ctx) ||
-    parseTCall(node, ctx) ||
     parseTForEach(node, ctx) ||
+    parseTIf(node, ctx) ||
+    parseTCall(node, ctx) ||
+    parseTEscNode(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTSlot(node, ctx) ||
     parseTRawNode(node, ctx) ||

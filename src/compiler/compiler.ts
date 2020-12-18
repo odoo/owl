@@ -43,6 +43,7 @@ export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 interface FunctionLine {
   path: string[];
+  elemDefs: string[];
   inserter(el: string): string;
 }
 
@@ -73,11 +74,11 @@ class BlockDescription {
   }
 
   insertUpdate(inserter: (target: string) => string) {
-    this.updateFn.push({ path: this.currentPath.slice(), inserter });
+    this.updateFn.push({ path: this.currentPath.slice(), inserter, elemDefs: [] });
   }
 
   insertBuild(inserter: (target: string) => string) {
-    this.buildFn.push({ path: this.currentPath.slice(), inserter });
+    this.buildFn.push({ path: this.currentPath.slice(), inserter, elemDefs: [] });
   }
 }
 
@@ -330,29 +331,37 @@ export class QWebCompiler {
     // build tree of paths
     const tree: any = {};
     let i = 1;
+    // console.warn('lines before', lines)
     for (let line of lines) {
       let current: any = tree;
       let el: string = `this`;
       for (let p of line.path.slice()) {
         if (current[p]) {
         } else {
-          current[p] = { firstChild: null, nextSibling: null };
+          current[p] = { firstChild: null, nextSibling: null, line };
         }
         if (current.firstChild && current.nextSibling && !current.name) {
           current.name = `el${i++}`;
-          this.addLine(`const ${current.name} = ${el};`);
+          current.line.elemDefs.push(`const ${current.name} = ${el};`);
+          // this.addLine(`const ${current.name} = ${el};`);
         }
         el = `${current.name ? current.name : el}.${p}`;
         current = current[p];
         if (current.target && !current.name) {
           current.name = `el${i++}`;
-          this.addLine(`const ${current.name} = ${el};`);
+          current.line.elemDefs.push(`const ${current.name} = ${el};`);
+          // this.addLine(`const ${current.name} = ${el};`);
         }
       }
       current.target = true;
     }
+    // console.warn('lines after', lines)
+    // console.warn(tree);
     for (let line of lines) {
-      const { path, inserter } = line;
+      const { path, inserter, elemDefs } = line;
+      for (let elem of elemDefs) {
+        this.addLine(elem);
+      }
       let current: any = tree;
       let el = `this`;
       for (let p of path.slice()) {
@@ -656,8 +665,8 @@ export class QWebCompiler {
   }
 
   compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {
-    let { block, index } = ctx;
-    if (!block) {
+    let { block, index, forceNewBlock } = ctx;
+    if (!block || (block.blockName !== "BMulti" && forceNewBlock)) {
       const n = 1 + (ast.tElif ? ast.tElif.length : 0) + (ast.tElse ? 1 : 0);
       const id = this.insertBlock(`new BMulti(${n})`, ctx)!;
       block = new BlockDescription(id, "BMulti");

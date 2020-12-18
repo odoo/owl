@@ -1,5 +1,5 @@
 import { Blocks } from "./bdom";
-import { compileTemplate, RenderFunction } from "./compiler/index";
+import { compileTemplate, Template } from "./compiler/index";
 import { callSlot, elem, getValues, owner, scope, toString, withDefault } from "./qweb_utils";
 import { Scheduler } from "./scheduler";
 import { globalTemplates } from "./tags";
@@ -24,7 +24,7 @@ export const UTILS = {
 
 export class App {
   rawTemplates: { [name: string]: string } = Object.create(globalTemplates);
-  templates: { [name: string]: RenderFunction } = {};
+  templates: { [name: string]: Template } = {};
   utils: typeof UTILS;
   scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
 
@@ -44,7 +44,7 @@ export class App {
     this.rawTemplates[name] = template;
   }
 
-  getTemplate(name: string): RenderFunction {
+  getTemplate(name: string): Template {
     if (!(name in this.templates)) {
       const rawTemplate = this.rawTemplates[name];
       if (rawTemplate === undefined) {

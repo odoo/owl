@@ -1,7 +1,7 @@
 import { BDom, Blocks } from "../src/bdom";
 import { App, UTILS } from "../src/app";
 import { globalTemplates } from "../src/tags";
-import { compileTemplate, RenderFunction } from "../src/compiler/index";
+import { compileTemplate, Template } from "../src/compiler/index";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
@@ -37,7 +37,7 @@ export function trim(str: string): string {
 // Helpers
 // -----------------------------------------------------------------------------
 
-export function compile(template: string): RenderFunction {
+export function compile(template: string): Template {
   const templateFunction = compileTemplate(template);
   return templateFunction(Blocks, UTILS);
 }

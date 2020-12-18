@@ -537,7 +537,7 @@ describe("slots", () => {
     class GrandChild extends Component {
       static template = xml`Grand Child`;
     }
-    const sub = xml`<GrandChild />`
+    const sub = xml`<GrandChild />`;
     class Parent extends Component {
       static template = xml`
         <div>

@@ -1,5 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`style and class handling can set class on multi root component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.parentClass = \`fromparent\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling can set class on sub component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.parentClass = \`some-class\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling can set class on sub sub component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.parentClass = \`fromparent\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling can set more than one class on sub component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.parentClass = \`a  b\`;
+    return b1;
+  }
+}"
+`;
+
 exports[`style and class handling can set style and class on component 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -12,6 +68,34 @@ exports[`style and class handling can set style and class on component 1`] = `
   
   return ctx => {
     const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling component class and parent class combine together 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.parentClass = \`from parent\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling setting a class on a child component with text node 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.parentClass = \`some-class\`;
     return b1;
   }
 }"

@@ -853,7 +853,9 @@ export class QWebCompiler {
     // props
     const props: string[] = [];
     for (let p in ast.props) {
-      props.push(`${p}: ${compileExpr(ast.props[p]) || undefined}`);
+      if (p !== "class") {
+        props.push(`${p}: ${compileExpr(ast.props[p]) || undefined}`);
+      }
     }
     const propString = `{${props.join(",")}}`;
 
@@ -926,6 +928,11 @@ export class QWebCompiler {
       this.generateHandlerCode(cblock, ast.handlers);
     } else {
       id = this.insertBlock(`new BComponent(${blockArgs})`, { ...ctx, forceNewBlock: hasSlot })!;
+    }
+
+    // class and style
+    if ("class" in ast.props) {
+      this.addLine(`${id!}.parentClass = \`${ast.props.class}\`;`);
     }
 
     if (hasSlot) {

@@ -58,6 +58,7 @@ export class Component {
 class BComponent extends Block {
   component: Component;
   handlers?: any[];
+  parentClass?: string;
 
   constructor(name: string, props: any, key: string, ctx: any) {
     super();
@@ -89,8 +90,17 @@ class BComponent extends Block {
   }
 
   mountBefore(anchor: ChildNode) {
-    this.component.__owl__!.bdom = this.component.__owl__!.fiber!.bdom;
+    const bdom = this.component.__owl__!.fiber!.bdom!;
+    this.component.__owl__!.bdom = bdom;
     this.component.__owl__!.bdom!.mountBefore(anchor);
+    if (this.parentClass) {
+      const el = this.firstChildNode();
+      if (el instanceof HTMLElement) {
+        for (let cl of this.parentClass.trim().split(/\s+/)) {
+          el.classList.add(cl);
+        }
+      }
+    }
   }
   patch() {
     this.component.__owl__!.bdom!.patch(this.component.__owl__!.fiber!.bdom);

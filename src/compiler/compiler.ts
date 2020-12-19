@@ -16,6 +16,7 @@ import {
   ASTMulti,
   ASTSlot,
   ASTTCall,
+  ASTTCallBlock,
   ASTTEsc,
   ASTText,
   ASTTForEach,
@@ -430,6 +431,9 @@ export class QWebCompiler {
       case ASTType.TCall:
         this.compileTCall(ast, ctx);
         break;
+      case ASTType.TCallBlock:
+        this.compileTCallBlock(ast, ctx);
+        break;
       case ASTType.TSet:
         this.compileTSet(ast);
         break;
@@ -821,6 +825,16 @@ export class QWebCompiler {
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
     }
+  }
+
+  compileTCallBlock(ast: ASTTCallBlock, ctx: Context) {
+    const { block, forceNewBlock } = ctx;
+    if (block) {
+      if (!forceNewBlock) {
+        this.insertAnchor(block);
+      }
+    }
+    this.insertBlock(compileExpr(ast.name), { ...ctx, forceNewBlock: !block });
   }
 
   compileTSet(ast: ASTTSet) {

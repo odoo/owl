@@ -18,6 +18,7 @@ export const enum ASTType {
   TDebug,
   TLog,
   TSlot,
+  TCallBlock,
 }
 
 export interface ASTText {
@@ -106,6 +107,11 @@ export interface ASTSlot {
   defaultContent: AST | null;
 }
 
+export interface ASTTCallBlock {
+  type: ASTType.TCallBlock;
+  name: string;
+}
+
 export interface ASTDebug {
   type: ASTType.TDebug;
   content: AST | null;
@@ -131,6 +137,7 @@ export type AST =
   | ASTTKey
   | ASTComponent
   | ASTSlot
+  | ASTTCallBlock
   | ASTLog
   | ASTDebug;
 
@@ -161,6 +168,7 @@ function parseNode(node: ChildNode, ctx: ParsingContext): AST | null {
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
     parseTCall(node, ctx) ||
+    parseTCallBlock(node, ctx) ||
     parseTEscNode(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTSlot(node, ctx) ||
@@ -438,6 +446,21 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
     type: ASTType.TCall,
     name: subTemplate,
     body: body.length ? body : null,
+  };
+}
+
+// -----------------------------------------------------------------------------
+// t-call-block
+// -----------------------------------------------------------------------------
+
+function parseTCallBlock(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-call-block")) {
+    return null;
+  }
+  const name = node.getAttribute("t-call-block")!;
+  return {
+    type: ASTType.TCallBlock,
+    name,
   };
 }
 

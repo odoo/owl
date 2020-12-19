@@ -864,4 +864,14 @@ describe("qweb parser", () => {
       content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "body" }],
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // t-call-block
+  // ---------------------------------------------------------------------------
+  test("simple t-call-block", async () => {
+    expect(parse(`<t t-call-block="myBlock" />`)).toEqual({
+      type: ASTType.TCallBlock,
+      name: "myBlock",
+    });
+  });
 });

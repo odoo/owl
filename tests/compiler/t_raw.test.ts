@@ -1,4 +1,4 @@
-import { renderToString, snapshotTemplateCode, TestApp } from "../helpers";
+import { renderToString, snapshotTemplateCode, TestContext } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // t-raw
@@ -69,7 +69,7 @@ describe("t-raw", () => {
   });
 
   test("multiple calls to t-raw", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = `
         <div>
           <t t-raw="0"/>
@@ -84,12 +84,12 @@ describe("t-raw", () => {
           </t>
         </div>`;
 
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
     const expected =
       "<div><div><span>coucou</span><div>Greeter</div><span>coucou</span></div></div>";
-    expect(app.renderToString("main")).toBe(expected);
+    expect(context.renderToString("main")).toBe(expected);
   });
 });

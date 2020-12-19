@@ -1,5 +1,5 @@
-import { App } from "../../src/app";
-import { renderToString, TestApp, compile } from "../helpers";
+import { Context } from "../../src/context";
+import { renderToString, TestContext, compile } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // basic validation
@@ -7,14 +7,14 @@ import { renderToString, TestApp, compile } from "../helpers";
 
 describe("basic validation", () => {
   test("error if no template with given name", () => {
-    const app = new App();
-    expect(() => app.getTemplate("invalidname")).toThrow("Missing template");
+    const context = new Context();
+    expect(() => context.getTemplate("invalidname")).toThrow("Missing template");
   });
 
   test("cannot add twice the same template", () => {
-    const app = new App();
-    expect(() => app.addTemplate("test", "<div/>", true)).not.toThrow("already defined");
-    expect(() => app.addTemplate("test", "<div/>")).toThrow("already defined");
+    const context = new Context();
+    expect(() => context.addTemplate("test", "<div/>", true)).not.toThrow("already defined");
+    expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
   });
 
   test("invalid xml", () => {
@@ -28,11 +28,11 @@ describe("basic validation", () => {
   });
 
   test("missing template in template set", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const template = `<t t-call="othertemplate" />`;
 
-    app.addTemplate("template", template);
-    expect(() => app.renderToString("template")).toThrowError("Missing");
+    context.addTemplate("template", template);
+    expect(() => context.renderToString("template")).toThrowError("Missing");
   });
 
   test("error when unknown directive", () => {

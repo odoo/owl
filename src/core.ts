@@ -1,4 +1,4 @@
-import { App } from "./app";
+import { Context } from "./context";
 import { BDom, Block, Blocks } from "./bdom";
 import { ChildFiber, Fiber, MountingFiber, RootFiber } from "./fibers";
 
@@ -15,7 +15,7 @@ export interface ComponentData {
   isMounted: boolean;
   children: { [key: string]: Component };
   slots?: any;
-  app: App;
+  context: Context;
 }
 
 export class Component {
@@ -45,7 +45,7 @@ export class Component {
   async render(): Promise<void> {
     const __owl__ = this.__owl__;
     const fiber = new RootFiber(__owl__!);
-    __owl__.app.scheduler.addFiber(fiber);
+    __owl__.context.scheduler.addFiber(fiber);
     internalRender(this, fiber);
     await fiber.promise;
   }
@@ -74,7 +74,7 @@ class BComponent extends Block {
       // new component
       const components = ctx.constructor.components || ctx.components;
       const C = components[name];
-      component = prepare(C, props, parentData.app);
+      component = prepare(C, props, parentData.context);
       parentData.children[key] = component;
       const fiber = new ChildFiber(component.__owl__, parentData.fiber!);
       const parentFiber = parentData.fiber!;
@@ -159,7 +159,7 @@ interface MountParameters {
   env?: Env;
   target: HTMLElement | DocumentFragment;
   props?: any;
-  app?: App | Component;
+  context?: Context | Component;
 }
 
 interface Type<T> extends Function {
@@ -183,19 +183,23 @@ export async function mount(C: any, params: MountParameters) {
     C.__owl__.bdom!.move(params.target);
     return;
   }
-  const { target, props, env, app } = params;
+  const { target, props, env, context } = params;
   currentEnv = env || {};
-  const componentApp = app ? (app instanceof App ? app : app.__owl__.app) : new App();
+  const componentApp = context
+    ? context instanceof Context
+      ? context
+      : context.__owl__.context
+    : new Context();
   const component = prepare(C, props || {}, componentApp);
   const __owl__ = component.__owl__!;
   const fiber = new MountingFiber(__owl__, target);
-  __owl__.app.scheduler.addFiber(fiber);
+  __owl__.context.scheduler.addFiber(fiber);
   internalRender(component, fiber);
   await fiber.promise;
   return component;
 }
 
-function prepare(C: any, props: any, app: App): Component {
+function prepare(C: any, props: any, context: Context): Component {
   let component: Component;
   let template: string = (C as any).template;
   if (!template) {
@@ -209,13 +213,13 @@ function prepare(C: any, props: any, app: App): Component {
     mountedCB: null as any,
     isMounted: false,
     children: {},
-    app,
+    context,
   };
   currentData = __owl__;
 
   component = new C(props);
   component.setup();
-  __owl__.render = app.getTemplate(template).bind(null, component);
+  __owl__.render = context.getTemplate(template).bind(null, component);
   return component;
 }
 

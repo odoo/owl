@@ -916,6 +916,8 @@ export class QWebCompiler {
     }
 
     let id: string;
+    const hasClass = "class" in ast.props;
+    const shouldForce = hasSlot || hasClass;
 
     if (Object.keys(ast.handlers).length) {
       // event handlers
@@ -927,7 +929,10 @@ export class QWebCompiler {
       const cblock = { varName: id, handlerNumber: 0 } as BlockDescription;
       this.generateHandlerCode(cblock, ast.handlers);
     } else {
-      id = this.insertBlock(`new BComponent(${blockArgs})`, { ...ctx, forceNewBlock: hasSlot })!;
+      id = this.insertBlock(`new BComponent(${blockArgs})`, {
+        ...ctx,
+        forceNewBlock: shouldForce,
+      })!;
     }
 
     // class and style

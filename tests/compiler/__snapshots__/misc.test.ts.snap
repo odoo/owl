@@ -105,12 +105,13 @@ exports[`misc complex template 1`] = `
       ctx[\`slot_index\`] = i1;
       ctx[\`slot_value\`] = k1[i1];
       let key1 = ctx['slot'].id;
-      b4.children[i1] = new BComponent(\`SlotButton\`, {class: ctx['slot_container'],slot: ctx['slot']}, \`__2__\${key1}\`, ctx);
+      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__2__\${key1}\`, ctx);
+      b5.parentClass = \`slot_container\`;
       b4.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
     const [v3, k3, l3] = getValues([1,2,3,4]);
-    const b5 = b1.children[3] = new BCollection(l3);
+    const b6 = b1.children[3] = new BCollection(l3);
     ctx = Object.create(ctx);
     for (let i1 = 0; i1 < l3; i1++) {
       ctx[\`x\`] = v3[i1];
@@ -119,12 +120,12 @@ exports[`misc complex template 1`] = `
       ctx[\`x_index\`] = i1;
       ctx[\`x_value\`] = k3[i1];
       let key1 = ctx['x'];
-      const b6 = b5.children[i1] = new Block4();
-      b5.keys[i1] = key1;
+      const b7 = b6.children[i1] = new Block4();
+      b6.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
     const [v4, k4, l4] = getValues(ctx['commit_links']);
-    const b7 = b1.children[4] = new BCollection(l4);
+    const b8 = b1.children[4] = new BCollection(l4);
     ctx = Object.create(ctx);
     for (let i1 = 0; i1 < l4; i1++) {
       ctx[\`commit_link\`] = v4[i1];
@@ -133,25 +134,25 @@ exports[`misc complex template 1`] = `
       ctx[\`commit_link_index\`] = i1;
       ctx[\`commit_link_value\`] = k4[i1];
       let key1 = ctx['commit_link'].id;
-      const b8 = b7.children[i1] = new Block5();
-      b8.data[0] = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
-      b8.data[1] = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
+      const b9 = b8.children[i1] = new Block5();
+      b9.data[0] = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
+      b9.data[1] = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
       if (ctx['commit_link'].match_type=='new') {
-        const b9 = b8.children[0] = new Block6();
+        const b10 = b9.children[0] = new Block6();
       }
       if (ctx['commit_link'].match_type=='head') {
-        const b10 = b8.children[1] = new Block7();
+        const b11 = b9.children[1] = new Block7();
       }
       if (ctx['commit_link'].match_type=='base_match') {
-        const b11 = b8.children[2] = new Block8();
+        const b12 = b9.children[2] = new Block8();
       }
       if (ctx['commit_link'].match_type=='base_head') {
-        const b12 = b8.children[3] = new Block9();
+        const b13 = b9.children[3] = new Block9();
       }
-      b8.data[2] = ctx['commit_link'].commit_dname;
-      b8.data[3] = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
-      b8.data[4] = ctx['commit_link'].commit_subject;
-      b7.keys[i1] = key1;
+      b9.data[2] = ctx['commit_link'].commit_dname;
+      b9.data[3] = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
+      b9.data[4] = ctx['commit_link'].commit_subject;
+      b8.keys[i1] = key1;
     }
     return b1;
   }

@@ -1,4 +1,4 @@
-import { snapshotTemplateCode, TestApp } from "../helpers";
+import { snapshotTemplateCode, TestContext } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // t-call
@@ -6,111 +6,111 @@ import { snapshotTemplateCode, TestApp } from "../helpers";
 
 describe("t-call (template calling)", () => {
   test("basic caller", () => {
-    const app = new TestApp();
-    app.addTemplate("_basic-callee", `<span>ok</span>`);
-    app.addTemplate("caller", `<div><t t-call="_basic-callee"/></div>`);
+    const context = new TestContext();
+    context.addTemplate("_basic-callee", `<span>ok</span>`);
+    context.addTemplate("caller", `<div><t t-call="_basic-callee"/></div>`);
 
     snapshotTemplateCode(`<div><t t-call="_basic-callee"/></div>`);
-    expect(app.renderToString("caller")).toBe("<div><span>ok</span></div>");
+    expect(context.renderToString("caller")).toBe("<div><span>ok</span></div>");
   });
 
   test("basic caller, no parent node", () => {
-    const app = new TestApp();
-    app.addTemplate("_basic-callee", `<span>ok</span>`);
-    app.addTemplate("caller", `<t t-call="_basic-callee"/>`);
+    const context = new TestContext();
+    context.addTemplate("_basic-callee", `<span>ok</span>`);
+    context.addTemplate("caller", `<t t-call="_basic-callee"/>`);
 
     snapshotTemplateCode(`<t t-call="_basic-callee"/>`);
-    expect(app.renderToString("caller")).toBe("<span>ok</span>");
+    expect(context.renderToString("caller")).toBe("<span>ok</span>");
   });
 
   test("t-esc inside t-call, with t-set outside", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const main = `<div><t t-set="v">Hi</t><t t-call="sub"/></div>`;
-    app.addTemplate("main", main);
-    app.addTemplate("sub", `<span t-esc="v"/>`);
+    context.addTemplate("main", main);
+    context.addTemplate("sub", `<span t-esc="v"/>`);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div><span>Hi</span></div>");
+    expect(context.renderToString("main")).toBe("<div><span>Hi</span></div>");
   });
 
   test("t-call with t-if", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const main = '<div><t t-if="flag" t-call="sub"/></div>';
-    app.addTemplate("main", main);
-    app.addTemplate("sub", "<span>ok</span>");
+    context.addTemplate("main", main);
+    context.addTemplate("sub", "<span>ok</span>");
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main", { flag: true })).toBe("<div><span>ok</span></div>");
+    expect(context.renderToString("main", { flag: true })).toBe("<div><span>ok</span></div>");
   });
 
   test("t-call allowed on a non t node", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const main = '<div t-call="sub"/>';
-    app.addTemplate("main", main);
-    app.addTemplate("sub", "<span>ok</span>");
+    context.addTemplate("main", main);
+    context.addTemplate("sub", "<span>ok</span>");
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div><span>ok</span></div>");
+    expect(context.renderToString("main")).toBe("<div><span>ok</span></div>");
   });
 
   test("with unused body", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = "<div>ok</div>";
     const main = '<t t-call="sub">WHEEE</t>';
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div>ok</div>");
+    expect(context.renderToString("main")).toBe("<div>ok</div>");
   });
 
   test("with unused setbody", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = "<div>ok</div>";
     const main = `<t t-call="sub"><t t-set="qux" t-value="3"/></t>`;
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div>ok</div>");
+    expect(context.renderToString("main")).toBe("<div>ok</div>");
   });
 
   test("with used body", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = '<h1><t t-esc="0"/></h1>';
     const main = '<t t-call="sub">ok</t>';
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
-    expect(app.renderToString("main")).toBe("<h1>ok</h1>");
+    expect(context.renderToString("main")).toBe("<h1>ok</h1>");
   });
 
   test("with used setbody", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = '<t t-esc="foo"/>';
     const main = `<span><t t-call="sub"><t t-set="foo" t-value="'ok'"/></t></span>`;
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<span>ok</span>");
+    expect(context.renderToString("main")).toBe("<span>ok</span>");
   });
 
   test("inherit context", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = '<t t-esc="foo"/>';
     const main = `<div><t t-set="foo" t-value="1"/><t t-call="sub"/></div>`;
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div>1</div>");
+    expect(context.renderToString("main")).toBe("<div>1</div>");
   });
 
   test("scoped parameters", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = "<t>ok</t>";
     const main = `
         <div>
@@ -119,15 +119,15 @@ describe("t-call (template calling)", () => {
           </t>
           <t t-esc="foo"/>
         </div>`;
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div>ok</div>");
+    expect(context.renderToString("main")).toBe("<div>ok</div>");
   });
 
   test("scoped parameters, part 2", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = '<t t-esc="foo"/>';
     const main = `
         <div>
@@ -137,15 +137,15 @@ describe("t-call (template calling)", () => {
           </t>
           <t t-esc="foo"/>
         </div>`;
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe("<div>4211</div>");
+    expect(context.renderToString("main")).toBe("<div>4211</div>");
   });
 
   test("call with several sub nodes on same line", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const sub = `
         <div>
           <t t-raw="0"/>
@@ -156,17 +156,17 @@ describe("t-call (template calling)", () => {
             <span>hey</span> <span>yay</span>
           </t>
         </div>`;
-    app.addTemplate("sub", sub);
-    app.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
     const expected = "<div><div><span>hey</span> <span>yay</span></div></div>";
-    expect(app.renderToString("main")).toBe(expected);
+    expect(context.renderToString("main")).toBe(expected);
   });
 
   test("cascading t-call t-raw='0'", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const finalTemplate = `
         <div>
           <span>cascade 2</span>
@@ -196,10 +196,10 @@ describe("t-call (template calling)", () => {
           </t>
         </div>`;
 
-    app.addTemplate("finalTemplate", finalTemplate);
-    app.addTemplate("subSubTemplate", subSubTemplate);
-    app.addTemplate("subTemplate", subTemplate);
-    app.addTemplate("main", main);
+    context.addTemplate("finalTemplate", finalTemplate);
+    context.addTemplate("subSubTemplate", subSubTemplate);
+    context.addTemplate("subTemplate", subTemplate);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(finalTemplate);
     snapshotTemplateCode(subTemplate);
@@ -207,11 +207,11 @@ describe("t-call (template calling)", () => {
     snapshotTemplateCode(main);
     const expected =
       "<div><div><div><div><span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span></div></div></div></div>";
-    expect(app.renderToString("main")).toBe(expected);
+    expect(context.renderToString("main")).toBe(expected);
   });
 
   test("cascading t-call t-raw='0', without external divs", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const finalTemplate = `
           <span>cascade 2</span>
           <t t-raw="0"/>`;
@@ -233,10 +233,10 @@ describe("t-call (template calling)", () => {
             <span>hey</span> <span>yay</span>
           </t>`;
 
-    app.addTemplate("finalTemplate", finalTemplate);
-    app.addTemplate("subSubTemplate", subSubTemplate);
-    app.addTemplate("subTemplate", subTemplate);
-    app.addTemplate("main", main);
+    context.addTemplate("finalTemplate", finalTemplate);
+    context.addTemplate("subSubTemplate", subSubTemplate);
+    context.addTemplate("subTemplate", subTemplate);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(finalTemplate);
     snapshotTemplateCode(subTemplate);
@@ -244,11 +244,11 @@ describe("t-call (template calling)", () => {
     snapshotTemplateCode(main);
     const expected =
       "<span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span>";
-    expect(app.renderToString("main")).toBe(expected);
+    expect(context.renderToString("main")).toBe(expected);
   });
 
   test("recursive template, part 1", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const recursive = `
         <div>
           <span>hey</span>
@@ -257,15 +257,15 @@ describe("t-call (template calling)", () => {
           </t>
         </div>`;
 
-    app.addTemplate("recursive", recursive);
+    context.addTemplate("recursive", recursive);
 
     snapshotTemplateCode(recursive);
     const expected = "<div><span>hey</span></div>";
-    expect(app.renderToString("recursive")).toBe(expected);
+    expect(context.renderToString("recursive")).toBe(expected);
   });
 
   test("recursive template, part 2", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const Parent = `
         <div>
           <t t-call="nodeTemplate">
@@ -283,18 +283,18 @@ describe("t-call (template calling)", () => {
           </t>
         </div>`;
 
-    app.addTemplate("Parent", Parent);
-    app.addTemplate("nodeTemplate", nodeTemplate);
+    context.addTemplate("Parent", Parent);
+    context.addTemplate("nodeTemplate", nodeTemplate);
 
     snapshotTemplateCode(Parent);
     snapshotTemplateCode(nodeTemplate);
     const root = { val: "a", children: [{ val: "b" }, { val: "c" }] };
     const expected = "<div><div><p>a</p><div><p>b</p></div><div><p>c</p></div></div></div>";
-    expect(app.renderToString("Parent", { root })).toBe(expected);
+    expect(context.renderToString("Parent", { root })).toBe(expected);
   });
 
   test("recursive template, part 3", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const Parent = `
         <div>
           <t t-call="nodeTemplate">
@@ -312,19 +312,19 @@ describe("t-call (template calling)", () => {
         </t>
         </div>`;
 
-    app.addTemplate("Parent", Parent);
-    app.addTemplate("nodeTemplate", nodeTemplate);
+    context.addTemplate("Parent", Parent);
+    context.addTemplate("nodeTemplate", nodeTemplate);
 
     snapshotTemplateCode(Parent);
     snapshotTemplateCode(nodeTemplate);
     const root = { val: "a", children: [{ val: "b", children: [{ val: "d" }] }, { val: "c" }] };
     const expected =
       "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
-    expect(app.renderToString("Parent", { root })).toBe(expected);
+    expect(context.renderToString("Parent", { root })).toBe(expected);
   });
 
   test("recursive template, part 4: with t-set recursive index", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const Parent = `
         <div>
           <t t-call="nodeTemplate">
@@ -344,8 +344,8 @@ describe("t-call (template calling)", () => {
           </t>
         </div>`;
 
-    app.addTemplate("Parent", Parent);
-    app.addTemplate("nodeTemplate", nodeTemplate);
+    context.addTemplate("Parent", Parent);
+    context.addTemplate("nodeTemplate", nodeTemplate);
 
     snapshotTemplateCode(Parent);
     snapshotTemplateCode(nodeTemplate);
@@ -355,11 +355,11 @@ describe("t-call (template calling)", () => {
     };
     const expected =
       "<div><div><p>a 2</p><div><p>b 3</p><div><p>c 4</p><div><p>d 5</p></div></div></div></div></div>";
-    expect(app.renderToString("Parent", { root })).toBe(expected);
+    expect(context.renderToString("Parent", { root })).toBe(expected);
   });
 
   test("t-call, conditional and t-set in t-call body", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const callee1 = `<div>callee1</div>`;
     const callee2 = `<div>callee2 <t t-esc="v"/></div>`;
     const caller = `
@@ -371,17 +371,17 @@ describe("t-call (template calling)", () => {
           </t>
         </div>`;
 
-    app.addTemplate("callee1", callee1);
-    app.addTemplate("callee2", callee2);
-    app.addTemplate("caller", caller);
+    context.addTemplate("callee1", callee1);
+    context.addTemplate("callee2", callee2);
+    context.addTemplate("caller", caller);
 
     snapshotTemplateCode(caller);
     const expected = `<div><div>callee2 success</div></div>`;
-    expect(app.renderToString("caller")).toBe(expected);
+    expect(context.renderToString("caller")).toBe(expected);
   });
 
   test("t-call with t-set inside and outside", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const main = `
         <div>
           <t t-foreach="list" t-as="v" t-key="v_index">
@@ -396,18 +396,18 @@ describe("t-call (template calling)", () => {
           <span t-esc="val3"/>
         </t>`;
 
-    app.addTemplate("main", main);
-    app.addTemplate("sub", sub);
+    context.addTemplate("main", main);
+    context.addTemplate("sub", sub);
 
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
     const expected = "<div><span>3</span><span>6</span><span>9</span></div>";
-    const context = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
-    expect(app.renderToString("main", context)).toBe(expected);
+    const ctx = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
+    expect(context.renderToString("main", ctx)).toBe(expected);
   });
 
   test("t-call with t-set inside and outside. 2", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const main = `
         <div>
           <t t-foreach="list" t-as="v" t-key="v_index">
@@ -424,20 +424,20 @@ describe("t-call (template calling)", () => {
         </t>`;
     const wrapper = `<p><t t-set="w" t-value="'fromwrapper'"/><t t-call="main"/></p>`;
 
-    app.addTemplate("main", main);
-    app.addTemplate("sub", sub);
-    app.addTemplate("wrapper", wrapper);
+    context.addTemplate("main", main);
+    context.addTemplate("sub", sub);
+    context.addTemplate("wrapper", wrapper);
 
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
     const expected =
       "<p><div><span>3</span>fromwrapper<span>6</span>fromwrapper<span>9</span>fromwrapper</div></p>";
-    const context = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
-    expect(app.renderToString("wrapper", context)).toBe(expected);
+    const ctx = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
+    expect(context.renderToString("wrapper", ctx)).toBe(expected);
   });
 
   test("t-call with t-set inside and body text content", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const main = `
         <div>
           <t t-call="sub">
@@ -446,41 +446,41 @@ describe("t-call (template calling)", () => {
         </div>`;
     const sub = `<p><t t-esc="val"/></p>`;
 
-    app.addTemplate("main", main);
-    app.addTemplate("sub", sub);
+    context.addTemplate("main", main);
+    context.addTemplate("sub", sub);
 
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
     const expected = "<div><p>yip yip</p></div>";
-    expect(app.renderToString("main")).toBe(expected);
+    expect(context.renderToString("main")).toBe(expected);
   });
 
   test("t-call with body content as root of a template", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const antony = `<foo><t t-raw="0"/></foo>`;
     const main = `<t><t t-call="antony"><p>antony</p></t></t>`;
-    app.addTemplate("antony", antony);
-    app.addTemplate("main", main);
+    context.addTemplate("antony", antony);
+    context.addTemplate("main", main);
     const expected = "<foo><p>antony</p></foo>";
     snapshotTemplateCode(antony);
     snapshotTemplateCode(main);
-    expect(app.renderToString("main")).toBe(expected);
+    expect(context.renderToString("main")).toBe(expected);
   });
 
   test("dynamic t-call", () => {
-    const app = new TestApp();
+    const context = new TestContext();
     const foo = `<foo><t t-esc="val"/></foo>`;
     const bar = `<bar><t t-esc="val"/></bar>`;
     const main = `<div><t t-call="{{template}}"/></div>`;
 
-    app.addTemplate("foo", foo);
-    app.addTemplate("bar", bar);
-    app.addTemplate("main", main);
+    context.addTemplate("foo", foo);
+    context.addTemplate("bar", bar);
+    context.addTemplate("main", main);
 
     snapshotTemplateCode(main);
     const expected1 = "<div><foo>foo</foo></div>";
-    expect(app.renderToString("main", { template: "foo", val: "foo" })).toBe(expected1);
+    expect(context.renderToString("main", { template: "foo", val: "foo" })).toBe(expected1);
     const expected2 = "<div><bar>quux</bar></div>";
-    expect(app.renderToString("main", { template: "bar", val: "quux" })).toBe(expected2);
+    expect(context.renderToString("main", { template: "bar", val: "quux" })).toBe(expected2);
   });
 });

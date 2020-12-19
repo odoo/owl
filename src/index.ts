@@ -7,7 +7,7 @@
 import * as _hooks from "./hooks";
 import { useComponent } from "./core";
 export { EventBus } from "./event_bus";
-export { App } from "./app";
+export { Context } from "./context";
 
 export { Component, mount, useComponent } from "./core";
 export { xml } from "./tags";

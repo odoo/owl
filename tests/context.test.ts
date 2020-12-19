@@ -1,4 +1,4 @@
-import { App } from "../src/app";
+import { Context } from "../src/context";
 import { Component, mount } from "../src/core";
 import { makeTestFixture, nextTick } from "./helpers";
 
@@ -8,18 +8,18 @@ beforeEach(() => {
   fixture = makeTestFixture();
 });
 
-describe("App", () => {
-  test("a component can be mounted with an app", async () => {
+describe("Context", () => {
+  test("a component can be mounted with an context", async () => {
     class Test extends Component {
       static template = "test";
     }
-    const app = new App();
-    app.addTemplate("test", `<div class="myapp"/>`);
-    await mount(Test, { target: fixture, app });
+    const context = new Context();
+    context.addTemplate("test", `<div class="myapp"/>`);
+    await mount(Test, { target: fixture, context });
     expect(fixture.innerHTML).toBe(`<div class="myapp"></div>`);
   });
 
-  test("a component can be used instead of an app", async () => {
+  test("a component can be used instead of a context", async () => {
     class Child extends Component {
       static template = "child";
     }
@@ -27,14 +27,14 @@ describe("App", () => {
     class Parent extends Component {
       static template = "test";
       mounted() {
-        mount(Child, { target: this.el! as any, app: this });
+        mount(Child, { target: this.el! as any, context: this });
       }
     }
 
-    const app = new App();
-    app.addTemplate("test", `<div class="myapp"/>`);
-    app.addTemplate("child", `<span>child</span>`);
-    await mount(Parent, { target: fixture, app });
+    const context = new Context();
+    context.addTemplate("test", `<div class="myapp"/>`);
+    context.addTemplate("child", `<span>child</span>`);
+    await mount(Parent, { target: fixture, context });
     expect(fixture.innerHTML).toBe(`<div class="myapp"></div>`);
     await nextTick();
     expect(fixture.innerHTML).toBe(`<div class="myapp"><span>child</span></div>`);

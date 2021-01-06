@@ -545,7 +545,7 @@ application), since it involves extracting all task related code out of the
 components. Here is the new content of the `app.js` file:
 
 ```js
-const { Component, Store } = owl;
+const { Component, Store, mount } = owl;
 const { xml } = owl.tags;
 const { whenReady } = owl.utils;
 const { useRef, useDispatch, useStore } = owl.hooks;
@@ -808,7 +808,7 @@ For reference, here is the final code:
 
 ```js
 (function () {
-  const { Component, Store } = owl;
+  const { Component, Store, mount } = owl;
   const { xml } = owl.tags;
   const { whenReady } = owl.utils;
   const { useRef, useDispatch, useState, useStore } = owl.hooks;

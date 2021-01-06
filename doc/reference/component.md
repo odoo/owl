@@ -10,13 +10,21 @@
   - [Static Properties](#static-properties)
   - [Methods](#methods)
   - [Lifecycle](#lifecycle)
+    - [`constructor(parent, props)`](#constructorparent-props)
+    - [`willStart()`](#willstart)
+    - [`mounted()`](#mounted)
+    - [`willUpdateProps(nextProps)`](#willupdatepropsnextprops)
+    - [`willPatch()`](#willpatch)
+    - [`patched(snapshot)`](#patchedsnapshot)
+    - [`willUnmount()`](#willunmount)
+    - [`catchError(error)`](#catcherrorerror)
   - [Root Component](#root-component)
   - [Composition](#composition)
   - [Form Input Bindings](#form-input-bindings)
   - [References](#references)
   - [Dynamic sub components](#dynamic-sub-components)
   - [Functional Components](#functional-components)
-  - [SVG components](#svg-components)
+  - [SVG Components](#svg-components)
 
 ## Overview
 
@@ -289,8 +297,13 @@ We explain here all the public methods of the `Component` class.
   are updated. It returns a boolean, which indicates if the component should
   ignore a props update. If it returns false, then `willUpdateProps` will not
   be called, and no rendering will occur. Its default implementation is to
-  always return true. This is an optimization, similar to React's `shouldComponentUpdate`. Most of the time, this should not be used, but it
-  can be useful if we are handling large number of components.
+  always return true. Note that this is an optimization, similar to React's `shouldComponentUpdate`. Most of the time, this should not be used, but it
+  can be useful if we are handling large number of components. Since this is an
+  optimization, Owl has the freedom to ignore the result of `shouldUpdate` in
+  some cases (for example, if a component is remounted, or if we want to force
+  a full rerender of the UI). However, if `shouldUpdate` returns true, then Owl
+  provides the guarantee that the component will be rendered at some point in
+  the future (except if the component is destroyed or if some part of the UI crashes).
 
 * **`destroy()`**. As its name suggests, this method will remove the component,
   and perform all necessary cleanup, such as unmounting the component, its children,

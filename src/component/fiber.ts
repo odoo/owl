@@ -82,6 +82,7 @@ export class Fiber {
 
     let oldFiber = __owl__.currentFiber;
     if (oldFiber && !oldFiber.isCompleted) {
+      this.force = true;
       if (oldFiber.root === oldFiber && !parent) {
         // both oldFiber and this fiber are root fibers
         this._reuseFiber(oldFiber);

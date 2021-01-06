@@ -1405,4 +1405,160 @@ describe("async rendering", () => {
     expect(fixture.innerHTML).toBe("<div>2</div>");
     expect(Widget.prototype.__render).toHaveBeenCalledTimes(2);
   });
+
+  test("components with shouldUpdate=false", async () => {
+    const state = { p: 1, cc: 10 };
+
+    class ChildChild extends Component {
+      static template = xml`
+        <div>
+          child child: <t t-esc="state.cc"/>
+        </div>`;
+      state = state;
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    class Child extends Component {
+      static components = { ChildChild };
+      static template = xml`
+        <div>
+          child
+          <ChildChild/>
+        </div>`;
+
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    let parent: any;
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+        <div>
+          parent: <t t-esc="state.p"/>
+          <Child/>
+        </div>`;
+
+      state = state;
+      constructor(a, b) {
+        super(a, b);
+        parent = this;
+      }
+      shouldUpdate() {
+        return false;
+      }
+    }
+
+    class App extends Component {
+      static components = { Parent };
+      static template = xml`
+        <div>
+          <Parent/>
+        </div>`;
+    }
+
+    var div = document.createElement("div");
+    fixture.appendChild(div);
+
+    const app = new App();
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div></div><div><div> parent: 1<div> child <div> child child: 10</div></div></div></div>"
+    );
+    app.mount(div);
+
+    // wait for rendering from second mount to go through parent
+    await Promise.resolve();
+    await Promise.resolve();
+    state.cc++;
+    state.p++;
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div><div> parent: 2<div> child <div> child child: 11</div></div></div></div></div>"
+    );
+  });
+
+  test("components with shouldUpdate=false, part 2", async () => {
+    const state = { p: 1, cc: 10 };
+    let shouldUpdate = true;
+
+    class ChildChild extends Component {
+      static template = xml`
+        <div>
+          child child: <t t-esc="state.cc"/>
+        </div>`;
+      state = state;
+      shouldUpdate() {
+        return shouldUpdate;
+      }
+    }
+
+    class Child extends Component {
+      static components = { ChildChild };
+      static template = xml`
+        <div>
+          child
+          <ChildChild/>
+        </div>`;
+
+      shouldUpdate() {
+        return shouldUpdate;
+      }
+    }
+
+    let parent: any;
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+        <div>
+          parent: <t t-esc="state.p"/>
+          <Child/>
+        </div>`;
+
+      state = state;
+      constructor(a, b) {
+        super(a, b);
+        parent = this;
+      }
+      shouldUpdate() {
+        return shouldUpdate;
+      }
+    }
+
+    class App extends Component {
+      static components = { Parent };
+      static template = xml`
+        <div>
+          <Parent/>
+        </div>`;
+    }
+
+    const app = new App();
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><div> parent: 1<div> child <div> child child: 10</div></div></div></div>"
+    );
+
+    state.cc++;
+    state.p++;
+    app.render();
+
+    // wait for rendering to go through child
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    shouldUpdate = false;
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div> parent: 2<div> child <div> child child: 11</div></div></div></div>"
+    );
+  });
 });

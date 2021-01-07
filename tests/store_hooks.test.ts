@@ -571,12 +571,12 @@ describe("connecting a component to store", () => {
     app.state.beerId = 2;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>kwak</span></div>");
-    expect(counter).toBe(1);
+    expect(counter).toBe(0);
 
     store.dispatch("renameBeer", { id: 2, name: "orval" });
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>orval</span></div>");
-    expect(counter).toBe(2);
+    expect(counter).toBe(1);
   });
 
   test("connected component is properly cleaned up on destroy", async () => {
@@ -1344,5 +1344,59 @@ describe("various scenarios", () => {
     state.value = 44;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>testWorld<div>3</div></div></div>");
+  });
+
+  test("parent/children with store, parent is remounted", async () => {
+    const store = new Store({ state: { a: 1, b: 1 } });
+
+    class Child extends Component {
+      static template = xml`<div><t t-esc="a"/></div>`;
+      a: any;
+      constructor(parent, props) {
+        super(parent, props);
+        this.a = useStore(
+          (state, props) => {
+            return state.a;
+          },
+          {
+            onUpdate: (a) => {
+              this.a = a;
+            },
+          }
+        );
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          parent: <t t-esc="b"/>
+          <Child/>
+        </div>`;
+      static components = { Child };
+
+      b: any;
+      constructor(parent, props) {
+        super(parent, props);
+        this.b = useStore((state, props) => {
+          return state.b;
+        });
+      }
+    }
+    (env as any).store = store;
+
+    const div = document.createElement("div");
+    fixture.appendChild(div);
+
+    // initial mounting
+    const parent = await mount(Parent, { target: fixture, env });
+    expect(fixture.innerHTML).toBe("<div></div><div> parent: 1<div>1</div></div>");
+
+    // remounting component, then immediately update store.state
+    parent.mount(div);
+    store.state.a++;
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div> parent: 1<div>2</div></div></div>");
   });
 });

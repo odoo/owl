@@ -75,6 +75,11 @@ export class Store extends Context {
     );
     return result;
   }
+
+  __notifyComponents(): Promise<void> {
+    this.trigger("before-update");
+    return super.__notifyComponents();
+  }
 }
 
 interface SelectorOptions {
@@ -105,12 +110,15 @@ export function useStore(selector, options: SelectorOptions = {}): any {
     const newRevNumber = hashFn(result);
     if ((newRevNumber > 0 && revNumber !== newRevNumber) || !isEqual(oldResult, result)) {
       revNumber = newRevNumber;
-      if (options.onUpdate) {
-        options.onUpdate(result);
-      }
       return true;
     }
     return false;
+  }
+  if (options.onUpdate) {
+    store.on("before-update", component, () => {
+      const newValue = selector(store!.state, component.props!);
+      options.onUpdate(newValue);
+    });
   }
   store.updateFunctions[componentId].push(function (): boolean {
     return selectCompareUpdate(store!.state, component.props);
@@ -132,6 +140,9 @@ export function useStore(selector, options: SelectorOptions = {}): any {
   const __destroy = component.__destroy;
   component.__destroy = (parent) => {
     delete store.updateFunctions[componentId];
+    if (options.onUpdate) {
+      store.off("before-update", component);
+    }
     __destroy.call(component, parent);
   };
 

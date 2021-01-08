@@ -155,6 +155,439 @@
         }
     }
 
+    /**
+     * Owl QWeb Expression Parser
+     *
+     * Owl needs in various contexts to be able to understand the structure of a
+     * string representing a javascript expression.  The usual goal is to be able
+     * to rewrite some variables.  For example, if a template has
+     *
+     *  ```xml
+     *  <t t-if="computeSomething({val: state.val})">...</t>
+     * ```
+     *
+     * this needs to be translated in something like this:
+     *
+     * ```js
+     *   if (context["computeSomething"]({val: context["state"].val})) { ... }
+     * ```
+     *
+     * This file contains the implementation of an extremely naive tokenizer/parser
+     * and evaluator for javascript expressions.  The supported grammar is basically
+     * only expressive enough to understand the shape of objects, of arrays, and
+     * various operators.
+     */
+    //------------------------------------------------------------------------------
+    // Misc types, constants and helpers
+    //------------------------------------------------------------------------------
+    const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,eval,void,Math,RegExp,Array,Object,Date".split(",");
+    const WORD_REPLACEMENT = {
+        and: "&&",
+        or: "||",
+        gt: ">",
+        gte: ">=",
+        lt: "<",
+        lte: "<=",
+    };
+    const STATIC_TOKEN_MAP = {
+        "{": "LEFT_BRACE",
+        "}": "RIGHT_BRACE",
+        "[": "LEFT_BRACKET",
+        "]": "RIGHT_BRACKET",
+        ":": "COLON",
+        ",": "COMMA",
+        "(": "LEFT_PAREN",
+        ")": "RIGHT_PAREN",
+    };
+    // note that the space after typeof is relevant. It makes sure that the formatted
+    // expression has a space after typeof
+    const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ".split(",");
+    let tokenizeString = function (expr) {
+        let s = expr[0];
+        let start = s;
+        if (s !== "'" && s !== '"') {
+            return false;
+        }
+        let i = 1;
+        let cur;
+        while (expr[i] && expr[i] !== start) {
+            cur = expr[i];
+            s += cur;
+            if (cur === "\\") {
+                i++;
+                cur = expr[i];
+                if (!cur) {
+                    throw new Error("Invalid expression");
+                }
+                s += cur;
+            }
+            i++;
+        }
+        if (expr[i] !== start) {
+            throw new Error("Invalid expression");
+        }
+        s += start;
+        return { type: "VALUE", value: s };
+    };
+    let tokenizeNumber = function (expr) {
+        let s = expr[0];
+        if (s && s.match(/[0-9]/)) {
+            let i = 1;
+            while (expr[i] && expr[i].match(/[0-9]|\./)) {
+                s += expr[i];
+                i++;
+            }
+            return { type: "VALUE", value: s };
+        }
+        else {
+            return false;
+        }
+    };
+    let tokenizeSymbol = function (expr) {
+        let s = expr[0];
+        if (s && s.match(/[a-zA-Z_\$]/)) {
+            let i = 1;
+            while (expr[i] && expr[i].match(/\w/)) {
+                s += expr[i];
+                i++;
+            }
+            if (s in WORD_REPLACEMENT) {
+                return { type: "OPERATOR", value: WORD_REPLACEMENT[s], size: s.length };
+            }
+            return { type: "SYMBOL", value: s };
+        }
+        else {
+            return false;
+        }
+    };
+    const tokenizeStatic = function (expr) {
+        const char = expr[0];
+        if (char && char in STATIC_TOKEN_MAP) {
+            return { type: STATIC_TOKEN_MAP[char], value: char };
+        }
+        return false;
+    };
+    const tokenizeOperator = function (expr) {
+        for (let op of OPERATORS) {
+            if (expr.startsWith(op)) {
+                return { type: "OPERATOR", value: op };
+            }
+        }
+        return false;
+    };
+    const TOKENIZERS = [
+        tokenizeString,
+        tokenizeNumber,
+        tokenizeOperator,
+        tokenizeSymbol,
+        tokenizeStatic,
+    ];
+    /**
+     * Convert a javascript expression (as a string) into a list of tokens. For
+     * example: `tokenize("1 + b")` will return:
+     * ```js
+     *  [
+     *   {type: "VALUE", value: "1"},
+     *   {type: "OPERATOR", value: "+"},
+     *   {type: "SYMBOL", value: "b"}
+     * ]
+     * ```
+     */
+    function tokenize(expr) {
+        const result = [];
+        let token = true;
+        while (token) {
+            expr = expr.trim();
+            if (expr) {
+                for (let tokenizer of TOKENIZERS) {
+                    token = tokenizer(expr);
+                    if (token) {
+                        result.push(token);
+                        expr = expr.slice(token.size || token.value.length);
+                        break;
+                    }
+                }
+            }
+            else {
+                token = false;
+            }
+        }
+        if (expr.length) {
+            throw new Error(`Tokenizer error: could not tokenize "${expr}"`);
+        }
+        return result;
+    }
+    //------------------------------------------------------------------------------
+    // Expression "evaluator"
+    //------------------------------------------------------------------------------
+    /**
+     * This is the main function exported by this file. This is the code that will
+     * process an expression (given as a string) and returns another expression with
+     * proper lookups in the context.
+     *
+     * Usually, this kind of code would be very simple to do if we had an AST (so,
+     * if we had a javascript parser), since then, we would only need to find the
+     * variables and replace them.  However, a parser is more complicated, and there
+     * are no standard builtin parser API.
+     *
+     * Since this method is applied to simple javasript expressions, and the work to
+     * be done is actually quite simple, we actually can get away with not using a
+     * parser, which helps with the code size.
+     *
+     * Here is the heuristic used by this method to determine if a token is a
+     * variable:
+     * - by default, all symbols are considered a variable
+     * - unless the previous token is a dot (in that case, this is a property: `a.b`)
+     * - or if the previous token is a left brace or a comma, and the next token is
+     *   a colon (in that case, this is an object key: `{a: b}`)
+     *
+     * Some specific code is also required to support arrow functions. If we detect
+     * the arrow operator, then we add the current (or some previous tokens) token to
+     * the list of variables so it does not get replaced by a lookup in the context
+     */
+    function compileExprToArray(expr, scope) {
+        scope = Object.create(scope);
+        const tokens = tokenize(expr);
+        for (let i = 0; i < tokens.length; i++) {
+            let token = tokens[i];
+            let prevToken = tokens[i - 1];
+            let nextToken = tokens[i + 1];
+            let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
+            if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
+                if (prevToken) {
+                    if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
+                        isVar = false;
+                    }
+                    else if (prevToken.type === "LEFT_BRACE" || prevToken.type === "COMMA") {
+                        if (nextToken && nextToken.type === "COLON") {
+                            isVar = false;
+                        }
+                    }
+                }
+            }
+            if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
+                if (token.type === "RIGHT_PAREN") {
+                    let j = i - 1;
+                    while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
+                        if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
+                            tokens[j].value = tokens[j].originalValue;
+                            scope[tokens[j].value] = { id: tokens[j].value, expr: tokens[j].value };
+                        }
+                        j--;
+                    }
+                }
+                else {
+                    scope[token.value] = { id: token.value, expr: token.value };
+                }
+            }
+            if (isVar) {
+                token.varName = token.value;
+                if (token.value in scope && "id" in scope[token.value]) {
+                    token.value = scope[token.value].expr;
+                }
+                else {
+                    token.originalValue = token.value;
+                    token.value = `scope['${token.value}']`;
+                }
+            }
+        }
+        return tokens;
+    }
+    function compileExpr(expr, scope) {
+        return compileExprToArray(expr, scope)
+            .map((t) => t.value)
+            .join("");
+    }
+
+    const INTERP_REGEXP = /\{\{.*?\}\}/g;
+    //------------------------------------------------------------------------------
+    // Compilation Context
+    //------------------------------------------------------------------------------
+    class CompilationContext {
+        constructor(name) {
+            this.code = [];
+            this.variables = {};
+            this.escaping = false;
+            this.parentNode = null;
+            this.parentTextNode = null;
+            this.rootNode = null;
+            this.indentLevel = 0;
+            this.shouldDefineParent = false;
+            this.shouldDefineScope = false;
+            this.protectedScopeNumber = 0;
+            this.shouldDefineQWeb = false;
+            this.shouldDefineUtils = false;
+            this.shouldDefineRefs = false;
+            this.shouldDefineResult = true;
+            this.loopNumber = 0;
+            this.inPreTag = false;
+            this.allowMultipleRoots = false;
+            this.hasParentWidget = false;
+            this.hasKey0 = false;
+            this.keyStack = [];
+            this.rootContext = this;
+            this.templateName = name || "noname";
+            this.addLine("let h = this.h;");
+        }
+        generateID() {
+            return CompilationContext.nextID++;
+        }
+        /**
+         * This method generates a "template key", which is basically a unique key
+         * which depends on the currently set keys, and on the iteration numbers (if
+         * we are in a loop).
+         *
+         * Such a key is necessary when we need to associate an id to some element
+         * generated by a template (for example, a component)
+         */
+        generateTemplateKey(prefix = "") {
+            const id = this.generateID();
+            if (this.loopNumber === 0 && !this.hasKey0) {
+                return `'${prefix}__${id}__'`;
+            }
+            let key = `\`${prefix}__${id}__`;
+            let start = this.hasKey0 ? 0 : 1;
+            for (let i = start; i < this.loopNumber + 1; i++) {
+                key += `\${key${i}}__`;
+            }
+            this.addLine(`let k${id} = ${key}\`;`);
+            return `k${id}`;
+        }
+        generateCode() {
+            if (this.shouldDefineResult) {
+                this.code.unshift("    let result;");
+            }
+            if (this.shouldDefineScope) {
+                this.code.unshift("    let scope = Object.create(context);");
+            }
+            if (this.shouldDefineRefs) {
+                this.code.unshift("    context.__owl__.refs = context.__owl__.refs || {};");
+            }
+            if (this.shouldDefineParent) {
+                if (this.hasParentWidget) {
+                    this.code.unshift("    let parent = extra.parent;");
+                }
+                else {
+                    this.code.unshift("    let parent = context;");
+                }
+            }
+            if (this.shouldDefineQWeb) {
+                this.code.unshift("    let QWeb = this.constructor;");
+            }
+            if (this.shouldDefineUtils) {
+                this.code.unshift("    let utils = this.constructor.utils;");
+            }
+            return this.code;
+        }
+        withParent(node) {
+            if (!this.allowMultipleRoots &&
+                this === this.rootContext &&
+                (this.parentNode || this.parentTextNode)) {
+                throw new Error("A template should not have more than one root node");
+            }
+            if (!this.rootContext.rootNode) {
+                this.rootContext.rootNode = node;
+            }
+            if (!this.parentNode && this.rootContext.shouldDefineResult) {
+                this.addLine(`result = vn${node};`);
+            }
+            return this.subContext("parentNode", node);
+        }
+        subContext(key, value) {
+            const newContext = Object.create(this);
+            newContext[key] = value;
+            return newContext;
+        }
+        indent() {
+            this.rootContext.indentLevel++;
+        }
+        dedent() {
+            this.rootContext.indentLevel--;
+        }
+        addLine(line) {
+            const prefix = new Array(this.indentLevel + 2).join("    ");
+            this.code.push(prefix + line);
+            return this.code.length - 1;
+        }
+        addIf(condition) {
+            this.addLine(`if (${condition}) {`);
+            this.indent();
+        }
+        addElse() {
+            this.dedent();
+            this.addLine("} else {");
+            this.indent();
+        }
+        closeIf() {
+            this.dedent();
+            this.addLine("}");
+        }
+        getValue(val) {
+            return val in this.variables ? this.getValue(this.variables[val]) : val;
+        }
+        /**
+         * Prepare an expression for being consumed at render time.  Its main job
+         * is to
+         * - replace unknown variables by a lookup in the context
+         * - replace already defined variables by their internal name
+         */
+        formatExpression(expr) {
+            this.rootContext.shouldDefineScope = true;
+            return compileExpr(expr, this.variables);
+        }
+        captureExpression(expr) {
+            this.rootContext.shouldDefineScope = true;
+            const argId = this.generateID();
+            const tokens = compileExprToArray(expr, this.variables);
+            const done = new Set();
+            return tokens
+                .map((tok) => {
+                if (tok.varName) {
+                    if (!done.has(tok.varName)) {
+                        done.add(tok.varName);
+                        this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`);
+                    }
+                    tok.value = `${tok.varName}_${argId}`;
+                }
+                return tok.value;
+            })
+                .join("");
+        }
+        /**
+         * Perform string interpolation on the given string. Note that if the whole
+         * string is an expression, it simply returns it (formatted and enclosed in
+         * parentheses).
+         * For instance:
+         *   'Hello {{x}}!' -> `Hello ${x}`
+         *   '{{x ? 'a': 'b'}}' -> (x ? 'a' : 'b')
+         */
+        interpolate(s) {
+            let matches = s.match(INTERP_REGEXP);
+            if (matches && matches[0].length === s.length) {
+                return `(${this.formatExpression(s.slice(2, -2))})`;
+            }
+            let r = s.replace(/\{\{.*?\}\}/g, (s) => "${" + this.formatExpression(s.slice(2, -2)) + "}");
+            return "`" + r + "`";
+        }
+        startProtectScope(codeBlock) {
+            const protectID = this.generateID();
+            this.rootContext.protectedScopeNumber++;
+            this.rootContext.shouldDefineScope = true;
+            const scopeExpr = `Object.create(scope);`;
+            this.addLine(`let _origScope${protectID} = scope;`);
+            this.addLine(`scope = ${scopeExpr}`);
+            if (!codeBlock) {
+                this.addLine(`scope.__access_mode__ = 'ro';`);
+            }
+            return protectID;
+        }
+        stopProtectScope(protectID) {
+            this.rootContext.protectedScopeNumber--;
+            this.addLine(`scope = _origScope${protectID};`);
+        }
+    }
+    CompilationContext.nextID = 1;
+
     //------------------------------------------------------------------------------
     // module/props.ts
     //------------------------------------------------------------------------------
@@ -807,442 +1240,7 @@
 
     const patch = init([eventListenersModule, attrsModule, propsModule, classModule]);
 
-    /**
-     * Owl QWeb Expression Parser
-     *
-     * Owl needs in various contexts to be able to understand the structure of a
-     * string representing a javascript expression.  The usual goal is to be able
-     * to rewrite some variables.  For example, if a template has
-     *
-     *  ```xml
-     *  <t t-if="computeSomething({val: state.val})">...</t>
-     * ```
-     *
-     * this needs to be translated in something like this:
-     *
-     * ```js
-     *   if (context["computeSomething"]({val: context["state"].val})) { ... }
-     * ```
-     *
-     * This file contains the implementation of an extremely naive tokenizer/parser
-     * and evaluator for javascript expressions.  The supported grammar is basically
-     * only expressive enough to understand the shape of objects, of arrays, and
-     * various operators.
-     */
-    //------------------------------------------------------------------------------
-    // Misc types, constants and helpers
-    //------------------------------------------------------------------------------
-    const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,eval,void,Math,RegExp,Array,Object,Date".split(",");
-    const WORD_REPLACEMENT = {
-        and: "&&",
-        or: "||",
-        gt: ">",
-        gte: ">=",
-        lt: "<",
-        lte: "<=",
-    };
-    const STATIC_TOKEN_MAP = {
-        "{": "LEFT_BRACE",
-        "}": "RIGHT_BRACE",
-        "[": "LEFT_BRACKET",
-        "]": "RIGHT_BRACKET",
-        ":": "COLON",
-        ",": "COMMA",
-        "(": "LEFT_PAREN",
-        ")": "RIGHT_PAREN",
-    };
-    // note that the space after typeof is relevant. It makes sure that the formatted
-    // expression has a space after typeof
-    const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ".split(",");
-    let tokenizeString = function (expr) {
-        let s = expr[0];
-        let start = s;
-        if (s !== "'" && s !== '"') {
-            return false;
-        }
-        let i = 1;
-        let cur;
-        while (expr[i] && expr[i] !== start) {
-            cur = expr[i];
-            s += cur;
-            if (cur === "\\") {
-                i++;
-                cur = expr[i];
-                if (!cur) {
-                    throw new Error("Invalid expression");
-                }
-                s += cur;
-            }
-            i++;
-        }
-        if (expr[i] !== start) {
-            throw new Error("Invalid expression");
-        }
-        s += start;
-        return { type: "VALUE", value: s };
-    };
-    let tokenizeNumber = function (expr) {
-        let s = expr[0];
-        if (s && s.match(/[0-9]/)) {
-            let i = 1;
-            while (expr[i] && expr[i].match(/[0-9]|\./)) {
-                s += expr[i];
-                i++;
-            }
-            return { type: "VALUE", value: s };
-        }
-        else {
-            return false;
-        }
-    };
-    let tokenizeSymbol = function (expr) {
-        let s = expr[0];
-        if (s && s.match(/[a-zA-Z_\$]/)) {
-            let i = 1;
-            while (expr[i] && expr[i].match(/\w/)) {
-                s += expr[i];
-                i++;
-            }
-            if (s in WORD_REPLACEMENT) {
-                return { type: "OPERATOR", value: WORD_REPLACEMENT[s], size: s.length };
-            }
-            return { type: "SYMBOL", value: s };
-        }
-        else {
-            return false;
-        }
-    };
-    const tokenizeStatic = function (expr) {
-        const char = expr[0];
-        if (char && char in STATIC_TOKEN_MAP) {
-            return { type: STATIC_TOKEN_MAP[char], value: char };
-        }
-        return false;
-    };
-    const tokenizeOperator = function (expr) {
-        for (let op of OPERATORS) {
-            if (expr.startsWith(op)) {
-                return { type: "OPERATOR", value: op };
-            }
-        }
-        return false;
-    };
-    const TOKENIZERS = [
-        tokenizeString,
-        tokenizeNumber,
-        tokenizeOperator,
-        tokenizeSymbol,
-        tokenizeStatic,
-    ];
-    /**
-     * Convert a javascript expression (as a string) into a list of tokens. For
-     * example: `tokenize("1 + b")` will return:
-     * ```js
-     *  [
-     *   {type: "VALUE", value: "1"},
-     *   {type: "OPERATOR", value: "+"},
-     *   {type: "SYMBOL", value: "b"}
-     * ]
-     * ```
-     */
-    function tokenize(expr) {
-        const result = [];
-        let token = true;
-        while (token) {
-            expr = expr.trim();
-            if (expr) {
-                for (let tokenizer of TOKENIZERS) {
-                    token = tokenizer(expr);
-                    if (token) {
-                        result.push(token);
-                        expr = expr.slice(token.size || token.value.length);
-                        break;
-                    }
-                }
-            }
-            else {
-                token = false;
-            }
-        }
-        if (expr.length) {
-            throw new Error(`Tokenizer error: could not tokenize "${expr}"`);
-        }
-        return result;
-    }
-    //------------------------------------------------------------------------------
-    // Expression "evaluator"
-    //------------------------------------------------------------------------------
-    /**
-     * This is the main function exported by this file. This is the code that will
-     * process an expression (given as a string) and returns another expression with
-     * proper lookups in the context.
-     *
-     * Usually, this kind of code would be very simple to do if we had an AST (so,
-     * if we had a javascript parser), since then, we would only need to find the
-     * variables and replace them.  However, a parser is more complicated, and there
-     * are no standard builtin parser API.
-     *
-     * Since this method is applied to simple javasript expressions, and the work to
-     * be done is actually quite simple, we actually can get away with not using a
-     * parser, which helps with the code size.
-     *
-     * Here is the heuristic used by this method to determine if a token is a
-     * variable:
-     * - by default, all symbols are considered a variable
-     * - unless the previous token is a dot (in that case, this is a property: `a.b`)
-     * - or if the previous token is a left brace or a comma, and the next token is
-     *   a colon (in that case, this is an object key: `{a: b}`)
-     *
-     * Some specific code is also required to support arrow functions. If we detect
-     * the arrow operator, then we add the current (or some previous tokens) token to
-     * the list of variables so it does not get replaced by a lookup in the context
-     */
-    function compileExprToArray(expr, scope) {
-        scope = Object.create(scope);
-        const tokens = tokenize(expr);
-        for (let i = 0; i < tokens.length; i++) {
-            let token = tokens[i];
-            let prevToken = tokens[i - 1];
-            let nextToken = tokens[i + 1];
-            let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
-            if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
-                if (prevToken) {
-                    if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
-                        isVar = false;
-                    }
-                    else if (prevToken.type === "LEFT_BRACE" || prevToken.type === "COMMA") {
-                        if (nextToken && nextToken.type === "COLON") {
-                            isVar = false;
-                        }
-                    }
-                }
-            }
-            if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
-                if (token.type === "RIGHT_PAREN") {
-                    let j = i - 1;
-                    while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
-                        if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
-                            tokens[j].value = tokens[j].originalValue;
-                            scope[tokens[j].value] = { id: tokens[j].value, expr: tokens[j].value };
-                        }
-                        j--;
-                    }
-                }
-                else {
-                    scope[token.value] = { id: token.value, expr: token.value };
-                }
-            }
-            if (isVar) {
-                token.varName = token.value;
-                if (token.value in scope && "id" in scope[token.value]) {
-                    token.value = scope[token.value].expr;
-                }
-                else {
-                    token.originalValue = token.value;
-                    token.value = `scope['${token.value}']`;
-                }
-            }
-        }
-        return tokens;
-    }
-    function compileExpr(expr, scope) {
-        return compileExprToArray(expr, scope)
-            .map((t) => t.value)
-            .join("");
-    }
-
-    const INTERP_REGEXP = /\{\{.*?\}\}/g;
-    //------------------------------------------------------------------------------
-    // Compilation Context
-    //------------------------------------------------------------------------------
-    let CompilationContext = /** @class */ (() => {
-        class CompilationContext {
-            constructor(name) {
-                this.code = [];
-                this.variables = {};
-                this.escaping = false;
-                this.parentNode = null;
-                this.parentTextNode = null;
-                this.rootNode = null;
-                this.indentLevel = 0;
-                this.shouldDefineParent = false;
-                this.shouldDefineScope = false;
-                this.protectedScopeNumber = 0;
-                this.shouldDefineQWeb = false;
-                this.shouldDefineUtils = false;
-                this.shouldDefineRefs = false;
-                this.shouldDefineResult = true;
-                this.loopNumber = 0;
-                this.inPreTag = false;
-                this.allowMultipleRoots = false;
-                this.hasParentWidget = false;
-                this.hasKey0 = false;
-                this.keyStack = [];
-                this.rootContext = this;
-                this.templateName = name || "noname";
-                this.addLine("let h = this.h;");
-            }
-            generateID() {
-                return CompilationContext.nextID++;
-            }
-            /**
-             * This method generates a "template key", which is basically a unique key
-             * which depends on the currently set keys, and on the iteration numbers (if
-             * we are in a loop).
-             *
-             * Such a key is necessary when we need to associate an id to some element
-             * generated by a template (for example, a component)
-             */
-            generateTemplateKey(prefix = "") {
-                const id = this.generateID();
-                if (this.loopNumber === 0 && !this.hasKey0) {
-                    return `'${prefix}__${id}__'`;
-                }
-                let key = `\`${prefix}__${id}__`;
-                let start = this.hasKey0 ? 0 : 1;
-                for (let i = start; i < this.loopNumber + 1; i++) {
-                    key += `\${key${i}}__`;
-                }
-                this.addLine(`let k${id} = ${key}\`;`);
-                return `k${id}`;
-            }
-            generateCode() {
-                if (this.shouldDefineResult) {
-                    this.code.unshift("    let result;");
-                }
-                if (this.shouldDefineScope) {
-                    this.code.unshift("    let scope = Object.create(context);");
-                }
-                if (this.shouldDefineRefs) {
-                    this.code.unshift("    context.__owl__.refs = context.__owl__.refs || {};");
-                }
-                if (this.shouldDefineParent) {
-                    if (this.hasParentWidget) {
-                        this.code.unshift("    let parent = extra.parent;");
-                    }
-                    else {
-                        this.code.unshift("    let parent = context;");
-                    }
-                }
-                if (this.shouldDefineQWeb) {
-                    this.code.unshift("    let QWeb = this.constructor;");
-                }
-                if (this.shouldDefineUtils) {
-                    this.code.unshift("    let utils = this.constructor.utils;");
-                }
-                return this.code;
-            }
-            withParent(node) {
-                if (!this.allowMultipleRoots &&
-                    this === this.rootContext &&
-                    (this.parentNode || this.parentTextNode)) {
-                    throw new Error("A template should not have more than one root node");
-                }
-                if (!this.rootContext.rootNode) {
-                    this.rootContext.rootNode = node;
-                }
-                if (!this.parentNode && this.rootContext.shouldDefineResult) {
-                    this.addLine(`result = vn${node};`);
-                }
-                return this.subContext("parentNode", node);
-            }
-            subContext(key, value) {
-                const newContext = Object.create(this);
-                newContext[key] = value;
-                return newContext;
-            }
-            indent() {
-                this.rootContext.indentLevel++;
-            }
-            dedent() {
-                this.rootContext.indentLevel--;
-            }
-            addLine(line) {
-                const prefix = new Array(this.indentLevel + 2).join("    ");
-                this.code.push(prefix + line);
-                return this.code.length - 1;
-            }
-            addIf(condition) {
-                this.addLine(`if (${condition}) {`);
-                this.indent();
-            }
-            addElse() {
-                this.dedent();
-                this.addLine("} else {");
-                this.indent();
-            }
-            closeIf() {
-                this.dedent();
-                this.addLine("}");
-            }
-            getValue(val) {
-                return val in this.variables ? this.getValue(this.variables[val]) : val;
-            }
-            /**
-             * Prepare an expression for being consumed at render time.  Its main job
-             * is to
-             * - replace unknown variables by a lookup in the context
-             * - replace already defined variables by their internal name
-             */
-            formatExpression(expr) {
-                this.rootContext.shouldDefineScope = true;
-                return compileExpr(expr, this.variables);
-            }
-            captureExpression(expr) {
-                this.rootContext.shouldDefineScope = true;
-                const argId = this.generateID();
-                const tokens = compileExprToArray(expr, this.variables);
-                const done = new Set();
-                return tokens
-                    .map((tok) => {
-                    if (tok.varName) {
-                        if (!done.has(tok.varName)) {
-                            done.add(tok.varName);
-                            this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`);
-                        }
-                        tok.value = `${tok.varName}_${argId}`;
-                    }
-                    return tok.value;
-                })
-                    .join("");
-            }
-            /**
-             * Perform string interpolation on the given string. Note that if the whole
-             * string is an expression, it simply returns it (formatted and enclosed in
-             * parentheses).
-             * For instance:
-             *   'Hello {{x}}!' -> `Hello ${x}`
-             *   '{{x ? 'a': 'b'}}' -> (x ? 'a' : 'b')
-             */
-            interpolate(s) {
-                let matches = s.match(INTERP_REGEXP);
-                if (matches && matches[0].length === s.length) {
-                    return `(${this.formatExpression(s.slice(2, -2))})`;
-                }
-                let r = s.replace(/\{\{.*?\}\}/g, (s) => "${" + this.formatExpression(s.slice(2, -2)) + "}");
-                return "`" + r + "`";
-            }
-            startProtectScope(codeBlock) {
-                const protectID = this.generateID();
-                this.rootContext.protectedScopeNumber++;
-                this.rootContext.shouldDefineScope = true;
-                const scopeExpr = `Object.create(scope);`;
-                this.addLine(`let _origScope${protectID} = scope;`);
-                this.addLine(`scope = ${scopeExpr}`);
-                if (!codeBlock) {
-                    this.addLine(`scope.__access_mode__ = 'ro';`);
-                }
-                return protectID;
-            }
-            stopProtectScope(protectID) {
-                this.rootContext.protectedScopeNumber--;
-                this.addLine(`scope = _origScope${protectID};`);
-            }
-        }
-        CompilationContext.nextID = 1;
-        return CompilationContext;
-    })();
-
+    let localStorage = null;
     const browser = {
         setTimeout: window.setTimeout.bind(window),
         clearTimeout: window.clearTimeout.bind(window),
@@ -1252,7 +1250,12 @@
         random: Math.random,
         Date: window.Date,
         fetch: (window.fetch || (() => { })).bind(window),
-        localStorage: window.localStorage,
+        get localStorage() {
+            return localStorage || window.localStorage;
+        },
+        set localStorage(newLocalStorage) {
+            localStorage = newLocalStorage;
+        },
     };
 
     /**
@@ -1367,6 +1370,7 @@
     const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
     const lineBreakRE = /[\r\n]/;
     const whitespaceRE = /\s+/g;
+    const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
     const NODE_HOOKS_PARAMS = {
         create: "(_, n)",
         insert: "vn",
@@ -1472,610 +1476,610 @@
     //------------------------------------------------------------------------------
     // QWeb rendering engine
     //------------------------------------------------------------------------------
-    let QWeb = /** @class */ (() => {
-        class QWeb extends EventBus {
-            constructor(config = {}) {
-                super();
-                this.h = h;
-                // subTemplates are stored in two objects: a (local) mapping from a name to an
-                // id, and a (global) mapping from an id to the compiled function.  This is
-                // necessary to ensure that global templates can be called with more than one
-                // QWeb instance.
-                this.subTemplates = {};
-                this.isUpdating = false;
-                this.templates = Object.create(QWeb.TEMPLATES);
-                if (config.templates) {
-                    this.addTemplates(config.templates);
-                }
-                if (config.translateFn) {
-                    this.translateFn = config.translateFn;
-                }
+    class QWeb extends EventBus {
+        constructor(config = {}) {
+            super();
+            this.h = h;
+            // subTemplates are stored in two objects: a (local) mapping from a name to an
+            // id, and a (global) mapping from an id to the compiled function.  This is
+            // necessary to ensure that global templates can be called with more than one
+            // QWeb instance.
+            this.subTemplates = {};
+            this.isUpdating = false;
+            this.templates = Object.create(QWeb.TEMPLATES);
+            if (config.templates) {
+                this.addTemplates(config.templates);
             }
-            static addDirective(directive) {
-                if (directive.name in QWeb.DIRECTIVE_NAMES) {
-                    throw new Error(`Directive "${directive.name} already registered`);
-                }
-                QWeb.DIRECTIVES.push(directive);
-                QWeb.DIRECTIVE_NAMES[directive.name] = 1;
-                QWeb.DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
-                if (directive.extraNames) {
-                    directive.extraNames.forEach((n) => (QWeb.DIRECTIVE_NAMES[n] = 1));
-                }
+            if (config.translateFn) {
+                this.translateFn = config.translateFn;
             }
-            static registerComponent(name, Component) {
-                if (QWeb.components[name]) {
-                    throw new Error(`Component '${name}' has already been registered`);
-                }
-                QWeb.components[name] = Component;
+        }
+        static addDirective(directive) {
+            if (directive.name in QWeb.DIRECTIVE_NAMES) {
+                throw new Error(`Directive "${directive.name} already registered`);
             }
-            /**
-             * Register globally a template.  All QWeb instances will obtain their
-             * templates from their own template map, and then, from the global static
-             * TEMPLATES property.
-             */
-            static registerTemplate(name, template) {
-                if (QWeb.TEMPLATES[name]) {
-                    throw new Error(`Template '${name}' has already been registered`);
-                }
-                const qweb = new QWeb();
-                qweb.addTemplate(name, template);
-                QWeb.TEMPLATES[name] = qweb.templates[name];
+            QWeb.DIRECTIVES.push(directive);
+            QWeb.DIRECTIVE_NAMES[directive.name] = 1;
+            QWeb.DIRECTIVES.sort((d1, d2) => d1.priority - d2.priority);
+            if (directive.extraNames) {
+                directive.extraNames.forEach((n) => (QWeb.DIRECTIVE_NAMES[n] = 1));
             }
-            /**
-             * Add a template to the internal template map.  Note that it is not
-             * immediately compiled.
-             */
-            addTemplate(name, xmlString, allowDuplicate) {
-                if (allowDuplicate && name in this.templates) {
-                    return;
-                }
-                const doc = parseXML(xmlString);
-                if (!doc.firstChild) {
-                    throw new Error("Invalid template (should not be empty)");
-                }
-                this._addTemplate(name, doc.firstChild);
+        }
+        static registerComponent(name, Component) {
+            if (QWeb.components[name]) {
+                throw new Error(`Component '${name}' has already been registered`);
             }
-            /**
-             * Load templates from a xml (as a string or xml document).  This will look up
-             * for the first <templates> tag, and will consider each child of this as a
-             * template, with the name given by the t-name attribute.
-             */
-            addTemplates(xmlstr) {
-                const doc = typeof xmlstr === "string" ? parseXML(xmlstr) : xmlstr;
-                const templates = doc.getElementsByTagName("templates")[0];
-                if (!templates) {
-                    return;
-                }
-                for (let elem of templates.children) {
-                    const name = elem.getAttribute("t-name");
-                    this._addTemplate(name, elem);
-                }
+            QWeb.components[name] = Component;
+        }
+        /**
+         * Register globally a template.  All QWeb instances will obtain their
+         * templates from their own template map, and then, from the global static
+         * TEMPLATES property.
+         */
+        static registerTemplate(name, template) {
+            if (QWeb.TEMPLATES[name]) {
+                throw new Error(`Template '${name}' has already been registered`);
             }
-            _addTemplate(name, elem) {
-                if (name in this.templates) {
-                    throw new Error(`Template ${name} already defined`);
-                }
-                this._processTemplate(elem);
-                const template = {
-                    elem,
-                    fn: function (context, extra) {
-                        const compiledFunction = this._compile(name, elem);
-                        template.fn = compiledFunction;
-                        return compiledFunction.call(this, context, extra);
-                    },
+            const qweb = new QWeb();
+            qweb.addTemplate(name, template);
+            QWeb.TEMPLATES[name] = qweb.templates[name];
+        }
+        /**
+         * Add a template to the internal template map.  Note that it is not
+         * immediately compiled.
+         */
+        addTemplate(name, xmlString, allowDuplicate) {
+            if (allowDuplicate && name in this.templates) {
+                return;
+            }
+            const doc = parseXML(xmlString);
+            if (!doc.firstChild) {
+                throw new Error("Invalid template (should not be empty)");
+            }
+            this._addTemplate(name, doc.firstChild);
+        }
+        /**
+         * Load templates from a xml (as a string or xml document).  This will look up
+         * for the first <templates> tag, and will consider each child of this as a
+         * template, with the name given by the t-name attribute.
+         */
+        addTemplates(xmlstr) {
+            const doc = typeof xmlstr === "string" ? parseXML(xmlstr) : xmlstr;
+            const templates = doc.getElementsByTagName("templates")[0];
+            if (!templates) {
+                return;
+            }
+            for (let elem of templates.children) {
+                const name = elem.getAttribute("t-name");
+                this._addTemplate(name, elem);
+            }
+        }
+        _addTemplate(name, elem) {
+            if (name in this.templates) {
+                throw new Error(`Template ${name} already defined`);
+            }
+            this._processTemplate(elem);
+            const template = {
+                elem,
+                fn: function (context, extra) {
+                    const compiledFunction = this._compile(name);
+                    template.fn = compiledFunction;
+                    return compiledFunction.call(this, context, extra);
+                },
+            };
+            this.templates[name] = template;
+        }
+        _processTemplate(elem) {
+            let tbranch = elem.querySelectorAll("[t-elif], [t-else]");
+            for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
+                let node = tbranch[i];
+                let prevElem = node.previousElementSibling;
+                let pattr = function (name) {
+                    return prevElem.getAttribute(name);
                 };
-                this.templates[name] = template;
-            }
-            _processTemplate(elem) {
-                let tbranch = elem.querySelectorAll("[t-elif], [t-else]");
-                for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
-                    let node = tbranch[i];
-                    let prevElem = node.previousElementSibling;
-                    let pattr = function (name) {
-                        return prevElem.getAttribute(name);
-                    };
-                    let nattr = function (name) {
-                        return +!!node.getAttribute(name);
-                    };
-                    if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
-                        if (pattr("t-foreach")) {
-                            throw new Error("t-if cannot stay at the same level as t-foreach when using t-elif or t-else");
-                        }
-                        if (["t-if", "t-elif", "t-else"].map(nattr).reduce(function (a, b) {
-                            return a + b;
-                        }) > 1) {
-                            throw new Error("Only one conditional branching directive is allowed per node");
-                        }
-                        // All text (with only spaces) and comment nodes (nodeType 8) between
-                        // branch nodes are removed
-                        let textNode;
-                        while ((textNode = node.previousSibling) !== prevElem) {
-                            if (textNode.nodeValue.trim().length && textNode.nodeType !== 8) {
-                                throw new Error("text is not allowed between branching directives");
-                            }
-                            textNode.remove();
-                        }
+                let nattr = function (name) {
+                    return +!!node.getAttribute(name);
+                };
+                if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
+                    if (pattr("t-foreach")) {
+                        throw new Error("t-if cannot stay at the same level as t-foreach when using t-elif or t-else");
                     }
-                    else {
-                        throw new Error("t-elif and t-else directives must be preceded by a t-if or t-elif directive");
+                    if (["t-if", "t-elif", "t-else"].map(nattr).reduce(function (a, b) {
+                        return a + b;
+                    }) > 1) {
+                        throw new Error("Only one conditional branching directive is allowed per node");
+                    }
+                    // All text (with only spaces) and comment nodes (nodeType 8) between
+                    // branch nodes are removed
+                    let textNode;
+                    while ((textNode = node.previousSibling) !== prevElem) {
+                        if (textNode.nodeValue.trim().length && textNode.nodeType !== 8) {
+                            throw new Error("text is not allowed between branching directives");
+                        }
+                        textNode.remove();
                     }
                 }
-            }
-            /**
-             * Render a template
-             *
-             * @param {string} name the template should already have been added
-             */
-            render(name, context = {}, extra = null) {
-                const template = this.templates[name];
-                if (!template) {
-                    throw new Error(`Template ${name} does not exist`);
+                else {
+                    throw new Error("t-elif and t-else directives must be preceded by a t-if or t-elif directive");
                 }
-                return template.fn.call(this, context, extra);
             }
-            /**
-             * Render a template to a html string.
-             *
-             * Note that this is more limited than the `render` method: it is not suitable
-             * to render a full component tree, since this is an asynchronous operation.
-             * This method can only render templates without components.
-             */
-            renderToString(name, context = {}, extra) {
-                const vnode = this.render(name, context, extra);
-                if (vnode.sel === undefined) {
-                    return vnode.text;
+        }
+        /**
+         * Render a template
+         *
+         * @param {string} name the template should already have been added
+         */
+        render(name, context = {}, extra = null) {
+            const template = this.templates[name];
+            if (!template) {
+                throw new Error(`Template ${name} does not exist`);
+            }
+            return template.fn.call(this, context, extra);
+        }
+        /**
+         * Render a template to a html string.
+         *
+         * Note that this is more limited than the `render` method: it is not suitable
+         * to render a full component tree, since this is an asynchronous operation.
+         * This method can only render templates without components.
+         */
+        renderToString(name, context = {}, extra) {
+            const vnode = this.render(name, context, extra);
+            if (vnode.sel === undefined) {
+                return vnode.text;
+            }
+            const node = document.createElement(vnode.sel);
+            const elem = patch(node, vnode).elm;
+            function escapeTextNodes(node) {
+                if (node.nodeType === 3) {
+                    node.textContent = escape(node.textContent);
                 }
-                const node = document.createElement(vnode.sel);
-                const elem = patch(node, vnode).elm;
-                function escapeTextNodes(node) {
+                for (let n of node.childNodes) {
+                    escapeTextNodes(n);
+                }
+            }
+            escapeTextNodes(elem);
+            return elem.outerHTML;
+        }
+        /**
+         * Force all widgets connected to this QWeb instance to rerender themselves.
+         *
+         * This method is mostly useful for external code that want to modify the
+         * application in some cases.  For example, a router plugin.
+         */
+        forceUpdate() {
+            this.isUpdating = true;
+            Promise.resolve().then(() => {
+                if (this.isUpdating) {
+                    this.isUpdating = false;
+                    this.trigger("update");
+                }
+            });
+        }
+        _compile(name, options = {}) {
+            const elem = options.elem || this.templates[name].elem;
+            const isDebug = elem.attributes.hasOwnProperty("t-debug");
+            const ctx = new CompilationContext(name);
+            if (elem.tagName !== "t") {
+                ctx.shouldDefineResult = false;
+            }
+            if (options.hasParent) {
+                ctx.variables = Object.create(null);
+                ctx.parentNode = ctx.generateID();
+                ctx.allowMultipleRoots = true;
+                ctx.hasParentWidget = true;
+                ctx.shouldDefineResult = false;
+                ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
+                if (options.defineKey) {
+                    ctx.addLine(`let key0 = extra.key || "";`);
+                    ctx.hasKey0 = true;
+                }
+            }
+            this._compileNode(elem, ctx);
+            if (!options.hasParent) {
+                if (ctx.shouldDefineResult) {
+                    ctx.addLine(`return result;`);
+                }
+                else {
+                    if (!ctx.rootNode) {
+                        throw new Error(`A template should have one root node (${ctx.templateName})`);
+                    }
+                    ctx.addLine(`return vn${ctx.rootNode};`);
+                }
+            }
+            let code = ctx.generateCode();
+            const templateName = ctx.templateName.replace(/`/g, "'").slice(0, 200);
+            code.unshift(`    // Template name: "${templateName}"`);
+            let template;
+            try {
+                template = new Function("context, extra", code.join("\n"));
+            }
+            catch (e) {
+                console.groupCollapsed(`Invalid Code generated by ${templateName}`);
+                console.warn(code.join("\n"));
+                console.groupEnd();
+                throw new Error(`Invalid generated code while compiling template '${templateName}': ${e.message}`);
+            }
+            if (isDebug) {
+                const tpl = this.templates[name];
+                if (tpl) {
+                    const msg = `Template: ${tpl.elem.outerHTML}\nCompiled code:\n${template.toString()}`;
+                    console.log(msg);
+                }
+            }
+            return template;
+        }
+        /**
+         * Generate code from an xml node
+         *
+         */
+        _compileNode(node, ctx) {
+            if (!(node instanceof Element)) {
+                // this is a text node, there are no directive to apply
+                let text = node.textContent;
+                if (!ctx.inPreTag) {
+                    if (lineBreakRE.test(text) && !text.trim()) {
+                        return;
+                    }
+                    text = text.replace(whitespaceRE, " ");
+                }
+                if (this.translateFn) {
+                    if (node.parentNode.getAttribute("t-translation") !== "off") {
+                        const match = translationRE.exec(text);
+                        text = match[1] + this.translateFn(match[2]) + match[3];
+                    }
+                }
+                if (ctx.parentNode) {
                     if (node.nodeType === 3) {
-                        node.textContent = escape(node.textContent);
+                        ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
                     }
-                    for (let n of node.childNodes) {
-                        escapeTextNodes(n);
+                    else if (node.nodeType === 8) {
+                        ctx.addLine(`c${ctx.parentNode}.push(h('!', \`${text}\`));`);
                     }
                 }
-                escapeTextNodes(elem);
-                return elem.outerHTML;
+                else if (ctx.parentTextNode) {
+                    ctx.addLine(`vn${ctx.parentTextNode}.text += \`${text}\`;`);
+                }
+                else {
+                    // this is an unusual situation: this text node is the result of the
+                    // template rendering.
+                    let nodeID = ctx.generateID();
+                    ctx.addLine(`let vn${nodeID} = {text: \`${text}\`};`);
+                    ctx.addLine(`result = vn${nodeID};`);
+                    ctx.rootContext.rootNode = nodeID;
+                    ctx.rootContext.parentTextNode = nodeID;
+                }
+                return;
             }
-            /**
-             * Force all widgets connected to this QWeb instance to rerender themselves.
-             *
-             * This method is mostly useful for external code that want to modify the
-             * application in some cases.  For example, a router plugin.
-             */
-            forceUpdate() {
-                this.isUpdating = true;
-                Promise.resolve().then(() => {
-                    if (this.isUpdating) {
-                        this.isUpdating = false;
-                        this.trigger("update");
-                    }
-                });
+            if (node.tagName !== "t" && node.hasAttribute("t-call")) {
+                const tCallNode = document.createElement("t");
+                tCallNode.setAttribute("t-call", node.getAttribute("t-call"));
+                node.removeAttribute("t-call");
+                node.prepend(tCallNode);
             }
-            _compile(name, elem, parentContext, defineKey) {
-                const isDebug = elem.attributes.hasOwnProperty("t-debug");
-                const ctx = new CompilationContext(name);
-                if (elem.tagName !== "t") {
-                    ctx.shouldDefineResult = false;
-                }
-                if (parentContext) {
-                    ctx.variables = Object.create(parentContext.variables);
-                    ctx.parentNode = parentContext.parentNode || ctx.generateID();
-                    ctx.allowMultipleRoots = true;
-                    ctx.hasParentWidget = true;
-                    ctx.shouldDefineResult = false;
-                    ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);
-                    if (defineKey) {
-                        ctx.addLine(`let key0 = extra.key || "";`);
-                        ctx.hasKey0 = true;
-                    }
-                }
-                this._compileNode(elem, ctx);
-                if (!parentContext) {
-                    if (ctx.shouldDefineResult) {
-                        ctx.addLine(`return result;`);
-                    }
-                    else {
-                        if (!ctx.rootNode) {
-                            throw new Error(`A template should have one root node (${ctx.templateName})`);
-                        }
-                        ctx.addLine(`return vn${ctx.rootNode};`);
-                    }
-                }
-                let code = ctx.generateCode();
-                const templateName = ctx.templateName.replace(/`/g, "'").slice(0, 200);
-                code.unshift(`    // Template name: "${templateName}"`);
-                let template;
-                try {
-                    template = new Function("context, extra", code.join("\n"));
-                }
-                catch (e) {
-                    console.groupCollapsed(`Invalid Code generated by ${templateName}`);
-                    console.warn(code.join("\n"));
-                    console.groupEnd();
-                    throw new Error(`Invalid generated code while compiling template '${templateName}': ${e.message}`);
-                }
-                if (isDebug) {
-                    const tpl = this.templates[name];
-                    if (tpl) {
-                        const msg = `Template: ${tpl.elem.outerHTML}\nCompiled code:\n${template.toString()}`;
-                        console.log(msg);
-                    }
-                }
-                return template;
+            const firstLetter = node.tagName[0];
+            if (firstLetter === firstLetter.toUpperCase()) {
+                // this is a component, we modify in place the xml document to change
+                // <SomeComponent ... /> to <SomeComponent t-component="SomeComponent" ... />
+                node.setAttribute("t-component", node.tagName);
             }
-            /**
-             * Generate code from an xml node
-             *
-             */
-            _compileNode(node, ctx) {
-                if (!(node instanceof Element)) {
-                    // this is a text node, there are no directive to apply
-                    let text = node.textContent;
-                    if (!ctx.inPreTag) {
-                        if (lineBreakRE.test(text) && !text.trim()) {
-                            return;
+            else if (node.tagName !== "t" && node.hasAttribute("t-component")) {
+                throw new Error(`Directive 't-component' can only be used on <t> nodes (used on a <${node.tagName}>)`);
+            }
+            const attributes = node.attributes;
+            const validDirectives = [];
+            const finalizers = [];
+            // maybe this is not optimal: we iterate on all attributes here, and again
+            // just after for each directive.
+            for (let i = 0; i < attributes.length; i++) {
+                let attrName = attributes[i].name;
+                if (attrName.startsWith("t-")) {
+                    let dName = attrName.slice(2).split(/-|\./)[0];
+                    if (!(dName in QWeb.DIRECTIVE_NAMES)) {
+                        throw new Error(`Unknown QWeb directive: '${attrName}'`);
+                    }
+                    if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
+                        const tNode = document.createElement("t");
+                        tNode.setAttribute(attrName, node.getAttribute(attrName));
+                        for (let child of Array.from(node.childNodes)) {
+                            tNode.appendChild(child);
                         }
-                        text = text.replace(whitespaceRE, " ");
+                        node.appendChild(tNode);
+                        node.removeAttribute(attrName);
                     }
-                    if (this.translateFn) {
-                        if (node.parentNode.getAttribute("t-translation") !== "off") {
-                            text = this.translateFn(text);
-                        }
-                    }
-                    if (ctx.parentNode) {
-                        if (node.nodeType === 3) {
-                            ctx.addLine(`c${ctx.parentNode}.push({text: \`${text}\`});`);
-                        }
-                        else if (node.nodeType === 8) {
-                            ctx.addLine(`c${ctx.parentNode}.push(h('!', \`${text}\`));`);
-                        }
-                    }
-                    else if (ctx.parentTextNode) {
-                        ctx.addLine(`vn${ctx.parentTextNode}.text += \`${text}\`;`);
-                    }
-                    else {
-                        // this is an unusual situation: this text node is the result of the
-                        // template rendering.
-                        let nodeID = ctx.generateID();
-                        ctx.addLine(`let vn${nodeID} = {text: \`${text}\`};`);
-                        ctx.addLine(`result = vn${nodeID};`);
-                        ctx.rootContext.rootNode = nodeID;
-                        ctx.rootContext.parentTextNode = nodeID;
-                    }
-                    return;
                 }
-                if (node.tagName !== "t" && node.hasAttribute("t-call")) {
-                    const tCallNode = document.createElement("t");
-                    tCallNode.setAttribute("t-call", node.getAttribute("t-call"));
-                    node.removeAttribute("t-call");
-                    node.prepend(tCallNode);
-                }
-                const firstLetter = node.tagName[0];
-                if (firstLetter === firstLetter.toUpperCase()) {
-                    // this is a component, we modify in place the xml document to change
-                    // <SomeComponent ... /> to <SomeComponent t-component="SomeComponent" ... />
-                    node.setAttribute("t-component", node.tagName);
-                }
-                else if (node.tagName !== "t" && node.hasAttribute("t-component")) {
-                    throw new Error(`Directive 't-component' can only be used on <t> nodes (used on a <${node.tagName}>)`);
-                }
-                const attributes = node.attributes;
-                const validDirectives = [];
-                const finalizers = [];
-                // maybe this is not optimal: we iterate on all attributes here, and again
-                // just after for each directive.
-                for (let i = 0; i < attributes.length; i++) {
-                    let attrName = attributes[i].name;
-                    if (attrName.startsWith("t-")) {
-                        let dName = attrName.slice(2).split(/-|\./)[0];
-                        if (!(dName in QWeb.DIRECTIVE_NAMES)) {
-                            throw new Error(`Unknown QWeb directive: '${attrName}'`);
-                        }
-                        if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
-                            const tNode = document.createElement("t");
-                            tNode.setAttribute(attrName, node.getAttribute(attrName));
-                            for (let child of Array.from(node.childNodes)) {
-                                tNode.appendChild(child);
-                            }
-                            node.appendChild(tNode);
-                            node.removeAttribute(attrName);
+            }
+            const DIR_N = QWeb.DIRECTIVES.length;
+            const ATTR_N = attributes.length;
+            let withHandlers = false;
+            for (let i = 0; i < DIR_N; i++) {
+                let directive = QWeb.DIRECTIVES[i];
+                let fullName;
+                let value;
+                for (let j = 0; j < ATTR_N; j++) {
+                    const name = attributes[j].name;
+                    if (name === "t-" + directive.name ||
+                        name.startsWith("t-" + directive.name + "-") ||
+                        name.startsWith("t-" + directive.name + ".")) {
+                        fullName = name;
+                        value = attributes[j].textContent;
+                        validDirectives.push({ directive, value, fullName });
+                        if (directive.name === "on" || directive.name === "model") {
+                            withHandlers = true;
                         }
                     }
                 }
-                const DIR_N = QWeb.DIRECTIVES.length;
-                const ATTR_N = attributes.length;
-                let withHandlers = false;
-                for (let i = 0; i < DIR_N; i++) {
-                    let directive = QWeb.DIRECTIVES[i];
-                    let fullName;
-                    let value;
-                    for (let j = 0; j < ATTR_N; j++) {
-                        const name = attributes[j].name;
-                        if (name === "t-" + directive.name ||
-                            name.startsWith("t-" + directive.name + "-") ||
-                            name.startsWith("t-" + directive.name + ".")) {
-                            fullName = name;
-                            value = attributes[j].textContent;
-                            validDirectives.push({ directive, value, fullName });
-                            if (directive.name === "on" || directive.name === "model") {
-                                withHandlers = true;
-                            }
+            }
+            for (let { directive, value, fullName } of validDirectives) {
+                if (directive.finalize) {
+                    finalizers.push({ directive, value, fullName });
+                }
+                if (directive.atNodeEncounter) {
+                    const isDone = directive.atNodeEncounter({
+                        node,
+                        qweb: this,
+                        ctx,
+                        fullName,
+                        value,
+                    });
+                    if (isDone) {
+                        for (let { directive, value, fullName } of finalizers) {
+                            directive.finalize({ node, qweb: this, ctx, fullName, value });
                         }
+                        return;
                     }
                 }
+            }
+            if (node.nodeName !== "t") {
+                let nodeID = this._compileGenericNode(node, ctx, withHandlers);
+                ctx = ctx.withParent(nodeID);
+                let nodeHooks = {};
+                let addNodeHook = function (hook, handler) {
+                    nodeHooks[hook] = nodeHooks[hook] || [];
+                    nodeHooks[hook].push(handler);
+                };
                 for (let { directive, value, fullName } of validDirectives) {
-                    if (directive.finalize) {
-                        finalizers.push({ directive, value, fullName });
-                    }
-                    if (directive.atNodeEncounter) {
-                        const isDone = directive.atNodeEncounter({
+                    if (directive.atNodeCreation) {
+                        directive.atNodeCreation({
                             node,
                             qweb: this,
                             ctx,
                             fullName,
                             value,
+                            nodeID,
+                            addNodeHook,
                         });
-                        if (isDone) {
-                            for (let { directive, value, fullName } of finalizers) {
-                                directive.finalize({ node, qweb: this, ctx, fullName, value });
-                            }
-                            return;
-                        }
                     }
                 }
-                if (node.nodeName !== "t") {
-                    let nodeID = this._compileGenericNode(node, ctx, withHandlers);
-                    ctx = ctx.withParent(nodeID);
-                    let nodeHooks = {};
-                    let addNodeHook = function (hook, handler) {
-                        nodeHooks[hook] = nodeHooks[hook] || [];
-                        nodeHooks[hook].push(handler);
-                    };
-                    for (let { directive, value, fullName } of validDirectives) {
-                        if (directive.atNodeCreation) {
-                            directive.atNodeCreation({
-                                node,
-                                qweb: this,
-                                ctx,
-                                fullName,
-                                value,
-                                nodeID,
-                                addNodeHook,
-                            });
+                if (Object.keys(nodeHooks).length) {
+                    ctx.addLine(`p${nodeID}.hook = {`);
+                    for (let hook in nodeHooks) {
+                        ctx.addLine(`  ${hook}: ${NODE_HOOKS_PARAMS[hook]} => {`);
+                        for (let handler of nodeHooks[hook]) {
+                            ctx.addLine(`    ${handler}`);
                         }
+                        ctx.addLine(`  },`);
                     }
-                    if (Object.keys(nodeHooks).length) {
-                        ctx.addLine(`p${nodeID}.hook = {`);
-                        for (let hook in nodeHooks) {
-                            ctx.addLine(`  ${hook}: ${NODE_HOOKS_PARAMS[hook]} => {`);
-                            for (let handler of nodeHooks[hook]) {
-                                ctx.addLine(`    ${handler}`);
-                            }
-                            ctx.addLine(`  },`);
-                        }
-                        ctx.addLine(`};`);
-                    }
-                }
-                if (node.nodeName === "pre") {
-                    ctx = ctx.subContext("inPreTag", true);
-                }
-                this._compileChildren(node, ctx);
-                // svg support
-                // we hadd svg namespace if it is a svg or if it is a g, but only if it is
-                // the root node.  This is the easiest way to support svg sub components:
-                // they need to have a g tag as root. Otherwise, we would need a complete
-                // list of allowed svg tags.
-                const shouldAddNS = node.nodeName === "svg" || (node.nodeName === "g" && ctx.rootNode === ctx.parentNode);
-                if (shouldAddNS) {
-                    ctx.rootContext.shouldDefineUtils = true;
-                    ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
-                }
-                for (let { directive, value, fullName } of finalizers) {
-                    directive.finalize({ node, qweb: this, ctx, fullName, value });
+                    ctx.addLine(`};`);
                 }
             }
-            _compileGenericNode(node, ctx, withHandlers = true) {
-                // nodeType 1 is generic tag
-                if (node.nodeType !== 1) {
-                    throw new Error("unsupported node type");
-                }
-                const attributes = node.attributes;
-                const attrs = [];
-                const props = [];
-                const tattrs = [];
-                function handleProperties(key, val) {
-                    let isProp = false;
-                    switch (node.nodeName) {
-                        case "input":
-                            let type = node.getAttribute("type");
-                            if (type === "checkbox" || type === "radio") {
-                                if (key === "checked" || key === "indeterminate") {
-                                    isProp = true;
-                                }
-                            }
-                            if (key === "value" || key === "readonly" || key === "disabled") {
+            if (node.nodeName === "pre") {
+                ctx = ctx.subContext("inPreTag", true);
+            }
+            this._compileChildren(node, ctx);
+            // svg support
+            // we hadd svg namespace if it is a svg or if it is a g, but only if it is
+            // the root node.  This is the easiest way to support svg sub components:
+            // they need to have a g tag as root. Otherwise, we would need a complete
+            // list of allowed svg tags.
+            const shouldAddNS = node.nodeName === "svg" || (node.nodeName === "g" && ctx.rootNode === ctx.parentNode);
+            if (shouldAddNS) {
+                ctx.rootContext.shouldDefineUtils = true;
+                ctx.addLine(`utils.addNameSpace(vn${ctx.parentNode});`);
+            }
+            for (let { directive, value, fullName } of finalizers) {
+                directive.finalize({ node, qweb: this, ctx, fullName, value });
+            }
+        }
+        _compileGenericNode(node, ctx, withHandlers = true) {
+            // nodeType 1 is generic tag
+            if (node.nodeType !== 1) {
+                throw new Error("unsupported node type");
+            }
+            const attributes = node.attributes;
+            const attrs = [];
+            const props = [];
+            const tattrs = [];
+            function handleProperties(key, val) {
+                let isProp = false;
+                switch (node.nodeName) {
+                    case "input":
+                        let type = node.getAttribute("type");
+                        if (type === "checkbox" || type === "radio") {
+                            if (key === "checked" || key === "indeterminate") {
                                 isProp = true;
                             }
-                            break;
-                        case "option":
-                            isProp = key === "selected" || key === "disabled";
-                            break;
-                        case "textarea":
-                            isProp = key === "readonly" || key === "disabled";
-                            break;
-                        case "button":
-                        case "select":
-                        case "optgroup":
-                            isProp = key === "disabled";
-                            break;
-                    }
-                    if (isProp) {
-                        props.push(`${key}: _${val}`);
-                    }
+                        }
+                        if (key === "value" || key === "readonly" || key === "disabled") {
+                            isProp = true;
+                        }
+                        break;
+                    case "option":
+                        isProp = key === "selected" || key === "disabled";
+                        break;
+                    case "textarea":
+                        isProp = key === "readonly" || key === "disabled";
+                        break;
+                    case "button":
+                    case "select":
+                    case "optgroup":
+                        isProp = key === "disabled";
+                        break;
                 }
-                let classObj = "";
-                for (let i = 0; i < attributes.length; i++) {
-                    let name = attributes[i].name;
-                    let value = attributes[i].textContent;
-                    if (this.translateFn && TRANSLATABLE_ATTRS.includes(name)) {
-                        value = this.translateFn(value);
-                    }
-                    // regular attributes
-                    if (!name.startsWith("t-") && !node.getAttribute("t-attf-" + name)) {
-                        const attID = ctx.generateID();
-                        if (name === "class") {
-                            if ((value = value.trim())) {
-                                let classDef = value
-                                    .split(/\s+/)
-                                    .map((a) => `'${escapeQuotes(a)}':true`)
-                                    .join(",");
-                                if (classObj) {
-                                    ctx.addLine(`Object.assign(${classObj}, {${classDef}})`);
-                                }
-                                else {
-                                    classObj = `_${ctx.generateID()}`;
-                                    ctx.addLine(`let ${classObj} = {${classDef}};`);
-                                }
-                            }
-                        }
-                        else {
-                            ctx.addLine(`let _${attID} = '${escapeQuotes(value)}';`);
-                            if (!name.match(/^[a-zA-Z]+$/)) {
-                                // attribute contains 'non letters' => we want to quote it
-                                name = '"' + name + '"';
-                            }
-                            attrs.push(`${name}: _${attID}`);
-                            handleProperties(name, attID);
-                        }
-                    }
-                    // dynamic attributes
-                    if (name.startsWith("t-att-")) {
-                        let attName = name.slice(6);
-                        const v = ctx.getValue(value);
-                        let formattedValue = typeof v === "string" ? ctx.formatExpression(v) : `scope.${v.id}`;
-                        if (attName === "class") {
-                            ctx.rootContext.shouldDefineUtils = true;
-                            formattedValue = `utils.toObj(${formattedValue})`;
+                if (isProp) {
+                    props.push(`${key}: _${val}`);
+                }
+            }
+            let classObj = "";
+            for (let i = 0; i < attributes.length; i++) {
+                let name = attributes[i].name;
+                let value = attributes[i].textContent;
+                if (this.translateFn && TRANSLATABLE_ATTRS.includes(name)) {
+                    value = this.translateFn(value);
+                }
+                // regular attributes
+                if (!name.startsWith("t-") && !node.getAttribute("t-attf-" + name)) {
+                    const attID = ctx.generateID();
+                    if (name === "class") {
+                        if ((value = value.trim())) {
+                            let classDef = value
+                                .split(/\s+/)
+                                .map((a) => `'${escapeQuotes(a)}':true`)
+                                .join(",");
                             if (classObj) {
-                                ctx.addLine(`Object.assign(${classObj}, ${formattedValue})`);
+                                ctx.addLine(`Object.assign(${classObj}, {${classDef}})`);
                             }
                             else {
                                 classObj = `_${ctx.generateID()}`;
-                                ctx.addLine(`let ${classObj} = ${formattedValue};`);
+                                ctx.addLine(`let ${classObj} = {${classDef}};`);
                             }
-                        }
-                        else {
-                            const attID = ctx.generateID();
-                            if (!attName.match(/^[a-zA-Z]+$/)) {
-                                // attribute contains 'non letters' => we want to quote it
-                                attName = '"' + attName + '"';
-                            }
-                            // we need to combine dynamic with non dynamic attributes:
-                            // class="a" t-att-class="'yop'" should be rendered as class="a yop"
-                            const attValue = node.getAttribute(attName);
-                            if (attValue) {
-                                const attValueID = ctx.generateID();
-                                ctx.addLine(`let _${attValueID} = ${formattedValue};`);
-                                formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
-                                const attrIndex = attrs.findIndex((att) => att.startsWith(attName + ":"));
-                                attrs.splice(attrIndex, 1);
-                            }
-                            ctx.addLine(`let _${attID} = ${formattedValue};`);
-                            attrs.push(`${attName}: _${attID}`);
-                            handleProperties(attName, attID);
                         }
                     }
-                    if (name.startsWith("t-attf-")) {
-                        let attName = name.slice(7);
+                    else {
+                        ctx.addLine(`let _${attID} = '${escapeQuotes(value)}';`);
+                        if (!name.match(/^[a-zA-Z]+$/)) {
+                            // attribute contains 'non letters' => we want to quote it
+                            name = '"' + name + '"';
+                        }
+                        attrs.push(`${name}: _${attID}`);
+                        handleProperties(name, attID);
+                    }
+                }
+                // dynamic attributes
+                if (name.startsWith("t-att-")) {
+                    let attName = name.slice(6);
+                    const v = ctx.getValue(value);
+                    let formattedValue = typeof v === "string" ? ctx.formatExpression(v) : `scope.${v.id}`;
+                    if (attName === "class") {
+                        ctx.rootContext.shouldDefineUtils = true;
+                        formattedValue = `utils.toObj(${formattedValue})`;
+                        if (classObj) {
+                            ctx.addLine(`Object.assign(${classObj}, ${formattedValue})`);
+                        }
+                        else {
+                            classObj = `_${ctx.generateID()}`;
+                            ctx.addLine(`let ${classObj} = ${formattedValue};`);
+                        }
+                    }
+                    else {
+                        const attID = ctx.generateID();
                         if (!attName.match(/^[a-zA-Z]+$/)) {
                             // attribute contains 'non letters' => we want to quote it
                             attName = '"' + attName + '"';
                         }
-                        const formattedExpr = ctx.interpolate(value);
-                        const attID = ctx.generateID();
-                        let staticVal = node.getAttribute(attName);
-                        if (staticVal) {
-                            ctx.addLine(`let _${attID} = '${staticVal} ' + ${formattedExpr};`);
+                        // we need to combine dynamic with non dynamic attributes:
+                        // class="a" t-att-class="'yop'" should be rendered as class="a yop"
+                        const attValue = node.getAttribute(attName);
+                        if (attValue) {
+                            const attValueID = ctx.generateID();
+                            ctx.addLine(`let _${attValueID} = ${formattedValue};`);
+                            formattedValue = `'${attValue}' + (_${attValueID} ? ' ' + _${attValueID} : '')`;
+                            const attrIndex = attrs.findIndex((att) => att.startsWith(attName + ":"));
+                            attrs.splice(attrIndex, 1);
                         }
-                        else {
-                            ctx.addLine(`let _${attID} = ${formattedExpr};`);
-                        }
+                        ctx.addLine(`let _${attID} = ${formattedValue};`);
                         attrs.push(`${attName}: _${attID}`);
-                    }
-                    // t-att= attributes
-                    if (name === "t-att") {
-                        let id = ctx.generateID();
-                        ctx.addLine(`let _${id} = ${ctx.formatExpression(value)};`);
-                        tattrs.push(id);
+                        handleProperties(attName, attID);
                     }
                 }
-                let nodeID = ctx.generateID();
-                let key = ctx.loopNumber || ctx.hasKey0 ? `\`\${key${ctx.loopNumber}}_${nodeID}\`` : nodeID;
-                const parts = [`key:${key}`];
-                if (attrs.length + tattrs.length > 0) {
-                    parts.push(`attrs:{${attrs.join(",")}}`);
+                if (name.startsWith("t-attf-")) {
+                    let attName = name.slice(7);
+                    if (!attName.match(/^[a-zA-Z]+$/)) {
+                        // attribute contains 'non letters' => we want to quote it
+                        attName = '"' + attName + '"';
+                    }
+                    const formattedExpr = ctx.interpolate(value);
+                    const attID = ctx.generateID();
+                    let staticVal = node.getAttribute(attName);
+                    if (staticVal) {
+                        ctx.addLine(`let _${attID} = '${staticVal} ' + ${formattedExpr};`);
+                    }
+                    else {
+                        ctx.addLine(`let _${attID} = ${formattedExpr};`);
+                    }
+                    attrs.push(`${attName}: _${attID}`);
                 }
-                if (props.length > 0) {
-                    parts.push(`props:{${props.join(",")}}`);
+                // t-att= attributes
+                if (name === "t-att") {
+                    let id = ctx.generateID();
+                    ctx.addLine(`let _${id} = ${ctx.formatExpression(value)};`);
+                    tattrs.push(id);
                 }
-                if (classObj) {
-                    parts.push(`class:${classObj}`);
-                }
-                if (withHandlers) {
-                    parts.push(`on:{}`);
-                }
-                ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
-                for (let id of tattrs) {
-                    ctx.addIf(`_${id} instanceof Array`);
-                    ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
-                    ctx.addElse();
-                    ctx.addLine(`for (let key in _${id}) {`);
-                    ctx.indent();
-                    ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key];`);
-                    ctx.dedent();
-                    ctx.addLine(`}`);
-                    ctx.closeIf();
-                }
-                ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
-                if (ctx.parentNode) {
-                    ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
-                }
-                else if (ctx.loopNumber || ctx.hasKey0) {
-                    ctx.rootContext.shouldDefineResult = true;
-                    ctx.addLine(`result = vn${nodeID};`);
-                }
-                return nodeID;
             }
-            _compileChildren(node, ctx) {
-                if (node.childNodes.length > 0) {
-                    for (let child of Array.from(node.childNodes)) {
-                        this._compileNode(child, ctx);
-                    }
+            let nodeID = ctx.generateID();
+            let key = ctx.loopNumber || ctx.hasKey0 ? `\`\${key${ctx.loopNumber}}_${nodeID}\`` : nodeID;
+            const parts = [`key:${key}`];
+            if (attrs.length + tattrs.length > 0) {
+                parts.push(`attrs:{${attrs.join(",")}}`);
+            }
+            if (props.length > 0) {
+                parts.push(`props:{${props.join(",")}}`);
+            }
+            if (classObj) {
+                parts.push(`class:${classObj}`);
+            }
+            if (withHandlers) {
+                parts.push(`on:{}`);
+            }
+            ctx.addLine(`let c${nodeID} = [], p${nodeID} = {${parts.join(",")}};`);
+            for (let id of tattrs) {
+                ctx.addIf(`_${id} instanceof Array`);
+                ctx.addLine(`p${nodeID}.attrs[_${id}[0]] = _${id}[1];`);
+                ctx.addElse();
+                ctx.addLine(`for (let key in _${id}) {`);
+                ctx.indent();
+                ctx.addLine(`p${nodeID}.attrs[key] = _${id}[key];`);
+                ctx.dedent();
+                ctx.addLine(`}`);
+                ctx.closeIf();
+            }
+            ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
+            if (ctx.parentNode) {
+                ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
+            }
+            else if (ctx.loopNumber || ctx.hasKey0) {
+                ctx.rootContext.shouldDefineResult = true;
+                ctx.addLine(`result = vn${nodeID};`);
+            }
+            return nodeID;
+        }
+        _compileChildren(node, ctx) {
+            if (node.childNodes.length > 0) {
+                for (let child of Array.from(node.childNodes)) {
+                    this._compileNode(child, ctx);
                 }
             }
         }
-        QWeb.utils = UTILS;
-        QWeb.components = Object.create(null);
-        QWeb.DIRECTIVE_NAMES = {
-            name: 1,
-            att: 1,
-            attf: 1,
-            translation: 1,
-        };
-        QWeb.DIRECTIVES = [];
-        QWeb.TEMPLATES = {};
-        QWeb.nextId = 1;
-        // dev mode enables better error messages or more costly validations
-        QWeb.dev = false;
-        // slots contains sub templates defined with t-set inside t-component nodes, and
-        // are meant to be used by the t-slot directive.
-        QWeb.slots = {};
-        QWeb.nextSlotId = 1;
-        QWeb.subTemplates = {};
-        return QWeb;
-    })();
+    }
+    QWeb.utils = UTILS;
+    QWeb.components = Object.create(null);
+    QWeb.DIRECTIVE_NAMES = {
+        name: 1,
+        att: 1,
+        attf: 1,
+        translation: 1,
+    };
+    QWeb.DIRECTIVES = [];
+    QWeb.TEMPLATES = {};
+    QWeb.nextId = 1;
+    // dev mode enables better error messages or more costly validations
+    QWeb.dev = false;
+    QWeb.enableTransitions = true;
+    // slots contains sub templates defined with t-set inside t-component nodes, and
+    // are meant to be used by the t-slot directive.
+    QWeb.slots = {};
+    QWeb.nextSlotId = 1;
+    QWeb.subTemplates = {};
 
     const parser = new DOMParser();
     function htmlToVDOM(html) {
@@ -2088,6 +2092,9 @@
     }
     function htmlToVNode(node) {
         if (!(node instanceof Element)) {
+            if (node instanceof Comment) {
+                return h("!", node.textContent);
+            }
             return { text: node.textContent };
         }
         const attrs = {};
@@ -2308,18 +2315,34 @@
             ctx.rootContext.shouldDefineScope = true;
             ctx.rootContext.shouldDefineUtils = true;
             const subTemplate = node.getAttribute("t-call");
+            const isDynamic = INTERP_REGEXP.test(subTemplate);
             const nodeTemplate = qweb.templates[subTemplate];
-            if (!nodeTemplate) {
+            if (!isDynamic && !nodeTemplate) {
                 throw new Error(`Cannot find template "${subTemplate}" (t-call)`);
             }
             // Step 2: compile target template in sub templates
             // ------------------------------------------------
-            let subId = qweb.subTemplates[subTemplate];
-            if (!subId) {
-                subId = QWeb.nextId++;
-                qweb.subTemplates[subTemplate] = subId;
-                const subTemplateFn = qweb._compile(subTemplate, nodeTemplate.elem, ctx, true);
-                QWeb.subTemplates[subId] = subTemplateFn;
+            let subIdstr;
+            if (isDynamic) {
+                const _id = ctx.generateID();
+                ctx.addLine(`let tname${_id} = ${ctx.interpolate(subTemplate)};`);
+                ctx.addLine(`let tid${_id} = this.subTemplates[tname${_id}];`);
+                ctx.addIf(`!tid${_id}`);
+                ctx.addLine(`tid${_id} = this.constructor.nextId++;`);
+                ctx.addLine(`this.subTemplates[tname${_id}] = tid${_id};`);
+                ctx.addLine(`this.constructor.subTemplates[tid${_id}] = this._compile(tname${_id}, {hasParent: true, defineKey: true});`);
+                ctx.closeIf();
+                subIdstr = `tid${_id}`;
+            }
+            else {
+                let subId = qweb.subTemplates[subTemplate];
+                if (!subId) {
+                    subId = QWeb.nextId++;
+                    qweb.subTemplates[subTemplate] = subId;
+                    const subTemplateFn = qweb._compile(subTemplate, { hasParent: true, defineKey: true });
+                    QWeb.subTemplates[subId] = subTemplateFn;
+                }
+                subIdstr = `'${subId}'`;
             }
             // Step 3: compile t-call body if necessary
             // ------------------------------------------------
@@ -2333,16 +2356,13 @@
                 for (let attr of ["t-if", "t-else", "t-elif", "t-call"]) {
                     nodeCopy.removeAttribute(attr);
                 }
-                const parentNode = ctx.parentNode;
-                ctx.parentNode = "__0";
                 // this local scope is intended to trap c__0
                 ctx.addLine(`{`);
                 ctx.indent();
                 ctx.addLine("let c__0 = [];");
-                qweb._compileNode(nodeCopy, ctx);
+                qweb._compileNode(nodeCopy, ctx.subContext("parentNode", "__0"));
                 ctx.rootContext.shouldDefineUtils = true;
                 ctx.addLine("scope[utils.zero] = c__0;");
-                ctx.parentNode = parentNode;
                 ctx.dedent();
                 ctx.addLine(`}`);
             }
@@ -2353,13 +2373,13 @@
             const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
             const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}, key: ${key}})`;
             if (ctx.parentNode) {
-                ctx.addLine(`this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`);
+                ctx.addLine(`this.constructor.subTemplates[${subIdstr}].call(this, scope, ${extra});`);
             }
             else {
                 // this is a t-call with no parentnode, we need to extract the result
                 ctx.rootContext.shouldDefineResult = true;
                 ctx.addLine(`result = []`);
-                ctx.addLine(`this.constructor.subTemplates['${subId}'].call(this, scope, ${extra});`);
+                ctx.addLine(`this.constructor.subTemplates[${subIdstr}].call(this, scope, ${extra});`);
                 ctx.addLine(`result = result[0]`);
             }
             // Step 5: restore previous scope
@@ -2626,6 +2646,9 @@
         name: "transition",
         priority: 96,
         atNodeCreation({ ctx, value, addNodeHook }) {
+            if (!QWeb.enableTransitions) {
+                return;
+            }
             ctx.rootContext.shouldDefineUtils = true;
             let name = value;
             const hooks = {
@@ -2645,7 +2668,8 @@
         priority: 80,
         atNodeEncounter({ ctx, value, node, qweb }) {
             const slotKey = ctx.generateID();
-            ctx.addLine(`const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + '${value}'];`);
+            const valueExpr = value.match(INTERP_REGEXP) ? ctx.interpolate(value) : `'${value}'`;
+            ctx.addLine(`const slot${slotKey} = this.constructor.slots[context.__owl__.slotId + '_' + ${valueExpr}];`);
             ctx.addIf(`slot${slotKey}`);
             let parentNode = `c${ctx.parentNode}`;
             if (!ctx.parentNode) {
@@ -2789,6 +2813,14 @@
             else {
                 console.log(`Owl is now running in 'prod' mode.`);
             }
+        },
+    });
+    Object.defineProperty(config, "enableTransitions", {
+        get() {
+            return QWeb.enableTransitions;
+        },
+        set(value) {
+            QWeb.enableTransitions = value;
         },
     });
 
@@ -3026,7 +3058,9 @@
                     events.push([name, value]);
                 }
                 else if (name === "t-transition") {
-                    transition = value;
+                    if (QWeb.enableTransitions) {
+                        transition = value;
+                    }
                 }
                 else if (!name.startsWith("t-")) {
                     if (name !== "class" && name !== "style") {
@@ -3171,7 +3205,6 @@
             ctx.addLine(`parent.__owl__.cmap[${templateKey}] = w${componentID}.__owl__.id;`);
             if (hasSlots) {
                 const clone = node.cloneNode(true);
-                const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
                 // The next code is a fallback for compatibility reason. It accepts t-set
                 // elements that are direct children with a non empty body as nodes defining
                 // the content of a slot.
@@ -3180,26 +3213,42 @@
                 // code using slots. This will be removed in v2.0 someday. Meanwhile,
                 // please use t-set-slot everywhere you need to set the content of a
                 // slot.
-                for (let el of clone.children) {
-                    if (el.getAttribute("t-set") && el.hasChildNodes()) {
-                        slotNodes.push(el);
+                for (let node of clone.children) {
+                    if (node.hasAttribute("t-set") && node.hasChildNodes()) {
+                        node.setAttribute("t-set-slot", node.getAttribute("t-set"));
+                        node.removeAttribute("t-set");
                     }
                 }
+                const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
+                const slotNames = new Set();
                 const slotId = QWeb.nextSlotId++;
                 ctx.addLine(`w${componentID}.__owl__.slotId = ${slotId};`);
                 if (slotNodes.length) {
                     for (let i = 0, length = slotNodes.length; i < length; i++) {
                         const slotNode = slotNodes[i];
-                        slotNode.parentElement.removeChild(slotNode);
-                        let key = slotNode.getAttribute("t-set-slot");
-                        slotNode.removeAttribute("t-set-slot");
-                        // here again, this code should be removed when we stop supporting
-                        // using t-set to define the content of named slots.
-                        if (!key) {
-                            key = slotNode.getAttribute("t-set");
-                            slotNode.removeAttribute("t-set");
+                        // check if this is defined in a sub component (in which case it should
+                        // be ignored)
+                        let el = slotNode.parentElement;
+                        let isInSubComponent = false;
+                        while (el !== clone) {
+                            if (el.hasAttribute("t-component") ||
+                                el.tagName[0] === el.tagName[0].toUpperCase()) {
+                                isInSubComponent = true;
+                                break;
+                            }
+                            el = el.parentElement;
                         }
-                        const slotFn = qweb._compile(`slot_${key}_template`, slotNode, ctx);
+                        if (isInSubComponent) {
+                            continue;
+                        }
+                        let key = slotNode.getAttribute("t-set-slot");
+                        if (slotNames.has(key)) {
+                            continue;
+                        }
+                        slotNames.add(key);
+                        slotNode.removeAttribute("t-set-slot");
+                        slotNode.parentElement.removeChild(slotNode);
+                        const slotFn = qweb._compile(`slot_${key}_template`, { elem: slotNode, hasParent: true });
                         QWeb.slots[`${slotId}_${key}`] = slotFn;
                     }
                 }
@@ -3208,7 +3257,7 @@
                     for (let child of Object.values(clone.childNodes)) {
                         t.appendChild(child);
                     }
-                    const slotFn = qweb._compile(`slot_default_template`, t, ctx);
+                    const slotFn = qweb._compile(`slot_default_template`, { elem: t, hasParent: true });
                     QWeb.slots[`${slotId}_default`] = slotFn;
                 }
             }
@@ -3331,285 +3380,283 @@
      * asynchronous rendering pipeline. Fibers can be cancelled, can be in different
      * states and in general determine the state of the rendering.
      */
-    let Fiber = /** @class */ (() => {
-        class Fiber {
-            constructor(parent, component, force, target, position) {
-                this.id = Fiber.nextId++;
-                // isCompleted means that the rendering corresponding to this fiber's work is
-                // done, either because the component has been mounted or patched, or because
-                // fiber has been cancelled.
-                this.isCompleted = false;
-                // the fibers corresponding to component updates (updateProps) need to call
-                // the willPatch and patched hooks from the corresponding component. However,
-                // fibers corresponding to a new component do not need to do that. So, the
-                // shouldPatch hook is the boolean that we check whenever we need to apply
-                // a patch.
-                this.shouldPatch = true;
-                // isRendered is the last state of a fiber. If true, this means that it has
-                // been rendered and is inert (so, it should not be taken into account when
-                // counting the number of active fibers).
-                this.isRendered = false;
-                // the counter number is a critical information. It is only necessary for a
-                // root fiber.  For that fiber, this number counts the number of active sub
-                // fibers.  When that number reaches 0, the fiber can be applied by the
-                // scheduler.
-                this.counter = 0;
-                this.vnode = null;
-                this.child = null;
-                this.sibling = null;
-                this.lastChild = null;
-                this.parent = null;
-                this.component = component;
-                this.force = force;
-                this.target = target;
-                this.position = position;
-                const __owl__ = component.__owl__;
-                this.scope = __owl__.scope;
-                this.root = parent ? parent.root : this;
-                this.parent = parent;
-                let oldFiber = __owl__.currentFiber;
-                if (oldFiber && !oldFiber.isCompleted) {
-                    if (oldFiber.root === oldFiber && !parent) {
-                        // both oldFiber and this fiber are root fibers
-                        this._reuseFiber(oldFiber);
-                        return oldFiber;
-                    }
-                    else {
-                        this._remapFiber(oldFiber);
-                    }
-                }
-                this.root.counter++;
-                __owl__.currentFiber = this;
-            }
-            /**
-             * When the oldFiber is not completed yet, and both oldFiber and this fiber
-             * are root fibers, we want to reuse the oldFiber instead of creating a new
-             * one. Doing so will guarantee that the initiator(s) of those renderings will
-             * be notified (the promise will resolve) when the last rendering will be done.
-             *
-             * This function thus assumes that oldFiber is a root fiber.
-             */
-            _reuseFiber(oldFiber) {
-                oldFiber.cancel(); // cancel children fibers
-                oldFiber.isCompleted = false; // keep the root fiber alive
-                oldFiber.isRendered = false; // the fiber has to be re-rendered
-                if (oldFiber.child) {
-                    // remove relation to children
-                    oldFiber.child.parent = null;
-                    oldFiber.child = null;
-                    oldFiber.lastChild = null;
-                }
-                oldFiber.counter = 1; // re-initialize counter
-                oldFiber.id = Fiber.nextId++;
-            }
-            /**
-             * In some cases, a rendering initiated at some component can detect that it
-             * should be part of a larger rendering initiated somewhere up the component
-             * tree.  In that case, it needs to cancel the previous rendering and
-             * remap itself as a part of the current parent rendering.
-             */
-            _remapFiber(oldFiber) {
-                oldFiber.cancel();
-                this.shouldPatch = oldFiber.shouldPatch;
-                if (oldFiber === oldFiber.root) {
-                    oldFiber.counter++;
-                }
-                if (oldFiber.parent && !this.parent) {
-                    // re-map links
-                    this.parent = oldFiber.parent;
-                    this.root = this.parent.root;
-                    this.sibling = oldFiber.sibling;
-                    if (this.parent.lastChild === oldFiber) {
-                        this.parent.lastChild = this;
-                    }
-                    if (this.parent.child === oldFiber) {
-                        this.parent.child = this;
-                    }
-                    else {
-                        let current = this.parent.child;
-                        while (true) {
-                            if (current.sibling === oldFiber) {
-                                current.sibling = this;
-                                break;
-                            }
-                            current = current.sibling;
-                        }
-                    }
-                }
-            }
-            /**
-             * This function has been taken from
-             * https://medium.com/react-in-depth/the-how-and-why-on-reacts-usage-of-linked-list-in-fiber-67f1014d0eb7
-             */
-            _walk(doWork) {
-                let root = this;
-                let current = this;
-                while (true) {
-                    const child = doWork(current);
-                    if (child) {
-                        current = child;
-                        continue;
-                    }
-                    if (current === root) {
-                        return;
-                    }
-                    while (!current.sibling) {
-                        if (!current.parent || current.parent === root) {
-                            return;
-                        }
-                        current = current.parent;
-                    }
-                    current = current.sibling;
-                }
-            }
-            /**
-             * Successfully complete the work of the fiber: call the mount or patch hooks
-             * and patch the DOM. This function is called once the fiber and its children
-             * are ready, and the scheduler decides to process it.
-             */
-            complete() {
-                let component = this.component;
-                this.isCompleted = true;
-                if (!this.target && !component.__owl__.isMounted) {
-                    return;
-                }
-                // build patchQueue
-                const patchQueue = [];
-                const doWork = function (f) {
-                    patchQueue.push(f);
-                    return f.child;
-                };
-                this._walk(doWork);
-                const patchLen = patchQueue.length;
-                // call willPatch hook on each fiber of patchQueue
-                for (let i = 0; i < patchLen; i++) {
-                    const fiber = patchQueue[i];
-                    if (fiber.shouldPatch) {
-                        component = fiber.component;
-                        if (component.__owl__.willPatchCB) {
-                            component.__owl__.willPatchCB();
-                        }
-                        component.willPatch();
-                    }
-                }
-                // call __patch on each fiber of (reversed) patchQueue
-                for (let i = patchLen - 1; i >= 0; i--) {
-                    const fiber = patchQueue[i];
-                    component = fiber.component;
-                    if (fiber.target && i === 0) {
-                        let target;
-                        if (fiber.position === "self") {
-                            target = fiber.target;
-                            if (target.tagName.toLowerCase() !== fiber.vnode.sel) {
-                                throw new Error(`Cannot attach '${component.constructor.name}' to target node (not same tag name)`);
-                            }
-                            // In self mode, we *know* we are to take possession of the target
-                            // Hence we manually create the corresponding VNode and copy the "key" in data
-                            const selfVnodeData = fiber.vnode.data ? { key: fiber.vnode.data.key } : {};
-                            const selfVnode = h(fiber.vnode.sel, selfVnodeData);
-                            selfVnode.elm = target;
-                            target = selfVnode;
-                        }
-                        else {
-                            target = component.__owl__.vnode || document.createElement(fiber.vnode.sel);
-                        }
-                        component.__patch(target, fiber.vnode);
-                    }
-                    else {
-                        if (fiber.shouldPatch) {
-                            component.__patch(component.__owl__.vnode, fiber.vnode);
-                            // When updating a Component's props (in directive),
-                            // the component has a pvnode AND should be patched.
-                            // However, its pvnode.elm may have changed if it is a High Order Component
-                            if (component.__owl__.pvnode) {
-                                component.__owl__.pvnode.elm = component.__owl__.vnode.elm;
-                            }
-                        }
-                        else {
-                            component.__patch(document.createElement(fiber.vnode.sel), fiber.vnode);
-                            component.__owl__.pvnode.elm = component.__owl__.vnode.elm;
-                        }
-                    }
-                    if (fiber === component.__owl__.currentFiber) {
-                        component.__owl__.currentFiber = null;
-                    }
-                }
-                // insert into the DOM (mount case)
-                let inDOM = false;
-                if (this.target) {
-                    switch (this.position) {
-                        case "first-child":
-                            this.target.prepend(this.component.el);
-                            break;
-                        case "last-child":
-                            this.target.appendChild(this.component.el);
-                            break;
-                    }
-                    inDOM = document.body.contains(this.component.el);
-                    this.component.env.qweb.trigger("dom-appended");
-                }
-                // call patched/mounted hook on each fiber of (reversed) patchQueue
-                for (let i = patchLen - 1; i >= 0; i--) {
-                    const fiber = patchQueue[i];
-                    component = fiber.component;
-                    if (fiber.shouldPatch && !this.target) {
-                        component.patched();
-                        if (component.__owl__.patchedCB) {
-                            component.__owl__.patchedCB();
-                        }
-                    }
-                    else if (this.target ? inDOM : true) {
-                        component.__callMounted();
-                    }
-                }
-            }
-            /**
-             * Cancel a fiber and all its children.
-             */
-            cancel() {
-                this._walk((f) => {
-                    if (!f.isRendered) {
-                        f.root.counter--;
-                    }
-                    f.isCompleted = true;
-                    return f.child;
-                });
-            }
-            /**
-             * This is the global error handler for errors occurring in Owl main lifecycle
-             * methods.  Caught errors are triggered on the QWeb instance, and are
-             * potentially given to some parent component which implements `catchError`.
-             *
-             * If there are no such component, we destroy everything. This is better than
-             * being in a corrupted state.
-             */
-            handleError(error) {
-                let component = this.component;
-                this.vnode = component.__owl__.vnode || h("div");
-                const qweb = component.env.qweb;
-                let root = component;
-                let canCatch = false;
-                while (component && !(canCatch = !!component.catchError)) {
-                    root = component;
-                    component = component.__owl__.parent;
-                }
-                qweb.trigger("error", error);
-                if (canCatch) {
-                    component.catchError(error);
+    class Fiber {
+        constructor(parent, component, force, target, position) {
+            this.id = Fiber.nextId++;
+            // isCompleted means that the rendering corresponding to this fiber's work is
+            // done, either because the component has been mounted or patched, or because
+            // fiber has been cancelled.
+            this.isCompleted = false;
+            // the fibers corresponding to component updates (updateProps) need to call
+            // the willPatch and patched hooks from the corresponding component. However,
+            // fibers corresponding to a new component do not need to do that. So, the
+            // shouldPatch hook is the boolean that we check whenever we need to apply
+            // a patch.
+            this.shouldPatch = true;
+            // isRendered is the last state of a fiber. If true, this means that it has
+            // been rendered and is inert (so, it should not be taken into account when
+            // counting the number of active fibers).
+            this.isRendered = false;
+            // the counter number is a critical information. It is only necessary for a
+            // root fiber.  For that fiber, this number counts the number of active sub
+            // fibers.  When that number reaches 0, the fiber can be applied by the
+            // scheduler.
+            this.counter = 0;
+            this.vnode = null;
+            this.child = null;
+            this.sibling = null;
+            this.lastChild = null;
+            this.parent = null;
+            this.component = component;
+            this.force = force;
+            this.target = target;
+            this.position = position;
+            const __owl__ = component.__owl__;
+            this.scope = __owl__.scope;
+            this.root = parent ? parent.root : this;
+            this.parent = parent;
+            let oldFiber = __owl__.currentFiber;
+            if (oldFiber && !oldFiber.isCompleted) {
+                this.force = true;
+                if (oldFiber.root === oldFiber && !parent) {
+                    // both oldFiber and this fiber are root fibers
+                    this._reuseFiber(oldFiber);
+                    return oldFiber;
                 }
                 else {
-                    // the 3 next lines aim to mark the root fiber as being in error, and
-                    // to force it to end, without waiting for its children
-                    this.root.counter = 0;
-                    this.root.error = error;
-                    scheduler.flush();
-                    root.destroy();
+                    this._remapFiber(oldFiber);
+                }
+            }
+            this.root.counter++;
+            __owl__.currentFiber = this;
+        }
+        /**
+         * When the oldFiber is not completed yet, and both oldFiber and this fiber
+         * are root fibers, we want to reuse the oldFiber instead of creating a new
+         * one. Doing so will guarantee that the initiator(s) of those renderings will
+         * be notified (the promise will resolve) when the last rendering will be done.
+         *
+         * This function thus assumes that oldFiber is a root fiber.
+         */
+        _reuseFiber(oldFiber) {
+            oldFiber.cancel(); // cancel children fibers
+            oldFiber.isCompleted = false; // keep the root fiber alive
+            oldFiber.isRendered = false; // the fiber has to be re-rendered
+            if (oldFiber.child) {
+                // remove relation to children
+                oldFiber.child.parent = null;
+                oldFiber.child = null;
+                oldFiber.lastChild = null;
+            }
+            oldFiber.counter = 1; // re-initialize counter
+            oldFiber.id = Fiber.nextId++;
+        }
+        /**
+         * In some cases, a rendering initiated at some component can detect that it
+         * should be part of a larger rendering initiated somewhere up the component
+         * tree.  In that case, it needs to cancel the previous rendering and
+         * remap itself as a part of the current parent rendering.
+         */
+        _remapFiber(oldFiber) {
+            oldFiber.cancel();
+            this.shouldPatch = oldFiber.shouldPatch;
+            if (oldFiber === oldFiber.root) {
+                oldFiber.counter++;
+            }
+            if (oldFiber.parent && !this.parent) {
+                // re-map links
+                this.parent = oldFiber.parent;
+                this.root = this.parent.root;
+                this.sibling = oldFiber.sibling;
+                if (this.parent.lastChild === oldFiber) {
+                    this.parent.lastChild = this;
+                }
+                if (this.parent.child === oldFiber) {
+                    this.parent.child = this;
+                }
+                else {
+                    let current = this.parent.child;
+                    while (true) {
+                        if (current.sibling === oldFiber) {
+                            current.sibling = this;
+                            break;
+                        }
+                        current = current.sibling;
+                    }
                 }
             }
         }
-        Fiber.nextId = 1;
-        return Fiber;
-    })();
+        /**
+         * This function has been taken from
+         * https://medium.com/react-in-depth/the-how-and-why-on-reacts-usage-of-linked-list-in-fiber-67f1014d0eb7
+         */
+        _walk(doWork) {
+            let root = this;
+            let current = this;
+            while (true) {
+                const child = doWork(current);
+                if (child) {
+                    current = child;
+                    continue;
+                }
+                if (current === root) {
+                    return;
+                }
+                while (!current.sibling) {
+                    if (!current.parent || current.parent === root) {
+                        return;
+                    }
+                    current = current.parent;
+                }
+                current = current.sibling;
+            }
+        }
+        /**
+         * Successfully complete the work of the fiber: call the mount or patch hooks
+         * and patch the DOM. This function is called once the fiber and its children
+         * are ready, and the scheduler decides to process it.
+         */
+        complete() {
+            let component = this.component;
+            this.isCompleted = true;
+            if (!this.target && !component.__owl__.isMounted) {
+                return;
+            }
+            // build patchQueue
+            const patchQueue = [];
+            const doWork = function (f) {
+                patchQueue.push(f);
+                return f.child;
+            };
+            this._walk(doWork);
+            const patchLen = patchQueue.length;
+            // call willPatch hook on each fiber of patchQueue
+            for (let i = 0; i < patchLen; i++) {
+                const fiber = patchQueue[i];
+                if (fiber.shouldPatch) {
+                    component = fiber.component;
+                    if (component.__owl__.willPatchCB) {
+                        component.__owl__.willPatchCB();
+                    }
+                    component.willPatch();
+                }
+            }
+            // call __patch on each fiber of (reversed) patchQueue
+            for (let i = patchLen - 1; i >= 0; i--) {
+                const fiber = patchQueue[i];
+                component = fiber.component;
+                if (fiber.target && i === 0) {
+                    let target;
+                    if (fiber.position === "self") {
+                        target = fiber.target;
+                        if (target.tagName.toLowerCase() !== fiber.vnode.sel) {
+                            throw new Error(`Cannot attach '${component.constructor.name}' to target node (not same tag name)`);
+                        }
+                        // In self mode, we *know* we are to take possession of the target
+                        // Hence we manually create the corresponding VNode and copy the "key" in data
+                        const selfVnodeData = fiber.vnode.data ? { key: fiber.vnode.data.key } : {};
+                        const selfVnode = h(fiber.vnode.sel, selfVnodeData);
+                        selfVnode.elm = target;
+                        target = selfVnode;
+                    }
+                    else {
+                        target = component.__owl__.vnode || document.createElement(fiber.vnode.sel);
+                    }
+                    component.__patch(target, fiber.vnode);
+                }
+                else {
+                    if (fiber.shouldPatch) {
+                        component.__patch(component.__owl__.vnode, fiber.vnode);
+                        // When updating a Component's props (in directive),
+                        // the component has a pvnode AND should be patched.
+                        // However, its pvnode.elm may have changed if it is a High Order Component
+                        if (component.__owl__.pvnode) {
+                            component.__owl__.pvnode.elm = component.__owl__.vnode.elm;
+                        }
+                    }
+                    else {
+                        component.__patch(document.createElement(fiber.vnode.sel), fiber.vnode);
+                        component.__owl__.pvnode.elm = component.__owl__.vnode.elm;
+                    }
+                }
+                if (fiber === component.__owl__.currentFiber) {
+                    component.__owl__.currentFiber = null;
+                }
+            }
+            // insert into the DOM (mount case)
+            let inDOM = false;
+            if (this.target) {
+                switch (this.position) {
+                    case "first-child":
+                        this.target.prepend(this.component.el);
+                        break;
+                    case "last-child":
+                        this.target.appendChild(this.component.el);
+                        break;
+                }
+                inDOM = document.body.contains(this.component.el);
+                this.component.env.qweb.trigger("dom-appended");
+            }
+            // call patched/mounted hook on each fiber of (reversed) patchQueue
+            for (let i = patchLen - 1; i >= 0; i--) {
+                const fiber = patchQueue[i];
+                component = fiber.component;
+                if (fiber.shouldPatch && !this.target) {
+                    component.patched();
+                    if (component.__owl__.patchedCB) {
+                        component.__owl__.patchedCB();
+                    }
+                }
+                else if (this.target ? inDOM : true) {
+                    component.__callMounted();
+                }
+            }
+        }
+        /**
+         * Cancel a fiber and all its children.
+         */
+        cancel() {
+            this._walk((f) => {
+                if (!f.isRendered) {
+                    f.root.counter--;
+                }
+                f.isCompleted = true;
+                return f.child;
+            });
+        }
+        /**
+         * This is the global error handler for errors occurring in Owl main lifecycle
+         * methods.  Caught errors are triggered on the QWeb instance, and are
+         * potentially given to some parent component which implements `catchError`.
+         *
+         * If there are no such component, we destroy everything. This is better than
+         * being in a corrupted state.
+         */
+        handleError(error) {
+            let component = this.component;
+            this.vnode = component.__owl__.vnode || h("div");
+            const qweb = component.env.qweb;
+            let root = component;
+            let canCatch = false;
+            while (component && !(canCatch = !!component.catchError)) {
+                root = component;
+                component = component.__owl__.parent;
+            }
+            qweb.trigger("error", error);
+            if (canCatch) {
+                component.catchError(error);
+            }
+            else {
+                // the 3 next lines aim to mark the root fiber as being in error, and
+                // to force it to end, without waiting for its children
+                this.root.counter = 0;
+                this.root.error = error;
+                scheduler.flush();
+                root.destroy();
+            }
+        }
+    }
+    Fiber.nextId = 1;
 
     //------------------------------------------------------------------------------
     // Prop validation helper
@@ -3798,445 +3845,404 @@
     // Component
     //------------------------------------------------------------------------------
     let nextId = 1;
-    let Component = /** @class */ (() => {
-        class Component {
-            //--------------------------------------------------------------------------
-            // Lifecycle
-            //--------------------------------------------------------------------------
-            /**
-             * Creates an instance of Component.
-             *
-             * Note that most of the time, only the root component needs to be created by
-             * hand.  Other components should be created automatically by the framework (with
-             * the t-component directive in a template)
-             */
-            constructor(parent, props) {
-                Component.current = this;
-                let constr = this.constructor;
-                const defaultProps = constr.defaultProps;
-                if (defaultProps) {
-                    props = props || {};
-                    this.__applyDefaultProps(props, defaultProps);
-                }
-                this.props = props;
-                if (QWeb.dev) {
-                    QWeb.utils.validateProps(constr, this.props);
-                }
-                const id = nextId++;
-                let depth;
-                if (parent) {
-                    this.env = parent.env;
-                    const __powl__ = parent.__owl__;
-                    __powl__.children[id] = this;
-                    depth = __powl__.depth + 1;
-                }
-                else {
-                    // we are the root component
-                    this.env = this.constructor.env;
-                    if (!this.env.qweb) {
-                        this.env.qweb = new QWeb();
-                    }
-                    if (!this.env.browser) {
-                        this.env.browser = browser;
-                    }
-                    this.env.qweb.on("update", this, () => {
-                        if (this.__owl__.isMounted) {
-                            this.render(true);
-                        }
-                        if (this.__owl__.isDestroyed) {
-                            // this is unlikely to happen, but if a root widget is destroyed,
-                            // we want to remove our subscription.  The usual way to do that
-                            // would be to perform some check in the destroy method, but since
-                            // it is very performance sensitive, and since this is a rare event,
-                            // we simply do it lazily
-                            this.env.qweb.off("update", this);
-                        }
-                    });
-                    depth = 0;
-                }
-                const qweb = this.env.qweb;
-                const template = constr.template || this.__getTemplate(qweb);
-                this.__owl__ = {
-                    id: id,
-                    depth: depth,
-                    vnode: null,
-                    pvnode: null,
-                    isMounted: false,
-                    isDestroyed: false,
-                    parent: parent || null,
-                    children: {},
-                    cmap: {},
-                    currentFiber: null,
-                    parentLastFiberId: 0,
-                    boundHandlers: {},
-                    mountedCB: null,
-                    willUnmountCB: null,
-                    willPatchCB: null,
-                    patchedCB: null,
-                    willStartCB: null,
-                    willUpdatePropsCB: null,
-                    observer: null,
-                    renderFn: qweb.render.bind(qweb, template),
-                    classObj: null,
-                    refs: null,
-                    scope: null,
-                };
-                if (constr.style) {
-                    this.__applyStyles(constr);
-                }
+    class Component {
+        //--------------------------------------------------------------------------
+        // Lifecycle
+        //--------------------------------------------------------------------------
+        /**
+         * Creates an instance of Component.
+         *
+         * Note that most of the time, only the root component needs to be created by
+         * hand.  Other components should be created automatically by the framework (with
+         * the t-component directive in a template)
+         */
+        constructor(parent, props) {
+            Component.current = this;
+            let constr = this.constructor;
+            const defaultProps = constr.defaultProps;
+            if (defaultProps) {
+                props = props || {};
+                this.__applyDefaultProps(props, defaultProps);
             }
-            /**
-             * The `el` is the root element of the component.  Note that it could be null:
-             * this is the case if the component is not mounted yet, or is destroyed.
-             */
-            get el() {
-                return this.__owl__.vnode ? this.__owl__.vnode.elm : null;
+            this.props = props;
+            if (QWeb.dev) {
+                QWeb.utils.validateProps(constr, this.props);
             }
-            /**
-             * willStart is an asynchronous hook that can be implemented to perform some
-             * action before the initial rendering of a component.
-             *
-             * It will be called exactly once before the initial rendering. It is useful
-             * in some cases, for example, to load external assets (such as a JS library)
-             * before the component is rendered.
-             *
-             * Note that a slow willStart method will slow down the rendering of the user
-             * interface.  Therefore, some effort should be made to make this method as
-             * fast as possible.
-             *
-             * Note: this method should not be called manually.
-             */
-            async willStart() { }
-            /**
-             * mounted is a hook that is called each time a component is attached to the
-             * DOM. This is a good place to add some listeners, or to interact with the
-             * DOM, if the component needs to perform some measure for example.
-             *
-             * Note: this method should not be called manually.
-             *
-             * @see willUnmount
-             */
-            mounted() { }
-            /**
-             * The willUpdateProps is an asynchronous hook, called just before new props
-             * are set. This is useful if the component needs some asynchronous task
-             * performed, depending on the props (for example, assuming that the props are
-             * some record Id, fetching the record data).
-             *
-             * This hook is not called during the first render (but willStart is called
-             * and performs a similar job).
-             */
-            async willUpdateProps(nextProps) { }
-            /**
-             * The willPatch hook is called just before the DOM patching process starts.
-             * It is not called on the initial render.  This is useful to get some
-             * information which are in the DOM.  For example, the current position of the
-             * scrollbar
-             */
-            willPatch() { }
-            /**
-             * This hook is called whenever a component did actually update its props,
-             * state or env.
-             *
-             * This method is not called on the initial render. It is useful to interact
-             * with the DOM (for example, through an external library) whenever the
-             * component was updated.
-             *
-             * Updating the component state in this hook is possible, but not encouraged.
-             * One need to be careful, because updates here will cause rerender, which in
-             * turn will cause other calls to updated. So, we need to be particularly
-             * careful at avoiding endless cycles.
-             */
-            patched() { }
-            /**
-             * willUnmount is a hook that is called each time just before a component is
-             * unmounted from the DOM. This is a good place to remove some listeners, for
-             * example.
-             *
-             * Note: this method should not be called manually.
-             *
-             * @see mounted
-             */
-            willUnmount() { }
-            //--------------------------------------------------------------------------
-            // Public
-            //--------------------------------------------------------------------------
-            /**
-             * Mount the component to a target element.
-             *
-             * This should only be done if the component was created manually. Components
-             * created declaratively in templates are managed by the Owl system.
-             *
-             * Note that a component can be mounted an unmounted several times
-             */
-            async mount(target, options = {}) {
-                const position = options.position || "last-child";
-                const __owl__ = this.__owl__;
-                if (__owl__.isMounted) {
-                    if (position !== "self" && this.el.parentNode !== target) {
-                        // in this situation, we are trying to mount a component on a different
-                        // target. In this case, we need to unmount first, otherwise it will
-                        // not work.
-                        this.unmount();
-                    }
-                    else {
-                        return Promise.resolve();
-                    }
-                }
-                if (__owl__.isDestroyed) {
-                    throw new Error("Cannot mount a destroyed component");
-                }
-                if (__owl__.currentFiber) {
-                    const currentFiber = __owl__.currentFiber;
-                    if (currentFiber.target === target && currentFiber.position === position) {
-                        return scheduler.addFiber(currentFiber);
-                    }
-                    else {
-                        scheduler.rejectFiber(currentFiber, "Mounting operation cancelled");
-                    }
-                }
-                if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
-                    let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
-                    message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
-                    throw new Error(message);
-                }
-                const fiber = new Fiber(null, this, false, target, position);
-                fiber.shouldPatch = false;
-                if (!__owl__.vnode) {
-                    this.__prepareAndRender(fiber, () => { });
-                }
-                else {
-                    this.__render(fiber);
-                }
-                return scheduler.addFiber(fiber);
+            const id = nextId++;
+            let depth;
+            if (parent) {
+                this.env = parent.env;
+                const __powl__ = parent.__owl__;
+                __powl__.children[id] = this;
+                depth = __powl__.depth + 1;
             }
-            /**
-             * The unmount method is the opposite of the mount method.  It is useful
-             * to call willUnmount calls and remove the component from the DOM.
-             */
-            unmount() {
-                if (this.__owl__.isMounted) {
-                    this.__callWillUnmount();
-                    this.el.remove();
+            else {
+                // we are the root component
+                this.env = this.constructor.env;
+                if (!this.env.qweb) {
+                    this.env.qweb = new QWeb();
                 }
-            }
-            /**
-             * The render method is the main entry point to render a component (once it
-             * is ready. This method is not initially called when the component is
-             * rendered the first time).
-             *
-             * This method will cause all its sub components to potentially rerender
-             * themselves.  Note that `render` is not called if a component is updated via
-             * its props.
-             */
-            async render(force = false) {
-                const __owl__ = this.__owl__;
-                const currentFiber = __owl__.currentFiber;
-                if (!__owl__.isMounted && !currentFiber) {
-                    // if we get here, this means that the component was either never mounted,
-                    // or was unmounted and some state change  triggered a render. Either way,
-                    // we do not want to actually render anything in this case.
-                    return;
+                // TODO: remove this in owl 2.0
+                if (!this.env.browser) {
+                    this.env.browser = browser;
                 }
-                if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
-                    return scheduler.addFiber(currentFiber.root);
-                }
-                // if we aren't mounted at this point, it implies that there is a
-                // currentFiber that is already rendered (isRendered is true), so we are
-                // about to be mounted
-                const isMounted = __owl__.isMounted;
-                const fiber = new Fiber(null, this, force, null, null);
-                Promise.resolve().then(() => {
-                    if (__owl__.isMounted || !isMounted) {
-                        if (fiber.isCompleted) {
-                            return;
-                        }
-                        // we are mounted (__owl__.isMounted), or if we are currently being
-                        // mounted (!isMounted), so we call __render
-                        this.__render(fiber);
+                this.env.qweb.on("update", this, () => {
+                    if (this.__owl__.isMounted) {
+                        this.render(true);
                     }
-                    else {
-                        // we were mounted when render was called, but we aren't anymore, so we
-                        // were actually about to be unmounted ; we can thus forget about this
-                        // fiber
-                        fiber.isCompleted = true;
-                        __owl__.currentFiber = null;
+                    if (this.__owl__.isDestroyed) {
+                        // this is unlikely to happen, but if a root widget is destroyed,
+                        // we want to remove our subscription.  The usual way to do that
+                        // would be to perform some check in the destroy method, but since
+                        // it is very performance sensitive, and since this is a rare event,
+                        // we simply do it lazily
+                        this.env.qweb.off("update", this);
                     }
                 });
-                return scheduler.addFiber(fiber);
+                depth = 0;
             }
-            /**
-             * Destroy the component.  This operation is quite complex:
-             *  - it recursively destroy all children
-             *  - call the willUnmount hooks if necessary
-             *  - remove the dom node from the dom
-             *
-             * This should only be called manually if you created the component.  Most
-             * components will be automatically destroyed.
-             */
-            destroy() {
-                const __owl__ = this.__owl__;
-                if (!__owl__.isDestroyed) {
-                    const el = this.el;
-                    this.__destroy(__owl__.parent);
-                    if (el) {
-                        el.remove();
+            const qweb = this.env.qweb;
+            const template = constr.template || this.__getTemplate(qweb);
+            this.__owl__ = {
+                id: id,
+                depth: depth,
+                vnode: null,
+                pvnode: null,
+                isMounted: false,
+                isDestroyed: false,
+                parent: parent || null,
+                children: {},
+                cmap: {},
+                currentFiber: null,
+                parentLastFiberId: 0,
+                boundHandlers: {},
+                mountedCB: null,
+                willUnmountCB: null,
+                willPatchCB: null,
+                patchedCB: null,
+                willStartCB: null,
+                willUpdatePropsCB: null,
+                observer: null,
+                renderFn: qweb.render.bind(qweb, template),
+                classObj: null,
+                refs: null,
+                scope: null,
+            };
+            if (constr.style) {
+                this.__applyStyles(constr);
+            }
+        }
+        /**
+         * The `el` is the root element of the component.  Note that it could be null:
+         * this is the case if the component is not mounted yet, or is destroyed.
+         */
+        get el() {
+            return this.__owl__.vnode ? this.__owl__.vnode.elm : null;
+        }
+        /**
+         * willStart is an asynchronous hook that can be implemented to perform some
+         * action before the initial rendering of a component.
+         *
+         * It will be called exactly once before the initial rendering. It is useful
+         * in some cases, for example, to load external assets (such as a JS library)
+         * before the component is rendered.
+         *
+         * Note that a slow willStart method will slow down the rendering of the user
+         * interface.  Therefore, some effort should be made to make this method as
+         * fast as possible.
+         *
+         * Note: this method should not be called manually.
+         */
+        async willStart() { }
+        /**
+         * mounted is a hook that is called each time a component is attached to the
+         * DOM. This is a good place to add some listeners, or to interact with the
+         * DOM, if the component needs to perform some measure for example.
+         *
+         * Note: this method should not be called manually.
+         *
+         * @see willUnmount
+         */
+        mounted() { }
+        /**
+         * The willUpdateProps is an asynchronous hook, called just before new props
+         * are set. This is useful if the component needs some asynchronous task
+         * performed, depending on the props (for example, assuming that the props are
+         * some record Id, fetching the record data).
+         *
+         * This hook is not called during the first render (but willStart is called
+         * and performs a similar job).
+         */
+        async willUpdateProps(nextProps) { }
+        /**
+         * The willPatch hook is called just before the DOM patching process starts.
+         * It is not called on the initial render.  This is useful to get some
+         * information which are in the DOM.  For example, the current position of the
+         * scrollbar
+         */
+        willPatch() { }
+        /**
+         * This hook is called whenever a component did actually update its props,
+         * state or env.
+         *
+         * This method is not called on the initial render. It is useful to interact
+         * with the DOM (for example, through an external library) whenever the
+         * component was updated.
+         *
+         * Updating the component state in this hook is possible, but not encouraged.
+         * One need to be careful, because updates here will cause rerender, which in
+         * turn will cause other calls to updated. So, we need to be particularly
+         * careful at avoiding endless cycles.
+         */
+        patched() { }
+        /**
+         * willUnmount is a hook that is called each time just before a component is
+         * unmounted from the DOM. This is a good place to remove some listeners, for
+         * example.
+         *
+         * Note: this method should not be called manually.
+         *
+         * @see mounted
+         */
+        willUnmount() { }
+        //--------------------------------------------------------------------------
+        // Public
+        //--------------------------------------------------------------------------
+        /**
+         * Mount the component to a target element.
+         *
+         * This should only be done if the component was created manually. Components
+         * created declaratively in templates are managed by the Owl system.
+         *
+         * Note that a component can be mounted an unmounted several times
+         */
+        async mount(target, options = {}) {
+            const position = options.position || "last-child";
+            const __owl__ = this.__owl__;
+            if (__owl__.isMounted) {
+                if (position !== "self" && this.el.parentNode !== target) {
+                    // in this situation, we are trying to mount a component on a different
+                    // target. In this case, we need to unmount first, otherwise it will
+                    // not work.
+                    this.unmount();
+                }
+                else {
+                    return Promise.resolve();
+                }
+            }
+            if (__owl__.isDestroyed) {
+                throw new Error("Cannot mount a destroyed component");
+            }
+            if (__owl__.currentFiber) {
+                const currentFiber = __owl__.currentFiber;
+                if (currentFiber.target === target && currentFiber.position === position) {
+                    return scheduler.addFiber(currentFiber);
+                }
+                else {
+                    scheduler.rejectFiber(currentFiber, "Mounting operation cancelled");
+                }
+            }
+            if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
+                let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
+                message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
+                throw new Error(message);
+            }
+            const fiber = new Fiber(null, this, true, target, position);
+            fiber.shouldPatch = false;
+            if (!__owl__.vnode) {
+                this.__prepareAndRender(fiber, () => { });
+            }
+            else {
+                this.__render(fiber);
+            }
+            return scheduler.addFiber(fiber);
+        }
+        /**
+         * The unmount method is the opposite of the mount method.  It is useful
+         * to call willUnmount calls and remove the component from the DOM.
+         */
+        unmount() {
+            if (this.__owl__.isMounted) {
+                this.__callWillUnmount();
+                this.el.remove();
+            }
+        }
+        /**
+         * The render method is the main entry point to render a component (once it
+         * is ready. This method is not initially called when the component is
+         * rendered the first time).
+         *
+         * This method will cause all its sub components to potentially rerender
+         * themselves.  Note that `render` is not called if a component is updated via
+         * its props.
+         */
+        async render(force = false) {
+            const __owl__ = this.__owl__;
+            const currentFiber = __owl__.currentFiber;
+            if (!__owl__.isMounted && !currentFiber) {
+                // if we get here, this means that the component was either never mounted,
+                // or was unmounted and some state change  triggered a render. Either way,
+                // we do not want to actually render anything in this case.
+                return;
+            }
+            if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
+                return scheduler.addFiber(currentFiber.root);
+            }
+            // if we aren't mounted at this point, it implies that there is a
+            // currentFiber that is already rendered (isRendered is true), so we are
+            // about to be mounted
+            const isMounted = __owl__.isMounted;
+            const fiber = new Fiber(null, this, force, null, null);
+            Promise.resolve().then(() => {
+                if (__owl__.isMounted || !isMounted) {
+                    if (fiber.isCompleted) {
+                        return;
                     }
+                    // we are mounted (__owl__.isMounted), or if we are currently being
+                    // mounted (!isMounted), so we call __render
+                    this.__render(fiber);
+                }
+                else {
+                    // we were mounted when render was called, but we aren't anymore, so we
+                    // were actually about to be unmounted ; we can thus forget about this
+                    // fiber
+                    fiber.isCompleted = true;
+                    __owl__.currentFiber = null;
+                }
+            });
+            return scheduler.addFiber(fiber);
+        }
+        /**
+         * Destroy the component.  This operation is quite complex:
+         *  - it recursively destroy all children
+         *  - call the willUnmount hooks if necessary
+         *  - remove the dom node from the dom
+         *
+         * This should only be called manually if you created the component.  Most
+         * components will be automatically destroyed.
+         */
+        destroy() {
+            const __owl__ = this.__owl__;
+            if (!__owl__.isDestroyed) {
+                const el = this.el;
+                this.__destroy(__owl__.parent);
+                if (el) {
+                    el.remove();
                 }
             }
-            /**
-             * This method is called by the component system whenever its props are
-             * updated. If it returns true, then the component will be rendered.
-             * Otherwise, it will skip the rendering (also, its props will not be updated)
-             */
-            shouldUpdate(nextProps) {
-                return true;
-            }
-            /**
-             * Emit a custom event of type 'eventType' with the given 'payload' on the
-             * component's el, if it exists. However, note that the event will only bubble
-             * up to the parent DOM nodes. Thus, it must be called between mounted() and
-             * willUnmount().
-             */
-            trigger(eventType, payload) {
-                this.__trigger(this, eventType, payload);
-            }
-            //--------------------------------------------------------------------------
-            // Private
-            //--------------------------------------------------------------------------
-            /**
-             * Private helper to perform a full destroy, from the point of view of an Owl
-             * component. It does not remove the el (this is done only once on the top
-             * level destroyed component, for performance reasons).
-             *
-             * The job of this method is mostly to call willUnmount hooks, and to perform
-             * all necessary internal cleanup.
-             *
-             * Note that it does not call the __callWillUnmount method to avoid visiting
-             * all children many times.
-             */
-            __destroy(parent) {
-                const __owl__ = this.__owl__;
-                const isMounted = __owl__.isMounted;
-                if (isMounted) {
-                    if (__owl__.willUnmountCB) {
-                        __owl__.willUnmountCB();
-                    }
-                    this.willUnmount();
-                    __owl__.isMounted = false;
-                }
-                const children = __owl__.children;
-                for (let key in children) {
-                    children[key].__destroy(this);
-                }
-                if (parent) {
-                    let id = __owl__.id;
-                    delete parent.__owl__.children[id];
-                    __owl__.parent = null;
-                }
-                __owl__.isDestroyed = true;
-                delete __owl__.vnode;
-                if (__owl__.currentFiber) {
-                    __owl__.currentFiber.isCompleted = true;
-                }
-            }
-            __callMounted() {
-                const __owl__ = this.__owl__;
-                __owl__.isMounted = true;
-                __owl__.currentFiber = null;
-                this.mounted();
-                if (__owl__.mountedCB) {
-                    __owl__.mountedCB();
-                }
-            }
-            __callWillUnmount() {
-                const __owl__ = this.__owl__;
+        }
+        /**
+         * This method is called by the component system whenever its props are
+         * updated. If it returns true, then the component will be rendered.
+         * Otherwise, it will skip the rendering (also, its props will not be updated)
+         */
+        shouldUpdate(nextProps) {
+            return true;
+        }
+        /**
+         * Emit a custom event of type 'eventType' with the given 'payload' on the
+         * component's el, if it exists. However, note that the event will only bubble
+         * up to the parent DOM nodes. Thus, it must be called between mounted() and
+         * willUnmount().
+         */
+        trigger(eventType, payload) {
+            this.__trigger(this, eventType, payload);
+        }
+        //--------------------------------------------------------------------------
+        // Private
+        //--------------------------------------------------------------------------
+        /**
+         * Private helper to perform a full destroy, from the point of view of an Owl
+         * component. It does not remove the el (this is done only once on the top
+         * level destroyed component, for performance reasons).
+         *
+         * The job of this method is mostly to call willUnmount hooks, and to perform
+         * all necessary internal cleanup.
+         *
+         * Note that it does not call the __callWillUnmount method to avoid visiting
+         * all children many times.
+         */
+        __destroy(parent) {
+            const __owl__ = this.__owl__;
+            const isMounted = __owl__.isMounted;
+            if (isMounted) {
                 if (__owl__.willUnmountCB) {
                     __owl__.willUnmountCB();
                 }
                 this.willUnmount();
                 __owl__.isMounted = false;
-                if (__owl__.currentFiber) {
-                    __owl__.currentFiber.isCompleted = true;
-                    __owl__.currentFiber.root.counter = 0;
-                }
-                const children = __owl__.children;
-                for (let id in children) {
-                    const comp = children[id];
-                    if (comp.__owl__.isMounted) {
-                        comp.__callWillUnmount();
-                    }
-                }
             }
-            /**
-             * Private trigger method, allows to choose the component which triggered
-             * the event in the first place
-             */
-            __trigger(component, eventType, payload) {
-                if (this.el) {
-                    const ev = new OwlEvent(component, eventType, {
-                        bubbles: true,
-                        cancelable: true,
-                        detail: payload,
-                    });
-                    const triggerHook = this.env[portalSymbol];
-                    if (triggerHook) {
-                        triggerHook(ev);
-                    }
-                    this.el.dispatchEvent(ev);
-                }
+            const children = __owl__.children;
+            for (let key in children) {
+                children[key].__destroy(this);
             }
-            /**
-             * The __updateProps method is called by the t-component directive whenever
-             * it updates a component (so, when the parent template is rerendered).
-             */
-            async __updateProps(nextProps, parentFiber, scope) {
-                this.__owl__.scope = scope;
-                const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
-                if (shouldUpdate) {
-                    const __owl__ = this.__owl__;
-                    const fiber = new Fiber(parentFiber, this, parentFiber.force, null, null);
-                    if (!parentFiber.child) {
-                        parentFiber.child = fiber;
-                    }
-                    else {
-                        parentFiber.lastChild.sibling = fiber;
-                    }
-                    parentFiber.lastChild = fiber;
-                    const defaultProps = this.constructor.defaultProps;
-                    if (defaultProps) {
-                        this.__applyDefaultProps(nextProps, defaultProps);
-                    }
-                    if (QWeb.dev) {
-                        QWeb.utils.validateProps(this.constructor, nextProps);
-                    }
-                    await Promise.all([
-                        this.willUpdateProps(nextProps),
-                        __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps),
-                    ]);
-                    if (fiber.isCompleted) {
-                        return;
-                    }
-                    this.props = nextProps;
-                    this.__render(fiber);
+            if (parent) {
+                let id = __owl__.id;
+                delete parent.__owl__.children[id];
+                __owl__.parent = null;
+            }
+            __owl__.isDestroyed = true;
+            delete __owl__.vnode;
+            if (__owl__.currentFiber) {
+                __owl__.currentFiber.isCompleted = true;
+            }
+        }
+        __callMounted() {
+            const __owl__ = this.__owl__;
+            __owl__.isMounted = true;
+            __owl__.currentFiber = null;
+            this.mounted();
+            if (__owl__.mountedCB) {
+                __owl__.mountedCB();
+            }
+        }
+        __callWillUnmount() {
+            const __owl__ = this.__owl__;
+            if (__owl__.willUnmountCB) {
+                __owl__.willUnmountCB();
+            }
+            this.willUnmount();
+            __owl__.isMounted = false;
+            if (__owl__.currentFiber) {
+                __owl__.currentFiber.isCompleted = true;
+                __owl__.currentFiber.root.counter = 0;
+            }
+            const children = __owl__.children;
+            for (let id in children) {
+                const comp = children[id];
+                if (comp.__owl__.isMounted) {
+                    comp.__callWillUnmount();
                 }
             }
-            /**
-             * Main patching method. We call the virtual dom patch method here to convert
-             * a virtual dom vnode into some actual dom.
-             */
-            __patch(target, vnode) {
-                this.__owl__.vnode = patch(target, vnode);
+        }
+        /**
+         * Private trigger method, allows to choose the component which triggered
+         * the event in the first place
+         */
+        __trigger(component, eventType, payload) {
+            if (this.el) {
+                const ev = new OwlEvent(component, eventType, {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: payload,
+                });
+                const triggerHook = this.env[portalSymbol];
+                if (triggerHook) {
+                    triggerHook(ev);
+                }
+                this.el.dispatchEvent(ev);
             }
-            /**
-             * The __prepare method is only called by the t-component directive, when a
-             * subcomponent is created. It gets its scope, if any, from the
-             * parent template.
-             */
-            __prepare(parentFiber, scope, cb) {
-                this.__owl__.scope = scope;
+        }
+        /**
+         * The __updateProps method is called by the t-component directive whenever
+         * it updates a component (so, when the parent template is rerendered).
+         */
+        async __updateProps(nextProps, parentFiber, scope) {
+            this.__owl__.scope = scope;
+            const shouldUpdate = parentFiber.force || this.shouldUpdate(nextProps);
+            if (shouldUpdate) {
+                const __owl__ = this.__owl__;
                 const fiber = new Fiber(parentFiber, this, parentFiber.force, null, null);
-                fiber.shouldPatch = false;
                 if (!parentFiber.child) {
                     parentFiber.child = fiber;
                 }
@@ -4244,155 +4250,211 @@
                     parentFiber.lastChild.sibling = fiber;
                 }
                 parentFiber.lastChild = fiber;
-                this.__prepareAndRender(fiber, cb);
-                return fiber;
+                const defaultProps = this.constructor.defaultProps;
+                if (defaultProps) {
+                    this.__applyDefaultProps(nextProps, defaultProps);
+                }
+                if (QWeb.dev) {
+                    QWeb.utils.validateProps(this.constructor, nextProps);
+                }
+                await Promise.all([
+                    this.willUpdateProps(nextProps),
+                    __owl__.willUpdatePropsCB && __owl__.willUpdatePropsCB(nextProps),
+                ]);
+                if (fiber.isCompleted) {
+                    return;
+                }
+                this.props = nextProps;
+                this.__render(fiber);
             }
-            /**
-             * Apply the stylesheets defined by the component. Note that we need to make
-             * sure all inherited stylesheets are applied as well.  We then delete the
-             * `style` key from the constructor to make sure we do not apply it again.
-             */
-            __applyStyles(constr) {
-                while (constr && constr.style) {
-                    if (constr.hasOwnProperty("style")) {
-                        activateSheet(constr.style, constr.name);
-                        delete constr.style;
-                    }
-                    constr = constr.__proto__;
+        }
+        /**
+         * Main patching method. We call the virtual dom patch method here to convert
+         * a virtual dom vnode into some actual dom.
+         */
+        __patch(target, vnode) {
+            this.__owl__.vnode = patch(target, vnode);
+        }
+        /**
+         * The __prepare method is only called by the t-component directive, when a
+         * subcomponent is created. It gets its scope, if any, from the
+         * parent template.
+         */
+        __prepare(parentFiber, scope, cb) {
+            this.__owl__.scope = scope;
+            const fiber = new Fiber(parentFiber, this, parentFiber.force, null, null);
+            fiber.shouldPatch = false;
+            if (!parentFiber.child) {
+                parentFiber.child = fiber;
+            }
+            else {
+                parentFiber.lastChild.sibling = fiber;
+            }
+            parentFiber.lastChild = fiber;
+            this.__prepareAndRender(fiber, cb);
+            return fiber;
+        }
+        /**
+         * Apply the stylesheets defined by the component. Note that we need to make
+         * sure all inherited stylesheets are applied as well.  We then delete the
+         * `style` key from the constructor to make sure we do not apply it again.
+         */
+        __applyStyles(constr) {
+            while (constr && constr.style) {
+                if (constr.hasOwnProperty("style")) {
+                    activateSheet(constr.style, constr.name);
+                    delete constr.style;
+                }
+                constr = constr.__proto__;
+            }
+        }
+        __getTemplate(qweb) {
+            let p = this.constructor;
+            if (!p.hasOwnProperty("_template")) {
+                // here, the component and none of its superclasses defines a static `template`
+                // key. So we fall back on looking for a template matching its name (or
+                // one of its subclass).
+                let template = p.name;
+                while (!(template in qweb.templates) && p !== Component) {
+                    p = p.__proto__;
+                    template = p.name;
+                }
+                if (p === Component) {
+                    throw new Error(`Could not find template for component "${this.constructor.name}"`);
+                }
+                else {
+                    p._template = template;
                 }
             }
-            __getTemplate(qweb) {
-                let p = this.constructor;
-                if (!p.hasOwnProperty("_template")) {
-                    // here, the component and none of its superclasses defines a static `template`
-                    // key. So we fall back on looking for a template matching its name (or
-                    // one of its subclass).
-                    let template = p.name;
-                    while (!(template in qweb.templates) && p !== Component) {
-                        p = p.__proto__;
-                        template = p.name;
-                    }
-                    if (p === Component) {
-                        throw new Error(`Could not find template for component "${this.constructor.name}"`);
-                    }
-                    else {
-                        p._template = template;
-                    }
-                }
-                return p._template;
+            return p._template;
+        }
+        async __prepareAndRender(fiber, cb) {
+            try {
+                await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
             }
-            async __prepareAndRender(fiber, cb) {
-                try {
-                    await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
-                }
-                catch (e) {
-                    fiber.handleError(e);
-                    return Promise.resolve();
-                }
-                if (this.__owl__.isDestroyed) {
-                    return Promise.resolve();
-                }
-                if (!fiber.isCompleted) {
-                    this.__render(fiber);
-                    cb();
-                }
+            catch (e) {
+                fiber.handleError(e);
+                return Promise.resolve();
             }
-            __render(fiber) {
-                const __owl__ = this.__owl__;
-                if (__owl__.observer) {
-                    __owl__.observer.allowMutations = false;
-                }
-                let error;
-                try {
-                    let vnode = __owl__.renderFn(this, {
-                        handlers: __owl__.boundHandlers,
-                        fiber: fiber,
-                    });
-                    // we iterate over the children to detect those that no longer belong to the
-                    // current rendering: those ones, if not mounted yet, can (and have to) be
-                    // destroyed right now, because they are not in the DOM, and thus we won't
-                    // be notified later on (when patching), that they are removed from the DOM
-                    for (let childKey in __owl__.children) {
-                        const child = __owl__.children[childKey];
-                        const childOwl = child.__owl__;
-                        if (!childOwl.isMounted && childOwl.parentLastFiberId < fiber.id) {
-                            // we only do here a "soft" destroy, meaning that we leave the child
-                            // dom node alone, without removing it.  Most of the time, it does not
-                            // matter, because the child component is already unmounted.  However,
-                            // if some of its parent have been unmounted, the child could actually
-                            // still be attached to its parent, and this may be important if we
-                            // want to remount the parent, because the vdom need to match the
-                            // actual DOM
-                            child.__destroy(childOwl.parent);
-                            if (childOwl.pvnode) {
-                                // we remove the key here to make sure that the patching algorithm
-                                // is able to make the difference between this pvnode and an eventual
-                                // other instance of the same component
-                                delete childOwl.pvnode.key;
-                                // Since the component has been unmounted, we do not want to actually
-                                // call a remove hook.  This is pretty important, since the t-component
-                                // directive actually disabled it, so the vdom algorithm will just
-                                // not remove the child elm if we don't remove the hook.
-                                delete childOwl.pvnode.data.hook.remove;
-                            }
+            if (this.__owl__.isDestroyed) {
+                return Promise.resolve();
+            }
+            if (!fiber.isCompleted) {
+                this.__render(fiber);
+                cb();
+            }
+        }
+        __render(fiber) {
+            const __owl__ = this.__owl__;
+            if (__owl__.observer) {
+                __owl__.observer.allowMutations = false;
+            }
+            let error;
+            try {
+                let vnode = __owl__.renderFn(this, {
+                    handlers: __owl__.boundHandlers,
+                    fiber: fiber,
+                });
+                // we iterate over the children to detect those that no longer belong to the
+                // current rendering: those ones, if not mounted yet, can (and have to) be
+                // destroyed right now, because they are not in the DOM, and thus we won't
+                // be notified later on (when patching), that they are removed from the DOM
+                for (let childKey in __owl__.children) {
+                    const child = __owl__.children[childKey];
+                    const childOwl = child.__owl__;
+                    if (!childOwl.isMounted && childOwl.parentLastFiberId < fiber.id) {
+                        // we only do here a "soft" destroy, meaning that we leave the child
+                        // dom node alone, without removing it.  Most of the time, it does not
+                        // matter, because the child component is already unmounted.  However,
+                        // if some of its parent have been unmounted, the child could actually
+                        // still be attached to its parent, and this may be important if we
+                        // want to remount the parent, because the vdom need to match the
+                        // actual DOM
+                        child.__destroy(childOwl.parent);
+                        if (childOwl.pvnode) {
+                            // we remove the key here to make sure that the patching algorithm
+                            // is able to make the difference between this pvnode and an eventual
+                            // other instance of the same component
+                            delete childOwl.pvnode.key;
+                            // Since the component has been unmounted, we do not want to actually
+                            // call a remove hook.  This is pretty important, since the t-component
+                            // directive actually disabled it, so the vdom algorithm will just
+                            // not remove the child elm if we don't remove the hook.
+                            delete childOwl.pvnode.data.hook.remove;
                         }
                     }
-                    if (!vnode) {
-                        throw new Error(`Rendering '${this.constructor.name}' did not return anything`);
-                    }
-                    fiber.vnode = vnode;
-                    // we apply here the class information described on the component by the
-                    // template (so, something like <MyComponent class="..."/>) to the actual
-                    // root vnode
-                    if (__owl__.classObj) {
-                        const data = vnode.data;
-                        data.class = Object.assign(data.class || {}, __owl__.classObj);
-                    }
                 }
-                catch (e) {
-                    error = e;
+                if (!vnode) {
+                    throw new Error(`Rendering '${this.constructor.name}' did not return anything`);
                 }
-                if (__owl__.observer) {
-                    __owl__.observer.allowMutations = true;
-                }
-                fiber.root.counter--;
-                fiber.isRendered = true;
-                if (error) {
-                    fiber.handleError(error);
+                fiber.vnode = vnode;
+                // we apply here the class information described on the component by the
+                // template (so, something like <MyComponent class="..."/>) to the actual
+                // root vnode
+                if (__owl__.classObj) {
+                    const data = vnode.data;
+                    data.class = Object.assign(data.class || {}, __owl__.classObj);
                 }
             }
-            /**
-             * Only called by qweb t-component directive (when t-keepalive is set)
-             */
-            __remount() {
-                const __owl__ = this.__owl__;
-                if (!__owl__.isMounted) {
-                    __owl__.isMounted = true;
-                    this.mounted();
-                }
+            catch (e) {
+                error = e;
             }
-            /**
-             * Apply default props (only top level).
-             *
-             * Note that this method does modify in place the props
-             */
-            __applyDefaultProps(props, defaultProps) {
-                for (let propName in defaultProps) {
-                    if (props[propName] === undefined) {
-                        props[propName] = defaultProps[propName];
-                    }
+            if (__owl__.observer) {
+                __owl__.observer.allowMutations = true;
+            }
+            fiber.root.counter--;
+            fiber.isRendered = true;
+            if (error) {
+                fiber.handleError(error);
+            }
+        }
+        /**
+         * Only called by qweb t-component directive (when t-keepalive is set)
+         */
+        __remount() {
+            const __owl__ = this.__owl__;
+            if (!__owl__.isMounted) {
+                __owl__.isMounted = true;
+                this.mounted();
+            }
+        }
+        /**
+         * Apply default props (only top level).
+         *
+         * Note that this method does modify in place the props
+         */
+        __applyDefaultProps(props, defaultProps) {
+            for (let propName in defaultProps) {
+                if (props[propName] === undefined) {
+                    props[propName] = defaultProps[propName];
                 }
             }
         }
-        Component.template = null;
-        Component._template = null;
-        Component.current = null;
-        Component.components = {};
-        Component.env = {};
-        // expose scheduler s.t. it can be mocked for testing purposes
-        Component.scheduler = scheduler;
-        return Component;
-    })();
+    }
+    Component.template = null;
+    Component._template = null;
+    Component.current = null;
+    Component.components = {};
+    Component.env = {};
+    // expose scheduler s.t. it can be mocked for testing purposes
+    Component.scheduler = scheduler;
+    async function mount(C, params) {
+        const { env, props, target } = params;
+        let origEnv = C.hasOwnProperty("env") ? C.env : null;
+        if (env) {
+            C.env = env;
+        }
+        const component = new C(null, props);
+        if (origEnv) {
+            C.env = origEnv;
+        }
+        else {
+            delete C.env;
+        }
+        const position = params.position || "last-child";
+        await component.mount(target, { position });
+        return component;
+    }
 
     /**
      * The `Context` object provides a way to share data between an arbitrary number
@@ -4499,16 +4561,6 @@
             __owl__.observer = new Observer();
             __owl__.observer.notifyCB = component.render.bind(component);
         }
-        const currentCB = __owl__.observer.notifyCB;
-        __owl__.observer.notifyCB = function () {
-            if (ctx.rev > mapping[id]) {
-                // in this case, the context has been updated since we were rendering
-                // last, and we do not need to render here with the observer. A
-                // rendering is coming anyway, with the correct props.
-                return;
-            }
-            currentCB();
-        };
         mapping[id] = 0;
         const renderFn = __owl__.renderFn;
         __owl__.renderFn = function (comp, params) {
@@ -4632,6 +4684,23 @@
         };
     }
     // -----------------------------------------------------------------------------
+    // "Builder" hooks
+    // -----------------------------------------------------------------------------
+    /**
+     * This hook is useful as a building block for some customized hooks, that may
+     * need a reference to the component calling them.
+     */
+    function useComponent() {
+        return Component.current;
+    }
+    /**
+     * This hook is useful as a building block for some customized hooks, that may
+     * need a reference to the env of the component calling them.
+     */
+    function useEnv() {
+        return Component.current.env;
+    }
+    // -----------------------------------------------------------------------------
     // useSubEnv
     // -----------------------------------------------------------------------------
     /**
@@ -4675,6 +4744,8 @@
         onWillStart: onWillStart,
         onWillUpdateProps: onWillUpdateProps,
         useRef: useRef,
+        useComponent: useComponent,
+        useEnv: useEnv,
         useSubEnv: useSubEnv,
         useExternalListener: useExternalListener
     });
@@ -4708,6 +4779,10 @@
             }, ...payload);
             return result;
         }
+        __notifyComponents() {
+            this.trigger("before-update");
+            return super.__notifyComponents();
+        }
     }
     const isStrictEqual = (a, b) => a === b;
     function useStore(selector, options = {}) {
@@ -4730,12 +4805,15 @@
             const newRevNumber = hashFn(result);
             if ((newRevNumber > 0 && revNumber !== newRevNumber) || !isEqual(oldResult, result)) {
                 revNumber = newRevNumber;
-                if (options.onUpdate) {
-                    options.onUpdate(result);
-                }
                 return true;
             }
             return false;
+        }
+        if (options.onUpdate) {
+            store.on("before-update", component, () => {
+                const newValue = selector(store.state, component.props);
+                options.onUpdate(newValue);
+            });
         }
         store.updateFunctions[componentId].push(function () {
             return selectCompareUpdate(store.state, component.props);
@@ -4755,6 +4833,9 @@
         const __destroy = component.__destroy;
         component.__destroy = (parent) => {
             delete store.updateFunctions[componentId];
+            if (options.onUpdate) {
+                store.off("before-update", component);
+            }
             __destroy.call(component, parent);
         };
         if (typeof result !== "object" || result === null) {
@@ -4835,213 +4916,203 @@
      * time what we want, but in some cases, it makes sense to "detach" a component
      * from this coordination.  This is the goal of the AsyncRoot component.
      */
-    let AsyncRoot = /** @class */ (() => {
-        class AsyncRoot extends Component {
-            async __updateProps(nextProps, parentFiber) {
-                this.render(parentFiber.force);
+    class AsyncRoot extends Component {
+        async __updateProps(nextProps, parentFiber) {
+            this.render(parentFiber.force);
+        }
+    }
+    AsyncRoot.template = xml `<t t-slot="default"/>`;
+
+    class Portal extends Component {
+        constructor(parent, props) {
+            super(parent, props);
+            // boolean to indicate whether or not we must listen to 'dom-appended' event
+            // to hook on the moment when the target is inserted into the DOM (because it
+            // is not when the portal is rendered)
+            this.doTargetLookUp = true;
+            // set of encountered events that need to be redirected
+            this._handledEvents = new Set();
+            // function that will be the event's tunnel (needs to be an arrow function to
+            // avoid having to rebind `this`)
+            this._handlerTunnel = (ev) => {
+                ev.stopPropagation();
+                this.__trigger(ev.originalComponent, ev.type, ev.detail);
+            };
+            // Storing the parent's env
+            this.parentEnv = null;
+            // represents the element that is moved somewhere else
+            this.portal = null;
+            // the target where we will move `portal`
+            this.target = null;
+            this.parentEnv = parent ? parent.env : {};
+            // put a callback in the env that is propagated to children s.t. portal can
+            // register an handler to those events just before children will trigger them
+            useSubEnv({
+                [portalSymbol]: (ev) => {
+                    if (!this._handledEvents.has(ev.type)) {
+                        this.portal.elm.addEventListener(ev.type, this._handlerTunnel);
+                        this._handledEvents.add(ev.type);
+                    }
+                },
+            });
+        }
+        /**
+         * Override to revert back to a classic Component's structure
+         *
+         * @override
+         */
+        __callWillUnmount() {
+            super.__callWillUnmount();
+            this.el.appendChild(this.portal.elm);
+            this.doTargetLookUp = true;
+        }
+        /**
+         * At each DOM change, we must ensure that the portal contains exactly one
+         * child
+         */
+        __checkVNodeStructure(vnode) {
+            const children = vnode.children;
+            let countRealNodes = 0;
+            for (let child of children) {
+                if (child.sel) {
+                    countRealNodes++;
+                }
+            }
+            if (countRealNodes !== 1) {
+                throw new Error(`Portal must have exactly one non-text child (has ${countRealNodes})`);
             }
         }
-        AsyncRoot.template = xml `<t t-slot="default"/>`;
-        return AsyncRoot;
-    })();
-
-    let Portal = /** @class */ (() => {
-        class Portal extends Component {
-            constructor(parent, props) {
-                super(parent, props);
-                // boolean to indicate whether or not we must listen to 'dom-appended' event
-                // to hook on the moment when the target is inserted into the DOM (because it
-                // is not when the portal is rendered)
-                this.doTargetLookUp = true;
-                // set of encountered events that need to be redirected
-                this._handledEvents = new Set();
-                // function that will be the event's tunnel (needs to be an arrow function to
-                // avoid having to rebind `this`)
-                this._handlerTunnel = (ev) => {
-                    ev.stopPropagation();
-                    this.__trigger(ev.originalComponent, ev.type, ev.detail);
-                };
-                // Storing the parent's env
-                this.parentEnv = null;
-                // represents the element that is moved somewhere else
-                this.portal = null;
-                // the target where we will move `portal`
-                this.target = null;
-                this.parentEnv = parent ? parent.env : {};
-                // put a callback in the env that is propagated to children s.t. portal can
-                // register an handler to those events just before children will trigger them
-                useSubEnv({
-                    [portalSymbol]: (ev) => {
-                        if (!this._handledEvents.has(ev.type)) {
-                            this.portal.elm.addEventListener(ev.type, this._handlerTunnel);
-                            this._handledEvents.add(ev.type);
-                        }
-                    },
-                });
+        /**
+         * Ensure the target is still there at whichever time we render
+         */
+        __checkTargetPresence() {
+            if (!this.target || !document.contains(this.target)) {
+                throw new Error(`Could not find any match for "${this.props.target}"`);
             }
-            /**
-             * Override to revert back to a classic Component's structure
-             *
-             * @override
-             */
-            __callWillUnmount() {
-                super.__callWillUnmount();
-                this.el.appendChild(this.portal.elm);
-                this.doTargetLookUp = true;
-            }
-            /**
-             * At each DOM change, we must ensure that the portal contains exactly one
-             * child
-             */
-            __checkVNodeStructure(vnode) {
-                const children = vnode.children;
-                let countRealNodes = 0;
-                for (let child of children) {
-                    if (child.sel) {
-                        countRealNodes++;
-                    }
-                }
-                if (countRealNodes !== 1) {
-                    throw new Error(`Portal must have exactly one non-text child (has ${countRealNodes})`);
+        }
+        /**
+         * Move the portal's element to the target
+         */
+        __deployPortal() {
+            this.__checkTargetPresence();
+            this.target.appendChild(this.portal.elm);
+        }
+        /**
+         * Override to remove from the DOM the element we have teleported
+         *
+         * @override
+         */
+        __destroy(parent) {
+            if (this.portal && this.portal.elm) {
+                const displacedElm = this.portal.elm;
+                const parent = displacedElm.parentNode;
+                if (parent) {
+                    parent.removeChild(displacedElm);
                 }
             }
-            /**
-             * Ensure the target is still there at whichever time we render
-             */
-            __checkTargetPresence() {
-                if (!this.target || !document.contains(this.target)) {
-                    throw new Error(`Could not find any match for "${this.props.target}"`);
-                }
-            }
-            /**
-             * Move the portal's element to the target
-             */
-            __deployPortal() {
-                this.__checkTargetPresence();
-                this.target.appendChild(this.portal.elm);
-            }
-            /**
-             * Override to remove from the DOM the element we have teleported
-             *
-             * @override
-             */
-            __destroy(parent) {
-                if (this.portal && this.portal.elm) {
-                    const displacedElm = this.portal.elm;
-                    const parent = displacedElm.parentNode;
-                    if (parent) {
-                        parent.removeChild(displacedElm);
-                    }
-                }
-                super.__destroy(parent);
-            }
-            /**
-             * Override to patch the element that has been teleported
-             *
-             * @override
-             */
-            __patch(target, vnode) {
-                if (this.doTargetLookUp) {
-                    const target = document.querySelector(this.props.target);
-                    if (!target) {
-                        this.env.qweb.on("dom-appended", this, () => {
-                            this.doTargetLookUp = false;
-                            this.env.qweb.off("dom-appended", this);
-                            this.target = document.querySelector(this.props.target);
-                            this.__deployPortal();
-                        });
-                    }
-                    else {
+            super.__destroy(parent);
+        }
+        /**
+         * Override to patch the element that has been teleported
+         *
+         * @override
+         */
+        __patch(target, vnode) {
+            if (this.doTargetLookUp) {
+                const target = document.querySelector(this.props.target);
+                if (!target) {
+                    this.env.qweb.on("dom-appended", this, () => {
                         this.doTargetLookUp = false;
-                        this.target = target;
-                    }
+                        this.env.qweb.off("dom-appended", this);
+                        this.target = document.querySelector(this.props.target);
+                        this.__deployPortal();
+                    });
                 }
-                this.__checkVNodeStructure(vnode);
-                const shouldDeploy = (!this.portal || this.el.contains(this.portal.elm)) && !this.doTargetLookUp;
-                if (!this.doTargetLookUp && !shouldDeploy) {
-                    // Only on pure patching, provided the
-                    // this.target's parent has not been unmounted
-                    this.__checkTargetPresence();
-                }
-                const portalPatch = this.portal ? this.portal : document.createElement(vnode.children[0].sel);
-                this.portal = patch(portalPatch, vnode.children[0]);
-                vnode.children = [];
-                super.__patch(target, vnode);
-                if (shouldDeploy) {
-                    this.__deployPortal();
+                else {
+                    this.doTargetLookUp = false;
+                    this.target = target;
                 }
             }
-            /**
-             * Override to set the env
-             */
-            __trigger(component, eventType, payload) {
-                const env = this.env;
-                this.env = this.parentEnv;
-                super.__trigger(component, eventType, payload);
-                this.env = env;
+            this.__checkVNodeStructure(vnode);
+            const shouldDeploy = (!this.portal || this.el.contains(this.portal.elm)) && !this.doTargetLookUp;
+            if (!this.doTargetLookUp && !shouldDeploy) {
+                // Only on pure patching, provided the
+                // this.target's parent has not been unmounted
+                this.__checkTargetPresence();
+            }
+            const portalPatch = this.portal ? this.portal : document.createElement(vnode.children[0].sel);
+            this.portal = patch(portalPatch, vnode.children[0]);
+            vnode.children = [];
+            super.__patch(target, vnode);
+            if (shouldDeploy) {
+                this.__deployPortal();
             }
         }
-        Portal.template = xml `<portal><t t-slot="default"/></portal>`;
-        Portal.props = {
-            target: {
-                type: String,
-            },
-        };
-        return Portal;
-    })();
+        /**
+         * Override to set the env
+         */
+        __trigger(component, eventType, payload) {
+            const env = this.env;
+            this.env = this.parentEnv;
+            super.__trigger(component, eventType, payload);
+            this.env = env;
+        }
+    }
+    Portal.template = xml `<portal><t t-slot="default"/></portal>`;
+    Portal.props = {
+        target: {
+            type: String,
+        },
+    };
 
-    let Link = /** @class */ (() => {
-        class Link extends Component {
-            constructor() {
-                super(...arguments);
-                this.href = this.env.router.destToPath(this.props);
-            }
-            async willUpdateProps(nextProps) {
-                this.href = this.env.router.destToPath(nextProps);
-            }
-            get isActive() {
-                if (this.env.router.mode === "hash") {
-                    return document.location.hash === this.href;
-                }
-                return document.location.pathname === this.href;
-            }
-            navigate(ev) {
-                // don't redirect with control keys
-                if (ev.metaKey || ev.altKey || ev.ctrlKey || ev.shiftKey) {
-                    return;
-                }
-                // don't redirect on right click
-                if (ev.button !== undefined && ev.button !== 0) {
-                    return;
-                }
-                // don't redirect if `target="_blank"`
-                if (ev.currentTarget && ev.currentTarget.getAttribute) {
-                    const target = ev.currentTarget.getAttribute("target");
-                    if (/\b_blank\b/i.test(target)) {
-                        return;
-                    }
-                }
-                ev.preventDefault();
-                this.env.router.navigate(this.props);
-            }
+    class Link extends Component {
+        constructor() {
+            super(...arguments);
+            this.href = this.env.router.destToPath(this.props);
         }
-        Link.template = xml `
+        async willUpdateProps(nextProps) {
+            this.href = this.env.router.destToPath(nextProps);
+        }
+        get isActive() {
+            if (this.env.router.mode === "hash") {
+                return document.location.hash === this.href;
+            }
+            return document.location.pathname === this.href;
+        }
+        navigate(ev) {
+            // don't redirect with control keys
+            if (ev.metaKey || ev.altKey || ev.ctrlKey || ev.shiftKey) {
+                return;
+            }
+            // don't redirect on right click
+            if (ev.button !== undefined && ev.button !== 0) {
+                return;
+            }
+            // don't redirect if `target="_blank"`
+            if (ev.currentTarget && ev.currentTarget.getAttribute) {
+                const target = ev.currentTarget.getAttribute("target");
+                if (/\b_blank\b/i.test(target)) {
+                    return;
+                }
+            }
+            ev.preventDefault();
+            this.env.router.navigate(this.props);
+        }
+    }
+    Link.template = xml `
     <a  t-att-class="{'router-link-active': isActive }"
         t-att-href="href"
         t-on-click="navigate">
         <t t-slot="default"/>
     </a>
   `;
-        return Link;
-    })();
 
-    let RouteComponent = /** @class */ (() => {
-        class RouteComponent extends Component {
-            get routeComponent() {
-                return this.env.router.currentRoute && this.env.router.currentRoute.component;
-            }
+    class RouteComponent extends Component {
+        get routeComponent() {
+            return this.env.router.currentRoute && this.env.router.currentRoute.component;
         }
-        RouteComponent.template = xml `
+    }
+    RouteComponent.template = xml `
     <t>
         <t
             t-if="routeComponent"
@@ -5050,8 +5121,6 @@
             t-props="env.router.currentParams" />
     </t>
   `;
-        return RouteComponent;
-    })();
 
     const paramRegexp = /\{\{(.*?)\}\}/;
     class Router {
@@ -5283,18 +5352,22 @@
     exports.QWeb = QWeb;
     exports.Store = Store$1;
     exports.__info__ = __info__;
+    exports.browser = browser;
     exports.config = config;
     exports.core = core;
     exports.hooks = hooks$1;
     exports.misc = misc;
+    exports.mount = mount;
     exports.router = router;
     exports.tags = tags;
     exports.useState = useState$1;
     exports.utils = utils;
 
-    exports.__info__.version = '1.0.10';
-    exports.__info__.date = '2020-09-21T14:18:45.579Z';
-    exports.__info__.hash = 'e73fb46';
-    exports.__info__.url = 'https://github.com/odoo/owl';
+
+    __info__.version = '1.2.1';
+    __info__.date = '2021-01-08T14:31:35.573Z';
+    __info__.hash = '25738a1';
+    __info__.url = 'https://github.com/odoo/owl';
+
 
 }(this.owl = this.owl || {}));

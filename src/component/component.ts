@@ -322,7 +322,14 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     }
     if (__owl__.currentFiber) {
       const currentFiber = __owl__.currentFiber;
-      if (currentFiber.target === target && currentFiber.position === position) {
+      if (!currentFiber.target && !currentFiber.position) {
+        // this means we have a pending rendering, but it was a render operation,
+        // not a mount operation. We can simply update the fiber with the target
+        // and the position
+        currentFiber.target = target;
+        currentFiber.position = position;
+        return scheduler.addFiber(currentFiber);
+      } else if (currentFiber.target === target && currentFiber.position === position) {
         return scheduler.addFiber(currentFiber);
       } else {
         scheduler.rejectFiber(currentFiber, "Mounting operation cancelled");
@@ -366,12 +373,6 @@ export class Component<Props extends {} = any, T extends Env = Env> {
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
     const currentFiber = __owl__.currentFiber;
-    if (!__owl__.isMounted && !currentFiber) {
-      // if we get here, this means that the component was either never mounted,
-      // or was unmounted and some state change  triggered a render. Either way,
-      // we do not want to actually render anything in this case.
-      return;
-    }
     if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
       return scheduler.addFiber(currentFiber.root);
     }
@@ -385,8 +386,6 @@ export class Component<Props extends {} = any, T extends Env = Env> {
         if (fiber.isCompleted) {
           return;
         }
-        // we are mounted (__owl__.isMounted), or if we are currently being
-        // mounted (!isMounted), so we call __render
         this.__render(fiber);
       } else {
         // we were mounted when render was called, but we aren't anymore, so we

@@ -8,7 +8,7 @@ import * as owl from "../../src/index";
 
 import { Component, Env } from "../../src/component/component";
 import { xml } from "../../src/tags";
-import { makeTestFixture, makeTestEnv } from "../helpers";
+import { makeTestFixture, makeTestEnv, nextTick } from "../helpers";
 
 let fixture: HTMLElement = makeTestFixture();
 let env: Env = makeTestEnv();
@@ -31,6 +31,7 @@ test("log a specific message for render method calls if component is not mounted
   parent.unmount();
   parent.state.value = 2;
 
+  await nextTick();
   expect(steps).toEqual([
     "[OWL_DEBUG] Parent<id=1> constructor, props={}",
     "[OWL_DEBUG] Parent<id=1> mount",
@@ -40,7 +41,10 @@ test("log a specific message for render method calls if component is not mounted
     "[OWL_DEBUG] Parent<id=1> mounted",
     "[OWL_DEBUG] scheduler: stop running tasks queue",
     "[OWL_DEBUG] Parent<id=1> willUnmount",
-    "[OWL_DEBUG] Parent<id=1> render (warning: component is not mounted, this render has no effect)",
+    "[OWL_DEBUG] Parent<id=1> render (warning: component is not mounted)",
+    "[OWL_DEBUG] scheduler: start running tasks queue",
+    "[OWL_DEBUG] Parent<id=1> rendering template",
+    "[OWL_DEBUG] scheduler: stop running tasks queue",
   ]);
   console.log = log;
 });

@@ -323,6 +323,38 @@ describe("unmounting and remounting", () => {
     expect(steps).toEqual([2, 2, 3]);
   });
 
+  test("change state and render while mounted in detached dom", async () => {
+    class App extends Component {
+      static template = xml`<div><t t-esc="state.val"/></div>`;
+      state = useState({ val: 1 });
+    }
+
+    const detachedDiv = document.createElement("div");
+    const app = await mount(App, { target: detachedDiv });
+
+    expect(detachedDiv.innerHTML).toBe("<div>1</div>");
+    app.state.val = 2;
+    await nextTick();
+    expect(detachedDiv.innerHTML).toBe("<div>2</div>");
+  });
+
+  test("destroy and change state after mounted in detached dom", async () => {
+    class App extends Component {
+      static template = xml`<div><t t-esc="state.val"/></div>`;
+      state = useState({ val: 1 });
+    }
+
+    const detachedDiv = document.createElement("div");
+    const app = await mount(App, { target: detachedDiv });
+
+    expect(detachedDiv.innerHTML).toBe("<div>1</div>");
+
+    app.destroy();
+    app.state.val = 2;
+    await nextTick();
+    expect(detachedDiv.innerHTML).toBe("");
+  });
+
   test("change state while component is unmounted", async () => {
     let child;
     class Child extends Component {

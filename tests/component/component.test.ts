@@ -962,6 +962,69 @@ describe("lifecycle hooks", () => {
       "parent:patched",
     ]);
   });
+
+  test("willPatch/patched hook is not called if not mounted in DOM", async () => {
+    const steps: string[] = [];
+
+    class ChildWidget extends Component {
+      static template = xml`<div/>`;
+      constructor(parent, props) {
+        super(parent, props);
+        steps.push("child:constructor");
+      }
+      mounted() {
+        steps.push("child:mounted");
+      }
+      willPatch() {
+        steps.push("child:willPatch");
+      }
+      patched() {
+        steps.push("child:patched");
+      }
+    }
+    class ParentWidget extends Component {
+      static template = xml`
+        <div>
+          <t t-component="child" v="state.n"/>
+        </div>
+      `;
+      static components = { child: ChildWidget };
+      state = useState({ n: 1 });
+      constructor() {
+        super();
+        steps.push("parent:constructor");
+      }
+      mounted() {
+        steps.push("parent:mounted");
+      }
+      willPatch() {
+        steps.push("parent:willPatch");
+      }
+      patched() {
+        steps.push("parent:patched");
+      }
+    }
+
+    const div = document.createElement("div");
+    const widget = new ParentWidget();
+    await widget.mount(div);
+    expect(steps).toEqual(["parent:constructor", "child:constructor"]);
+
+    widget.state.n = 2;
+    await nextTick();
+
+    expect(steps).toEqual(["parent:constructor", "child:constructor"]);
+
+    // then we remount the component in the dom
+    await widget.mount(fixture);
+
+    expect(steps).toEqual([
+      "parent:constructor",
+      "child:constructor",
+      "child:mounted",
+      "parent:mounted",
+    ]);
+  });
 });
 
 describe("destroy method", () => {

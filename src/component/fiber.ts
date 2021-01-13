@@ -188,7 +188,8 @@ export class Fiber {
   complete() {
     let component = this.component;
     this.isCompleted = true;
-    if (!this.target && !component.__owl__.isMounted) {
+    const { isMounted, isDestroyed } = component.__owl__;
+    if (isDestroyed) {
       return;
     }
 
@@ -202,14 +203,16 @@ export class Fiber {
     const patchLen = patchQueue.length;
 
     // call willPatch hook on each fiber of patchQueue
-    for (let i = 0; i < patchLen; i++) {
-      const fiber = patchQueue[i];
-      if (fiber.shouldPatch) {
-        component = fiber.component;
-        if (component.__owl__.willPatchCB) {
-          component.__owl__.willPatchCB();
+    if (isMounted) {
+      for (let i = 0; i < patchLen; i++) {
+        const fiber = patchQueue[i];
+        if (fiber.shouldPatch) {
+          component = fiber.component;
+          if (component.__owl__.willPatchCB) {
+            component.__owl__.willPatchCB();
+          }
+          component.willPatch();
         }
-        component.willPatch();
       }
     }
 
@@ -271,16 +274,18 @@ export class Fiber {
     }
 
     // call patched/mounted hook on each fiber of (reversed) patchQueue
-    for (let i = patchLen - 1; i >= 0; i--) {
-      const fiber = patchQueue[i];
-      component = fiber.component;
-      if (fiber.shouldPatch && !this.target) {
-        component.patched();
-        if (component.__owl__.patchedCB) {
-          component.__owl__.patchedCB();
+    if (isMounted || inDOM) {
+      for (let i = patchLen - 1; i >= 0; i--) {
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        if (fiber.shouldPatch && !this.target) {
+          component.patched();
+          if (component.__owl__.patchedCB) {
+            component.__owl__.patchedCB();
+          }
+        } else {
+          component.__callMounted();
         }
-      } else if (this.target ? inDOM : true) {
-        component.__callMounted();
       }
     }
   }

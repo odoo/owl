@@ -338,6 +338,22 @@ describe("unmounting and remounting", () => {
     expect(detachedDiv.innerHTML).toBe("<div>2</div>");
   });
 
+  test("change state and render while not mounted ", async () => {
+    class App extends Component {
+      static template = xml`<div><t t-esc="state.val"/></div>`;
+      state = useState({ val: 1 });
+    }
+
+    const app = new App(null);
+
+    app.state.val = 2; // will call the render method (before being mounted)
+    await nextTick();
+
+    await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+  });
+
   test("destroy and change state after mounted in detached dom", async () => {
     class App extends Component {
       static template = xml`<div><t t-esc="state.val"/></div>`;

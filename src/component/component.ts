@@ -373,6 +373,9 @@ export class Component<Props extends {} = any, T extends Env = Env> {
   async render(force: boolean = false): Promise<void> {
     const __owl__ = this.__owl__;
     const currentFiber = __owl__.currentFiber;
+    if (!__owl__.vnode && !currentFiber) {
+      return;
+    }
     if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
       return scheduler.addFiber(currentFiber.root);
     }

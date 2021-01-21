@@ -21,7 +21,6 @@ export class Observer {
   rev: number = 1;
   allowMutations: boolean = true;
   weakMap: WeakMap<any, any> = new WeakMap();
-
   notifyCB() {}
 
   observe<T>(value: T, parent?: any): T {

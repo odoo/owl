@@ -8,6 +8,7 @@ import "./props_validation";
 import { Scheduler, scheduler } from "./scheduler";
 import { activateSheet } from "./styles";
 import { Browser, browser } from "../browser";
+import { onMounted, onPatched } from "../hooks";
 
 /**
  * Owl Component System
@@ -91,7 +92,23 @@ interface Internal<T extends Env> {
   refs: { [key: string]: Component<any, T> | HTMLElement | undefined } | null;
 }
 
+interface DevToolsAccess {
+  props?: any;
+  defaultProps?: any;
+  template?: string | null;
+  state: Observer;
+  tag: String;
+  depth: number,
+}
+
 export const portalSymbol = Symbol("portal"); // FIXME
+
+/**
+ * It is required for the dev tools to have access to the __owl__ element.
+ */
+interface HTMLElementWithDevToolsAccess extends HTMLElement {
+  __owl_devtools__: DevToolsAccess
+}
 
 //------------------------------------------------------------------------------
 // Component
@@ -110,11 +127,13 @@ export class Component<Props extends {} = any, T extends Env = Env> {
   // expose scheduler s.t. it can be mocked for testing purposes
   static scheduler: Scheduler = scheduler;
 
+  __devtools__: DevToolsAccess;
+
   /**
    * The `el` is the root element of the component.  Note that it could be null:
    * this is the case if the component is not mounted yet, or is destroyed.
    */
-  get el(): HTMLElement | null {
+  get el(): HTMLElementWithDevToolsAccess | null {
     return this.__owl__.vnode ? (<any>this).__owl__.vnode.elm : null;
   }
 
@@ -209,6 +228,24 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     if (constr.style) {
       this.__applyStyles(constr);
     }
+
+    // DevTools hooks
+    onMounted(() => {
+      this.__devtools__ = {
+        depth: this.__owl__.depth,
+        state: this.__owl__.observer,
+        tag: this.constructor.name
+      };
+      this.__devtools__.defaultProps = defaultProps;
+      this.__devtools__.props = this.props;
+      this.__devtools__.template = template;
+      this.el.__owl_devtools__ = this.__devtools__;
+    })
+    onPatched(() => {
+      this.__devtools__.depth = this.__owl__.depth,
+      this.el.__owl_devtools__ = this.__devtools__;
+    })
+
   }
 
   /**

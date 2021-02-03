@@ -1,4 +1,4 @@
-import { Component, Env, mount } from "../../src/component/component";
+import { Component, Env, mount, STATUS } from "../../src/component/component";
 import { EventBus } from "../../src/core/event_bus";
 import { useRef, useState } from "../../src/hooks";
 import { QWeb } from "../../src/qweb/qweb";
@@ -1035,8 +1035,7 @@ describe("destroy method", () => {
     expect(document.contains(widget.el)).toBe(true);
     widget.destroy();
     expect(document.contains(widget.el)).toBe(false);
-    expect(widget.__owl__.isMounted).toBe(false);
-    expect(widget.__owl__.isDestroyed).toBe(true);
+    expect(widget.__owl__.status).toBe(STATUS.DESTROYED);
   });
 
   test("destroying a parent also destroys its children", async () => {
@@ -1045,9 +1044,9 @@ describe("destroy method", () => {
 
     const child = children(parent)[0];
 
-    expect(child.__owl__.isDestroyed).toBe(false);
+    expect(child.__owl__.status).toBe(STATUS.MOUNTED);
     parent.destroy();
-    expect(child.__owl__.isDestroyed).toBe(true);
+    expect(child.__owl__.status).toBe(STATUS.DESTROYED);
   });
 
   test("destroy remove the parent/children link", async () => {
@@ -1073,17 +1072,15 @@ describe("destroy method", () => {
     }
     expect(fixture.innerHTML).toBe("");
     const widget = new DelayedWidget();
+    expect(widget.__owl__.status).toBe(STATUS.CREATED);
     widget.mount(fixture);
-    expect(widget.__owl__.isMounted).toBe(false);
-    expect(widget.__owl__.isDestroyed).toBe(false);
+    expect(widget.__owl__.status).toBe(STATUS.WILLSTARTED);
     widget.destroy();
-    expect(widget.__owl__.isMounted).toBe(false);
-    expect(widget.__owl__.isDestroyed).toBe(true);
+    expect(widget.__owl__.status).toBe(STATUS.DESTROYED);
     def.resolve();
     await nextTick();
 
-    expect(widget.__owl__.isMounted).toBe(false);
-    expect(widget.__owl__.isDestroyed).toBe(true);
+    expect(widget.__owl__.status).toBe(STATUS.DESTROYED);
     expect(widget.__owl__.vnode).toBe(undefined);
     expect(fixture.innerHTML).toBe("");
     expect(isRendered).toBe(false);
@@ -1539,7 +1536,7 @@ describe("composition", () => {
     parent.state.flag = true;
     await nextTick();
     expect(children(parent)[0]).toBe(child);
-    expect(child.__owl__.isDestroyed).toBe(false);
+    expect(child.__owl__.status).toBe(STATUS.MOUNTED);
     expect(normalize(fixture.innerHTML)).toBe(
       normalize(`
       <div>
@@ -2287,7 +2284,7 @@ describe("other directives with t-component", () => {
     el.click();
     expect(steps).toEqual(["click"]);
     parent.unmount();
-    expect(child.__owl__.isMounted).toBe(false);
+    expect(child.__owl__.status).toBe(STATUS.UNMOUNTED);
     el.click();
     expect(steps).toEqual(["click", "click"]);
   });
@@ -2361,7 +2358,7 @@ describe("other directives with t-component", () => {
     expect(steps).toEqual(["click"]);
     parent.state.flag = false;
     await nextTick();
-    expect(child.__owl__.isDestroyed).toBe(true);
+    expect(child.__owl__.status).toBe(STATUS.DESTROYED);
     el.click();
     expect(steps).toEqual(["click"]);
   });
@@ -2396,7 +2393,7 @@ describe("other directives with t-component", () => {
     expect(steps).toEqual(["click"]);
     parent.state.flag = false;
     await nextTick();
-    expect(child.__owl__.isDestroyed).toBe(true);
+    expect(child.__owl__.status).toBe(STATUS.DESTROYED);
     el.click();
     expect(steps).toEqual(["click"]);
   });

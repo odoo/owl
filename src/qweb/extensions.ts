@@ -1,3 +1,4 @@
+import { STATUS } from "../component/component";
 import { VNode } from "../vdom/index";
 import { INTERP_REGEXP } from "./compilation_context";
 import { QWeb } from "./qweb";
@@ -76,7 +77,7 @@ export function makeHandlerCode(
     code = ctx.captureExpression(value);
   }
   const modCode = mods.map((mod) => modcodes[mod]).join("");
-  let handler = `function (e) {if (context.__owl__.isDestroyed){return}${modCode}${code}}`;
+  let handler = `function (e) {if (context.__owl__.status === ${STATUS.DESTROYED}){return}${modCode}${code}}`;
   if (putInCache) {
     const key = ctx.generateTemplateKey(event);
     ctx.addLine(`extra.handlers[${key}] = extra.handlers[${key}] || ${handler};`);

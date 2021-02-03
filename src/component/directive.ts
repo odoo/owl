@@ -1,6 +1,7 @@
 import { QWeb } from "../qweb/index";
 import { INTERP_REGEXP } from "../qweb/compilation_context";
 import { makeHandlerCode, MODS_CODE } from "../qweb/extensions";
+import { STATUS } from "./component";
 
 //------------------------------------------------------------------------------
 // t-component
@@ -361,7 +362,7 @@ QWeb.addDirective({
     // need to update component
     let styleCode = "";
     if (tattStyle) {
-      styleCode = `.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`;
+      styleCode = `.then(()=>{if (w${componentID}.__owl__.status === ${STATUS.DESTROYED}) {return};w${componentID}.el.style=${tattStyle};});`;
     }
     ctx.addLine(
       `w${componentID}.__updateProps(props${componentID}, extra.fiber, ${scope})${styleCode};`

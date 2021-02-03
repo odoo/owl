@@ -1,4 +1,4 @@
-import { Env, Component } from "../src/component/component";
+import { Env, Component, STATUS } from "../src/component/component";
 import { scheduler } from "../src/component/scheduler";
 import { EvalContext, QWeb } from "../src/qweb/qweb";
 import { CompilationContext } from "../src/qweb/compilation_context";
@@ -92,7 +92,7 @@ export function renderToDOM(
   if (!context.__owl__) {
     // we add `__owl__` to better simulate a component as context.  This is
     // particularly important for event handlers added with the `t-on` directive.
-    context.__owl__ = { isMounted: true };
+    context.__owl__ = { status: STATUS.MOUNTED };
   }
   const vnode = qweb.render(template, context, extra);
 

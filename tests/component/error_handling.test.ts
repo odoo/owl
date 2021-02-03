@@ -1,4 +1,4 @@
-import { Component, Env } from "../../src/component/component";
+import { Component, Env, STATUS } from "../../src/component/component";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
@@ -108,7 +108,7 @@ describe("component error handling (catchError)", () => {
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
-    expect(app.__owl__.isDestroyed).toBe(true);
+    expect(app.__owl__.status).toBe(STATUS.DESTROYED);
     expect(handler).toBeCalledTimes(1);
   });
 

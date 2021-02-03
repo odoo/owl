@@ -1,5 +1,5 @@
 import { h, VNode } from "../vdom/index";
-import { Component, MountPosition } from "./component";
+import { Component, MountPosition, STATUS } from "./component";
 import { scheduler } from "./scheduler";
 
 /**
@@ -107,6 +107,8 @@ export class Fiber {
    */
   _reuseFiber(oldFiber: Fiber) {
     oldFiber.cancel(); // cancel children fibers
+    oldFiber.target = this.target || oldFiber.target;
+    oldFiber.position = this.position || oldFiber.position;
     oldFiber.isCompleted = false; // keep the root fiber alive
     oldFiber.isRendered = false; // the fiber has to be re-rendered
     if (oldFiber.child) {
@@ -188,8 +190,8 @@ export class Fiber {
   complete() {
     let component = this.component;
     this.isCompleted = true;
-    const { isMounted, isDestroyed } = component.__owl__;
-    if (isDestroyed) {
+    const status = component.__owl__.status;
+    if (status === STATUS.DESTROYED) {
       return;
     }
 
@@ -203,7 +205,7 @@ export class Fiber {
     const patchLen = patchQueue.length;
 
     // call willPatch hook on each fiber of patchQueue
-    if (isMounted) {
+    if (status === STATUS.MOUNTED) {
       for (let i = 0; i < patchLen; i++) {
         const fiber = patchQueue[i];
         if (fiber.shouldPatch) {
@@ -253,8 +255,9 @@ export class Fiber {
           component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;
         }
       }
-      if (fiber === component.__owl__.currentFiber) {
-        component.__owl__.currentFiber = null;
+      const compOwl = component.__owl__;
+      if (fiber === compOwl.currentFiber) {
+        compOwl.currentFiber = null;
       }
     }
 
@@ -274,7 +277,7 @@ export class Fiber {
     }
 
     // call patched/mounted hook on each fiber of (reversed) patchQueue
-    if (isMounted || inDOM) {
+    if (status === STATUS.MOUNTED || inDOM) {
       for (let i = patchLen - 1; i >= 0; i--) {
         const fiber = patchQueue[i];
         component = fiber.component;
@@ -286,6 +289,12 @@ export class Fiber {
         } else {
           component.__callMounted();
         }
+      }
+    } else {
+      for (let i = patchLen - 1; i >= 0; i--) {
+        const fiber = patchQueue[i];
+        component = fiber.component;
+        component.__owl__.status = STATUS.UNMOUNTED;
       }
     }
   }

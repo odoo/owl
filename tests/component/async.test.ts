@@ -1,4 +1,4 @@
-import { Component, Env } from "../../src/component/component";
+import { Component, Env, STATUS } from "../../src/component/component";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeDeferred, makeTestEnv, makeTestFixture, nextMicroTick, nextTick } from "../helpers";
@@ -40,14 +40,14 @@ describe("async rendering", () => {
       }
     }
     const w = new W();
+    expect(w.__owl__.status).toBe(STATUS.CREATED);
     w.mount(fixture);
-    expect(w.__owl__.isDestroyed).toBe(false);
-    expect(w.__owl__.isMounted).toBe(false);
+    expect(w.__owl__.status).toBe(STATUS.WILLSTARTED);
     w.destroy();
+    expect(w.__owl__.status).toBe(STATUS.DESTROYED);
     def.resolve();
     await nextTick();
-    expect(w.__owl__.isDestroyed).toBe(true);
-    expect(w.__owl__.isMounted).toBe(false);
+    expect(w.__owl__.status).toBe(STATUS.DESTROYED);
   });
 
   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {

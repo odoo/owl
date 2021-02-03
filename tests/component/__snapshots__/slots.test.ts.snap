@@ -229,7 +229,7 @@ exports[`t-slot directive dynamic t-slot call 1`] = `
     let h = this.h;
     let c10 = [], p10 = {key:10,on:{}};
     let vn10 = h('button', p10, c10);
-    extra.handlers['click__11__'] = extra.handlers['click__11__'] || function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['toggle'](e);};
+    extra.handlers['click__11__'] = extra.handlers['click__11__'] || function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['toggle'](e);};
     p10.on['click'] = extra.handlers['click__11__'];
     const slot12 = this.constructor.slots[context.__owl__.slotId + '_' + (scope['current'].slot)];
     if (slot12) {
@@ -301,7 +301,7 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
     let c9 = [], p9 = {key:9,on:{}};
     let vn9 = h('button', p9, c9);
     c8.push(vn9);
-    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['doSomething'](e);};
+    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['doSomething'](e);};
     p9.on['click'] = extra.handlers['click__10__'];
     const ref11 = \`myButton\`;
     p9.hook = {
@@ -326,7 +326,7 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
     let c9 = [], p9 = {key:9,on:{}};
     let vn9 = h('button', p9, c9);
     c8.push(vn9);
-    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['doSomething'](e);};
+    extra.handlers['click__10__'] = extra.handlers['click__10__'] || function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['doSomething'](e);};
     p9.on['click'] = extra.handlers['click__10__'];
     c9.push({text: \`do something\`});
 }"

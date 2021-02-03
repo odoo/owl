@@ -15,7 +15,7 @@ use cases, there is no need to directly instantiate an observer.
 For example, this code will display `update` in the console:
 
 ```javascript
-const observer = new owl.Observer();
+const observer = new owl.core.Observer();
 observer.notifyCB = () => console.log("update");
 const obj = observer.observe({ a: { b: 1 } });
 
@@ -39,14 +39,14 @@ is incremented every time the value is observed. Sometimes, it can be useful
 to obtain that number:
 
 ```js
-const observer = new owl.Observer();
+const observer = new owl.core.Observer();
 const obj = observer.observe({ a: { b: 1 } });
 
-observer.deepRevNumber(obj.a); // 1
+observer.revNumber(obj.a); // 1
 obj.a.b = 2;
 
-observer.deepRevNumber(obj.a); // 2
+observer.revNumber(obj.a); // 2
 ```
 
-The `deepRevNumber` can also return 0, which indicates that the value is not
+The `revNumber` can also return 0, which indicates that the value is not
 observed.

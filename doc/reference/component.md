@@ -771,7 +771,7 @@ template rendered with `props`. In Owl, this can be done by
 simply defining a template, that will access the `props` object:
 
 ```js
-const Welcome = xml`<h1>Hello, {props.name}</h1>`;
+const Welcome = xml`<h1>Hello, <t t-esc="props.name"/></h1>`;
 
 class MyComponent extends Component {
   static template = xml`

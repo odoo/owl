@@ -444,7 +444,7 @@ exports[`composition t-ref on a node, and t-on-click 2`] = `
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('click', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['doSomething'](e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('click', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['doSomething'](e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -579,7 +579,7 @@ exports[`other directives with t-component t-on expression captured in t-foreach
         c6.push(vn7);
         const otherState_8 = scope['otherState'];
         const iter_8 = scope.iter;
-        p7.on['click'] = function (e) {if (context.__owl__.isDestroyed){return}otherState_8.vals.push(iter_8+'_'+iter_8)};
+        p7.on['click'] = function (e) {if (context.__owl__.status === 5){return}otherState_8.vals.push(iter_8+'_'+iter_8)};
         c7.push({text: \`expr\`});
         utils.getScope(scope, 'iter').iter = scope.iter+1;
     }
@@ -630,7 +630,7 @@ exports[`other directives with t-component t-on expression in t-foreach 1`] = `
         c6.push(vn9);
         const otherState_10 = scope['otherState'];
         const val_10 = scope['val'];
-        p9.on['click'] = function (e) {if (context.__owl__.isDestroyed){return}otherState_10.vals.push(val_10)};
+        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}otherState_10.vals.push(val_10)};
         c9.push({text: \`Expr\`});
     }
     scope = _origScope5;
@@ -684,7 +684,7 @@ exports[`other directives with t-component t-on expression in t-foreach with t-s
         const otherState_10 = scope['otherState'];
         const val_10 = scope['val'];
         const bossa_10 = scope.bossa;
-        p9.on['click'] = function (e) {if (context.__owl__.isDestroyed){return}otherState_10.vals.push(val_10+'_'+bossa_10)};
+        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}otherState_10.vals.push(val_10+'_'+bossa_10)};
         c9.push({text: \`Expr\`});
     }
     scope = _origScope5;
@@ -734,7 +734,7 @@ exports[`other directives with t-component t-on method call in t-foreach 1`] = `
         let vn9 = h('button', p9, c9);
         c6.push(vn9);
         let args10 = [scope['val']];
-        p9.on['click'] = function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['addVal'](...args10, e);};
+        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['addVal'](...args10, e);};
         c9.push({text: \`meth call\`});
     }
     scope = _origScope5;
@@ -770,7 +770,7 @@ exports[`other directives with t-component t-on with .capture modifier 1`] = `
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('click', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['capture'](e);}, true);}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('click', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['capture'](e);}, true);}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -812,7 +812,7 @@ exports[`other directives with t-component t-on with getter as handler 1`] = `
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
-        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['handler'](e);});}});});
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['handler'](e);});}});});
         let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
@@ -851,7 +851,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -890,7 +890,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -929,7 +929,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -968,7 +968,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv'](...args4, e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -1011,7 +1011,7 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
-        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}state_5.counter++});}});});
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}state_5.counter++});}});});
         let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;
@@ -1049,7 +1049,7 @@ exports[`other directives with t-component t-on with no handler (only modifiers)
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv'](e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv'](e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -1087,7 +1087,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}e.preventDefault();if (e.target !== vn.elm) {return}utils.getComponent(context)['onEv'](e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}e.preventDefault();if (e.target !== vn.elm) {return}utils.getComponent(context)['onEv'](e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -1125,7 +1125,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}if (e.target !== vn.elm) {return}e.preventDefault();utils.getComponent(context)['onEv'](e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}if (e.target !== vn.elm) {return}e.preventDefault();utils.getComponent(context)['onEv'](e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -1163,7 +1163,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv1'](e);});vn.elm.addEventListener('ev-2', function (e) {if (context.__owl__.isDestroyed){return}if (e.target !== vn.elm) {return}utils.getComponent(context)['onEv2'](e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv1'](e);});vn.elm.addEventListener('ev-2', function (e) {if (context.__owl__.status === 5){return}if (e.target !== vn.elm) {return}utils.getComponent(context)['onEv2'](e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -1201,7 +1201,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
-        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if (context.__owl__.isDestroyed){return}e.stopPropagation();utils.getComponent(context)['onEv1'](e);});vn.elm.addEventListener('ev-2', function (e) {if (context.__owl__.isDestroyed){return}e.preventDefault();utils.getComponent(context)['onEv2'](e);});vn.elm.addEventListener('ev-3', function (e) {if (context.__owl__.isDestroyed){return}e.stopPropagation();e.preventDefault();utils.getComponent(context)['onEv3'](e);});}});});
+        let fiber = w2.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev-1', function (e) {if (context.__owl__.status === 5){return}e.stopPropagation();utils.getComponent(context)['onEv1'](e);});vn.elm.addEventListener('ev-2', function (e) {if (context.__owl__.status === 5){return}e.preventDefault();utils.getComponent(context)['onEv2'](e);});vn.elm.addEventListener('ev-3', function (e) {if (context.__owl__.status === 5){return}e.stopPropagation();e.preventDefault();utils.getComponent(context)['onEv3'](e);});}});});
         let pvnode = h('dummy', {key: '__3__', hook: {remove() {},destroy(vn) {w2.destroy();}}});
         c1.push(pvnode);
         w2.__owl__.pvnode = pvnode;
@@ -1555,7 +1555,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
                 if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
                 w6 = new W6(parent, props6);
                 parent.__owl__.cmap[k7] = w6.__owl__.id;
-                let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['onEv'](...args8, e);});}});});
+                let fiber = w6.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['onEv'](...args8, e);});}});});
                 let pvnode = h('dummy', {key: k7, hook: {remove() {},destroy(vn) {w6.destroy();}}});
                 c1.push(pvnode);
                 w6.__owl__.pvnode = pvnode;
@@ -1580,7 +1580,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let k4 = \`click__4__\${key0}__\`;
-    extra.handlers[k4] = extra.handlers[k4] || function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['update'](e);};
+    extra.handlers[k4] = extra.handlers[k4] || function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['update'](e);};
     p3.on['click'] = extra.handlers[k4];
     c3.push({text: \`lucas\`});
 }"
@@ -1599,7 +1599,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
     let vn3 = h('p', p3, c3);
     c2.push(vn3);
     let args4 = [scope['a']];
-    p3.on['click'] = function (e) {if (context.__owl__.isDestroyed){return}utils.getComponent(context)['update'](...args4, e);};
+    p3.on['click'] = function (e) {if (context.__owl__.status === 5){return}utils.getComponent(context)['update'](...args4, e);};
     c3.push({text: \`lucas\`});
 }"
 `;

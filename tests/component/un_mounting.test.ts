@@ -404,6 +404,40 @@ describe("unmounting and remounting", () => {
     expect(fixture.innerHTML).toBe("<div>P2<span>C2</span></div>");
   });
 
+  test("change state while component is mounted in a fragment", async () => {
+    class Child1 extends Component {
+      static template = xml`<span>C1</span>`;
+    }
+
+    class Child2 extends Component {
+      static template = xml`<span>C2</span>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child1, Child2 };
+      static template = xml`
+        <div>
+          <Child1 t-if="child == 'c1'"/>
+          <Child2 t-if="child == 'c2'"/>
+        </div>`;
+      child: string | false = false;
+    }
+
+    const fragment = document.createDocumentFragment();
+    const parent = new Parent();
+    await parent.mount(fragment);
+    expect(parent.el.outerHTML).toBe("<div></div>");
+
+    parent.child = "c1";
+    parent.render();
+    await Promise.resolve();
+
+    parent.child = "c2";
+    await parent.mount(fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>C2</span></div>");
+  });
+
   test("unmount component during a re-rendering", async () => {
     const def = makeDeferred();
     class Child extends Component {
@@ -490,17 +524,17 @@ describe("unmounting and remounting", () => {
     // one full tick.
     await nextMicroTick();
     await nextMicroTick();
-    expect(steps).toEqual(["1 catch"]);
+    expect(steps).toEqual([]);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div><span></span>");
 
     def.resolve();
     await nextTick();
-    expect(steps).toEqual(["1 catch", "2 resolved"]);
+    expect(steps).toEqual(["2 resolved"]);
     expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
   });
 
-  test("widget can be mounted on same target, another situation", async () => {
+  test("component can be mounted on same target, another situation", async () => {
     const def = makeDeferred();
     const steps: string[] = [];
 
@@ -528,8 +562,8 @@ describe("unmounting and remounting", () => {
 
     def.resolve();
     await nextTick();
-    expect(steps).toEqual(["1 resolved", "2 resolved"]);
     expect(fixture.innerHTML).toBe("<div>Hey</div>");
+    expect(steps).toEqual(["1 resolved", "2 resolved"]);
   });
 
   test("mounting a destroyed widget", async () => {

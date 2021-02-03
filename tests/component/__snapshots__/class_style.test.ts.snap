@@ -20,7 +20,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         w2 = false;
     }
     if (w2) {
-        w2.__updateProps(props2, extra.fiber, undefined).then(()=>{if (w2.__owl__.isDestroyed) {return};w2.el.style=_4;});;
+        w2.__updateProps(props2, extra.fiber, undefined).then(()=>{if (w2.__owl__.status === 5) {return};w2.el.style=_4;});;
         let pvnode = w2.__owl__.pvnode;
         c1.push(pvnode);
     } else {

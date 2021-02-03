@@ -44,7 +44,7 @@ Slots are defined by the caller, with the `t-set-slot` directive:
 ```xml
 <div t-name="SomeComponent">
   <div>some component</div>
-  <Dialog title="Some Dialog">
+  <Dialog title="'Some Dialog'">
     <t t-set-slot="content">
       <div>hey</div>
     </t>

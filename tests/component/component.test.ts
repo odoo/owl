@@ -163,7 +163,7 @@ describe("basic widget properties", () => {
     expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
 
-  test("cannot be clicked on and updated if not in DOM", async () => {
+  test("can be clicked on and updated if not in DOM", async () => {
     class Counter extends Component {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
@@ -178,8 +178,8 @@ describe("basic widget properties", () => {
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     button.click();
     await nextTick();
-    expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
-    expect(counter.state.counter).toBe(0);
+    expect(target.innerHTML).toBe("<div>1<button>Inc</button></div>");
+    expect(counter.state.counter).toBe(1);
   });
 
   test("widget style and classname", async () => {
@@ -2292,7 +2292,27 @@ describe("other directives with t-component", () => {
     parent.unmount();
     expect(child.__owl__.isMounted).toBe(false);
     el.click();
-    expect(steps).toEqual(["click"]);
+    expect(steps).toEqual(["click", "click"]);
+  });
+
+  test("triggering custom event on mounted components", async () => {
+    let value = false;
+    class Child extends Component {
+      static template = xml`<div/>`;
+      mounted() {
+        this.trigger("coucou");
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-on-coucou="doSomething"/>`;
+      static components = { Child };
+      doSomething() {
+        value = true;
+      }
+    }
+    const parent = new Parent();
+    await parent.mount(fixture);
+    expect(value).toBe(true);
   });
 
   test("t-on with .capture modifier", async () => {

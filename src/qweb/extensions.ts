@@ -76,7 +76,7 @@ export function makeHandlerCode(
     code = ctx.captureExpression(value);
   }
   const modCode = mods.map((mod) => modcodes[mod]).join("");
-  let handler = `function (e) {if (!context.__owl__.isMounted){return}${modCode}${code}}`;
+  let handler = `function (e) {if (context.__owl__.isDestroyed){return}${modCode}${code}}`;
   if (putInCache) {
     const key = ctx.generateTemplateKey(event);
     ctx.addLine(`extra.handlers[${key}] = extra.handlers[${key}] || ${handler};`);

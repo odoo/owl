@@ -663,7 +663,7 @@ function makeStore() {
 
 function setup() {
   owl.config.mode = "dev";
-  const env = {store: makeStore()};
+  const env = { store: makeStore() };
   mount(App, { target: document.body, env });
 }
 ```
@@ -939,7 +939,7 @@ For reference, here is the final code:
 
   function setup() {
     owl.config.mode = "dev";
-    const env = {store: makeStore()};
+    const env = { store: makeStore() };
     mount(App, { target: document.body, env });
   }
 

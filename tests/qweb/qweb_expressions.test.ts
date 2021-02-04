@@ -196,4 +196,8 @@ describe("expression evaluation", () => {
     expect(compileExpr("f(...state.list)", {})).toBe("scope['f'](...scope['state'].list)");
     expect(compileExpr("f([...list])", {})).toBe("scope['f']([...scope['list']])");
   });
+
+  test("works with builtin properties", () => {
+    expect(compileExpr("state.constructor.name", {})).toBe("scope['state'].constructor.name");
+  });
 });

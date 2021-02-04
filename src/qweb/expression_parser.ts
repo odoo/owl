@@ -29,14 +29,14 @@ const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in
   ","
 );
 
-const WORD_REPLACEMENT = {
+const WORD_REPLACEMENT = Object.assign(Object.create(null), {
   and: "&&",
   or: "||",
   gt: ">",
   gte: ">=",
   lt: "<",
   lte: "<=",
-};
+});
 
 export interface QWebVar {
   id: string; // foo
@@ -69,7 +69,7 @@ interface Token {
   varName?: string;
 }
 
-const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
+const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(null), {
   "{": "LEFT_BRACE",
   "}": "RIGHT_BRACE",
   "[": "LEFT_BRACKET",
@@ -78,7 +78,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ",": "COMMA",
   "(": "LEFT_PAREN",
   ")": "RIGHT_PAREN",
-};
+});
 
 // note that the space after typeof is relevant. It makes sure that the formatted
 // expression has a space after typeof

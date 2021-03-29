@@ -3,6 +3,7 @@ const readline = require("readline");
 const fs = require("fs");
 const exec = require("child_process").exec;
 const chalk = require("chalk");
+const branchName = require('current-git-branch');
 
 const REL_NOTES_FILE = `release-notes.md`;
 const STEPS = 8;
@@ -21,6 +22,12 @@ startRelease().then(() => {
 // -----------------------------------------------------------------------------
 
 async function startRelease() {
+  // First check we are on master
+  if (branchName() !== 'master') {
+    logError("you shall not pass! You are not on the master branch!")
+    return;
+  }
+  
   log(`*** Owl release script ***`);
   log(`Current Version: ${package.version}`);
 

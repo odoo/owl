@@ -27,7 +27,7 @@ async function startRelease() {
     logError("you shall not pass! You are not on the master branch!")
     return;
   }
-  
+
   log(`*** Owl release script ***`);
   log(`Current Version: ${package.version}`);
 
@@ -79,6 +79,11 @@ async function startRelease() {
   log(`Step 5/${STEPS}: building owl...`);
   await execCommand("rm -rf dist/");
   await execCommand("npm run prettier");
+  const checkFormatting = await execCommand("npm run check-formatting");
+  if (checkFormatting !== 0) {
+    logError("Prettier formatting failed. Aborting.");
+    return;
+  }
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {
     logError("Build failed. Aborting.");

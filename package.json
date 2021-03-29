@@ -22,6 +22,7 @@
     "pretools:watch": "npm run build",
     "tools:watch": "npm-run-all  --parallel tools:serve \"build:* -- --watch\"",
     "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --write",
+    "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --check",
     "publish": "npm run build && npm publish",
     "release": "node tools/release.js"
   },
@@ -40,6 +41,7 @@
     "@types/node": "^14.11.8",
     "chalk": "^3.0.0",
     "cpx": "^1.5.0",
+    "current-git-branch": "^1.1.0",
     "git-rev-sync": "^1.12.0",
     "github-api": "^3.3.0",
     "jest": "^23.6.0",

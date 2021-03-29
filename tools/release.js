@@ -3,9 +3,11 @@ const readline = require("readline");
 const fs = require("fs");
 const exec = require("child_process").exec;
 const chalk = require("chalk");
+const branchName = require('current-git-branch');
 
 const REL_NOTES_FILE = `release-notes.md`;
 const STEPS = 8;
+const branch = "master";
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -21,6 +23,19 @@ startRelease().then(() => {
 // -----------------------------------------------------------------------------
 
 async function startRelease() {
+  // First check we are on master
+  if (branchName() !== branch) {
+    logError(`You shall not pass! You are not on the ${branch} branch!`)
+    return;
+  }
+  
+  log("Check if code formatting is right...")
+  const checkFormatting = await execCommand("npm run check-formatting");
+  if (checkFormatting !== 0) {
+    logError("Prettier format validation failed. Aborting.");
+    return;
+  }
+
   log(`*** Owl release script ***`);
   log(`Current Version: ${package.version}`);
 
@@ -36,7 +51,7 @@ async function startRelease() {
     content = await readFile("./" + file);
   } catch (e) {
     logSubContent(e.message);
-    log("Cannot find release notes... Aborting");
+    logError("Cannot find release notes... Aborting");
     return;
   }
   let shouldBeDraft = await ask(`Should be a draft [y/n] ? (n)`);
@@ -45,12 +60,14 @@ async function startRelease() {
   {
     draft = "--draft";
   }
+  let shouldUploadPlayground = await ask(`Should this release be uploaded on the playground [y/n] ? (y)`);
+  shouldUploadPlayground = shouldUploadPlayground.toLowerCase() !== 'n';
 
   // ---------------------------------------------------------------------------
   log(`Step 2/${STEPS}: running tests...`);
   const testsResult = await execCommand("npm run test");
   if (testsResult !== 0) {
-    log("Test suite does not pass. Aborting.");
+    logError("Test suite does not pass. Aborting.");
     return;
   }
 
@@ -64,24 +81,24 @@ async function startRelease() {
   log(`Step 4/${STEPS}: creating git commit...`);
   const gitResult = await execCommand(`git commit -am "[REL] v${next}\n\n${content}"`);
   if (gitResult !== 0) {
-    log("Git commit failed. Aborting.");
+    logError("Git commit failed. Aborting.");
     return;
   }
 
   // ----------------------------------------------------------------------------
   log(`Step 5/${STEPS}: building owl...`);
-  await execCommand("npm run prettier");
+  await execCommand("rm -rf dist/");
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {
-    log("Build failed. Aborting.");
+    logError("Build failed. Aborting.");
     return;
   }
 
   // ---------------------------------------------------------------------------
   log(`Step 6/${STEPS}: pushing on github...`);
-  const pushResult = await execCommand("git push");
+  const pushResult = await execCommand("git push origin " + branch);
   if (pushResult !== 0) {
-    log("git push failed. Aborting.");
+    logError("git push failed. Aborting.");
     return;
   }
 
@@ -90,17 +107,51 @@ async function startRelease() {
   log(`Step 7/${STEPS}: Creating the release...`);
   const relaseResult = await execCommand(`gh release create v${next} dist/*.js ${draft} -F release-notes.md`);
   if (relaseResult !== 0) {
-    log("github release failed. Aborting.");
+    logError("github release failed. Aborting.");
     return;
   }
 
   log(`Step 8/${STEPS}: publishing module on npm...`);
   await execCommand("npm run publish");
-  
+
   log("Owl Release process completed! Thank you for your patience");
   await execCommand(`gh release view`);
   await execCommand(`gh release view -w`);
 
+  if (shouldUploadPlayground) {
+    log(`Bonus step: publishing new release on playground...`);
+    let owl_code = null;
+    status = 0
+
+    try {
+      owl_code = await readFile("dist/owl.iife.js");
+    } catch (e) {
+      logSubContent(e.message);
+      logError("Cannot read owl.iife.js... Aborting");
+      return;
+    }
+
+    status += await execCommand("git checkout gh-pages");
+    
+    if (status !== 0) {
+      logError("Couldn't switch to gh-pages branch")
+      return;
+    }
+
+    try {
+      fs.writeFileSync('owl.js', owl_code)
+    } catch (err) {
+      logError(err)
+      return;
+    }
+    
+    status += await execCommand(`git commit -am "[IMP] update owl to v${next}"`);
+    status += await execCommand(`git push origin gh-pages`);
+    status += await execCommand("git checkout -");
+    if (status !== 0) {
+      logError("Something went wrong for the playground update.")
+    }
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -109,6 +160,10 @@ async function startRelease() {
 
 function log(text) {
   console.log(chalk.yellow(formatLog(text)));
+}
+
+function logError(text) {
+  console.log(chalk.red(formatLog(text)));
 }
 
 function formatLog(text) {

@@ -70,6 +70,7 @@ async function startRelease() {
 
   // ----------------------------------------------------------------------------
   log(`Step 5/${STEPS}: building owl...`);
+  await execCommand("rm -rf dist/");
   await execCommand("npm run prettier");
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {

@@ -36,7 +36,7 @@ async function startRelease() {
     content = await readFile("./" + file);
   } catch (e) {
     logSubContent(e.message);
-    log("Cannot find release notes... Aborting");
+    logError("Cannot find release notes... Aborting");
     return;
   }
   let shouldBeDraft = await ask(`Should be a draft [y/n] ? (n)`);
@@ -50,7 +50,7 @@ async function startRelease() {
   log(`Step 2/${STEPS}: running tests...`);
   const testsResult = await execCommand("npm run test");
   if (testsResult !== 0) {
-    log("Test suite does not pass. Aborting.");
+    logError("Test suite does not pass. Aborting.");
     return;
   }
 
@@ -64,7 +64,7 @@ async function startRelease() {
   log(`Step 4/${STEPS}: creating git commit...`);
   const gitResult = await execCommand(`git commit -am "[REL] v${next}\n\n${content}"`);
   if (gitResult !== 0) {
-    log("Git commit failed. Aborting.");
+    logError("Git commit failed. Aborting.");
     return;
   }
 
@@ -74,7 +74,7 @@ async function startRelease() {
   await execCommand("npm run prettier");
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {
-    log("Build failed. Aborting.");
+    logError("Build failed. Aborting.");
     return;
   }
 
@@ -82,7 +82,7 @@ async function startRelease() {
   log(`Step 6/${STEPS}: pushing on github...`);
   const pushResult = await execCommand("git push");
   if (pushResult !== 0) {
-    log("git push failed. Aborting.");
+    logError("git push failed. Aborting.");
     return;
   }
 
@@ -91,7 +91,7 @@ async function startRelease() {
   log(`Step 7/${STEPS}: Creating the release...`);
   const relaseResult = await execCommand(`gh release create v${next} dist/*.js ${draft} -F release-notes.md`);
   if (relaseResult !== 0) {
-    log("github release failed. Aborting.");
+    logError("github release failed. Aborting.");
     return;
   }
 
@@ -110,6 +110,10 @@ async function startRelease() {
 
 function log(text) {
   console.log(chalk.yellow(formatLog(text)));
+}
+
+function logError(text) {
+  console.log(chalk.red(formatLog(text)));
 }
 
 function formatLog(text) {

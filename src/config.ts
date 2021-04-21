@@ -9,6 +9,7 @@ import { QWeb } from "./qweb/index";
 interface Config {
   mode: string;
   enableTransitions: boolean;
+  guaranteeTransitionEnd: boolean;
 }
 
 export const config = {} as Config;
@@ -36,5 +37,14 @@ Object.defineProperty(config, "enableTransitions", {
   },
   set(value: boolean) {
     QWeb.enableTransitions = value;
+  },
+});
+
+Object.defineProperty(config, "guaranteeTransitionEnd", {
+  get() {
+    return QWeb.guaranteeTransitionEnd;
+  },
+  set(value: boolean) {
+    QWeb.guaranteeTransitionEnd = value;
   },
 });

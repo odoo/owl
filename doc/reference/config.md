@@ -6,6 +6,7 @@ global `config` object. It provides two settings:
 
 - [`mode`](#mode) (default value: `prod`),
 - [`enableTransitions`](#enabletransitions) (default value: `true`).
+- [`guaranteeTransitionEnd`](#guaranteetransitionend) (default value: `false`).
 
 ## Mode
 
@@ -42,3 +43,15 @@ owl.config.enableTransitions = false;
 
 Note that it suffers from the same drawback as the "dev" mode: all compiled
 templates, if any, will keep their current behaviours.
+
+## `guaranteeTransitionEnd`
+
+This is applicable to elements/components having the `t-transition` directive.
+
+Setting this value to `true` ensures that the callback for `transitionend` event
+will be called even if the `transitionend` event failed to trigger at the end of
+transition.
+
+```js
+owl.config.guaranteeTransitionEnd = true;
+```

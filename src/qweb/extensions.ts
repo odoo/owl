@@ -198,14 +198,18 @@ function whenTransitionEnd(elm: HTMLElement, cb) {
   const durations: Array<string> = (styles.transitionDuration || "").split(", ");
   const timeout: number = getTimeout(delays, durations);
   if (timeout > 0) {
-    const transitionEndCB = () => {
-      if (!elm.parentNode) return;
-      cb();
-      browser.clearTimeout(fallbackTimeout);
-      elm.removeEventListener('transitionend', transitionEndCB);
+    if (!QWeb.guaranteeTransitionEnd) {
+      elm.addEventListener("transitionend", cb, { once: true });
+    } else {
+      const transitionEndCB = () => {
+        if (!elm.parentNode) return;
+        cb();
+        browser.clearTimeout(fallbackTimeout);
+        elm.removeEventListener("transitionend", transitionEndCB);
+      };
+      elm.addEventListener("transitionend", transitionEndCB, { once: true });
+      const fallbackTimeout = browser.setTimeout(transitionEndCB, timeout + 50);
     }
-    elm.addEventListener("transitionend", transitionEndCB, { once: true });
-    const fallbackTimeout = browser.setTimeout(transitionEndCB, timeout + 50);
   } else {
     cb();
   }

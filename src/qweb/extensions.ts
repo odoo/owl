@@ -2,6 +2,7 @@ import { STATUS } from "../component/component";
 import { VNode } from "../vdom/index";
 import { INTERP_REGEXP } from "./compilation_context";
 import { QWeb } from "./qweb";
+import { browser } from "../browser";
 
 /**
  * Owl QWeb Extensions
@@ -197,7 +198,14 @@ function whenTransitionEnd(elm: HTMLElement, cb) {
   const durations: Array<string> = (styles.transitionDuration || "").split(", ");
   const timeout: number = getTimeout(delays, durations);
   if (timeout > 0) {
-    elm.addEventListener("transitionend", cb, { once: true });
+    const transitionEndCB = () => {
+      if (!elm.parentNode) return;
+      cb();
+      browser.clearTimeout(fallbackTimeout);
+      elm.removeEventListener('transitionend', transitionEndCB);
+    }
+    elm.addEventListener("transitionend", transitionEndCB, { once: true });
+    const fallbackTimeout = browser.setTimeout(transitionEndCB, timeout + 50);
   } else {
     cb();
   }

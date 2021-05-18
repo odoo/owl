@@ -24,7 +24,7 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;

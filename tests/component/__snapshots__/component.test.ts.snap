@@ -24,7 +24,7 @@ exports[`basic widget properties can handle empty props 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -97,7 +97,7 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
                 c1.push(pvnode);
             } else {
                 let componentKey10 = \`Child\`;
-                let W10 = context.constructor.components[componentKey10] || QWeb.components[componentKey10]|| scope['Child'];
+                let W10 = scope['Child'] || context.constructor.components[componentKey10] || QWeb.components[componentKey10];
                 if (!W10) {throw new Error('Cannot find the definition of component \\"' + componentKey10 + '\\"')}
                 w10 = new W10(parent, props10);
                 parent.__owl__.cmap[k11] = w10.__owl__.id;
@@ -145,7 +145,7 @@ exports[`basic widget properties same t-keys in two different places 1`] = `
             c2.push(pvnode);
         } else {
             let componentKey3 = \`Child\`;
-            let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+            let W3 = scope['Child'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
             if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
             w3 = new W3(parent, props3);
             parent.__owl__.cmap[k4] = w3.__owl__.id;
@@ -175,7 +175,7 @@ exports[`basic widget properties same t-keys in two different places 1`] = `
             c5.push(pvnode);
         } else {
             let componentKey6 = \`Child\`;
-            let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| scope['Child'];
+            let W6 = scope['Child'] || context.constructor.components[componentKey6] || QWeb.components[componentKey6];
             if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
             w6 = new W6(parent, props6);
             parent.__owl__.cmap[k7] = w6.__owl__.id;
@@ -218,7 +218,7 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
                 c1.push(pvnode);
             } else {
                 let componentKey2 = \`Child\`;
-                let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+                let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
                 if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
                 w2 = new W2(parent, props2);
                 parent.__owl__.cmap[k3] = w2.__owl__.id;
@@ -243,7 +243,7 @@ exports[`basic widget properties t-key on a component with t-if, and a sibling c
         c1.push(pvnode);
     } else {
         let componentKey4 = \`Child\`;
-        let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| scope['Child'];
+        let W4 = scope['Child'] || context.constructor.components[componentKey4] || QWeb.components[componentKey4];
         if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
         w4 = new W4(parent, props4);
         parent.__owl__.cmap['__5__'] = w4.__owl__.id;
@@ -301,7 +301,7 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
                 c1.push(pvnode);
             } else {
                 let componentKey6 = \`ChildWidget\`;
-                let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| scope['ChildWidget'];
+                let W6 = scope['ChildWidget'] || context.constructor.components[componentKey6] || QWeb.components[componentKey6];
                 if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
                 w6 = new W6(parent, props6);
                 parent.__owl__.cmap[k7] = w6.__owl__.id;
@@ -342,7 +342,7 @@ exports[`composition t-component with dynamic value 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = (scope['state'].widget);
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2];
+        let W2 = false || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -380,7 +380,7 @@ exports[`composition t-component with dynamic value 2 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Widget\${scope['state'].widget}\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2];
+        let W2 = false || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -440,7 +440,7 @@ exports[`composition t-ref on a node, and t-on-click 2`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -478,7 +478,7 @@ exports[`dynamic t-props basic use 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -523,7 +523,7 @@ exports[`other directives with t-component slot setted value (with t-set) not ac
         c1.push(pvnode);
     } else {
         let componentKey3 = \`ChildWidget\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['ChildWidget'];
+        let W3 = scope['ChildWidget'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
@@ -766,7 +766,7 @@ exports[`other directives with t-component t-on with .capture modifier 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -808,7 +808,7 @@ exports[`other directives with t-component t-on with getter as handler 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey3 = \`Child\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+        let W3 = scope['Child'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
@@ -847,7 +847,7 @@ exports[`other directives with t-component t-on with handler bound to argument 1
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -886,7 +886,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -925,7 +925,7 @@ exports[`other directives with t-component t-on with handler bound to empty obje
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -964,7 +964,7 @@ exports[`other directives with t-component t-on with handler bound to object 1`]
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -1007,7 +1007,7 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey3 = \`Child\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+        let W3 = scope['Child'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
@@ -1045,7 +1045,7 @@ exports[`other directives with t-component t-on with no handler (only modifiers)
         c1.push(pvnode);
     } else {
         let componentKey2 = \`ComponentA\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['ComponentA'];
+        let W2 = scope['ComponentA'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -1083,7 +1083,7 @@ exports[`other directives with t-component t-on with prevent and self modifiers 
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -1121,7 +1121,7 @@ exports[`other directives with t-component t-on with self and prevent modifiers 
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -1159,7 +1159,7 @@ exports[`other directives with t-component t-on with self modifier 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -1197,7 +1197,7 @@ exports[`other directives with t-component t-on with stop and/or prevent modifie
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -1337,7 +1337,7 @@ exports[`other directives with t-component t-set not altered by child widget 1`]
         c1.push(pvnode);
     } else {
         let componentKey3 = \`ChildWidget\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['ChildWidget'];
+        let W3 = scope['ChildWidget'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
@@ -1432,7 +1432,7 @@ exports[`props evaluation  t-set with a body expression can be used as textual p
         c1.push(pvnode);
     } else {
         let componentKey3 = \`Child\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+        let W3 = scope['Child'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
@@ -1491,7 +1491,7 @@ exports[`random stuff/miscellaneous snapshotting compiled code 1`] = `
             c1.push(pvnode);
         } else {
             let componentKey2 = \`child\`;
-            let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+            let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
             if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
             w2 = new W2(parent, props2);
             parent.__owl__.cmap[k3] = w2.__owl__.id;
@@ -1551,7 +1551,7 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
                 c1.push(pvnode);
             } else {
                 let componentKey6 = \`Child\`;
-                let W6 = context.constructor.components[componentKey6] || QWeb.components[componentKey6]|| scope['Child'];
+                let W6 = scope['Child'] || context.constructor.components[componentKey6] || QWeb.components[componentKey6];
                 if (!W6) {throw new Error('Cannot find the definition of component \\"' + componentKey6 + '\\"')}
                 w6 = new W6(parent, props6);
                 parent.__owl__.cmap[k7] = w6.__owl__.id;
@@ -1629,7 +1629,7 @@ exports[`t-call parent is set within t-call 1`] = `
         c2.push(pvnode);
     } else {
         let componentKey3 = \`Child\`;
-        let W3 = context.constructor.components[componentKey3] || QWeb.components[componentKey3]|| scope['Child'];
+        let W3 = scope['Child'] || context.constructor.components[componentKey3] || QWeb.components[componentKey3];
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap[k4] = w3.__owl__.id;
@@ -1667,7 +1667,7 @@ exports[`t-call parent is set within t-call with no parentNode 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap[k3] = w2.__owl__.id;
@@ -2062,7 +2062,7 @@ exports[`top level sub widgets basic use 1`] = `
         utils.defineProxy(vn3, pvnode);
     } else {
         let componentKey1 = \`Child\`;
-        let W1 = context.constructor.components[componentKey1] || QWeb.components[componentKey1]|| scope['Child'];
+        let W1 = scope['Child'] || context.constructor.components[componentKey1] || QWeb.components[componentKey1];
         if (!W1) {throw new Error('Cannot find the definition of component \\"' + componentKey1 + '\\"')}
         w1 = new W1(parent, props1);
         parent.__owl__.cmap['__2__'] = w1.__owl__.id;
@@ -2102,7 +2102,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
             utils.defineProxy(vn3, pvnode);
         } else {
             let componentKey1 = \`Child\`;
-            let W1 = context.constructor.components[componentKey1] || QWeb.components[componentKey1]|| scope['Child'];
+            let W1 = scope['Child'] || context.constructor.components[componentKey1] || QWeb.components[componentKey1];
             if (!W1) {throw new Error('Cannot find the definition of component \\"' + componentKey1 + '\\"')}
             w1 = new W1(parent, props1);
             parent.__owl__.cmap['__2__'] = w1.__owl__.id;
@@ -2129,7 +2129,7 @@ exports[`top level sub widgets can select a sub widget  1`] = `
             utils.defineProxy(vn6, pvnode);
         } else {
             let componentKey4 = \`OtherChild\`;
-            let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| scope['OtherChild'];
+            let W4 = scope['OtherChild'] || context.constructor.components[componentKey4] || QWeb.components[componentKey4];
             if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
             w4 = new W4(parent, props4);
             parent.__owl__.cmap['__5__'] = w4.__owl__.id;

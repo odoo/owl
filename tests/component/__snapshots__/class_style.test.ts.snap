@@ -25,7 +25,7 @@ exports[`class and style attributes with t-component dynamic t-att-style is prop
         c1.push(pvnode);
     } else {
         let componentKey2 = \`child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['child'];
+        let W2 = scope['child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -67,7 +67,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -125,7 +125,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Child\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Child'];
+        let W2 = scope['Child'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;

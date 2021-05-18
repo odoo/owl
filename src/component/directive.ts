@@ -378,14 +378,11 @@ QWeb.addDirective({
     ctx.addElse();
 
     // new component
-    let dynamicFallback = "";
-    if (!value.match(INTERP_REGEXP)) {
-      dynamicFallback = `|| ${ctx.formatExpression(value)}`;
-    }
+    const contextualValue = value.match(INTERP_REGEXP) ? "false" : ctx.formatExpression(value);
     const interpValue = ctx.interpolate(value);
     ctx.addLine(`let componentKey${componentID} = ${interpValue};`);
     ctx.addLine(
-      `let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}]${dynamicFallback};`
+      `let W${componentID} = ${contextualValue} || context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`
     );
 
     // maybe only do this in dev mode...

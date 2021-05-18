@@ -24,7 +24,7 @@ exports[`t-slot directive can define and call slots 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Dialog\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Dialog'];
+        let W2 = scope['Dialog'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -114,7 +114,7 @@ exports[`t-slot directive can define and call slots using old t-set keyword 1`] 
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Dialog\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Dialog'];
+        let W2 = scope['Dialog'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;
@@ -397,7 +397,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
             c7.push(pvnode);
         } else {
             let componentKey8 = \`Link\`;
-            let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| scope['Link'];
+            let W8 = scope['Link'] || context.constructor.components[componentKey8] || QWeb.components[componentKey8];
             if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
             w8 = new W8(parent, props8);
             parent.__owl__.cmap[k9] = w8.__owl__.id;
@@ -495,7 +495,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
             c7.push(pvnode);
         } else {
             let componentKey8 = \`Link\`;
-            let W8 = context.constructor.components[componentKey8] || QWeb.components[componentKey8]|| scope['Link'];
+            let W8 = scope['Link'] || context.constructor.components[componentKey8] || QWeb.components[componentKey8];
             if (!W8) {throw new Error('Cannot find the definition of component \\"' + componentKey8 + '\\"')}
             w8 = new W8(parent, props8);
             parent.__owl__.cmap[k9] = w8.__owl__.id;
@@ -551,7 +551,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 1`] = `
         c1.push(pvnode);
     } else {
         let componentKey2 = \`Link\`;
-        let W2 = context.constructor.components[componentKey2] || QWeb.components[componentKey2]|| scope['Link'];
+        let W2 = scope['Link'] || context.constructor.components[componentKey2] || QWeb.components[componentKey2];
         if (!W2) {throw new Error('Cannot find the definition of component \\"' + componentKey2 + '\\"')}
         w2 = new W2(parent, props2);
         parent.__owl__.cmap['__3__'] = w2.__owl__.id;

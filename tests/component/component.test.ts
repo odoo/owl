@@ -1242,6 +1242,23 @@ describe("composition", () => {
     delete QWeb.components["WidgetB"];
   });
 
+  test("don't fallback to global/component's registry if widget defined in the instance's context", async () => {
+    QWeb.registerComponent("WidgetB", WidgetB); // should not use this widget
+    env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);
+    env.qweb.addTemplate("ComponentWidgetB", `<span>Belgium</span>`); // should not use this widget either
+    env.qweb.addTemplate("InstanceWidgetB", `<span>Chocolate</span>`); // should use this
+    class ComponentWidgetB extends Component {}
+    class InstanceWidgetB extends Component {}
+    class ParentWidget extends Component {
+      static components = { WidgetB: ComponentWidgetB };
+      WidgetB = InstanceWidgetB;
+    }
+    const widget = new ParentWidget();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>Chocolate</span></div>");
+    delete QWeb.components["WidgetB"];
+  });
+
   test("can define components in template without t-component", async () => {
     env.qweb.addTemplates(`
       <templates>

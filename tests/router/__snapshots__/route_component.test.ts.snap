@@ -29,7 +29,7 @@ exports[`RouteComponent can render simple cases 1`] = `
                 utils.defineProxy(vn6, pvnode);
             } else {
                 let componentKey4 = \`routeComponent\`;
-                let W4 = context.constructor.components[componentKey4] || QWeb.components[componentKey4]|| scope['routeComponent'];
+                let W4 = scope['routeComponent'] || context.constructor.components[componentKey4] || QWeb.components[componentKey4];
                 if (!W4) {throw new Error('Cannot find the definition of component \\"' + componentKey4 + '\\"')}
                 w4 = new W4(parent, props4);
                 parent.__owl__.cmap[k5] = w4.__owl__.id;

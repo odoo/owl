@@ -181,15 +181,15 @@
     // Misc types, constants and helpers
     //------------------------------------------------------------------------------
     const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,eval,void,Math,RegExp,Array,Object,Date".split(",");
-    const WORD_REPLACEMENT = {
+    const WORD_REPLACEMENT = Object.assign(Object.create(null), {
         and: "&&",
         or: "||",
         gt: ">",
         gte: ">=",
         lt: "<",
         lte: "<=",
-    };
-    const STATIC_TOKEN_MAP = {
+    });
+    const STATIC_TOKEN_MAP = Object.assign(Object.create(null), {
         "{": "LEFT_BRACE",
         "}": "RIGHT_BRACE",
         "[": "LEFT_BRACKET",
@@ -198,7 +198,7 @@
         ",": "COMMA",
         "(": "LEFT_PAREN",
         ")": "RIGHT_PAREN",
-    };
+    });
     // note that the space after typeof is relevant. It makes sure that the formatted
     // expression has a space after typeof
     const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ".split(",");
@@ -2531,7 +2531,7 @@
             code = ctx.captureExpression(value);
         }
         const modCode = mods.map((mod) => modcodes[mod]).join("");
-        let handler = `function (e) {if (!context.__owl__.isMounted){return}${modCode}${code}}`;
+        let handler = `function (e) {if (context.__owl__.status === ${5 /* DESTROYED */}){return}${modCode}${code}}`;
         if (putInCache) {
             const key = ctx.generateTemplateKey(event);
             ctx.addLine(`extra.handlers[${key}] = extra.handlers[${key}] || ${handler};`);
@@ -3176,7 +3176,7 @@
             // need to update component
             let styleCode = "";
             if (tattStyle) {
-                styleCode = `.then(()=>{if (w${componentID}.__owl__.isDestroyed) {return};w${componentID}.el.style=${tattStyle};});`;
+                styleCode = `.then(()=>{if (w${componentID}.__owl__.status === ${5 /* DESTROYED */}) {return};w${componentID}.el.style=${tattStyle};});`;
             }
             ctx.addLine(`w${componentID}.__updateProps(props${componentID}, extra.fiber, ${scope})${styleCode};`);
             ctx.addLine(`let pvnode = w${componentID}.__owl__.pvnode;`);
@@ -3188,13 +3188,10 @@
             }
             ctx.addElse();
             // new component
-            let dynamicFallback = "";
-            if (!value.match(INTERP_REGEXP)) {
-                dynamicFallback = `|| ${ctx.formatExpression(value)}`;
-            }
+            const contextualValue = value.match(INTERP_REGEXP) ? "false" : ctx.formatExpression(value);
             const interpValue = ctx.interpolate(value);
             ctx.addLine(`let componentKey${componentID} = ${interpValue};`);
-            ctx.addLine(`let W${componentID} = context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}]${dynamicFallback};`);
+            ctx.addLine(`let W${componentID} = ${contextualValue} || context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`);
             // maybe only do this in dev mode...
             ctx.addLine(`if (!W${componentID}) {throw new Error('Cannot find the definition of component "' + componentKey${componentID} + '"')}`);
             ctx.addLine(`w${componentID} = new W${componentID}(parent, props${componentID});`);
@@ -3440,6 +3437,8 @@
          */
         _reuseFiber(oldFiber) {
             oldFiber.cancel(); // cancel children fibers
+            oldFiber.target = this.target || oldFiber.target;
+            oldFiber.position = this.position || oldFiber.position;
             oldFiber.isCompleted = false; // keep the root fiber alive
             oldFiber.isRendered = false; // the fiber has to be re-rendered
             if (oldFiber.child) {
@@ -3519,7 +3518,8 @@
         complete() {
             let component = this.component;
             this.isCompleted = true;
-            if (!this.target && !component.__owl__.isMounted) {
+            const status = component.__owl__.status;
+            if (status === 5 /* DESTROYED */) {
                 return;
             }
             // build patchQueue
@@ -3531,14 +3531,16 @@
             this._walk(doWork);
             const patchLen = patchQueue.length;
             // call willPatch hook on each fiber of patchQueue
-            for (let i = 0; i < patchLen; i++) {
-                const fiber = patchQueue[i];
-                if (fiber.shouldPatch) {
-                    component = fiber.component;
-                    if (component.__owl__.willPatchCB) {
-                        component.__owl__.willPatchCB();
+            if (status === 3 /* MOUNTED */) {
+                for (let i = 0; i < patchLen; i++) {
+                    const fiber = patchQueue[i];
+                    if (fiber.shouldPatch) {
+                        component = fiber.component;
+                        if (component.__owl__.willPatchCB) {
+                            component.__owl__.willPatchCB();
+                        }
+                        component.willPatch();
                     }
-                    component.willPatch();
                 }
             }
             // call __patch on each fiber of (reversed) patchQueue
@@ -3579,8 +3581,9 @@
                         component.__owl__.pvnode.elm = component.__owl__.vnode.elm;
                     }
                 }
-                if (fiber === component.__owl__.currentFiber) {
-                    component.__owl__.currentFiber = null;
+                const compOwl = component.__owl__;
+                if (fiber === compOwl.currentFiber) {
+                    compOwl.currentFiber = null;
                 }
             }
             // insert into the DOM (mount case)
@@ -3598,17 +3601,26 @@
                 this.component.env.qweb.trigger("dom-appended");
             }
             // call patched/mounted hook on each fiber of (reversed) patchQueue
-            for (let i = patchLen - 1; i >= 0; i--) {
-                const fiber = patchQueue[i];
-                component = fiber.component;
-                if (fiber.shouldPatch && !this.target) {
-                    component.patched();
-                    if (component.__owl__.patchedCB) {
-                        component.__owl__.patchedCB();
+            if (status === 3 /* MOUNTED */ || inDOM) {
+                for (let i = patchLen - 1; i >= 0; i--) {
+                    const fiber = patchQueue[i];
+                    component = fiber.component;
+                    if (fiber.shouldPatch && !this.target) {
+                        component.patched();
+                        if (component.__owl__.patchedCB) {
+                            component.__owl__.patchedCB();
+                        }
+                    }
+                    else {
+                        component.__callMounted();
                     }
                 }
-                else if (this.target ? inDOM : true) {
-                    component.__callMounted();
+            }
+            else {
+                for (let i = patchLen - 1; i >= 0; i--) {
+                    const fiber = patchQueue[i];
+                    component = fiber.component;
+                    component.__owl__.status = 4 /* UNMOUNTED */;
                 }
             }
         }
@@ -3840,6 +3852,15 @@
         document.head.appendChild(sheet);
     }
 
+    var STATUS;
+    (function (STATUS) {
+        STATUS[STATUS["CREATED"] = 0] = "CREATED";
+        STATUS[STATUS["WILLSTARTED"] = 1] = "WILLSTARTED";
+        STATUS[STATUS["RENDERED"] = 2] = "RENDERED";
+        STATUS[STATUS["MOUNTED"] = 3] = "MOUNTED";
+        STATUS[STATUS["UNMOUNTED"] = 4] = "UNMOUNTED";
+        STATUS[STATUS["DESTROYED"] = 5] = "DESTROYED";
+    })(STATUS || (STATUS = {}));
     const portalSymbol = Symbol("portal"); // FIXME
     //------------------------------------------------------------------------------
     // Component
@@ -3887,16 +3908,18 @@
                     this.env.browser = browser;
                 }
                 this.env.qweb.on("update", this, () => {
-                    if (this.__owl__.isMounted) {
-                        this.render(true);
-                    }
-                    if (this.__owl__.isDestroyed) {
-                        // this is unlikely to happen, but if a root widget is destroyed,
-                        // we want to remove our subscription.  The usual way to do that
-                        // would be to perform some check in the destroy method, but since
-                        // it is very performance sensitive, and since this is a rare event,
-                        // we simply do it lazily
-                        this.env.qweb.off("update", this);
+                    switch (this.__owl__.status) {
+                        case 3 /* MOUNTED */:
+                            this.render(true);
+                            break;
+                        case 5 /* DESTROYED */:
+                            // this is unlikely to happen, but if a root widget is destroyed,
+                            // we want to remove our subscription.  The usual way to do that
+                            // would be to perform some check in the destroy method, but since
+                            // it is very performance sensitive, and since this is a rare event,
+                            // we simply do it lazily
+                            this.env.qweb.off("update", this);
+                            break;
                     }
                 });
                 depth = 0;
@@ -3908,8 +3931,7 @@
                 depth: depth,
                 vnode: null,
                 pvnode: null,
-                isMounted: false,
-                isDestroyed: false,
+                status: 0 /* CREATED */,
                 parent: parent || null,
                 children: {},
                 cmap: {},
@@ -3931,6 +3953,7 @@
             if (constr.style) {
                 this.__applyStyles(constr);
             }
+            this.setup();
         }
         /**
          * The `el` is the root element of the component.  Note that it could be null:
@@ -3939,6 +3962,16 @@
         get el() {
             return this.__owl__.vnode ? this.__owl__.vnode.elm : null;
         }
+        /**
+         * setup is run just after the component is constructed. This is the standard
+         * location where the component can setup its hooks. It has some advantages
+         * over the constructor:
+         *  - it can be patched (useful in odoo ecosystem)
+         *  - it does not need to propagate the arguments to the super call
+         *
+         * Note: this method should not be called manually.
+         */
+        setup() { }
         /**
          * willStart is an asynchronous hook that can be implemented to perform some
          * action before the initial rendering of a component.
@@ -4017,52 +4050,53 @@
          * Note that a component can be mounted an unmounted several times
          */
         async mount(target, options = {}) {
-            const position = options.position || "last-child";
-            const __owl__ = this.__owl__;
-            if (__owl__.isMounted) {
-                if (position !== "self" && this.el.parentNode !== target) {
-                    // in this situation, we are trying to mount a component on a different
-                    // target. In this case, we need to unmount first, otherwise it will
-                    // not work.
-                    this.unmount();
-                }
-                else {
-                    return Promise.resolve();
-                }
-            }
-            if (__owl__.isDestroyed) {
-                throw new Error("Cannot mount a destroyed component");
-            }
-            if (__owl__.currentFiber) {
-                const currentFiber = __owl__.currentFiber;
-                if (currentFiber.target === target && currentFiber.position === position) {
-                    return scheduler.addFiber(currentFiber);
-                }
-                else {
-                    scheduler.rejectFiber(currentFiber, "Mounting operation cancelled");
-                }
-            }
             if (!(target instanceof HTMLElement || target instanceof DocumentFragment)) {
                 let message = `Component '${this.constructor.name}' cannot be mounted: the target is not a valid DOM node.`;
                 message += `\nMaybe the DOM is not ready yet? (in that case, you can use owl.utils.whenReady)`;
                 throw new Error(message);
             }
-            const fiber = new Fiber(null, this, true, target, position);
-            fiber.shouldPatch = false;
-            if (!__owl__.vnode) {
-                this.__prepareAndRender(fiber, () => { });
+            const position = options.position || "last-child";
+            const __owl__ = this.__owl__;
+            const currentFiber = __owl__.currentFiber;
+            switch (__owl__.status) {
+                case 0 /* CREATED */: {
+                    const fiber = new Fiber(null, this, true, target, position);
+                    fiber.shouldPatch = false;
+                    this.__prepareAndRender(fiber, () => { });
+                    return scheduler.addFiber(fiber);
+                }
+                case 1 /* WILLSTARTED */:
+                case 2 /* RENDERED */:
+                    currentFiber.target = target;
+                    currentFiber.position = position;
+                    return scheduler.addFiber(currentFiber);
+                case 4 /* UNMOUNTED */: {
+                    const fiber = new Fiber(null, this, true, target, position);
+                    fiber.shouldPatch = false;
+                    this.__render(fiber);
+                    return scheduler.addFiber(fiber);
+                }
+                case 3 /* MOUNTED */: {
+                    if (position !== "self" && this.el.parentNode !== target) {
+                        const fiber = new Fiber(null, this, true, target, position);
+                        fiber.shouldPatch = false;
+                        this.__render(fiber);
+                        return scheduler.addFiber(fiber);
+                    }
+                    else {
+                        return Promise.resolve();
+                    }
+                }
+                case 5 /* DESTROYED */:
+                    throw new Error("Cannot mount a destroyed component");
             }
-            else {
-                this.__render(fiber);
-            }
-            return scheduler.addFiber(fiber);
         }
         /**
          * The unmount method is the opposite of the mount method.  It is useful
          * to call willUnmount calls and remove the component from the DOM.
          */
         unmount() {
-            if (this.__owl__.isMounted) {
+            if (this.__owl__.status === 3 /* MOUNTED */) {
                 this.__callWillUnmount();
                 this.el.remove();
             }
@@ -4079,10 +4113,7 @@
         async render(force = false) {
             const __owl__ = this.__owl__;
             const currentFiber = __owl__.currentFiber;
-            if (!__owl__.isMounted && !currentFiber) {
-                // if we get here, this means that the component was either never mounted,
-                // or was unmounted and some state change  triggered a render. Either way,
-                // we do not want to actually render anything in this case.
+            if (!__owl__.vnode && !currentFiber) {
                 return;
             }
             if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
@@ -4091,15 +4122,13 @@
             // if we aren't mounted at this point, it implies that there is a
             // currentFiber that is already rendered (isRendered is true), so we are
             // about to be mounted
-            const isMounted = __owl__.isMounted;
+            const status = __owl__.status;
             const fiber = new Fiber(null, this, force, null, null);
             Promise.resolve().then(() => {
-                if (__owl__.isMounted || !isMounted) {
-                    if (fiber.isCompleted) {
+                if (__owl__.status === 3 /* MOUNTED */ || status !== 3 /* MOUNTED */) {
+                    if (fiber.isCompleted || fiber.isRendered) {
                         return;
                     }
-                    // we are mounted (__owl__.isMounted), or if we are currently being
-                    // mounted (!isMounted), so we call __render
                     this.__render(fiber);
                 }
                 else {
@@ -4123,7 +4152,7 @@
          */
         destroy() {
             const __owl__ = this.__owl__;
-            if (!__owl__.isDestroyed) {
+            if (__owl__.status !== 5 /* DESTROYED */) {
                 const el = this.el;
                 this.__destroy(__owl__.parent);
                 if (el) {
@@ -4164,13 +4193,12 @@
          */
         __destroy(parent) {
             const __owl__ = this.__owl__;
-            const isMounted = __owl__.isMounted;
-            if (isMounted) {
+            if (__owl__.status === 3 /* MOUNTED */) {
                 if (__owl__.willUnmountCB) {
                     __owl__.willUnmountCB();
                 }
                 this.willUnmount();
-                __owl__.isMounted = false;
+                __owl__.status = 4 /* UNMOUNTED */;
             }
             const children = __owl__.children;
             for (let key in children) {
@@ -4181,7 +4209,7 @@
                 delete parent.__owl__.children[id];
                 __owl__.parent = null;
             }
-            __owl__.isDestroyed = true;
+            __owl__.status = 5 /* DESTROYED */;
             delete __owl__.vnode;
             if (__owl__.currentFiber) {
                 __owl__.currentFiber.isCompleted = true;
@@ -4189,7 +4217,7 @@
         }
         __callMounted() {
             const __owl__ = this.__owl__;
-            __owl__.isMounted = true;
+            __owl__.status = 3 /* MOUNTED */;
             __owl__.currentFiber = null;
             this.mounted();
             if (__owl__.mountedCB) {
@@ -4202,7 +4230,7 @@
                 __owl__.willUnmountCB();
             }
             this.willUnmount();
-            __owl__.isMounted = false;
+            __owl__.status = 4 /* UNMOUNTED */;
             if (__owl__.currentFiber) {
                 __owl__.currentFiber.isCompleted = true;
                 __owl__.currentFiber.root.counter = 0;
@@ -4210,7 +4238,7 @@
             const children = __owl__.children;
             for (let id in children) {
                 const comp = children[id];
-                if (comp.__owl__.isMounted) {
+                if (comp.__owl__.status === 3 /* MOUNTED */) {
                     comp.__callWillUnmount();
                 }
             }
@@ -4330,17 +4358,23 @@
         }
         async __prepareAndRender(fiber, cb) {
             try {
-                await Promise.all([this.willStart(), this.__owl__.willStartCB && this.__owl__.willStartCB()]);
+                const proms = Promise.all([
+                    this.willStart(),
+                    this.__owl__.willStartCB && this.__owl__.willStartCB(),
+                ]);
+                this.__owl__.status = 1 /* WILLSTARTED */;
+                await proms;
+                if (this.__owl__.status === 5 /* DESTROYED */) {
+                    return Promise.resolve();
+                }
             }
             catch (e) {
                 fiber.handleError(e);
                 return Promise.resolve();
             }
-            if (this.__owl__.isDestroyed) {
-                return Promise.resolve();
-            }
             if (!fiber.isCompleted) {
                 this.__render(fiber);
+                this.__owl__.status = 2 /* RENDERED */;
                 cb();
             }
         }
@@ -4362,7 +4396,7 @@
                 for (let childKey in __owl__.children) {
                     const child = __owl__.children[childKey];
                     const childOwl = child.__owl__;
-                    if (!childOwl.isMounted && childOwl.parentLastFiberId < fiber.id) {
+                    if (childOwl.status !== 3 /* MOUNTED */ && childOwl.parentLastFiberId < fiber.id) {
                         // we only do here a "soft" destroy, meaning that we leave the child
                         // dom node alone, without removing it.  Most of the time, it does not
                         // matter, because the child component is already unmounted.  However,
@@ -4406,16 +4440,6 @@
             fiber.isRendered = true;
             if (error) {
                 fiber.handleError(error);
-            }
-        }
-        /**
-         * Only called by qweb t-component directive (when t-keepalive is set)
-         */
-        __remount() {
-            const __owl__ = this.__owl__;
-            if (!__owl__.isMounted) {
-                __owl__.isMounted = true;
-                this.mounted();
             }
         }
         /**
@@ -5364,9 +5388,9 @@
     exports.utils = utils;
 
 
-    __info__.version = '1.2.1';
-    __info__.date = '2021-01-08T14:31:35.573Z';
-    __info__.hash = '25738a1';
+    __info__.version = '1.2.5';
+    __info__.date = '2021-05-18T08:01:47.651Z';
+    __info__.hash = '968a546';
     __info__.url = 'https://github.com/odoo/owl';
 
 

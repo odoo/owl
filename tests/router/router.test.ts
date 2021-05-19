@@ -1,6 +1,6 @@
 import { Destination, RouterEnv, Route } from "../../src/router/router";
 import { makeTestEnv, nextTick } from "../helpers";
-import { TestRouter } from "./test_router";
+import { TestRouter, getRouteParams } from "./test_router";
 
 let env: RouterEnv;
 let router: TestRouter | null = null;
@@ -107,60 +107,64 @@ describe("destToPath", () => {
 
 describe("getRouteParams", () => {
   test("properly match simple routes", () => {
-    router = new TestRouter(env, []);
     // simple route
-    expect(router["getRouteParams"]({ path: "/home" } as Route, "/home")).toEqual({});
+    expect(getRouteParams({ path: "/home" }, "/home")).toEqual({});
 
     // no match
-    expect(router["getRouteParams"]({ path: "/home" } as Route, "/otherpath")).toEqual(false);
+    expect(getRouteParams({ path: "/home" }, "/otherpath")).toEqual(false);
 
     // fallback route
-    expect(router["getRouteParams"]({ path: "*" } as Route, "somepath")).toEqual({});
+    expect(getRouteParams({ path: "*" }, "somepath")).toEqual({});
   });
 
   test("properly match simple routes, mode hash", () => {
-    router = new TestRouter(env, [], { mode: "hash" });
     // simple route
-    expect(router["getRouteParams"]({ path: "/home" } as Route, "#/home")).toEqual({});
+    expect(getRouteParams({ path: "/home" }, "#/home")).toEqual({});
 
     // no match
-    expect(router["getRouteParams"]({ path: "/home" } as Route, "#/otherpath")).toEqual(false);
+    expect(getRouteParams({ path: "/home" }, "#/otherpath")).toEqual(false);
 
     // fallback route
-    expect(router["getRouteParams"]({ path: "*" } as Route, "#/somepath")).toEqual({});
+    expect(getRouteParams({ path: "*" }, "#/somepath")).toEqual({});
   });
 
   test("match some parameterized routes", () => {
-    router = new TestRouter(env, []);
-    expect(router["getRouteParams"]({ path: "/invoices/{{id}}" } as Route, "/invoices/3")).toEqual({
+    expect(getRouteParams({ path: "/invoices/{{id}}" }, "/invoices/3")).toEqual({
       id: "3",
     });
   });
 
   test("match some parameterized routes, mode hash", () => {
-    router = new TestRouter(env, [], { mode: "hash" });
-    expect(router["getRouteParams"]({ path: "/invoices/{{id}}" } as Route, "#/invoices/3")).toEqual(
-      {
-        id: "3",
-      }
-    );
+    expect(getRouteParams({ path: "/invoices/{{id}}" }, "#/invoices/3")).toEqual({
+      id: "3",
+    });
   });
 
   test("can convert to number if needed", () => {
-    router = new TestRouter(env, []);
-    expect(
-      router["getRouteParams"]({ path: "/invoices/{{id.number}}" } as Route, "/invoices/3")
-    ).toEqual({
+    expect(getRouteParams({ path: "/invoices/{{id.number}}" }, "/invoices/3")).toEqual({
       id: 3,
     });
   });
 
   test("can convert to number if needed, mode: hash", () => {
-    router = new TestRouter(env, [], { mode: "hash" });
+    expect(getRouteParams({ path: "/invoices/{{id.number}}" }, "#/invoices/3")).toEqual({
+      id: 3,
+    });
+  });
+
+  test("can extract params not separated by slashes", () => {
+    expect(getRouteParams({ path: "/books/{{id.number}}-{{name}}" }, "/books/3-1984")).toEqual({
+      id: 3,
+      name: "1984",
+    });
+  });
+
+  test("can extract params not separated by slashes, mode: hash", () => {
     expect(
-      router["getRouteParams"]({ path: "/invoices/{{id.number}}" } as Route, "#/invoices/3")
+      getRouteParams({ path: "books&id={{id.number}}&name={{name}}" }, "#books&id=3&name=1984")
     ).toEqual({
       id: 3,
+      name: "1984",
     });
   });
 });

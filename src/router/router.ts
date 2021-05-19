@@ -11,6 +11,7 @@ type NavigationGuard = (info: {
 export interface Route {
   name: string;
   path: string;
+  extractionRegExp: RegExp;
   component?: any;
   redirect?: Destination;
   params: string[];
@@ -54,6 +55,7 @@ export interface EnvWithRouter extends Env {
 }
 
 const paramRegexp = /\{\{(.*?)\}\}/;
+const globalParamRegexp = new RegExp(paramRegexp.source, "g");
 
 export class Router {
   currentRoute: Route | null = null;
@@ -87,6 +89,7 @@ export class Router {
         this.validateDestination(partialRoute.redirect);
       }
       partialRoute.params = partialRoute.path ? findParams(partialRoute.path) : [];
+      partialRoute.extractionRegExp = makeExtractionRegExp(partialRoute.path);
       this.routes[partialRoute.name] = partialRoute as Route;
       this.routeIds.push(partialRoute.name);
     }
@@ -170,19 +173,14 @@ export class Router {
   }
 
   private routeToPath(route: Route, params: RouteParams): string {
-    const path = route.path;
-    const parts = path.split("/");
-    const l = parts.length;
-    for (let i = 0; i < l; i++) {
-      const part = parts[i];
-      const match = part.match(paramRegexp);
-      if (match) {
-        const key = match[1].split(".")[0];
-        parts[i] = <string>params[key];
-      }
-    }
     const prefix = this.mode === "hash" ? "#" : "";
-    return prefix + parts.join("/");
+    return (
+      prefix +
+      route.path.replace(globalParamRegexp, (match, param) => {
+        const [key] = param.split(".");
+        return <string>params[key];
+      })
+    );
   }
 
   private currentPath(): string {
@@ -244,40 +242,47 @@ export class Router {
     if (path.startsWith("#")) {
       path = path.slice(1);
     }
-    const descrParts = route.path.split("/");
-    const targetParts = path.split("/");
-    const l = descrParts.length;
-    if (l !== targetParts.length) {
+    const paramsMatch = path.match(route.extractionRegExp);
+    if (!paramsMatch) {
       return false;
     }
     const result = {};
-    for (let i = 0; i < l; i++) {
-      const descr = descrParts[i];
-      let target: string | number = targetParts[i];
-      const match = descr.match(paramRegexp);
-      if (match) {
-        const [key, suffix] = match[1].split(".");
-        if (suffix === "number") {
-          target = parseInt(target, 10);
-        }
-        result[key] = target;
-      } else if (descr !== target) {
-        return false;
+    route.params.forEach((param, index) => {
+      const [key, suffix] = param.split(".");
+      const paramValue = paramsMatch[index + 1];
+      if (suffix === "number") {
+        return (result[key] = parseInt(paramValue, 10));
       }
-    }
+      return (result[key] = paramValue);
+    });
     return result;
   }
 }
 
 function findParams(str: string): string[] {
-  const globalParamRegexp = /\{\{(.*?)\}\}/g;
   const result: string[] = [];
   let m;
   do {
     m = globalParamRegexp.exec(str);
     if (m) {
-      result.push(m[1].split(".")[0]);
+      result.push(m[1]);
     }
   } while (m);
   return result;
+}
+
+function escapeRegExp(str: string) {
+  return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
+function makeExtractionRegExp(path: string) {
+  // replace param strings with capture groups so that we can build a regex to match over the path
+  const extractionString = path
+    .split(paramRegexp)
+    .map((part, index) => {
+      return index % 2 ? "(.*)" : escapeRegExp(part);
+    })
+    .join("");
+  // Example: /home/{{param1}}/{{param2}} => ^\/home\/(.*)\/(.*)$
+  return new RegExp(`^${extractionString}$`);
 }

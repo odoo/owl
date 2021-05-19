@@ -103,4 +103,26 @@ describe("RouteComponent", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>Book 1984|124</span></div>");
   });
+
+  test("can render parameterized route where params are not separated by slashes", async () => {
+    env.qweb.addTemplates(`
+        <templates>
+            <div t-name="App">
+                <RouteComponent />
+            </div>
+            <span t-name="Book">Book <t t-esc="props.title"/>|<t t-esc="props.val"/></span>
+        </templates>
+    `);
+    class Book extends Component {}
+    class App extends Component {
+      static components = { RouteComponent };
+    }
+
+    const routes = [{ name: "book", path: "/#title={{title}}&val={{val.number}}", component: Book }];
+    router = new TestRouter(env, routes, { mode: "hash" });
+    await router.navigate({ to: "book", params: { title: "1984", val: "123" } });
+    const app = new App();
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>Book 1984|123</span></div>");
+  });
 });

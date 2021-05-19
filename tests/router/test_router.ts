@@ -1,4 +1,5 @@
-import { Router } from "../../src/router/router";
+import { Router, Route, RouterEnv } from "../../src/router/router";
+import { makeTestEnv } from "../helpers";
 import { QWeb } from "../../src/qweb/index";
 
 export class TestRouter extends Router {
@@ -12,4 +13,11 @@ export class TestRouter extends Router {
       }
     }
   }
+}
+
+export function getRouteParams(route: Partial<Route>, path: string) {
+  const env = <RouterEnv>makeTestEnv();
+  const router = new TestRouter(env, [route])
+  const {routeIds: [routeId], routes} = router;
+  return router["getRouteParams"](routes[routeId], path);
 }

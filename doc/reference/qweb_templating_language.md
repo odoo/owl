@@ -13,6 +13,7 @@
   - [Setting Variables](#setting-variables)
   - [Conditionals](#conditionals)
   - [Dynamic Attributes](#dynamic-attributes)
+  - [Dynamic Tag Names](#dynamic-tag-names)
   - [Loops](#loops)
   - [Rendering Sub Templates](#rendering-sub-templates)
   - [Dynamic Sub Templates](#dynamic-sub-templates)
@@ -76,6 +77,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-transition`           | [Defining an animation](animations.md#css-transitions)                          |
 | `t-slot`                 | [Rendering a slot](slots.md)                                                    |
 | `t-model`                | [Form input bindings](component.md#form-input-bindings)                         |
+| `t-tag`                  | [Rendering nodes with dynamic tag name](#dynamic-tag-names)                     |
 
 ## Reference
 
@@ -323,6 +325,22 @@ values) or a pair `[key, value]`. For example:
 
 <div t-att="['a', 'b']"/> <!-- <div a="b"></div> -->
 ```
+
+### Dynamic tag names
+
+When writing generic components or templates, the specific concrete tag for an
+HTML element is not known yet. In those situations, the `t-tag` directive is
+useful. It simply evaluates dynamically an expression to use as a tag name. The
+template:
+
+```xml
+<t t-tag="tag">
+    <span>content</span>
+</t>
+```
+
+will be rendered as `<div><span>content</span></div>` if the `tag` context key
+is set to `div`.
 
 ### Loops
 

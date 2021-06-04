@@ -203,6 +203,7 @@ export class QWeb extends EventBus {
     att: 1,
     attf: 1,
     translation: 1,
+    tag: 1,
   };
   static DIRECTIVES: Directive[] = [];
 
@@ -614,7 +615,7 @@ export class QWeb extends EventBus {
       }
     }
 
-    if (node.nodeName !== "t") {
+    if (node.nodeName !== "t" || node.hasAttribute("t-tag")) {
       let nodeID = this._compileGenericNode(node, ctx, withHandlers);
       ctx = ctx.withParent(nodeID);
       let nodeHooks = {};
@@ -841,7 +842,14 @@ export class QWeb extends EventBus {
       ctx.addLine(`}`);
       ctx.closeIf();
     }
-    ctx.addLine(`let vn${nodeID} = h('${node.nodeName}', p${nodeID}, c${nodeID});`);
+    let nodeName = `'${node.nodeName}'`;
+    if ((<Element>node).hasAttribute("t-tag")) {
+      const tagExpr = (<Element>node).getAttribute("t-tag");
+      (<Element>node).removeAttribute("t-tag");
+      nodeName = `tag${ctx.generateID()}`;
+      ctx.addLine(`let ${nodeName} = ${ctx.formatExpression(tagExpr)};`);
+    }
+    ctx.addLine(`let vn${nodeID} = h(${nodeName}, p${nodeID}, c${nodeID});`);
     if (ctx.parentNode) {
       ctx.addLine(`c${ctx.parentNode}.push(vn${nodeID});`);
     } else if (ctx.loopNumber || ctx.hasKey0) {

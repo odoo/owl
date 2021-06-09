@@ -281,7 +281,7 @@ QWeb.addDirective({
 
     // Step 4: add the appropriate function call to current component
     // ------------------------------------------------
-    const parentComponent = `utils.getComponent(context)`;
+    const parentComponent = ctx.rootContext.shouldDefineParent ? `parent` : `utils.getComponent(context)`;
     const key = ctx.generateTemplateKey();
     const parentNode = ctx.parentNode ? `c${ctx.parentNode}` : "result";
     const extra = `Object.assign({}, extra, {parentNode: ${parentNode}, parent: ${parentComponent}, key: ${key}})`;

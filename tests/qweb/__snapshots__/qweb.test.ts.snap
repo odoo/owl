@@ -1514,6 +1514,7 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
 ) {
     // Template name: \\"recursive\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c3 = extra.parentNode;
@@ -1530,7 +1531,7 @@ exports[`t-call (template calling recursive template, part 1 2`] = `
         scope = Object.create(scope);
         scope.__access_mode__ = 'ro';
         let k7 = \`__7__\${key0}__\`;
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c4, parent: utils.getComponent(context), key: k7}));
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c4, parent: parent, key: k7}));
         scope = _origScope6;
     }
 }"
@@ -1566,6 +1567,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
 ) {
     // Template name: \\"nodeTemplate\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c2 = extra.parentNode;
@@ -1607,7 +1609,7 @@ exports[`t-call (template calling recursive template, part 2 2`] = `
                 scope[utils.zero] = c__0;
             }
             let k11 = \`__11__\${key0}__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k11}));
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: parent, key: k11}));
         }
         scope = _origScope10;
     }
@@ -1645,6 +1647,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
 ) {
     // Template name: \\"nodeTemplate\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c2 = extra.parentNode;
@@ -1686,7 +1689,7 @@ exports[`t-call (template calling recursive template, part 3 2`] = `
                 scope[utils.zero] = c__0;
             }
             let k11 = \`__11__\${key0}__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k11}));
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: parent, key: k11}));
         }
         scope = _origScope10;
     }
@@ -1725,6 +1728,7 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
 ) {
     // Template name: \\"nodeTemplate\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c2 = extra.parentNode;
@@ -1771,7 +1775,7 @@ exports[`t-call (template calling recursive template, part 4: with t-set recursi
                 scope[utils.zero] = c__0;
             }
             let k11 = \`__11__\${key0}__\${key1}__\`;
-            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: utils.getComponent(context), key: k11}));
+            this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c3, parent: parent, key: k11}));
         }
         scope = _origScope10;
     }

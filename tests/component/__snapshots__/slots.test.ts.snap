@@ -68,6 +68,7 @@ exports[`t-slot directive can define and call slots 3`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_header_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
@@ -81,6 +82,7 @@ exports[`t-slot directive can define and call slots 4`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_footer_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c6 = extra.parentNode;
     let c7 = [], p7 = {key:7};
@@ -158,6 +160,7 @@ exports[`t-slot directive can define and call slots using old t-set keyword 3`] 
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_header_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
@@ -171,6 +174,7 @@ exports[`t-slot directive can define and call slots using old t-set keyword 4`] 
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_footer_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c6 = extra.parentNode;
     let c7 = [], p7 = {key:7};
@@ -184,6 +188,7 @@ exports[`t-slot directive content is the default slot 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_default_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
@@ -214,6 +219,7 @@ exports[`t-slot directive default slot work with text nodes 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_default_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c4 = extra.parentNode;
     c4.push({text: \`sts rocks\`});
@@ -243,6 +249,7 @@ exports[`t-slot directive multiple roots are allowed in a default slot 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_default_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
@@ -260,6 +267,7 @@ exports[`t-slot directive multiple roots are allowed in a named slot 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_content_template\\"
+    let parent = extra.parent;
     let h = this.h;
     let c4 = extra.parentNode;
     let c5 = [], p5 = {key:5};
@@ -295,6 +303,7 @@ exports[`t-slot directive refs are properly bound in slots 1`] = `
 ) {
     // Template name: \\"slot_footer_template\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     context.__owl__.refs = context.__owl__.refs || {};
     let h = this.h;
     let c8 = extra.parentNode;
@@ -321,6 +330,7 @@ exports[`t-slot directive slots are rendered with proper context 1`] = `
 ) {
     // Template name: \\"slot_footer_template\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let h = this.h;
     let c8 = extra.parentNode;
     let c9 = [], p9 = {key:9,on:{}};
@@ -418,6 +428,7 @@ exports[`t-slot directive slots are rendered with proper context, part 2 3`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_default_template\\"
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c10 = extra.parentNode;
@@ -516,6 +527,7 @@ exports[`t-slot directive slots are rendered with proper context, part 3 3`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_default_template\\"
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c10 = extra.parentNode;
@@ -570,6 +582,7 @@ exports[`t-slot directive slots are rendered with proper context, part 4 2`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"slot_default_template\\"
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c4 = extra.parentNode;

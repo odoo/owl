@@ -436,6 +436,7 @@ export class QWeb extends EventBus {
       ctx.variables = Object.create(null);
       ctx.parentNode = ctx.generateID();
       ctx.allowMultipleRoots = true;
+      ctx.shouldDefineParent = true;
       ctx.hasParentWidget = true;
       ctx.shouldDefineResult = false;
       ctx.addLine(`let c${ctx.parentNode} = extra.parentNode;`);

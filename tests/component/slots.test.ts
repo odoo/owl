@@ -1118,4 +1118,35 @@ describe("t-slot directive", () => {
 
     expect(env.qweb.templates[Toggler.template].fn.toString()).toMatchSnapshot();
   });
+
+  test("t-slot within dynamic t-call", async () => {
+    let child;
+    class Child extends Component {
+      static template = xml`<div class="child"/>`;
+      constructor(...args) {
+        super(...args);
+        child = this;
+      }
+    }
+
+    class Slotted extends Component {
+      static template = xml`<div class="slotted"><t t-slot="default" /></div>`;
+    }
+
+    class UsingTcallInSlotted extends Component {
+      tcallTemplate =  xml`<div class="slot"><Child/></div>`;
+      static template = xml`
+      <div>
+        <Slotted>
+          <t t-call="{{ tcallTemplate }}"/>
+        </Slotted>
+      </div>`;
+      static components = { Slotted , Child };
+    }
+
+    await mount(UsingTcallInSlotted, {target: fixture});
+
+    expect(child.__owl__.parent).toBeInstanceOf(Slotted);
+    expect(fixture.innerHTML).toBe(`<div><div class="slotted"><div class="slot"><div class="child"></div></div></div></div>`);
+  });
 });

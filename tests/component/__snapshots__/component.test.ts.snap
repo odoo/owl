@@ -1573,6 +1573,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 ) {
     // Template name: \\"sub\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let h = this.h;
     let c2 = extra.parentNode;
     let key0 = extra.key || \\"\\";
@@ -1591,6 +1592,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
 ) {
     // Template name: \\"sub\\"
     let utils = this.constructor.utils;
+    let parent = extra.parent;
     let scope = Object.create(context);
     let h = this.h;
     let c2 = extra.parentNode;

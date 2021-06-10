@@ -1134,19 +1134,21 @@ describe("t-slot directive", () => {
     }
 
     class UsingTcallInSlotted extends Component {
-      tcallTemplate =  xml`<div class="slot"><Child/></div>`;
+      tcallTemplate = xml`<div class="slot"><Child/></div>`;
       static template = xml`
       <div>
         <Slotted>
           <t t-call="{{ tcallTemplate }}"/>
         </Slotted>
       </div>`;
-      static components = { Slotted , Child };
+      static components = { Slotted, Child };
     }
 
-    await mount(UsingTcallInSlotted, {target: fixture});
+    await mount(UsingTcallInSlotted, { target: fixture });
 
     expect(child.__owl__.parent).toBeInstanceOf(Slotted);
-    expect(fixture.innerHTML).toBe(`<div><div class="slotted"><div class="slot"><div class="child"></div></div></div></div>`);
+    expect(fixture.innerHTML).toBe(
+      `<div><div class="slotted"><div class="slot"><div class="child"></div></div></div></div>`
+    );
   });
 });

@@ -326,16 +326,30 @@ export class Fiber {
 
     const qweb = component.env.qweb;
     let root = component;
-    let canCatch = false;
-    while (component && !(canCatch = !!component.catchError)) {
-      root = component;
-      component = component.__owl__.parent!;
-    }
-    qweb.trigger("error", error);
 
-    if (canCatch) {
-      component.catchError!(error);
-    } else {
+    function handle(error) {
+      let canCatch = false;
+      qweb.trigger("error", error);
+      while (component && !(canCatch = !!component.catchError)) {
+        root = component;
+        component = component.__owl__.parent!;
+      }
+      if (canCatch) {
+        try {
+          component.catchError!(error);
+        } catch (e) {
+          root = component;
+          component = component.__owl__.parent!;
+          return handle(e);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    let isHandled = handle(error);
+
+    if (!isHandled) {
       // the 3 next lines aim to mark the root fiber as being in error, and
       // to force it to end, without waiting for its children
       this.root.counter = 0;

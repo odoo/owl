@@ -1,4 +1,4 @@
-import { Component, Env, STATUS } from "../../src/component/component";
+import { Component, Env, mount, STATUS } from "../../src/component/component";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { makeTestEnv, makeTestFixture, nextTick } from "../helpers";
@@ -519,5 +519,71 @@ describe("component error handling (catchError)", () => {
     }
     expect(error).toBeDefined();
     expect(error.message).toBe("Cannot read property 'y' of undefined");
+  });
+
+  test("simple catchError", async () => {
+    class Boom extends Component {
+      static template = xml`<div t-esc="a.b.c"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-if="error">Error</t>
+          <t t-else="">
+            <Boom />
+          </t>
+        </div>`;
+      static components = { Boom };
+
+      error = false;
+
+      catchError(error) {
+        this.error = error;
+        this.render();
+      }
+    }
+
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>Error</div>");
+  });
+
+  test("catchError in catchError", async () => {
+    class Boom extends Component {
+      static template = xml`<div t-esc="a.b.c"/>`;
+    }
+
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <Boom />
+        </div>`;
+      static components = { Boom };
+
+      catchError(error) {
+        throw error;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-if="error">Error</t>
+          <t t-else="">
+            <Child />
+          </t>
+        </div>`;
+      static components = { Child };
+
+      error = false;
+
+      catchError(error) {
+        this.error = error;
+        this.render();
+      }
+    }
+
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>Error</div>");
   });
 });

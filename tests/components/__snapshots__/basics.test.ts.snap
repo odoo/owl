@@ -1,89 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`basics Multi root component 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  class Block1 extends BStatic {
-    static el = elem(\`<span>1</span>\`);
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<span>2</span>\`);
-  }
-  
-  return ctx => {
-    const b1 = new BMulti(3);
-    const b2 = b1.children[0] = new Block1();
-    b1.children[1] = new BText(\`text\`);
-    const b3 = b1.children[2] = new Block2();
-    return b1;
-  }
-}"
-`;
-
-exports[`basics a class component inside a class component 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  class Block1 extends BNode {
-    static el = elem(\`<span><owl-anchor/></span>\`);
-    children = new Array(1);
-    anchors = new Array(1);
-    build() {
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  return ctx => {
-    const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics a class component inside a class component, no external dom 1`] = `
+exports[`basics can mount a component with just some text 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    const b1 = new BText(\`just text\`);
     return b1;
   }
 }"
 `;
 
-exports[`basics can handle empty props 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  class Block1 extends BNode {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    anchors = new Array(1);
-    build() {
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  return ctx => {
-    const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics can mount a simple class component 1`] = `
+exports[`basics can mount a simple component 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
@@ -100,105 +30,37 @@ exports[`basics can mount a simple class component 1`] = `
 }"
 `;
 
-exports[`basics cannot be clicked on and updated if not in DOM 1`] = `
+exports[`basics can mount a simple component with multiple roots 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span/>\`);
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    const b3 = b1.children[1] = new Block2();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
   
   class Block1 extends BNode {
-    static el = elem(\`<div><owl-text/><button>Inc</button></div>\`);
-    data = new Array(1);
-    handlers = new Array(1);
-    build() {
-      this.setupHandler(this.el.firstChild.nextSibling, 0);
-    }
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
-    }
-  }
-  
-  return ctx => {
-    ctx = Object.create(ctx);
-    ctx[scope] = 1;
-    const b1 = new Block1();
-    b1.data[0] = ctx['state'].counter;
-    const v1 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v1.counter++, ctx];
-    return b1;
-  }
-}"
-`;
-
-exports[`basics child can be updated 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  return ctx => {
-    const b1 = new BText(ctx['props'].value);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics child can be updated 2`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics class component with dynamic text 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  class Block1 extends BNode {
-    static el = elem(\`<span>My value: <owl-text/></span>\`);
-    data = new Array(1);
-    update() {
-      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
-    }
-  }
-  
-  return ctx => {
-    const b1 = new Block1();
-    b1.data[0] = ctx['value'];
-    return b1;
-  }
-}"
-`;
-
-exports[`basics class parent, class child component with props 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics class parent, class child component with props 2`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  class Block1 extends BNode {
-    static el = elem(\`<div><owl-text/></div>\`);
+    static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update() {
       this.el.firstChild.textContent = toString(this.data[0]);
@@ -208,50 +70,6 @@ exports[`basics class parent, class child component with props 2`] = `
   return ctx => {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
-    return b1;
-  }
-}"
-`;
-
-exports[`basics parent, child and grandchild 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics two child components 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  return ctx => {
-    const b1 = new BMulti(2);
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
-    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx);
-    return b1;
-  }
-}"
-`;
-
-exports[`basics zero or one child components 1`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
-  
-  return ctx => {
-    const b1 = new BMulti(1);
-    if (ctx['state'].hasChild) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
-    }
     return b1;
   }
 }"

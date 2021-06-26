@@ -1,5 +1,5 @@
 import { BDom, Blocks } from "../src/bdom";
-import { Context, UTILS } from "../src/context";
+import { App, UTILS } from "../src/app";
 import { globalTemplates } from "../src/tags";
 import { compileTemplate, Template } from "../src/compiler/index";
 
@@ -53,7 +53,7 @@ export function renderToString(template: string, context: any = {}): string {
   return fixture.innerHTML;
 }
 
-export class TestContext extends Context {
+export class TestContext extends App {
   renderToString(name: string, context: any = {}): string {
     const renderFn = this.getTemplate(name);
     const bdom = renderFn(context);

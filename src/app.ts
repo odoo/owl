@@ -22,7 +22,7 @@ export const UTILS = {
   callSlot,
 };
 
-export class Context {
+export class App {
   rawTemplates: { [name: string]: string } = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
   utils: typeof UTILS;

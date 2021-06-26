@@ -1,4 +1,4 @@
-import { Context } from "../../src/context";
+import { App } from "../../src/app";
 import { makeTestFixture, renderToBdom, renderToString, snapshotTemplateCode } from "../helpers";
 
 // -----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ describe("t-on", () => {
 
   test("handler is bound to proper owner, part 3", () => {
     expect.assertions(3);
-    const context = new Context();
+    const context = new App();
     const sub = `<button t-on-click="add">Click</button>`;
     const main = `<t t-call="sub"/>`;
     context.addTemplate("sub", sub);
@@ -169,7 +169,7 @@ describe("t-on", () => {
 
   test("handler is bound to proper owner, part 4", () => {
     expect.assertions(3);
-    const context = new Context();
+    const context = new App();
     const sub = `<button t-on-click="add">Click</button>`;
     const main = `
         <t t-foreach="[1]" t-as="value" t-key="value">
@@ -255,11 +255,11 @@ describe("t-on", () => {
 
   test("t-on with t-call", async () => {
     expect.assertions(3);
-    const context = new Context();
+    const app = new App();
     const sub = `<p t-on-click="update">lucas</p>`;
     const main = `<div><t t-call="sub"/></div>`;
-    context.addTemplate("sub", sub);
-    context.addTemplate("main", main);
+    app.addTemplate("sub", sub);
+    app.addTemplate("main", main);
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
 
@@ -270,7 +270,7 @@ describe("t-on", () => {
     };
 
     const fixture = makeTestFixture();
-    const render = context.getTemplate("main");
+    const render = app.getTemplate("main");
     const bdom = render(owner);
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();
@@ -278,11 +278,11 @@ describe("t-on", () => {
 
   test("t-on, with arguments and t-call", async () => {
     expect.assertions(4);
-    const context = new Context();
+    const app = new App();
     const sub = `<p t-on-click="update(value)">lucas</p>`;
     const main = `<div><t t-call="sub"/></div>`;
-    context.addTemplate("sub", sub);
-    context.addTemplate("main", main);
+    app.addTemplate("sub", sub);
+    app.addTemplate("main", main);
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
 
@@ -295,7 +295,7 @@ describe("t-on", () => {
     };
 
     const fixture = makeTestFixture();
-    const render = context.getTemplate("main");
+    const render = app.getTemplate("main");
     const bdom = render(owner);
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();

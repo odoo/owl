@@ -1,4 +1,4 @@
-import { Context } from "../../src/context";
+import { App } from "../../src/app";
 import { renderToString, TestContext, compile } from "../helpers";
 
 // -----------------------------------------------------------------------------
@@ -7,12 +7,12 @@ import { renderToString, TestContext, compile } from "../helpers";
 
 describe("basic validation", () => {
   test("error if no template with given name", () => {
-    const context = new Context();
+    const context = new App();
     expect(() => context.getTemplate("invalidname")).toThrow("Missing template");
   });
 
   test("cannot add twice the same template", () => {
-    const context = new Context();
+    const context = new App();
     expect(() => context.addTemplate("test", "<div/>", true)).not.toThrow("already defined");
     expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
   });

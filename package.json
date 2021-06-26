@@ -61,6 +61,7 @@
       "<rootDir>/src",
       "<rootDir>/tests"
     ],
+    "setupFiles": ["./tests/mocks/mockEventTarget.js"],
     "transform": {
       "^.+\\.ts?$": "ts-jest"
     },

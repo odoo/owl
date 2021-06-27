@@ -4,7 +4,7 @@ exports[`t-esc div with falsy values 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><p><owl-text/></p><p><owl-text/></p><p><owl-text/></p><p><owl-text/></p><p><owl-text/></p></div>\`);
@@ -38,7 +38,7 @@ exports[`t-esc escaping 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -60,7 +60,7 @@ exports[`t-esc escaping on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -82,7 +82,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -104,7 +104,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -126,7 +126,7 @@ exports[`t-esc literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -148,7 +148,7 @@ exports[`t-esc t-esc is escaped 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -177,7 +177,7 @@ exports[`t-esc t-esc work with spread operator 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -199,7 +199,7 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -232,7 +232,7 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -254,7 +254,7 @@ exports[`t-esc variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);

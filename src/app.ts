@@ -1,7 +1,7 @@
 import { Blocks } from "./bdom";
 import { compileTemplate, Template } from "./compiler/index";
 import { Component, mount } from "./component";
-import { callSlot, elem, getValues, owner, scope, toString, withDefault } from "./qweb_utils";
+import { callSlot, elem, owner, scope, toString, withDefault } from "./qweb_utils";
 import { Scheduler } from "./scheduler";
 import { globalTemplates } from "./tags";
 
@@ -18,7 +18,6 @@ export const UTILS = {
   },
   zero: Symbol("zero"),
   scope,
-  getValues,
   owner,
   callSlot,
 };

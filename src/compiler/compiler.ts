@@ -207,9 +207,7 @@ export class QWebCompiler {
     this.addLine(
       `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;`
     );
-    this.addLine(
-      `let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;`
-    );
+    this.addLine(`let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;`);
 
     // define all blocks
     for (let block of this.blocks) {
@@ -716,26 +714,18 @@ export class QWebCompiler {
 
   compileTForeach(ast: ASTTForEach, ctx: Context) {
     const { block } = ctx;
-    const cId = this.generateId();
-    const vals = `v${cId}`;
-    const keys = `k${cId}`;
-    const l = `l${cId}`;
-    this.addLine(`const [${vals}, ${keys}, ${l}] = getValues(${compileExpr(ast.collection)});`);
 
     if (block) {
       this.insertAnchor(block);
     }
-    const id = this.insertBlock(`new BCollection(${l})`, { ...ctx, forceNewBlock: true })!;
+    const id = this.insertBlock(`new BCollection(${compileExpr(ast.collection)})`, {
+      ...ctx,
+      forceNewBlock: true,
+    })!;
     this.loopLevel++;
     const loopVar = `i${this.loopLevel}`;
-    this.addLine(`ctx = Object.create(ctx);`);
-    this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
+    this.addLine(`${id}.forEach(\`${ast.elem}\`, ctx, (${loopVar}, ctx) => {`);
     this.target.indentLevel++;
-    this.addLine(`ctx[\`${ast.elem}\`] = ${vals}[${loopVar}];`);
-    this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
-    this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${vals}.length - 1;`);
-    this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
-    this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
     this.addLine(`let key${this.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
     const collectionBlock = new BlockDescription(id, "Collection");
     const subCtx: Context = {
@@ -756,9 +746,8 @@ export class QWebCompiler {
     this.hasDefinedKey = initialState;
 
     this.target.indentLevel--;
-    this.addLine(`}`);
     this.loopLevel--;
-    this.addLine(`ctx = ctx.__proto__;`);
+    this.addLine(`});`);
   }
 
   compileTKey(ast: ASTTKey, ctx: Context) {

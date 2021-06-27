@@ -59,16 +59,6 @@ export function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
 
-export function getValues(collection: any): [any[], any[], number] {
-  if (Array.isArray(collection)) {
-    return [collection, collection, collection.length];
-  } else if (collection) {
-    const keys = Object.keys(collection);
-    return [keys, Object.values(collection), keys.length];
-  }
-  throw new Error("Invalid loop expression");
-}
-
 export const scope = Symbol("scope");
 
 export function owner(obj: any): any | null {

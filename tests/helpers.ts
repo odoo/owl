@@ -1,7 +1,7 @@
+import { TemplateSet, UTILS } from "../src/app";
 import { BDom, Blocks } from "../src/bdom";
-import { App, UTILS } from "../src/app";
-import { globalTemplates } from "../src/tags";
 import { compileTemplate, Template } from "../src/compiler/index";
+import { globalTemplates } from "../src/tags";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
@@ -53,7 +53,7 @@ export function renderToString(template: string, context: any = {}): string {
   return fixture.innerHTML;
 }
 
-export class TestContext extends App {
+export class TestContext extends TemplateSet {
   renderToString(name: string, context: any = {}): string {
     const renderFn = this.getTemplate(name);
     const bdom = renderFn(context);

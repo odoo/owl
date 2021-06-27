@@ -4,7 +4,7 @@ exports[`t-on can bind event handler 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -28,7 +28,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -53,7 +53,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -78,7 +78,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -103,7 +103,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<ul><owl-anchor/></ul>\`);
@@ -126,21 +126,14 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    const [v1, k1, l1] = getValues(['someval']);
-    const b2 = b1.children[0] = new BCollection(l1);
-    ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`action\`] = v1[i1];
-      ctx[\`action_first\`] = i1 === 0;
-      ctx[\`action_last\`] = i1 === v1.length - 1;
-      ctx[\`action_index\`] = i1;
-      ctx[\`action_value\`] = k1[i1];
+    const b2 = b1.children[0] = new BCollection(['someval']);
+    b2.forEach(\`action\`, ctx, (i1, ctx) => {
       let key1 = ctx['action_index'];
       const b3 = b2.children[i1] = new Block2();
-      const arg2 = [ctx['action']];
-      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg2, e), ctx];
+      const arg1 = [ctx['action']];
+      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['activate'](...arg1, e), ctx];
       b2.keys[i1] = key1;
-    }
+    });
     return b1;
   }
 }"
@@ -150,7 +143,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -175,7 +168,7 @@ exports[`t-on can bind two event handlers 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -202,7 +195,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -226,7 +219,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -239,21 +232,14 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
   return ctx => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
-    const [v1, k1, l1] = getValues([1]);
-    const b1 = new BCollection(l1);
-    ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`value\`] = v1[i1];
-      ctx[\`value_first\`] = i1 === 0;
-      ctx[\`value_last\`] = i1 === v1.length - 1;
-      ctx[\`value_index\`] = i1;
-      ctx[\`value_value\`] = k1[i1];
+    const b1 = new BCollection([1]);
+    b1.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = i1;
       key1 = ctx['value'];
       const b2 = b1.children[i1] = new Block1();
       b2.handlers[0] = [\`click\`, (e) => owner(ctx)['add'](e), ctx];
       b1.keys[i1] = key1;
-    }
+    });
     return b1;
   }
 }"
@@ -263,7 +249,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -287,7 +273,7 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   return (ctx, refs = {}) => {
     ctx = Object.create(ctx);
@@ -303,7 +289,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -327,24 +313,17 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   return (ctx, refs = {}) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
-    const [v1, k1, l1] = getValues([1]);
-    const b1 = new BCollection(l1);
-    ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`value\`] = v1[i1];
-      ctx[\`value_first\`] = i1 === 0;
-      ctx[\`value_last\`] = i1 === v1.length - 1;
-      ctx[\`value_index\`] = i1;
-      ctx[\`value_value\`] = k1[i1];
+    const b1 = new BCollection([1]);
+    b1.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = ctx['value'];
       b1.children[i1] = call(\`sub\`, ctx, refs);
       b1.keys[i1] = key1;
-    }
+    });
     b1.refs = refs;
     return b1;
   }
@@ -355,7 +334,7 @@ exports[`t-on receive event in first argument 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -379,7 +358,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -404,7 +383,7 @@ exports[`t-on t-on with inline statement 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Click</button>\`);
@@ -429,7 +408,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Toggle</button>\`);
@@ -454,7 +433,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<button>Toggle</button>\`);
@@ -480,7 +459,7 @@ exports[`t-on t-on with t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<p>lucas</p>\`);
@@ -504,7 +483,7 @@ exports[`t-on t-on with t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -530,7 +509,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<p>lucas</p>\`);
@@ -555,7 +534,7 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);

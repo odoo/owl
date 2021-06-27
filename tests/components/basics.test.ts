@@ -79,14 +79,14 @@ describe("basics", () => {
         <t t-foreach="items" t-as="item" t-key="item">
           <t t-esc="item"/>
         </t>`;
-      items = ['one', 'two', 'three'];
+      items = ["one", "two", "three"];
     }
     snapshotTemplateCode(fromName(Test.template));
 
     const component = await new App(Test).mount(fixture);
 
     expect(fixture.innerHTML).toBe("onetwothree");
-    component.items = ['two', 'three', 'one'];
+    component.items = ["two", "three", "one"];
     await component.render();
     expect(fixture.innerHTML).toBe("twothreeone");
   });

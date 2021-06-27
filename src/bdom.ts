@@ -392,11 +392,39 @@ export class BCollection extends Block {
   children: Block[];
   anchor?: ChildNode;
   keys: (string | number)[];
+  collection: any[];
+  values: any[];
 
-  constructor(n: number) {
+  constructor(collection: any[]) {
     super();
+    let n: number;
+    if (Array.isArray(collection)) {
+      this.collection = collection;
+      this.values = collection;
+      n = collection.length;
+    } else if (collection) {
+      this.collection = Object.keys(collection);
+      this.values = Object.values(collection);
+      n = this.collection.length;
+    } else {
+      throw new Error("Invalid loop expression");
+    }
     this.keys = new Array(n);
     this.children = new Array(n);
+  }
+
+  forEach(item: string, ctx: any, cb: Function) {
+    const collection = this.collection;
+    const values = this.values;
+    ctx = Object.create(ctx);
+    for (let i = 0; i < collection.length; i++) {
+      ctx[item] = collection[i];
+      ctx[item + "_first"] = i === 0;
+      ctx[item + "_last"] = i === collection.length - 1;
+      ctx[item + "_index"] = i;
+      ctx[item + "_value"] = values[i];
+      cb(i, ctx);
+    }
   }
 
   firstChildNode(): ChildNode | null {

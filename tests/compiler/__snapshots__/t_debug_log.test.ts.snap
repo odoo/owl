@@ -4,7 +4,7 @@ exports[`debugging t-debug 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -35,7 +35,7 @@ exports[`debugging t-log 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div/>\`);

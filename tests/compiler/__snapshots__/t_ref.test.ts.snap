@@ -4,7 +4,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span/></div>\`);
@@ -28,7 +28,7 @@ exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span/></div>\`);
@@ -49,7 +49,7 @@ exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -75,7 +75,7 @@ exports[`t-ref ref in a t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div>1<span/>2</div>\`);
@@ -96,7 +96,7 @@ exports[`t-ref ref in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -130,7 +130,7 @@ exports[`t-ref refs in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -153,24 +153,17 @@ exports[`t-ref refs in a loop 1`] = `
   
   return (ctx, refs = {}) => {
     const b1 = new Block1();
-    const [v1, k1, l1] = getValues(ctx['items']);
-    const b2 = b1.children[0] = new BCollection(l1);
-    ctx = Object.create(ctx);
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
+    const b2 = b1.children[0] = new BCollection(ctx['items']);
+    b2.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = i1;
       key1 = ctx['item'];
       const b3 = b2.children[i1] = new Block2();
       b3.refs = refs;
-      const v2 = ctx['item'];
-      b3.data[0] = \`\${v2}\`;
+      const v1 = ctx['item'];
+      b3.data[0] = \`\${v1}\`;
       b3.data[1] = ctx['item'];
       b2.keys[i1] = key1;
-    }
+    });
     b1.refs = refs;
     return b1;
   }
@@ -181,7 +174,7 @@ exports[`t-ref two refs, one in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><p/></div>\`);

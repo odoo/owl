@@ -73,6 +73,24 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span>2</span>");
   });
 
+  test("updating a component with t-foreach as root", async () => {
+    class Test extends Component {
+      static template = xml`
+        <t t-foreach="items" t-as="item" t-key="item">
+          <t t-esc="item"/>
+        </t>`;
+      items = ['one', 'two', 'three'];
+    }
+    snapshotTemplateCode(fromName(Test.template));
+
+    const component = await new App(Test).mount(fixture);
+
+    expect(fixture.innerHTML).toBe("onetwothree");
+    component.items = ['two', 'three', 'one'];
+    await component.render();
+    expect(fixture.innerHTML).toBe("twothreeone");
+  });
+
   // test("props is set on root component", async () => {
   //   expect.assertions(2);
   //   const p = {};

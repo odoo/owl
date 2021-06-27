@@ -74,3 +74,28 @@ exports[`basics can mount a simple component with props 1`] = `
   }
 }"
 `;
+
+exports[`basics updating a component with t-foreach as root 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, getValues, owner, callSlot} = utils;
+  
+  return ctx => {
+    const [v1, k1, l1] = getValues(ctx['items']);
+    const b1 = new BCollection(l1);
+    ctx = Object.create(ctx);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
+      let key1 = ctx['item'];
+      b1.children[i1] = new BText(ctx['item']);
+      b1.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;

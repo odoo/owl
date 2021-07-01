@@ -579,7 +579,7 @@ exports[`other directives with t-component t-on expression captured in t-foreach
         c6.push(vn7);
         const otherState_8 = scope['otherState'];
         const iter_8 = scope.iter;
-        p7.on['click'] = function (e) {if (context.__owl__.status === 5){return}otherState_8.vals.push(iter_8+'_'+iter_8)};
+        p7.on['click'] = function (e) {if (context.__owl__.status === 5){return}const res = (() => { return otherState_8.vals.push(iter_8+'_'+iter_8) })(); if (typeof res === 'function') { res(e) }};
         c7.push({text: \`expr\`});
         utils.getScope(scope, 'iter').iter = scope.iter+1;
     }
@@ -630,7 +630,7 @@ exports[`other directives with t-component t-on expression in t-foreach 1`] = `
         c6.push(vn9);
         const otherState_10 = scope['otherState'];
         const val_10 = scope['val'];
-        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}otherState_10.vals.push(val_10)};
+        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}const res = (() => { return otherState_10.vals.push(val_10) })(); if (typeof res === 'function') { res(e) }};
         c9.push({text: \`Expr\`});
     }
     scope = _origScope5;
@@ -684,7 +684,7 @@ exports[`other directives with t-component t-on expression in t-foreach with t-s
         const otherState_10 = scope['otherState'];
         const val_10 = scope['val'];
         const bossa_10 = scope.bossa;
-        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}otherState_10.vals.push(val_10+'_'+bossa_10)};
+        p9.on['click'] = function (e) {if (context.__owl__.status === 5){return}const res = (() => { return otherState_10.vals.push(val_10+'_'+bossa_10) })(); if (typeof res === 'function') { res(e) }};
         c9.push({text: \`Expr\`});
     }
     scope = _origScope5;
@@ -1011,7 +1011,7 @@ exports[`other directives with t-component t-on with inline statement 1`] = `
         if (!W3) {throw new Error('Cannot find the definition of component \\"' + componentKey3 + '\\"')}
         w3 = new W3(parent, props3);
         parent.__owl__.cmap['__4__'] = w3.__owl__.id;
-        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}state_5.counter++});}});});
+        let fiber = w3.__prepare(extra.fiber, undefined, () => { const vnode = fiber.vnode; pvnode.sel = vnode.sel; utils.assignHooks(vnode.data, {create(_, vn){vn.elm.addEventListener('ev', function (e) {if (context.__owl__.status === 5){return}const res = (() => { return state_5.counter++ })(); if (typeof res === 'function') { res(e) }});}});});
         let pvnode = h('dummy', {key: '__4__', hook: {remove() {},destroy(vn) {w3.destroy();}}});
         c1.push(pvnode);
         w3.__owl__.pvnode = pvnode;

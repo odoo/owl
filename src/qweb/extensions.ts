@@ -75,6 +75,7 @@ export function makeHandlerCode(
     // we need to capture every variable in it
     putInCache = false;
     code = ctx.captureExpression(value);
+    code = `const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }`;
   }
   const modCode = mods.map((mod) => modcodes[mod]).join("");
   let handler = `function (e) {if (context.__owl__.status === ${STATUS.DESTROYED}){return}${modCode}${code}}`;

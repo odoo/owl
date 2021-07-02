@@ -18,7 +18,7 @@ exports[`RouteComponent can render simple cases 1`] = `
             let w4 = k5 in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap[k5]] : false;
             let vn6 = {};
             result = vn6;
-            let props4 = Object.assign({}, scope['env'].router.currentParams);
+            let props4 = Object.assign({}, scope['env'].router.currentParams, {});
             if (w4 && w4.__owl__.currentFiber && !w4.__owl__.vnode) {
                 w4.destroy();
                 w4 = false;

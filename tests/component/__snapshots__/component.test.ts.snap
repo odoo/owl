@@ -467,7 +467,7 @@ exports[`dynamic t-props basic use 1`] = `
     let vn1 = h('div', p1, c1);
     // Component 'Child'
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
-    let props2 = Object.assign({}, scope['some'].obj);
+    let props2 = Object.assign({}, scope['some'].obj, {});
     if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
         w2.destroy();
         w2 = false;

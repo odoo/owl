@@ -4040,6 +4040,30 @@ describe("dynamic t-props", () => {
     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
     expect(env.qweb.templates[Parent.template].fn.toString()).toMatchSnapshot();
   });
+
+  test("t-props with props", async () => {
+    expect.assertions(1);
+
+    class Child extends Component {
+      static template = xml`<div />`;
+      setup() {
+        expect(this.props).toEqual({ a: 1, b: 2, c: "c" });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+            <Child t-props="props" a="1" b="2" />
+        </div>
+      `;
+      static components = { Child };
+
+      props = { a: "a", c: "c" };
+    }
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+  });
 });
 
 describe("support svg components", () => {

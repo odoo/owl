@@ -210,6 +210,10 @@ export function tokenize(expr: string): Token[] {
 // Expression "evaluator"
 //------------------------------------------------------------------------------
 
+const isLeftSeparator = (token) => token && (token.type === "LEFT_BRACE" || token.type === "COMMA");
+const isRightSeparator = (token) =>
+  token && (token.type === "RIGHT_BRACE" || token.type === "COMMA");
+
 /**
  * This is the main function exported by this file. This is the code that will
  * process an expression (given as a string) and returns another expression with
@@ -238,13 +242,22 @@ export function tokenize(expr: string): Token[] {
 export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar }): Token[] {
   scope = Object.create(scope);
   const tokens = tokenize(expr);
-  for (let i = 0; i < tokens.length; i++) {
+
+  let i = 0;
+
+  while (i < tokens.length) {
     let token = tokens[i];
     let prevToken = tokens[i - 1];
     let nextToken = tokens[i + 1];
     let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
     if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
       if (prevToken) {
+        // normalize missing tokens: {a} should be equivalent to {a:a}
+        if (isLeftSeparator(prevToken) && isRightSeparator(nextToken)) {
+          tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, { ...token });
+          nextToken = tokens[i + 1];
+        }
+
         if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
           isVar = false;
         } else if (prevToken.type === "LEFT_BRACE" || prevToken.type === "COMMA") {
@@ -278,6 +291,7 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
         token.value = `scope['${token.value}']`;
       }
     }
+    i++;
   }
   return tokens;
 }

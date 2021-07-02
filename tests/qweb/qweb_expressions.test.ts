@@ -200,4 +200,10 @@ describe("expression evaluation", () => {
   test("works with builtin properties", () => {
     expect(compileExpr("state.constructor.name", {})).toBe("scope['state'].constructor.name");
   });
+
+  test("works with shortcut object key description", () => {
+    expect(compileExpr("{a}", {})).toBe("{a:scope['a']}");
+    expect(compileExpr("{a,b}", {})).toBe("{a:scope['a'],b:scope['b']}");
+    expect(compileExpr("{a,b:3,c}", {})).toBe("{a:scope['a'],b:3,c:scope['c']}");
+  });
 });

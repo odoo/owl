@@ -336,7 +336,7 @@ QWeb.addDirective({
     }
     if (hasDynamicProps) {
       const dynamicProp = ctx.formatExpression(node.getAttribute("t-props")!);
-      ctx.addLine(`let props${componentID} = Object.assign({${propStr}}, ${dynamicProp});`);
+      ctx.addLine(`let props${componentID} = Object.assign({}, ${dynamicProp}, {${propStr}});`);
     } else {
       ctx.addLine(`let props${componentID} = {${propStr}};`);
     }

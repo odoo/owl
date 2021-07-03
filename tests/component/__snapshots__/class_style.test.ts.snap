@@ -90,7 +90,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let scope = Object.create(context);
     let h = this.h;
     let _7 = {'c':true};
-    Object.assign(_7, utils.toObj({d:scope['state'].d}))
+    Object.assign(_7, utils.toClassObj({d:scope['state'].d}))
     let c8 = [], p8 = {key:8,class:_7};
     let vn8 = h('span', p8, c8);
     return vn8;
@@ -112,7 +112,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     // Component 'Child'
     const ref4 = \`child\`;
     let _5 = {'a':true};
-    Object.assign(_5, utils.toObj(scope['state'].b?'b':''))
+    Object.assign(_5, utils.toClassObj(scope['state'].b?'b':''))
     let w2 = '__3__' in parent.__owl__.cmap ? parent.__owl__.children[parent.__owl__.cmap['__3__']] : false;
     let props2 = {};
     if (w2 && w2.__owl__.currentFiber && !w2.__owl__.vnode) {
@@ -148,7 +148,7 @@ exports[`class and style attributes with t-component t-att-class is properly add
     let scope = Object.create(context);
     let h = this.h;
     let _7 = {'c':true};
-    Object.assign(_7, utils.toObj(scope['state'].d?'d':''))
+    Object.assign(_7, utils.toClassObj(scope['state'].d?'d':''))
     let c8 = [], p8 = {key:8,class:_7};
     let vn8 = h('span', p8, c8);
     return vn8;

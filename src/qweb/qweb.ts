@@ -705,7 +705,7 @@ export class QWeb extends EventBus {
           isProp = key === "selected" || key === "disabled";
           break;
         case "textarea":
-          isProp = key === "readonly" || key === "disabled";
+          isProp = key === "readonly" || key === "disabled" || key === "value";
           break;
         case "button":
         case "select":

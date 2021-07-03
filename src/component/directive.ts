@@ -355,7 +355,7 @@ QWeb.addDirective({
     // SLOTS
     const hasSlots = node.childNodes.length;
 
-    let scope = hasSlots ? `Object.assign(Object.create(context), scope)` : "undefined";
+    let scope = hasSlots ? `utils.combine(context, scope)` : "undefined";
 
     ctx.addIf(`w${componentID}`);
 

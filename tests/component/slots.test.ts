@@ -325,6 +325,70 @@ describe("t-slot directive", () => {
     expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
+  test("slots in t-foreach in t-foreach", async () => {
+    class Child extends Component {
+      static template = xml`
+        <div><t t-slot="default" /></div>
+      `;
+    }
+
+    class App extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="tree" t-as="node1" t-key="node1.key">
+            <div t-esc="node1.value" />
+            <ul>
+              <t t-foreach="node1.nodes" t-as="node2" t-key="node2.key">
+                <Child>
+                  <li t-esc="node1.value" />
+                </Child>
+              </t>
+            </ul>
+          </t>
+        </div>`;
+
+      static components = { Child };
+
+      tree = [
+        {
+          key: "a",
+          value: "A",
+          nodes: [
+            {
+              key: "1",
+              value: "A-1",
+            },
+            {
+              key: "2",
+              value: "A-2",
+            },
+          ],
+        },
+        {
+          key: "b",
+          value: "B",
+          nodes: [
+            {
+              key: "1",
+              value: "B-1",
+            },
+            {
+              key: "2",
+              value: "B-2",
+            },
+          ],
+        },
+      ];
+    }
+
+    await mount(App, { target: fixture });
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div>A</div><ul><div><li>A</li></div><div><li>A</li></div></ul><div>B</div><ul><div><li>B</li></div><div><li>B</li></div></ul></div>"
+    );
+    expect(env.qweb.templates[App.template].fn.toString()).toMatchSnapshot();
+  });
+
   test("refs are properly bound in slots", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="footer"/></span>`;

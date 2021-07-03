@@ -126,6 +126,13 @@ const UTILS: Utils = {
     }
     return expr;
   },
+  combine(context, scope) {
+    const clone = Object.create(context);
+    for (let k in scope) {
+      clone[k] = scope[k];
+    }
+    return clone;
+  },
   shallowEqual,
   addNameSpace(vnode) {
     addNS(vnode.data, vnode.children, vnode.sel);

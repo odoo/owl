@@ -62,14 +62,14 @@ The CSS tag is useful to define a css stylesheet in the javascript file:
 
 ```js
 class MyComponent extends Component {
-    static template = xml`
+  static template = xml`
         <div class="my-component">some template</div>
     `;
-    static css`
-      .my-component {
-          color: red;
-      }
-    `;
+  static style = css`
+    .my-component {
+      color: red;
+    }
+  `;
 }
 ```
 

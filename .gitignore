@@ -29,3 +29,6 @@ node_modules
 release-notes.md
 
 .rpt2_cache
+
+# useful in some cases
+/temp

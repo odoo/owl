@@ -1931,6 +1931,25 @@ describe("special cases for some specific html attributes/properties", () => {
     let elm = vnode2.elm as HTMLInputElement;
     expect(elm.indeterminate).toBe(true);
   });
+
+  test("textarea with t-att-value", () => {
+    // render input with initial value
+    qweb.addTemplate("test", `<textarea  t-att-value="v"/>`);
+    const vnode1 = qweb.render("test", { v: "zucchini" });
+    const vnode2 = patch(document.createElement("textarea"), vnode1);
+    let elm = vnode2.elm as HTMLInputElement;
+    expect(elm.value).toBe("zucchini");
+
+    // change value manually in textarea, to simulate user textarea
+    elm.value = "tomato";
+    expect(elm.value).toBe("tomato");
+
+    // rerender with a different value, and patch actual dom, to check that
+    // textarea value was properly reset by owl
+    const vnode3 = qweb.render("test", { v: "potato" });
+    patch(vnode2, vnode3);
+    expect(elm.value).toBe("potato");
+  });
 });
 
 describe("whitespace handling", () => {

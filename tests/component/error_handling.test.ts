@@ -586,4 +586,25 @@ describe("component error handling (catchError)", () => {
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>Error</div>");
   });
+
+  test("errors in mounted and in willUnmount", async () => {
+    expect.assertions(1);
+    class Example extends Component {
+      static template = xml`<div/>`;
+      val;
+      mounted() {
+        throw new Error("Error in mounted");
+        this.val = { foo: "bar" };
+      }
+      willUnmount() {
+        console.log(this.val.foo);
+      }
+    }
+
+    try {
+      await mount(Example, { target: fixture });
+    } catch (e) {
+      expect(e.message).toBe("Error in mounted");
+    }
+  });
 });

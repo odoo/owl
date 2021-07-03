@@ -355,7 +355,14 @@ export class Fiber {
       this.root.counter = 0;
       this.root.error = error;
       scheduler.flush();
-      root.destroy();
+      // at this point, the state of the application is corrupted and we could
+      // have a lot of issues or crashes. So we destroy the application in a try
+      // catch and swallow these errors because the fiber is already in error,
+      // and this is the actual issue that needs to be solved, not those followup
+      // errors.
+      try {
+        root.destroy();
+      } catch (e) {}
     }
   }
 }

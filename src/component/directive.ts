@@ -291,7 +291,7 @@ QWeb.addDirective({
       if (tattClass) {
         let tattExpr = ctx.formatExpression(tattClass);
         if (tattExpr[0] !== "{" || tattExpr[tattExpr.length - 1] !== "}") {
-          tattExpr = `utils.toObj(${tattExpr})`;
+          tattExpr = `utils.toClassObj(${tattExpr})`;
         }
         if (classAttr) {
           ctx.addLine(`Object.assign(${classObj}, ${tattExpr})`);

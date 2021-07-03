@@ -7,7 +7,7 @@ exports[`attributes class and t-att-class should combine together 1`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let _1 = utils.toObj(scope['value']);
+    let _1 = utils.toClassObj(scope['value']);
     Object.assign(_1, {'hello':true})
     let c3 = [], p3 = {key:3,class:_1};
     let vn3 = h('div', p3, c3);
@@ -74,7 +74,7 @@ exports[`attributes dynamic class attribute 1`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let _1 = utils.toObj(scope['c']);
+    let _1 = utils.toClassObj(scope['c']);
     let c2 = [], p2 = {key:2,class:_1};
     let vn2 = h('div', p2, c2);
     return vn2;
@@ -88,7 +88,7 @@ exports[`attributes dynamic empty class attribute 1`] = `
     let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
-    let _1 = utils.toObj(scope['c']);
+    let _1 = utils.toClassObj(scope['c']);
     let c2 = [], p2 = {key:2,class:_1};
     let vn2 = h('div', p2, c2);
     return vn2;
@@ -195,7 +195,7 @@ exports[`attributes from object variables set previously 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     scope.o = {a:'b'};
-    let _2 = utils.toObj(scope.o.a);
+    let _2 = utils.toClassObj(scope.o.a);
     let c3 = [], p3 = {key:3,class:_2};
     let vn3 = h('span', p3, c3);
     c1.push(vn3);
@@ -213,7 +213,7 @@ exports[`attributes from variables set previously 1`] = `
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     scope.abc = 'def';
-    let _2 = utils.toObj(scope.abc);
+    let _2 = utils.toClassObj(scope.abc);
     let c3 = [], p3 = {key:3,class:_2};
     let vn3 = h('span', p3, c3);
     c1.push(vn3);
@@ -288,7 +288,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
     let scope = Object.create(context);
     let h = this.h;
     let _2 = {'hello':true};
-    Object.assign(_2, utils.toObj(scope['value']))
+    Object.assign(_2, utils.toClassObj(scope['value']))
     let c3 = [], p3 = {key:3,class:_2};
     let vn3 = h('div', p3, c3);
     return vn3;
@@ -303,7 +303,7 @@ exports[`attributes t-att-class with object 1`] = `
     let scope = Object.create(context);
     let h = this.h;
     let _2 = {'static':true};
-    Object.assign(_2, utils.toObj({a:scope['b'],c:scope['d'],e:scope['f']}))
+    Object.assign(_2, utils.toClassObj({a:scope['b'],c:scope['d'],e:scope['f']}))
     let c3 = [], p3 = {key:3,class:_2};
     let vn3 = h('div', p3, c3);
     return vn3;

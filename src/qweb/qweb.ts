@@ -80,7 +80,7 @@ const NODE_HOOKS_PARAMS = {
 };
 
 interface Utils {
-  toObj(expr: any): Object;
+  toClassObj(expr: any): Object;
   shallowEqual(p1: Object, p2: Object): boolean;
   [key: string]: any;
 }
@@ -111,20 +111,31 @@ function vDomToString(vdom: VNode[]): string {
 
 const UTILS: Utils = {
   zero: Symbol("zero"),
-  toObj(expr) {
+  toClassObj(expr) {
+    const result = {};
     if (typeof expr === "string") {
+      // we transform here a list of classes into an object:
+      //  'hey you' becomes {hey: true, you: true}
       expr = expr.trim();
       if (!expr) {
         return {};
       }
       let words = expr.split(/\s+/);
-      let result = {};
       for (let i = 0; i < words.length; i++) {
         result[words[i]] = true;
       }
       return result;
     }
-    return expr;
+    // this is already an object, but we may need to split keys:
+    // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
+    for (let key in expr) {
+      const value = expr[key];
+      const words = key.split(/\s+/);
+      for (let word of words) {
+        result[word] = value;
+      }
+    }
+    return result;
   },
   combine(context, scope) {
     const clone = Object.create(context);
@@ -767,7 +778,7 @@ export class QWeb extends EventBus {
             name = '"' + name + '"';
           }
           attrs.push(`${name}: _${attID}`);
-          handleProperties(name, "_" + attID);
+          handleProperties(name, `_${attID}`);
         }
       }
 
@@ -779,7 +790,7 @@ export class QWeb extends EventBus {
 
         if (attName === "class") {
           ctx.rootContext.shouldDefineUtils = true;
-          formattedValue = `utils.toObj(${formattedValue})`;
+          formattedValue = `utils.toClassObj(${formattedValue})`;
           if (classObj) {
             ctx.addLine(`Object.assign(${classObj}, ${formattedValue})`);
           } else {

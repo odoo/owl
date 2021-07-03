@@ -13,6 +13,7 @@
   - [Setting Variables](#setting-variables)
   - [Conditionals](#conditionals)
   - [Dynamic Attributes](#dynamic-attributes)
+  - [Dynamic Class Attribute](#dynamic-class-attribute)
   - [Dynamic Tag Names](#dynamic-tag-names)
   - [Loops](#loops)
   - [Rendering Sub Templates](#rendering-sub-templates)
@@ -324,6 +325,24 @@ values) or a pair `[key, value]`. For example:
 <div t-att="{'a': 1, 'b': 2}"/> <!-- result: <div a="1" b="2"></div> -->
 
 <div t-att="['a', 'b']"/> <!-- <div a="b"></div> -->
+```
+
+### Dynamic class attribute
+
+For convenience, Owl supports a special case for the `t-att-class` case: one can
+use an object with keys describing the classes, and values boolean value denoting
+if the class is or is not present:
+
+```xml
+<div t-att-class="{'a': true, 'b': true}"/> <!-- result: <div class="a b"></div> -->
+
+<div t-att-class="{'a b': true, 'c': true}"/> <!-- result: <div class="a b c"></div> -->
+```
+
+Note that it can be combined with normal class attribute:
+
+```xml
+<div class="a" t-att-class="{'b': true}"/> <!-- result: <div class="a b"></div> -->
 ```
 
 ### Dynamic tag names

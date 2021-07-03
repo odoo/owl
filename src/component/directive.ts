@@ -245,7 +245,18 @@ QWeb.addDirective({
       .join(",");
     let componentID = ctx.generateID();
 
-    const templateKey = ctx.generateTemplateKey();
+    let hasDefinedKey = false;
+    let templateKey;
+    if (node.tagName === "t" && !node.hasAttribute("t-key") && value.match(INTERP_REGEXP)) {
+      defineComponentKey();
+      const id = ctx.generateID();
+      // the ___ is to make sure we have no possible conflict with normal
+      // template keys
+      ctx.addLine(`let k${id} = '___' + componentKey${componentID}`);
+      templateKey = `k${id}`;
+    } else {
+      templateKey = ctx.generateTemplateKey();
+    }
     let ref = node.getAttribute("t-ref");
     let refExpr = "";
     let refKey: string = "";
@@ -378,9 +389,15 @@ QWeb.addDirective({
     ctx.addElse();
 
     // new component
+    function defineComponentKey() {
+      if (!hasDefinedKey) {
+        const interpValue = ctx.interpolate(value);
+        ctx.addLine(`let componentKey${componentID} = ${interpValue};`);
+        hasDefinedKey = true;
+      }
+    }
+    defineComponentKey();
     const contextualValue = value.match(INTERP_REGEXP) ? "false" : ctx.formatExpression(value);
-    const interpValue = ctx.interpolate(value);
-    ctx.addLine(`let componentKey${componentID} = ${interpValue};`);
     ctx.addLine(
       `let W${componentID} = ${contextualValue} || context.constructor.components[componentKey${componentID}] || QWeb.components[componentKey${componentID}];`
     );

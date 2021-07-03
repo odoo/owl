@@ -1246,6 +1246,30 @@ describe("composition", () => {
     expect(fixture.innerHTML).toBe("<div>child b</div>");
   });
 
+  test("can switch between dynamic components without the need for a t-key", async () => {
+    class A extends Component {
+      static template = xml`<span>child a</span>`;
+    }
+    class B extends Component {
+      static template = xml`<span>child b</span>`;
+    }
+    class App extends Component {
+      static template = xml`
+        <div>
+            <t t-component="{{state.child}}"/>
+        </div>`;
+      static components = { A, B };
+
+      state = useState({ child: "A" });
+    }
+    const app = await mount(App, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div><span>child a</span></div>");
+    app.state.child = "B";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>child b</span></div>");
+    expect(QWeb.TEMPLATES[App.template].fn.toString()).toMatchSnapshot();
+  });
+
   test("don't fallback to global registry if widget defined locally", async () => {
     QWeb.registerComponent("WidgetB", WidgetB); // should not use this widget
     env.qweb.addTemplate("ParentWidget", `<div><t t-component="WidgetB"/></div>`);

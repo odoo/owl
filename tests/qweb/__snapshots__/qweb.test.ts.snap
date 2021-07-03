@@ -1073,6 +1073,39 @@ exports[`special cases for some specific html attributes/properties input type= 
 }"
 `;
 
+exports[`special cases for some specific html attributes/properties select with t-att-value 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let expr1 = scope['value'];
+    let c3 = [], p3 = {key:3,attrs:{value: expr1},props:{value: expr1}};
+    let vn3 = h('select', p3, c3);
+    p3.hook = {
+      create: (_, n) => {
+        n.elm.value=expr1;
+      },
+    };
+    let _4 = 'potato';
+    let c5 = [], p5 = {key:5,attrs:{value: _4}};
+    let vn5 = h('option', p5, c5);
+    c3.push(vn5);
+    c5.push({text: \`Potato\`});
+    let _6 = 'tomato';
+    let c7 = [], p7 = {key:7,attrs:{value: _6}};
+    let vn7 = h('option', p7, c7);
+    c3.push(vn7);
+    c7.push({text: \`Tomato\`});
+    let _8 = 'onion';
+    let c9 = [], p9 = {key:9,attrs:{value: _8}};
+    let vn9 = h('option', p9, c9);
+    c3.push(vn9);
+    c9.push({text: \`Onion\`});
+    return vn3;
+}"
+`;
+
 exports[`special cases for some specific html attributes/properties various boolean html attributes 1`] = `
 "function anonymous(context, extra
 ) {

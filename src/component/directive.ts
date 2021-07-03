@@ -452,12 +452,17 @@ QWeb.addDirective({
         }
       }
       if (clone.childNodes.length) {
+        let hasContent = false;
         const t = clone.ownerDocument!.createElement("t");
         for (let child of Object.values(clone.childNodes)) {
+          hasContent =
+            hasContent || (child instanceof Text ? Boolean(child.textContent.trim().length) : true);
           t.appendChild(child);
         }
-        const slotFn = qweb._compile(`slot_default_template`, { elem: t, hasParent: true });
-        QWeb.slots[`${slotId}_default`] = slotFn;
+        if (hasContent) {
+          const slotFn = qweb._compile(`slot_default_template`, { elem: t, hasParent: true });
+          QWeb.slots[`${slotId}_default`] = slotFn;
+        }
       }
     }
 

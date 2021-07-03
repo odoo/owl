@@ -467,6 +467,48 @@ describe("t-slot directive", () => {
     expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
   });
 
+  test("default slot next to named slot, with default content", async () => {
+    class Dialog extends Component {
+      // We're using 2 slots here: a "default" one and a "footer",
+      // both having default children nodes.
+      static template = xml`
+        <div class="Dialog">
+          <div class="content">
+            <t t-slot="default">
+              Default content
+            </t>
+          </div>
+          <div class="footer">
+            <t t-slot="footer">
+              Default footer
+            </t>
+          </div>
+        </div>
+      `;
+    }
+
+    class App extends Component {
+      // Here we're trying to assign the "footer" slot with some content
+      static components = { Dialog };
+      static template = xml`
+        <div>
+          <Dialog>
+            <t t-set-slot="footer">
+              Overridden footer
+            </t>
+          </Dialog>
+        </div>
+      `;
+    }
+
+    await mount(App, { target: fixture });
+
+    expect(fixture.innerHTML).toBe(
+      '<div><div class="Dialog"><div class="content"> Default content </div><div class="footer"> Overridden footer </div></div></div>'
+    );
+    expect(QWeb.TEMPLATES[App.template].fn.toString()).toMatchSnapshot();
+  });
+
   test("multiple roots are allowed in a named slot", async () => {
     env.qweb.addTemplates(`
           <templates>

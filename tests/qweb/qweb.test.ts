@@ -1950,6 +1950,30 @@ describe("special cases for some specific html attributes/properties", () => {
     patch(vnode2, vnode3);
     expect(elm.value).toBe("potato");
   });
+
+  test("select with t-att-value", () => {
+    const template = `
+      <select t-att-value="value">
+        <option value="potato">Potato</option>
+        <option value="tomato">Tomato</option>
+        <option value="onion">Onion</option>
+      </select>`;
+    qweb.addTemplate("test", template);
+    const vnode1 = qweb.render("test", { value: "tomato" });
+    const vnode2 = patch(document.createElement("select"), vnode1);
+    let elm = vnode2.elm as HTMLSelectElement;
+    expect(elm.value).toBe("tomato");
+
+    elm.value = "potato";
+    expect(elm.value).toBe("potato");
+
+    // rerender with a different value, and patch actual dom, to check that
+    // select value was properly reset by owl
+    const vnode3 = qweb.render("test", { value: "onion" });
+    patch(vnode2, vnode3);
+    expect(elm.value).toBe("onion");
+    expect(qweb.templates.test.fn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("whitespace handling", () => {

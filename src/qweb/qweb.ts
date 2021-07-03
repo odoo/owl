@@ -617,13 +617,21 @@ export class QWeb extends EventBus {
     }
 
     if (node.nodeName !== "t" || node.hasAttribute("t-tag")) {
-      let nodeID = this._compileGenericNode(node, ctx, withHandlers);
-      ctx = ctx.withParent(nodeID);
       let nodeHooks = {};
       let addNodeHook = function (hook, handler) {
         nodeHooks[hook] = nodeHooks[hook] || [];
         nodeHooks[hook].push(handler);
       };
+      if (node.tagName === "select" && node.hasAttribute("t-att-value")) {
+        const value = node.getAttribute("t-att-value");
+        let exprId = ctx.generateID();
+        ctx.addLine(`let expr${exprId} = ${ctx.formatExpression(value)};`);
+        let expr = `expr${exprId}`;
+        node.setAttribute("t-att-value", expr);
+        addNodeHook("create", `n.elm.value=${expr};`);
+      }
+      let nodeID = this._compileGenericNode(node, ctx, withHandlers);
+      ctx = ctx.withParent(nodeID);
 
       for (let { directive, value, fullName } of validDirectives) {
         if (directive.atNodeCreation) {
@@ -707,14 +715,16 @@ export class QWeb extends EventBus {
         case "textarea":
           isProp = key === "readonly" || key === "disabled" || key === "value";
           break;
-        case "button":
         case "select":
+          isProp = key === "disabled" || key === "value";
+          break;
+        case "button":
         case "optgroup":
           isProp = key === "disabled";
           break;
       }
       if (isProp) {
-        props.push(`${key}: _${val}`);
+        props.push(`${key}: ${val}`);
       }
     }
     let classObj = "";
@@ -750,7 +760,7 @@ export class QWeb extends EventBus {
             name = '"' + name + '"';
           }
           attrs.push(`${name}: _${attID}`);
-          handleProperties(name, attID);
+          handleProperties(name, "_" + attID);
         }
       }
 
@@ -785,9 +795,14 @@ export class QWeb extends EventBus {
             const attrIndex = attrs.findIndex((att) => att.startsWith(attName + ":"));
             attrs.splice(attrIndex, 1);
           }
-          ctx.addLine(`let _${attID} = ${formattedValue};`);
-          attrs.push(`${attName}: _${attID}`);
-          handleProperties(attName, attID);
+          if (node.nodeName === "select" && attName === "value") {
+            attrs.push(`${attName}: ${v}`);
+            handleProperties(attName, v);
+          } else {
+            ctx.addLine(`let _${attID} = ${formattedValue};`);
+            attrs.push(`${attName}: _${attID}`);
+            handleProperties(attName, "_" + attID);
+          }
         }
       }
 

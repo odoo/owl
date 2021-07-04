@@ -1,4 +1,6 @@
-import { BDom, BMulti } from "./bdom";
+import { Block, Blocks } from "../bdom";
+
+const { BMulti } = Blocks;
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -68,7 +70,7 @@ export function owner(obj: any): any | null {
   return obj;
 }
 
-export function callSlot(ctx: any, name: string, def?: (ctx: any) => BDom): BDom | null {
+export function callSlot(ctx: any, name: string, def?: (ctx: any) => Block): Block | null {
   const slots = ctx.__owl__.slots;
   const slotBDom = slots ? slots[name]() : null;
   if (def) {

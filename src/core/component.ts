@@ -1,23 +1,23 @@
 import type { App } from "./app";
-import type { BDom } from "./bdom";
+import type { Block } from "../bdom";
 import { EventBus } from "./event_bus";
 import { Fiber, MountFiber, RootFiber } from "./fibers";
 
 export const enum STATUS {
-  CREATED,
+  INSTANTIATED,
   WILLSTARTED, // willstart has been called
-  RENDERED, // first render is completed (so, vnode is now defined)
+  CREATED, // after first render is complete
   MOUNTED, // is ready, and in DOM. It has a valid el
-  UNMOUNTED, // has a valid el, but is not in DOM
+  UNMOUNTED, // has a valid el, but is no longer in DOM
   DESTROYED,
 }
 
 export class OwlNode {
   app: App;
-  bdom: null | BDom = null;
+  bdom: null | Block = null;
   component: Component;
   fiber: Fiber | null = null;
-  status: STATUS = STATUS.CREATED;
+  status: STATUS = STATUS.INSTANTIATED;
   renderFn: Function;
 
   constructor(app: App, C: typeof Component, props: any) {
@@ -50,7 +50,7 @@ export class Component extends EventBus {
   setup() {}
 
   render(): Promise<void> {
-    return render(this.__owl__);
+    return internalRender(this.__owl__);
   }
 }
 
@@ -73,7 +73,7 @@ export function internalMount<T extends typeof Component>(
   return fiber.promise.then(() => node.component);
 }
 
-function render(node: OwlNode): Promise<void> {
+function internalRender(node: OwlNode): Promise<void> {
   const fiber = new RootFiber(node);
   node.fiber = fiber;
   node.app.scheduler.addFiber(fiber);

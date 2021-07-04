@@ -1,6 +1,5 @@
-import { EventBus } from "../src/event_bus";
+import { EventBus } from "../../src/core/event_bus";
 
-(window as any)._document = window.document;
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {
     const bus = new EventBus();

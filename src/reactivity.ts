@@ -116,7 +116,7 @@ function observeValue(value: any, callbacks: PSet<CB>): any {
       }
       return true;
     },
-    deleteProperty(target: any, key: string | number) {
+    deleteProperty(target: any, key: any) {
       if (key in target) {
         delete target[key];
         notify(target);

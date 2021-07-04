@@ -1,9 +1,9 @@
-import type { BDom } from "./bdom";
+import type { Block } from "../bdom";
 import type { OwlNode } from "./component";
 
 export class Fiber {
   node: OwlNode;
-  bdom: BDom | null = null;
+  bdom: Block | null = null;
 
   constructor(node: OwlNode) {
     this.node = node;
@@ -26,7 +26,7 @@ export class RootFiber extends Fiber {
   }
 
   complete() {
-    this.node.bdom!.patch(this.bdom);
+    this.node.bdom!.patch(this.bdom!);
   }
 }
 

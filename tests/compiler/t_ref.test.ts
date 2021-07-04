@@ -1,4 +1,4 @@
-import { App } from "../../src/app";
+import { TemplateSet } from "../../src/core/app";
 import { renderToBdom, snapshotTemplateCode } from "../helpers";
 
 // -----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ describe("t-ref", () => {
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
 
-    const app = new App();
+    const app = new TemplateSet();
     app.addTemplate("main", main);
     app.addTemplate("sub", sub);
 

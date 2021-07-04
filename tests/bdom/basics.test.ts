@@ -1,7 +1,8 @@
-import { BNode, BMulti } from "../../src/bdom";
+import { Blocks } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-import { elem } from "../../src/qweb_utils";
+import { elem } from "../../src/core/template_utils";
 
+const { BNode, BMulti } = Blocks;
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------

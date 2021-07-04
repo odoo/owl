@@ -1,9 +1,9 @@
-import { Blocks } from "./bdom";
-import { compileTemplate, Template } from "./compiler/index";
+import { Blocks } from "../bdom";
+import { compileTemplate, Template } from "../compiler/index";
+import { globalTemplates } from "../tags";
 import { Component, internalMount } from "./component";
-import { callSlot, elem, owner, scope, toString, withDefault } from "./qweb_utils";
 import { Scheduler } from "./scheduler";
-import { globalTemplates } from "./tags";
+import { callSlot, elem, owner, scope, toString, withDefault } from "./template_utils";
 
 // -----------------------------------------------------------------------------
 //  TemplateSet
@@ -92,6 +92,6 @@ export async function mount<T extends typeof Component>(
 ): Promise<InstanceType<T>> {
   const { env, props, target } = params;
   const app = new App(C, props);
-  app.configure({env});
+  app.configure({ env });
   return app.mount(target);
 }

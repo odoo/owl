@@ -1,5 +1,5 @@
-import { TemplateSet, UTILS } from "../src/app";
-import { BDom, Blocks } from "../src/bdom";
+import { TemplateSet, UTILS } from "../src/core/app";
+import { Block, Blocks } from "../src/bdom";
 import { compileTemplate, Template } from "../src/compiler/index";
 import { globalTemplates } from "../src/tags";
 
@@ -42,7 +42,7 @@ export function compile(template: string): Template {
   return templateFunction(Blocks, UTILS);
 }
 
-export function renderToBdom(template: string, context: any = {}): BDom {
+export function renderToBdom(template: string, context: any = {}): Block {
   return compile(template)(context);
 }
 

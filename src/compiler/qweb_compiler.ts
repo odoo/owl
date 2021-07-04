@@ -1,11 +1,12 @@
-import type { BDom } from "../bdom";
+import type { Block } from "../bdom";
+import { Dom, DomNode, domToString, DomType, isProp } from "./helpers";
 import {
   compileExpr,
   compileExprToArray,
   interpolate,
   INTERP_GROUP_REGEXP,
   INTERP_REGEXP,
-} from "./expressions";
+} from "./inline_expressions";
 import {
   AST,
   ASTComment,
@@ -26,11 +27,9 @@ import {
   ASTTSet,
   ASTType,
   parse,
-} from "./parser";
+} from "./qweb_parser";
 
-import { isProp, domToString, DomType, Dom, DomNode } from "./utils";
-
-export type Template = (context: any, refs?: any) => BDom;
+export type Template = (context: any, refs?: any) => Block;
 export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 // export function compile(template: string, utils: typeof UTILS = UTILS): RenderFunction {

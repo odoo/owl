@@ -57,6 +57,7 @@ type TKind =
   | "RIGHT_PAREN"
   | "COMMA"
   | "VALUE"
+  | "TEMPLATE_STRING"
   | "SYMBOL"
   | "OPERATOR"
   | "COLON";
@@ -67,6 +68,7 @@ interface Token {
   originalValue?: string;
   size?: number;
   varName?: string;
+  replace?: Function;
 }
 
 const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(null), {
@@ -89,7 +91,7 @@ type Tokenizer = (expr: string) => Token | false;
 let tokenizeString: Tokenizer = function (expr) {
   let s = expr[0];
   let start = s;
-  if (s !== "'" && s !== '"') {
+  if (s !== "'" && s !== '"' && s !== "`") {
     return false;
   }
   let i = 1;
@@ -111,6 +113,17 @@ let tokenizeString: Tokenizer = function (expr) {
     throw new Error("Invalid expression");
   }
   s += start;
+  if (start === "`") {
+    return {
+      type: "TEMPLATE_STRING",
+      value: s,
+      replace(replacer) {
+        return s.replace(/\$\{(.*?)\}/g, (match, group) => {
+          return "${" + replacer(group) + "}";
+        });
+      },
+    };
+  }
   return { type: "VALUE", value: s };
 };
 
@@ -266,6 +279,9 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
           }
         }
       }
+    }
+    if (token.type === "TEMPLATE_STRING") {
+      token.value = token.replace((expr) => compileExpr(expr, scope));
     }
     if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
       if (token.type === "RIGHT_PAREN") {

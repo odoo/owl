@@ -206,4 +206,10 @@ describe("expression evaluation", () => {
     expect(compileExpr("{a,b}", {})).toBe("{a:scope['a'],b:scope['b']}");
     expect(compileExpr("{a,b:3,c}", {})).toBe("{a:scope['a'],b:3,c:scope['c']}");
   });
+
+  test("template strings", () => {
+    expect(compileExpr("`hey`", {})).toBe("`hey`");
+    expect(compileExpr("`hey ${you}`", {})).toBe("`hey ${scope['you']}`");
+    expect(compileExpr("`hey ${1 + 2}`", {})).toBe("`hey ${1+2}`");
+  });
 });

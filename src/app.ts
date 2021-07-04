@@ -1,6 +1,6 @@
 import { Blocks } from "./bdom";
 import { compileTemplate, Template } from "./compiler/index";
-import { Component, mount } from "./component";
+import { Component, internalMount } from "./component";
 import { callSlot, elem, owner, scope, toString, withDefault } from "./qweb_utils";
 import { Scheduler } from "./scheduler";
 import { globalTemplates } from "./tags";
@@ -76,6 +76,22 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   }
 
   mount(target: HTMLElement): Promise<InstanceType<T>> {
-    return mount(this, this.Root, this.props, target);
+    return internalMount(this, this.Root, this.props, target);
   }
+}
+
+interface MountParameters {
+  env?: any;
+  target: HTMLElement;
+  props?: any;
+}
+
+export async function mount<T extends typeof Component>(
+  C: T,
+  params: MountParameters
+): Promise<InstanceType<T>> {
+  const { env, props, target } = params;
+  const app = new App(C, props);
+  app.configure({env});
+  return app.mount(target);
 }

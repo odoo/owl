@@ -1,4 +1,4 @@
-import { App } from "../../src/app";
+import { mount } from "../../src/app";
 import { Component } from "../../src/component";
 import { xml } from "../../src/tags";
 import { fromName, makeTestFixture, snapshotTemplateCode } from "../../tests/helpers";
@@ -15,7 +15,7 @@ describe("basics", () => {
       static template = xml`<span>simple vnode</span>`;
     }
 
-    const component = await new App(Test).mount(fixture);
+    const component = await mount(Test, {target: fixture});
 
     expect(fixture.innerHTML).toBe("<span>simple vnode</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
@@ -27,7 +27,7 @@ describe("basics", () => {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
 
-    const component = await new App(Test, { value: 3 }).mount(fixture);
+    const component = await mount(Test, { props: { value: 3 }, target: fixture});
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
@@ -39,7 +39,7 @@ describe("basics", () => {
       static template = xml`just text`;
     }
 
-    const component = await new App(Test).mount(fixture);
+    const component = await mount(Test, {target: fixture});
 
     expect(fixture.innerHTML).toBe("just text");
     expect(component.el).toBeInstanceOf(Text);
@@ -51,7 +51,7 @@ describe("basics", () => {
       static template = xml`<span></span><div></div>`;
     }
 
-    const component = await new App(Test).mount(fixture);
+    const component = await mount(Test, {target: fixture});
 
     expect(fixture.innerHTML).toBe("<span></span><div></div>");
     expect(component.el).toEqual(null);
@@ -64,7 +64,7 @@ describe("basics", () => {
       value = 1;
     }
 
-    const component = await new App(Test).mount(fixture);
+    const component = await mount(Test, {target: fixture});
 
     expect(fixture.innerHTML).toBe("<span>1</span>");
 
@@ -83,7 +83,7 @@ describe("basics", () => {
     }
     snapshotTemplateCode(fromName(Test.template));
 
-    const component = await new App(Test).mount(fixture);
+    const component = await mount(Test, {target: fixture});
 
     expect(fixture.innerHTML).toBe("onetwothree");
     component.items = ["two", "three", "one"];

@@ -54,7 +54,7 @@ export class Component extends EventBus {
   }
 }
 
-export function mount<T extends typeof Component>(
+export function internalMount<T extends typeof Component>(
   app: App,
   C: T,
   props: any,

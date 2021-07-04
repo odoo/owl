@@ -1,5 +1,5 @@
 import type { Block } from "../bdom";
-import type { OwlNode } from "./component";
+import { OwlNode, STATUS } from "./component";
 
 export class Fiber {
   node: OwlNode;
@@ -10,15 +10,31 @@ export class Fiber {
   }
 }
 
+export class ChildFiber extends Fiber {
+  root: RootFiber;
+  parent: Fiber;
+
+  constructor(node: OwlNode, parent: ChildFiber | RootFiber) {
+    super(node);
+    this.parent = parent;
+    const root = parent.root;
+    root.counter++;
+    this.root = root;
+  }
+}
+
 export class RootFiber extends Fiber {
   counter = 1;
   error = null;
   resolve: any;
   promise: any;
   reject: any;
+  root: RootFiber;
 
   constructor(node: OwlNode) {
     super(node);
+    this.root = this;
+
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
@@ -31,7 +47,7 @@ export class RootFiber extends Fiber {
 }
 
 export class MountFiber extends RootFiber {
-  target: HTMLElement | DocumentFragment;
+  target: HTMLElement;
 
   constructor(node: OwlNode, target: HTMLElement) {
     super(node);
@@ -41,5 +57,6 @@ export class MountFiber extends RootFiber {
     const node = this.node;
     node.bdom = this.bdom;
     node.bdom!.mount(this.target);
+    node.status = STATUS.MOUNTED;
   }
 }

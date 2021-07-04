@@ -1,7 +1,8 @@
-import { Blocks } from "../bdom";
+import { Blocks as BaseBlocks } from "../bdom";
 import { compileTemplate, Template } from "../compiler/index";
 import { globalTemplates } from "../tags";
-import { Component, internalMount } from "./component";
+import { BComponent, BComponentH } from "./block_component";
+import { Component, OwlNode } from "./component";
 import { Scheduler } from "./scheduler";
 import { callSlot, elem, owner, scope, toString, withDefault } from "./template_utils";
 
@@ -22,6 +23,12 @@ export const UTILS = {
   callSlot,
 };
 
+const Blocks = {
+  ...BaseBlocks,
+  BComponent,
+  BComponentH,
+};
+
 export class TemplateSet {
   rawTemplates: { [name: string]: string } = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
@@ -36,8 +43,8 @@ export class TemplateSet {
     this.utils = Object.assign({}, UTILS, { call });
   }
 
-  addTemplate(name: string, template: string, allowDuplicate: boolean = false) {
-    if (name in this.rawTemplates && !allowDuplicate) {
+  addTemplate(name: string, template: string, options: { allowDuplicate?: boolean } = {}) {
+    if (name in this.rawTemplates && !options.allowDuplicate) {
       throw new Error(`Template ${name} already defined`);
     }
     this.rawTemplates[name] = template;
@@ -76,7 +83,11 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   }
 
   mount(target: HTMLElement): Promise<InstanceType<T>> {
-    return internalMount(this, this.Root, this.props, target);
+    if (!(target instanceof HTMLElement)) {
+      throw new Error("Cannot mount component: the target is not a valid DOM element");
+    }
+    const node = new OwlNode(this, this.Root, this.props);
+    return node.mount(target);
   }
 }
 

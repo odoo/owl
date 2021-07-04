@@ -1,5 +1,5 @@
 import { mount } from "../../src/core/app";
-import { Component } from "../../src/core/component";
+import { Component, STATUS } from "../../src/core/component";
 import { xml } from "../../src/tags";
 import { fromName, makeTestFixture, snapshotTemplateCode } from "../helpers";
 
@@ -91,123 +91,111 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("twothreeone");
   });
 
-  // test("props is set on root component", async () => {
-  //   expect.assertions(2);
-  //   const p = {};
-  //   class Test extends Component {
-  //     static template = xml`<span>simple vnode</span>`;
-  //     constructor(props: any) {
-  //       super(props);
-  //       expect(this.props).toBe(p);
-  //       expect(props).toBe(p);
-  //     }
-  //   }
+  test("props is set on root component", async () => {
+    expect.assertions(1);
+    const p = {};
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+      setup() {
+        expect(this.props).toBe(p);
+      }
+    }
 
-  //   await mount(Test, { target: fixture, props: p });
-  // });
+    await mount(Test, { target: fixture, props: p });
+  });
 
-  // test("has no el after creation", async () => {
-  //   expect.assertions(1);
-  //   class Test extends Component {
-  //     static template = xml`<span>simple vnode</span>`;
-  //     constructor(props: any) {
-  //       super(props);
-  //       expect(this.el).toBe(null);
-  //     }
-  //   }
+  test("some simple sanity checks (el/status)", async () => {
+    expect.assertions(3);
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+      setup() {
+        expect(this.el).toBe(null);
+        expect(this.__owl__.status).toBe(STATUS.NEW);
+      }
+    }
 
-  //   await mount(Test, { target: fixture });
-  // });
+    const test = await mount(Test, { target: fixture });
+    expect(test.__owl__.status).toBe(STATUS.MOUNTED);
+  });
 
-  // test("throws if mounting on target=null", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<span>simple vnode</span>`;
-  //   }
+  test("throws if mounting on target=null", async () => {
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+    }
 
-  //   let error;
-  //   try {
-  //     await mount(Test, { target: null as any });
-  //   } catch (e) {
-  //     error = e;
-  //   }
-  //   expect(error).toBeDefined();
-  //   expect(error.message).toBe("Cannot mount component: the target is not a valid DOM element");
-  // });
+    let error;
+    try {
+      await mount(Test, { target: null as any });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot mount component: the target is not a valid DOM element");
+  });
 
-  // test("crashes if it cannot find a template", async () => {
-  //   class Test extends Component {}
+  test("crashes if it cannot find a template", async () => {
+    class Test extends Component {
+      static template = "wrongtemplate";
+    }
 
-  //   let error;
-  //   try {
-  //     await mount(Test, { target: fixture });
-  //   } catch (e) {
-  //     error = e;
-  //   }
-  //   expect(error).toBeDefined();
-  //   expect(error.message).toBe('Could not find template for component "Test"');
-  // });
+    let error;
+    try {
+      await mount(Test, { target: fixture });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe('Missing template: "wrongtemplate"');
+  });
 
-  // test("can mount a simple class component in a detached div", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<span>simple vnode</span>`;
-  //   }
+  test("can mount a simple class component in a detached div", async () => {
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+    }
 
-  //   const div = document.createElement("div");
-  //   await mount(Test, { target: div });
-  //   expect(div.innerHTML).toBe("<span>simple vnode</span>");
-  // });
+    const div = document.createElement("div");
+    await mount(Test, { target: div });
+    expect(div.innerHTML).toBe("<span>simple vnode</span>");
+  });
 
-  // test("can mount a simple class component in a documentfragment", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<span>simple vnode</span>`;
-  //   }
+  test("class component with dynamic text", async () => {
+    class Test extends Component {
+      static template = xml`<span>My value: <t t-esc="value"/></span>`;
 
-  //   const fragment = document.createDocumentFragment();
-  //   const test = await mount(Test, { target: fragment });
-  //   expect(fixture.innerHTML).toBe("");
+      value = 42;
+    }
 
-  //   await mount(test, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<span>simple vnode</span>");
-  // });
+    await mount(Test, { target: fixture });
+    expect(fixture.innerHTML).toBe("<span>My value: 42</span>");
+    snapshotTemplateCode(fromName(Test.template));
+  });
 
-  // test("class component with dynamic text", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<span>My value: <t t-esc="value"/></span>`;
+  test("Multi root component", async () => {
+    class Test extends Component {
+      static template = xml`<span>1</span>text<span>2</span>`;
 
-  //     value = 42;
-  //   }
+      value = 42;
+    }
 
-  //   await mount(Test, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<span>My value: 42</span>");
-  //   snapshotTemplateCode(fromName(Test.template));
-  // });
+    await mount(Test, { target: fixture });
+    expect(fixture.innerHTML).toBe(`<span>1</span>text<span>2</span>`);
+    snapshotTemplateCode(fromName(Test.template));
+  });
 
-  // test("Multi root component", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<span>1</span>text<span>2</span>`;
+  test("a component inside a component", async () => {
+    class Child extends Component {
+      static template = xml`<div>simple vnode</div>`;
+    }
 
-  //     value = 42;
-  //   }
+    class Parent extends Component {
+      static template = xml`<span><Child/></span>`;
+      static components = { Child };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
 
-  //   await mount(Test, { target: fixture });
-  //   expect(fixture.innerHTML).toBe(`<span>1</span>text<span>2</span>`);
-  //   snapshotTemplateCode(fromName(Test.template));
-  // });
-
-  // test("a class component inside a class component", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<div>simple vnode</div>`;
-  //   }
-
-  //   class Parent extends Component {
-  //     static template = xml`<span><Child/></span>`;
-  //     static components = { Child };
-  //   }
-  //   snapshotTemplateCode(fromName(Parent.template));
-
-  //   await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<span><div>simple vnode</div></span>");
-  // });
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<span><div>simple vnode</div></span>");
+  });
 
   // test("a class component inside a class component, no external dom", async () => {
   //   class Child extends Component {

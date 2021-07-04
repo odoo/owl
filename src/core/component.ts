@@ -1,10 +1,10 @@
 import type { App } from "./app";
 import type { Block } from "../bdom";
 import { EventBus } from "./event_bus";
-import { Fiber, MountFiber, RootFiber } from "./fibers";
+import { ChildFiber, MountFiber, RootFiber } from "./fibers";
 
 export const enum STATUS {
-  INSTANTIATED,
+  NEW,
   WILLSTARTED, // willstart has been called
   CREATED, // after first render is complete
   MOUNTED, // is ready, and in DOM. It has a valid el
@@ -16,15 +16,45 @@ export class OwlNode {
   app: App;
   bdom: null | Block = null;
   component: Component;
-  fiber: Fiber | null = null;
-  status: STATUS = STATUS.INSTANTIATED;
+  fiber: ChildFiber | RootFiber | null = null;
+  status: STATUS = STATUS.NEW;
   renderFn: Function;
+  children: { [key: string]: OwlNode } = {};
 
   constructor(app: App, C: typeof Component, props: any) {
     this.app = app;
     const component = new C(props, app.env, this);
     this.component = component;
     this.renderFn = app.getTemplate(C.template).bind(null, component);
+  }
+
+  mount(target: any) {
+    const fiber = new MountFiber(this, target);
+    this.fiber = fiber;
+
+    this.app.scheduler.addFiber(fiber);
+    // rendering
+    fiber.bdom = this.renderFn();
+    fiber.counter--;
+
+    return fiber.promise.then(() => this.component);
+  }
+  render() {
+    const fiber = new RootFiber(this);
+    this.fiber = fiber;
+    this.app.scheduler.addFiber(fiber);
+
+    fiber.bdom = this.renderFn();
+    fiber.counter--;
+
+    return fiber.promise;
+  }
+
+  async initiateRender() {
+    await Promise.resolve(); // should be willStart stuff
+    const fiber = this.fiber!;
+    fiber.bdom = this.renderFn();
+    fiber.root.counter--;
   }
 }
 
@@ -50,36 +80,6 @@ export class Component extends EventBus {
   setup() {}
 
   render(): Promise<void> {
-    return internalRender(this.__owl__);
+    return this.__owl__.render();
   }
-}
-
-export function internalMount<T extends typeof Component>(
-  app: App,
-  C: T,
-  props: any,
-  target: HTMLElement
-): Promise<InstanceType<T>> {
-  const node = new OwlNode(app, C, props);
-
-  const fiber = new MountFiber(node, target);
-  node.fiber = fiber;
-
-  app.scheduler.addFiber(fiber);
-  // rendering
-  fiber.bdom = node.renderFn();
-  fiber.counter--;
-
-  return fiber.promise.then(() => node.component);
-}
-
-function internalRender(node: OwlNode): Promise<void> {
-  const fiber = new RootFiber(node);
-  node.fiber = fiber;
-  node.app.scheduler.addFiber(fiber);
-
-  fiber.bdom = node.renderFn();
-  fiber.counter--;
-
-  return fiber.promise;
 }

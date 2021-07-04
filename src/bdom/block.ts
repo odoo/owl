@@ -6,7 +6,7 @@ export abstract class Block {
   el: ChildNode | null | null = null;
   refs?: { [name: string]: HTMLElement };
 
-  mount(parent: HTMLElement | DocumentFragment) {
+  mount(parent: HTMLElement) {
     const anchor = document.createTextNode("");
     parent.appendChild(anchor);
     this.mountBefore(anchor);
@@ -21,7 +21,7 @@ export abstract class Block {
 
   remove() {}
 
-  move(parent: HTMLElement | DocumentFragment) {
+  move(parent: HTMLElement) {
     const anchor = document.createTextNode("");
     parent.appendChild(anchor);
     this.moveBefore(anchor);

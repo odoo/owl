@@ -13,7 +13,9 @@ describe("basic validation", () => {
 
   test("cannot add twice the same template", () => {
     const context = new TemplateSet();
-    expect(() => context.addTemplate("test", "<div/>", true)).not.toThrow("already defined");
+    expect(() => context.addTemplate("test", "<div/>", { allowDuplicate: true })).not.toThrow(
+      "already defined"
+    );
     expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
   });
 

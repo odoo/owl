@@ -72,7 +72,7 @@ if __name__ == "__main__":
  * Make an iframe, with all the js, css and xml properly injected.
  */
 function makeCodeIframe(js, css, xml) {
-  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "");
+  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "").replace(/`/g, '\\\`');
 
 
   // create iframe

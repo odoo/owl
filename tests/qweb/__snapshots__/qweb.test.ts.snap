@@ -1236,6 +1236,55 @@ exports[`static templates empty div 1`] = `
 }"
 `;
 
+exports[`static templates inline template string in t-esc 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let result;
+    let h = this.h;
+    let _1 = \`text\`;
+    if (_1 != null) {
+        let vn2 = {text: _1};
+        result = vn2
+    }
+    return result;
+}"
+`;
+
+exports[`static templates inline template string with content in t-esc 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let result;
+    let h = this.h;
+    scope.v = 1;
+    let _1 = \`text\${scope.v}\`;
+    if (_1 != null) {
+        let vn2 = {text: _1};
+        result = vn2
+    }
+    return result;
+}"
+`;
+
+exports[`static templates inline template string with variable in context 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let result;
+    let h = this.h;
+    let _1 = \`text \${scope['v']}\`;
+    if (_1 != null) {
+        let vn2 = {text: _1};
+        result = vn2
+    }
+    return result;
+}"
+`;
+
 exports[`static templates properly handle comments 1`] = `
 "function anonymous(context, extra
 ) {

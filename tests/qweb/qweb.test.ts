@@ -31,6 +31,21 @@ describe("static templates", () => {
     expect(renderToString(qweb, "test", { text: "hello vdom" })).toBe("hello vdom");
   });
 
+  test("inline template string in t-esc", () => {
+    qweb.addTemplate("test", '<t><t t-esc="`text`"/></t>');
+    expect(renderToString(qweb, "test")).toBe("text");
+  });
+
+  test("inline template string with content in t-esc", () => {
+    qweb.addTemplate("test", '<t><t t-set="v" t-value="1"/><t t-esc="`text${v}`"/></t>');
+    expect(renderToString(qweb, "test")).toBe("text1");
+  });
+
+  test("inline template string with variable in context", () => {
+    qweb.addTemplate("test", '<t><t t-esc="`text ${v}`"/></t>');
+    expect(renderToString(qweb, "test", { v: "from context" })).toBe("text from context");
+  });
+
   test("simple string, with some dynamic value", () => {
     qweb.addTemplate("test", '<t>hello <t t-esc="text"/></t>');
     expect(renderToString(qweb, "test", { text: "vdom" })).toBe("hello vdom");

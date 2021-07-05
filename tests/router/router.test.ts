@@ -60,6 +60,13 @@ describe("router miscellaneous", () => {
     await router.navigate({ to: "users", params: { id: 3 } });
     expect(window.location.href).toBe("http://localhost/test.html#/users/3");
   });
+
+  test("navigate using path and query string should preserve query string", async () => {
+    router = new TestRouter(env, [{ name: "users", path: "/users/{{id}}" }]);
+    await router.navigate({ path: "/users/3?test=1" });
+    expect(window.location.pathname).toBe("/users/3");
+    expect(window.location.search).toBe("?test=1");
+  });
 });
 
 describe("routeToPath", () => {
@@ -115,6 +122,13 @@ describe("getRouteParams", () => {
 
     // fallback route
     expect(getRouteParams({ path: "*" }, "somepath")).toEqual({});
+  });
+
+  test("properly match routes with query params", () => {
+
+    expect(getRouteParams({ path: "/home" }, "/home?test=1")).toEqual({});
+    expect(getRouteParams({ path: "/home" }, "/home?test1=1&test2=2")).toEqual({});
+
   });
 
   test("properly match simple routes, mode hash", () => {

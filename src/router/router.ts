@@ -125,7 +125,10 @@ export class Router {
     const initialParams = this.currentParams;
     const result = await this.matchAndApplyRules(path);
     if (result.type === "match") {
-      const finalPath = this.routeToPath(result.route, result.params);
+      let finalPath = this.routeToPath(result.route, result.params);
+      if (path.indexOf("?") > -1) {
+        finalPath += "?" + path.split("?")[1];
+      }
       const isPopStateEvent = ev && ev instanceof PopStateEvent;
       if (!isPopStateEvent) {
         this.setUrlFromPath(finalPath);
@@ -238,6 +241,9 @@ export class Router {
   private getRouteParams(route: Route, path: string): RouteParams | false {
     if (route.path === "*") {
       return {};
+    }
+    if (path.indexOf("?") > -1) {
+      path = path.split("?")[0];
     }
     if (path.startsWith("#")) {
       path = path.slice(1);

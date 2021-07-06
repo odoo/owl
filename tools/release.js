@@ -79,7 +79,8 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step 4/${STEPS}: creating git commit...`);
-  const gitResult = await execCommand(`git commit -am "[REL] v${next}\n\n${content}"`);
+  const escapedContent = content.replace(/\"/g, '\\\"').replace(/\`/g, '\\\`');
+  const gitResult = await execCommand(`git commit -am "[REL] v${next}\n\n${escapedContent}"`);
   if (gitResult !== 0) {
     logError("Git commit failed. Aborting.");
     return;

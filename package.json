@@ -10,7 +10,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=10.15.3"
+    "node": ">=12.18.3"
   },
   "scripts": {
     "build:bundle": "rollup -c",

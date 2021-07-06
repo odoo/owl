@@ -231,7 +231,8 @@ function updateClass(oldVnode: VNode, vnode: VNode): void {
   elm = vnode.elm as Element;
 
   for (name in oldClass) {
-    if (name && !klass[name]) {
+    if (name && !klass[name] && !Object.prototype.hasOwnProperty.call(klass, name)) {
+      // was `true` and now not provided
       elm.classList.remove(name);
     }
   }

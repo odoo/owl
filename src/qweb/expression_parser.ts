@@ -257,16 +257,33 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
   const tokens = tokenize(expr);
 
   let i = 0;
+  let stack = []; // to track last opening [ or {
 
   while (i < tokens.length) {
     let token = tokens[i];
     let prevToken = tokens[i - 1];
     let nextToken = tokens[i + 1];
+    let groupType = stack[stack.length - 1];
+
+    switch (token.type) {
+      case "LEFT_BRACE":
+      case "LEFT_BRACKET":
+        stack.push(token.type);
+        break;
+      case "RIGHT_BRACE":
+      case "RIGHT_BRACKET":
+        stack.pop();
+    }
+
     let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
     if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
       if (prevToken) {
         // normalize missing tokens: {a} should be equivalent to {a:a}
-        if (isLeftSeparator(prevToken) && isRightSeparator(nextToken)) {
+        if (
+          groupType === "LEFT_BRACE" &&
+          isLeftSeparator(prevToken) &&
+          isRightSeparator(nextToken)
+        ) {
           tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, { ...token });
           nextToken = tokens[i + 1];
         }

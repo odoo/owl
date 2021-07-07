@@ -207,6 +207,17 @@ describe("expression evaluation", () => {
     expect(compileExpr("{a,b:3,c}", {})).toBe("{a:scope['a'],b:3,c:scope['c']}");
   });
 
+  test("works with short object description and lists ", () => {
+    expect(compileExpr("[a, b]", {})).toBe("[scope['a'],scope['b']]");
+    expect(compileExpr("[a, b, c]", {})).toBe("[scope['a'],scope['b'],scope['c']]");
+    expect(compileExpr("[a, {b, c},d]", {})).toBe(
+      "[scope['a'],{b:scope['b'],c:scope['c']},scope['d']]"
+    );
+    expect(compileExpr("{a:[b, {c, d: e}]}", {})).toBe(
+      "{a:[scope['b'],{c:scope['c'],d:scope['e']}]}"
+    );
+  });
+
   test("template strings", () => {
     expect(compileExpr("`hey`", {})).toBe("`hey`");
     expect(compileExpr("`hey ${you}`", {})).toBe("`hey ${scope['you']}`");

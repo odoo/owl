@@ -139,8 +139,9 @@ const UTILS: Utils = {
   },
   combine(context, scope) {
     const clone = Object.create(context);
-    for (let k in scope) {
-      clone[k] = scope[k];
+    while (!isComponent(scope)) {
+      Object.assign(clone, scope);
+      scope = scope.__proto__;
     }
     return clone;
   },

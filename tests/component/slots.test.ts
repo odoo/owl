@@ -1257,4 +1257,50 @@ describe("t-slot directive", () => {
       `<div><div class="slotted"><div class="slot"><div class="child"></div></div></div></div>`
     );
   });
+
+  test("t-slot scope context", async () => {
+    expect.assertions(1);
+
+    class Wrapper extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    let dialog;
+
+    class Dialog extends Component {
+      static template = xml`
+        <Wrapper>
+          <div t-on-click="onClick">
+            <t t-slot="default" />
+          </div>
+        </Wrapper>
+      `;
+
+      static components = { Wrapper };
+
+      setup() {
+        dialog = this;
+      }
+
+      onClick(ev) {
+        // we do not use expect(this).toBe(dialog) here because if it fails, it
+        // may blow up jest because it then tries to compute a diff, which is
+        // infinite if there is a cycle
+        expect(this === dialog).toBe(true);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Dialog>
+            <button>The Button</button>
+        </Dialog>`;
+      static components = { Dialog };
+    }
+
+    await mount(Parent, { target: fixture });
+
+    document.querySelector("button").click();
+    await nextTick();
+  });
 });

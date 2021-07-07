@@ -816,7 +816,8 @@
         klass = klass || {};
         elm = vnode.elm;
         for (name in oldClass) {
-            if (name && !klass[name]) {
+            if (name && !klass[name] && !Object.prototype.hasOwnProperty.call(klass, name)) {
+                // was `true` and now not provided
                 elm.classList.remove(name);
             }
         }
@@ -1452,8 +1453,9 @@
         },
         combine(context, scope) {
             const clone = Object.create(context);
-            for (let k in scope) {
-                clone[k] = scope[k];
+            while (!isComponent(scope)) {
+                Object.assign(clone, scope);
+                scope = scope.__proto__;
             }
             return clone;
         },
@@ -5515,9 +5517,9 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
     exports.utils = utils;
 
 
-    __info__.version = '1.4.0';
-    __info__.date = '2021-07-06T08:28:15.916Z';
-    __info__.hash = '6faaa6c';
+    __info__.version = '1.4.1';
+    __info__.date = '2021-07-07T09:10:55.375Z';
+    __info__.hash = 'e579a99';
     __info__.url = 'https://github.com/odoo/owl';
 
 

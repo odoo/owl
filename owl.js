@@ -362,15 +362,28 @@
         scope = Object.create(scope);
         const tokens = tokenize(expr);
         let i = 0;
+        let stack = []; // to track last opening [ or {
         while (i < tokens.length) {
             let token = tokens[i];
             let prevToken = tokens[i - 1];
             let nextToken = tokens[i + 1];
+            let groupType = stack[stack.length - 1];
+            switch (token.type) {
+                case "LEFT_BRACE":
+                case "LEFT_BRACKET":
+                    stack.push(token.type);
+                    break;
+                case "RIGHT_BRACE":
+                case "RIGHT_BRACKET":
+                    stack.pop();
+            }
             let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
             if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
                 if (prevToken) {
                     // normalize missing tokens: {a} should be equivalent to {a:a}
-                    if (isLeftSeparator(prevToken) && isRightSeparator(nextToken)) {
+                    if (groupType === "LEFT_BRACE" &&
+                        isLeftSeparator(prevToken) &&
+                        isRightSeparator(nextToken)) {
                         tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, { ...token });
                         nextToken = tokens[i + 1];
                     }
@@ -5517,9 +5530,9 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
     exports.utils = utils;
 
 
-    __info__.version = '1.4.1';
-    __info__.date = '2021-07-07T09:10:55.375Z';
-    __info__.hash = 'e579a99';
+    __info__.version = '1.4.2';
+    __info__.date = '2021-07-07T12:57:07.352Z';
+    __info__.hash = '8083678';
     __info__.url = 'https://github.com/odoo/owl';
 
 

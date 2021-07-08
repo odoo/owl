@@ -41,7 +41,7 @@ export function elem(html: string): HTMLElement | Text | Comment {
   return toDom(doc.firstChild!);
 }
 
-export function toString(value: any): string {
+function toString(value: any): string {
   switch (typeof value) {
     case "string":
       return value;
@@ -57,21 +57,22 @@ export function toString(value: any): string {
   throw new Error("not yet working" + value);
 }
 
-export function withDefault(value: any, defaultValue: any): any {
+function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
 
-export const scope = Symbol("scope");
+const scope = Symbol("scope");
 
-export function owner(obj: any): any | null {
+function owner(obj: any): any | null {
   while (obj && obj[scope]) {
     obj = obj.__proto__;
   }
   return obj;
 }
 
-export function callSlot(ctx: any, name: string, def?: (ctx: any) => Block): Block | null {
+function callSlot(ctx: any, name: string, def?: (ctx: any) => Block): Block | null {
   const slots = ctx.__owl__.slots;
+  // todo: do not call slot fn if not necessary
   const slotBDom = slots ? slots[name]() : null;
   if (def) {
     const result = new BMulti(2);
@@ -84,3 +85,16 @@ export function callSlot(ctx: any, name: string, def?: (ctx: any) => Block): Blo
   }
   return slotBDom;
 }
+
+export const UTILS = {
+  elem,
+  toString,
+  withDefault,
+  call: (name: string) => {
+    throw new Error(`Missing template: ${name}`);
+  },
+  zero: Symbol("zero"),
+  scope,
+  owner,
+  callSlot,
+};

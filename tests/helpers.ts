@@ -1,7 +1,8 @@
-import { TemplateSet, UTILS } from "../src/core/app";
+import { TemplateSet } from "../src/core/app";
 import { Block, Blocks } from "../src/bdom";
 import { compileTemplate, Template } from "../src/compiler/index";
 import { globalTemplates } from "../src/tags";
+import { UTILS } from "../src/core/template_utils";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();

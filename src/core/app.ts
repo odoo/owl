@@ -4,30 +4,17 @@ import { globalTemplates } from "../tags";
 import { BComponent, BComponentH } from "./block_component";
 import { Component, OwlNode } from "./component";
 import { Scheduler } from "./scheduler";
-import { callSlot, elem, owner, scope, toString, withDefault } from "./template_utils";
-
-// -----------------------------------------------------------------------------
-//  TemplateSet
-// -----------------------------------------------------------------------------
-
-export const UTILS = {
-  elem,
-  toString,
-  withDefault,
-  call: (name: string) => {
-    throw new Error(`Missing template: ${name}`);
-  },
-  zero: Symbol("zero"),
-  scope,
-  owner,
-  callSlot,
-};
+import { UTILS } from "./template_utils";
 
 const Blocks = {
   ...BaseBlocks,
   BComponent,
   BComponentH,
 };
+
+// -----------------------------------------------------------------------------
+//  TemplateSet
+// -----------------------------------------------------------------------------
 
 export class TemplateSet {
   rawTemplates: { [name: string]: string } = Object.create(globalTemplates);

@@ -140,7 +140,7 @@ const UTILS: Utils = {
   /**
    * This method combines the current context with the variables defined in a
    * scope for use in a slot.
-   * 
+   *
    * The implementation is kind of tricky because we want to preserve the
    * prototype chain structure of the cloned result. So we need to traverse the
    * prototype chain, cloning each level respectively.

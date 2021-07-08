@@ -137,11 +137,25 @@ const UTILS: Utils = {
     }
     return result;
   },
+  /**
+   * This method combines the current context with the variables defined in a
+   * scope for use in a slot.
+   * 
+   * The implementation is kind of tricky because we want to preserve the
+   * prototype chain structure of the cloned result. So we need to traverse the
+   * prototype chain, cloning each level respectively.
+   */
   combine(context, scope) {
-    const clone = Object.create(context);
+    let clone = context;
+    const scopeStack = [];
     while (!isComponent(scope)) {
-      Object.assign(clone, scope);
+      scopeStack.push(scope);
       scope = scope.__proto__;
+    }
+    while (scopeStack.length) {
+      let scope = scopeStack.pop();
+      clone = Object.create(clone);
+      Object.assign(clone, scope);
     }
     return clone;
   },

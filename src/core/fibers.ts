@@ -1,5 +1,5 @@
 import type { Block } from "../bdom";
-import { OwlNode, STATUS } from "./component";
+import { OwlNode, STATUS } from "./owl_node";
 
 export class Fiber {
   node: OwlNode;

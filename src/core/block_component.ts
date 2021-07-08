@@ -1,5 +1,5 @@
 import { Block } from "../bdom";
-import { OwlNode } from "./component";
+import { OwlNode } from "./owl_node";
 import { ChildFiber } from "./fibers";
 // import type { Component } from "./component";
 

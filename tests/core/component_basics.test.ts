@@ -1,5 +1,6 @@
 import { mount } from "../../src/core/app";
-import { Component, STATUS } from "../../src/core/component";
+import { Component } from "../../src/core/component";
+import { STATUS } from "../../src/core/owl_node";
 import { xml } from "../../src/tags";
 import { fromName, makeTestFixture, snapshotTemplateCode } from "../helpers";
 

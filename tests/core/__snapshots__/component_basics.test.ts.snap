@@ -24,6 +24,19 @@ exports[`basics Multi root component 1`] = `
 }"
 `;
 
+exports[`basics a class component inside a class component, no external dom 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    return b1;
+  }
+}"
+`;
+
 exports[`basics a component inside a component 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -42,6 +55,29 @@ exports[`basics a component inside a component 1`] = `
   return ctx => {
     const b1 = new Block1();
     b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can handle empty props 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx);
     return b1;
   }
 }"
@@ -139,6 +175,69 @@ exports[`basics class component with dynamic text 1`] = `
   return ctx => {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
+exports[`basics class parent, class child component with props 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics class parent, class child component with props 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return ctx => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].value;
+    return b1;
+  }
+}"
+`;
+
+exports[`basics parent, child and grandchild 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics two child components 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(2);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx);
     return b1;
   }
 }"

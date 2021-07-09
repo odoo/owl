@@ -12,6 +12,12 @@ export const enum STATUS {
   DESTROYED,
 }
 
+let currentNode: OwlNode | null = null;
+
+export function getCurrent(): OwlNode | null {
+  return currentNode;
+}
+
 export class OwlNode {
   app: App;
   bdom: null | Block = null;
@@ -23,6 +29,7 @@ export class OwlNode {
 
   constructor(app: App, C: typeof Component, props: any) {
     this.app = app;
+    currentNode = this;
     const component = new C(props, app.env, this);
     component.setup();
     this.component = component;
@@ -31,29 +38,25 @@ export class OwlNode {
 
   mount(target: any) {
     const fiber = new MountFiber(this, target);
-    this.fiber = fiber;
-
     this.app.scheduler.addFiber(fiber);
-    // rendering
-    fiber.bdom = this.renderFn();
-    fiber.counter--;
-
+    this._render(fiber);
     return fiber.promise.then(() => this.component);
   }
+
   render() {
     const fiber = new RootFiber(this);
-    this.fiber = fiber;
     this.app.scheduler.addFiber(fiber);
-
-    fiber.bdom = this.renderFn();
-    fiber.counter--;
-
+    this._render(fiber);
     return fiber.promise;
   }
 
-  async initiateRender() {
+  async initiateRender(fiber: ChildFiber) {
     await Promise.resolve(); // should be willStart stuff
-    const fiber = this.fiber!;
+    this._render(fiber);
+  }
+
+  _render(fiber: ChildFiber | RootFiber) {
+    this.fiber = fiber;
     fiber.bdom = this.renderFn();
     fiber.root.counter--;
   }

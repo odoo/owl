@@ -1,8 +1,9 @@
 import { mount } from "../../src/";
 import { Component } from "../../src/core/component";
 import { STATUS } from "../../src/core/owl_node";
+import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
-import { fromName, makeTestFixture, snapshotTemplateCode } from "../helpers";
+import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -198,97 +199,97 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span><div>simple vnode</div></span>");
   });
 
-  // test("a class component inside a class component, no external dom", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<div>simple vnode</div>`;
-  //   }
+  test("a class component inside a class component, no external dom", async () => {
+    class Child extends Component {
+      static template = xml`<div>simple vnode</div>`;
+    }
 
-  //   class Parent extends Component {
-  //     static template = xml`<Child/>`;
-  //     static components = { Child };
-  //   }
-  //   snapshotTemplateCode(fromName(Parent.template));
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
 
-  //   await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
-  // });
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
+  });
 
-  // test("simple component with a dynamic text", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<div><t t-esc="value" /></div>`;
-  //     value = 3;
-  //   }
+  test("simple component with a dynamic text", async () => {
+    class Test extends Component {
+      static template = xml`<div><t t-esc="value" /></div>`;
+      value = 3;
+    }
 
-  //   const test = await mount(Test, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>3</div>");
-  //   test.value = 5;
-  //   await test.render();
-  //   expect(fixture.innerHTML).toBe("<div>5</div>");
-  // });
+    const test = await mount(Test, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+    test.value = 5;
+    await test.render();
+    expect(fixture.innerHTML).toBe("<div>5</div>");
+  });
 
-  // test("simple component, useState", async () => {
-  //   class Test extends Component {
-  //     static template = xml`<div><t t-esc="state.value" /></div>`;
-  //     state = useState({ value: 3 });
-  //   }
+  test("simple component, useState", async () => {
+    class Test extends Component {
+      static template = xml`<div><t t-esc="state.value" /></div>`;
+      state = useState({ value: 3 });
+    }
 
-  //   const test = await mount(Test, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>3</div>");
-  //   test.state.value = 5;
-  //   await nextTick();
-  //   expect(fixture.innerHTML).toBe("<div>5</div>");
-  // });
+    const test = await mount(Test, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+    test.state.value = 5;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>5</div>");
+  });
 
-  // test("two child components", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<div>simple vnode</div>`;
-  //   }
+  test("two child components", async () => {
+    class Child extends Component {
+      static template = xml`<div>simple vnode</div>`;
+    }
 
-  //   class Parent extends Component {
-  //     static template = xml`<Child/><Child/>`;
-  //     static components = { Child };
-  //   }
-  //   snapshotTemplateCode(fromName(Parent.template));
+    class Parent extends Component {
+      static template = xml`<Child/><Child/>`;
+      static components = { Child };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
 
-  //   await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>simple vnode</div><div>simple vnode</div>");
-  // });
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>simple vnode</div><div>simple vnode</div>");
+  });
 
-  // test("class parent, class child component with props", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<div><t t-esc="props.value" /></div>`;
-  //   }
+  test("class parent, class child component with props", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-esc="props.value" /></div>`;
+    }
 
-  //   class Parent extends Component {
-  //     static template = xml`<Child value="42" />`;
-  //     static components = { Child };
-  //   }
-  //   snapshotTemplateCode(fromName(Parent.template));
-  //   snapshotTemplateCode(fromName(Child.template));
+    class Parent extends Component {
+      static template = xml`<Child value="42" />`;
+      static components = { Child };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
+    snapshotTemplateCode(fromName(Child.template));
 
-  //   await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>42</div>");
-  // });
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+  });
 
-  // test("parent, child and grandchild", async () => {
-  //   class GrandChild extends Component {
-  //     static template = xml`<div>hey</div>`;
-  //   }
+  test("parent, child and grandchild", async () => {
+    class GrandChild extends Component {
+      static template = xml`<div>hey</div>`;
+    }
 
-  //   class Child extends Component {
-  //     static template = xml`<GrandChild />`;
-  //     static components = { GrandChild };
-  //   }
+    class Child extends Component {
+      static template = xml`<GrandChild />`;
+      static components = { GrandChild };
+    }
 
-  //   class Parent extends Component {
-  //     static template = xml`<Child/>`;
-  //     static components = { Child };
-  //   }
-  //   snapshotTemplateCode(fromName(Parent.template));
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+    snapshotTemplateCode(fromName(Parent.template));
 
-  //   await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>hey</div>");
-  // });
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div>hey</div>");
+  });
 
   // test("zero or one child components", async () => {
   //   class Child extends Component {
@@ -326,19 +327,19 @@ describe("basics", () => {
   //   expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
   // });
 
-  // test("can handle empty props", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<span><t t-esc="props.val"/></span>`;
-  //   }
-  //   class Parent extends Component {
-  //     static template = xml`<div><Child val=""/></div>`;
-  //     static components = { Child };
-  //   }
+  test("can handle empty props", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child val=""/></div>`;
+      static components = { Child };
+    }
 
-  //   snapshotTemplateCode(fromName(Parent.template));
-  //   await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div><span></span></div>");
-  // });
+    snapshotTemplateCode(fromName(Parent.template));
+    await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div><span></span></div>");
+  });
 
   // test("cannot be clicked on and updated if not in DOM", async () => {
   //   class Counter extends Component {

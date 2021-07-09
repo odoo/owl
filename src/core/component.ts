@@ -1,4 +1,4 @@
-import { EventBus } from "./event_bus";
+import { EventBus } from "../event_bus";
 import type { OwlNode } from "./owl_node";
 
 export class Component extends EventBus {

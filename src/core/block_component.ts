@@ -29,8 +29,8 @@ export class BComponent extends Block {
       const C = components[name];
       node = new OwlNode(parentNode.app, C, props);
       parentNode.children[key] = node;
-      node.fiber = new ChildFiber(node, parentNode.fiber!);
-      node.initiateRender();
+      const fiber = new ChildFiber(node, parentNode.fiber!);
+      node.initiateRender(fiber);
     }
     this.node = node;
   }

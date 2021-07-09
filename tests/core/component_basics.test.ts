@@ -1,4 +1,4 @@
-import { mount } from "../../src/core/app";
+import { mount } from "../../src/";
 import { Component } from "../../src/core/component";
 import { STATUS } from "../../src/core/owl_node";
 import { xml } from "../../src/tags";

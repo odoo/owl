@@ -78,19 +78,3 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     return node.mount(target);
   }
 }
-
-interface MountParameters {
-  env?: any;
-  target: HTMLElement;
-  props?: any;
-}
-
-export async function mount<T extends typeof Component>(
-  C: T,
-  params: MountParameters
-): Promise<InstanceType<T>> {
-  const { env, props, target } = params;
-  const app = new App(C, props);
-  app.configure({ env });
-  return app.mount(target);
-}

@@ -260,3 +260,19 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   }
 }"
 `;
+
+exports[`basics zero or one child components 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BMulti(1);
+    if (ctx['state'].hasChild) {
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    }
+    return b1;
+  }
+}"
+`;

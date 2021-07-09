@@ -24,6 +24,7 @@ export class OwlNode {
   constructor(app: App, C: typeof Component, props: any) {
     this.app = app;
     const component = new C(props, app.env, this);
+    component.setup();
     this.component = component;
     this.renderFn = app.getTemplate(C.template).bind(null, component);
   }

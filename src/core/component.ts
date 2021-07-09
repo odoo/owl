@@ -13,7 +13,6 @@ export class Component extends EventBus {
     this.props = props;
     this.env = env;
     this.__owl__ = node;
-    this.setup();
   }
   get el() {
     const node = this.__owl__;

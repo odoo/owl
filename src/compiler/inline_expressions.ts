@@ -334,7 +334,7 @@ export function compileExpr(expr: string): string {
 }
 
 export const INTERP_REGEXP = /\{\{.*?\}\}/g;
-export const INTERP_GROUP_REGEXP = /\{\{.*?\}\}/g;
+const INTERP_GROUP_REGEXP = /\{\{.*?\}\}/g;
 
 export function interpolate(s: string): string {
   let matches = s.match(INTERP_REGEXP);

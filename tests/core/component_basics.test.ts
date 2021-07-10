@@ -1,6 +1,6 @@
 import { mount } from "../../src/";
 import { Component } from "../../src/core/component";
-import { STATUS } from "../../src/core/owl_node";
+import { status } from "../../src/status";
 import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
@@ -112,12 +112,12 @@ describe("basics", () => {
       static template = xml`<span>simple vnode</span>`;
       setup() {
         expect(this.el).toBe(null);
-        expect(this.__owl__.status).toBe(STATUS.NEW);
+        expect(status(this)).toBe("new");
       }
     }
 
     const test = await mount(Test, { target: fixture });
-    expect(test.__owl__.status).toBe(STATUS.MOUNTED);
+    expect(status(test)).toBe("mounted");
   });
 
   test("throws if mounting on target=null", async () => {

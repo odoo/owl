@@ -1,12 +1,6 @@
 import type { Block } from "../bdom";
 import { Dom, DomNode, domToString, DomType, isProp } from "./helpers";
-import {
-  compileExpr,
-  compileExprToArray,
-  interpolate,
-  INTERP_GROUP_REGEXP,
-  INTERP_REGEXP,
-} from "./inline_expressions";
+import { compileExpr, compileExprToArray, interpolate, INTERP_REGEXP } from "./inline_expressions";
 import {
   AST,
   ASTComment,
@@ -578,11 +572,13 @@ export class QWebCompiler {
       }
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       if (isDynamic) {
-        const str = ast.ref.replace(INTERP_REGEXP, (expr) => this.captureExpression(expr));
+        const str = ast.ref.replace(
+          INTERP_REGEXP,
+          (expr) => "${" + this.captureExpression(expr.slice(2, -2)) + "}"
+        );
         const index = block.dataNumber;
         block.dataNumber++;
-        const expr = str.replace(INTERP_GROUP_REGEXP, (s) => "${" + s.slice(2, -2) + "}");
-        this.addLine(`${block.varName}.data[${index}] = \`${expr}\`;`);
+        this.addLine(`${block.varName}.data[${index}] = \`${str}\`;`);
         block.insertUpdate((el) => `this.refs[this.data[${index}]] = ${el};`);
       } else {
         block.insertUpdate((el) => `this.refs[\`${ast.ref}\`] = ${el};`);

@@ -2,15 +2,7 @@ import type { App } from "./app";
 import type { Block } from "../bdom";
 import { ChildFiber, MountFiber, RootFiber } from "./fibers";
 import type { Component } from "./component";
-
-export const enum STATUS {
-  NEW,
-  WILLSTARTED, // willstart has been called
-  CREATED, // after first render is complete
-  MOUNTED, // is ready, and in DOM. It has a valid el
-  UNMOUNTED, // has a valid el, but is no longer in DOM
-  DESTROYED,
-}
+import { STATUS } from "../status";
 
 let currentNode: OwlNode | null = null;
 

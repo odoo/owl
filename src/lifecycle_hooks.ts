@@ -1,11 +1,10 @@
 import { getCurrent } from "./core/owl_node";
-import { observe } from "./reactivity";
 
 // -----------------------------------------------------------------------------
 //  hooks
 // -----------------------------------------------------------------------------
 
-export function useState<T>(state: T): T {
+export function onWillStart(fn: () => Promise<void> | void) {
   const node = getCurrent()!;
-  return observe(state, () => node.render());
+  node.willStart.push(fn);
 }

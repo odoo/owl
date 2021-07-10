@@ -1,3 +1,10 @@
+import { getCurrent } from "./core/owl_node";
+
+export function useState<T>(state: T): T {
+  const node = getCurrent()!;
+  return observe(state, () => node.render());
+}
+
 type CB = () => void;
 const observers: WeakMap<any, PSet<CB>> = new WeakMap();
 

@@ -1,7 +1,6 @@
-import { mount } from "../../src/";
+import { mount, useState } from "../../src";
 import { Component } from "../../src/core/component";
 import { status } from "../../src/status";
-import { useState } from "../../src/hooks";
 import { xml } from "../../src/tags";
 import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 

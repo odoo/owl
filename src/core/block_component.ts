@@ -37,7 +37,6 @@ export class BComponent extends Block {
   }
 
   firstChildNode(): ChildNode | null {
-    // return null;
     const bdom = this.node.bdom;
     return bdom ? bdom.firstChildNode() : null;
   }

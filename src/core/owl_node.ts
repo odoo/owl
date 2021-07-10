@@ -10,6 +10,8 @@ export function getCurrent(): OwlNode | null {
   return currentNode;
 }
 
+type LifecycleHook = Function;
+
 export class OwlNode {
   app: App;
   bdom: null | Block = null;
@@ -18,6 +20,8 @@ export class OwlNode {
   status: STATUS = STATUS.NEW;
   renderFn: Function;
   children: { [key: string]: OwlNode } = {};
+
+  willStart: LifecycleHook[] = [];
 
   constructor(app: App, C: typeof Component, props: any) {
     this.app = app;
@@ -28,9 +32,10 @@ export class OwlNode {
     this.renderFn = app.getTemplate(C.template).bind(null, component);
   }
 
-  mount(target: any) {
+  async mount(target: any) {
     const fiber = new MountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
+    await Promise.all(this.willStart.map((f) => f()));
     this._render(fiber);
     return fiber.promise.then(() => this.component);
   }
@@ -43,7 +48,7 @@ export class OwlNode {
   }
 
   async initiateRender(fiber: ChildFiber) {
-    await Promise.resolve(); // should be willStart stuff
+    await Promise.all(this.willStart.map((f) => f()));
     this._render(fiber);
   }
 

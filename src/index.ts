@@ -18,3 +18,7 @@ export async function mount<T extends typeof Component>(
   app.configure({ env });
   return app.mount(target);
 }
+
+export { xml } from "./tags";
+export { useState } from "./hooks";
+export { EventBus } from "./event_bus";

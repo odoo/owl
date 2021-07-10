@@ -73,7 +73,7 @@ function owner(obj: any): any | null {
 function callSlot(ctx: any, name: string, defaultSlot?: (ctx: any) => Block): Block | null {
   const slots = ctx.__owl__.slots;
   const slotFn = slots[name];
-  const slotBDom = slotFn ? slotFn() : null;
+  const slotBDom = slotFn ? slotFn(ctx) : null;
   if (defaultSlot) {
     const result = new BMulti(2);
     if (slotBDom) {

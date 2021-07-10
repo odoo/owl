@@ -3,10 +3,10 @@ import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../he
 
 let fixture: HTMLElement;
 
-// function children(w: Component): Component[] {
-//   const childrenMap = w.__owl__.children;
-//   return Object.keys(childrenMap).map((id) => childrenMap[id]);
-// }
+function children(w: Component): Component[] {
+  const childrenMap = w.__owl__.children;
+  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
+}
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -498,37 +498,37 @@ describe("slots", () => {
     console.log = consoleLog;
   });
 
-  // test.skip("slot preserves properly parented relationship", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<t t-slot="default"/>`;
-  //   }
-  //   class GrandChild extends Component {
-  //     static template = xml`Grand Child`;
-  //   }
-  //   class Parent extends Component {
-  //     static template = xml`
-  //       <div>
-  //         <Child>
-  //           <GrandChild/>
-  //         </Child>
-  //       </div>`;
-  //     static components = { Child, GrandChild };
-  //   }
+  test("slot preserves properly parented relationship", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+    class GrandChild extends Component {
+      static template = xml`Grand Child`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <GrandChild/>
+          </Child>
+        </div>`;
+      static components = { Child, GrandChild };
+    }
 
-  //   snapshotTemplateCode(fromName(Parent.template));
-  //   snapshotTemplateCode(fromName(Child.template));
-  //   const parent = await mount(Parent, { target: fixture });
+    snapshotTemplateCode(fromName(Parent.template));
+    snapshotTemplateCode(fromName(Child.template));
+    const parent = await mount(Parent, { target: fixture });
 
-  //   expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
+    expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
 
-  //   const parentChildren = children(parent);
-  //   expect(parentChildren.length).toBe(1);
-  //   expect(parentChildren[0]).toBeInstanceOf(Child);
+    const parentChildren = children(parent);
+    expect(parentChildren.length).toBe(1);
+    expect(parentChildren[0]).toBeInstanceOf(Child);
 
-  //   const childrenChildren = children(parentChildren[0]);
-  //   expect(childrenChildren.length).toBe(1);
-  //   expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
-  // });
+    const childrenChildren = children(parentChildren[0]);
+    expect(childrenChildren.length).toBe(1);
+    expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
+  });
 
   //   test.skip("slot preserves properly parented relationship, even through t-call", async () => {
   //     class Child extends Component {

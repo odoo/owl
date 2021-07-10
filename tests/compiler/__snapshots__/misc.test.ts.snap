@@ -98,7 +98,7 @@ exports[`misc complex template 1`] = `
     const b4 = b1.children[2] = new BCollection(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])));
     b4.forEach(\`slot\`, ctx, (i1, ctx) => {
       let key1 = ctx['slot'].id;
-      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__1__\${key1}\`, ctx);
+      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__1__\${key1}\`, ctx, ctx);
       b5.parentClass = \`slot_container\`;
       b4.keys[i1] = key1;
     });
@@ -549,8 +549,8 @@ exports[`misc other complex template 1`] = `
       const b23 = b1.children[6] = new Block14();
     } else {
       const b24 = b1.children[7] = new Block15();
-      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__2\`, ctx);
-      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__3\`, ctx);
+      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__2\`, ctx, ctx);
+      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__3\`, ctx, ctx);
     }
     b1.refs = refs;
     return b1;

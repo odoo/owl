@@ -44,7 +44,7 @@ exports[`refs refs are properly bound in slots 1`] = `
     b1.data[0] = ctx['state'].val;
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'footer': slot4(ctx2, refs)};
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, ctx);
     b3.node.slots = slots3;
     b1.refs = refs;
     return b1;

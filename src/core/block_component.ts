@@ -13,9 +13,17 @@ export class BComponent extends Block {
   // handlers?: any[];
   // parentClass?: string;
 
-  constructor(name: string, props: any, key: string, ctx: any) {
+  /**
+   *
+   * @param name
+   * @param props
+   * @param key
+   * @param owner the component in which the component was defined
+   * @param parent the actual parent (may be different in case of slots)
+   */
+  constructor(name: string, props: any, key: string, owner: any, parent: any) {
     super();
-    const parentNode: OwlNode = ctx.__owl__;
+    const parentNode: OwlNode = parent.__owl__;
     let node = parentNode.children[key];
     if (node) {
       // update
@@ -26,7 +34,7 @@ export class BComponent extends Block {
       //     updateAndRender(component, fiber, props);
     } else {
       // new component
-      const components = ctx.constructor.components;
+      const components = owner.constructor.components;
       const C = components[name];
       node = new OwlNode(parentNode.app, C, props);
       parentNode.children[key] = node;

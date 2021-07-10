@@ -31,7 +31,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
     return b1;
   }
 }"
@@ -54,7 +54,7 @@ exports[`basics a component inside a component 1`] = `
   
   return ctx => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
     return b1;
   }
 }"
@@ -107,7 +107,7 @@ exports[`basics can handle empty props 1`] = `
   
   return ctx => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx);
+    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx, ctx);
     return b1;
   }
 }"
@@ -208,7 +208,7 @@ exports[`basics child can be updated 2`] = `
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx);
+    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx, ctx);
     return b1;
   }
 }"
@@ -243,7 +243,7 @@ exports[`basics class parent, class child component with props 1`] = `
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx);
+    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx, ctx);
     return b1;
   }
 }"
@@ -278,7 +278,7 @@ exports[`basics parent, child and grandchild 1`] = `
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
   return ctx => {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
     return b1;
   }
 }"
@@ -292,8 +292,8 @@ exports[`basics two child components 1`] = `
   
   return ctx => {
     const b1 = new BMulti(2);
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
-    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, ctx);
     return b1;
   }
 }"
@@ -326,7 +326,7 @@ exports[`basics zero or one child components 1`] = `
   return ctx => {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx);
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
     }
     return b1;
   }

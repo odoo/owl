@@ -41,7 +41,8 @@ export class OwlNode {
     return fiber.promise.then(() => this.component);
   }
 
-  render() {
+  async render() {
+    await Promise.resolve();
     const fiber = new RootFiber(this);
     this.app.scheduler.addFiber(fiber);
     this._render(fiber);

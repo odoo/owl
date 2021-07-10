@@ -61,10 +61,10 @@ export class BComponent extends Block {
     node.bdom!.patch(node!.fiber!.bdom!);
   }
 
-  // remove() {
-  //   const bdom = this.component.__owl__.bdom!;
-  //   bdom.remove();
-  // }
+  remove() {
+    const bdom = this.node.bdom!;
+    bdom.remove();
+  }
 }
 
 export class BComponentH extends BComponent {

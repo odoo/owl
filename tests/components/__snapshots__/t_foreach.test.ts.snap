@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`list of components simple list 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = new BCollection(ctx['state'].elems);
+    b1.forEach(\`elem\`, ctx, (i1, ctx) => {
+      let key1 = ctx['elem'].id;
+      b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, \`__1__\${key1}\`, ctx);
+      b1.keys[i1] = key1;
+    });
+    return b1;
+  }
+}"
+`;

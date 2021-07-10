@@ -21,6 +21,7 @@ export async function mount<T extends typeof Component>(
 
 export { xml } from "./tags";
 export { useState } from "./reactivity";
+export { useRef } from "./refs";
 export { EventBus } from "./event_bus";
 
 export { onWillStart } from "./lifecycle_hooks";

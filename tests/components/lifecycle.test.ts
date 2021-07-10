@@ -67,4 +67,24 @@ describe("lifecycle hooks", () => {
     await mount(Parent, { target: fixture });
     expect(ok).toBe(true);
   });
+
+  test("willStart is called with component as this", async () => {
+    expect.assertions(2);
+    let comp: any;
+
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+      setup() {
+        comp = this;
+        onWillStart(this.willStart);
+      }
+
+      willStart() {
+        expect(this).toBeInstanceOf(Test);
+        expect(this).toBe(comp);
+      }
+    }
+
+    await mount(Test, { target: fixture });
+  });
 });

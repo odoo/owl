@@ -35,7 +35,8 @@ export class OwlNode {
   async mount(target: any) {
     const fiber = new MountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
-    await Promise.all(this.willStart.map((f) => f()));
+    const comp = this.component;
+    await Promise.all(this.willStart.map((f) => f.call(comp)));
     this._render(fiber);
     return fiber.promise.then(() => this.component);
   }
@@ -48,7 +49,8 @@ export class OwlNode {
   }
 
   async initiateRender(fiber: ChildFiber) {
-    await Promise.all(this.willStart.map((f) => f()));
+    const comp = this.component;
+    await Promise.all(this.willStart.map((f) => f.call(comp)));
     this._render(fiber);
   }
 

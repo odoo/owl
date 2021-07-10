@@ -183,4 +183,27 @@ describe("expression evaluation", () => {
     expect(compileExpr("f(...state.list)")).toBe("ctx['f'](...ctx['state'].list)");
     expect(compileExpr("f([...list])")).toBe("ctx['f']([...ctx['list']])");
   });
+
+  test("works with builtin properties", () => {
+    expect(compileExpr("state.constructor.name")).toBe("ctx['state'].constructor.name");
+  });
+
+  test("works with shortcut object key description", () => {
+    expect(compileExpr("{a}")).toBe("{a:ctx['a']}");
+    expect(compileExpr("{a,b}")).toBe("{a:ctx['a'],b:ctx['b']}");
+    expect(compileExpr("{a,b:3,c}")).toBe("{a:ctx['a'],b:3,c:ctx['c']}");
+  });
+
+  test("template strings", () => {
+    expect(compileExpr("`hey`")).toBe("`hey`");
+    expect(compileExpr("`hey ${you}`")).toBe("`hey ${ctx['you']}`");
+    expect(compileExpr("`hey ${1 + 2}`")).toBe("`hey ${1+2}`");
+  });
+
+  test("works with short object description and lists ", () => {
+    expect(compileExpr("[a, b]")).toBe("[ctx['a'],ctx['b']]");
+    expect(compileExpr("[a, b, c]")).toBe("[ctx['a'],ctx['b'],ctx['c']]");
+    expect(compileExpr("[a, {b, c},d]")).toBe("[ctx['a'],{b:ctx['b'],c:ctx['c']},ctx['d']]");
+    expect(compileExpr("{a:[b, {c, d: e}]}")).toBe("{a:[ctx['b'],{c:ctx['c'],d:ctx['e']}]}");
+  });
 });

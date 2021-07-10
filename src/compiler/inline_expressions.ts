@@ -29,14 +29,14 @@ const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in
   ","
 );
 
-const WORD_REPLACEMENT: { [key: string]: string } = {
+const WORD_REPLACEMENT: { [key: string]: string } = Object.assign(Object.create(null), {
   and: "&&",
   or: "||",
   gt: ">",
   gte: ">=",
   lt: "<",
   lte: "<=",
-};
+});
 
 export interface QWebVar {
   id: string; // foo
@@ -57,6 +57,7 @@ type TKind =
   | "RIGHT_PAREN"
   | "COMMA"
   | "VALUE"
+  | "TEMPLATE_STRING"
   | "SYMBOL"
   | "OPERATOR"
   | "COLON";
@@ -67,9 +68,10 @@ interface Token {
   originalValue?: string;
   size?: number;
   varName?: string;
+  replace?: Function;
 }
 
-const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
+const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(null), {
   "{": "LEFT_BRACE",
   "}": "RIGHT_BRACE",
   "[": "LEFT_BRACKET",
@@ -78,7 +80,7 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = {
   ",": "COMMA",
   "(": "LEFT_PAREN",
   ")": "RIGHT_PAREN",
-};
+});
 
 // note that the space after typeof is relevant. It makes sure that the formatted
 // expression has a space after typeof
@@ -89,7 +91,7 @@ type Tokenizer = (expr: string) => Token | false;
 let tokenizeString: Tokenizer = function (expr) {
   let s = expr[0];
   let start = s;
-  if (s !== "'" && s !== '"') {
+  if (s !== "'" && s !== '"' && s !== "`") {
     return false;
   }
   let i = 1;
@@ -111,6 +113,17 @@ let tokenizeString: Tokenizer = function (expr) {
     throw new Error("Invalid expression");
   }
   s += start;
+  if (start === "`") {
+    return {
+      type: "TEMPLATE_STRING",
+      value: s,
+      replace(replacer: any) {
+        return s.replace(/\$\{(.*?)\}/g, (match, group) => {
+          return "${" + replacer(group) + "}";
+        });
+      },
+    };
+  }
   return { type: "VALUE", value: s };
 };
 
@@ -210,6 +223,11 @@ export function tokenize(expr: string): Token[] {
 // Expression "evaluator"
 //------------------------------------------------------------------------------
 
+const isLeftSeparator = (token: Token) =>
+  token && (token.type === "LEFT_BRACE" || token.type === "COMMA");
+const isRightSeparator = (token: Token) =>
+  token && (token.type === "RIGHT_BRACE" || token.type === "COMMA");
+
 /**
  * This is the main function exported by this file. This is the code that will
  * process an expression (given as a string) and returns another expression with
@@ -238,13 +256,38 @@ export function tokenize(expr: string): Token[] {
 export function compileExprToArray(expr: string): Token[] {
   const localVars = new Set<string>();
   const tokens = tokenize(expr);
-  for (let i = 0; i < tokens.length; i++) {
+  let i = 0;
+  let stack = []; // to track last opening [ or {
+
+  while (i < tokens.length) {
     let token = tokens[i];
     let prevToken = tokens[i - 1];
     let nextToken = tokens[i + 1];
+    let groupType = stack[stack.length - 1];
+
+    switch (token.type) {
+      case "LEFT_BRACE":
+      case "LEFT_BRACKET":
+        stack.push(token.type);
+        break;
+      case "RIGHT_BRACE":
+      case "RIGHT_BRACKET":
+        stack.pop();
+    }
+
     let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
     if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
       if (prevToken) {
+        // normalize missing tokens: {a} should be equivalent to {a:a}
+        if (
+          groupType === "LEFT_BRACE" &&
+          isLeftSeparator(prevToken) &&
+          isRightSeparator(nextToken)
+        ) {
+          tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, { ...token });
+          nextToken = tokens[i + 1];
+        }
+
         if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
           isVar = false;
         } else if (prevToken.type === "LEFT_BRACE" || prevToken.type === "COMMA") {
@@ -254,18 +297,21 @@ export function compileExprToArray(expr: string): Token[] {
         }
       }
     }
+    if (token.type === "TEMPLATE_STRING") {
+      token.value = token.replace!((expr: any) => compileExpr(expr));
+    }
     if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
       if (token.type === "RIGHT_PAREN") {
         let j = i - 1;
         while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
           if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
             tokens[j].value = tokens[j].originalValue!;
-            localVars.add(tokens[j].value);
+            localVars.add(tokens[j].value); //] = { id: tokens[j].value, expr: tokens[j].value };
           }
           j--;
         }
       } else {
-        localVars.add(token.value);
+        localVars.add(token.value); //] = { id: token.value, expr: token.value };
       }
     }
 
@@ -276,6 +322,7 @@ export function compileExprToArray(expr: string): Token[] {
         token.value = `ctx['${token.value}']`;
       }
     }
+    i++;
   }
   return tokens;
 }

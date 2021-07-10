@@ -20,6 +20,7 @@ export class OwlNode {
   status: STATUS = STATUS.NEW;
   renderFn: Function;
   children: { [key: string]: OwlNode } = {};
+  slots: any = {};
 
   willStart: LifecycleHook[] = [];
 

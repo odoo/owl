@@ -939,7 +939,7 @@ export class QWebCompiler {
     }
 
     if (hasSlot) {
-      this.addLine(`${id!}.component.__owl__.slots = ${slotId!};`);
+      this.addLine(`${id!}.node.slots = ${slotId!};`);
     }
   }
 

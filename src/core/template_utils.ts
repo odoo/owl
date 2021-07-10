@@ -70,16 +70,16 @@ function owner(obj: any): any | null {
   return obj;
 }
 
-function callSlot(ctx: any, name: string, def?: (ctx: any) => Block): Block | null {
+function callSlot(ctx: any, name: string, defaultSlot?: (ctx: any) => Block): Block | null {
   const slots = ctx.__owl__.slots;
-  // todo: do not call slot fn if not necessary
-  const slotBDom = slots ? slots[name]() : null;
-  if (def) {
+  const slotFn = slots[name];
+  const slotBDom = slotFn ? slotFn() : null;
+  if (defaultSlot) {
     const result = new BMulti(2);
     if (slotBDom) {
       result.children[0] = slotBDom;
     } else {
-      result.children[1] = def(ctx);
+      result.children[1] = defaultSlot(ctx);
     }
     return result;
   }

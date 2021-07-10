@@ -57,6 +57,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   props: any;
   env: any = {};
   scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
+  root: OwlNode | null = null;
 
   constructor(Root: T, props?: any) {
     super();
@@ -75,6 +76,13 @@ export class App<T extends typeof Component = any> extends TemplateSet {
       throw new Error("Cannot mount component: the target is not a valid DOM element");
     }
     const node = new OwlNode(this, this.Root, this.props);
+    this.root = node;
     return node.mount(target);
+  }
+
+  destroy() {
+    if (this.root) {
+      this.root.destroy();
+    }
   }
 }

@@ -64,4 +64,9 @@ export class OwlNode {
     fiber.bdom = this.renderFn();
     fiber.root.counter--;
   }
+
+  destroy() {
+    this.bdom!.remove();
+    this.status = STATUS.DESTROYED;
+  }
 }

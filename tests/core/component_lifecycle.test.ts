@@ -12,7 +12,7 @@ beforeEach(() => {
 
 describe("lifecycle hooks", () => {
   test("lifecycle for a simple component", async () => {
-    expect.assertions(3);
+    expect.assertions(5);
     class Test extends Component {
       static template = xml`<span>test</span>`;
 
@@ -27,5 +27,10 @@ describe("lifecycle hooks", () => {
 
     expect(fixture.innerHTML).toBe("<span>test</span>");
     expect(status(component)).toBe("mounted");
+
+    app.destroy();
+
+    expect(fixture.innerHTML).toBe("");
+    expect(status(component)).toBe("destroyed");
   });
 });

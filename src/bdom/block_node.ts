@@ -93,10 +93,10 @@ export class BNode extends Block {
     const eventType = this.handlers![index][0];
     el.addEventListener(eventType, (ev) => {
       const info = this.handlers![index];
-      const [, callback, ctx] = info;
-      if (ctx.__owl__ && !ctx.__owl__.isMounted) {
-        return;
-      }
+      const [, callback] = info;
+      // if (ctx.__owl__ && !ctx.__owl__.isMounted) {
+      //   return;
+      // }
       callback(ev);
     });
   }

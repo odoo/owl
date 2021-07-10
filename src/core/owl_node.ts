@@ -55,6 +55,18 @@ export class OwlNode {
     this._render(fiber);
   }
 
+  async updateAndRender(props: any, fiber: ChildFiber) {
+    await Promise.resolve(); // willupdateprops
+    this.component.props = props;
+    this._render(fiber);
+    // const componentData = component.__owl__;
+    // componentData.fiber = fiber;
+    // await component.willUpdateProps(props);
+    // component.props = props;
+    // fiber.bdom = componentData.render();
+    // fiber.root.counter--;
+  }
+
   _render(fiber: ChildFiber | RootFiber) {
     this.fiber = fiber;
     fiber.bdom = this.renderFn();

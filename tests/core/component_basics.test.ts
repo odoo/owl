@@ -310,22 +310,23 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
   });
 
-  // test("can be clicked on and updated", async () => {
-  //   class Counter extends Component {
-  //     static template = xml`
-  //     <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
-  //     state = useState({
-  //       counter: 0,
-  //     });
-  //   }
+  test("can be clicked on and updated", async () => {
+    class Counter extends Component {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0,
+      });
+    }
 
-  //   const counter = await mount(Counter, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
-  //   const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
-  //   button.click();
-  //   await nextTick();
-  //   expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
-  // });
+    const counter = await mount(Counter, { target: fixture });
+    snapshotTemplateCode(fromName(Counter.template));
+    expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
+    const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
+    button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
+  });
 
   test("can handle empty props", async () => {
     class Child extends Component {
@@ -341,47 +342,27 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
 
-  // test("cannot be clicked on and updated if not in DOM", async () => {
-  //   class Counter extends Component {
-  //     static template = xml`
-  //     <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
-  //     state = useState({
-  //       counter: 0,
-  //     });
-  //   }
-  //   snapshotTemplateCode(fromName(Counter.template));
+  test("child can be updated", async () => {
+    class Child extends Component {
+      static template = xml`<t t-esc="props.value"/>`;
+    }
 
-  //   const target = document.createElement("div");
-  //   const counter = await mount(Counter, { target });
-  //   expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
-  //   const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
-  //   button.click();
-  //   await nextTick();
-  //   expect(target.innerHTML).toBe("<div>0<button>Inc</button></div>");
-  //   expect(counter.state.counter).toBe(0);
-  // });
+    class Parent extends Component {
+      static template = xml`<Child value="state.counter"/>`;
+      static components = { Child };
+      state = useState({
+        counter: 0,
+      });
+    }
 
-  // test("child can be updated", async () => {
-  //   class Child extends Component {
-  //     static template = xml`<t t-esc="props.value"/>`;
-  //   }
+    snapshotTemplateCode(fromName(Child.template));
+    snapshotTemplateCode(fromName(Parent.template));
 
-  //   class Parent extends Component {
-  //     static template = xml`<Child value="state.counter"/>`;
-  //     static components = { Child };
-  //     state = useState({
-  //       counter: 0,
-  //     });
-  //   }
+    const parent = await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("0");
 
-  //   snapshotTemplateCode(fromName(Child.template));
-  //   snapshotTemplateCode(fromName(Parent.template));
-
-  //   const parent = await mount(Parent, { target: fixture });
-  //   expect(fixture.innerHTML).toBe("0");
-
-  //   parent.state.counter = 1;
-  //   await nextTick();
-  //   expect(fixture.innerHTML).toBe("1");
-  // });
+    parent.state.counter = 1;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1");
+  });
 });

@@ -18,8 +18,9 @@ export class BComponent extends Block {
     const parentNode: OwlNode = ctx.__owl__;
     let node = parentNode.children[key];
     if (node) {
-      //     // update
-      //     const fiber = new ChildFiber(component.__owl__, parentData.fiber!);
+      // update
+      const fiber = new ChildFiber(node, parentNode.fiber!);
+      node.updateAndRender(props, fiber);
       //     const parentFiber = parentData.fiber!;
       //     parentFiber.child = fiber; // wrong!
       //     updateAndRender(component, fiber, props);
@@ -36,9 +37,9 @@ export class BComponent extends Block {
   }
 
   firstChildNode(): ChildNode | null {
-    return null;
-    //   const bdom = this.component.__owl__.bdom;
-    //   return bdom ? bdom.firstChildNode() : null;
+    // return null;
+    const bdom = this.node.bdom;
+    return bdom ? bdom.firstChildNode() : null;
   }
 
   mountBefore(anchor: ChildNode) {
@@ -57,7 +58,8 @@ export class BComponent extends Block {
   }
 
   patch() {
-    //   this.component.__owl__!.bdom!.patch(this.component.__owl__!.fiber!.bdom);
+    const node = this.node;
+    node.bdom!.patch(node!.fiber!.bdom!);
   }
 
   // remove() {

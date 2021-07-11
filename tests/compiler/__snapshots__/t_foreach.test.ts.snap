@@ -390,7 +390,6 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
   }
   
   return (ctx, parent = ctx) => {
-    ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers']);
     b2.forEach(\`a\`, ctx, (i1, ctx) => {

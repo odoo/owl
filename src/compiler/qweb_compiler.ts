@@ -786,7 +786,6 @@ export class QWebCompiler {
 
   compileTCall(ast: ASTTCall, ctx: Context) {
     const { block, forceNewBlock } = ctx;
-    this.shouldDefineOwner = true;
     this.hasTCall = true;
     if (ast.body) {
       const targetRoot = this.target.rootBlock;

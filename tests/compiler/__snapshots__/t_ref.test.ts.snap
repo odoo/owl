@@ -71,7 +71,6 @@ exports[`t-ref ref in a t-call 1`] = `
   }
   
   return (ctx, parent = ctx) => {
-    ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;

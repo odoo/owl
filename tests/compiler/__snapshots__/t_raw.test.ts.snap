@@ -82,7 +82,6 @@ exports[`t-raw multiple calls to t-raw 2`] = `
   }
   
   return (ctx, parent = ctx) => {
-    ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx = Object.create(ctx);
     const b2 = new Block2();

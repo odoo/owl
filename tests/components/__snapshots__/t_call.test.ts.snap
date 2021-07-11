@@ -8,7 +8,6 @@ exports[`t-call dynamic t-call 1`] = `
   
   return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
-    ctx = Object.create(ctx);
     const b1 = new BText(\` owl \`);
     ctx[zero] = b1;
     const template1 = (ctx['current'].template);

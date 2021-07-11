@@ -34,6 +34,10 @@ export function trim(str: string): string {
   return str.replace(/\s/g, "");
 }
 
+export function addTemplate(name: string, template: string): string {
+  globalTemplates[name] = template;
+  return name;
+}
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------

@@ -6,7 +6,10 @@ import { makeTestFixture, renderToBdom, renderToString, snapshotTemplateCode } f
 // -----------------------------------------------------------------------------
 
 describe("t-on", () => {
-  function mountToFixture(template: string, ctx: any): HTMLDivElement {
+  function mountToFixture(template: string, ctx: any = {}): HTMLDivElement {
+    if (!("__owl__" in ctx)) {
+      ctx.__owl__ = { component: ctx };
+    }
     const block = renderToBdom(template, ctx);
     const fixture = makeTestFixture();
     block.mount(fixture);
@@ -155,11 +158,12 @@ describe("t-on", () => {
 
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
-    let owner = {
+    let owner: any = {
       add() {
         expect(this).toBe(owner);
       },
     };
+    owner.__owl__ = { component: owner };
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner);
@@ -180,11 +184,12 @@ describe("t-on", () => {
 
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
-    let owner = {
+    let owner: any = {
       add() {
         expect(this).toBe(owner);
       },
     };
+    owner.__owl__ = { component: owner };
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner);
@@ -263,11 +268,12 @@ describe("t-on", () => {
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
 
-    let owner = {
+    let owner: any = {
       update() {
         expect(this).toBe(owner);
       },
     };
+    owner.__owl__ = { component: owner };
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
@@ -286,13 +292,14 @@ describe("t-on", () => {
     snapshotTemplateCode(sub);
     snapshotTemplateCode(main);
 
-    let owner = {
+    let owner: any = {
       update(val: number) {
         expect(this).toBe(owner);
         expect(val).toBe(444);
       },
       value: 444,
     };
+    owner.__owl__ = { component: owner };
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");

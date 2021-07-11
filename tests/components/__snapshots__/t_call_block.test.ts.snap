@@ -4,7 +4,7 @@ exports[`t-call-block simple t-call-block with static text 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);

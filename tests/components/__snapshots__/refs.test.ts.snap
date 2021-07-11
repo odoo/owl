@@ -4,7 +4,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
@@ -37,7 +37,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   const slot3 = ctx => parent => {
     const refs = ctx.__owl__.refs
     const b2 = new Block2();
-    b2.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](e), ctx];
+    b2.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['doSomething'](e), ctx];
     b2.refs = refs;
     return b2;
   }
@@ -45,7 +45,6 @@ exports[`refs refs are properly bound in slots 1`] = `
   return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
-    ctx[scope] = 1;
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
     const ctx2 = Object.assign(Object.create(ctx), ctx);

@@ -4,7 +4,7 @@ exports[`list of components simple list 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BCollection(ctx['state'].elems);

@@ -4,7 +4,7 @@ exports[`misc complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
@@ -140,7 +140,7 @@ exports[`misc global 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
@@ -162,7 +162,6 @@ exports[`misc global 1`] = `
   
   return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
-    ctx[scope] = 1;
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([4,5,6]);
     b2.forEach(\`value\`, ctx, (i1, ctx) => {
@@ -194,7 +193,7 @@ exports[`misc global 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -218,7 +217,7 @@ exports[`misc global 3`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<año><owl-anchor/></año>\`);
@@ -246,7 +245,7 @@ exports[`misc global 4`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -268,7 +267,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a><b style=\\"color:#777;\\"><owl-text/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-anchor/><li class=\\"nav-item divider\\"/><owl-anchor/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\"/><button class=\\"btn btn-default\\"> More </button><owl-anchor/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
@@ -464,7 +463,6 @@ exports[`misc other complex template 1`] = `
   return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
-    ctx[scope] = 1;
     const b1 = new Block1();
     b1.data[0] = \`/runbot/\${ctx['project'].slug}\`;
     b1.data[1] = ctx['project'].name;
@@ -473,7 +471,7 @@ exports[`misc other complex template 1`] = `
       let key1 = ctx['project'].id;
       const b3 = b2.children[i1] = new Block2();
       const arg1 = [ctx['project']];
-      b3.handlers[0] = [\`click\`, (e) => owner(ctx)['selectProject'](...arg1, e), ctx];
+      b3.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['selectProject'](...arg1, e), ctx];
       b3.data[0] = ctx['project'].name;
       b2.keys[i1] = key1;
     });
@@ -501,8 +499,8 @@ exports[`misc other complex template 1`] = `
         b13.data[2] = \`/web\`;
       }
     }
-    b1.handlers[0] = [\`click\`, (e) => owner(ctx)['toggleSettingsMenu'](e), ctx];
-    b1.handlers[1] = [\`click\`, (e) => owner(ctx)['toggleMore'](e), ctx];
+    b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['toggleSettingsMenu'](e), ctx];
+    b1.handlers[1] = [\`click\`, (e) => ctx.__owl__.component['toggleMore'](e), ctx];
     if (ctx['categories']&&ctx['categories'].length>1) {
       const b14 = b1.children[2] = new Block9();
       const b15 = b14.children[0] = new BCollection(ctx['categories']);
@@ -516,10 +514,10 @@ exports[`misc other complex template 1`] = `
       });
     }
     b1.data[2] = ctx['search'].value;
-    b1.handlers[2] = [\`keyup\`, (e) => owner(ctx)['updateFilter'](e), ctx];
-    b1.handlers[3] = [\`change\`, (e) => owner(ctx)['updateFilter'](e), ctx];
+    b1.handlers[2] = [\`keyup\`, (e) => ctx.__owl__.component['updateFilter'](e), ctx];
+    b1.handlers[3] = [\`change\`, (e) => ctx.__owl__.component['updateFilter'](e), ctx];
     b1.refs = refs;
-    b1.handlers[4] = [\`click\`, (e) => owner(ctx)['clearSearch'](e), ctx];
+    b1.handlers[4] = [\`click\`, (e) => ctx.__owl__.component['clearSearch'](e), ctx];
     b1.refs = refs;
     if (ctx['triggers']) {
       const b17 = b1.children[3] = new BMulti(2);
@@ -533,17 +531,17 @@ exports[`misc other complex template 1`] = `
           b20.data[1] = \`trigger_\${ctx['trigger'].id}\`;
           b20.data[2] = ctx['options'].trigger_display[ctx['trigger'].id];
           b20.data[3] = ctx['trigger'].id;
-          b20.handlers[0] = [\`change\`, (e) => owner(ctx)['updateTriggerDisplay'](e), ctx];
+          b20.handlers[0] = [\`change\`, (e) => ctx.__owl__.component['updateTriggerDisplay'](e), ctx];
           b20.data[4] = \`trigger_\${ctx['trigger'].id}\`;
           b20.data[5] = ctx['trigger'].name;
         }
         b18.keys[i1] = key1;
       });
       const b21 = b17.children[1] = new Block12();
-      b21.handlers[0] = [\`click\`, (e) => owner(ctx)['triggerAll'](e), ctx];
-      b21.handlers[1] = [\`click\`, (e) => owner(ctx)['triggerNone'](e), ctx];
-      b21.handlers[2] = [\`click\`, (e) => owner(ctx)['triggerDefault'](e), ctx];
-      b21.handlers[3] = [\`click\`, (e) => owner(ctx)['toggleSettingsMenu'](e), ctx];
+      b21.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['triggerAll'](e), ctx];
+      b21.handlers[1] = [\`click\`, (e) => ctx.__owl__.component['triggerNone'](e), ctx];
+      b21.handlers[2] = [\`click\`, (e) => ctx.__owl__.component['triggerDefault'](e), ctx];
+      b21.handlers[3] = [\`click\`, (e) => ctx.__owl__.component['toggleSettingsMenu'](e), ctx];
     }
     if (ctx['load_infos']) {
       b1.children[4] = call(\`LOAD_INFOS_TEMPLATE\`, ctx, parent);

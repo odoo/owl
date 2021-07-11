@@ -61,15 +61,6 @@ function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
 
-const scope = Symbol("scope");
-
-function owner(obj: any): any | null {
-  while (obj && obj[scope]) {
-    obj = obj.__proto__;
-  }
-  return obj;
-}
-
 function callSlot(ctx: any, name: string, defaultSlot?: (ctx: any) => Block): Block | null {
   const slots = ctx.__owl__.slots;
   const slotFn = slots[name];
@@ -94,7 +85,5 @@ export const UTILS = {
     throw new Error(`Missing template: ${name}`);
   },
   zero: Symbol("zero"),
-  scope,
-  owner,
   callSlot,
 };

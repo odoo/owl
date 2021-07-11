@@ -201,7 +201,7 @@ export class QWebCompiler {
     this.addLine(
       `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;`
     );
-    this.addLine(`let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;`);
+    this.addLine(`let {elem, toString, withDefault, call, zero, callSlot} = utils;`);
 
     // define all blocks
     for (let block of this.blocks) {
@@ -227,9 +227,6 @@ export class QWebCompiler {
     }
     if (this.shouldProtectScope || this.shouldDefineOwner) {
       this.addLine(`  ctx = Object.create(ctx);`);
-    }
-    if (this.shouldDefineOwner) {
-      this.addLine(`  ctx[scope] = 1;`);
     }
     if (this.shouldDefineKey0) {
       this.addLine(`  let key0;`);
@@ -513,9 +510,9 @@ export class QWebCompiler {
         if (args) {
           const argId = this.generateId("arg");
           this.addLine(`const ${argId} = [${compileExpr(args)}];`);
-          code = `owner(ctx)['${name}'](...${argId}, e)`;
+          code = `ctx.__owl__.component['${name}'](...${argId}, e)`;
         } else {
-          code = `owner(ctx)['${name}'](e)`;
+          code = `ctx.__owl__.component['${name}'](e)`;
         }
       } else {
         code = this.captureExpression(value);

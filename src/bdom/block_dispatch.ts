@@ -42,7 +42,7 @@ export class BDispatch extends Block {
     this.child.moveBefore(_anchor);
   }
 
-  patch(newTree: any) {
+  patch(newTree: BDispatch) {
     if (newTree.key === this.key) {
       this.child.patch(newTree.child);
     } else {

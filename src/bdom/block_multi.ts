@@ -49,7 +49,7 @@ export class BMulti extends Block {
     }
   }
 
-  patch(newTree: any) {
+  patch(newTree: BMulti) {
     const children = this.children;
     const newChildren = newTree.children;
     const anchors = this.anchors!;

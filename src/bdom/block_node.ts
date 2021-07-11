@@ -103,7 +103,7 @@ export class BNode extends Block {
 
   protected build() {}
 
-  patch(newTree: any) {
+  patch(newTree: BNode) {
     this.data = newTree.data;
     this.refs = newTree.refs;
     this.update();

@@ -47,10 +47,11 @@ export class BHtml extends Block {
     this.anchor.remove();
   }
 
-  patch(other: any) {
+  patch(other: BHtml) {
     for (let elem of this.content) {
       elem.remove();
     }
+    this.html = other.html;
     this.build();
     for (let elem of this.content) {
       this.anchor.before(elem);

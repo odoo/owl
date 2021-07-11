@@ -21,7 +21,7 @@ export class BText extends Block {
     anchor.before(this.el);
   }
 
-  patch(other: any) {
+  patch(other: BText) {
     if (other.text !== this.text) {
       this.el.textContent = other.el.textContent;
       this.text = other.text;

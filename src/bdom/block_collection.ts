@@ -62,8 +62,8 @@ export class BCollection extends Block {
       child.moveBefore(_anchor);
     }
   }
-  
-  patch(other: any) {
+
+  patch(other: BCollection) {
     const oldKeys = this.keys;
     const newKeys = other.keys;
     const oldCh = this.children;

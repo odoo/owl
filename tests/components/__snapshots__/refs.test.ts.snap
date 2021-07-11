@@ -4,7 +4,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
@@ -47,7 +47,7 @@ exports[`refs refs are properly bound in slots 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
-    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const ctx2 = capture(ctx);
     const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, parent);
     b3.node.slots = {'footer': slot3(ctx2)};
     return b1;

@@ -4,7 +4,7 @@ exports[`simple templates, mostly static can render a table row 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<tr><td>cell</td></tr>\`);
@@ -21,7 +21,7 @@ exports[`simple templates, mostly static div with a class attribute 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div class=\\"abc\\">foo</div>\`);
@@ -38,7 +38,7 @@ exports[`simple templates, mostly static div with a class attribute with a quote
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div class=\\"a'bc\\">word</div>\`);
@@ -55,7 +55,7 @@ exports[`simple templates, mostly static div with a span child node 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div><span>word</span></div>\`);
@@ -72,7 +72,7 @@ exports[`simple templates, mostly static div with an arbitrary attribute with a 
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div abc=\\"a'bc\\">word</div>\`);
@@ -89,7 +89,7 @@ exports[`simple templates, mostly static div with an empty class attribute 1`] =
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>word</div>\`);
@@ -106,7 +106,7 @@ exports[`simple templates, mostly static div with content 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>foo</div>\`);
@@ -123,7 +123,7 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -145,7 +145,7 @@ exports[`simple templates, mostly static dynamic text value 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BText(ctx['text']);
@@ -158,7 +158,7 @@ exports[`simple templates, mostly static empty div 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div/>\`);
@@ -175,7 +175,7 @@ exports[`simple templates, mostly static empty string 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BText(\`\`);
@@ -188,7 +188,7 @@ exports[`simple templates, mostly static multiple root nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>foo</div>\`);
@@ -211,7 +211,7 @@ exports[`simple templates, mostly static simple string 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BText(\`hello vdom\`);
@@ -224,7 +224,7 @@ exports[`simple templates, mostly static simple string in t tag 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BText(\`hello vdom\`);
@@ -237,7 +237,7 @@ exports[`simple templates, mostly static static text and dynamic text (no t tag)
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
@@ -252,7 +252,7 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
@@ -267,7 +267,7 @@ exports[`simple templates, mostly static t-esc in dom node 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -289,7 +289,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div>hello <owl-text/></div>\`);
@@ -311,7 +311,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div>hello <owl-text/> world</div>\`);
@@ -333,7 +333,7 @@ exports[`simple templates, mostly static two t-escs next to each other 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
@@ -348,7 +348,7 @@ exports[`simple templates, mostly static two t-escs next to each other 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
@@ -363,7 +363,7 @@ exports[`simple templates, mostly static two t-escs next to each other, in a div
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/><owl-text/></div>\`);

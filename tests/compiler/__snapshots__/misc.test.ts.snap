@@ -4,7 +4,7 @@ exports[`misc complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
@@ -140,7 +140,7 @@ exports[`misc global 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
@@ -193,7 +193,7 @@ exports[`misc global 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -217,7 +217,7 @@ exports[`misc global 3`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<año><owl-anchor/></año>\`);
@@ -245,7 +245,7 @@ exports[`misc global 4`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -267,7 +267,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a><b style=\\"color:#777;\\"><owl-text/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-anchor/><li class=\\"nav-item divider\\"/><owl-anchor/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\"/><button class=\\"btn btn-default\\"> More </button><owl-anchor/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">

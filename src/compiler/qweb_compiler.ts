@@ -153,10 +153,6 @@ export class QWebCompiler {
     return `Block${this.blocks.length + 1}`;
   }
 
-  generateSafeCtx(): string {
-    return `Object.assign(Object.create(ctx), ctx)`;
-  }
-
   getNextBlockId(): () => string | null {
     const id = this.nextBlockId;
     return () => {
@@ -201,7 +197,7 @@ export class QWebCompiler {
     this.addLine(
       `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;`
     );
-    this.addLine(`let {elem, toString, withDefault, call, zero, callSlot} = utils;`);
+    this.addLine(`let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;`);
 
     // define all blocks
     for (let block of this.blocks) {
@@ -883,7 +879,7 @@ export class QWebCompiler {
       let ctxStr = "ctx";
       if (this.loopLevel || !this.hasSafeContext) {
         ctxStr = this.generateId("ctx");
-        this.addLine(`const ${ctxStr} = ${this.generateSafeCtx()};`);
+        this.addLine(`const ${ctxStr} = capture(ctx);`);
       }
       // slotDef = this.generateId("slots");
       let slotStr: string[] = [];

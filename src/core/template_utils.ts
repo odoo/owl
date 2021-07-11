@@ -77,6 +77,15 @@ function callSlot(ctx: any, name: string, defaultSlot?: (ctx: any) => Block): Bl
   return slotBDom;
 }
 
+function capture(ctx: any): any {
+  const component = ctx.__owl__.component;
+  const result = Object.create(component);
+  for (let k in ctx) {
+    result[k] = ctx[k];
+  }
+  return Object.create(result);
+}
+
 export const UTILS = {
   elem,
   toString,
@@ -86,4 +95,5 @@ export const UTILS = {
   },
   zero: Symbol("zero"),
   callSlot,
+  capture,
 };

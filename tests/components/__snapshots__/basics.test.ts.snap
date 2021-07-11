@@ -4,7 +4,7 @@ exports[`basics Multi root component 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<span>1</span>\`);
@@ -28,7 +28,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
@@ -41,7 +41,7 @@ exports[`basics a component inside a component 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
@@ -64,7 +64,7 @@ exports[`basics can be clicked on and updated 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/><button>Inc</button></div>\`);
@@ -93,7 +93,7 @@ exports[`basics can handle empty props 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -116,7 +116,7 @@ exports[`basics can mount a component with just some text 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BText(\`just text\`);
@@ -129,7 +129,7 @@ exports[`basics can mount a simple component 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<span>simple vnode</span>\`);
@@ -146,7 +146,7 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<span/>\`);
@@ -169,7 +169,7 @@ exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -191,7 +191,7 @@ exports[`basics child can be updated 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BText(ctx['props'].value);
@@ -204,7 +204,7 @@ exports[`basics child can be updated 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx, parent);
@@ -217,7 +217,7 @@ exports[`basics class component with dynamic text 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span>My value: <owl-text/></span>\`);
@@ -239,7 +239,7 @@ exports[`basics class parent, class child component with props 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx, parent);
@@ -252,7 +252,7 @@ exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -274,7 +274,7 @@ exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
@@ -287,7 +287,7 @@ exports[`basics two child components 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
@@ -302,7 +302,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BCollection(ctx['items']);
@@ -320,7 +320,7 @@ exports[`basics zero or one child components 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
     const b1 = new BMulti(1);

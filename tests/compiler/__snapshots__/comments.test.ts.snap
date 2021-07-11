@@ -3,7 +3,7 @@
 exports[`comments only a comment 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
@@ -20,7 +20,7 @@ exports[`comments only a comment 1`] = `
 exports[`comments properly handle comments 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
@@ -37,7 +37,7 @@ exports[`comments properly handle comments 1`] = `
 exports[`comments properly handle comments between t-if/t-else 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {

@@ -3,7 +3,7 @@
 exports[`slots can define and call slots 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -29,7 +29,7 @@ exports[`slots can define and call slots 1`] = `
 exports[`slots can define and call slots 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -72,7 +72,7 @@ exports[`slots can define and call slots 2`] = `
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
@@ -95,7 +95,7 @@ exports[`slots content is the default slot (variation) 1`] = `
 exports[`slots content is the default slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -128,7 +128,7 @@ exports[`slots content is the default slot 1`] = `
 exports[`slots dafault slots can define a default content 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -156,7 +156,7 @@ exports[`slots dafault slots can define a default content 1`] = `
 exports[`slots default content is not rendered if named slot is provided 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -184,7 +184,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
 exports[`slots default content is not rendered if named slot is provided 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -214,7 +214,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
 exports[`slots default content is not rendered if slot is provided 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -242,7 +242,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
 exports[`slots default content is not rendered if slot is provided 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -271,7 +271,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 exports[`slots default slot next to named slot, with default content 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -307,7 +307,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
 exports[`slots default slot next to named slot, with default content 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -337,7 +337,7 @@ exports[`slots default slot next to named slot, with default content 2`] = `
 exports[`slots default slot work with text nodes (variation) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   const slot2 = ctx => parent => {
@@ -356,7 +356,7 @@ exports[`slots default slot work with text nodes (variation) 1`] = `
 exports[`slots default slot work with text nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -382,10 +382,88 @@ exports[`slots default slot work with text nodes 1`] = `
 }"
 `;
 
+exports[`slots dynamic t-slot call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<p>slot1</p>\`);
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<span>content</span>\`);
+  }
+  
+  class Block4 extends BStatic {
+    static el = elem(\`<h1>slot2</h1>\`);
+  }
+  
+  const slot3 = ctx => parent => {
+    const b2 = new BMulti(2);
+    const b3 = b2.children[0] = new Block2();
+    const b4 = b2.children[1] = new Block3();
+    return b2;
+  }
+  
+  const slot4 = ctx => parent => {
+    const b5 = new Block4();
+    return b5;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const ctx2 = capture(ctx);
+    const b6 = b1.children[0] = new BComponent(\`Toggler\`, {}, \`__1\`, ctx, parent);
+    b6.node.slots = {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)};
+    return b1;
+  }
+}"
+`;
+
+exports[`slots dynamic t-slot call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button><owl-anchor/></button>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    handlers = new Array(1);
+    build() {
+      const el1 = this.el;
+      this.setupHandler(el1, 0);
+      this.anchors[0] = el1.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['toggle'](e), ctx];
+    const slot1 = (ctx['current'].slot);
+    b1.children[0] = new BDispatch(slot1, callSlot(ctx, slot1));
+    return b1;
+  }
+}"
+`;
+
 exports[`slots fun: two calls to the same slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   const slot2 = ctx => parent => {
@@ -404,7 +482,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
 exports[`slots fun: two calls to the same slot 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
@@ -419,7 +497,7 @@ exports[`slots fun: two calls to the same slot 2`] = `
 exports[`slots missing slots are ignored 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -444,7 +522,7 @@ exports[`slots missing slots are ignored 1`] = `
 exports[`slots multiple roots are allowed in a default slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -483,7 +561,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
 exports[`slots multiple roots are allowed in a named slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -523,7 +601,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
 exports[`slots named slots can define a default content 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -551,7 +629,7 @@ exports[`slots named slots can define a default content 1`] = `
 exports[`slots named slots can define a default content 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -574,7 +652,7 @@ exports[`slots named slots can define a default content 2`] = `
 exports[`slots no named slot content => just no children 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -597,7 +675,7 @@ exports[`slots no named slot content => just no children 1`] = `
 exports[`slots no named slot content => just no children 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
@@ -610,7 +688,7 @@ exports[`slots no named slot content => just no children 2`] = `
 exports[`slots simple default slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   const slot2 = ctx => parent => {
@@ -629,7 +707,7 @@ exports[`slots simple default slot 1`] = `
 exports[`slots simple default slot 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -652,7 +730,7 @@ exports[`slots simple default slot 2`] = `
 exports[`slots simple default slot, variation 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   const slot2 = ctx => parent => {
@@ -671,7 +749,7 @@ exports[`slots simple default slot, variation 1`] = `
 exports[`slots simple default slot, variation 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
@@ -684,7 +762,7 @@ exports[`slots simple default slot, variation 2`] = `
 exports[`slots slot content is bound to caller 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -713,7 +791,7 @@ exports[`slots slot content is bound to caller 1`] = `
 exports[`slots slot content is bound to caller 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -736,7 +814,7 @@ exports[`slots slot content is bound to caller 2`] = `
 exports[`slots slot preserves properly parented relationship 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -765,7 +843,7 @@ exports[`slots slot preserves properly parented relationship 1`] = `
 exports[`slots slot preserves properly parented relationship 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
@@ -778,7 +856,7 @@ exports[`slots slot preserves properly parented relationship 2`] = `
 exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -809,7 +887,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
@@ -822,7 +900,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
@@ -835,7 +913,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slots are rendered with proper context 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -858,7 +936,7 @@ exports[`slots slots are rendered with proper context 1`] = `
 exports[`slots slots are rendered with proper context 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -903,7 +981,7 @@ exports[`slots slots are rendered with proper context 2`] = `
 exports[`slots slots are rendered with proper context, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -950,7 +1028,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
 exports[`slots slots are rendered with proper context, part 2 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -978,7 +1056,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
 exports[`slots slots are rendered with proper context, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1025,7 +1103,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
 exports[`slots slots are rendered with proper context, part 3 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1053,7 +1131,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
 exports[`slots slots are rendered with proper context, part 4 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1085,7 +1163,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
 exports[`slots slots in t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1155,7 +1233,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
 exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1186,7 +1264,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 exports[`slots t-slot in recursive templates 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   const slot3 = ctx => parent => {
@@ -1223,7 +1301,7 @@ exports[`slots t-slot in recursive templates 1`] = `
 exports[`slots t-slot scope context 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1257,7 +1335,7 @@ exports[`slots t-slot scope context 1`] = `
 exports[`slots t-slot within dynamic t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1280,7 +1358,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
 exports[`slots t-slot within dynamic t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {

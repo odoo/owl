@@ -3,7 +3,7 @@
 exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2,3,4,5 (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -41,7 +41,7 @@ exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2
 exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2,3,4,5 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -68,7 +68,7 @@ exports[`adding/removing elements add element at beginning and end: 2,3,4 => 1,2
 exports[`adding/removing elements add element in middle: 1,2,4,5 => 1,2,3,4,5 (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -106,7 +106,7 @@ exports[`adding/removing elements add element in middle: 1,2,4,5 => 1,2,3,4,5 (2
 exports[`adding/removing elements add element in middle: 1,2,4,5 => 1,2,3,4,5 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -133,7 +133,7 @@ exports[`adding/removing elements add element in middle: 1,2,4,5 => 1,2,3,4,5 1`
 exports[`adding/removing elements adding one element at the end (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -171,7 +171,7 @@ exports[`adding/removing elements adding one element at the end (2 nodes) 1`] = 
 exports[`adding/removing elements adding one element at the end 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -198,7 +198,7 @@ exports[`adding/removing elements adding one element at the end 1`] = `
 exports[`adding/removing elements adding two elements at the end (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -236,7 +236,7 @@ exports[`adding/removing elements adding two elements at the end (2 nodes) 1`] =
 exports[`adding/removing elements adding two elements at the end 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -263,7 +263,7 @@ exports[`adding/removing elements adding two elements at the end 1`] = `
 exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -311,7 +311,7 @@ exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] (2 
 exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -348,7 +348,7 @@ exports[`adding/removing elements adds children (inside elem): [] => [1,2,3] 1`]
 exports[`adding/removing elements adds children: [] => [1,2,3] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -386,7 +386,7 @@ exports[`adding/removing elements adds children: [] => [1,2,3] (2 nodes) 1`] = `
 exports[`adding/removing elements adds children: [] => [1,2,3] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -413,7 +413,7 @@ exports[`adding/removing elements adds children: [] => [1,2,3] 1`] = `
 exports[`adding/removing elements prepend elements: 4,5 => 1,2,3,4,5 (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -451,7 +451,7 @@ exports[`adding/removing elements prepend elements: 4,5 => 1,2,3,4,5 (2 nodes) 1
 exports[`adding/removing elements prepend elements: 4,5 => 1,2,3,4,5 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -478,7 +478,7 @@ exports[`adding/removing elements prepend elements: 4,5 => 1,2,3,4,5 1`] = `
 exports[`adding/removing elements remove children (inside elem): [1,2,3] => [] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -515,7 +515,7 @@ exports[`adding/removing elements remove children (inside elem): [1,2,3] => [] 1
 exports[`adding/removing elements remove children from the beginning: [1,2,3,4,5] => [3,4,5] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -553,7 +553,7 @@ exports[`adding/removing elements remove children from the beginning: [1,2,3,4,5
 exports[`adding/removing elements remove children from the beginning: [1,2,3,4,5] => [3,4,5] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -580,7 +580,7 @@ exports[`adding/removing elements remove children from the beginning: [1,2,3,4,5
 exports[`adding/removing elements remove children from the end: [1,2,3,4,5] => [1,2,3] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -607,7 +607,7 @@ exports[`adding/removing elements remove children from the end: [1,2,3,4,5] => [
 exports[`adding/removing elements remove children from the middle: [1,2,3,4,5] => [1,2,4,5] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -634,7 +634,7 @@ exports[`adding/removing elements remove children from the middle: [1,2,3,4,5] =
 exports[`adding/removing elements remove children: [1,2,3] => [] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -672,7 +672,7 @@ exports[`adding/removing elements remove children: [1,2,3] => [] (2 nodes) 1`] =
 exports[`adding/removing elements remove children: [1,2,3] => [] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -699,7 +699,7 @@ exports[`adding/removing elements remove children: [1,2,3] => [] 1`] = `
 exports[`adding/removing elements removing elements (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -737,7 +737,7 @@ exports[`adding/removing elements removing elements (2 nodes) 1`] = `
 exports[`adding/removing elements removing elements 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -764,7 +764,7 @@ exports[`adding/removing elements removing elements 1`] = `
 exports[`element reordering move element backward: [1,2,3,4] => [1,4,2,3] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -791,7 +791,7 @@ exports[`element reordering move element backward: [1,2,3,4] => [1,4,2,3] 1`] = 
 exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -829,7 +829,7 @@ exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] (2 node
 exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -856,7 +856,7 @@ exports[`element reordering move element forward: [1,2,3,4] => [2,3,1,4] 1`] = `
 exports[`element reordering move element to end: [1,2,3] => [2,3,1] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -894,7 +894,7 @@ exports[`element reordering move element to end: [1,2,3] => [2,3,1] (2 nodes) 1`
 exports[`element reordering move element to end: [1,2,3] => [2,3,1] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -921,7 +921,7 @@ exports[`element reordering move element to end: [1,2,3] => [2,3,1] 1`] = `
 exports[`element reordering swaps first and last: [1,2,3,4] => [4,3,2,1] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -948,7 +948,7 @@ exports[`element reordering swaps first and last: [1,2,3,4] => [4,3,2,1] 1`] = `
 exports[`miscellaneous operations [2,4,5] => [4,5,3] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -975,7 +975,7 @@ exports[`miscellaneous operations [2,4,5] => [4,5,3] 1`] = `
 exports[`miscellaneous operations move to left and leave hole: [1,4,5] => [4,6] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1002,7 +1002,7 @@ exports[`miscellaneous operations move to left and leave hole: [1,4,5] => [4,6] 
 exports[`miscellaneous operations move to left and replace: [1,2,3,4,5] => [4,1,2,3,6] (2 nodes) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
@@ -1040,7 +1040,7 @@ exports[`miscellaneous operations move to left and replace: [1,2,3,4,5] => [4,1,
 exports[`miscellaneous operations move to left and replace: [1,2,3,4,5] => [4,1,2,3,6] 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {

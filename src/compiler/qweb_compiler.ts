@@ -195,7 +195,7 @@ export class QWebCompiler {
     this.target.indentLevel = 0;
     // define blocks and utility functions
     this.addLine(
-      `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;`
+      `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;`
     );
     this.addLine(`let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;`);
 
@@ -952,6 +952,15 @@ export class QWebCompiler {
     const { block } = ctx;
 
     let blockString: string;
+    let slotName;
+    let dynamic = false;
+    if (ast.name.match(INTERP_REGEXP)) {
+      dynamic = true;
+      slotName = interpolate(ast.name);
+    } else {
+      slotName = "'" + ast.name + "'";
+    }
+
     if (ast.defaultContent) {
       let name = this.generateId("defaultSlot");
       const slot: CodeGroup = {
@@ -967,9 +976,15 @@ export class QWebCompiler {
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
-      blockString = `callSlot(ctx, '${ast.name}', ${name})`;
+      blockString = `callSlot(ctx, ${slotName}, ${name})`;
     } else {
-      blockString = `callSlot(ctx, '${ast.name}')`;
+      if (dynamic) {
+        let name = this.generateId("slot");
+        this.addLine(`const ${name} = ${slotName};`);
+        blockString = `new BDispatch(${name}, callSlot(ctx, ${name}))`;
+      } else {
+        blockString = `callSlot(ctx, ${slotName})`;
+      }
     }
 
     if (block) {

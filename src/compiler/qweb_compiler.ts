@@ -878,7 +878,7 @@ export class QWebCompiler {
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
-    let slotId: string;
+    let slotDef: string;
     if (hasSlot) {
       if (this.hasSafeContext === null) {
         this.hasSafeContext = !this.template.includes("t-set") && !this.template.includes("t-call");
@@ -888,7 +888,7 @@ export class QWebCompiler {
         ctxStr = this.generateId("ctx");
         this.addLine(`const ${ctxStr} = ${this.generateSafeCtx()};`);
       }
-      slotId = this.generateId("slots");
+      // slotDef = this.generateId("slots");
       let slotStr: string[] = [];
       const initialTarget = this.target;
       for (let slotName in ast.slots) {
@@ -918,7 +918,7 @@ export class QWebCompiler {
         }
       }
       this.target = initialTarget;
-      this.addLine(`const ${slotId} = {${slotStr.join(", ")}};`);
+      slotDef = `{${slotStr.join(", ")}}`;
     }
 
     if (block) {
@@ -951,7 +951,7 @@ export class QWebCompiler {
     }
 
     if (hasSlot) {
-      this.addLine(`${id!}.node.slots = ${slotId!};`);
+      this.addLine(`${id!}.node.slots = ${slotDef!};`);
     }
   }
 

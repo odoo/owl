@@ -15,7 +15,7 @@ exports[`t-call-block simple t-call-block with static text 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.children[0] = ctx['myBlock']();
     return b1;

@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src/index";
+import { App, Component, mount, useState, xml } from "../../src/index";
 import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;
@@ -530,17 +530,20 @@ describe("slots", () => {
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
 
-  test.skip("slot preserves properly parented relationship, even through t-call", async () => {
+  test("slot preserves properly parented relationship, even through t-call", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
+
     class GrandChild extends Component {
       static template = xml`Grand Child`;
     }
-    const sub = xml`<GrandChild />`;
+
+    const sub = xml`<GrandChild/>`;
+
     class Parent extends Component {
       static template = xml`
-          <div t-debug="">
+          <div>
             <Child>
               <t t-call="${sub}"/>
             </Child>
@@ -550,6 +553,7 @@ describe("slots", () => {
 
     snapshotTemplateCode(fromName(Parent.template));
     snapshotTemplateCode(fromName(Child.template));
+    snapshotTemplateCode(fromName(sub));
     // throw new Error("boom")
     const parent = await mount(Parent, { target: fixture });
 
@@ -564,68 +568,68 @@ describe("slots", () => {
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
 
-  //   test("t-slot in recursive templates", async () => {
+  test("t-slot in recursive templates", async () => {
+    class Wrapper extends Component {
+      static template = xml`
+          <wrapper>
+            <t t-slot="default"/>
+          </wrapper>`;
+    }
 
-  //     class Wrapper extends Component {
-  //       static template = xml`
-  //         <wrapper>
-  //           <t t-slot="default"/>
-  //         </wrapper>`;
-  //     }
+    class Parent extends Component {
+      static template = "_test_recursive_template";
+      static components = { Wrapper };
+      name = "foo";
+      items = [
+        {
+          name: "foo-0",
+          children: [
+            { name: "foo-00", children: [] },
+            {
+              name: "foo-01",
+              children: [
+                { name: "foo-010", children: [] },
+                { name: "foo-011", children: [] },
+                {
+                  name: "foo-012",
+                  children: [
+                    { name: "foo-0120", children: [] },
+                    { name: "foo-0121", children: [] },
+                    { name: "foo-0122", children: [] },
+                  ],
+                },
+              ],
+            },
+            { name: "foo-02", children: [] },
+          ],
+        },
+        { name: "foo-1", children: [] },
+        { name: "foo-2", children: [] },
+      ];
+    }
 
-  //     class Parent extends Component {
-  //       static template = "_test_recursive_template";
-  //       static components = { Wrapper };
-  //       name = "foo";
-  //       items = [
-  //         {
-  //           name: "foo-0",
-  //           children: [
-  //             { name: "foo-00", children: [] },
-  //             {
-  //               name: "foo-01",
-  //               children: [
-  //                 { name: "foo-010", children: [] },
-  //                 { name: "foo-011", children: [] },
-  //                 {
-  //                   name: "foo-012",
-  //                   children: [
-  //                     { name: "foo-0120", children: [] },
-  //                     { name: "foo-0121", children: [] },
-  //                     { name: "foo-0122", children: [] },
-  //                   ],
-  //                 },
-  //               ],
-  //             },
-  //             { name: "foo-02", children: [] },
-  //           ],
-  //         },
-  //         { name: "foo-1", children: [] },
-  //         { name: "foo-2", children: [] },
-  //       ];
-  //     }
+    const recursiveTemplate = `
+          <Wrapper>
+            <t t-esc="name" />
+            <t t-foreach="items" t-as="item" t-key="item.name">
+                <t t-if="!item.children.length">
+                <t t-esc="item.name" />
+                </t>
+                <t t-else="" t-call="_test_recursive_template">
+                <t t-set="name" t-value="item.name" />
+                <t t-set="items" t-value="item.children" />
+                </t>
+            </t>
+        </Wrapper>`;
+    const app = new App(Parent);
+    app.addTemplate("_test_recursive_template", recursiveTemplate);
 
-  //     const app = new App(Parent);
-  //     app.addTemplate("_test_recursive_template",
-  //     `
-  //     <Wrapper>
-  //         <t t-esc="name" />
-  //         <t t-foreach="items" t-as="item">
-  //           <t t-if="!item.children.length">
-  //             <t t-esc="item.name" />
-  //           </t>
-  //           <t t-else="" t-call="_test_recursive_template">
-  //             <t t-set="name" t-value="item.name" />
-  //             <t t-set="items" t-value="item.children" />
-  //           </t>
-  //         </t>
-  //     </Wrapper>`
-  //   );
+    snapshotTemplateCode(recursiveTemplate);
 
-  //     await app.mount(fixture);
+    await app.mount(fixture);
 
-  //     expect(fixture.innerHTML).toBe(
-  //       "<wrapper>foo<wrapper>foo-0foo-00<wrapper>foo-01foo-010foo-011<wrapper>foo-012foo-0120foo-0121foo-0122</wrapper></wrapper>foo-02</wrapper>foo-1foo-2</wrapper>"
-  //     );
-  //   });
+    expect(fixture.innerHTML).toBe(
+      "<wrapper>foo<wrapper>foo-0foo-00<wrapper>foo-01foo-010foo-011<wrapper>foo-012foo-0120foo-0121foo-0122</wrapper></wrapper>foo-02</wrapper>foo-1foo-2</wrapper>"
+    );
+  });
 });

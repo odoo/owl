@@ -14,7 +14,7 @@ exports[`t-on can bind event handler 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -38,7 +38,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -63,7 +63,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -88,7 +88,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -122,7 +122,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -153,7 +153,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -180,7 +180,7 @@ exports[`t-on can bind two event handlers 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -205,7 +205,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -229,7 +229,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new BCollection([1]);
@@ -259,7 +259,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -275,10 +275,10 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
-    const b1 = call(\`sub\`, ctx);
+    const b1 = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -298,7 +298,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -314,13 +314,13 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new BCollection([1]);
     b1.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = ctx['value'];
-      b1.children[i1] = call(\`sub\`, ctx);
+      b1.children[i1] = call(\`sub\`, ctx, parent);
       b1.keys[i1] = key1;
     });
     return b1;
@@ -342,7 +342,7 @@ exports[`t-on receive event in first argument 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -366,7 +366,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -391,7 +391,7 @@ exports[`t-on t-on with inline statement 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -416,7 +416,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -441,7 +441,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -467,7 +467,7 @@ exports[`t-on t-on with t-call 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -492,11 +492,11 @@ exports[`t-on t-on with t-call 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -516,7 +516,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -542,11 +542,11 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"

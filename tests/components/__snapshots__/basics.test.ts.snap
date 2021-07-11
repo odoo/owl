@@ -14,7 +14,7 @@ exports[`basics Multi root component 1`] = `
     static el = elem(\`<span>2</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BMulti(3);
     const b2 = b1.children[0] = new Block1();
     b1.children[1] = new BText(\`text\`);
@@ -30,8 +30,8 @@ exports[`basics a class component inside a class component, no external dom 1`] 
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
     return b1;
   }
 }"
@@ -52,9 +52,9 @@ exports[`basics a component inside a component 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
     return b1;
   }
 }"
@@ -78,7 +78,7 @@ exports[`basics can be clicked on and updated 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -105,9 +105,9 @@ exports[`basics can handle empty props 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx, ctx);
+    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx, parent);
     return b1;
   }
 }"
@@ -119,7 +119,7 @@ exports[`basics can mount a component with just some text 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BText(\`just text\`);
     return b1;
   }
@@ -136,7 +136,7 @@ exports[`basics can mount a simple component 1`] = `
     static el = elem(\`<span>simple vnode</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     return b1;
   }
@@ -157,7 +157,7 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     const b3 = b1.children[1] = new Block2();
@@ -180,7 +180,7 @@ exports[`basics can mount a simple component with props 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -194,7 +194,7 @@ exports[`basics child can be updated 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BText(ctx['props'].value);
     return b1;
   }
@@ -207,8 +207,8 @@ exports[`basics child can be updated 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx, ctx);
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx, parent);
     return b1;
   }
 }"
@@ -228,7 +228,7 @@ exports[`basics class component with dynamic text 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -242,8 +242,8 @@ exports[`basics class parent, class child component with props 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx, ctx);
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx, parent);
     return b1;
   }
 }"
@@ -263,7 +263,7 @@ exports[`basics class parent, class child component with props 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -277,8 +277,8 @@ exports[`basics parent, child and grandchild 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
     return b1;
   }
 }"
@@ -290,10 +290,10 @@ exports[`basics two child components 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
-    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, ctx);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, parent);
     return b1;
   }
 }"
@@ -305,7 +305,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BCollection(ctx['items']);
     b1.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = ctx['item'];
@@ -323,10 +323,10 @@ exports[`basics zero or one child components 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
     }
     return b1;
   }

@@ -18,7 +18,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     b1.refs = refs;
@@ -46,7 +46,7 @@ exports[`t-ref can get a ref on a node 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     b1.refs = refs;
@@ -70,11 +70,11 @@ exports[`t-ref ref in a t-call 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -97,7 +97,7 @@ exports[`t-ref ref in a t-call 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     b1.refs = refs;
@@ -132,7 +132,7 @@ exports[`t-ref ref in a t-if 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     if (ctx['condition']) {
@@ -173,7 +173,7 @@ exports[`t-ref refs in a loop 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['items']);
@@ -225,7 +225,7 @@ exports[`t-ref two refs, one in a t-if 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     if (ctx['condition']) {

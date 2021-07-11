@@ -19,7 +19,7 @@ exports[`debugging t-debug 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     debugger;
     const b1 = new Block1();
     if (true) {
@@ -41,7 +41,7 @@ exports[`debugging t-log 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`foo\`] = 42;

@@ -23,9 +23,9 @@ export class TemplateSet {
   utils: typeof UTILS;
 
   constructor() {
-    const call = (subTemplate: string, ctx: any, refs: any) => {
+    const call = (subTemplate: string, ctx: any, parent: any) => {
       const template = this.getTemplate(subTemplate);
-      return template(ctx, refs);
+      return template(ctx, parent);
     };
 
     this.utils = Object.assign({}, UTILS, { call });

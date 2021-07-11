@@ -15,11 +15,11 @@ exports[`t-call (template calling) basic caller 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call(\`_basic-callee\`, ctx);
+    b1.children[0] = call(\`_basic-callee\`, ctx, parent);
     return b1;
   }
 }"
@@ -31,10 +31,10 @@ exports[`t-call (template calling) basic caller, no parent node 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
-    const b1 = call(\`_basic-callee\`, ctx);
+    const b1 = call(\`_basic-callee\`, ctx, parent);
     return b1;
   }
 }"
@@ -55,7 +55,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 1`] 
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx[zero]);
     return b1;
@@ -86,7 +86,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
     static el = elem(\`<span>yay</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -96,7 +96,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
     b2.children[1] = new BText(\` \`);
     const b4 = b2.children[2] = new Block3();
     ctx[zero] = b2;
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -117,7 +117,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx[zero]);
     return b1;
@@ -144,7 +144,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 2`] = `
     static el = elem(\`<span>cascade 0</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -153,7 +153,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 2`] = `
     const b3 = b2.children[0] = new Block2();
     b2.children[1] = new BHtml(ctx[zero]);
     ctx[zero] = b2;
-    b1.children[0] = call(\`subSubTemplate\`, ctx);
+    b1.children[0] = call(\`subSubTemplate\`, ctx, parent);
     return b1;
   }
 }"
@@ -178,7 +178,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 3`] = `
     static el = elem(\`<span>cascade 1</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -187,7 +187,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 3`] = `
     const b3 = b2.children[0] = new Block2();
     b2.children[1] = new BHtml(ctx[zero]);
     ctx[zero] = b2;
-    b1.children[0] = call(\`finalTemplate\`, ctx);
+    b1.children[0] = call(\`finalTemplate\`, ctx, parent);
     return b1;
   }
 }"
@@ -216,7 +216,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 4`] = `
     static el = elem(\`<span>yay</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -226,7 +226,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 4`] = `
     b2.children[1] = new BText(\` \`);
     const b4 = b2.children[2] = new Block3();
     ctx[zero] = b2;
-    b1.children[0] = call(\`subTemplate\`, ctx);
+    b1.children[0] = call(\`subTemplate\`, ctx, parent);
     return b1;
   }
 }"
@@ -242,7 +242,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     static el = elem(\`<span>cascade 2</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     b1.children[1] = new BHtml(ctx[zero]);
@@ -261,7 +261,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     static el = elem(\`<span>cascade 0</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
@@ -269,7 +269,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     const b2 = b1.children[0] = new Block1();
     b1.children[1] = new BHtml(ctx[zero]);
     ctx[zero] = b1;
-    const b3 = call(\`subSubTemplate\`, ctx);
+    const b3 = call(\`subSubTemplate\`, ctx, parent);
     return b3;
   }
 }"
@@ -285,7 +285,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     static el = elem(\`<span>cascade 1</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
@@ -293,7 +293,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     const b2 = b1.children[0] = new Block1();
     b1.children[1] = new BHtml(ctx[zero]);
     ctx[zero] = b1;
-    const b3 = call(\`finalTemplate\`, ctx);
+    const b3 = call(\`finalTemplate\`, ctx, parent);
     return b3;
   }
 }"
@@ -313,7 +313,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     static el = elem(\`<span>yay</span>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
@@ -322,7 +322,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
     b1.children[1] = new BText(\` \`);
     const b3 = b1.children[2] = new Block2();
     ctx[zero] = b1;
-    const b4 = call(\`subTemplate\`, ctx);
+    const b4 = call(\`subTemplate\`, ctx, parent);
     return b4;
   }
 }"
@@ -343,11 +343,11 @@ exports[`t-call (template calling) dynamic t-call 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call((ctx['template']), ctx);
+    b1.children[0] = call((ctx['template']), ctx, parent);
     return b1;
   }
 }"
@@ -368,12 +368,12 @@ exports[`t-call (template calling) inherit context 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx[\`foo\`] = 1;
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -394,12 +394,12 @@ exports[`t-call (template calling) recursive template, part 1 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     if (false) {
-      b1.children[0] = call(\`recursive\`, ctx);
+      b1.children[0] = call(\`recursive\`, ctx, parent);
     }
     return b1;
   }
@@ -421,13 +421,13 @@ exports[`t-call (template calling) recursive template, part 2 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     ctx[\`node\`] = ctx['root'];
-    b1.children[0] = call(\`nodeTemplate\`, ctx);
+    b1.children[0] = call(\`nodeTemplate\`, ctx, parent);
     return b1;
   }
 }"
@@ -452,7 +452,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -462,7 +462,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b2.children[i1] = call(\`nodeTemplate\`, ctx);
+      b2.children[i1] = call(\`nodeTemplate\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     });
@@ -486,13 +486,13 @@ exports[`t-call (template calling) recursive template, part 3 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     ctx[\`node\`] = ctx['root'];
-    b1.children[0] = call(\`nodeTemplate\`, ctx);
+    b1.children[0] = call(\`nodeTemplate\`, ctx, parent);
     return b1;
   }
 }"
@@ -517,7 +517,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -527,7 +527,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b2.children[i1] = call(\`nodeTemplate\`, ctx);
+      b2.children[i1] = call(\`nodeTemplate\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     });
@@ -551,14 +551,14 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     ctx[\`recursive_idx\`] = 1;
     ctx[\`node\`] = ctx['root'];
-    b1.children[0] = call(\`nodeTemplate\`, ctx);
+    b1.children[0] = call(\`nodeTemplate\`, ctx, parent);
     return b1;
   }
 }"
@@ -585,7 +585,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -597,7 +597,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
-      b2.children[i1] = call(\`nodeTemplate\`, ctx);
+      b2.children[i1] = call(\`nodeTemplate\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     });
@@ -625,13 +625,13 @@ exports[`t-call (template calling) scoped parameters 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     ctx[\`foo\`] = 42;
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     ctx = ctx.__proto__;
     b1.data[0] = ctx['foo'];
     return b1;
@@ -658,14 +658,14 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx[\`foo\`] = 11;
     ctx = Object.create(ctx);
     ctx[\`foo\`] = 42;
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     ctx = ctx.__proto__;
     b1.data[0] = ctx['foo'];
     return b1;
@@ -688,11 +688,11 @@ exports[`t-call (template calling) t-call allowed on a non t node 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -713,7 +713,7 @@ exports[`t-call (template calling) t-call with body content as root of a templat
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx[zero]);
     return b1;
@@ -731,13 +731,13 @@ exports[`t-call (template calling) t-call with body content as root of a templat
     static el = elem(\`<p>antony</p>\`);
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[zero] = b1;
-    const b2 = call(\`antony\`, ctx);
+    const b2 = call(\`antony\`, ctx, parent);
     return b2;
   }
 }"
@@ -758,12 +758,12 @@ exports[`t-call (template calling) t-call with t-if 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     if (ctx['flag']) {
-      b1.children[0] = call(\`sub\`, ctx);
+      b1.children[0] = call(\`sub\`, ctx, parent);
     }
     return b1;
   }
@@ -785,13 +785,13 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     ctx[\`val\`] = \`yip yip\`;
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -811,7 +811,7 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.data[0] = ctx['val'];
     return b1;
@@ -834,7 +834,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -844,7 +844,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
       ctx[\`val3\`] = ctx['val']*3;
-      b2.children[i1] = call(\`sub\`, ctx);
+      b2.children[i1] = call(\`sub\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     });
@@ -867,7 +867,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.data[0] = ctx['val3'];
     return b1;
@@ -890,7 +890,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -900,7 +900,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
       ctx[\`val3\`] = ctx['val']*3;
-      b2.children[i1] = call(\`sub\`, ctx);
+      b2.children[i1] = call(\`sub\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     });
@@ -923,7 +923,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     b2.data[0] = ctx['val3'];
@@ -949,17 +949,17 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx[\`v1\`] = 'elif';
     if (ctx['v1']==='if') {
-      b1.children[0] = call(\`callee1\`, ctx);
+      b1.children[0] = call(\`callee1\`, ctx, parent);
     } else if (ctx['v1']==='elif') {
       ctx = Object.create(ctx);
       ctx[\`v\`] = 'success';
-      b1.children[1] = call(\`callee2\`, ctx);
+      b1.children[1] = call(\`callee2\`, ctx, parent);
       ctx = ctx.__proto__;
     }
     return b1;
@@ -982,12 +982,12 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 1`] =
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx[\`v\`] = \`Hi\`;
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -999,13 +999,13 @@ exports[`t-call (template calling) with unused body 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
     const b1 = new BText(\`WHEEE\`);
     ctx[zero] = b1;
-    const b2 = call(\`sub\`, ctx);
+    const b2 = call(\`sub\`, ctx, parent);
     return b2;
   }
 }"
@@ -1017,12 +1017,12 @@ exports[`t-call (template calling) with unused setbody 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
     ctx[\`qux\`] = 3;
-    const b1 = call(\`sub\`, ctx);
+    const b1 = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"
@@ -1034,13 +1034,13 @@ exports[`t-call (template calling) with used body 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
   let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     ctx = Object.create(ctx);
     const b1 = new BText(\`ok\`);
     ctx[zero] = b1;
-    const b2 = call(\`sub\`, ctx);
+    const b2 = call(\`sub\`, ctx, parent);
     return b2;
   }
 }"
@@ -1060,7 +1060,7 @@ exports[`t-call (template calling) with used body 2`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const b1 = new Block1();
     b1.data[0] = ctx[zero];
     return b1;
@@ -1083,13 +1083,13 @@ exports[`t-call (template calling) with used setbody 1`] = `
     }
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     ctx[\`foo\`] = 'ok';
-    b1.children[0] = call(\`sub\`, ctx);
+    b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
   }
 }"

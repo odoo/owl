@@ -42,7 +42,7 @@ exports[`refs refs are properly bound in slots 1`] = `
     return b2;
   }
   
-  return ctx => {
+  return (ctx, parent = ctx) => {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     ctx[scope] = 1;
@@ -50,7 +50,7 @@ exports[`refs refs are properly bound in slots 1`] = `
     b1.data[0] = ctx['state'].val;
     const ctx2 = Object.assign(Object.create(ctx), ctx);
     const slots3 = {'footer': slot4(ctx2)};
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, ctx);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, parent);
     b3.node.slots = slots3;
     return b1;
   }

@@ -86,7 +86,6 @@ interface Context {
   block: BlockDescription | null;
   index: number | string;
   forceNewBlock: boolean;
-  inSlot: Boolean;
 }
 
 interface CodeGroup {
@@ -135,7 +134,7 @@ export class QWebCompiler {
   compile(): TemplateFunction {
     const ast = this.ast;
     this.isDebug = ast.type === ASTType.TDebug;
-    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false, inSlot: false });
+    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false });
     const code = this.generateCode();
     // console.warn(code);
     return new Function("Blocks, utils", code) as TemplateFunction;
@@ -222,7 +221,7 @@ export class QWebCompiler {
     // generate main code
     this.target.indentLevel = 0;
     this.addLine(``);
-    this.addLine(`return ctx => {`);
+    this.addLine(`return (ctx, parent = ctx) => {`);
     if (this.hasRef) {
       this.addLine(`  const refs = ctx.__owl__.refs;`);
     }
@@ -607,7 +606,6 @@ export class QWebCompiler {
           block: block,
           index: block.childNumber,
           forceNewBlock: false,
-          inSlot: ctx.inSlot,
         };
         const next =
           children[i + 1] && children[i + 1].type === ASTType.DomNode
@@ -660,7 +658,7 @@ export class QWebCompiler {
     let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
     if (ast.body) {
       const nextIdCb = this.getNextBlockId();
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true, inSlot: ctx.inSlot };
+      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       const nextId = nextIdCb();
       if (nextId) {
@@ -680,7 +678,7 @@ export class QWebCompiler {
     this.addLine(`if (${compileExpr(ast.condition)}) {`);
     this.target.indentLevel++;
     this.insertAnchor(block);
-    const subCtx: Context = { block: block, index: index, forceNewBlock: true, inSlot: ctx.inSlot };
+    const subCtx: Context = { block: block, index: index, forceNewBlock: true };
 
     this.compileAST(ast.content, subCtx);
     this.target.indentLevel--;
@@ -694,7 +692,6 @@ export class QWebCompiler {
           block: block,
           index: block.childNumber - 1,
           forceNewBlock: true,
-          inSlot: ctx.inSlot,
         };
         this.compileAST(clause.content, subCtx);
         this.target.indentLevel--;
@@ -709,7 +706,6 @@ export class QWebCompiler {
         block: block,
         index: block.childNumber - 1,
         forceNewBlock: true,
-        inSlot: ctx.inSlot,
       };
       this.compileAST(ast.tElse, subCtx);
 
@@ -738,7 +734,6 @@ export class QWebCompiler {
       block: collectionBlock,
       index: loopVar,
       forceNewBlock: true,
-      inSlot: ctx.inSlot,
     };
     const initialState = this.hasDefinedKey;
     this.hasDefinedKey = false;
@@ -788,7 +783,6 @@ export class QWebCompiler {
         block: block,
         index: index,
         forceNewBlock: !isTSet,
-        inSlot: ctx.inSlot,
       };
       this.compileAST(child, subCtx);
       if (!isTSet) {
@@ -805,7 +799,7 @@ export class QWebCompiler {
       const targetRoot = this.target.rootBlock;
       this.addLine(`ctx = Object.create(ctx);`);
       const nextIdCb = this.getNextBlockId();
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true, inSlot: ctx.inSlot };
+      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       const nextId = nextIdCb();
       if (nextId) {
@@ -822,7 +816,7 @@ export class QWebCompiler {
         this.insertAnchor(block);
       }
     }
-    this.insertBlock(`call(${subTemplate}, ctx)`, { ...ctx, forceNewBlock: !block });
+    this.insertBlock(`call(${subTemplate}, ctx, parent)`, { ...ctx, forceNewBlock: !block });
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
     }
@@ -843,7 +837,7 @@ export class QWebCompiler {
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
       const nextIdCb = this.getNextBlockId();
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true, inSlot: ctx.inSlot };
+      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       const nextId = nextIdCb();
       const value = ast.value ? (nextId ? `withDefault(${expr}, ${nextId})` : expr) : nextId;
@@ -880,8 +874,7 @@ export class QWebCompiler {
       parts.push(`\${key${i + 1}}`);
     }
     const key = parts.join("__");
-    const parent = ctx.inSlot ? "parent" : "ctx";
-    const blockArgs = `\`${ast.name}\`, ${propString}, \`${key}\`, ctx, ${parent}`;
+    const blockArgs = `\`${ast.name}\`, ${propString}, \`${key}\`, ctx, parent`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -909,7 +902,7 @@ export class QWebCompiler {
         };
         this.functions.push(slot);
         this.target = slot;
-        const subCtx: Context = { block: null, index: 0, forceNewBlock: true, inSlot: true };
+        const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
         // const nextId = this.getNextBlockId();
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
@@ -977,7 +970,7 @@ export class QWebCompiler {
       };
       this.functions.push(slot);
       const initialTarget = this.target;
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true, inSlot: ctx.inSlot };
+      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;

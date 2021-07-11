@@ -809,7 +809,16 @@ export class QWebCompiler {
         this.insertAnchor(block);
       }
     }
-    this.insertBlock(`call(${subTemplate}, ctx, parent)`, { ...ctx, forceNewBlock: !block });
+    if (isDynamic) {
+      const templateVar = this.generateId("template");
+      this.addLine(`const ${templateVar} = ${subTemplate};`);
+      this.insertBlock(`new BDispatch(${templateVar}, call(${templateVar}, ctx, parent))`, {
+        ...ctx,
+        forceNewBlock: !block,
+      });
+    } else {
+      this.insertBlock(`call(${subTemplate}, ctx, parent)`, { ...ctx, forceNewBlock: !block });
+    }
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
     }

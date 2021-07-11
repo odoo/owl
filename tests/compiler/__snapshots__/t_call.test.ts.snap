@@ -337,7 +337,8 @@ exports[`t-call (template calling) dynamic t-call 1`] = `
   return (ctx, parent = ctx) => {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    b1.children[0] = call((ctx['template']), ctx, parent);
+    const template1 = (ctx['template']);
+    b1.children[0] = new BDispatch(template1, call(template1, ctx, parent));
     return b1;
   }
 }"

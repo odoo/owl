@@ -1453,7 +1453,8 @@ exports[`slots t-slot within dynamic t-call 2`] = `
   }
   
   const slot3 = ctx => parent => {
-    const b2 = call((ctx['tcallTemplate']), ctx, parent);
+    const template4 = (ctx['tcallTemplate']);
+    const b2 = new BDispatch(template4, call(template4, ctx, parent));
     return b2;
   }
   

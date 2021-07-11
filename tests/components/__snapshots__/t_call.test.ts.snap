@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-call dynamic t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    ctx = Object.create(ctx);
+    ctx = Object.create(ctx);
+    const b1 = new BText(\` owl \`);
+    ctx[zero] = b1;
+    const template1 = (ctx['current'].template);
+    const b2 = new BDispatch(template1, call(template1, ctx, parent));
+    return b2;
+  }
+}"
+`;

@@ -5,6 +5,7 @@
  *
  * - whenReady
  * - loadJS
+ * - loadCSS
  * - loadFile
  * - escape
  * - debounce
@@ -43,6 +44,30 @@ export function loadJS(url: string): Promise<void> {
   });
   loadedScripts[url] = promise;
   return promise;
+}
+
+const loadedStyles: { [key: string]: Promise<void> } = {};
+
+export function loadCSS(url: string): Promise<void> {
+    if (url in loadedStyles) {
+        return loadedStyles[url];
+    }
+    const promise: Promise<void> = new Promise(function (resolve, reject) {
+        const link = document.createElement("link");
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = url;
+        link.onload = function () {
+          resolve();
+        };
+        link.onerror = function () {
+          reject(`Error loading file '${url}'`);
+        };
+        const headScript = document.querySelector("script");
+        headScript.parentNode.insertBefore(link, headScript);
+    });
+    loadedStyles[url] = promise;
+    return promise;
 }
 
 export async function loadFile(url: string): Promise<string> {

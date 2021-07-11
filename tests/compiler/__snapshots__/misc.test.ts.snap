@@ -160,7 +160,7 @@ exports[`misc global 1`] = `
     }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -174,18 +174,17 @@ exports[`misc global 1`] = `
       const b5 = new BMulti(3);
       ctx = Object.create(ctx);
       ctx[\`foo\`] = 'aaa';
-      b5.children[0] = call(\`_callee-uses-foo\`, ctx, refs);
+      b5.children[0] = call(\`_callee-uses-foo\`, ctx);
       ctx = ctx.__proto__;
-      b5.children[1] = call(\`_callee-uses-foo\`, ctx, refs);
+      b5.children[1] = call(\`_callee-uses-foo\`, ctx);
       ctx[\`foo\`] = 'bbb';
-      b5.children[2] = call(\`_callee-uses-foo\`, ctx, refs);
+      b5.children[2] = call(\`_callee-uses-foo\`, ctx);
       ctx[zero] = b5;
-      b3.children[1] = call(\`_callee-asc\`, ctx, refs);
+      b3.children[1] = call(\`_callee-asc\`, ctx);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     });
-    b1.children[1] = call(\`_callee-asc-toto\`, ctx, refs);
-    b1.refs = refs;
+    b1.children[1] = call(\`_callee-asc-toto\`, ctx);
     return b1;
   }
 }"
@@ -324,6 +323,11 @@ exports[`misc other complex template 1`] = `
       this.refs[\`search_input\`] = el2;
       this.refs[\`settings_menu\`] = el3.nextSibling;
     }
+    remove() {
+      delete this.refs[\`search_input\`];
+      delete this.refs[\`settings_menu\`];
+      super.remove();
+    }
   }
   
   class Block2 extends BNode {
@@ -457,7 +461,8 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
@@ -513,7 +518,9 @@ exports[`misc other complex template 1`] = `
     b1.data[2] = ctx['search'].value;
     b1.handlers[2] = [\`keyup\`, (e) => owner(ctx)['updateFilter'](e), ctx];
     b1.handlers[3] = [\`change\`, (e) => owner(ctx)['updateFilter'](e), ctx];
+    b1.refs = refs;
     b1.handlers[4] = [\`click\`, (e) => owner(ctx)['clearSearch'](e), ctx];
+    b1.refs = refs;
     if (ctx['triggers']) {
       const b17 = b1.children[3] = new BMulti(2);
       const b18 = b17.children[0] = new BCollection(ctx['triggers']);
@@ -539,7 +546,7 @@ exports[`misc other complex template 1`] = `
       b21.handlers[3] = [\`click\`, (e) => owner(ctx)['toggleSettingsMenu'](e), ctx];
     }
     if (ctx['load_infos']) {
-      b1.children[4] = call(\`LOAD_INFOS_TEMPLATE\`, ctx, refs);
+      b1.children[4] = call(\`LOAD_INFOS_TEMPLATE\`, ctx);
     }
     if (ctx['message']) {
       const b22 = b1.children[5] = new Block13();
@@ -552,7 +559,6 @@ exports[`misc other complex template 1`] = `
       b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__2\`, ctx, ctx);
       b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__3\`, ctx, ctx);
     }
-    b1.refs = refs;
     return b1;
   }
 }"

@@ -9,19 +9,21 @@ describe("t-ref", () => {
   test("can get a ref on a node", () => {
     const template = `<div><span t-ref="myspan"/></div>`;
     snapshotTemplateCode(template);
-    const bdom = renderToBdom(template);
-    expect(bdom.refs).toEqual({});
+    const refs: any = {};
+    const bdom = renderToBdom(template, { __owl__: { refs } });
+    expect(refs).toEqual({});
     bdom.mount(document.createElement("div"));
-    expect(bdom.refs!.myspan.tagName).toBe("SPAN");
+    expect(refs.myspan.tagName).toBe("SPAN");
   });
 
   test("can get a dynamic ref on a node", () => {
     const template = `<div><span t-ref="myspan{{id}}"/></div>`;
     snapshotTemplateCode(template);
-    const bdom = renderToBdom(template, { id: 3 });
-    expect(bdom.refs).toEqual({});
+    const refs: any = {};
+    const bdom = renderToBdom(template, { id: 3, __owl__: { refs } });
+    expect(refs).toEqual({});
     bdom.mount(document.createElement("div"));
-    expect(bdom.refs!.myspan3.tagName).toBe("SPAN");
+    expect(refs.myspan3.tagName).toBe("SPAN");
   });
 
   test("refs in a loop", () => {
@@ -31,10 +33,11 @@ describe("t-ref", () => {
         </t>
       </div>`;
     snapshotTemplateCode(template);
-    const bdom = renderToBdom(template, { items: [1, 2, 3] });
-    expect(bdom.refs).toEqual({});
+    const refs: any = {};
+    const bdom = renderToBdom(template, { items: [1, 2, 3], __owl__: { refs } });
+    expect(refs).toEqual({});
     bdom.mount(document.createElement("div"));
-    expect(Object.keys(bdom.refs!)).toEqual(["1", "2", "3"]);
+    expect(Object.keys(refs)).toEqual(["1", "2", "3"]);
   });
 
   test("ref in a t-if", () => {
@@ -46,21 +49,22 @@ describe("t-ref", () => {
       </div>`;
     snapshotTemplateCode(template);
 
+    const refs: any = {};
     // false
-    const bdom = renderToBdom(template, { condition: false });
-    expect(bdom.refs).toEqual({});
+    const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
+    expect(refs).toEqual({});
     bdom.mount(document.createElement("div"));
-    expect(bdom.refs).toEqual({});
+    expect(refs).toEqual({});
 
     // true now
-    const bdom2 = renderToBdom(template, { condition: true });
+    const bdom2 = renderToBdom(template, { condition: true, __owl__: { refs } });
     bdom.patch(bdom2);
-    expect(bdom.refs!.name.tagName).toBe("SPAN");
+    expect(refs.name.tagName).toBe("SPAN");
 
     // false again
-    const bdom3 = renderToBdom(template, { condition: false });
+    const bdom3 = renderToBdom(template, { condition: false, __owl__: { refs } });
     bdom.patch(bdom3);
-    expect(bdom.refs).toEqual({});
+    expect(refs).toEqual({});
   });
 
   test("two refs, one in a t-if", () => {
@@ -73,21 +77,23 @@ describe("t-ref", () => {
       </div>`;
     snapshotTemplateCode(template);
 
+    const refs: any = {};
+
     // false
-    const bdom = renderToBdom(template, { condition: false });
+    const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
     expect(Object.keys(bdom.refs!)).toEqual([]);
     bdom.mount(document.createElement("div"));
-    expect(Object.keys(bdom.refs!)).toEqual(["p"]);
+    expect(Object.keys(refs)).toEqual(["p"]);
 
     // true now
-    const bdom2 = renderToBdom(template, { condition: true });
+    const bdom2 = renderToBdom(template, { condition: true, __owl__: { refs } });
     bdom.patch(bdom2);
-    expect(Object.keys(bdom.refs!)).toEqual(["p", "name"]);
+    expect(Object.keys(refs)).toEqual(["p", "name"]);
 
     // false again
-    const bdom3 = renderToBdom(template, { condition: false });
+    const bdom3 = renderToBdom(template, { condition: false, __owl__: { refs } });
     bdom.patch(bdom3);
-    expect(Object.keys(bdom.refs!)).toEqual(["p"]);
+    expect(Object.keys(refs)).toEqual(["p"]);
   });
 
   test("ref in a t-call", () => {
@@ -96,13 +102,15 @@ describe("t-ref", () => {
     snapshotTemplateCode(main);
     snapshotTemplateCode(sub);
 
+    const refs: any = {};
+
     const app = new TemplateSet();
     app.addTemplate("main", main);
     app.addTemplate("sub", sub);
 
-    const bdom = app.getTemplate("main")({});
+    const bdom = app.getTemplate("main")({ __owl__: { refs } });
     bdom.mount(document.createElement("div"));
 
-    expect(bdom.refs!.name.tagName).toBe("SPAN");
+    expect(refs.name.tagName).toBe("SPAN");
   });
 });

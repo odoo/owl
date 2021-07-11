@@ -12,13 +12,18 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
     update() {
       this.refs[this.data[0]] = this.el.firstChild;
     }
+    remove() {
+      delete this.refs[this.data[0]];
+      super.remove();
+    }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     const b1 = new Block1();
+    b1.refs = refs;
     const v1 = ctx['id'];
     b1.data[0] = \`myspan\${v1}\`;
-    b1.refs = refs;
     return b1;
   }
 }"
@@ -35,9 +40,14 @@ exports[`t-ref can get a ref on a node 1`] = `
     update() {
       this.refs[\`myspan\`] = this.el.firstChild;
     }
+    remove() {
+      delete this.refs[\`myspan\`];
+      super.remove();
+    }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     b1.refs = refs;
     return b1;
@@ -60,12 +70,11 @@ exports[`t-ref ref in a t-call 1`] = `
     }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
-    b1.children[0] = call(\`sub\`, ctx, refs);
-    b1.refs = refs;
+    b1.children[0] = call(\`sub\`, ctx);
     return b1;
   }
 }"
@@ -82,9 +91,14 @@ exports[`t-ref ref in a t-call 2`] = `
     update() {
       this.refs[\`name\`] = this.el.firstChild.nextSibling;
     }
+    remove() {
+      delete this.refs[\`name\`];
+      super.remove();
+    }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     b1.refs = refs;
     return b1;
@@ -112,15 +126,19 @@ exports[`t-ref ref in a t-if 1`] = `
     update() {
       this.refs[\`name\`] = this.el;
     }
+    remove() {
+      delete this.refs[\`name\`];
+      super.remove();
+    }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     if (ctx['condition']) {
       const b2 = b1.children[0] = new Block2();
       b2.refs = refs;
     }
-    b1.refs = refs;
     return b1;
   }
 }"
@@ -149,9 +167,14 @@ exports[`t-ref refs in a loop 1`] = `
       this.refs[this.data[0]] = el1;
       el1.firstChild.textContent = toString(this.data[1]);
     }
+    remove() {
+      delete this.refs[this.data[0]];
+      super.remove();
+    }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['items']);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -164,7 +187,6 @@ exports[`t-ref refs in a loop 1`] = `
       b3.data[1] = ctx['item'];
       b2.keys[i1] = key1;
     });
-    b1.refs = refs;
     return b1;
   }
 }"
@@ -186,6 +208,10 @@ exports[`t-ref two refs, one in a t-if 1`] = `
     update() {
       this.refs[\`p\`] = this.anchors[0].nextSibling;
     }
+    remove() {
+      delete this.refs[\`p\`];
+      super.remove();
+    }
   }
   
   class Block2 extends BNode {
@@ -193,9 +219,14 @@ exports[`t-ref two refs, one in a t-if 1`] = `
     update() {
       this.refs[\`name\`] = this.el;
     }
+    remove() {
+      delete this.refs[\`name\`];
+      super.remove();
+    }
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     const b1 = new Block1();
     if (ctx['condition']) {
       const b2 = b1.children[0] = new Block2();

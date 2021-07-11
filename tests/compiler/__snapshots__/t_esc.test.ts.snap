@@ -214,15 +214,14 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
     static el = elem(\`<p>escaped</p>\`);
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     ctx = Object.create(ctx);
     const b2 = new Block2();
     ctx[zero] = b2;
-    b1.children[0] = call(\`sub\`, ctx, refs);
-    b1.refs = refs;
+    b1.children[0] = call(\`sub\`, ctx);
     return b1;
   }
 }"

@@ -724,6 +724,53 @@ exports[`slots slot preserves properly parented relationship 2`] = `
 }"
 `;
 
+exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot4 = ctx => parent => {
+    const b2 = call(\`__template__3\`, ctx, refs);
+    return b2;
+  }
+  
+  return (ctx, refs = {}) => {
+    ctx = Object.create(ctx);
+    ctx[scope] = 1;
+    const b1 = new Block1();
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const slots3 = {'default': slot4(ctx2)};
+    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, ctx);
+    b3.node.slots = slots3;
+    b1.refs = refs;
+    return b1;
+  }
+}"
+`;
+
+exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, scope, owner, callSlot} = utils;
+  
+  return ctx => {
+    const b1 = callSlot(ctx, 'default');
+    return b1;
+  }
+}"
+`;
+
 exports[`slots slots are rendered with proper context 1`] = `
 "function anonymous(Blocks, utils
 ) {

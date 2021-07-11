@@ -18,7 +18,7 @@ export function useRef<C extends Component = Component>(name: string): Ref<C> {
   const node = getCurrent()!;
   return {
     get el(): HTMLElement | null {
-      const val = node.bdom && node.bdom.refs && node.bdom.refs[name];
+      const val = node.refs[name];
       return val!;
       // if (val instanceof HTMLElement) {
       //   return val;

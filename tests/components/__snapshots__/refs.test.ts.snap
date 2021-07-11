@@ -28,25 +28,30 @@ exports[`refs refs are properly bound in slots 1`] = `
     update() {
       this.refs[\`myButton\`] = this.el;
     }
+    remove() {
+      delete this.refs[\`myButton\`];
+      super.remove();
+    }
   }
   
-  const slot4 = (ctx, refs) => () => {
+  const slot4 = ctx => parent => {
+    const refs = ctx.__owl__.refs
     const b2 = new Block2();
     b2.handlers[0] = [\`click\`, (e) => owner(ctx)['doSomething'](e), ctx];
     b2.refs = refs;
     return b2;
   }
   
-  return (ctx, refs = {}) => {
+  return ctx => {
+    const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     ctx[scope] = 1;
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
     const ctx2 = Object.assign(Object.create(ctx), ctx);
-    const slots3 = {'footer': slot4(ctx2, refs)};
+    const slots3 = {'footer': slot4(ctx2)};
     const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, ctx);
     b3.node.slots = slots3;
-    b1.refs = refs;
     return b1;
   }
 }"

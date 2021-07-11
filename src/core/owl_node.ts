@@ -21,6 +21,7 @@ export class OwlNode {
   renderFn: Function;
   children: { [key: string]: OwlNode } = {};
   slots: any = {};
+  refs: any = {};
 
   willStart: LifecycleHook[] = [];
 

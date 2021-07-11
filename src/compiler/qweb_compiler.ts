@@ -46,6 +46,7 @@ class BlockDescription {
   blockName: string;
   buildFn: FunctionLine[] = [];
   updateFn: FunctionLine[] = [];
+  removeFn: string[] = [];
   currentPath: string[] = ["el"];
   dataNumber: number = 0;
   handlerNumber: number = 0;
@@ -221,10 +222,9 @@ export class QWebCompiler {
     // generate main code
     this.target.indentLevel = 0;
     this.addLine(``);
-    if (this.hasRef || this.hasTCall) {
-      this.addLine(`return (ctx, refs = {}) => {`);
-    } else {
-      this.addLine(`return ctx => {`);
+    this.addLine(`return ctx => {`);
+    if (this.hasRef) {
+      this.addLine(`  const refs = ctx.__owl__.refs;`);
     }
     if (this.shouldProtectScope || this.shouldDefineOwner) {
       this.addLine(`  ctx = Object.create(ctx);`);
@@ -240,9 +240,6 @@ export class QWebCompiler {
     }
     if (!this.target.rootBlock) {
       throw new Error("missing root block");
-    }
-    if (this.hasRef || this.hasTCall) {
-      this.addLine(`  ${this.target.rootBlock}.refs = refs;`);
     }
     this.addLine(`  return ${this.target.rootBlock};`);
     this.addLine("}");
@@ -304,6 +301,16 @@ export class QWebCompiler {
       }
       this.target.indentLevel--;
       this.addLine(`}`);
+    }
+    if (block.removeFn.length) {
+      this.addLine(`remove() {`);
+      this.target.indentLevel++;
+      for (let line of block.removeFn) {
+        this.addLine(line);
+      }
+      this.addLine(`super.remove();`);
+      this.target.indentLevel--;
+      this.addLine("}");
     }
 
     this.target.indentLevel--;
@@ -568,9 +575,7 @@ export class QWebCompiler {
     if (ast.ref) {
       this.hasRef = true;
       this.refBlocks.push(block.varName);
-      if (this.target.rootBlock !== block.varName) {
-        this.addLine(`${block.varName}.refs = refs;`);
-      }
+      this.addLine(`${block.varName}.refs = refs;`);
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       if (isDynamic) {
         const str = ast.ref.replace(
@@ -581,8 +586,10 @@ export class QWebCompiler {
         block.dataNumber++;
         this.addLine(`${block.varName}.data[${index}] = \`${str}\`;`);
         block.insertUpdate((el) => `this.refs[this.data[${index}]] = ${el};`);
+        block.removeFn.push(`delete this.refs[this.data[${index}]];`);
       } else {
         block.insertUpdate((el) => `this.refs[\`${ast.ref}\`] = ${el};`);
+        block.removeFn.push(`delete this.refs[\`${ast.ref}\`];`);
       }
     }
 
@@ -815,7 +822,7 @@ export class QWebCompiler {
         this.insertAnchor(block);
       }
     }
-    this.insertBlock(`call(${subTemplate}, ctx, refs)`, { ...ctx, forceNewBlock: !block });
+    this.insertBlock(`call(${subTemplate}, ctx)`, { ...ctx, forceNewBlock: !block });
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
     }
@@ -903,15 +910,16 @@ export class QWebCompiler {
         this.functions.push(slot);
         this.target = slot;
         const subCtx: Context = { block: null, index: 0, forceNewBlock: true, inSlot: true };
-        const nextId = this.getNextBlockId();
+        // const nextId = this.getNextBlockId();
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
-          slot.signature = "(ctx, refs) => () => {";
-          slotStr.push(`'${slotName}': ${name}(${ctxStr}, refs)`);
-          const id = nextId();
-          if (id) {
-            this.addLine(`${id}.refs = refs;`);
-          }
+          slot.signature = "ctx => parent => {";
+          slot.code.unshift(`  const refs = ctx.__owl__.refs`);
+          slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
+          // const id = nextId();
+          // if (id) {
+          //   this.addLine(`${id}.refs = refs;`);
+          // }
         } else {
           slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
         }

@@ -680,4 +680,43 @@ describe("slots", () => {
       "<wrapper>foo<wrapper>foo-0foo-00<wrapper>foo-01foo-010foo-011<wrapper>foo-012foo-0120foo-0121foo-0122</wrapper></wrapper>foo-02</wrapper>foo-1foo-2</wrapper>"
     );
   });
+
+  test("t-slot within dynamic t-call", async () => {
+    class Child extends Component {
+      static template = xml`<div class="child"/>`;
+    }
+
+    class Slotted extends Component {
+      static template = xml`<div class="slotted"><t t-slot="default" /></div>`;
+    }
+
+    addTemplate("sometemplate", `<div class="slot"><Child/></div>`);
+    class UsingTcallInSlotted extends Component {
+      tcallTemplate = "sometemplate";
+      static template = xml`
+      <div>
+        <Slotted>
+          <t t-call="{{ tcallTemplate }}"/>
+        </Slotted>
+      </div>`;
+      static components = { Slotted, Child };
+    }
+
+    const parent = await mount(UsingTcallInSlotted, { target: fixture });
+
+    expect(parent).toBeInstanceOf(UsingTcallInSlotted);
+    expect(children(parent).length).toBe(1);
+    const slotted = children(parent)[0];
+    expect(slotted).toBeInstanceOf(Slotted);
+    expect(children(slotted).length).toBe(1);
+    const child = children(slotted)[0];
+    expect(child).toBeInstanceOf(Child);
+
+    expect(fixture.innerHTML).toBe(
+      `<div><div class="slotted"><div class="slot"><div class="child"></div></div></div></div>`
+    );
+
+    snapshotTemplateCode(fromName("sometemplate"));
+    snapshotTemplateCode(fromName(UsingTcallInSlotted.template));
+  });
 });

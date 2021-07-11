@@ -1117,3 +1117,57 @@ exports[`slots t-slot scope context 1`] = `
   }
 }"
 `;
+
+exports[`slots t-slot within dynamic t-call 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div class=\\"slot\\"><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`slots t-slot within dynamic t-call 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot3 = ctx => parent => {
+    const b2 = call((ctx['tcallTemplate']), ctx, parent);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    const ctx2 = Object.assign(Object.create(ctx), ctx);
+    const b3 = b1.children[0] = new BComponent(\`Slotted\`, {}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot3(ctx2)};
+    return b1;
+  }
+}"
+`;

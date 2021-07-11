@@ -53,6 +53,9 @@ export class Observer {
       },
       set(target, key: string, newVal): boolean {
         const value = target[key];
+        if (!self.weakMap.get(target)) {
+          return true;
+        }
         if (newVal !== value) {
           if (!self.allowMutations) {
             throw new Error(
@@ -67,6 +70,12 @@ export class Observer {
       },
       deleteProperty(target, key) {
         if (key in target) {
+          const val = target[key];
+          const meta = self.weakMap.get(val);
+          if (meta) {
+            self.weakMap.delete(val);
+            self.weakMap.delete(meta.proxy);
+          }
           delete target[key];
           self._updateRevNumber(target);
           self.notifyCB();

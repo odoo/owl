@@ -268,6 +268,72 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 }"
 `;
 
+exports[`slots default slot next to named slot, with default content 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div class=\\"Dialog\\"><div class=\\"content\\"><owl-anchor/></div><div class=\\"footer\\"><owl-anchor/></div></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      const el1 = this.el.firstChild;
+      this.anchors[0] = el1.firstChild;
+      this.anchors[1] = el1.nextSibling.firstChild;
+    }
+  }
+  
+  const defaultSlot1 = ctx => {
+    const b2 = new BText(\` Default content \`);
+    return b2;
+  }
+  
+  const defaultSlot2 = ctx => {
+    const b3 = new BText(\` Default footer \`);
+    return b3;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, 'default', defaultSlot1);
+    b1.children[1] = callSlot(ctx, 'footer', defaultSlot2);
+    return b1;
+  }
+}"
+`;
+
+exports[`slots default slot next to named slot, with default content 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot3 = ctx => parent => {
+    const b2 = new BText(\` Overridden footer \`);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const ctx2 = capture(ctx);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, parent);
+    b3.node.slots = {'footer': slot3(ctx2)};
+    return b1;
+  }
+}"
+`;
+
 exports[`slots default slot work with text nodes (variation) 1`] = `
 "function anonymous(Blocks, utils
 ) {

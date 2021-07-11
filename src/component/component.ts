@@ -640,7 +640,9 @@ export class Component<Props extends {} = any, T extends Env = Env> {
         template = p.name;
       }
       if (p === Component) {
-        throw new Error(`Could not find template for component "${this.constructor.name}"`);
+        throw new Error(`Could not find template for component "${this.constructor.name}".
+        However, there is a (instance, not a class) "template" property.
+        Maybe this should simply be defined as a class (or static) property?`);
       } else {
         p._template = template;
       }

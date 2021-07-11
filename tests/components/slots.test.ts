@@ -1,5 +1,5 @@
 import { App, Component, mount, useState, xml } from "../../src/index";
-import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { addTemplate, fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -539,13 +539,13 @@ describe("slots", () => {
       static template = xml`Grand Child`;
     }
 
-    const sub = xml`<GrandChild/>`;
+    addTemplate("sub", `<GrandChild/>`);
 
     class Parent extends Component {
       static template = xml`
           <div>
             <Child>
-              <t t-call="${sub}"/>
+              <t t-call="sub"/>
             </Child>
           </div>`;
       static components = { Child, GrandChild };
@@ -553,7 +553,7 @@ describe("slots", () => {
 
     snapshotTemplateCode(fromName(Parent.template));
     snapshotTemplateCode(fromName(Child.template));
-    snapshotTemplateCode(fromName(sub));
+    snapshotTemplateCode("sub");
     // throw new Error("boom")
     const parent = await mount(Parent, { target: fixture });
 
@@ -566,6 +566,54 @@ describe("slots", () => {
     const childrenChildren = children(parentChildren[0]);
     expect(childrenChildren.length).toBe(1);
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
+  });
+
+  test("t-slot scope context", async () => {
+    expect.assertions(2);
+
+    class Wrapper extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    let dialog: any;
+
+    class Dialog extends Component {
+      static template = xml`
+        <Wrapper>
+          <div t-on-click="onClick">
+            <t t-slot="default" />
+          </div>
+        </Wrapper>
+      `;
+
+      static components = { Wrapper };
+
+      setup() {
+        dialog = this;
+      }
+
+      onClick() {
+        // we do not use expect(this).toBe(dialog) here because if it fails, it
+        // may blow up jest because it then tries to compute a diff, which is
+        // infinite if there is a cycle
+        expect(this === dialog).toBe(true);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Dialog>
+            <button>The Button</button>
+        </Dialog>`;
+      static components = { Dialog };
+    }
+
+    snapshotTemplateCode(fromName(Dialog.template));
+
+    await mount(Parent, { target: fixture });
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
   });
 
   test("t-slot in recursive templates", async () => {

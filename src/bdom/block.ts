@@ -15,6 +15,10 @@ export abstract class Block {
 
   abstract mountBefore(anchor: ChildNode): void;
 
+  /**
+   * A key point is that a block of a given type is always patched with a block
+   * of the same type
+   */
   abstract patch(other: Block): void;
 
   abstract firstChildNode(): ChildNode | null;

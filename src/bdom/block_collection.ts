@@ -6,7 +6,7 @@ import { Block } from "./block";
 
 export class BCollection extends Block {
   children: Block[];
-  anchor?: ChildNode;
+  anchor: ChildNode = document.createTextNode("");
   keys: (string | number)[];
   collection: any[];
   values: any[];
@@ -48,22 +48,21 @@ export class BCollection extends Block {
   }
 
   mountBefore(anchor: ChildNode) {
-    const _anchor = document.createTextNode("");
+    const _anchor = this.anchor;
     anchor.before(_anchor);
-    this.anchor = _anchor;
     for (let child of this.children) {
       child.mountBefore(_anchor);
     }
   }
 
   moveBefore(anchor: ChildNode) {
-    const _anchor = document.createTextNode("");
+    const _anchor = this.anchor;
     anchor.before(_anchor);
-    this.anchor = _anchor;
     for (let child of this.children) {
       child.moveBefore(_anchor);
     }
   }
+  
   patch(other: any) {
     const oldKeys = this.keys;
     const newKeys = other.keys;

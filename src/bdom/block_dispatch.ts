@@ -18,7 +18,7 @@ import { Block } from "./block";
 export class BDispatch extends Block {
   child: Block;
   key: string;
-  anchor: ChildNode | null = null;
+  anchor: ChildNode = document.createTextNode("");
 
   constructor(key: string, child: Block) {
     super();
@@ -31,17 +31,14 @@ export class BDispatch extends Block {
   }
 
   mountBefore(anchor: ChildNode) {
-    const _anchor = document.createTextNode("");
+    const _anchor = this.anchor;
     anchor.before(_anchor);
-    this.anchor = _anchor;
     this.child.mountBefore(_anchor);
   }
 
   moveBefore(anchor: ChildNode) {
-    // todo: reuse current anchor
-    const _anchor = document.createTextNode("");
+    const _anchor = this.anchor;
     anchor.before(_anchor);
-    this.anchor = _anchor;
     this.child.moveBefore(_anchor);
   }
 

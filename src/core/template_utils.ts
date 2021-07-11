@@ -1,4 +1,5 @@
 import { Block, Blocks } from "../bdom";
+import { BDispatch } from "../bdom/block_dispatch";
 
 const { BMulti } = Blocks;
 
@@ -61,14 +62,19 @@ function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
 
-function callSlot(ctx: any, name: string, defaultSlot?: (ctx: any) => Block): Block | null {
+function callSlot(
+  ctx: any,
+  name: string,
+  defaultSlot?: (ctx: any) => Block,
+  dynamic?: boolean
+): Block | null {
   const slots = ctx.__owl__.slots;
   const slotFn = slots[name];
   const slotBDom = slotFn ? slotFn(ctx) : null;
   if (defaultSlot) {
     const result = new BMulti(2);
     if (slotBDom) {
-      result.children[0] = slotBDom;
+      result.children[0] = dynamic ? new BDispatch(name, slotBDom) : slotBDom;
     } else {
       result.children[1] = defaultSlot(ctx);
     }

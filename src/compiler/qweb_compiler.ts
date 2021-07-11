@@ -976,7 +976,7 @@ export class QWebCompiler {
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
-      blockString = `callSlot(ctx, ${slotName}, ${name})`;
+      blockString = `callSlot(ctx, ${slotName}, ${name}, ${dynamic})`;
     } else {
       if (dynamic) {
         let name = this.generateId("slot");

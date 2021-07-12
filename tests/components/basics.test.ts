@@ -364,4 +364,32 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("1");
   });
+
+  test("higher order components parent and child", async () => {
+    class ChildA extends Component {
+      static template = xml`<div>a</div>`;
+    }
+    class ChildB extends Component {
+      static template = xml`<span>b</span>`;
+    }
+    class Child extends Component {
+      static template = xml`<ChildA t-if="props.child==='a'"/><ChildB t-else=""/>`;
+      static components = { ChildA, ChildB };
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child child="state.child" />`;
+      static components = { Child };
+
+      state = useState({ child: "a" });
+    }
+    snapshotTemplateCode(fromName(Parent.template));
+
+    const parent = await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe(`<div>a</div>`);
+    parent.state.child = "b";
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<span>b</span>`);
+  });
+
 });

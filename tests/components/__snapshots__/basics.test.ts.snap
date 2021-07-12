@@ -270,6 +270,19 @@ exports[`basics class parent, class child component with props 2`] = `
 }"
 `;
 
+exports[`basics higher order components parent and child 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(Blocks, utils
 ) {

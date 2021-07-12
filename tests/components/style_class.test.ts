@@ -1,5 +1,5 @@
-import { Component, mount, xml } from "../../src";
-import { fromName, makeTestFixture, snapshotTemplateCode } from "../helpers";
+import { Component, mount, useState, xml } from "../../src";
+import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -106,5 +106,30 @@ describe("style and class handling", () => {
     snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
+  });
+
+  test.skip("class on sub component, which is switched to another", async () => {
+    class ChildA extends Component {
+      static template = xml`<div>a</div>`;
+    }
+    class ChildB extends Component {
+      static template = xml`<span>b</span>`;
+    }
+    class Child extends Component {
+      static template = xml`<ChildA t-debug="" t-if="props.child==='a'"/><ChildB t-else=""/>`;
+      static components = { ChildA, ChildB };
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-debug="" class="someclass" child="state.child" />`;
+      static components = { Child };
+
+      state = useState({ child: "a" });
+    }
+    const parent = await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe(`<div class="someclass">a</div>`);
+    parent.state.child = "b";
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<span class="someclass">b</span>`);
   });
 });

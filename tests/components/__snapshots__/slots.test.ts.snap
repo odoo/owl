@@ -985,7 +985,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
-    const b1 = new BText(\`sub\`);
+    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, parent);
     return b1;
   }
 }"

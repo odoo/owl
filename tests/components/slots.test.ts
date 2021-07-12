@@ -553,7 +553,7 @@ describe("slots", () => {
 
     snapshotTemplateCode(fromName(Parent.template));
     snapshotTemplateCode(fromName(Child.template));
-    snapshotTemplateCode("sub");
+    snapshotTemplateCode(fromName("sub"));
     // throw new Error("boom")
     const parent = await mount(Parent, { target: fixture });
 

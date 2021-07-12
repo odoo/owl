@@ -108,7 +108,7 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
   });
 
-  test.skip("class on sub component, which is switched to another", async () => {
+  test("class on sub component, which is switched to another", async () => {
     class ChildA extends Component {
       static template = xml`<div>a</div>`;
     }
@@ -126,6 +126,8 @@ describe("style and class handling", () => {
 
       state = useState({ child: "a" });
     }
+    snapshotTemplateCode(fromName(Parent.template));
+
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="someclass">a</div>`);
     parent.state.child = "b";

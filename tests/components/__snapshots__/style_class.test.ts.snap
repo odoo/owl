@@ -73,6 +73,21 @@ exports[`style and class handling can set style and class on component 1`] = `
 }"
 `;
 
+exports[`style and class handling class on sub component, which is switched to another 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    debugger;
+    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, \`__1\`, ctx, parent);
+    b1.parentClass = \`someclass\`;
+    return b1;
+  }
+}"
+`;
+
 exports[`style and class handling component class and parent class combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {

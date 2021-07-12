@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`event handling can set handler on sub component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    ctx = Object.create(ctx);
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, \`__1\`, ctx, parent);
+    b2.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['inc'](e), ctx];
+    b1.children[1] = new BText(ctx['state'].value);
+    return b1;
+  }
+}"
+`;

@@ -384,6 +384,7 @@ describe("basics", () => {
       state = useState({ child: "a" });
     }
     snapshotTemplateCode(fromName(Parent.template));
+    snapshotTemplateCode(fromName(Child.template));
 
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div>a</div>`);
@@ -391,5 +392,4 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe(`<span>b</span>`);
   });
-
 });

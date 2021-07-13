@@ -478,7 +478,7 @@ exports[`misc other complex template 1`] = `
     if (ctx['user']) {
       const b4 = b1.children[1] = new BMulti(2);
       if (ctx['user'].public) {
-        const b5 = b4.children[1] = new Block3();
+        const b5 = b4.children[0] = new Block3();
         b5.data[0] = \`/web/login?redirect=/\`;
       } else {
         const b6 = b4.children[1] = new BMulti(2);
@@ -526,7 +526,7 @@ exports[`misc other complex template 1`] = `
         let key1 = ctx['trigger'].id;
         const b19 = b18.children[i1] = new BMulti(1);
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
-          const b20 = b19.children[i1] = new Block11();
+          const b20 = b19.children[0] = new Block11();
           b20.data[0] = \`trigger_\${ctx['trigger'].id}\`;
           b20.data[1] = \`trigger_\${ctx['trigger'].id}\`;
           b20.data[2] = ctx['options'].trigger_display[ctx['trigger'].id];

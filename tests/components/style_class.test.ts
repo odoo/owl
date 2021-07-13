@@ -108,7 +108,7 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
   });
 
-  test("class on sub component, which is switched to another", async () => {
+  test.skip("class on sub component, which is switched to another", async () => {
     class ChildA extends Component {
       static template = xml`<div>a</div>`;
     }

@@ -470,7 +470,7 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
       let key1 = ctx['elem'].id;
       const b2 = b1.children[i1] = new BMulti(1);
       if (ctx['elem'].id<3) {
-        const b3 = b2.children[i1] = new Block1();
+        const b3 = b2.children[0] = new Block1();
         b3.data[0] = ctx['elem'].text;
       }
       b1.keys[i1] = key1;
@@ -510,7 +510,7 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
       let key1 = ctx['elem'].id;
       const b3 = b2.children[i1] = new BMulti(1);
       if (ctx['elem'].id<3) {
-        const b4 = b3.children[i1] = new Block2();
+        const b4 = b3.children[0] = new Block2();
         b4.data[0] = ctx['elem'].text;
       }
       b2.keys[i1] = key1;

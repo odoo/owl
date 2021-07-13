@@ -1356,7 +1356,7 @@ exports[`slots t-slot in recursive templates 1`] = `
       let key1 = ctx['item'].name;
       const b3 = b2.children[i1] = new BMulti(2);
       if (!ctx['item'].children.length) {
-        b3.children[i1] = new BText(ctx['item'].name);
+        b3.children[0] = new BText(ctx['item'].name);
       } else {
         ctx = Object.create(ctx);
         ctx[\`name\`] = ctx['item'].name;

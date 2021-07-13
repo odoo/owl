@@ -71,6 +71,13 @@ describe("t-if", () => {
     expect(renderToString(template, { condition: false })).toBe("<div>2</div>");
   });
 
+  test("t-if/t-else with more content", () => {
+    const template = `<t t-if="condition"><t t-if="condition">asf</t></t><t t-else="">coucou</t>`;
+    snapshotTemplateCode(template);
+    expect(renderToString(template, { condition: true })).toBe("asf");
+    expect(renderToString(template, { condition: false })).toBe("coucou");
+  });
+
   test("boolean value condition elif", () => {
     const template = `
         <div>
@@ -218,5 +225,19 @@ describe("t-if", () => {
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
     bdom.patch(bdom2);
     expect(fixture.innerHTML).toBe("<div>halloween</div>");
+  });
+
+  test("two t-ifs next to each other", () => {
+    const template = `<div><span t-if="condition"><t t-esc="text"/></span><t t-if="condition"><p>1</p><p>2</p></t></div>`;
+    snapshotTemplateCode(template);
+
+    // need to do it with bdom to go through the update path
+    const bdom = renderToBdom(template, { condition: true, text: "owl" });
+    const fixture = makeTestFixture();
+    bdom.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>owl</span><p>1</p><p>2</p></div>");
+    const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
+    bdom.patch(bdom2);
+    expect(fixture.innerHTML).toBe("<div></div>");
   });
 });

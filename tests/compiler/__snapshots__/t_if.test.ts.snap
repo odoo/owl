@@ -492,6 +492,26 @@ exports[`t-if t-if in a t-if 1`] = `
 }"
 `;
 
+exports[`t-if t-if/t-else with more content 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(2);
+    if (ctx['condition']) {
+      if (ctx['condition']) {
+        b1.children[0] = new BText(\`asf\`);
+      }
+    } else {
+      b1.children[1] = new BText(\`coucou\`);
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -632,6 +652,54 @@ exports[`t-if two consecutive t-if in a div 1`] = `
     }
     if (ctx['cond2']) {
       b1.children[1] = new BText(\`2\`);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`t-if two t-ifs next to each other 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<p>1</p>\`);
+  }
+  
+  class Block4 extends BStatic {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    if (ctx['condition']) {
+      const b2 = b1.children[0] = new Block2();
+      b2.data[0] = ctx['text'];
+    }
+    if (ctx['condition']) {
+      const b3 = b1.children[1] = new BMulti(2);
+      const b4 = b3.children[0] = new Block3();
+      const b5 = b3.children[1] = new Block4();
     }
     return b1;
   }

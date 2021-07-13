@@ -662,28 +662,33 @@ export class QWebCompiler {
   }
 
   compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {
-    let { block, index, forceNewBlock } = ctx;
+    let { block, forceNewBlock, index } = ctx;
+    let currentIndex = index;
     if (!block || (block.blockName !== "BMulti" && forceNewBlock)) {
       const n = 1 + (ast.tElif ? ast.tElif.length : 0) + (ast.tElse ? 1 : 0);
       const id = this.insertBlock(`new BMulti(${n})`, ctx)!;
       block = new BlockDescription(id, "BMulti");
+      currentIndex = 0;
     }
     this.addLine(`if (${compileExpr(ast.condition)}) {`);
     this.target.indentLevel++;
     this.insertAnchor(block);
-    const subCtx: Context = { block: block, index: index, forceNewBlock: true };
+    const subCtx: Context = { block: block, index: currentIndex, forceNewBlock: true };
 
     this.compileAST(ast.content, subCtx);
     this.target.indentLevel--;
     if (ast.tElif) {
       for (let clause of ast.tElif) {
+        if (typeof currentIndex === "number") {
+          currentIndex++;
+        }
         this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
         this.target.indentLevel++;
         block.currentPath.push("nextSibling");
         this.insertAnchor(block);
         const subCtx: Context = {
           block: block,
-          index: block.childNumber - 1,
+          index: currentIndex,
           forceNewBlock: true,
         };
         this.compileAST(clause.content, subCtx);
@@ -691,13 +696,16 @@ export class QWebCompiler {
       }
     }
     if (ast.tElse) {
+      if (typeof currentIndex === "number") {
+        currentIndex++;
+      }
       this.addLine(`} else {`);
       this.target.indentLevel++;
       block.currentPath.push("nextSibling");
       this.insertAnchor(block);
       const subCtx: Context = {
         block: block,
-        index: block.childNumber - 1,
+        index: currentIndex,
         forceNewBlock: true,
       };
       this.compileAST(ast.tElse, subCtx);

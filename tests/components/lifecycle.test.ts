@@ -1,4 +1,4 @@
-import { App, mount, onWillStart } from "../../src";
+import { App, mount, onMounted, onWillStart } from "../../src";
 import { Component } from "../../src/core/component";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
@@ -86,5 +86,46 @@ describe("lifecycle hooks", () => {
     }
 
     await mount(Test, { target: fixture });
+  });
+
+  test("mounted hook is called if mounted in DOM", async () => {
+    let mounted = false;
+    class Test extends Component {
+      static template = xml`<div/>`;
+
+      setup() {
+        onMounted(() => {
+          mounted = true;
+        });
+      }
+    }
+    await mount(Test, { target: fixture });
+    expect(mounted).toBe(true);
+  });
+
+  test("mounted hook is called on subcomponents, in proper order", async () => {
+    const steps: any[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        onMounted(() => {
+          expect(document.body.contains(this.el)).toBe(true);
+          steps.push("child:mounted");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child /></div>`;
+      static components = { Child };
+      setup() {
+        onMounted(() => {
+          steps.push("parent:mounted");
+        });
+      }
+    }
+    await mount(Parent, { target: fixture });
+    expect(steps).toEqual(["child:mounted", "parent:mounted"]);
   });
 });

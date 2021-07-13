@@ -57,7 +57,14 @@ export class MountFiber extends RootFiber {
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    node.bdom!.mount(this.target);
-    node.status = STATUS.MOUNTED;
+    const nodes: any[] = [node];
+    node.bdom!.mount(this.target, nodes);
+    let current;
+    while ((current = nodes.pop())) {
+      current.status = STATUS.MOUNTED;
+      for (let cb of current.mounted) {
+        cb();
+      }
+    }
   }
 }

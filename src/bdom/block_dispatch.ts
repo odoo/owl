@@ -30,10 +30,10 @@ export class BDispatch extends Block {
     return this.child.firstChildNode();
   }
 
-  mountBefore(anchor: ChildNode) {
+  mountBefore(anchor: ChildNode, nodes: any[]) {
     const _anchor = this.anchor;
     anchor.before(_anchor);
-    this.child.mountBefore(_anchor);
+    this.child.mountBefore(_anchor, nodes);
   }
 
   moveBefore(anchor: ChildNode) {

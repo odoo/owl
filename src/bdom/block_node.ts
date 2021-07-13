@@ -18,11 +18,11 @@ export class BNode extends Block {
 
   toString(): string {
     const div = document.createElement("div");
-    this.mount(div);
+    this.mount(div, []);
     return div.innerHTML;
   }
 
-  mountBefore(anchor: ChildNode) {
+  mountBefore(anchor: ChildNode, nodes: any[] = []) {
     this.el = (this.constructor as any).el.cloneNode(true);
     this.build();
     this.update();
@@ -31,7 +31,7 @@ export class BNode extends Block {
         const child = this.children[i];
         if (child) {
           const anchor = this.anchors![i];
-          child.mountBefore(anchor);
+          child.mountBefore(anchor, nodes);
         }
       }
     }

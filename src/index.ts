@@ -24,6 +24,6 @@ export { useState } from "./reactivity";
 export { useRef } from "./refs";
 export { EventBus } from "./event_bus";
 
-export { onWillStart } from "./lifecycle_hooks";
+export { onWillStart, onMounted } from "./lifecycle_hooks";
 
 export const __info__ = {};

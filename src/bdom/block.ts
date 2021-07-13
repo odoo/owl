@@ -6,14 +6,14 @@ export abstract class Block {
   el: ChildNode | null | null = null;
   refs?: { [name: string]: HTMLElement };
 
-  mount(parent: HTMLElement) {
+  mount(parent: HTMLElement, nodes: any[] = []) {
     const anchor = document.createTextNode("");
     parent.appendChild(anchor);
-    this.mountBefore(anchor);
+    this.mountBefore(anchor, nodes);
     anchor.remove();
   }
 
-  abstract mountBefore(anchor: ChildNode): void;
+  abstract mountBefore(anchor: ChildNode, nodes?: any[]): void;
 
   /**
    * A key point is that a block of a given type is always patched with a block
@@ -33,6 +33,6 @@ export abstract class Block {
   }
 
   moveBefore(anchor: ChildNode): void {
-    this.mountBefore(anchor);
+    this.mountBefore(anchor, []);
   }
 }

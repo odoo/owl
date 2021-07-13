@@ -50,8 +50,9 @@ export class BComponent extends Block {
     return bdom ? bdom.firstChildNode() : null;
   }
 
-  mountBefore(anchor: ChildNode) {
+  mountBefore(anchor: ChildNode, nodes: any[] = []) {
     const node = this.node;
+    nodes.push(node);
     const bdom = node.fiber!.bdom!;
     node.bdom = bdom;
     bdom.mountBefore(anchor);
@@ -108,8 +109,8 @@ export class BComponentH extends BComponent {
     super(name, props, key, owner, parent);
     this.handlers = new Array(handlers);
   }
-  mountBefore(anchor: ChildNode) {
-    super.mountBefore(anchor);
+  mountBefore(anchor: ChildNode, nodes: any[]) {
+    super.mountBefore(anchor, nodes);
     this.setupHandlers();
   }
   setupHandlers() {

@@ -25,6 +25,7 @@ export class OwlNode extends EventBus {
   refs: any = {};
 
   willStart: LifecycleHook[] = [];
+  mounted: LifecycleHook[] = [];
 
   constructor(app: App, C: typeof Component, props: any) {
     super();

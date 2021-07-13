@@ -23,7 +23,7 @@ export class BMulti extends Block {
     return null;
   }
 
-  mountBefore(anchor: ChildNode) {
+  mountBefore(anchor: ChildNode, nodes: any[]) {
     const children = this.children;
     const anchors = this.anchors;
     for (let i = 0, l = children.length; i < l; i++) {
@@ -32,7 +32,7 @@ export class BMulti extends Block {
       anchor.before(childAnchor);
       anchors![i] = childAnchor;
       if (child) {
-        child.mountBefore(childAnchor);
+        child.mountBefore(childAnchor, nodes);
       }
     }
   }

@@ -47,11 +47,11 @@ export class BCollection extends Block {
     return this.children.length ? this.children[0].firstChildNode() : null;
   }
 
-  mountBefore(anchor: ChildNode) {
+  mountBefore(anchor: ChildNode, nodes: any[] = []) {
     const _anchor = this.anchor;
     anchor.before(_anchor);
     for (let child of this.children) {
-      child.mountBefore(_anchor);
+      child.mountBefore(_anchor, nodes);
     }
   }
 

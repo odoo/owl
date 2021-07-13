@@ -11,7 +11,8 @@ export class BComponent extends Block {
   node: OwlNode;
   // component: Component;
   // handlers?: any[];
-  parentClass?: string;
+  parentClass?: any;
+  classTarget?: HTMLElement;
 
   /**
    *
@@ -55,18 +56,44 @@ export class BComponent extends Block {
     node.bdom = bdom;
     bdom.mountBefore(anchor);
     if (this.parentClass) {
+      this.parentClass = this.parentClass.trim().split(/\s+/);
       const el = this.firstChildNode();
       if (el instanceof HTMLElement) {
-        for (let cl of this.parentClass.trim().split(/\s+/)) {
-          el.classList.add(cl);
-        }
+        this.addClass(el);
       }
+    }
+  }
+
+  addClass(el: HTMLElement) {
+    this.classTarget = el;
+    for (let cl of this.parentClass) {
+      el.classList.add(cl);
+    }
+  }
+
+  removeClass(el: HTMLElement) {
+    for (let cl of this.parentClass) {
+      el.classList.remove(cl);
     }
   }
 
   patch() {
     const node = this.node;
     node.bdom!.patch(node!.fiber!.bdom!);
+    if (this.parentClass) {
+      const el = this.firstChildNode();
+      if (el !== this.classTarget) {
+        if (el && this.classTarget) {
+          this.removeClass(this.classTarget);
+          this.addClass(el as any);
+        } else if (el) {
+          this.addClass(el as any);
+        } else {
+          this.removeClass(this.classTarget!);
+          this.classTarget = undefined;
+        }
+      }
+    }
   }
 
   remove() {

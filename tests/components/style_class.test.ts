@@ -108,7 +108,7 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
   });
 
-  test.skip("class on sub component, which is switched to another", async () => {
+  test("class on sub component, which is switched to another", async () => {
     class ChildA extends Component {
       static template = xml`<div>a</div>`;
     }
@@ -116,12 +116,12 @@ describe("style and class handling", () => {
       static template = xml`<span>b</span>`;
     }
     class Child extends Component {
-      static template = xml`<ChildA t-debug="" t-if="props.child==='a'"/><ChildB t-else=""/>`;
+      static template = xml`<ChildA t-if="props.child==='a'"/><ChildB t-else=""/>`;
       static components = { ChildA, ChildB };
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-debug="" class="someclass" child="state.child" />`;
+      static template = xml`<Child class="someclass" child="state.child" />`;
       static components = { Child };
 
       state = useState({ child: "a" });

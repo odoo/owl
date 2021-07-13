@@ -80,7 +80,6 @@ exports[`style and class handling class on sub component, which is switched to a
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return (ctx, parent = ctx) => {
-    debugger;
     const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, \`__1\`, ctx, parent);
     b1.parentClass = \`someclass\`;
     return b1;

@@ -75,6 +75,9 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     if (!(target instanceof HTMLElement)) {
       throw new Error("Cannot mount component: the target is not a valid DOM element");
     }
+    if (!document.body.contains(target)) {
+      throw new Error("Cannot mount a component on a detached dom node");
+    }
     const node = new OwlNode(this, this.Root, this.props);
     this.root = node;
     return node.mount(target);

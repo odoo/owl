@@ -134,6 +134,21 @@ describe("basics", () => {
     expect(error.message).toBe("Cannot mount component: the target is not a valid DOM element");
   });
 
+  test("a component cannot be mounted in a detached node", async () => {
+    class Test extends Component {
+      static template = xml`<div/>`;
+    }
+    let error;
+    try {
+      await mount(Test, { target: document.createElement("div") });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot mount a component on a detached dom node");
+  });
+
+  
   test("crashes if it cannot find a template", async () => {
     class Test extends Component {
       static template = "wrongtemplate";
@@ -147,16 +162,6 @@ describe("basics", () => {
     }
     expect(error).toBeDefined();
     expect(error.message).toBe('Missing template: "wrongtemplate"');
-  });
-
-  test("can mount a simple class component in a detached div", async () => {
-    class Test extends Component {
-      static template = xml`<span>simple vnode</span>`;
-    }
-
-    const div = document.createElement("div");
-    await mount(Test, { target: div });
-    expect(div.innerHTML).toBe("<span>simple vnode</span>");
   });
 
   test("class component with dynamic text", async () => {
@@ -392,4 +397,5 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe(`<span>b</span>`);
   });
+
 });

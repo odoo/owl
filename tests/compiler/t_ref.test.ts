@@ -12,7 +12,7 @@ describe("t-ref", () => {
     const refs: any = {};
     const bdom = renderToBdom(template, { __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    bdom.mount(document.createElement("div"), [], []);
     expect(refs.myspan.tagName).toBe("SPAN");
   });
 
@@ -22,7 +22,7 @@ describe("t-ref", () => {
     const refs: any = {};
     const bdom = renderToBdom(template, { id: 3, __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    bdom.mount(document.createElement("div"), [], []);
     expect(refs.myspan3.tagName).toBe("SPAN");
   });
 
@@ -36,7 +36,7 @@ describe("t-ref", () => {
     const refs: any = {};
     const bdom = renderToBdom(template, { items: [1, 2, 3], __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    bdom.mount(document.createElement("div"), [], []);
     expect(Object.keys(refs)).toEqual(["1", "2", "3"]);
   });
 
@@ -53,17 +53,17 @@ describe("t-ref", () => {
     // false
     const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    bdom.mount(document.createElement("div"), [], []);
     expect(refs).toEqual({});
 
     // true now
     const bdom2 = renderToBdom(template, { condition: true, __owl__: { refs } });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, [], []);
     expect(refs.name.tagName).toBe("SPAN");
 
     // false again
     const bdom3 = renderToBdom(template, { condition: false, __owl__: { refs } });
-    bdom.patch(bdom3);
+    bdom.patch(bdom3, [], []);
     expect(refs).toEqual({});
   });
 
@@ -82,17 +82,17 @@ describe("t-ref", () => {
     // false
     const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
     expect(Object.keys(bdom.refs!)).toEqual([]);
-    bdom.mount(document.createElement("div"));
+    bdom.mount(document.createElement("div"), [], []);
     expect(Object.keys(refs)).toEqual(["p"]);
 
     // true now
     const bdom2 = renderToBdom(template, { condition: true, __owl__: { refs } });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, [], []);
     expect(Object.keys(refs)).toEqual(["p", "name"]);
 
     // false again
     const bdom3 = renderToBdom(template, { condition: false, __owl__: { refs } });
-    bdom.patch(bdom3);
+    bdom.patch(bdom3, [], []);
     expect(Object.keys(refs)).toEqual(["p"]);
   });
 
@@ -109,7 +109,7 @@ describe("t-ref", () => {
     app.addTemplate("sub", sub);
 
     const bdom = app.getTemplate("main")({ __owl__: { refs } });
-    bdom.mount(document.createElement("div"));
+    bdom.mount(document.createElement("div"), [], []);
 
     expect(refs.name.tagName).toBe("SPAN");
   });

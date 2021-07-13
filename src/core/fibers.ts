@@ -43,7 +43,20 @@ export class RootFiber extends Fiber {
   }
 
   complete() {
-    this.node.bdom!.patch(this.bdom!);
+    const mountedNodes: any[] = [];
+    const patchedNodes: any[] = [this.node];
+    this.node.bdom!.patch(this.bdom!, mountedNodes, patchedNodes);
+    this.finalize(mountedNodes, patchedNodes);
+  }
+
+  finalize(mounted: any[], patched: any[]) {
+    let current;
+    while ((current = mounted.pop())) {
+      current.status = STATUS.MOUNTED;
+      for (let cb of current.mounted) {
+        cb();
+      }
+    }
   }
 }
 
@@ -57,14 +70,10 @@ export class MountFiber extends RootFiber {
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    const nodes: any[] = [node];
-    node.bdom!.mount(this.target, nodes);
-    let current;
-    while ((current = nodes.pop())) {
-      current.status = STATUS.MOUNTED;
-      for (let cb of current.mounted) {
-        cb();
-      }
-    }
+    debugger;
+    const mountedNodes: any[] = [node];
+    const patchedNodes: any[] = [];
+    node.bdom!.mount(this.target, mountedNodes, patchedNodes);
+    this.finalize(mountedNodes, patchedNodes);
   }
 }

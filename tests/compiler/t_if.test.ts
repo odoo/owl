@@ -220,10 +220,10 @@ describe("t-if", () => {
     // need to do it with bdom to go through the update path
     const bdom = renderToBdom(template, { condition: true, text: "owl" });
     const fixture = makeTestFixture();
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p>1</p><p>2</p>owl</div>");
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, [], []);
     expect(fixture.innerHTML).toBe("<div>halloween</div>");
   });
 
@@ -234,10 +234,10 @@ describe("t-if", () => {
     // need to do it with bdom to go through the update path
     const bdom = renderToBdom(template, { condition: true, text: "owl" });
     const fixture = makeTestFixture();
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><span>owl</span><p>1</p><p>2</p></div>");
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, [], []);
     expect(fixture.innerHTML).toBe("<div></div>");
   });
 });

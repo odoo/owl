@@ -60,7 +60,7 @@ export function renderToBdom(template: string, context: any = {}): Block {
 export function renderToString(template: string, context: any = {}): string {
   const fixture = makeTestFixture();
   const bdom = renderToBdom(template, context);
-  bdom.mount(fixture);
+  bdom.mount(fixture, [], []);
   return fixture.innerHTML;
 }
 
@@ -69,7 +69,7 @@ export class TestContext extends TemplateSet {
     const renderFn = this.getTemplate(name);
     const bdom = renderFn(context);
     const fixture = makeTestFixture();
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     return fixture.innerHTML;
   }
 }

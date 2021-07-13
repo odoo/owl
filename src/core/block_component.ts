@@ -50,12 +50,14 @@ export class BComponent extends Block {
     return bdom ? bdom.firstChildNode() : null;
   }
 
-  mountBefore(anchor: ChildNode, nodes: any[] = []) {
+  mountBefore(anchor: ChildNode, mounted: any[], patched: any[]) {
     const node = this.node;
-    nodes.push(node);
+    if (node.mount.length) {
+      mounted.push(node);
+    }
     const bdom = node.fiber!.bdom!;
     node.bdom = bdom;
-    bdom.mountBefore(anchor);
+    bdom.mountBefore(anchor, mounted, patched);
     if (this.parentClass) {
       this.parentClass = this.parentClass.trim().split(/\s+/);
       const el = this.firstChildNode();
@@ -63,6 +65,10 @@ export class BComponent extends Block {
         this.addClass(el);
       }
     }
+  }
+
+  moveBefore(anchor: ChildNode) {
+    this.node.bdom!.moveBefore(anchor);
   }
 
   addClass(el: HTMLElement) {
@@ -78,9 +84,9 @@ export class BComponent extends Block {
     }
   }
 
-  patch() {
+  patch(other: BComponent, mountedNodes: any[], patchedNodes: any[]) {
     const node = this.node;
-    node.bdom!.patch(node!.fiber!.bdom!);
+    node.bdom!.patch(node!.fiber!.bdom!, mountedNodes, patchedNodes);
     if (this.parentClass) {
       const el = this.firstChildNode();
       if (el !== this.classTarget) {
@@ -97,6 +103,10 @@ export class BComponent extends Block {
     }
   }
 
+  beforeRemove() {
+    this.node.callBeforeUnmount();
+  }
+
   remove() {
     const bdom = this.node.bdom!;
     bdom.remove();
@@ -109,8 +119,8 @@ export class BComponentH extends BComponent {
     super(name, props, key, owner, parent);
     this.handlers = new Array(handlers);
   }
-  mountBefore(anchor: ChildNode, nodes: any[]) {
-    super.mountBefore(anchor, nodes);
+  mountBefore(anchor: ChildNode, mounted: any[], patched: any[]) {
+    super.mountBefore(anchor, mounted, patched);
     this.setupHandlers();
   }
   setupHandlers() {

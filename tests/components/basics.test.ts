@@ -148,7 +148,6 @@ describe("basics", () => {
     expect(error.message).toBe("Cannot mount a component on a detached dom node");
   });
 
-  
   test("crashes if it cannot find a template", async () => {
     class Test extends Component {
       static template = "wrongtemplate";
@@ -397,5 +396,4 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe(`<span>b</span>`);
   });
-
 });

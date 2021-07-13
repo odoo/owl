@@ -6,33 +6,41 @@ export abstract class Block {
   el: ChildNode | null | null = null;
   refs?: { [name: string]: HTMLElement };
 
-  mount(parent: HTMLElement, nodes: any[] = []) {
+  mount(parent: HTMLElement, mountedNodes: any[], patchedNodes: any[]) {
     const anchor = document.createTextNode("");
     parent.appendChild(anchor);
-    this.mountBefore(anchor, nodes);
+    this.mountBefore(anchor, mountedNodes, patchedNodes);
     anchor.remove();
   }
 
-  abstract mountBefore(anchor: ChildNode, nodes?: any[]): void;
+  abstract mountBefore(anchor: ChildNode, mountedNode: any[], patchedNode: any[]): void;
 
   /**
    * A key point is that a block of a given type is always patched with a block
    * of the same type
    */
-  abstract patch(other: Block): void;
+  abstract patch(other: Block, mountedNodes: any[], patchedNodes: any[]): void;
 
   abstract firstChildNode(): ChildNode | null;
 
-  remove() {}
+  beforeRemove() {}
 
-  move(parent: HTMLElement) {
-    const anchor = document.createTextNode("");
-    parent.appendChild(anchor);
-    this.moveBefore(anchor);
-    anchor.remove();
+  abstract remove(): void;
+
+  fullRemove() {
+    this.beforeRemove();
+    this.remove();
   }
 
-  moveBefore(anchor: ChildNode): void {
-    this.mountBefore(anchor, []);
-  }
+  // move(parent: HTMLElement) {
+  //   const anchor = document.createTextNode("");
+  //   parent.appendChild(anchor);
+  //   this.moveBefore(anchor);
+  //   anchor.remove();
+  // }
+
+  abstract moveBefore(anchor: ChildNode): void;
+  //  {
+  // this.mountBefore(anchor, []);
+  // }
 }

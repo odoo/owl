@@ -13,7 +13,7 @@ export class BStatic extends Block {
 
   toString(): string {
     const div = document.createElement("div");
-    this.mount(div);
+    this.mount(div, [], []);
     return div.innerHTML;
   }
 

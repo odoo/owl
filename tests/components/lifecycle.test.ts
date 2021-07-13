@@ -1,8 +1,9 @@
-import { App, mount, onMounted, onWillStart } from "../../src";
+import { App, mount, onMounted, onWillStart, useState } from "../../src";
 import { Component } from "../../src/core/component";
+import { onBeforeUnmount } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
-import { makeTestFixture } from "../helpers";
+import { makeTestFixture, nextTick } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -127,5 +128,63 @@ describe("lifecycle hooks", () => {
     }
     await mount(Parent, { target: fixture });
     expect(steps).toEqual(["child:mounted", "parent:mounted"]);
+  });
+
+  test("mounted hook is called on subsubcomponents, in proper order", async () => {
+    const steps: any[] = [];
+
+    class ChildChild extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        onMounted(() => {
+          steps.push("childchild:mounted");
+        });
+        onBeforeUnmount(() => {
+          steps.push("childchild:willUnmount");
+        });
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<div><ChildChild /></div>`;
+      static components = { ChildChild };
+      setup() {
+        onMounted(() => {
+          steps.push("child:mounted");
+        });
+        onBeforeUnmount(() => {
+          steps.push("child:willUnmount");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><t t-if="state.flag"><Child/></t></div>`;
+      static components = { Child };
+      state = useState({ flag: false });
+      setup() {
+        onMounted(() => {
+          steps.push("parent:mounted");
+        });
+        onBeforeUnmount(() => {
+          steps.push("parent:willUnmount");
+        });
+      }
+    }
+
+    const app = new App(Parent);
+    const widget = await app.mount(fixture);
+    expect(steps).toEqual(["parent:mounted"]);
+    widget.state.flag = true;
+    await nextTick();
+    app.destroy();
+    expect(steps).toEqual([
+      "parent:mounted",
+      "childchild:mounted",
+      "child:mounted",
+      "parent:willUnmount",
+      "child:willUnmount",
+      "childchild:willUnmount",
+    ]);
   });
 });

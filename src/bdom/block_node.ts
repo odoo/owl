@@ -18,11 +18,11 @@ export class BNode extends Block {
 
   toString(): string {
     const div = document.createElement("div");
-    this.mount(div, []);
+    this.mount(div, [], []);
     return div.innerHTML;
   }
 
-  mountBefore(anchor: ChildNode, nodes: any[] = []) {
+  mountBefore(anchor: ChildNode, mountedNodes: any[], patchedNodes: any[]) {
     this.el = (this.constructor as any).el.cloneNode(true);
     this.build();
     this.update();
@@ -31,7 +31,7 @@ export class BNode extends Block {
         const child = this.children[i];
         if (child) {
           const anchor = this.anchors![i];
-          child.mountBefore(anchor, nodes);
+          child.mountBefore(anchor, mountedNodes, patchedNodes);
         }
       }
     }
@@ -103,7 +103,7 @@ export class BNode extends Block {
 
   protected build() {}
 
-  patch(newTree: BNode) {
+  patch(newTree: BNode, mountedNodes: any[], patchedNodes: any[]): void {
     this.data = newTree.data;
     this.refs = newTree.refs;
     this.update();
@@ -116,14 +116,25 @@ export class BNode extends Block {
         const child = children[i];
         if (child) {
           if (newChild) {
-            child.patch(newChild);
+            child.patch(newChild, mountedNodes, patchedNodes);
           } else {
             children[i] = null;
-            child.remove();
+            child.fullRemove();
           }
         } else if (newChild) {
           children[i] = newChild;
-          newChild.mountBefore(anchors[i]);
+          newChild.mountBefore(anchors[i], mountedNodes, patchedNodes);
+        }
+      }
+    }
+  }
+
+  beforeRemove() {
+    const children = this.children;
+    if (children) {
+      for (let child of this.children!) {
+        if (child) {
+          child.beforeRemove();
         }
       }
     }

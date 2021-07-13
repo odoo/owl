@@ -26,6 +26,7 @@ export class OwlNode extends EventBus {
 
   willStart: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
+  beforeUnmount: LifecycleHook[] = [];
 
   constructor(app: App, C: typeof Component, props: any) {
     super();
@@ -40,8 +41,7 @@ export class OwlNode extends EventBus {
   async mount(target: any) {
     const fiber = new MountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
-    const comp = this.component;
-    await Promise.all(this.willStart.map((f) => f.call(comp)));
+    await this.callWillStart();
     this._render(fiber);
     return fiber.promise.then(() => this.component);
   }
@@ -55,21 +55,31 @@ export class OwlNode extends EventBus {
   }
 
   async initiateRender(fiber: ChildFiber) {
-    const comp = this.component;
-    await Promise.all(this.willStart.map((f) => f.call(comp)));
+    await this.callWillStart();
     this._render(fiber);
+  }
+
+  callWillStart() {
+    const component = this.component;
+    const prom = Promise.all(this.willStart.map((f) => f.call(component)));
+    this.status = STATUS.WILLSTARTED;
+    return prom;
+  }
+
+  callBeforeUnmount() {
+    const component = this.component;
+    for (let cb of this.beforeUnmount) {
+      cb.call(component);
+    }
+    for (let child of Object.values(this.children)) {
+      child.callBeforeUnmount();
+    }
   }
 
   async updateAndRender(props: any, fiber: ChildFiber) {
     await Promise.resolve(); // willupdateprops
     this.component.props = props;
     this._render(fiber);
-    // const componentData = component.__owl__;
-    // componentData.fiber = fiber;
-    // await component.willUpdateProps(props);
-    // component.props = props;
-    // fiber.bdom = componentData.render();
-    // fiber.root.counter--;
   }
 
   _render(fiber: ChildFiber | RootFiber) {
@@ -79,6 +89,7 @@ export class OwlNode extends EventBus {
   }
 
   destroy() {
+    this.callBeforeUnmount();
     this.bdom!.remove();
     this.status = STATUS.DESTROYED;
   }

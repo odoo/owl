@@ -21,6 +21,9 @@ export class BText extends Block {
     anchor.before(this.el);
   }
 
+  moveBefore(anchor: ChildNode) {
+    anchor.before(this.el);
+  }
   patch(other: BText) {
     if (other.text !== this.text) {
       this.el.textContent = other.el.textContent;
@@ -30,5 +33,9 @@ export class BText extends Block {
 
   toString() {
     return this.el.textContent;
+  }
+
+  remove() {
+    this.el.remove();
   }
 }

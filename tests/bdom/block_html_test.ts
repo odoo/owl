@@ -23,7 +23,7 @@ afterEach(() => {
 describe("BHtml", () => {
   test("can be mounted and patched", async () => {
     const tree = new BHtml("<span>1</span><span>2</span>");
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span>");
 
     const tree2 = new BHtml("<div>coucou</div>");

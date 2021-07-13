@@ -82,7 +82,7 @@ describe("t-esc", () => {
     snapshotTemplateCode(template);
     const bdom = renderToBdom(template);
     const fixture = makeTestFixture();
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
 
     expect(fixture.textContent).toBe("<p>escaped</p>");
   });
@@ -98,7 +98,7 @@ describe("t-esc", () => {
     snapshotTemplateCode(sub);
     const bdom = context.getTemplate("main")({});
     const fixture = makeTestFixture();
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     expect(fixture.querySelector("span")!.textContent).toBe("<p>escaped</p>");
   });
 });

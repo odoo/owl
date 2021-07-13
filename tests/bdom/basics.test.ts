@@ -1,6 +1,8 @@
 import { Blocks } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
 import { elem } from "../../src/core/template_utils";
+import { BCollection } from "../../src/bdom/block_collection";
+import { BText } from "../../src/bdom/block_text";
 
 const { BNode, BMulti } = Blocks;
 //------------------------------------------------------------------------------
@@ -33,7 +35,7 @@ describe("mount", () => {
     }
 
     const tree = new Block1();
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div>foo</div>");
   });
 
@@ -43,8 +45,19 @@ describe("mount", () => {
     }
 
     const tree = new Block1();
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("foo");
+  });
+
+  test("a text block can be removed", async () => {
+    const tree = new BText("cat");
+    expect(fixture.childNodes.length).toBe(0);
+    tree.mount(fixture, [], []);
+    expect(fixture.innerHTML).toBe("cat");
+    expect(fixture.childNodes.length).toBe(1);
+    tree.remove();
+    expect(fixture.innerHTML).toBe("");
+    expect(fixture.childNodes.length).toBe(0);
   });
 
   test("simple block with multiple roots", async () => {
@@ -59,7 +72,7 @@ describe("mount", () => {
     tree.children[0] = new Block1();
     tree.children[1] = new Block2();
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div>foo</div><span>bar</span>");
   });
 
@@ -76,7 +89,7 @@ describe("mount", () => {
     tree.children[1] = new Block2();
 
     expect(fixture.childNodes.length).toBe(0);
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.childNodes.length).toBe(4);
     tree.remove();
     expect(fixture.childNodes.length).toBe(0);
@@ -90,8 +103,28 @@ describe("mount", () => {
     const tree = new BMulti(2);
     tree.children[0] = new Block1();
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div>foo</div>");
+  });
+
+  test("a collection block can be removed and leaves nothing", async () => {
+    const elems = [
+      { id: 1, name: "sheep" },
+      { id: 2, name: "cow" },
+    ];
+    const tree = new BCollection(elems);
+    tree.forEach("elem", {}, (i: any, ctx: any) => {
+      tree.children[i] = new BText(ctx.elem.name);
+      tree.keys[i] = ctx.elem.id;
+    });
+
+    expect(fixture.childNodes.length).toBe(0);
+    tree.mount(fixture, [], []);
+    expect(fixture.innerHTML).toBe("sheepcow");
+    expect(fixture.childNodes.length).toBe(3);
+    tree.remove();
+    expect(fixture.innerHTML).toBe("");
+    expect(fixture.childNodes.length).toBe(0);
   });
 
   test("block with dynamic content", async () => {
@@ -105,7 +138,7 @@ describe("mount", () => {
 
     const tree = new Block1();
     tree.data[0] = "foo";
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
   });
 
@@ -131,7 +164,7 @@ describe("mount", () => {
     tree.data[0] = "foo";
     tree.children[0] = new Block2();
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><span>foo</span><p>yip yip</p></div>");
   });
 
@@ -152,7 +185,7 @@ describe("mount", () => {
     const tree = new Block1();
     tree.children[0] = new Block2();
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p>1</p><p>yip yip</p><p>2</p></div>");
   });
 
@@ -174,7 +207,7 @@ describe("mount", () => {
     const b2 = (b1.children[0] = new BMulti(1));
     b2.children[0] = new Block2();
 
-    b1.mount(fixture);
+    b1.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><span>yip yip</span></div>");
   });
 });
@@ -191,12 +224,12 @@ describe("update", () => {
 
     const tree1 = new Block1();
     tree1.data[0] = "foo";
-    tree1.mount(fixture);
+    tree1.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
 
     const tree2 = new Block1();
     tree2.data[0] = "bar";
-    tree1.patch(tree2);
+    tree1.patch(tree2, [], []);
     expect(fixture.innerHTML).toBe("<div><p>bar</p></div>");
   });
 
@@ -214,16 +247,16 @@ describe("update", () => {
     }
 
     const tree = new Block1();
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p></p></div>");
 
     const tree2 = new Block1();
     tree2.children[0] = new Block2();
-    tree.patch(tree2);
+    tree.patch(tree2, [], []);
     expect(fixture.innerHTML).toBe("<div><p><span>foo</span></p></div>");
 
     const tree3 = new Block1();
-    tree.patch(tree3);
+    tree.patch(tree3, [], []);
     expect(fixture.innerHTML).toBe("<div><p></p></div>");
   });
 
@@ -249,14 +282,14 @@ describe("update", () => {
     tree.children[0] = new Block2();
     tree.children[0].data[0] = "yip yip";
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p>yip yip</p></div>");
 
     const tree2 = new Block1();
     tree2.children[0] = new Block2();
     tree2.children[0].data[0] = "foo";
 
-    tree.patch(tree2);
+    tree.patch(tree2, [], []);
     expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
   });
 
@@ -283,14 +316,14 @@ describe("update", () => {
     tree.data[0] = "yip yip";
     tree.children[0] = new Block2();
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("<div><p>sub block</p><p>yip yip</p></div>");
 
     const tree2 = new Block1();
     tree2.data[0] = "foo";
     tree2.children[0] = new Block2();
 
-    tree.patch(tree2);
+    tree.patch(tree2, [], []);
     expect(fixture.innerHTML).toBe("<div><p>sub block</p><p>foo</p></div>");
   });
 
@@ -302,16 +335,16 @@ describe("update", () => {
     const tree = new BMulti(1);
     tree.children[0] = new Block1();
 
-    tree.mount(fixture);
+    tree.mount(fixture, [], []);
     expect(fixture.innerHTML).toBe("ok");
 
     const tree2 = new BMulti(1);
-    tree.patch(tree2);
+    tree.patch(tree2, [], []);
     expect(fixture.innerHTML).toBe("");
 
     const tree3 = new BMulti(1);
     tree3.children[0] = new Block1();
-    tree.patch(tree3);
+    tree.patch(tree3, [], []);
     expect(fixture.innerHTML).toBe("ok");
   });
 });

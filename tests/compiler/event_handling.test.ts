@@ -12,7 +12,7 @@ describe("t-on", () => {
     }
     const block = renderToBdom(template, ctx);
     const fixture = makeTestFixture();
-    block.mount(fixture);
+    block.mount(fixture, [], []);
     return fixture;
   }
 
@@ -167,7 +167,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner);
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     fixture.querySelector("button")!.click();
   });
 
@@ -193,7 +193,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner);
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     fixture.querySelector("button")!.click();
   });
 
@@ -278,7 +278,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
     const bdom = render(owner);
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     fixture.querySelector("p")!.click();
   });
 
@@ -304,7 +304,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
     const bdom = render(owner);
-    bdom.mount(fixture);
+    bdom.mount(fixture, [], []);
     fixture.querySelector("p")!.click();
   });
 

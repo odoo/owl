@@ -3,6 +3,7 @@ import type { Block } from "../bdom";
 import { ChildFiber, MountFiber, RootFiber } from "./fibers";
 import type { Component } from "./component";
 import { STATUS } from "../status";
+import { EventBus } from "../event_bus";
 
 let currentNode: OwlNode | null = null;
 
@@ -12,7 +13,7 @@ export function getCurrent(): OwlNode | null {
 
 type LifecycleHook = Function;
 
-export class OwlNode {
+export class OwlNode extends EventBus {
   app: App;
   bdom: null | Block = null;
   component: Component;
@@ -26,6 +27,7 @@ export class OwlNode {
   willStart: LifecycleHook[] = [];
 
   constructor(app: App, C: typeof Component, props: any) {
+    super();
     this.app = app;
     currentNode = this;
     const component = new C(props, app.env, this);

@@ -29,7 +29,7 @@ export class BComponent extends Block {
     let node: OwlNode | undefined = parentNode.children[key];
     if (node && node.status < STATUS.MOUNTED) {
       node.destroy();
-      delete parentNode.children[key];
+      // delete parentNode.children[key];
       node = undefined;
     }
     if (node) {
@@ -76,6 +76,7 @@ export class BComponent extends Block {
       }
     }
     node.status = STATUS.MOUNTED;
+    node.fiber = null;
   }
 
   moveBefore(anchor: ChildNode) {
@@ -116,6 +117,7 @@ export class BComponent extends Block {
         }
       }
     }
+    node.fiber = null;
   }
 
   beforeRemove() {

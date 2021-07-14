@@ -11,6 +11,7 @@ export class Fiber {
   children: Fiber[] = [];
 
   constructor(node: OwlNode, parent: Fiber | null) {
+    // console.log(`new fiber ${this.constructor.name} for ${node.component.constructor.name}`)
     this.node = node;
     node.fiber = this as any;
     this.parent = parent;
@@ -40,9 +41,9 @@ export class RootFiber extends Fiber {
     this.error = null;
     this.root = this;
     this.toPatch = [node];
-    if (oldFiber instanceof RootFiber) {
-      this._reuseFiber(oldFiber);
-      return oldFiber;
+    if (oldFiber) {
+      this._reuseFiber(oldFiber as any);
+      return oldFiber as any;
     }
 
     this.promise = new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ export class RootFiber extends Fiber {
     // cancel old fibers
     const fibers = [oldFiber.children];
     let fiberGroup;
-    while (fiberGroup = fibers.pop()) {
+    while ((fiberGroup = fibers.pop())) {
       for (let fiber of fiberGroup) {
         fiber.isCompleted = true;
         if (fiber.children.length) {

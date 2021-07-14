@@ -506,57 +506,56 @@ test("concurrent renderings scenario 1", async () => {
   expect(ComponentC.prototype.someValue).toBeCalledTimes(2);
 });
 
-//   test("concurrent renderings scenario 2", async () => {
-//     // this test asserts that a rendering initiated before another one, and that
-//     // ends after it, is re-mapped to that second rendering
-//     const defs = [makeDeferred(), makeDeferred()];
-//     let index = 0;
-//     let stateB;
-//     class ComponentC extends Component {
-//       static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromB"/></span>`;
-//       willUpdateProps() {
-//         return defs[index++];
-//       }
-//     }
+test("concurrent renderings scenario 2", async () => {
+  // this test asserts that a rendering initiated before another one, and that
+  // ends after it, is re-mapped to that second rendering
+  const defs = [makeDeferred(), makeDeferred()];
+  let index = 0;
+  let stateB: any = null;
+  class ComponentC extends Component {
+    static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromB"/></span>`;
 
-//     class ComponentB extends Component {
-//       static template = xml`<p><ComponentC fromA="props.fromA" fromB="state.fromB" /></p>`;
-//       static components = { ComponentC };
-//       state = useState({ fromB: "b" });
+    setup() {
+      onWillUpdateProps(() => defs[index++]);
+    }
+  }
 
-//       constructor(parent, props) {
-//         super(parent, props);
-//         stateB = this.state;
-//       }
-//     }
+  class ComponentB extends Component {
+    static template = xml`<p><ComponentC fromA="props.fromA" fromB="state.fromB" /></p>`;
+    static components = { ComponentC };
+    state = useState({ fromB: "b" });
 
-//     class ComponentA extends Component {
-//       static template = xml`<div><t t-esc="state.fromA"/><ComponentB fromA="state.fromA"/></div>`;
-//       static components = { ComponentB };
-//       state = useState({ fromA: 1 });
-//     }
+    setup() {
+      stateB = this.state;
+    }
+  }
 
-//     const component = new ComponentA();
-//     await component.mount(fixture);
+  class ComponentA extends Component {
+    static template = xml`<div><t t-esc="state.fromA"/><ComponentB fromA="state.fromA"/></div>`;
+    static components = { ComponentB };
+    state = useState({ fromA: 1 });
+  }
 
-//     expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
+  const component = await mount(ComponentA, { target: fixture });
 
-//     component.state.fromA = 2;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
+  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
 
-//     stateB.fromB = "c";
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
 
-//     defs[1].resolve(); // resolve rendering initiated in B
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
+  stateB.fromB = "c";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
 
-//     defs[0].resolve(); // resolve rendering initiated in A
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
-//   });
+  defs[1].resolve(); // resolve rendering initiated in B
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
+
+  defs[0].resolve(); // resolve rendering initiated in A
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
+});
 
 //   test("concurrent renderings scenario 2bis", async () => {
 //     const defs = [makeDeferred(), makeDeferred()];

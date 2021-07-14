@@ -1,6 +1,6 @@
 import type { App } from "./app";
 import type { Block } from "../bdom";
-import { ChildFiber, MountFiber, RootFiber } from "./fibers";
+import { Fiber, MountFiber, RootFiber } from "./fibers";
 import type { Component } from "./component";
 import { STATUS } from "../status";
 import { EventBus } from "../event_bus";
@@ -17,7 +17,7 @@ export class OwlNode extends EventBus {
   app: App;
   bdom: null | Block = null;
   component: Component;
-  fiber: ChildFiber | RootFiber | null = null;
+  fiber: Fiber | null = null;
   status: STATUS = STATUS.NEW;
   renderFn: Function;
   children: { [key: string]: OwlNode } = {};
@@ -49,19 +49,22 @@ export class OwlNode extends EventBus {
   }
 
   async render() {
-    await Promise.resolve();
+    if (this.fiber && !this.fiber.bdom) {
+      return this.fiber.root.promise;
+    }
     const fiber = new RootFiber(this);
     this.app.scheduler.addFiber(fiber);
+    await Promise.resolve();
     this._render(fiber);
     return fiber.promise;
   }
 
-  async initiateRender(fiber: ChildFiber | MountFiber) {
+  async initiateRender(fiber: Fiber | MountFiber) {
     const component = this.component;
     const prom = Promise.all(this.willStart.map((f) => f.call(component)));
     this.status = STATUS.WILLSTARTED;
     await prom;
-    if (this.status === STATUS.WILLSTARTED) {
+    if (this.status === STATUS.WILLSTARTED && !fiber.isCompleted) {
       this._render(fiber);
     }
   }
@@ -83,7 +86,7 @@ export class OwlNode extends EventBus {
     }
   }
 
-  async updateAndRender(props: any, fiber: ChildFiber) {
+  async updateAndRender(props: any, fiber: Fiber) {
     const component = this.component;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;
@@ -94,7 +97,7 @@ export class OwlNode extends EventBus {
     this._render(fiber);
   }
 
-  _render(fiber: ChildFiber | RootFiber) {
+  _render(fiber: Fiber | RootFiber) {
     this.fiber = fiber;
     fiber.bdom = this.renderFn();
     fiber.root.counter--;

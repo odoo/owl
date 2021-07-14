@@ -149,6 +149,82 @@ exports[`concurrent renderings scenario 1 3`] = `
 }"
 `;
 
+exports[`concurrent renderings scenario 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/><owl-text/></span>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].fromA;
+    b1.data[1] = ctx['props'].fromB;
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 2 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 2 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    data = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].fromA;
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`creating two async components, scenario 1 1`] = `
 "function anonymous(Blocks, utils
 ) {

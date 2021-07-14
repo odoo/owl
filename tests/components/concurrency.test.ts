@@ -253,81 +253,81 @@ test("update a sub-component twice in the same frame", async () => {
   expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
 });
 
-//   test("update a sub-component twice in the same frame, 2", async () => {
-//     const steps: string[] = [];
-//     class ChildA extends Component {
-//       static template = xml`<span><t t-esc="val()"/></span>`;
-//       patched() {
-//         steps.push("patched");
-//       }
-//       val() {
-//         steps.push("render");
-//         return this.props.val;
-//       }
-//     }
+test("update a sub-component twice in the same frame, 2", async () => {
+  const steps: string[] = [];
+  class ChildA extends Component {
+    static template = xml`<span><t t-esc="val()"/></span>`;
 
-//     class Parent extends Component {
-//       static template = xml`<div><ChildA val="state.valA"/></div>`;
-//       static components = { ChildA };
-//       state = useState({ valA: 1 });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     parent.state.valA = 2;
-//     await nextMicroTick();
-//     expect(steps).toEqual(["render"]);
-//     await nextMicroTick();
-//     // For an unknown reason, this test fails on windows without the next microtick. It works
-//     // in linux and osx, but fails on at least this machine.
-//     // I do not see anything harmful in waiting an extra tick. But it is annoying to not
-//     // know what is different.
-//     await nextMicroTick();
-//     expect(steps).toEqual(["render", "render"]);
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     parent.state.valA = 3;
-//     await nextMicroTick();
-//     expect(steps).toEqual(["render", "render"]);
-//     await nextMicroTick();
-//     // same as above
-//     await nextMicroTick();
-//     expect(steps).toEqual(["render", "render", "render"]);
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-//     expect(steps).toEqual(["render", "render", "render", "patched"]);
-//   });
+    setup() {
+      onPatched(() => {
+        steps.push("patched");
+      });
+    }
 
-//   test("components in a node in a t-foreach ", async () => {
-//     class Child extends Component {}
+    val() {
+      steps.push("render");
+      return this.props.val;
+    }
+  }
 
-//     class App extends Component {
-//       static components = { Child };
+  class Parent extends Component {
+    static template = xml`<div><ChildA val="state.valA"/></div>`;
+    static components = { ChildA };
+    state = useState({ valA: 1 });
+  }
+  const parent = await mount(Parent, { target: fixture });
 
-//       get items() {
-//         return [1, 2];
-//       }
-//     }
-//     env.qweb.addTemplates(`
-//           <templates>
-//               <div t-name="Child"><t t-esc="props.item"/></div>
-//               <div t-name="App">
-//                   <ul>
-//                       <t t-foreach="items" t-as="item">
-//                           <li t-key="'li_'+item">
-//                               <Child item="item"/>
-//                           </li>
-//                       </t>
-//                   </ul>
-//               </div>
-//           </templates>`);
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  parent.state.valA = 2;
+  await nextMicroTick();
+  expect(steps).toEqual(["render"]);
+  await nextMicroTick();
+  // For an unknown reason, this test fails on windows without the next microtick. It works
+  // in linux and osx, but fails on at least this machine.
+  // I do not see anything harmful in waiting an extra tick. But it is annoying to not
+  // know what is different.
+  await nextMicroTick();
+  expect(steps).toEqual(["render", "render"]);
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  parent.state.valA = 3;
+  await nextMicroTick();
+  expect(steps).toEqual(["render", "render"]);
+  await nextMicroTick();
+  // same as above
+  await nextMicroTick();
+  expect(steps).toEqual(["render", "render", "render"]);
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+  expect(steps).toEqual(["render", "render", "render", "patched"]);
+});
 
-//     const app = new App();
-//     await app.mount(fixture);
-//     expect(fixture.innerHTML).toBe(
-//       "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
-//     );
-//   });
+test("components in a node in a t-foreach ", async () => {
+  class Child extends Component {
+    static template = xml`<div><t t-esc="props.item"/></div>`;
+  }
+
+  class Parent extends Component {
+    static template = xml`
+            <div>
+                <ul>
+                    <t t-foreach="items" t-as="item">
+                        <li t-key="'li_'+item">
+                            <Child item="item"/>
+                        </li>
+                    </t>
+                </ul>
+            </div>`;
+    static components = { Child };
+
+    get items() {
+      return [1, 2];
+    }
+  }
+
+  await mount(Parent, { target: fixture });
+  expect(fixture.innerHTML).toBe("<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>");
+});
 
 //   test("properly behave when destroyed/unmounted while rendering ", async () => {
 //     const def = makeDeferred();
@@ -422,34 +422,33 @@ test("update a sub-component twice in the same frame", async () => {
 //     expect(destroyCount).toBe(0);
 //   });
 
-//   test("rendering component again in next microtick", async () => {
-//     class Child extends Component {
-//       static template = xml`<div t-name="Child">Child</div>`;
-//     }
+test("rendering component again in next microtick", async () => {
+  class Child extends Component {
+    static template = xml`<div>Child</div>`;
+  }
 
-//     class App extends Component {
-//       static template = xml`
-//           <div>
-//             <button t-on-click="onClick">Click</button>
-//             <t t-if="env.flag"><Child/></t>
-//           </div>`;
-//       static components = { Child };
+  class Parent extends Component {
+    static template = xml`
+          <div>
+            <button t-on-click="onClick">Click</button>
+            <t t-if="env.flag"><Child/></t>
+          </div>`;
+    static components = { Child };
 
-//       async onClick() {
-//         (env as any).flag = true;
-//         this.render();
-//         await Promise.resolve();
-//         this.render();
-//       }
-//     }
+    async onClick() {
+      this.env.flag = true;
+      this.render();
+      await Promise.resolve();
+      this.render();
+    }
+  }
 
-//     const app = new App();
-//     await app.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
-//     fixture.querySelector("button")!.click();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
-//   });
+  await mount(Parent, { target: fixture });
+  expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
+  fixture.querySelector("button")!.click();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
+});
 
 //   test("concurrent renderings scenario 1", async () => {
 //     const def = makeDeferred();

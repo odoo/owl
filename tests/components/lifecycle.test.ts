@@ -3,17 +3,18 @@ import { Component } from "../../src/core/component";
 import { onBeforePatch, onBeforeUnmount, onPatched } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
+snapshotEverything();
 beforeEach(() => {
   fixture = makeTestFixture();
 });
 
 describe("lifecycle hooks", () => {
   test("basic checks for a component", async () => {
-    expect.assertions(5);
+    expect.assertions(6); // 1 for snapshots
     class Test extends Component {
       static template = xml`<span>test</span>`;
 
@@ -70,7 +71,7 @@ describe("lifecycle hooks", () => {
   });
 
   test("willStart is called with component as this", async () => {
-    expect.assertions(2);
+    expect.assertions(3);
     let comp: any;
 
     class Test extends Component {

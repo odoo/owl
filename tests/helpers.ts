@@ -44,6 +44,7 @@ export function addTemplate(name: string, template: string): string {
   globalTemplates[name] = template;
   return name;
 }
+
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
@@ -72,4 +73,18 @@ export class TestContext extends TemplateSet {
     bdom.mount(fixture, [], []);
     return fixture.innerHTML;
   }
+}
+
+export function snapshotEverything() {
+
+  beforeEach(() => {
+    for (let k in globalTemplates) {
+      delete globalTemplates[k];
+    }
+  })
+  afterEach(() => {
+    for (let k in globalTemplates) {
+      snapshotTemplateCode(globalTemplates[k]);
+    }
+  });
 }

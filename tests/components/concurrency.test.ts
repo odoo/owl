@@ -1,5 +1,6 @@
-import { App, mount, onWillStart, useState } from "../../src";
+import { App, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
 import { Component } from "../../src/core/component";
+import { onPatched } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
 import {
@@ -129,126 +130,128 @@ test("creating two async components, scenario 1", async () => {
   expect(nbRenderings).toBe(1);
 });
 
-//   test("creating two async components, scenario 2", async () => {
-//     let defA = makeDeferred();
-//     let defB = makeDeferred();
+test("creating two async components, scenario 2", async () => {
+  let defA = makeDeferred();
+  let defB = makeDeferred();
 
-//     class ChildA extends Component {
-//       static template = xml`<span>a<t t-esc="props.val"/></span>`;
-//       willUpdateProps(): Promise<void> {
-//         return defA;
-//       }
-//     }
-//     class ChildB extends Component {
-//       static template = xml`<span>b<t t-esc="props.val"/></span>`;
-//       willStart(): Promise<void> {
-//         return defB;
-//       }
-//     }
+  class ChildA extends Component {
+    static template = xml`<span>a<t t-esc="props.val"/></span>`;
 
-//     class Parent extends Component {
-//       static template = xml`
-//           <div>
-//             <ChildA val="state.valA"/>
-//             <t t-if="state.flagB"><ChildB val="state.valB"/></t>
-//           </div>`;
-//       static components = { ChildA, ChildB };
-//       state = useState({ valA: 1, valB: 2, flagB: false });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     parent.state.valA = 2;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     parent.state.flagB = true;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     defB.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     defA.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
-//   });
+    setup() {
+      onWillUpdateProps(() => defA);
+    }
+  }
 
-//   test("creating two async components, scenario 3 (patching in the same frame)", async () => {
-//     let defA = makeDeferred();
-//     let defB = makeDeferred();
+  class ChildB extends Component {
+    static template = xml`<span>b<t t-esc="props.val"/></span>`;
+    setup() {
+      onWillStart(() => defB);
+    }
+  }
 
-//     class ChildA extends Component {
-//       static template = xml`<span>a<t t-esc="props.val"/></span>`;
-//       willUpdateProps(): Promise<void> {
-//         return defA;
-//       }
-//     }
-//     class ChildB extends Component {
-//       static template = xml`<span>b<t t-esc="props.val"/></span>`;
-//       willStart(): Promise<void> {
-//         return defB;
-//       }
-//     }
+  class Parent extends Component {
+    static template = xml`
+          <div>
+            <ChildA val="state.valA"/>
+            <t t-if="state.flagB"><ChildB val="state.valB"/></t>
+          </div>`;
+    static components = { ChildA, ChildB };
+    state = useState({ valA: 1, valB: 2, flagB: false });
+  }
+  const parent = await mount(Parent, { target: fixture });
 
-//     class Parent extends Component {
-//       static template = xml`
-//           <div>
-//             <ChildA val="state.valA"/>
-//             <t t-if="state.flagB"><ChildB val="state.valB"/></t>
-//           </div>`;
-//       static components = { ChildA, ChildB };
-//       state = useState({ valA: 1, valB: 2, flagB: false });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     parent.state.valA = 2;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     parent.state.flagB = true;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     defB.resolve();
-//     expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-//     defA.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
-//   });
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  parent.state.valA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  parent.state.flagB = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  defB.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  defA.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
+});
 
-//   test("update a sub-component twice in the same frame", async () => {
-//     const steps: string[] = [];
-//     const defs = [makeDeferred(), makeDeferred()];
-//     let index = 0;
-//     class ChildA extends Component {
-//       static template = xml`<span><t t-esc="props.val"/></span>`;
-//       willUpdateProps(): Promise<void> {
-//         return defs[index++];
-//       }
-//       patched() {
-//         steps.push("patched");
-//       }
-//     }
+test("creating two async components, scenario 3 (patching in the same frame)", async () => {
+  let defA = makeDeferred();
+  let defB = makeDeferred();
 
-//     class Parent extends Component {
-//       static template = xml`<div><ChildA val="state.valA"/></div>`;
-//       static components = { ChildA };
-//       state = useState({ valA: 1 });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     parent.state.valA = 2;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     parent.state.valA = 3;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     defs[0].resolve();
-//     await Promise.resolve();
-//     defs[1].resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-//     expect(steps).toEqual(["patched"]);
-//   });
+  class ChildA extends Component {
+    static template = xml`<span>a<t t-esc="props.val"/></span>`;
+    setup() {
+      onWillUpdateProps(() => defA);
+    }
+  }
+  class ChildB extends Component {
+    static template = xml`<span>b<t t-esc="props.val"/></span>`;
+    setup() {
+      onWillStart(() => defB);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+          <div>
+            <ChildA val="state.valA"/>
+            <t t-if="state.flagB"><ChildB val="state.valB"/></t>
+          </div>`;
+    static components = { ChildA, ChildB };
+    state = useState({ valA: 1, valB: 2, flagB: false });
+  }
+  const parent = await mount(Parent, { target: fixture });
+
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  parent.state.valA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  parent.state.flagB = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  defB.resolve();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  defA.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
+});
+
+test("update a sub-component twice in the same frame", async () => {
+  const steps: string[] = [];
+  const defs = [makeDeferred(), makeDeferred()];
+  let index = 0;
+  class ChildA extends Component {
+    static template = xml`<span><t t-esc="props.val"/></span>`;
+    setup() {
+      onWillUpdateProps(() => defs[index++]);
+      onPatched(() => {
+        steps.push("patched");
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<div><ChildA val="state.valA"/></div>`;
+    static components = { ChildA };
+    state = useState({ valA: 1 });
+  }
+  const parent = await mount(Parent, { target: fixture });
+
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  parent.state.valA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  parent.state.valA = 3;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  defs[0].resolve();
+  await Promise.resolve();
+  defs[1].resolve();
+  await nextTick();
+  expect(steps).toEqual(["patched"]);
+  expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+});
 
 //   test("update a sub-component twice in the same frame, 2", async () => {
 //     const steps: string[] = [];

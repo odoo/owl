@@ -5,7 +5,7 @@ import { RootFiber } from "./fibers";
 // -----------------------------------------------------------------------------
 
 export class Scheduler {
-  tasks: RootFiber[] = [];
+  tasks: Set<RootFiber> = new Set();
   isRunning: boolean = false;
   requestAnimationFrame: Window["requestAnimationFrame"];
 
@@ -23,7 +23,7 @@ export class Scheduler {
   }
 
   addFiber(fiber: RootFiber) {
-    this.tasks.push(fiber); // no check for unicity. need to be careful here
+    this.tasks.add(fiber); // no check for unicity. need to be careful here
     if (!this.isRunning) {
       this.start();
     }
@@ -34,20 +34,31 @@ export class Scheduler {
    * Other tasks are left unchanged.
    */
   flush() {
-    let tasks = this.tasks;
-    this.tasks = [];
-    tasks = tasks.filter((fiber) => {
+    this.tasks.forEach((fiber) => {
       if (fiber.counter === 0) {
         if (!fiber.error) {
           fiber.complete();
         }
         fiber.resolve();
-        return false;
+        this.tasks.delete(fiber);
       }
-      return true;
     });
-    this.tasks = tasks.concat(this.tasks);
-    if (this.tasks.length === 0) {
+
+    // let tasks = this.tasks.[...this.tasks];
+    // this.tasks = [];
+    // console.log(this.tasks)
+    // tasks = tasks.filter((fiber) => {
+    //   if (fiber.counter === 0) {
+    //     if (!fiber.error) {
+    //       fiber.complete();
+    //     }
+    //     fiber.resolve();
+    //     return false;
+    //   }
+    //   return true;
+    // });
+    // this.tasks = tasks.concat(this.tasks);
+    if (this.tasks.size === 0) {
       this.stop();
     }
   }

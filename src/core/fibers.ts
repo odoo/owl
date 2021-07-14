@@ -5,6 +5,7 @@ import { OwlNode } from "./owl_node";
 export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
+  isCompleted: boolean = false;
 
   constructor(node: OwlNode) {
     this.node = node;
@@ -21,22 +22,31 @@ export class ChildFiber extends Fiber {
     const root = parent.root;
     root.counter++;
     this.root = root;
+    root.childFibers.push(this);
   }
 }
 
 export class RootFiber extends Fiber {
-  counter = 1;
-  error = null;
+  counter: number;
+  error: Error | null;
   resolve: any;
   promise: any;
   reject: any;
   root: RootFiber;
+  childFibers: Fiber[] = [];
   toPatch: OwlNode[];
 
   constructor(node: OwlNode) {
     super(node);
+    const oldFiber = node.fiber;
+    this.counter = 1;
+    this.error = null;
     this.root = this;
     this.toPatch = [node];
+    if (oldFiber instanceof RootFiber) {
+      this._reuseFiber(oldFiber);
+      return oldFiber;
+    }
 
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
@@ -44,14 +54,26 @@ export class RootFiber extends Fiber {
     });
   }
 
+  _reuseFiber(oldFiber: RootFiber) {
+    // cancel old fibers
+    for (let fiber of oldFiber.childFibers) {
+      fiber.isCompleted = true;
+    }
+    oldFiber.childFibers = [];
+    oldFiber.counter = 1;
+    oldFiber.isCompleted = false;
+  }
+
   complete() {
     for (let node of this.toPatch) {
       node.callBeforePatch();
     }
+    const node = this.node;
     const mountedNodes: any[] = [];
-    const patchedNodes: any[] = [this.node];
-    this.node.bdom!.patch(this.bdom!, mountedNodes, patchedNodes);
+    const patchedNodes: any[] = [node];
+    node.bdom!.patch(this.bdom!, mountedNodes, patchedNodes);
     this.finalize(mountedNodes, patchedNodes);
+    node.fiber = null;
   }
 
   finalize(mounted: OwlNode[], patched: OwlNode[]) {
@@ -85,5 +107,6 @@ export class MountFiber extends RootFiber {
     node.bdom!.mount(this.target, mountedNodes, patchedNodes);
     this.finalize(mountedNodes, patchedNodes);
     node.status = STATUS.MOUNTED;
+    node.fiber = null;
   }
 }

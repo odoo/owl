@@ -87,6 +87,9 @@ export class OwlNode extends EventBus {
     const component = this.component;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;
+    if (fiber.isCompleted) {
+      return;
+    }
     this.component.props = props;
     this._render(fiber);
   }

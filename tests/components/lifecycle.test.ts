@@ -255,4 +255,44 @@ describe("lifecycle hooks", () => {
       "parent:patched",
     ]);
   });
+
+  test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
+    const steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+
+      setup() {
+        onWillStart(() => {
+          steps.push("child:willStart");
+        });
+        onMounted(() => {
+          steps.push("child:mounted");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      // the t-else part in the template is important. This is
+      // necessary to have a situation that could confuse the vdom
+      // patching algorithm
+      static template = xml`
+        <div>
+          <t t-if="state.ok">
+            <Child />
+          </t>
+          <t t-else="">
+            <div/>
+          </t>
+        </div>`;
+
+      static components = { Child };
+      state = useState({ ok: false });
+    }
+    const parent = await mount(Parent, { target: fixture });
+    expect(steps).toEqual([]);
+    parent.state.ok = true;
+    await nextTick();
+    expect(steps).toEqual(["child:willStart", "child:mounted"]);
+  });
 });

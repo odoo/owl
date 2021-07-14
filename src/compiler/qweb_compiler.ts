@@ -930,7 +930,7 @@ export class QWebCompiler {
       slotDef = `{${slotStr.join(", ")}}`;
     }
 
-    if (block) {
+    if (block && ctx.forceNewBlock === false) {
       this.insertAnchor(block);
     }
 

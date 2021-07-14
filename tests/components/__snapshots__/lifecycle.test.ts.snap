@@ -121,12 +121,11 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    anchors = new Array(2);
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
     build() {
       this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0];
     }
   }
   
@@ -296,13 +295,12 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(3);
-    anchors = new Array(3);
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
     build() {
       this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0];
-      this.anchors[2] = this.anchors[1].nextSibling;
+      this.anchors[1] = this.anchors[0].nextSibling;
     }
   }
   

@@ -61,6 +61,7 @@ export class RootFiber extends Fiber {
     for (let fiber of oldFiber.childFibers) {
       fiber.isCompleted = true;
     }
+    oldFiber.toPatch = [];
     oldFiber.childFibers = [];
     oldFiber.counter = 1;
     oldFiber.isCompleted = false;

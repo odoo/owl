@@ -1,6 +1,6 @@
 import { App, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
 import { Component } from "../../src/core/component";
-import { onPatched } from "../../src/lifecycle_hooks";
+import { onBeforePatch, onPatched } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
 import {
@@ -329,53 +329,57 @@ test("components in a node in a t-foreach ", async () => {
   expect(fixture.innerHTML).toBe("<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>");
 });
 
-//   test("properly behave when destroyed/unmounted while rendering ", async () => {
-//     const def = makeDeferred();
+test("properly behave when destroyed/unmounted while rendering ", async () => {
+  const def = makeDeferred();
 
-//     class SubChild extends Component {
-//       static template = xml`<div/>`;
-//       willPatch() {
-//         throw new Error("Should not happen!");
-//       }
-//       patched() {
-//         throw new Error("Should not happen!");
-//       }
-//       willUpdateProps() {
-//         return def;
-//       }
-//     }
+  class SubChild extends Component {
+    static template = xml`<div/>`;
 
-//     class Child extends Component {
-//       static template = xml`<div><SubChild /></div>`;
-//       static components = { SubChild };
-//     }
+    setup() {
+      onBeforePatch(() => {
+        throw new Error("Should not happen!");
+      });
+      onPatched(() => {
+        throw new Error("Should not happen!");
+      });
+      onWillUpdateProps(() => {
+        return def;
+      });
+    }
+  }
 
-//     class Parent extends Component {
-//       static template = xml`<div><t t-if="state.flag"><Child val="state.val"/></t></div>`;
-//       static components = { Child };
-//       state = useState({ flag: true, val: "Framboise Lindemans" });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
+  class Child extends Component {
+    static template = xml`<div><SubChild /></div>`;
+    static components = { SubChild };
+  }
 
-//     // this change triggers a rendering of the parent. This rendering is delayed,
-//     // because child is now waiting for def to be resolved
-//     parent.state.val = "Framboise Girardin";
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
+  class Parent extends Component {
+    static template = xml`
+        <div><t t-if="state.flag"><Child val="state.val"/></t></div>`;
+    static components = { Child };
+    state = useState({ flag: true, val: "Framboise Lindemans" });
+  }
 
-//     // with this, we remove child, and subchild, even though it is not finished
-//     // rendering from previous changes
-//     parent.state.flag = false;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div></div>");
+  const parent = await mount(Parent, { target: fixture });
+  expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
 
-//     // we now resolve def, so the child rendering is now complete.
-//     (<any>def).resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div></div>");
-//   });
+  // this change triggers a rendering of the parent. This rendering is delayed,
+  // because child is now waiting for def to be resolved
+  parent.state.val = "Framboise Girardin";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
+
+  // with this, we remove child, and subchild, even though it is not finished
+  // rendering from previous changes
+  parent.state.flag = false;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  // we now resolve def, so the child rendering is now complete.
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+});
 
 //   test.skip("reuse widget if possible, in some async situation", async () => {
 //     // this optimization has been temporarily deactivated

@@ -6,24 +6,22 @@ export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
   isCompleted: boolean = false;
+  root: RootFiber;
+  parent: Fiber | null;
+  children: Fiber[] = [];
 
-  constructor(node: OwlNode) {
+  constructor(node: OwlNode, parent: Fiber | null) {
     this.node = node;
     node.fiber = this as any;
-  }
-}
-
-export class ChildFiber extends Fiber {
-  root: RootFiber;
-  parent: Fiber;
-
-  constructor(node: OwlNode, parent: ChildFiber | RootFiber) {
-    super(node);
     this.parent = parent;
-    const root = parent.root;
-    root.counter++;
-    this.root = root;
-    root.childFibers.push(this);
+    if (parent) {
+      const root = parent.root;
+      root.counter++;
+      this.root = root;
+      root.children.push(this);
+    } else {
+      this.root = this as any;
+    }
   }
 }
 
@@ -33,14 +31,11 @@ export class RootFiber extends Fiber {
   resolve: any;
   promise: any;
   reject: any;
-  root: RootFiber;
-  childFibers: Fiber[];
   toPatch: OwlNode[];
 
   constructor(node: OwlNode) {
     const oldFiber = node.fiber;
-    super(node);
-    this.childFibers = [];
+    super(node, null);
     this.counter = 1;
     this.error = null;
     this.root = this;
@@ -58,11 +53,11 @@ export class RootFiber extends Fiber {
 
   _reuseFiber(oldFiber: RootFiber) {
     // cancel old fibers
-    for (let fiber of oldFiber.childFibers) {
+    for (let fiber of oldFiber.children) {
       fiber.isCompleted = true;
     }
     oldFiber.toPatch = [];
-    oldFiber.childFibers = [];
+    oldFiber.children = [];
     oldFiber.counter = 1;
     oldFiber.isCompleted = false;
   }

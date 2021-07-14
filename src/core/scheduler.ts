@@ -35,6 +35,11 @@ export class Scheduler {
    */
   flush() {
     this.tasks.forEach((fiber) => {
+      if (fiber.isCompleted) {
+        // leave the promise pending???
+        this.tasks.delete(fiber);
+        return;
+      }
       if (fiber.counter === 0) {
         if (!fiber.error) {
           fiber.complete();

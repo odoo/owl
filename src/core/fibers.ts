@@ -9,6 +9,7 @@ export class Fiber {
 
   constructor(node: OwlNode) {
     this.node = node;
+    node.fiber = this as any;
   }
 }
 
@@ -33,12 +34,13 @@ export class RootFiber extends Fiber {
   promise: any;
   reject: any;
   root: RootFiber;
-  childFibers: Fiber[] = [];
+  childFibers: Fiber[];
   toPatch: OwlNode[];
 
   constructor(node: OwlNode) {
-    super(node);
     const oldFiber = node.fiber;
+    super(node);
+    this.childFibers = [];
     this.counter = 1;
     this.error = null;
     this.root = this;
@@ -65,10 +67,13 @@ export class RootFiber extends Fiber {
   }
 
   complete() {
+    const node = this.node;
+    // if (node.fiber !== fiber) {
+    //   return;
+    // }
     for (let node of this.toPatch) {
       node.callBeforePatch();
     }
-    const node = this.node;
     const mountedNodes: any[] = [];
     const patchedNodes: any[] = [node];
     node.bdom!.patch(this.bdom!, mountedNodes, patchedNodes);

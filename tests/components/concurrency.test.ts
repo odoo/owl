@@ -1,8 +1,14 @@
-import { App, onWillStart } from "../../src";
+import { App, mount, onWillStart, useState } from "../../src";
 import { Component } from "../../src/core/component";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
-import { makeDeferred, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  makeDeferred,
+  makeTestFixture,
+  nextMicroTick,
+  nextTick,
+  snapshotEverything,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -35,90 +41,93 @@ describe("async rendering", () => {
   });
 });
 
-//   test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
-//     let def = makeDeferred();
-//     let n = 0;
-//     class Child extends Component {
-//       static template = xml`<span>child:<t t-esc="props.val"/></span>`;
-//       constructor(parent, props) {
-//         super(parent, props);
-//         n++;
-//       }
-//       willStart(): Promise<void> {
-//         return def;
-//       }
-//     }
-//     class W extends Component {
-//       static template = xml`<div><t t-if="state.val > 1"><Child val="state.val"/></t></div>`;
-//       static components = { Child };
-//       state = useState({ val: 1 });
-//     }
+test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
+  let def = makeDeferred();
+  let n = 0;
+  class Child extends Component {
+    static template = xml`<span>child:<t t-esc="props.val"/></span>`;
+    setup() {
+      n++;
+      onWillStart(() => def);
+    }
+  }
 
-//     const w = new W();
-//     await w.mount(fixture);
-//     expect(n).toBe(0);
-//     w.state.val = 2;
+  class W extends Component {
+    static template = xml`
+        <div>
+            <t t-if="state.val > 1"><Child val="state.val"/></t>
+        </div>`;
+    static components = { Child };
+    state = useState({ val: 1 });
+  }
 
-//     await nextMicroTick();
-//     expect(n).toBe(1);
-//     w.state.val = 3;
-//     await nextMicroTick();
-//     expect(n).toBe(2);
-//     def.resolve();
-//     await nextTick();
-//     expect(children(w).length).toBe(1);
-//     expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
-//   });
+  const w = await mount(W, { target: fixture });
 
-//   test("creating two async components, scenario 1", async () => {
-//     let defA = makeDeferred();
-//     let defB = makeDeferred();
-//     let nbRenderings: number = 0;
+  expect(n).toBe(0);
+  w.state.val = 2;
 
-//     class ChildA extends Component {
-//       static template = xml`<span><t t-esc="getValue()"/></span>`;
-//       willStart(): Promise<void> {
-//         return defA;
-//       }
-//       getValue() {
-//         nbRenderings++;
-//         return "a";
-//       }
-//     }
+  await nextMicroTick();
+  expect(n).toBe(1);
+  w.state.val = 3;
+  await nextMicroTick();
+  expect(n).toBe(2);
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
+  expect(Object.values(w.__owl__.children).length).toBe(1);
+});
 
-//     class ChildB extends Component {
-//       static template = xml`<span>b</span>`;
-//       willStart(): Promise<void> {
-//         return defB;
-//       }
-//     }
-//     class Parent extends Component {
-//       static template = xml`
-//           <div>
-//             <t t-if="state.flagA"><ChildA /></t>
-//             <t t-if="state.flagB"><ChildB /></t>
-//           </div>`;
-//       static components = { ChildA, ChildB };
-//       state = useState({ flagA: false, flagB: false });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div></div>");
-//     parent.state.flagA = true;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div></div>");
-//     parent.state.flagB = true;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div></div>");
-//     defB.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div></div>");
-//     expect(nbRenderings).toBe(0);
-//     defA.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>a</span><span>b</span></div>");
-//     expect(nbRenderings).toBe(1);
-//   });
+test("creating two async components, scenario 1", async () => {
+  let defA = makeDeferred();
+  let defB = makeDeferred();
+  let nbRenderings: number = 0;
+
+  class ChildA extends Component {
+    static template = xml`<span><t t-esc="getValue()"/></span>`;
+
+    setup() {
+      onWillStart(() => defA);
+    }
+
+    getValue() {
+      nbRenderings++;
+      return "a";
+    }
+  }
+
+  class ChildB extends Component {
+    static template = xml`<span>b</span>`;
+    setup() {
+      onWillStart(() => defB);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+        <t t-if="state.flagA"><ChildA /></t>
+        <t t-if="state.flagB"><ChildB /></t>`;
+
+    static components = { ChildA, ChildB };
+    state = useState({ flagA: false, flagB: false });
+  }
+
+  const parent = await mount(Parent, { target: fixture });
+  expect(fixture.innerHTML).toBe("");
+  parent.state.flagA = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("");
+  parent.state.flagB = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("");
+  defB.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("");
+  expect(nbRenderings).toBe(0);
+  defA.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");
+  expect(nbRenderings).toBe(1);
+});
 
 //   test("creating two async components, scenario 2", async () => {
 //     let defA = makeDeferred();

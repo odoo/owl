@@ -26,7 +26,12 @@ export class BComponent extends Block {
   constructor(name: string, props: any, key: string, owner: any, parent: any) {
     super();
     const parentNode: OwlNode = parent.__owl__;
-    let node = parentNode.children[key];
+    let node: OwlNode | undefined = parentNode.children[key];
+    if (node && node.status < STATUS.MOUNTED) {
+      node.destroy();
+      delete parentNode.children[key];
+      node = undefined;
+    }
     if (node) {
       // update
       const parentFiber = parentNode.fiber!;

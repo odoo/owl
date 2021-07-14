@@ -31,10 +31,12 @@ export class RootFiber extends Fiber {
   promise: any;
   reject: any;
   root: RootFiber;
+  toPatch: OwlNode[];
 
   constructor(node: OwlNode) {
     super(node);
     this.root = this;
+    this.toPatch = [node];
 
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
@@ -43,17 +45,24 @@ export class RootFiber extends Fiber {
   }
 
   complete() {
+    for (let node of this.toPatch) {
+      node.callBeforePatch();
+    }
     const mountedNodes: any[] = [];
     const patchedNodes: any[] = [this.node];
     this.node.bdom!.patch(this.bdom!, mountedNodes, patchedNodes);
     this.finalize(mountedNodes, patchedNodes);
   }
 
-  finalize(mounted: any[], patched: any[]) {
+  finalize(mounted: OwlNode[], patched: OwlNode[]) {
     let current;
     while ((current = mounted.pop())) {
-      current.status = STATUS.MOUNTED;
       for (let cb of current.mounted) {
+        cb();
+      }
+    }
+    while ((current = patched.pop())) {
+      for (let cb of current.patched) {
         cb();
       }
     }
@@ -66,14 +75,15 @@ export class MountFiber extends RootFiber {
   constructor(node: OwlNode, target: HTMLElement) {
     super(node);
     this.target = target;
+    this.toPatch = [];
   }
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    debugger;
     const mountedNodes: any[] = [node];
     const patchedNodes: any[] = [];
     node.bdom!.mount(this.target, mountedNodes, patchedNodes);
     this.finalize(mountedNodes, patchedNodes);
+    node.status = STATUS.MOUNTED;
   }
 }

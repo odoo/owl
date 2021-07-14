@@ -25,8 +25,10 @@ export class OwlNode extends EventBus {
   refs: any = {};
 
   willStart: LifecycleHook[] = [];
-  mounted: LifecycleHook[] = [];
   beforeUnmount: LifecycleHook[] = [];
+  mounted: LifecycleHook[] = [];
+  beforePatch: LifecycleHook[] = [];
+  patched: LifecycleHook[] = [];
 
   constructor(app: App, C: typeof Component, props: any) {
     super();
@@ -73,6 +75,13 @@ export class OwlNode extends EventBus {
     }
     for (let child of Object.values(this.children)) {
       child.callBeforeUnmount();
+    }
+  }
+
+  callBeforePatch() {
+    const component = this.component;
+    for (let cb of this.beforePatch) {
+      cb.call(component);
     }
   }
 

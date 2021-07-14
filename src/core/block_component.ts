@@ -1,6 +1,7 @@
 import { Block } from "../bdom";
 import { OwlNode } from "./owl_node";
 import { ChildFiber } from "./fibers";
+import { STATUS } from "../status";
 // import type { Component } from "./component";
 
 // -----------------------------------------------------------------------------
@@ -28,7 +29,11 @@ export class BComponent extends Block {
     let node = parentNode.children[key];
     if (node) {
       // update
-      const fiber = new ChildFiber(node, parentNode.fiber!);
+      const parentFiber = parentNode.fiber!;
+      if (node.beforePatch.length) {
+        parentFiber.root.toPatch.push(node);
+      }
+      const fiber = new ChildFiber(node, parentFiber);
       node.updateAndRender(props, fiber);
       //     const parentFiber = parentData.fiber!;
       //     parentFiber.child = fiber; // wrong!
@@ -65,6 +70,7 @@ export class BComponent extends Block {
         this.addClass(el);
       }
     }
+    node.status = STATUS.MOUNTED;
   }
 
   moveBefore(anchor: ChildNode) {
@@ -86,6 +92,10 @@ export class BComponent extends Block {
 
   patch(other: BComponent, mountedNodes: any[], patchedNodes: any[]) {
     const node = this.node;
+    if (node.patched.length) {
+      patchedNodes.push(node);
+    }
+
     node.bdom!.patch(node!.fiber!.bdom!, mountedNodes, patchedNodes);
     if (this.parentClass) {
       const el = this.firstChildNode();

@@ -1,6 +1,6 @@
 import { App, mount, onMounted, onWillStart, useState } from "../../src";
 import { Component } from "../../src/core/component";
-import { onBeforeUnmount } from "../../src/lifecycle_hooks";
+import { onBeforePatch, onBeforeUnmount, onPatched } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
 import { makeTestFixture, nextTick } from "../helpers";
@@ -185,6 +185,74 @@ describe("lifecycle hooks", () => {
       "parent:willUnmount",
       "child:willUnmount",
       "childchild:willUnmount",
+    ]);
+  });
+
+  test("willPatch, patched hook are called on subsubcomponents, in proper order", async () => {
+    const steps: any[] = [];
+
+    class ChildChild extends Component {
+      static template = xml`
+        <div><t t-esc="props.n"/></div>
+      `;
+
+      setup() {
+        onBeforePatch(() => {
+          steps.push("childchild:willPatch");
+        });
+        onPatched(() => {
+          steps.push("childchild:patched");
+        });
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`
+        <div><ChildChild n="props.n"/></div>
+      `;
+      static components = { ChildChild };
+
+      setup() {
+        onBeforePatch(() => {
+          steps.push("child:willPatch");
+        });
+        onPatched(() => {
+          steps.push("child:patched");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div><Child n="state.n"/></div>
+      `;
+      static components = { Child };
+
+      state = useState({ n: 1 });
+
+      setup() {
+        onBeforePatch(() => {
+          steps.push("parent:willPatch");
+        });
+        onPatched(() => {
+          steps.push("parent:patched");
+        });
+      }
+    }
+
+    const app = new App(Parent);
+    const parent = await app.mount(fixture);
+    expect(steps).toEqual([]);
+    parent.state.n = 2;
+    await nextTick();
+    app.destroy();
+    expect(steps).toEqual([
+      "parent:willPatch",
+      "child:willPatch",
+      "childchild:willPatch",
+      "childchild:patched",
+      "child:patched",
+      "parent:patched",
     ]);
   });
 });

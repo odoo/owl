@@ -17,6 +17,127 @@ exports[`lifecycle hooks basic checks for a component 1`] = `
 }"
 `;
 
+exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(1);
+    if (ctx['state'].ok) {
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].n;
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(1);
+    if (ctx['state'].flag) {
+      const b2 = b1.children[0] = new Block1();
+      b2.children[0] = new BComponent(\`Child\`, {n: ctx['state'].n}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`lifecycle hooks mounted hook is called if mounted in DOM 1`] = `
 "function anonymous(Blocks, utils
 ) {

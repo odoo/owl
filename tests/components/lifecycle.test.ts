@@ -296,4 +296,126 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps).toEqual(["child:willStart", "child:mounted"]);
   });
+
+  test("components are unmounted and destroyed if no longer in DOM", async () => {
+    let steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        steps.push("setup");
+        onWillStart(() => {
+          steps.push("willstart");
+        });
+        onMounted(() => {
+          steps.push("mounted");
+        });
+        onBeforeUnmount(() => {
+          steps.push("willunmount");
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<t t-if="state.ok"><Child /></t>`;
+      static components = { Child };
+      state = useState({ ok: true });
+    }
+
+    const parent = await mount(Parent, { target: fixture });
+    expect(steps).toEqual(["setup", "willstart", "mounted"]);
+    parent.state.ok = false;
+    await nextTick();
+    expect(steps).toEqual(["setup", "willstart", "mounted", "willunmount"]);
+  });
+
+  test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
+    let childUnmounted = false;
+
+    class Child extends Component {
+      static template = xml`<span><t t-esc="props.n"/></span>`;
+      setup() {
+        onBeforeUnmount(() => {
+          childUnmounted = true;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+          <div t-if="state.flag">
+            <Child n="state.n"/>
+          </div>
+      `;
+      static components = { Child };
+
+      state = useState({ n: 0, flag: true });
+      increment() {
+        this.state.n += 1;
+      }
+      toggleSubWidget() {
+        this.state.flag = !this.state.flag;
+      }
+    }
+
+    const parent = await mount(Parent, { target: fixture });
+    expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
+    parent.increment();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    parent.toggleSubWidget();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+    expect(childUnmounted).toBe(true);
+  });
+
+  test("hooks are called in proper order in widget creation/destruction", async () => {
+    let steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        steps.push("c init");
+        onWillStart(() => {
+          steps.push("c willstart");
+        });
+        onMounted(() => {
+          steps.push("c mounted");
+        });
+        onBeforeUnmount(() => {
+          steps.push("c willunmount");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child/></div>`;
+      static components = { Child };
+      setup() {
+        steps.push("p init");
+        onWillStart(() => {
+          steps.push("p willstart");
+        });
+        onMounted(() => {
+          steps.push("p mounted");
+        });
+        onBeforeUnmount(() => {
+          steps.push("p willunmount");
+        });
+      }
+    }
+
+    const app = new App(Parent);
+    await app.mount(fixture);
+    app.destroy();
+    expect(steps).toEqual([
+      "p init",
+      "p willstart",
+      "c init",
+      "c willstart",
+      "c mounted",
+      "p mounted",
+      "p willunmount",
+      "c willunmount",
+    ]);
+  });
 });

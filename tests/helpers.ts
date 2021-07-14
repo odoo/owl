@@ -29,6 +29,22 @@ export async function nextTick(): Promise<void> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
+interface Deferred extends Promise<any> {
+  resolve(val?: any): void;
+  reject(): void;
+}
+
+export function makeDeferred(): Deferred {
+  let resolve, reject;
+  let def = new Promise((_resolve, _reject) => {
+    resolve = _resolve;
+    reject = _reject;
+  });
+  (def as any).resolve = resolve;
+  (def as any).reject = reject;
+  return <Deferred>def;
+}
+
 /**
  * Return the global template xml string corresponding to the given name
  */

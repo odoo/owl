@@ -43,8 +43,7 @@ export class OwlNode extends EventBus {
   async mount(target: any) {
     const fiber = new MountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
-    await this.callWillStart();
-    this._render(fiber);
+    await this.initiateRender(fiber);
     return fiber.promise.then(() => this.component);
   }
 
@@ -56,16 +55,14 @@ export class OwlNode extends EventBus {
     return fiber.promise;
   }
 
-  async initiateRender(fiber: ChildFiber) {
-    await this.callWillStart();
-    this._render(fiber);
-  }
-
-  callWillStart() {
+  async initiateRender(fiber: ChildFiber | MountFiber) {
     const component = this.component;
     const prom = Promise.all(this.willStart.map((f) => f.call(component)));
     this.status = STATUS.WILLSTARTED;
-    return prom;
+    await prom;
+    if (this.status === STATUS.WILLSTARTED) {
+      this._render(fiber);
+    }
   }
 
   callBeforeUnmount() {
@@ -98,8 +95,12 @@ export class OwlNode extends EventBus {
   }
 
   destroy() {
-    this.callBeforeUnmount();
-    this.bdom!.remove();
+    switch (this.status) {
+      case STATUS.MOUNTED:
+        this.callBeforeUnmount();
+        this.bdom!.remove();
+        break;
+    }
     this.status = STATUS.DESTROYED;
   }
 }

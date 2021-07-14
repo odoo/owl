@@ -440,3 +440,38 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   }
 }"
 `;
+
+exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].n;
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`Child\`, {n: ctx['state'].n}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;

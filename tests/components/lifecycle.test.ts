@@ -1,9 +1,14 @@
 import { App, mount, onMounted, onWillStart, useState } from "../../src";
 import { Component } from "../../src/core/component";
-import { onBeforePatch, onBeforeUnmount, onPatched } from "../../src/lifecycle_hooks";
+import {
+  onBeforePatch,
+  onBeforeUnmount,
+  onPatched,
+  onWillUpdateProps,
+} from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeDeferred, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -417,5 +422,35 @@ describe("lifecycle hooks", () => {
       "p willunmount",
       "c willunmount",
     ]);
+  });
+
+  test("willUpdateProps hook is called", async () => {
+    let def = makeDeferred();
+
+    class Child extends Component {
+      static template = xml`<span><t t-esc="props.n"/></span>`;
+
+      setup() {
+        onWillUpdateProps((nextProps) => {
+          expect(nextProps.n).toBe(2);
+          return def;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child n="state.n"/>`;
+      static components = { Child };
+      state = useState({ n: 1 });
+    }
+    const parent = await mount(Parent, { target: fixture });
+
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+    parent.state.n = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+    def.resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>2</span>");
   });
 });

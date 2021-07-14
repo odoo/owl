@@ -9,6 +9,11 @@ export function onWillStart(fn: () => Promise<void> | void) {
   node.willStart.push(fn);
 }
 
+export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void) {
+  const node = getCurrent()!;
+  node.willUpdateProps.push(fn);
+}
+
 export function onBeforeUnmount(fn: () => Promise<void> | void) {
   const node = getCurrent()!;
   node.beforeUnmount.push(fn);

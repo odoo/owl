@@ -25,6 +25,7 @@ export class OwlNode extends EventBus {
   refs: any = {};
 
   willStart: LifecycleHook[] = [];
+  willUpdateProps: LifecycleHook[] = [];
   beforeUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
   beforePatch: LifecycleHook[] = [];
@@ -83,7 +84,9 @@ export class OwlNode extends EventBus {
   }
 
   async updateAndRender(props: any, fiber: ChildFiber) {
-    await Promise.resolve(); // willupdateprops
+    const component = this.component;
+    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
+    await prom;
     this.component.props = props;
     this._render(fiber);
   }

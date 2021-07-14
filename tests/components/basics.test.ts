@@ -2,9 +2,11 @@ import { mount, useState } from "../../src";
 import { Component } from "../../src/core/component";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
-import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
+
+snapshotEverything();
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -20,7 +22,6 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("<span>simple vnode</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("can mount a simple component with props", async () => {
@@ -32,7 +33,6 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("can mount a component with just some text", async () => {
@@ -44,7 +44,6 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("just text");
     expect(component.el).toBeInstanceOf(Text);
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("can mount a simple component with multiple roots", async () => {
@@ -56,7 +55,6 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("<span></span><div></div>");
     expect(component.el).toEqual(null);
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("component with dynamic content can be updated", async () => {
@@ -82,7 +80,6 @@ describe("basics", () => {
         </t>`;
       items = ["one", "two", "three"];
     }
-    snapshotTemplateCode(fromName(Test.template));
 
     const component = await mount(Test, { target: fixture });
 
@@ -93,7 +90,7 @@ describe("basics", () => {
   });
 
   test("props is set on root component", async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const p = {};
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
@@ -106,7 +103,7 @@ describe("basics", () => {
   });
 
   test("some simple sanity checks (el/status)", async () => {
-    expect.assertions(3);
+    expect.assertions(4);
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
       setup() {
@@ -172,7 +169,6 @@ describe("basics", () => {
 
     await mount(Test, { target: fixture });
     expect(fixture.innerHTML).toBe("<span>My value: 42</span>");
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("Multi root component", async () => {
@@ -184,7 +180,6 @@ describe("basics", () => {
 
     await mount(Test, { target: fixture });
     expect(fixture.innerHTML).toBe(`<span>1</span>text<span>2</span>`);
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("a component inside a component", async () => {
@@ -196,7 +191,6 @@ describe("basics", () => {
       static template = xml`<span><Child/></span>`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<span><div>simple vnode</div></span>");
@@ -211,7 +205,6 @@ describe("basics", () => {
       static template = xml`<Child/>`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
@@ -252,7 +245,6 @@ describe("basics", () => {
       static template = xml`<Child/><Child/>`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>simple vnode</div><div>simple vnode</div>");
@@ -267,8 +259,6 @@ describe("basics", () => {
       static template = xml`<Child value="42" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>42</div>");
@@ -288,7 +278,6 @@ describe("basics", () => {
       static template = xml`<Child/>`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>hey</div>");
@@ -304,7 +293,6 @@ describe("basics", () => {
       static components = { Child };
       state = useState({ hasChild: false });
     }
-    snapshotTemplateCode(fromName(Parent.template));
 
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("");
@@ -323,7 +311,6 @@ describe("basics", () => {
     }
 
     const counter = await mount(Counter, { target: fixture });
-    snapshotTemplateCode(fromName(Counter.template));
     expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     button.click();
@@ -340,7 +327,6 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
@@ -357,9 +343,6 @@ describe("basics", () => {
         counter: 0,
       });
     }
-
-    snapshotTemplateCode(fromName(Child.template));
-    snapshotTemplateCode(fromName(Parent.template));
 
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("0");
@@ -387,8 +370,6 @@ describe("basics", () => {
 
       state = useState({ child: "a" });
     }
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
 
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div>a</div>`);

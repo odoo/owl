@@ -1,4 +1,7 @@
-import { renderToString, snapshotTemplateCode, TestContext, trim } from "../helpers";
+import { xml } from "../../src";
+import { renderToString, snapshotEverything, TestContext, trim } from "../helpers";
+
+snapshotEverything();
 
 // -----------------------------------------------------------------------------
 // misc
@@ -29,11 +32,6 @@ describe("misc", () => {
     context.addTemplate("_callee-uses-foo", _calleeUsesFoo);
     context.addTemplate("_callee-asc-toto", _calleeAscToto);
     context.addTemplate("caller", caller);
-
-    snapshotTemplateCode(caller);
-    snapshotTemplateCode(_calleeAscToto);
-    snapshotTemplateCode(_calleeAsc);
-    snapshotTemplateCode(_calleeUsesFoo);
 
     const result = trim(context.renderToString("caller"));
     const expected = trim(`
@@ -101,7 +99,6 @@ describe("misc", () => {
         </div>
       </div>`;
 
-    snapshotTemplateCode(template);
     const context = {
       options: { more: true },
       klass: "info",
@@ -119,7 +116,7 @@ describe("misc", () => {
   });
 
   test("other complex template", () => {
-    const template = `
+    xml`
         <div>
           <header>
               <nav class="navbar navbar-expand-md navbar-light bg-light">
@@ -261,7 +258,5 @@ describe("misc", () => {
               </div>
           </div>
       </div>`;
-
-    snapshotTemplateCode(template);
   });
 });

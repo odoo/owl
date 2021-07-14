@@ -141,6 +141,28 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
 }"
 `;
 
+exports[`simple templates, mostly static dom node with t-esc 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['text'];
+    return b1;
+  }
+}"
+`;
+
 exports[`simple templates, mostly static dynamic text value 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -172,6 +194,19 @@ exports[`simple templates, mostly static empty div 1`] = `
 `;
 
 exports[`simple templates, mostly static empty string 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BText(\`\`);
+    return b1;
+  }
+}"
+`;
+
+exports[`simple templates, mostly static empty string in a template set 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;

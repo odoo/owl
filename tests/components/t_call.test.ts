@@ -1,5 +1,7 @@
 import { Component, mount, useState, xml } from "../../src/index";
-import { addTemplate, fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { addTemplate, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+
+snapshotEverything();
 
 let fixture: HTMLElement;
 
@@ -19,7 +21,6 @@ describe("t-call", () => {
     addTemplate("foo", "<div>foo</div>");
     addTemplate("bar", "bar");
 
-    snapshotTemplateCode(fromName(App.template));
     const app = await mount(App, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>foo</div>");
 

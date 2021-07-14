@@ -1,7 +1,8 @@
 import { Component, mount, useRef, useState } from "../../src/index";
-import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { xml } from "../../src/index";
 
+snapshotEverything();
 let fixture: HTMLElement;
 
 beforeEach(() => {
@@ -30,7 +31,6 @@ describe("refs", () => {
         this.state.val++;
       }
     }
-    snapshotTemplateCode(fromName(Parent.template));
     const parent = await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe(

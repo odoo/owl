@@ -1,4 +1,6 @@
-import { snapshotTemplateCode, TestContext } from "../helpers";
+import { snapshotEverything, TestContext } from "../helpers";
+
+snapshotEverything();
 
 // -----------------------------------------------------------------------------
 // t-call
@@ -10,7 +12,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("_basic-callee", `<span>ok</span>`);
     context.addTemplate("caller", `<div><t t-call="_basic-callee"/></div>`);
 
-    snapshotTemplateCode(`<div><t t-call="_basic-callee"/></div>`);
     expect(context.renderToString("caller")).toBe("<div><span>ok</span></div>");
   });
 
@@ -19,7 +20,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("_basic-callee", `<span>ok</span>`);
     context.addTemplate("caller", `<t t-call="_basic-callee"/>`);
 
-    snapshotTemplateCode(`<t t-call="_basic-callee"/>`);
     expect(context.renderToString("caller")).toBe("<span>ok</span>");
   });
 
@@ -29,7 +29,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", main);
     context.addTemplate("sub", `<span t-esc="v"/>`);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div><span>Hi</span></div>");
   });
 
@@ -39,7 +38,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", main);
     context.addTemplate("sub", "<span>ok</span>");
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main", { flag: true })).toBe("<div><span>ok</span></div>");
   });
 
@@ -49,7 +47,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", main);
     context.addTemplate("sub", "<span>ok</span>");
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div><span>ok</span></div>");
   });
 
@@ -60,7 +57,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div>ok</div>");
   });
 
@@ -71,7 +67,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div>ok</div>");
   });
 
@@ -82,8 +77,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
-    snapshotTemplateCode(sub);
     expect(context.renderToString("main")).toBe("<h1>ok</h1>");
   });
 
@@ -94,7 +87,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<span>ok</span>");
   });
 
@@ -105,7 +97,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div>1</div>");
   });
 
@@ -122,7 +113,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div>ok</div>");
   });
 
@@ -140,7 +130,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe("<div>4211</div>");
   });
 
@@ -159,8 +148,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
     const expected = "<div><div><span>hey</span> <span>yay</span></div></div>";
     expect(context.renderToString("main")).toBe(expected);
   });
@@ -201,10 +188,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("subTemplate", subTemplate);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(finalTemplate);
-    snapshotTemplateCode(subTemplate);
-    snapshotTemplateCode(subSubTemplate);
-    snapshotTemplateCode(main);
     const expected =
       "<div><div><div><div><span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span></div></div></div></div>";
     expect(context.renderToString("main")).toBe(expected);
@@ -238,10 +221,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("subTemplate", subTemplate);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(finalTemplate);
-    snapshotTemplateCode(subTemplate);
-    snapshotTemplateCode(subSubTemplate);
-    snapshotTemplateCode(main);
     const expected =
       "<span>cascade 2</span><span>cascade 1</span><span>cascade 0</span><span>hey</span> <span>yay</span>";
     expect(context.renderToString("main")).toBe(expected);
@@ -259,7 +238,6 @@ describe("t-call (template calling)", () => {
 
     context.addTemplate("recursive", recursive);
 
-    snapshotTemplateCode(recursive);
     const expected = "<div><span>hey</span></div>";
     expect(context.renderToString("recursive")).toBe(expected);
   });
@@ -286,8 +264,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("Parent", Parent);
     context.addTemplate("nodeTemplate", nodeTemplate);
 
-    snapshotTemplateCode(Parent);
-    snapshotTemplateCode(nodeTemplate);
     const root = { val: "a", children: [{ val: "b" }, { val: "c" }] };
     const expected = "<div><div><p>a</p><div><p>b</p></div><div><p>c</p></div></div></div>";
     expect(context.renderToString("Parent", { root })).toBe(expected);
@@ -315,8 +291,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("Parent", Parent);
     context.addTemplate("nodeTemplate", nodeTemplate);
 
-    snapshotTemplateCode(Parent);
-    snapshotTemplateCode(nodeTemplate);
     const root = { val: "a", children: [{ val: "b", children: [{ val: "d" }] }, { val: "c" }] };
     const expected =
       "<div><div><p>a</p><div><p>b</p><div><p>d</p></div></div><div><p>c</p></div></div></div>";
@@ -347,8 +321,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("Parent", Parent);
     context.addTemplate("nodeTemplate", nodeTemplate);
 
-    snapshotTemplateCode(Parent);
-    snapshotTemplateCode(nodeTemplate);
     const root = {
       val: "a",
       children: [{ val: "b", children: [{ val: "c", children: [{ val: "d" }] }] }],
@@ -375,7 +347,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("callee2", callee2);
     context.addTemplate("caller", caller);
 
-    snapshotTemplateCode(caller);
     const expected = `<div><div>callee2 success</div></div>`;
     expect(context.renderToString("caller")).toBe(expected);
   });
@@ -399,8 +370,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", main);
     context.addTemplate("sub", sub);
 
-    snapshotTemplateCode(main);
-    snapshotTemplateCode(sub);
     const expected = "<div><span>3</span><span>6</span><span>9</span></div>";
     const ctx = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
     expect(context.renderToString("main", ctx)).toBe(expected);
@@ -428,8 +397,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("wrapper", wrapper);
 
-    snapshotTemplateCode(main);
-    snapshotTemplateCode(sub);
     const expected =
       "<p><div><span>3</span>fromwrapper<span>6</span>fromwrapper<span>9</span>fromwrapper</div></p>";
     const ctx = { list: [{ val: 1 }, { val: 2 }, { val: 3 }] };
@@ -449,8 +416,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", main);
     context.addTemplate("sub", sub);
 
-    snapshotTemplateCode(main);
-    snapshotTemplateCode(sub);
     const expected = "<div><p>yip yip</p></div>";
     expect(context.renderToString("main")).toBe(expected);
   });
@@ -462,8 +427,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("antony", antony);
     context.addTemplate("main", main);
     const expected = "<foo><p>antony</p></foo>";
-    snapshotTemplateCode(antony);
-    snapshotTemplateCode(main);
     expect(context.renderToString("main")).toBe(expected);
   });
 
@@ -477,7 +440,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("bar", bar);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(main);
     const expected1 = "<div><foo>foo</foo></div>";
     expect(context.renderToString("main", { template: "foo", val: "foo" })).toBe(expected1);
     const expected2 = "<div><bar>quux</bar></div>";

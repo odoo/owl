@@ -1,6 +1,7 @@
 import { TemplateSet } from "../../src/core/app";
-import { makeTestFixture, renderToBdom, renderToString, snapshotTemplateCode } from "../helpers";
+import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
+snapshotEverything();
 // -----------------------------------------------------------------------------
 // t-on
 // -----------------------------------------------------------------------------
@@ -18,7 +19,6 @@ describe("t-on", () => {
 
   test("can bind event handler", () => {
     const template = `<button t-on-click="add">Click</button>`;
-    snapshotTemplateCode(template);
     let a = 1;
     const fixture = mountToFixture(template, { add: () => (a = 3) });
     expect(a).toBe(1);
@@ -29,7 +29,6 @@ describe("t-on", () => {
   test("receive event in first argument", () => {
     expect.assertions(2);
     const template = `<button t-on-click="add">Click</button>`;
-    snapshotTemplateCode(template);
     const fixture = mountToFixture(template, {
       add: (ev: any) => {
         expect(ev).toBeInstanceOf(Event);
@@ -41,7 +40,6 @@ describe("t-on", () => {
   test("can bind two event handlers", () => {
     const template = `
         <button t-on-click="handleClick" t-on-dblclick="handleDblClick">Click</button>`;
-    snapshotTemplateCode(template);
     let steps: string[] = [];
     const fixture = mountToFixture(template, {
       handleClick() {
@@ -60,7 +58,6 @@ describe("t-on", () => {
 
   test("can bind handlers with arguments", () => {
     const template = `<button t-on-click="add(5)">Click</button>`;
-    snapshotTemplateCode(template);
     let a = 1;
     const fixture = mountToFixture(template, { add: (n: number) => (a = a + n) });
     expect(a).toBe(1);
@@ -70,7 +67,6 @@ describe("t-on", () => {
 
   test("can bind handlers with object arguments", () => {
     const template = `<button t-on-click="add({val: 5})">Click</button>`;
-    snapshotTemplateCode(template);
     let a = 1;
     const fixture = mountToFixture(template, { add: ({ val }: any) => (a = a + val) });
     expect(a).toBe(1);
@@ -81,7 +77,6 @@ describe("t-on", () => {
   test("can bind handlers with empty  object", () => {
     expect.assertions(2);
     const template = `<button t-on-click="doSomething({})">Click</button>`;
-    snapshotTemplateCode(template);
     const fixture = mountToFixture(template, {
       doSomething(arg: any) {
         expect(arg).toEqual({});
@@ -93,7 +88,6 @@ describe("t-on", () => {
   test("can bind handlers with empty object (with non empty inner string)", () => {
     expect.assertions(2);
     const template = `<button t-on-click="doSomething({ })">Click</button>`;
-    snapshotTemplateCode(template);
     const fixture = mountToFixture(template, {
       doSomething(arg: any) {
         expect(arg).toEqual({});
@@ -110,7 +104,6 @@ describe("t-on", () => {
             <a t-on-click="activate(action)">link</a>
           </li>
         </ul>`;
-    snapshotTemplateCode(template);
     const fixture = mountToFixture(template, {
       activate(action: string) {
         expect(action).toBe("someval");
@@ -122,7 +115,6 @@ describe("t-on", () => {
   test("handler is bound to proper owner", () => {
     expect.assertions(2);
     const template = `<button t-on-click="add">Click</button>`;
-    snapshotTemplateCode(template);
     let owner = {
       add() {
         expect(this).toBe(owner);
@@ -138,7 +130,6 @@ describe("t-on", () => {
         <t t-foreach="[1]" t-as="value">
           <button t-key="value" t-on-click="add">Click</button>
         </t>`;
-    snapshotTemplateCode(template);
     let owner = {
       add() {
         expect(this).toBe(owner);
@@ -156,8 +147,6 @@ describe("t-on", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
     let owner: any = {
       add() {
         expect(this).toBe(owner);
@@ -182,8 +171,6 @@ describe("t-on", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
     let owner: any = {
       add() {
         expect(this).toBe(owner);
@@ -199,7 +186,6 @@ describe("t-on", () => {
 
   test("t-on with inline statement", () => {
     const template = `<button t-on-click="state.counter++">Click</button>`;
-    snapshotTemplateCode(template);
     let owner = { state: { counter: 0 } };
     const fixture = mountToFixture(template, owner);
     expect(owner.state.counter).toBe(0);
@@ -209,7 +195,6 @@ describe("t-on", () => {
 
   test("t-on with inline statement (function call)", () => {
     const template = `<button t-on-click="state.incrementCounter(2)">Click</button>`;
-    snapshotTemplateCode(template);
     let owner = {
       state: {
         counter: 0,
@@ -226,7 +211,6 @@ describe("t-on", () => {
 
   test("t-on with inline statement, part 2", () => {
     const template = `<button t-on-click="state.flag = !state.flag">Toggle</button>`;
-    snapshotTemplateCode(template);
     let owner = {
       state: {
         flag: true,
@@ -242,7 +226,6 @@ describe("t-on", () => {
 
   test("t-on with inline statement, part 3", () => {
     const template = `<button t-on-click="state.n = someFunction(3)">Toggle</button>`;
-    snapshotTemplateCode(template);
     let owner = {
       someFunction(n: number) {
         return n + 1;
@@ -265,8 +248,6 @@ describe("t-on", () => {
     const main = `<div><t t-call="sub"/></div>`;
     app.addTemplate("sub", sub);
     app.addTemplate("main", main);
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
 
     let owner: any = {
       update() {
@@ -289,8 +270,6 @@ describe("t-on", () => {
     const main = `<div><t t-call="sub"/></div>`;
     app.addTemplate("sub", sub);
     app.addTemplate("main", main);
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
 
     let owner: any = {
       update(val: number) {

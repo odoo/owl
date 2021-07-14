@@ -1,5 +1,7 @@
 import { TemplateSet } from "../../src/core/app";
-import { renderToBdom, snapshotTemplateCode } from "../helpers";
+import { renderToBdom, snapshotEverything } from "../helpers";
+
+snapshotEverything();
 
 // -----------------------------------------------------------------------------
 // t-ref
@@ -8,7 +10,6 @@ import { renderToBdom, snapshotTemplateCode } from "../helpers";
 describe("t-ref", () => {
   test("can get a ref on a node", () => {
     const template = `<div><span t-ref="myspan"/></div>`;
-    snapshotTemplateCode(template);
     const refs: any = {};
     const bdom = renderToBdom(template, { __owl__: { refs } });
     expect(refs).toEqual({});
@@ -18,7 +19,6 @@ describe("t-ref", () => {
 
   test("can get a dynamic ref on a node", () => {
     const template = `<div><span t-ref="myspan{{id}}"/></div>`;
-    snapshotTemplateCode(template);
     const refs: any = {};
     const bdom = renderToBdom(template, { id: 3, __owl__: { refs } });
     expect(refs).toEqual({});
@@ -32,7 +32,6 @@ describe("t-ref", () => {
           <div t-ref="{{item}}" t-key="item"><t t-esc="item"/></div>
         </t>
       </div>`;
-    snapshotTemplateCode(template);
     const refs: any = {};
     const bdom = renderToBdom(template, { items: [1, 2, 3], __owl__: { refs } });
     expect(refs).toEqual({});
@@ -47,7 +46,6 @@ describe("t-ref", () => {
           <span t-ref="name"/>
         </t>
       </div>`;
-    snapshotTemplateCode(template);
 
     const refs: any = {};
     // false
@@ -75,7 +73,6 @@ describe("t-ref", () => {
         </t>
         <p t-ref="p"/>
       </div>`;
-    snapshotTemplateCode(template);
 
     const refs: any = {};
 
@@ -99,8 +96,6 @@ describe("t-ref", () => {
   test("ref in a t-call", () => {
     const main = `<div><t t-call="sub"/></div>`;
     const sub = `<div>1<span t-ref="name"/>2</div>`;
-    snapshotTemplateCode(main);
-    snapshotTemplateCode(sub);
 
     const refs: any = {};
 

@@ -1,4 +1,6 @@
-import { renderToString, snapshotTemplateCode } from "../helpers";
+import { renderToString, snapshotEverything } from "../helpers";
+
+snapshotEverything();
 
 // -----------------------------------------------------------------------------
 // white space
@@ -8,13 +10,11 @@ describe("white space handling", () => {
   test("white space only text nodes are condensed into a single space", () => {
     const template = `<div>  </div>`;
     expect(renderToString(template)).toBe("<div> </div>");
-    snapshotTemplateCode(template);
   });
 
   test("consecutives whitespaces are condensed into a single space", () => {
     const template = `<div>  abc  </div>`;
     expect(renderToString(template)).toBe("<div> abc </div>");
-    snapshotTemplateCode(template);
   });
 
   test("whitespace only text nodes with newlines are removed", () => {
@@ -23,7 +23,6 @@ describe("white space handling", () => {
         </div>`;
 
     expect(renderToString(template)).toBe("<div><span>abc</span></div>");
-    snapshotTemplateCode(template);
   });
 
   test("nothing is done in pre tags", () => {
@@ -33,7 +32,6 @@ describe("white space handling", () => {
     const template2 = `<pre>
           some text
         </pre>`;
-    snapshotTemplateCode(template2);
     expect(renderToString(template2)).toBe(template2);
 
     const template3 = `<pre>

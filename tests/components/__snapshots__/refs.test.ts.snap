@@ -7,6 +7,29 @@ exports[`refs refs are properly bound in slots 1`] = `
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/></span>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, 'footer');
+    return b1;
+  }
+}"
+`;
+
+exports[`refs refs are properly bound in slots 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);

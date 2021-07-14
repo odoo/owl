@@ -202,6 +202,28 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = this.data[0];
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx[zero];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-esc t-esc=0 is escaped 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -220,28 +242,6 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
     const b2 = new Block2();
     ctx[zero] = b2;
     b1.children[0] = call(\`sub\`, ctx, parent);
-    return b1;
-  }
-}"
-`;
-
-exports[`t-esc t-esc=0 is escaped 2`] = `
-"function anonymous(Blocks, utils
-) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
-  
-  class Block1 extends BNode {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = this.data[0];
-    }
-  }
-  
-  return (ctx, parent = ctx) => {
-    const b1 = new Block1();
-    b1.data[0] = ctx[zero];
     return b1;
   }
 }"

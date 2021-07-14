@@ -1,6 +1,8 @@
 import { BText } from "../../src/bdom/block_text";
 import { Component, mount, xml } from "../../src/index";
-import { fromName, makeTestFixture, snapshotTemplateCode } from "../helpers";
+import { makeTestFixture, snapshotEverything } from "../helpers";
+
+snapshotEverything();
 
 let fixture: HTMLElement;
 
@@ -16,8 +18,6 @@ describe("t-call-block", () => {
         return new BText("hello");
       }
     }
-
-    snapshotTemplateCode(fromName(Test.template));
 
     await mount(Test, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>hello</div>");

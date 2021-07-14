@@ -1,5 +1,7 @@
 import { Component, mount, useState, xml } from "../../src/index";
-import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+
+snapshotEverything();
 
 let fixture: HTMLElement;
 
@@ -27,8 +29,6 @@ describe("list of components", () => {
         ],
       });
     }
-
-    snapshotTemplateCode(fromName(Parent.template));
 
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");

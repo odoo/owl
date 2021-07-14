@@ -1,4 +1,6 @@
-import { renderToString, snapshotTemplateCode } from "../helpers";
+import { renderToString, snapshotEverything } from "../helpers";
+
+snapshotEverything();
 
 // -----------------------------------------------------------------------------
 // t-set
@@ -7,13 +9,11 @@ import { renderToString, snapshotTemplateCode } from "../helpers";
 describe("t-set", () => {
   test("set from attribute literal", () => {
     const template = `<div><t t-set="value" t-value="'ok'"/><t t-esc="value"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div>ok</div>");
   });
 
   test("set from attribute literal (no outside div)", () => {
     const template = `<t><t t-set="value" t-value="'ok'"/><t t-esc="value"/></t>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("ok");
   });
 
@@ -23,19 +23,16 @@ describe("t-set", () => {
           <t t-set="v" t-value="value"/>
           <t t-if="v === 'ok'">grimbergen</t>
         </div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template, { value: "ok" })).toBe("<div>grimbergen</div>");
   });
 
   test("set from body literal", () => {
     const template = `<t><t t-set="value">ok</t><t t-esc="value"/></t>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("ok");
   });
 
   test("set from attribute lookup", () => {
     const template = `<div><t t-set="stuff" t-value="value"/><t t-esc="stuff"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template, { value: "ok" })).toBe("<div>ok</div>");
   });
 
@@ -46,7 +43,6 @@ describe("t-set", () => {
           <t t-esc="v"/>
           <t t-esc="v"/>
         </div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template, { value: "stella" })).toBe(
       "<div>stella artoisstella artois</div>"
     );
@@ -54,31 +50,26 @@ describe("t-set", () => {
 
   test("set from body lookup", () => {
     const template = `<div><t t-set="stuff"><t t-esc="value"/></t><t t-esc="stuff"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template, { value: "ok" })).toBe("<div>ok</div>");
   });
 
   test("set from empty body", () => {
     const template = `<div><t t-set="stuff"/><t t-esc="stuff"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div></div>");
   });
 
   test("value priority", () => {
     const template = `<div><t t-set="value" t-value="1">2</t><t t-esc="value"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div>1</div>");
   });
 
   test("value priority (with non text body", () => {
     const template = `<div><t t-set="value" t-value="1"><span>2</span></t><t t-esc="value"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div>1</div>");
   });
 
   test("evaluate value expression", () => {
     const template = `<div><t t-set="value" t-value="1 + 2"/><t t-esc="value"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div>3</div>");
   });
 
@@ -91,7 +82,6 @@ describe("t-set", () => {
               <t t-set="v" t-value="elem"/>
           </div>
         </div>`;
-    snapshotTemplateCode(template);
     const expected = "<div><div><span>v1</span></div><div><span>va</span></div></div>";
     expect(renderToString(template, { list: ["a", "b"] })).toBe(expected);
   });
@@ -102,13 +92,11 @@ describe("t-set", () => {
           <t t-set="setvar"><t t-esc="beep"/> boop</t>
           <t t-esc="setvar"/>
         </div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template, { beep: "beep" })).toBe("<div>beep boop</div>");
   });
 
   test("evaluate value expression, part 2", () => {
     const template = `<div><t t-set="value" t-value="somevariable + 2"/><t t-esc="value"/></div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template, { somevariable: 43 })).toBe("<div>45</div>");
   });
 
@@ -119,7 +107,6 @@ describe("t-set", () => {
           <t t-else="" t-set="ourvar" t-value="0"></t>
           <t t-esc="ourvar"/>
         </div>`;
-    snapshotTemplateCode(template);
 
     expect(renderToString(template, { flag: true })).toBe("<div>1</div>");
     expect(renderToString(template, { flag: false })).toBe("<div>0</div>");
@@ -132,7 +119,6 @@ describe("t-set", () => {
           <t t-else="" t-set="ourvar">0</t>
           <t t-esc="ourvar"/>
         </div>`;
-    snapshotTemplateCode(template);
 
     expect(renderToString(template, { flag: true })).toBe("<div>1</div>");
     expect(renderToString(template, { flag: false })).toBe("<div>0</div>");
@@ -143,7 +129,6 @@ describe("t-set", () => {
           <t t-if="flag" t-set="ourvar" t-value="1"></t>
           <t t-else="" t-set="ourvar">0</t>
           <t t-esc="ourvar"/>`;
-    snapshotTemplateCode(template);
 
     expect(renderToString(template, { flag: true })).toBe("1");
     expect(renderToString(template, { flag: false })).toBe("0");
@@ -159,7 +144,6 @@ describe("t-set", () => {
           <t t-set="v1" t-value="'after'"/>
           <t t-raw="v2"/>
         </div>`;
-    snapshotTemplateCode(template);
 
     expect(renderToString(template)).toBe("<div><span>before</span></div>");
   });
@@ -176,7 +160,6 @@ describe("t-set", () => {
           <t t-set="v3" t-value="true"/>
           <t t-raw="v2"/>
         </div>`;
-    snapshotTemplateCode(template);
 
     expect(renderToString(template)).toBe("<div><span>before</span></div>");
   });
@@ -193,7 +176,6 @@ describe("t-set", () => {
           <t t-set="v3" t-value="false"/>
           <t t-raw="v2"/>
         </div>`;
-    snapshotTemplateCode(template);
 
     expect(renderToString(template)).toBe("<div>Truthy</div>");
   });

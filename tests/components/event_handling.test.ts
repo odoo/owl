@@ -1,5 +1,7 @@
-import { fromName, makeTestFixture, snapshotTemplateCode, nextTick } from "../helpers";
+import { makeTestFixture, snapshotEverything, nextTick } from "../helpers";
 import { mount, Component, useState, xml } from "../../src/index";
+
+snapshotEverything();
 
 let fixture: HTMLElement;
 
@@ -21,8 +23,6 @@ describe("event handling", () => {
         this.state.value++;
       }
     }
-
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>1");

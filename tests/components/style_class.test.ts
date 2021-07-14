@@ -1,6 +1,7 @@
 import { Component, mount, useState, xml } from "../../src";
-import { fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
+snapshotEverything();
 let fixture: HTMLElement;
 
 beforeEach(() => {
@@ -16,7 +17,6 @@ describe("style and class handling", () => {
     }
     await mount(Test, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
-    snapshotTemplateCode(fromName(Test.template));
   });
 
   test("can set class on sub component", async () => {
@@ -28,7 +28,6 @@ describe("style and class handling", () => {
       static template = xml`<Child class="some-class" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="some-class">child</div>`);
   });
@@ -42,7 +41,6 @@ describe("style and class handling", () => {
       static template = xml`<Child class="a  b" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="a b">child</div>`);
   });
@@ -56,7 +54,6 @@ describe("style and class handling", () => {
       static template = xml`<Child class="from parent" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="child from parent">child</div>`);
   });
@@ -70,7 +67,6 @@ describe("style and class handling", () => {
       static template = xml`<Child class="some-class" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`child`);
   });
@@ -89,7 +85,6 @@ describe("style and class handling", () => {
       static template = xml`<Child class="fromparent" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="fromchild fromparent">childchild</div>`);
   });
@@ -103,7 +98,6 @@ describe("style and class handling", () => {
       static template = xml`<Child class="fromparent" />`;
       static components = { Child };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
   });
@@ -126,7 +120,6 @@ describe("style and class handling", () => {
 
       state = useState({ child: "a" });
     }
-    snapshotTemplateCode(fromName(Parent.template));
 
     const parent = await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe(`<div class="someclass">a</div>`);

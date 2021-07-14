@@ -204,6 +204,29 @@ exports[`t-raw t-raw with a <t/> in body 1`] = `
 }"
 `;
 
+exports[`t-raw t-raw with comment 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/></span>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BHtml(ctx['var']);
+    return b1;
+  }
+}"
+`;
+
 exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
 "function anonymous(Blocks, utils
 ) {

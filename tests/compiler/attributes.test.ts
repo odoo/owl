@@ -1,5 +1,7 @@
-import { makeTestFixture, renderToBdom, renderToString, snapshotTemplateCode } from "../helpers";
+import { xml } from "../../src";
+import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
+snapshotEverything();
 // -----------------------------------------------------------------------------
 // attributes
 // -----------------------------------------------------------------------------
@@ -27,91 +29,78 @@ describe("attributes", () => {
 
   test("dynamic attributes", () => {
     const template = `<div t-att-foo="'bar'"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template);
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
   test("two dynamic attributes", () => {
     const template = `<div t-att-foo="'bar'" t-att-bar="'foo'"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template);
     expect(result).toBe(`<div foo="bar" bar="foo"></div>`);
   });
 
   test("dynamic class attribute", () => {
     const template = `<div t-att-class="c"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { c: "abc" });
     expect(result).toBe(`<div class="abc"></div>`);
   });
 
   test("dynamic empty class attribute", () => {
     const template = `<div t-att-class="c"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { c: "" });
     expect(result).toBe(`<div></div>`);
   });
 
   test("dynamic attribute with a dash", () => {
     const template = `<div t-att-data-action-id="id"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { id: 32 });
     expect(result).toBe(`<div data-action-id="32"></div>`);
   });
 
   test("dynamic formatted attributes with a dash", () => {
     const template = `<div t-attf-aria-label="Some text {{id}}"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { id: 32 });
     expect(result).toBe(`<div aria-label="Some text 32"></div>`);
   });
 
   test("fixed variable", () => {
     const template = `<div t-att-foo="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: "ok" });
     expect(result).toBe(`<div foo="ok"></div>`);
   });
 
   test("dynamic attribute evaluating to 0", () => {
     const template = `<div t-att-foo="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: 0 });
     expect(result).toBe(`<div foo="0"></div>`);
   });
 
   test("dynamic class attribute evaluating to 0", () => {
     const template = `<div t-att-class="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: 0 });
     expect(result).toBe(`<div class="0"></div>`);
   });
 
   test("dynamic attribute falsy variable ", () => {
     const template = `<div t-att-foo="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: false });
     expect(result).toBe(`<div></div>`);
   });
 
   test("tuple literal", () => {
     const template = `<div t-att="['foo', 'bar']"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template);
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
   test("tuple variable", () => {
     const template = `<div t-att="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: ["foo", "bar"] });
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
   test("object", () => {
     const template = `<div t-att="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, {
       value: { a: 1, b: 2, c: 3 },
     });
@@ -120,14 +109,12 @@ describe("attributes", () => {
 
   test("format literal", () => {
     const template = `<div t-attf-foo="bar"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template);
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
   test("format value", () => {
     const template = `<div t-attf-foo="b{{value}}r"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: "a" });
     expect(result).toBe(`<div foo="bar"></div>`);
   });
@@ -135,35 +122,30 @@ describe("attributes", () => {
   test("t-attf-class", () => {
     const template = `<div t-attf-class="hello"/>`;
     const result = renderToString(template);
-    snapshotTemplateCode(template);
     expect(result).toBe(`<div class="hello"></div>`);
   });
 
   test("t-attf-class with multiple classes", () => {
     const template = `<div t-attf-class="hello {{word}}"/>`;
     const result = renderToString(template, { word: "world" });
-    snapshotTemplateCode(template);
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
   test("t-attf-class with multiple classes separated by multiple spaces", () => {
     const template = `<div t-attf-class="hello  {{word}}"/>`;
     const result = renderToString(template, { word: "world" });
-    snapshotTemplateCode(template);
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
   test("t-attf-class should combine with class", () => {
     const template = `<div class="hello" t-attf-class="world"/>`;
     const result = renderToString(template);
-    snapshotTemplateCode(template);
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
   test("from variables set previously", () => {
     const template = `<div><t t-set="abc" t-value="'def'"/><span t-att-class="abc"/></div>`;
     const result = renderToString(template);
-    snapshotTemplateCode(template);
     expect(result).toBe('<div><span class="def"></span></div>');
   });
 
@@ -172,7 +154,6 @@ describe("attributes", () => {
       <t t-set="abc" t-value="'def'"/>
       <span t-att-class="abc"/>`;
     const result = renderToString(template);
-    snapshotTemplateCode(template);
     expect(result).toBe('<span class="def"></span>');
   });
 
@@ -183,14 +164,12 @@ describe("attributes", () => {
         <t t-set="o" t-value="{a:'b'}"/>
         <span t-att-class="o.a"/>
       </div>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template);
     expect(result).toBe('<div><span class="b"></span></div>');
   });
 
   test("format expression", () => {
     const template = `<div t-attf-foo="{{value + 37}}"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: 5 });
     expect(result).toBe(`<div foo="42"></div>`);
   });
@@ -203,7 +182,6 @@ describe("attributes", () => {
       value3: 2,
     });
     expect(result).toBe(`<div foo="a 0 is 1 of 2 ]"></div>`);
-    snapshotTemplateCode(template);
   });
 
   test("various escapes", () => {
@@ -214,7 +192,6 @@ describe("attributes", () => {
         t-attf-baz="&lt;{{baz}}&gt;"
         t-att="qux"/>`;
 
-    snapshotTemplateCode(template);
     const result = renderToString(template, {
       bar: 0,
       baz: 1,
@@ -226,28 +203,24 @@ describe("attributes", () => {
 
   test("t-att-class and class should combine together", () => {
     const template = `<div class="hello" t-att-class="value"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: "world" });
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
   test("class and t-att-class should combine together", () => {
     const template = `<div t-att-class="value" class="hello" />`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: "world" });
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
   test("class and t-attf-class with ternary operation", () => {
     const template = `<div class="hello" t-attf-class="{{value ? 'world' : ''}}"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { value: true });
     expect(result).toBe(`<div class="hello world"></div>`);
   });
 
   test("t-att-class with object", () => {
     const template = `<div class="static" t-att-class="{a: b, c: d, e: f}"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { b: true, d: false, f: true });
     expect(result).toBe(`<div class="static a e"></div>`);
   });
@@ -256,7 +229,6 @@ describe("attributes", () => {
 describe("special cases for some specific html attributes/properties", () => {
   test("input type= checkbox, with t-att-checked", () => {
     const template = `<input type="checkbox" t-att-checked="flag"/>`;
-    snapshotTemplateCode(template);
     const result = renderToString(template, { flag: true });
     expect(result).toBe(`<input type="checkbox" checked="">`);
   });
@@ -264,7 +236,7 @@ describe("special cases for some specific html attributes/properties", () => {
   test("various boolean html attributes", () => {
     // the unique assertion here is the code snapshot automatically done by
     // renderToString
-    const template = `
+    xml`
       <div>
         <input type="checkbox" checked="checked"/>
         <input checked="checked"/>
@@ -275,13 +247,11 @@ describe("special cases for some specific html attributes/properties", () => {
         <button disabled="disabled"/>
       </div>
       `;
-    snapshotTemplateCode(template);
   });
 
   test("input with t-att-value", () => {
     // render input with initial value
     const template = `<input  t-att-value="v"/>`;
-    snapshotTemplateCode(template);
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
     bnode1.mount(fixture, [], []);

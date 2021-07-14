@@ -50,6 +50,9 @@ export function addTemplate(name: string, template: string): string {
 // -----------------------------------------------------------------------------
 
 export function compile(template: string): Template {
+  // register here the template globally so snapshotEverything
+  // can get it
+  globalTemplates[template] = template;
   const templateFunction = compileTemplate(template);
   return templateFunction(Blocks, UTILS);
 }
@@ -76,15 +79,29 @@ export class TestContext extends TemplateSet {
 }
 
 export function snapshotEverything() {
+  const consolewarn = console.warn;
+
+  const originalAddTemplate = TemplateSet.prototype.addTemplate;
+  TemplateSet.prototype.addTemplate = function (name: string, template: string, options) {
+    originalAddTemplate.call(this, name, template, options);
+    // register it so snapshotEverything can get it
+    globalTemplates[name] = template;
+  };
 
   beforeEach(() => {
     for (let k in globalTemplates) {
       delete globalTemplates[k];
     }
-  })
+  });
   afterEach(() => {
+    console.warn = () => {};
     for (let k in globalTemplates) {
-      snapshotTemplateCode(globalTemplates[k]);
+      try {
+        snapshotTemplateCode(globalTemplates[k]);
+      } catch (e) {
+        // ignore error
+      }
     }
+    console.warn = consolewarn;
   });
 }

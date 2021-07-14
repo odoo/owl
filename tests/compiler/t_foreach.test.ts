@@ -1,4 +1,6 @@
-import { renderToString, snapshotTemplateCode, TestContext } from "../helpers";
+import { renderToString, snapshotEverything, TestContext } from "../helpers";
+
+snapshotEverything();
 
 // -----------------------------------------------------------------------------
 // t-foreach
@@ -7,13 +9,11 @@ import { renderToString, snapshotTemplateCode, TestContext } from "../helpers";
 describe("t-foreach", () => {
   test("simple iteration", () => {
     const template = `<t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-esc="item"/></t>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("321");
   });
 
   test("t-key on an inside node", () => {
     const template = `<t t-foreach="[3, 2, 1]" t-as="item"><p t-key="item"><t t-esc="item"/></p></t>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<p>3</p><p>2</p><p>1</p>");
   });
 
@@ -23,7 +23,6 @@ describe("t-foreach", () => {
         <span>a<t t-esc="item"/></span>
         <span>b<t t-esc="item"/></span>
       </t>`;
-    snapshotTemplateCode(template);
     const expected =
       "<span>a3</span><span>b3</span><span>a2</span><span>b2</span><span>a1</span><span>b1</span>";
     expect(renderToString(template)).toBe(expected);
@@ -34,7 +33,6 @@ describe("t-foreach", () => {
         <div>
           <t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-esc="item"/></t>
         </div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div>321</div>");
   });
 
@@ -45,7 +43,6 @@ describe("t-foreach", () => {
             [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
           </t>
         </div>`;
-    snapshotTemplateCode(template);
     expect(renderToString(template)).toBe("<div> [0: 3 3]  [1: 2 2]  [2: 1 1] </div>");
   });
 
@@ -54,7 +51,6 @@ describe("t-foreach", () => {
         <div>
           <span t-foreach="[1, 2]" t-as="item" t-key="item"><t t-esc="item"/></span>
         </div>`;
-    snapshotTemplateCode(template);
     const expected = `<div><span>1</span><span>2</span></div>`;
     expect(renderToString(template)).toBe(expected);
   });
@@ -66,7 +62,6 @@ describe("t-foreach", () => {
             -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-esc="elem_index"/>)
           </t>
         </div>`;
-    snapshotTemplateCode(template);
     const expected = `<div> - first (0)  - (1)  - (2)  - (3)  - last (4) </div>`;
     expect(renderToString(template)).toBe(expected);
   });
@@ -78,7 +73,6 @@ describe("t-foreach", () => {
             [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
           </t>
         </div>`;
-    snapshotTemplateCode(template);
     const expected = `<div> [0: a 1]  [1: b 2]  [2: c 3] </div>`;
     const context = { value: { a: 1, b: 2, c: 3 } };
     expect(renderToString(template, context)).toBe(expected);
@@ -89,7 +83,6 @@ describe("t-foreach", () => {
         <div>
           <t t-foreach="[1]" t-as="item" t-key="item"><t t-esc="item"/></t>
         </div>`;
-    snapshotTemplateCode(template);
     const context = { __owl__: {} };
     renderToString(template, context);
     expect(Object.keys(context)).toEqual(["__owl__"]);
@@ -104,8 +97,6 @@ describe("t-foreach", () => {
             </t>
           </t>
         </div>`;
-
-    snapshotTemplateCode(template);
 
     const context = { numbers: [1, 2, 3], letters: ["a", "b"] };
     const expected = "<div> [1a]  [1b]  [2a]  [2b]  [3a]  [3b] </div>";
@@ -135,8 +126,6 @@ describe("t-foreach", () => {
 
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
 
     const ctx = { numbers: [1, 2, 3], letters: ["a", "b"] };
     const expected =
@@ -168,8 +157,6 @@ describe("t-foreach", () => {
 
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
-    snapshotTemplateCode(sub);
-    snapshotTemplateCode(main);
 
     const ctx = { numbers: [1, 2, 3], letters: ["a", "b"] };
     const expected =
@@ -212,7 +199,6 @@ describe("t-foreach", () => {
             <span t-if="elem.id < 3"><t t-esc="elem.text"/></span>
           </t>
         </div>`;
-    snapshotTemplateCode(template);
     const ctx = {
       elems: [
         { id: 1, text: "a" },
@@ -228,7 +214,6 @@ describe("t-foreach", () => {
           <t t-foreach="elems" t-as="elem" t-key="elem.id">
             <span t-if="elem.id < 3"><t t-esc="elem.text"/></span>
           </t>`;
-    snapshotTemplateCode(template);
     const ctx = {
       elems: [
         { id: 1, text: "a" },

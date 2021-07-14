@@ -1,6 +1,7 @@
 import { App, Component, mount, useState, xml } from "../../src/index";
-import { addTemplate, fromName, makeTestFixture, nextTick, snapshotTemplateCode } from "../helpers";
+import { addTemplate, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
+snapshotEverything();
 let fixture: HTMLElement;
 
 function children(w: Component): Component[] {
@@ -24,8 +25,6 @@ describe("slots", () => {
     }
     await mount(Parent, { target: fixture });
 
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
     expect(fixture.innerHTML).toBe("<span>some text</span>");
   });
 
@@ -40,8 +39,6 @@ describe("slots", () => {
     }
     await mount(Parent, { target: fixture });
 
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
     expect(fixture.innerHTML).toBe("some text");
   });
 
@@ -56,8 +53,6 @@ describe("slots", () => {
     }
     await mount(Parent, { target: fixture });
 
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
     expect(fixture.innerHTML).toBe("some textsome text");
   });
 
@@ -76,8 +71,6 @@ describe("slots", () => {
     }
     const parent = await mount(Parent, { target: fixture });
 
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
     expect(parent.state.value).toBe(0);
     fixture.querySelector("button")!.click();
     expect(parent.state.value).toBe(1);
@@ -104,8 +97,6 @@ describe("slots", () => {
     }
     await mount(Parent, { target: fixture });
 
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(Parent.template));
     expect(fixture.innerHTML).toBe(
       "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
     );
@@ -119,8 +110,6 @@ describe("slots", () => {
       static template = xml`<Dialog/>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<span></span>");
@@ -137,8 +126,6 @@ describe("slots", () => {
       static template = xml`<div><Dialog/></div>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
@@ -157,7 +144,6 @@ describe("slots", () => {
     }
     await mount(Parent, { target: fixture });
 
-    snapshotTemplateCode(fromName(Dialog.template));
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
   });
 
@@ -172,8 +158,6 @@ describe("slots", () => {
       static template = xml`<div><Dialog>hey</Dialog></div>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
@@ -190,8 +174,6 @@ describe("slots", () => {
       static template = xml`<div><Dialog><t t-set-slot="header">hey</t></Dialog></div>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
@@ -218,8 +200,6 @@ describe("slots", () => {
         this.state.val++;
       }
     }
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(Parent.template));
 
     await mount(Parent, { target: fixture });
 
@@ -259,8 +239,6 @@ describe("slots", () => {
       });
       static components = { Link };
     }
-    snapshotTemplateCode(fromName(App.template));
-    snapshotTemplateCode(fromName(Link.template));
 
     const app = await mount(App, { target: fixture });
 
@@ -301,9 +279,6 @@ describe("slots", () => {
       static components = { Link };
     }
 
-    snapshotTemplateCode(fromName(App.template));
-    snapshotTemplateCode(fromName(Link.template));
-
     const app = await mount(App, { target: fixture });
 
     expect(fixture.innerHTML).toBe(
@@ -336,8 +311,6 @@ describe("slots", () => {
       state = useState({ user: { id: 1, name: "Aaron" } });
     }
 
-    snapshotTemplateCode(fromName(App.template));
-
     const app = await mount(App, { target: fixture });
 
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
@@ -362,7 +335,6 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
   });
@@ -379,7 +351,6 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<span>sts rocks</span>");
   });
@@ -395,7 +366,6 @@ describe("slots", () => {
           </div>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
@@ -409,7 +379,6 @@ describe("slots", () => {
       static template = xml`<Dialog>sts rocks</Dialog>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("sts rocks");
@@ -431,7 +400,6 @@ describe("slots", () => {
           </div>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
@@ -451,7 +419,6 @@ describe("slots", () => {
           </div>`;
       static components = { Dialog };
     }
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
@@ -471,7 +438,6 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    snapshotTemplateCode(fromName(Dialog.template));
     await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
@@ -492,7 +458,6 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    snapshotTemplateCode(fromName(Parent.template));
     await mount(Parent, { target: fixture });
     expect(console.log).toHaveBeenCalledTimes(0);
     console.log = consoleLog;
@@ -515,8 +480,6 @@ describe("slots", () => {
       static components = { Child, GrandChild };
     }
 
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
     const parent = await mount(Parent, { target: fixture });
 
     expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
@@ -551,9 +514,6 @@ describe("slots", () => {
       static components = { Child, GrandChild };
     }
 
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Child.template));
-    snapshotTemplateCode(fromName("sub"));
     // throw new Error("boom")
     const parent = await mount(Parent, { target: fixture });
 
@@ -569,7 +529,7 @@ describe("slots", () => {
   });
 
   test("t-slot scope context", async () => {
-    expect.assertions(2);
+    expect.assertions(4);
 
     class Wrapper extends Component {
       static template = xml`<t t-slot="default"/>`;
@@ -607,8 +567,6 @@ describe("slots", () => {
         </Dialog>`;
       static components = { Dialog };
     }
-
-    snapshotTemplateCode(fromName(Dialog.template));
 
     await mount(Parent, { target: fixture });
 
@@ -672,8 +630,6 @@ describe("slots", () => {
     const app = new App(Parent);
     app.addTemplate("_test_recursive_template", recursiveTemplate);
 
-    snapshotTemplateCode(recursiveTemplate);
-
     await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe(
@@ -715,9 +671,6 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe(
       `<div><div class="slotted"><div class="slot"><div class="child"></div></div></div></div>`
     );
-
-    snapshotTemplateCode(fromName("sometemplate"));
-    snapshotTemplateCode(fromName(UsingTcallInSlotted.template));
   });
 
   test("slots in t-foreach in t-foreach", async () => {
@@ -775,7 +728,6 @@ describe("slots", () => {
         },
       ];
     }
-    snapshotTemplateCode(fromName(App.template));
 
     await mount(App, { target: fixture });
 
@@ -823,8 +775,6 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe(
       '<div><div class="Dialog"><div class="content"> Default content </div><div class="footer"> Overridden footer </div></div></div>'
     );
-    snapshotTemplateCode(fromName(Dialog.template));
-    snapshotTemplateCode(fromName(App.template));
   });
 
   test("dynamic t-slot call", async () => {
@@ -846,8 +796,6 @@ describe("slots", () => {
         </div>`;
       static components = { Toggler };
     }
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Toggler.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
 
@@ -884,8 +832,6 @@ describe("slots", () => {
         </div>`;
       static components = { Toggler };
     }
-    snapshotTemplateCode(fromName(Parent.template));
-    snapshotTemplateCode(fromName(Toggler.template));
     await mount(Parent, { target: fixture });
     expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
 

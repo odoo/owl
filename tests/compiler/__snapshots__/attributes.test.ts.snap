@@ -424,6 +424,57 @@ exports[`attributes object 1`] = `
 }"
 `;
 
+exports[`attributes static attributes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div foo=\\"a\\" bar=\\"b\\" baz=\\"c\\"/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes static attributes on void elements 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<img src=\\"/test.jpg\\" alt=\\"Test\\"/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes static attributes with dashes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div aria-label=\\"Close\\"/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
 exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -600,6 +651,23 @@ exports[`attributes tuple variable 1`] = `
 }"
 `;
 
+exports[`attributes two classes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div class=\\"a b\\"/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
 exports[`attributes two dynamic attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -647,6 +715,30 @@ exports[`attributes various escapes 1`] = `
     b1.data[0] = ctx['bar'];
     b1.data[1] = \`<\${ctx['baz']}>\`;
     b1.data[2] = ctx['qux'];
+    return b1;
+  }
+}"
+`;
+
+exports[`special cases for some specific html attributes/properties input of type checkbox with t-att-indeterminate 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<input type=\\"checkbox\\"/>\`);
+    data = new Array(1);
+    update() {
+      const el1 = this.el;
+      this.updateAttr(el1, \`indeterminate\`, this.data[0]);
+      this.updateProp(el1, \`indeterminate\`, this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['v'];
     return b1;
   }
 }"

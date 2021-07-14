@@ -18,7 +18,7 @@ export class Fiber {
       const root = parent.root;
       root.counter++;
       this.root = root;
-      root.children.push(this);
+      parent.children.push(this);
     } else {
       this.root = this as any;
     }
@@ -53,8 +53,15 @@ export class RootFiber extends Fiber {
 
   _reuseFiber(oldFiber: RootFiber) {
     // cancel old fibers
-    for (let fiber of oldFiber.children) {
-      fiber.isCompleted = true;
+    const fibers = [oldFiber.children];
+    let fiberGroup;
+    while (fiberGroup = fibers.pop()) {
+      for (let fiber of fiberGroup) {
+        fiber.isCompleted = true;
+        if (fiber.children.length) {
+          fibers.push(fiber.children);
+        }
+      }
     }
     oldFiber.toPatch = [];
     oldFiber.children = [];

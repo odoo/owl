@@ -584,6 +584,77 @@ exports[`rendering component again in next microtick 2`] = `
 }"
 `;
 
+exports[`reuse widget if possible, in some async situation 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>a<owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`reuse widget if possible, in some async situation 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>b<owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`reuse widget if possible, in some async situation 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/></span>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    if (ctx['state'].flag) {
+      const b2 = b1.children[0] = new BMulti(2);
+      b2.children[0] = new BComponent(\`ChildA\`, {val: ctx['state'].valA}, \`__1\`, ctx, parent);
+      b2.children[1] = new BComponent(\`ChildB\`, {val: ctx['state'].valB}, \`__2\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`update a sub-component twice in the same frame 1`] = `
 "function anonymous(Blocks, utils
 ) {

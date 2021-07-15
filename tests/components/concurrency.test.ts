@@ -381,50 +381,50 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
   expect(fixture.innerHTML).toBe("<div></div>");
 });
 
-//   test.skip("reuse widget if possible, in some async situation", async () => {
-//     // this optimization has been temporarily deactivated
-//     env.qweb.addTemplates(`
-//           <templates>
-//               <span t-name="ChildA">a<t t-esc="props.val"/></span>
-//               <span t-name="ChildB">b<t t-esc="props.val"/></span>
-//               <span t-name="Parent">
-//                   <t t-if="state.flag">
-//                       <ChildA val="state.valA"/>
-//                       <ChildB val="state.valB"/>
-//                   </t>
-//               </span>
-//           </templates>
-//       `);
+test("reuse widget if possible, in some async situation", async () => {
+  // this optimization has been temporarily deactivated in the past
 
-//     let destroyCount = 0;
-//     class ChildA extends Component {
-//       destroy() {
-//         destroyCount++;
-//         super.destroy();
-//       }
-//     }
-//     class ChildB extends Component {
-//       willStart(): any {
-//         return new Promise(function () {});
-//       }
-//     }
-//     class Parent extends Component {
-//       static components = { ChildA, ChildB };
-//       state = useState({ valA: 1, valB: 2, flag: false });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
+  let def = makeDeferred();
+  let childCount = 0;
+  class ChildA extends Component {
+    static template = xml`<span>a<t t-esc="props.val"/></span>`;
+    setup() {
+      childCount++;
+    }
+  }
+  class ChildB extends Component {
+    static template = xml`<span>b<t t-esc="props.val"/></span>`;
+    willStart(): any {
+      return def;
+    }
+  }
+  class Parent extends Component {
+    static template = xml`
+            <span>
+                <t t-if="state.flag">
+                    <ChildA val="state.valA"/>
+                    <ChildB val="state.valB"/>
+                </t>
+            </span>`;
+    static components = { ChildA, ChildB };
+    state = useState({ valA: 1, valB: 2, flag: false });
+  }
+  const parent = await mount(Parent, { target: fixture });
 
-//     expect(destroyCount).toBe(0);
+  expect(childCount).toBe(0);
 
-//     parent.state.flag = true;
-//     await nextTick();
-//     expect(destroyCount).toBe(0);
+  parent.state.flag = true;
+  await nextTick();
+  expect(childCount).toBe(1);
 
-//     parent.state.valB = 3;
-//     await nextTick();
-//     expect(destroyCount).toBe(0);
-//   });
+  parent.state.valB = 3;
+  await nextTick();
+  expect(childCount).toBe(1);
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<span><span>a1</span><span>b3</span></span>");
+});
 
 test("rendering component again in next microtick", async () => {
   class Child extends Component {

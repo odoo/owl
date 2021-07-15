@@ -967,66 +967,69 @@ test("concurrent renderings scenario 9", async () => {
   expect(fixture.innerHTML).toBe("<div>a2<b>a2</b><p><span>a2b2</span></p></div>");
 });
 
-//   test("concurrent renderings scenario 10", async () => {
-//     // Here is the global idea of this scenario:
-//     //       A
-//     //       |
-//     //       B    <- async willUpdateProps
-//     //     -----  <- conditional (initialy false)
-//     //       |
-//     //       C    <- async willStart
-//     // Render A and B normally
-//     // Change the condition on B to trigger a re-rendering with C (async willStart)
-//     // Change the state on A to trigger a global re-rendering, which is blocked
-//     // in B (async willUpdateProps)
-//     // Resolve the willStart of C: the first re-rendering has been cancelled by
-//     // the global re-rendering, but handlers waiting for the rendering promise to
-//     // resolve might execute and we don't want them to crash/do anything
-//     const defB = makeDeferred();
-//     const defC = makeDeferred();
-//     let stateB;
-//     class ComponentC extends Component {
-//       static template = xml`<span><t t-esc="props.value"/></span>`;
-//       willStart() {
-//         return defC;
-//       }
-//     }
-//     ComponentC.prototype.__render = jest.fn(ComponentC.prototype.__render);
-//     class ComponentB extends Component {
-//       static template = xml`<p><ComponentC t-if="state.hasChild" value="props.value"/></p>`;
-//       state = useState({ hasChild: false });
-//       static components = { ComponentC };
-//       constructor(parent, props) {
-//         super(parent, props);
-//         stateB = this.state;
-//       }
-//       willUpdateProps() {
-//         return defB;
-//       }
-//     }
-//     class ComponentA extends Component {
-//       static template = xml`<div><ComponentB value="state.value"/></div>`;
-//       static components = { ComponentB };
-//       state = useState({ value: 1 });
-//     }
+test("concurrent renderings scenario 10", async () => {
+  // Here is the global idea of this scenario:
+  //       A
+  //       |
+  //       B    <- async willUpdateProps
+  //     -----  <- conditional (initialy false)
+  //       |
+  //       C    <- async willStart
+  // Render A and B normally
+  // Change the condition on B to trigger a re-rendering with C (async willStart)
+  // Change the state on A to trigger a global re-rendering, which is blocked
+  // in B (async willUpdateProps)
+  // Resolve the willStart of C: the first re-rendering has been cancelled by
+  // the global re-rendering, but handlers waiting for the rendering promise to
+  // resolve might execute and we don't want them to crash/do anything
 
-//     const componentA = new ComponentA();
-//     await componentA.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><p></p></div>");
-//     stateB.hasChild = true;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><p></p></div>");
+  const defB = makeDeferred();
+  const defC = makeDeferred();
+  let stateB: any = null;
+  let rendered = 0;
+  class ComponentC extends Component {
+    static template = xml`<span><t t-esc="value"/></span>`;
+    setup() {
+      onWillStart(() => defC);
+    }
+    get value() {
+      rendered++;
+      return this.props.value;
+    }
+  }
 
-//     componentA.state.value = 2;
-//     defC.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><p></p></div>");
+  class ComponentB extends Component {
+    static template = xml`<p><ComponentC t-if="state.hasChild" value="props.value"/></p>`;
+    state = useState({ hasChild: false });
+    static components = { ComponentC };
+    setup() {
+      stateB = this.state;
+      onWillUpdateProps(() => defB);
+    }
+  }
 
-//     defB.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><p><span>2</span></p></div>");
-//     expect(ComponentC.prototype.__render).toHaveBeenCalledTimes(1);
-//   });
+  class ComponentA extends Component {
+    static template = xml`<div><ComponentB value="state.value"/></div>`;
+    static components = { ComponentB };
+    state = useState({ value: 1 });
+  }
+
+  const componentA = await mount(ComponentA, fixture);
+  expect(fixture.innerHTML).toBe("<div><p></p></div>");
+  stateB.hasChild = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p></p></div>");
+
+  componentA.state.value = 2;
+  defC.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p></p></div>");
+
+  defB.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>2</span></p></div>");
+  expect(rendered).toBe(1);
+});
 
 test("concurrent renderings scenario 11", async () => {
   // This scenario is the following: we have a component being updated (by props),

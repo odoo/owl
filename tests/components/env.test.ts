@@ -14,7 +14,7 @@ describe("env handling", () => {
       static template = xml`<div/>`;
     }
     const app = new App(Test);
-    app.configure({env});
+    app.configure({ env });
     const component = await app.mount(fixture);
     expect(component.env).toBe(env);
   });

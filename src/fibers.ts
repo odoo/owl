@@ -14,7 +14,11 @@ export class Fiber {
   constructor(node: OwlNode, parent: Fiber | null) {
     // console.log(`new fiber ${this.constructor.name} for ${node.component.constructor.name}`)
     this.node = node;
-    node.fiber = this as any;
+    if (node.fiber) {
+      // pending rendering => should be cancelled
+      this.cancelRendering(node.fiber);
+    }
+    node.fiber = this;
     this.parent = parent;
     if (parent) {
       const root = parent.root;
@@ -23,6 +27,24 @@ export class Fiber {
       parent.children.push(this);
     } else {
       this.root = this as any;
+    }
+  }
+
+  cancelRendering(fiber: Fiber) {
+    // cancel old fibers
+    const fibers = [fiber.children];
+    const root = fiber.root;
+    let fiberGroup;
+    while ((fiberGroup = fibers.pop())) {
+      for (let fiber of fiberGroup) {
+        fiber.isCompleted = true;
+        if (fiber.isRendered) {
+          root.counter++;
+        }
+        if (fiber.children.length) {
+          fibers.push(fiber.children);
+        }
+      }
     }
   }
 }
@@ -54,24 +76,9 @@ export class RootFiber extends Fiber {
   }
 
   _reuseFiber(oldFiber: RootFiber) {
-    // cancel old fibers
-    const fibers = [oldFiber.children];
-    const root = oldFiber.root;
-    let fiberGroup;
-    while ((fiberGroup = fibers.pop())) {
-      for (let fiber of fiberGroup) {
-        fiber.isCompleted = true;
-        if (fiber.isRendered) {
-          root.counter++;
-        }
-        if (fiber.children.length) {
-          fibers.push(fiber.children);
-        }
-      }
-    }
     oldFiber.toPatch = [];
     oldFiber.children = [];
-    if (oldFiber === root) {
+    if (oldFiber === oldFiber.root) {
       oldFiber.counter = 1;
     }
     oldFiber.isRendered = false;

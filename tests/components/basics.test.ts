@@ -28,8 +28,8 @@ describe("basics", () => {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
 
-    const app = new App(Test, {value: 3});
-    const component = await app.mount(fixture );
+    const app = new App(Test, { value: 3 });
+    const component = await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
@@ -138,7 +138,7 @@ describe("basics", () => {
     }
     let error;
     try {
-      await mount(Test, document.createElement("div") );
+      await mount(Test, document.createElement("div"));
     } catch (e) {
       error = e;
     }

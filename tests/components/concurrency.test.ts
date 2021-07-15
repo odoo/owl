@@ -1,5 +1,5 @@
 import { App, mount, onWillStart, onWillUpdateProps, useState, Component } from "../../src";
-import { onBeforePatch, onPatched } from "../../src/lifecycle_hooks";
+import { onBeforePatch, onMounted, onPatched } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
 import {
@@ -1119,42 +1119,44 @@ test("concurrent renderings scenario 12", async () => {
   expect(rendered).toBe(3);
 });
 
-//   test("concurrent renderings scenario 13", async () => {
-//     let lastChild;
-//     class Child extends Component {
-//       static template = xml`<span><t t-esc="state.val"/></span>`;
-//       state = useState({ val: 0 });
-//       mounted() {
-//         if (lastChild) {
-//           lastChild.state.val = 0;
-//         }
-//         lastChild = this;
-//         this.state.val = 1;
-//       }
-//     }
+test("concurrent renderings scenario 13", async () => {
+  let lastChild: any = null;
 
-//     class Parent extends Component {
-//       static template = xml`
-//           <div>
-//             <Child/>
-//             <Child t-if="state.bool"/>
-//           </div>`;
-//       static components = { Child };
-//       state = useState({ bool: false });
-//     }
+  class Child extends Component {
+    static template = xml`<span><t t-esc="state.val"/></span>`;
+    state = useState({ val: 0 });
+    setup() {
+      onMounted(() => {
+        if (lastChild) {
+          lastChild.state.val = 0;
+        }
+        lastChild = this;
+        this.state.val = 1;
+      });
+    }
+  }
 
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
+  class Parent extends Component {
+    static template = xml`
+          <div>
+            <Child/>
+            <Child t-if="state.bool"/>
+          </div>`;
+    static components = { Child };
+    state = useState({ bool: false });
+  }
 
-//     await nextTick(); // wait for changes triggered in mounted to be applied
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
 
-//     parent.state.bool = true;
-//     await nextTick(); // wait for this change to be applied
-//     await nextTick(); // wait for changes triggered in mounted to be applied
-//     expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
-//   });
+  await nextTick(); // wait for changes triggered in mounted to be applied
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+  parent.state.bool = true;
+  await nextTick(); // wait for this change to be applied
+  await nextTick(); // wait for changes triggered in mounted to be applied
+  expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
+});
 
 //   test("concurrent renderings scenario 14", async () => {
 //     let b: B | undefined = undefined;

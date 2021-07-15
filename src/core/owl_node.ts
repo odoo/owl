@@ -100,6 +100,7 @@ export class OwlNode extends EventBus {
   _render(fiber: Fiber | RootFiber) {
     this.fiber = fiber;
     fiber.bdom = this.renderFn();
+    fiber.isRendered = true;
     fiber.root.counter--;
   }
 

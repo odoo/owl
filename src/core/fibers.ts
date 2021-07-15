@@ -6,6 +6,7 @@ export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
   isCompleted: boolean = false;
+  isRendered: boolean = false;
   root: RootFiber;
   parent: Fiber | null;
   children: Fiber[] = [];
@@ -55,10 +56,14 @@ export class RootFiber extends Fiber {
   _reuseFiber(oldFiber: RootFiber) {
     // cancel old fibers
     const fibers = [oldFiber.children];
+    const root = oldFiber.root;
     let fiberGroup;
     while ((fiberGroup = fibers.pop())) {
       for (let fiber of fiberGroup) {
         fiber.isCompleted = true;
+        if (fiber.isRendered) {
+          root.counter++;
+        }
         if (fiber.children.length) {
           fibers.push(fiber.children);
         }
@@ -66,7 +71,10 @@ export class RootFiber extends Fiber {
     }
     oldFiber.toPatch = [];
     oldFiber.children = [];
-    oldFiber.counter = 1;
+    if (oldFiber === root) {
+      oldFiber.counter = 1;
+    }
+    oldFiber.isRendered = false;
     oldFiber.isCompleted = false;
   }
 

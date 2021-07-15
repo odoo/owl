@@ -904,68 +904,69 @@ test("concurrent renderings scenario 8", async () => {
   expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
 });
 
-//   test("concurrent renderings scenario 9", async () => {
-//     // Here is the global idea of this scenario:
-//     //       A
-//     //      / \
-//     //     B   C
-//     //         |
-//     //         D
-//     // A state is updated, triggering a whole re-rendering
-//     // B is async, and blocked
-//     // C (and D) are rendered
-//     // C state is updated, producing a re-rendering of C and D
-//     // this last re-rendering of C should be correctly re-mapped to the whole
-//     // re-rendering
-//     const def = makeDeferred();
-//     let stateC;
-//     class ComponentD extends Component {
-//       static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromC"/></span>`;
-//     }
-//     class ComponentC extends Component {
-//       static template = xml`<p><ComponentD fromA="props.fromA" fromC="state.fromC" /></p>`;
-//       static components = { ComponentD };
-//       state = useState({ fromC: "b1" });
+test("concurrent renderings scenario 9", async () => {
+  // Here is the global idea of this scenario:
+  //       A
+  //      / \
+  //     B   C
+  //         |
+  //         D
+  // A state is updated, triggering a whole re-rendering
+  // B is async, and blocked
+  // C (and D) are rendered
+  // C state is updated, producing a re-rendering of C and D
+  // this last re-rendering of C should be correctly re-mapped to the whole
+  // re-rendering
+  const def = makeDeferred();
+  let stateC: any = null;
 
-//       constructor(parent, props) {
-//         super(parent, props);
-//         stateC = this.state;
-//       }
-//     }
-//     class ComponentB extends Component {
-//       static template = xml`<b><t t-esc="props.fromA"/></b>`;
-//       willUpdateProps() {
-//         return def;
-//       }
-//     }
-//     class ComponentA extends Component {
-//       static template = xml`
-//           <div>
-//             <t t-esc="state.fromA"/>
-//             <ComponentB fromA="state.fromA"/>
-//             <ComponentC fromA="state.fromA"/>
-//           </div>`;
-//       static components = { ComponentB, ComponentC };
-//       state = useState({ fromA: "a1" });
-//     }
+  class ComponentD extends Component {
+    static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromC"/></span>`;
+  }
 
-//     const component = new ComponentA();
-//     await component.mount(fixture);
+  class ComponentC extends Component {
+    static template = xml`<p><ComponentD fromA="props.fromA" fromC="state.fromC" /></p>`;
+    static components = { ComponentD };
+    state = useState({ fromC: "b1" });
 
-//     expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+    setup() {
+      stateC = this.state;
+    }
+  }
+  class ComponentB extends Component {
+    static template = xml`<b><t t-esc="props.fromA"/></b>`;
 
-//     component.state.fromA = "a2";
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+    setup() {
+      onWillUpdateProps(() => def);
+    }
+  }
+  class ComponentA extends Component {
+    static template = xml`
+          <div>
+            <t t-esc="state.fromA"/>
+            <ComponentB fromA="state.fromA"/>
+            <ComponentC fromA="state.fromA"/>
+          </div>`;
+    static components = { ComponentB, ComponentC };
+    state = useState({ fromA: "a1" });
+  }
 
-//     stateC.fromC = "b2";
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+  const component = await mount(ComponentA, { target: fixture });
 
-//     def.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div>a2<b>a2</b><p><span>a2b2</span></p></div>");
-//   });
+  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+
+  component.state.fromA = "a2";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+
+  stateC.fromC = "b2";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>a2<b>a2</b><p><span>a2b2</span></p></div>");
+});
 
 //   test("concurrent renderings scenario 10", async () => {
 //     // Here is the global idea of this scenario:

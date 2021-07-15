@@ -19,7 +19,7 @@ describe("t-call-block", () => {
       }
     }
 
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div>hello</div>");
   });
 });

@@ -51,7 +51,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
     expect(willstart).toBe(true);
   });
 
@@ -70,7 +70,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<Child />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(ok).toBe(true);
   });
 
@@ -91,7 +91,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
   });
 
   test("mounted hook is called if mounted in DOM", async () => {
@@ -105,7 +105,7 @@ describe("lifecycle hooks", () => {
         });
       }
     }
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
     expect(mounted).toBe(true);
   });
 
@@ -131,7 +131,7 @@ describe("lifecycle hooks", () => {
         });
       }
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(steps).toEqual(["child:mounted", "parent:mounted"]);
   });
 
@@ -294,7 +294,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ ok: false });
     }
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(steps).toEqual([]);
     parent.state.ok = true;
     await nextTick();
@@ -325,7 +325,7 @@ describe("lifecycle hooks", () => {
       state = useState({ ok: true });
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(steps).toEqual(["setup", "willstart", "mounted"]);
     parent.state.ok = false;
     await nextTick();
@@ -361,7 +361,7 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
     parent.increment();
     await nextTick();
@@ -442,7 +442,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ n: 1 });
     }
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<span>1</span>");
     parent.state.n = 2;
@@ -464,7 +464,7 @@ describe("lifecycle hooks", () => {
         onPatched(() => n++);
       }
     }
-    const widget = await mount(Test, { target: fixture });
+    const widget = await mount(Test, fixture);
     expect(n).toBe(0);
 
     widget.state.a = 1; // empty update, should do nothing
@@ -493,7 +493,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
     }
 
-    const widget = await mount(Parent, { target: fixture });
+    const widget = await mount(Parent, fixture);
     expect(n).toBe(0);
 
     widget.state.a = 2;

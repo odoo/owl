@@ -1,4 +1,4 @@
-import { Component, mount, xml } from "../../src";
+import { App, Component, mount, xml } from "../../src";
 import { makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;
@@ -13,7 +13,9 @@ describe("env handling", () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    const component = await mount(Test, { target: fixture, env });
+    const app = new App(Test);
+    app.configure({env});
+    const component = await app.mount(fixture);
     expect(component.env).toBe(env);
   });
 
@@ -21,7 +23,7 @@ describe("env handling", () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    const component = await mount(Test, { target: fixture });
+    const component = await mount(Test, fixture);
     expect(component.env).toEqual({});
   });
 });

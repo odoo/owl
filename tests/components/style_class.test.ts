@@ -15,7 +15,7 @@ describe("style and class handling", () => {
           <div style="font-weight:bold;" class="some-class">world</div>
         `;
     }
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
     expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
   });
 
@@ -28,7 +28,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="some-class" />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="some-class">child</div>`);
   });
 
@@ -41,7 +41,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="a  b" />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="a b">child</div>`);
   });
 
@@ -54,7 +54,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="from parent" />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="child from parent">child</div>`);
   });
 
@@ -67,7 +67,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="some-class" />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`child`);
   });
 
@@ -85,7 +85,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="fromparent" />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="fromchild fromparent">childchild</div>`);
   });
 
@@ -98,7 +98,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="fromparent" />`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
   });
 
@@ -121,7 +121,7 @@ describe("style and class handling", () => {
       state = useState({ child: "a" });
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="someclass">a</div>`);
     parent.state.child = "b";
     await nextTick();

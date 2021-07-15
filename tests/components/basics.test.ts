@@ -1,4 +1,4 @@
-import { mount, useState, Component } from "../../src";
+import { mount, useState, Component, App } from "../../src";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
@@ -17,7 +17,7 @@ describe("basics", () => {
       static template = xml`<span>simple vnode</span>`;
     }
 
-    const component = await mount(Test, { target: fixture });
+    const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("<span>simple vnode</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
@@ -28,7 +28,8 @@ describe("basics", () => {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
 
-    const component = await mount(Test, { props: { value: 3 }, target: fixture });
+    const app = new App(Test, {value: 3});
+    const component = await app.mount(fixture );
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
     expect(component.el).toEqual(fixture.querySelector("span"));
@@ -39,7 +40,7 @@ describe("basics", () => {
       static template = xml`just text`;
     }
 
-    const component = await mount(Test, { target: fixture });
+    const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("just text");
     expect(component.el).toBeInstanceOf(Text);
@@ -50,7 +51,7 @@ describe("basics", () => {
       static template = xml`<span></span><div></div>`;
     }
 
-    const component = await mount(Test, { target: fixture });
+    const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("<span></span><div></div>");
     expect(component.el).toEqual(null);
@@ -62,7 +63,7 @@ describe("basics", () => {
       value = 1;
     }
 
-    const component = await mount(Test, { target: fixture });
+    const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("<span>1</span>");
 
@@ -80,7 +81,7 @@ describe("basics", () => {
       items = ["one", "two", "three"];
     }
 
-    const component = await mount(Test, { target: fixture });
+    const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("onetwothree");
     component.items = ["two", "three", "one"];
@@ -98,7 +99,8 @@ describe("basics", () => {
       }
     }
 
-    await mount(Test, { target: fixture, props: p });
+    const app = new App(Test, p);
+    await app.mount(fixture);
   });
 
   test("some simple sanity checks (el/status)", async () => {
@@ -111,7 +113,7 @@ describe("basics", () => {
       }
     }
 
-    const test = await mount(Test, { target: fixture });
+    const test = await mount(Test, fixture);
     expect(status(test)).toBe("mounted");
   });
 
@@ -122,7 +124,7 @@ describe("basics", () => {
 
     let error;
     try {
-      await mount(Test, { target: null as any });
+      await mount(Test, null as any);
     } catch (e) {
       error = e;
     }
@@ -136,7 +138,7 @@ describe("basics", () => {
     }
     let error;
     try {
-      await mount(Test, { target: document.createElement("div") });
+      await mount(Test, document.createElement("div") );
     } catch (e) {
       error = e;
     }
@@ -151,7 +153,7 @@ describe("basics", () => {
 
     let error;
     try {
-      await mount(Test, { target: fixture });
+      await mount(Test, fixture);
     } catch (e) {
       error = e;
     }
@@ -166,7 +168,7 @@ describe("basics", () => {
       value = 42;
     }
 
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<span>My value: 42</span>");
   });
 
@@ -177,7 +179,7 @@ describe("basics", () => {
       value = 42;
     }
 
-    await mount(Test, { target: fixture });
+    await mount(Test, fixture);
     expect(fixture.innerHTML).toBe(`<span>1</span>text<span>2</span>`);
   });
 
@@ -191,7 +193,7 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span><div>simple vnode</div></span>");
   });
 
@@ -205,7 +207,7 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
   });
 
@@ -215,7 +217,7 @@ describe("basics", () => {
       value = 3;
     }
 
-    const test = await mount(Test, { target: fixture });
+    const test = await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
     test.value = 5;
     await test.render();
@@ -228,7 +230,7 @@ describe("basics", () => {
       state = useState({ value: 3 });
     }
 
-    const test = await mount(Test, { target: fixture });
+    const test = await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
     test.state.value = 5;
     await nextTick();
@@ -245,7 +247,7 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>simple vnode</div><div>simple vnode</div>");
   });
 
@@ -259,7 +261,7 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>42</div>");
   });
 
@@ -278,7 +280,7 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>hey</div>");
   });
 
@@ -293,7 +295,7 @@ describe("basics", () => {
       state = useState({ hasChild: false });
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("");
     parent.state.hasChild = true;
     await nextTick();
@@ -309,7 +311,7 @@ describe("basics", () => {
       });
     }
 
-    const counter = await mount(Counter, { target: fixture });
+    const counter = await mount(Counter, fixture);
     expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
     const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
     button.click();
@@ -326,7 +328,7 @@ describe("basics", () => {
       static components = { Child };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
 
@@ -343,7 +345,7 @@ describe("basics", () => {
       });
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("0");
 
     parent.state.counter = 1;
@@ -370,7 +372,7 @@ describe("basics", () => {
       state = useState({ child: "a" });
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div>a</div>`);
     parent.state.child = "b";
     await nextTick();

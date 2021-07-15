@@ -31,7 +31,7 @@ describe("refs", () => {
         this.state.val++;
       }
     }
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">0</span><span><button>do something</button></span></div>'

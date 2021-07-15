@@ -23,7 +23,7 @@ describe("slots", () => {
       static template = xml`<Child>some text</Child>`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<span>some text</span>");
   });
@@ -37,7 +37,7 @@ describe("slots", () => {
       static template = xml`<Child>some text</Child>`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("some text");
   });
@@ -51,7 +51,7 @@ describe("slots", () => {
       static template = xml`<Child>some text</Child>`;
       static components = { Child };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("some textsome text");
   });
@@ -69,7 +69,7 @@ describe("slots", () => {
         this.state.value++;
       }
     }
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
 
     expect(parent.state.value).toBe(0);
     fixture.querySelector("button")!.click();
@@ -95,7 +95,7 @@ describe("slots", () => {
           </Dialog>
         </div>`;
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe(
       "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
@@ -111,7 +111,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
   });
 
@@ -127,7 +127,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
   });
 
@@ -142,7 +142,7 @@ describe("slots", () => {
       static template = xml`<div><Dialog/></div>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
   });
@@ -158,7 +158,7 @@ describe("slots", () => {
       static template = xml`<div><Dialog>hey</Dialog></div>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
@@ -174,7 +174,7 @@ describe("slots", () => {
       static template = xml`<div><Dialog><t t-set-slot="header">hey</t></Dialog></div>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
@@ -201,7 +201,7 @@ describe("slots", () => {
       }
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe(
       '<div><span class="counter">0</span><span><button>do something</button></span></div>'
@@ -240,7 +240,7 @@ describe("slots", () => {
       static components = { Link };
     }
 
-    const app = await mount(App, { target: fixture });
+    const app = await mount(App, fixture);
 
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
@@ -279,7 +279,7 @@ describe("slots", () => {
       static components = { Link };
     }
 
-    const app = await mount(App, { target: fixture });
+    const app = await mount(App, fixture);
 
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User David</a></li></u></div>'
@@ -311,7 +311,7 @@ describe("slots", () => {
       state = useState({ user: { id: 1, name: "Aaron" } });
     }
 
-    const app = await mount(App, { target: fixture });
+    const app = await mount(App, fixture);
 
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User Aaron</a></div>');
 
@@ -335,7 +335,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
   });
 
@@ -351,7 +351,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span>sts rocks</span>");
   });
 
@@ -366,7 +366,7 @@ describe("slots", () => {
           </div>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
   });
@@ -379,7 +379,7 @@ describe("slots", () => {
       static template = xml`<Dialog>sts rocks</Dialog>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("sts rocks");
   });
@@ -400,7 +400,7 @@ describe("slots", () => {
           </div>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
   });
@@ -419,7 +419,7 @@ describe("slots", () => {
           </div>`;
       static components = { Dialog };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
   });
@@ -438,7 +438,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
   });
@@ -458,7 +458,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(console.log).toHaveBeenCalledTimes(0);
     console.log = consoleLog;
   });
@@ -480,7 +480,7 @@ describe("slots", () => {
       static components = { Child, GrandChild };
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
 
@@ -515,7 +515,7 @@ describe("slots", () => {
     }
 
     // throw new Error("boom")
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
 
@@ -568,7 +568,7 @@ describe("slots", () => {
       static components = { Dialog };
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
 
     fixture.querySelector("button")!.click();
     await nextTick();
@@ -658,7 +658,7 @@ describe("slots", () => {
       static components = { Slotted, Child };
     }
 
-    const parent = await mount(UsingTcallInSlotted, { target: fixture });
+    const parent = await mount(UsingTcallInSlotted, fixture);
 
     expect(parent).toBeInstanceOf(UsingTcallInSlotted);
     expect(children(parent).length).toBe(1);
@@ -729,7 +729,7 @@ describe("slots", () => {
       ];
     }
 
-    await mount(App, { target: fixture });
+    await mount(App, fixture);
 
     expect(fixture.innerHTML).toBe(
       "<div><div>A</div><ul><div><li>A</li></div><div><li>A</li></div></ul><div>B</div><ul><div><li>B</li></div><div><li>B</li></div></ul></div>"
@@ -770,7 +770,7 @@ describe("slots", () => {
       `;
     }
 
-    await mount(App, { target: fixture });
+    await mount(App, fixture);
 
     expect(fixture.innerHTML).toBe(
       '<div><div class="Dialog"><div class="content"> Default content </div><div class="footer"> Overridden footer </div></div></div>'
@@ -796,7 +796,7 @@ describe("slots", () => {
         </div>`;
       static components = { Toggler };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
 
     fixture.querySelector<HTMLElement>("button")!.click();
@@ -832,7 +832,7 @@ describe("slots", () => {
         </div>`;
       static components = { Toggler };
     }
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
 
     fixture.querySelector<HTMLElement>("button")!.click();

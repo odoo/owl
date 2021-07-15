@@ -30,7 +30,7 @@ describe("list of components", () => {
       });
     }
 
-    const parent = await mount(Parent, { target: fixture });
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");
     parent.state.elems.push({ id: 4, value: "d" });
     await nextTick();

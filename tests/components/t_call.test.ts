@@ -21,7 +21,7 @@ describe("t-call", () => {
     addTemplate("foo", "<div>foo</div>");
     addTemplate("bar", "bar");
 
-    const app = await mount(App, { target: fixture });
+    const app = await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div>foo</div>");
 
     app.current.template = "bar";

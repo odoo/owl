@@ -61,7 +61,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
     state = useState({ val: 1 });
   }
 
-  const w = await mount(W, { target: fixture });
+  const w = await mount(W, fixture);
 
   expect(n).toBe(0);
   w.state.val = 2;
@@ -111,7 +111,7 @@ test("creating two async components, scenario 1", async () => {
     state = useState({ flagA: false, flagB: false });
   }
 
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("");
   parent.state.flagA = true;
   await nextTick();
@@ -157,7 +157,7 @@ test("creating two async components, scenario 2", async () => {
     static components = { ChildA, ChildB };
     state = useState({ valA: 1, valB: 2, flagB: false });
   }
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
 
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
   parent.state.valA = 2;
@@ -200,7 +200,7 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
     static components = { ChildA, ChildB };
     state = useState({ valA: 1, valB: 2, flagB: false });
   }
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
 
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
   parent.state.valA = 2;
@@ -235,7 +235,7 @@ test("update a sub-component twice in the same frame", async () => {
     static components = { ChildA };
     state = useState({ valA: 1 });
   }
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
 
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 2;
@@ -274,7 +274,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
     static components = { ChildA };
     state = useState({ valA: 1 });
   }
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
 
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 2;
@@ -324,7 +324,7 @@ test("components in a node in a t-foreach ", async () => {
     }
   }
 
-  await mount(Parent, { target: fixture });
+  await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>");
 });
 
@@ -359,7 +359,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     state = useState({ flag: true, val: "Framboise Lindemans" });
   }
 
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
 
   // this change triggers a rendering of the parent. This rendering is delayed,
@@ -410,7 +410,7 @@ test.skip("reuse widget if possible, in some async situation", async () => {
     static components = { ChildA, ChildB };
     state = useState({ valA: 1, valB: 2, flag: false });
   }
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
 
   expect(childCount).toBe(0);
 
@@ -448,7 +448,7 @@ test("rendering component again in next microtick", async () => {
     }
   }
 
-  await mount(Parent, { target: fixture });
+  await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
   fixture.querySelector("button")!.click();
   await nextTick();
@@ -486,7 +486,7 @@ test("concurrent renderings scenario 1", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
 
@@ -537,7 +537,7 @@ test("concurrent renderings scenario 2", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
 
@@ -586,7 +586,7 @@ test("concurrent renderings scenario 2bis", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
 
@@ -649,7 +649,7 @@ test("concurrent renderings scenario 3", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
 
@@ -718,7 +718,7 @@ test("concurrent renderings scenario 4", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
 
@@ -767,7 +767,7 @@ test("concurrent renderings scenario 5", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
 
@@ -812,7 +812,7 @@ test("concurrent renderings scenario 6", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
 
@@ -857,7 +857,7 @@ test("concurrent renderings scenario 7", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
   expect(ComponentB.prototype.someValue).toBeCalledTimes(1);
@@ -886,7 +886,7 @@ test("concurrent renderings scenario 8", async () => {
     state = useState({ fromA: 1 });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
 
@@ -950,7 +950,7 @@ test("concurrent renderings scenario 9", async () => {
     state = useState({ fromA: "a1" });
   }
 
-  const component = await mount(ComponentA, { target: fixture });
+  const component = await mount(ComponentA, fixture);
 
   expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
 
@@ -1053,7 +1053,7 @@ test("concurrent renderings scenario 11", async () => {
     static components = { Child };
     state = useState({ valA: 1 });
   }
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><span>1|3</span></div>");
   parent.state.valA = 2;
 
@@ -1095,7 +1095,7 @@ test("concurrent renderings scenario 12", async () => {
     }
   }
 
-  const parent = await mount(Parent, { target: fixture });
+  const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   expect(rendered).toBe(1);
 

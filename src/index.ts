@@ -3,19 +3,11 @@ import { Component } from "./component";
 
 export { App, Component };
 
-interface MountParameters {
-  env?: any;
-  target: HTMLElement;
-  props?: any;
-}
-
 export async function mount<T extends typeof Component>(
   C: T,
-  params: MountParameters
+  target: HTMLElement
 ): Promise<InstanceType<T>> {
-  const { env, props, target } = params;
-  const app = new App(C, props);
-  app.configure({ env });
+  const app = new App(C);
   return app.mount(target);
 }
 

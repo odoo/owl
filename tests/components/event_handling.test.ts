@@ -24,7 +24,7 @@ describe("event handling", () => {
       }
     }
 
-    await mount(Parent, { target: fixture });
+    await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>1");
 
     fixture.querySelector("div")!.click();

@@ -225,6 +225,451 @@ exports[`concurrent renderings scenario 2 3`] = `
 }"
 `;
 
+exports[`concurrent renderings scenario 2bis 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/><owl-text/></span>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].fromA;
+    b1.data[1] = ctx['props'].fromB;
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 2bis 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 2bis 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<i><owl-text/><owl-text/></i>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].fromA;
+    b1.data[1] = ctx['someValue']();
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 3 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/></span>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 3 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentC\`, {fromA: ctx['props'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 3 4`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 4 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<i><owl-text/><owl-text/></i>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].fromA;
+    b1.data[1] = ctx['someValue']();
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 4 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-anchor/></span>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 4 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentC\`, {fromA: ctx['props'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 4 4`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 5 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['someValue']();
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 5 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 6 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['someValue']();
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 6 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 7 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/><owl-text/></p>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].fromA;
+    b1.data[1] = ctx['someValue']();
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 7 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 8 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/><owl-text/></p>\`);
+    data = new Array(2);
+    update() {
+      const el1 = this.el.firstChild;
+      el1.textContent = toString(this.data[0]);
+      el1.nextSibling.textContent = toString(this.data[1]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].fromA;
+    b1.data[1] = ctx['state'].fromB;
+    return b1;
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 8 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {fromA: ctx['state'].fromA}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`creating two async components, scenario 1 1`] = `
 "function anonymous(Blocks, utils
 ) {

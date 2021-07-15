@@ -452,4 +452,52 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>2</span>");
   });
+
+  test("patched hook is called after updating State", async () => {
+    let n = 0;
+
+    class Test extends Component {
+      static template = xml`<div/>`;
+      state = useState({ a: 1 });
+
+      setup() {
+        onPatched(() => n++);
+      }
+    }
+    const widget = await mount(Test, { target: fixture });
+    expect(n).toBe(0);
+
+    widget.state.a = 1; // empty update, should do nothing
+    await nextTick();
+    expect(n).toBe(0);
+
+    widget.state.a = 3;
+    await nextTick();
+    expect(n).toBe(1);
+  });
+
+  test("patched hook is called after updateProps", async () => {
+    let n = 0;
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        onWillUpdateProps(() => {
+          n++;
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child a="state.a"/></div>`;
+      state = useState({ a: 1 });
+      static components = { Child };
+    }
+
+    const widget = await mount(Parent, { target: fixture });
+    expect(n).toBe(0);
+
+    widget.state.a = 2;
+    await nextTick();
+    expect(n).toBe(1);
+  });
 });

@@ -1028,86 +1028,93 @@ test("concurrent renderings scenario 9", async () => {
 //     expect(ComponentC.prototype.__render).toHaveBeenCalledTimes(1);
 //   });
 
-//   test("concurrent renderings scenario 11", async () => {
-//     // This scenario is the following: we have a component being updated (by props),
-//     // and then rendered (render method), but before the willUpdateProps resolves.
-//     // We check that in that case, the return value of the render method is a promise
-//     // that is resolved when the component is completely rendered (so, properly
-//     // remapped to the promise of the ambient rendering)
-//     const def = makeDeferred();
-//     let child;
-//     class Child extends Component {
-//       static template = xml`<span><t t-esc="props.val"/>|<t t-esc="val"/></span>`;
-//       val = 3;
-//       willUpdateProps() {
-//         child = this;
-//         return def;
-//       }
-//     }
+test("concurrent renderings scenario 11", async () => {
+  // This scenario is the following: we have a component being updated (by props),
+  // and then rendered (render method), but before the willUpdateProps resolves.
+  // We check that in that case, the return value of the render method is a promise
+  // that is resolved when the component is completely rendered (so, properly
+  // remapped to the promise of the ambient rendering)
+  const def = makeDeferred();
+  let child: any = null;
+  class Child extends Component {
+    static template = xml`<span><t t-esc="props.val"/>|<t t-esc="val"/></span>`;
+    val = 3;
 
-//     class Parent extends Component {
-//       static template = xml`<div><Child val="state.valA"/></div>`;
-//       static components = { Child };
-//       state = useState({ valA: 1 });
-//     }
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>1|3</span></div>");
-//     parent.state.valA = 2;
+    setup() {
+      onWillUpdateProps(() => {
+        child = this;
+        return def;
+      });
+    }
+  }
 
-//     await nextTick();
-//     setTimeout(() => {
-//       def.resolve();
-//     }, 20);
-//     child.val = 5;
-//     await child.render();
-//     expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
-//   });
+  class Parent extends Component {
+    static template = xml`<div><Child val="state.valA"/></div>`;
+    static components = { Child };
+    state = useState({ valA: 1 });
+  }
+  const parent = await mount(Parent, { target: fixture });
+  expect(fixture.innerHTML).toBe("<div><span>1|3</span></div>");
+  parent.state.valA = 2;
 
-//   test("concurrent renderings scenario 12", async () => {
-//     // In this scenario, we have a parent component that will be re-rendered
-//     // several times simultaneously:
-//     //    - once in a tick: it will create a new fiber, render it, but will have
-//     //    to wait for its child (blocking) to be completed
-//     //    - twice in the next tick: it will twice reuse the same fiber (as it is
-//     //    rendered but not completed yet)
-//     const def = makeDeferred();
+  await nextTick();
+  setTimeout(() => {
+    def.resolve();
+  }, 20);
+  child.val = 5;
+  await child.render();
+  expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
+});
 
-//     class Child extends Component {
-//       static template = xml`<span><t t-esc="props.val"/></span>`;
-//       willUpdateProps() {
-//         return def;
-//       }
-//     }
+test("concurrent renderings scenario 12", async () => {
+  // In this scenario, we have a parent component that will be re-rendered
+  // several times simultaneously:
+  //    - once in a tick: it will create a new fiber, render it, but will have
+  //    to wait for its child (blocking) to be completed
+  //    - twice in the next tick: it will twice reuse the same fiber (as it is
+  //    rendered but not completed yet)
+  const def = makeDeferred();
 
-//     class Parent extends Component {
-//       static template = xml`<div><Child val="state.val"/></div>`;
-//       static components = { Child };
-//       state = useState({ val: 1 });
-//     }
-//     Parent.prototype.__render = jest.fn(Parent.prototype.__render);
+  class Child extends Component {
+    static template = xml`<span><t t-esc="props.val"/></span>`;
+    setup() {
+      onWillUpdateProps(() => def);
+    }
+  }
 
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     expect(Parent.prototype.__render).toHaveBeenCalledTimes(1);
+  let rendered = 0;
 
-//     parent.state.val = 2;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     expect(Parent.prototype.__render).toHaveBeenCalledTimes(2);
+  class Parent extends Component {
+    static template = xml`<div><Child val="val"/></div>`;
+    static components = { Child };
+    state = useState({ val: 1 });
 
-//     parent.state.val = 3;
-//     parent.state.val = 4;
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-//     expect(Parent.prototype.__render).toHaveBeenCalledTimes(3);
+    get val() {
+      rendered++;
+      return this.state.val;
+    }
+  }
 
-//     def.resolve();
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<div><span>4</span></div>");
-//     expect(Parent.prototype.__render).toHaveBeenCalledTimes(3);
-//   });
+  const parent = await mount(Parent, { target: fixture });
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(rendered).toBe(1);
+
+  parent.state.val = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(rendered).toBe(2);
+
+  parent.state.val = 3;
+  parent.state.val = 4;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(rendered).toBe(3);
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>4</span></div>");
+  expect(rendered).toBe(3);
+});
 
 //   test("concurrent renderings scenario 13", async () => {
 //     let lastChild;

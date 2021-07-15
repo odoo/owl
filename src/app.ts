@@ -59,7 +59,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
   root: OwlNode | null = null;
   dev: boolean = true;
-  
+
   constructor(Root: T, props?: any) {
     super();
     this.Root = Root;

@@ -1,5 +1,4 @@
-import { App, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
-import { Component } from "../../src/core/component";
+import { App, mount, onWillStart, onWillUpdateProps, useState, Component } from "../../src";
 import { onBeforePatch, onPatched } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";

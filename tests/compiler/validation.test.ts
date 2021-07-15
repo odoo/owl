@@ -1,4 +1,4 @@
-import { TemplateSet } from "../../src/core/app";
+import { TemplateSet } from "../../src/app";
 import { renderToString, TestContext, compile } from "../helpers";
 
 // -----------------------------------------------------------------------------

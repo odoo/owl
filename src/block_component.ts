@@ -1,7 +1,7 @@
-import { Block } from "../bdom";
+import { Block } from "./bdom";
 import { OwlNode } from "./owl_node";
 import { Fiber } from "./fibers";
-import { STATUS } from "../status";
+import { STATUS } from "./status";
 // import type { Component } from "./component";
 
 // -----------------------------------------------------------------------------

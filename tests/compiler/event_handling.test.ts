@@ -1,4 +1,4 @@
-import { TemplateSet } from "../../src/core/app";
+import { TemplateSet } from "../../src/app";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();

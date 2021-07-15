@@ -1,4 +1,4 @@
-import type { Component } from "./core/component";
+import type { Component } from "./component";
 
 export const enum STATUS {
   NEW,

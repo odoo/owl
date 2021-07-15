@@ -1,6 +1,6 @@
 import { Blocks } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-import { elem } from "../../src/core/template_utils";
+import { elem } from "../../src/template_utils";
 import { BCollection } from "../../src/bdom/block_collection";
 import { BText } from "../../src/bdom/block_text";
 

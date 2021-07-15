@@ -1,6 +1,6 @@
-import { Blocks as BaseBlocks } from "../bdom";
-import { compileTemplate, Template } from "../compiler/index";
-import { globalTemplates } from "../tags";
+import { Blocks as BaseBlocks } from "./bdom";
+import { compileTemplate, Template } from "./compiler/index";
+import { globalTemplates } from "./tags";
 import { BComponent, BComponentH } from "./block_component";
 import type { Component } from "./component";
 import { OwlNode } from "./owl_node";
@@ -58,7 +58,8 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   env: any = {};
   scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
   root: OwlNode | null = null;
-
+  dev: boolean = true;
+  
   constructor(Root: T, props?: any) {
     super();
     this.Root = Root;

@@ -1,5 +1,5 @@
-import { App } from "./core/app";
-import { Component } from "./core/component";
+import { App } from "./app";
+import { Component } from "./component";
 
 export { App, Component };
 

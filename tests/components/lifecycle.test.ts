@@ -1,5 +1,4 @@
-import { App, mount, onMounted, onWillStart, useState } from "../../src";
-import { Component } from "../../src/core/component";
+import { App, mount, onMounted, onWillStart, useState, Component } from "../../src";
 import {
   onBeforePatch,
   onBeforeUnmount,

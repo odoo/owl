@@ -1,9 +1,9 @@
 import type { App } from "./app";
-import type { Block } from "../bdom";
+import type { Block } from "./bdom";
 import { Fiber, MountFiber, RootFiber } from "./fibers";
 import type { Component } from "./component";
-import { STATUS } from "../status";
-import { EventBus } from "../event_bus";
+import { STATUS } from "./status";
+import { EventBus } from "./event_bus";
 
 let currentNode: OwlNode | null = null;
 

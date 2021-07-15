@@ -1,4 +1,4 @@
-import { getCurrent } from "./core/owl_node";
+import { getCurrent } from "./owl_node";
 
 // -----------------------------------------------------------------------------
 //  hooks

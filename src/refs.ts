@@ -2,8 +2,8 @@
 // useRef
 // -----------------------------------------------------------------------------
 
-import type { Component } from "./core/component";
-import { getCurrent } from "./core/owl_node";
+import type { Component } from "./component";
+import { getCurrent } from "./owl_node";
 
 /**
  * The purpose of this hook is to allow components to get a reference to a sub

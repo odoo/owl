@@ -104,19 +104,20 @@ export function snapshotEverything() {
     globalTemplates[name] = template;
   };
 
-  beforeEach(() => {
-    for (let k in globalTemplates) {
-      delete globalTemplates[k];
-    }
-  });
+  let globalSet = new Set(...Object.keys(globalTemplates));
   afterEach(() => {
     console.warn = () => {};
     for (let k in globalTemplates) {
+      if (globalSet.has(k)) {
+        // ignore generic templates
+        continue;
+      }
       try {
         snapshotTemplateCode(globalTemplates[k]);
       } catch (e) {
         // ignore error
       }
+      delete globalTemplates[k];
     }
     console.warn = consolewarn;
   });

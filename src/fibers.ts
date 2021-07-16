@@ -3,10 +3,6 @@ import { STATUS } from "./status";
 import { OwlNode } from "./owl_node";
 
 export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
-  // todo: remove this
-  if ((window as any).debug) {
-    console.log("childfiber for " + node.component.constructor.name);
-  }
   let current = node.fiber;
   if (current) {
     // current is necessarily a rootfiber here
@@ -18,15 +14,10 @@ export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
     current.root = root;
     return current;
   }
-  let result = new Fiber(node, parent);
-  return result;
+  return new Fiber(node, parent);
 }
 
 export function makeRootFiber(node: OwlNode): Fiber {
-  // todo: remove this
-  if ((window as any).debug) {
-    console.log("rootfiber for " + node.component.constructor.name);
-  }
   let current = node.fiber;
   if (current) {
     let root = current.root;
@@ -36,16 +27,7 @@ export function makeRootFiber(node: OwlNode): Fiber {
     current.bdom = null;
     return current;
   }
-  let result = new RootFiber(node);
-  return result;
-}
-
-export function makeMountFiber(node: OwlNode, target: HTMLElement): MountFiber {
-  if ((window as any).debug) {
-    console.log("mountfiber for " + node.component.constructor.name);
-  }
-  let result = new MountFiber(node, target);
-  return result;
+  return new RootFiber(node);
 }
 
 /**
@@ -90,7 +72,7 @@ export class RootFiber extends Fiber {
   counter: number = 1;
   error: Error | null = null;
   resolve: any;
-  promise: any;
+  promise: Promise<any>;
   reject: any;
   toPatch: Fiber[];
 
@@ -108,9 +90,6 @@ export class RootFiber extends Fiber {
 
   complete() {
     const node = this.node;
-    // if (node.fiber !== fiber) {
-    //   return;
-    // }
     for (let fiber of this.toPatch) {
       let node = fiber.node;
       // because of the asynchronous nature of the rendering, some parts of the

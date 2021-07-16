@@ -10,8 +10,6 @@ import { STATUS } from "./status";
 
 export class BComponent extends Block {
   node: OwlNode;
-  // component: Component;
-  // handlers?: any[];
   parentClass?: any;
   classTarget?: HTMLElement;
 
@@ -40,9 +38,6 @@ export class BComponent extends Block {
         parentFiber.root.toPatch.push(fiber);
       }
       node.updateAndRender(props, fiber);
-      //     const parentFiber = parentData.fiber!;
-      //     parentFiber.child = fiber; // wrong!
-      //     updateAndRender(component, fiber, props);
     } else {
       // new component
       const components = owner.constructor.components;

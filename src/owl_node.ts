@@ -1,9 +1,9 @@
 import type { App } from "./app";
 import type { Block } from "./bdom";
-import { Fiber, makeMountFiber, makeRootFiber, MountFiber, RootFiber } from "./fibers";
 import type { Component } from "./component";
-import { STATUS } from "./status";
 import { EventBus } from "./event_bus";
+import { Fiber, makeRootFiber, MountFiber, RootFiber } from "./fibers";
+import { STATUS } from "./status";
 
 let currentNode: OwlNode | null = null;
 
@@ -13,10 +13,10 @@ export function getCurrent(): OwlNode | null {
 
 type LifecycleHook = Function;
 
-export class OwlNode extends EventBus {
+export class OwlNode<T extends typeof Component = any> extends EventBus {
   app: App;
   bdom: null | Block = null;
-  component: Component;
+  component: InstanceType<T>;
   fiber: Fiber | null = null;
   status: STATUS = STATUS.NEW;
   renderFn: Function;
@@ -31,18 +31,18 @@ export class OwlNode extends EventBus {
   beforePatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
 
-  constructor(app: App, C: typeof Component, props: any) {
+  constructor(app: App, C: T, props: any) {
     super();
     this.app = app;
     currentNode = this;
-    const component = new C(props, app.env, this);
+    const component: InstanceType<T> = new C(props, app.env, this) as any;
     component.setup();
     this.component = component;
     this.renderFn = app.getTemplate(C.template).bind(null, component);
   }
 
-  async mount(target: any) {
-    const fiber = makeMountFiber(this, target);
+  async mount(target: any): Promise<InstanceType<T>> {
+    const fiber = new MountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
     await this.initiateRender(fiber);
     return fiber.promise.then(() => this.component);

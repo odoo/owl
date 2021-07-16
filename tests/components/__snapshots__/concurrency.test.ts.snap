@@ -17,6 +17,28 @@ exports[`async rendering destroying a widget before start is over 1`] = `
 }"
 `;
 
+exports[`change state and call manually render: no unnecessary rendering 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['value'];
+    return b1;
+  }
+}"
+`;
+
 exports[`components in a node in a t-foreach  1`] = `
 "function anonymous(Blocks, utils
 ) {

@@ -1364,45 +1364,48 @@ test("concurrent renderings scenario 16", async () => {
   );
 });
 
-//   test.skip("concurrent renderings scenario 17", async () => {
-//     class Parent extends Component {
-//       static template = xml`<span><t t-esc="state.value"/></span>`;
-//       state = useState({ value: 1 });
-//     }
+  // test("concurrent renderings scenario 17", async () => {
+  //   class Parent extends Component {
+  //     static template = xml`<span><t t-esc="state.value"/></span>`;
+  //     state = useState({ value: 1 });
+  //   }
 
-//     const parent = new Parent();
-//     await parent.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<span>1</span>");
+  //   const parent = await mount(Parent, fixture);
+  //   expect(fixture.innerHTML).toBe("<span>1</span>");
 
-//     parent.state.value = 2;
-//     parent.__owl__.currentFiber!.cancel();
+  //   parent.state.value = 2;
+  //   parent.__owl__.fiber!.cancel();
 
-//     parent.state.value = 3; // update value directly
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<span>3</span>");
+  //   parent.state.value = 3; // update value directly
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe("<span>3</span>");
 
-//     parent.state.value = 4; // update value after a tick
-//     await nextTick();
-//     expect(fixture.innerHTML).toBe("<span>4</span>");
-//   });
+  //   parent.state.value = 4; // update value after a tick
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe("<span>4</span>");
+  // });
 
-//   test.skip("change state and call manually render: no unnecessary rendering", async () => {
-//     class Widget extends Component {
-//       static template = xml`<div><t t-esc="state.val"/></div>`;
-//       state = useState({ val: 1 });
-//     }
-//     Widget.prototype.__render = jest.fn(Widget.prototype.__render);
+  test("change state and call manually render: no unnecessary rendering", async () => {
+    let numberOfRender = 0;
 
-//     const widget = new Widget();
-//     await widget.mount(fixture);
-//     expect(fixture.innerHTML).toBe("<div>1</div>");
-//     expect(Widget.prototype.__render).toHaveBeenCalledTimes(1);
+    class Test extends Component {
+      static template = xml`<div><t t-esc="value"/></div>`;
+      state = useState({ val: 1 });
+      get value() {
+        numberOfRender++;
+        return this.state.val;
+      }
+    }
 
-//     widget.state.val = 2;
-//     await widget.render();
-//     expect(fixture.innerHTML).toBe("<div>2</div>");
-//     expect(Widget.prototype.__render).toHaveBeenCalledTimes(2);
-//   });
+    const test = await mount(Test, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+    expect(numberOfRender).toBe(1);
+
+    test.state.val = 2;
+    await test.render();
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(numberOfRender).toBe(2);
+  });
 
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };

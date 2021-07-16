@@ -11,7 +11,7 @@ export class Fiber {
   children: Fiber[] = [];
 
   constructor(node: OwlNode, parent: Fiber | null) {
-    // console.log(`new fiber ${this.constructor.name} for ${node.component.constructor.name}`)
+    // console.log(`${this.constructor.name} for ${node.component.constructor.name}`)
     this.node = node;
     const current = node.fiber;
     if (current) {

@@ -24,7 +24,7 @@ export class Scheduler {
   }
 
   addFiber(fiber: Fiber) {
-    this.tasks.add(fiber.root!); // no check for unicity. need to be careful here
+    this.tasks.add(fiber.root);
     if (!this.isRunning) {
       this.start();
     }
@@ -41,6 +41,12 @@ export class Scheduler {
         return;
       }
       if (fiber.root !== fiber) {
+        // this is wrong! should be something like
+        // if (this.tasks.has(fiber.root)) {
+        //   // parent rendering has completed
+        //   fiber.resolve();
+        //   this.tasks.delete(fiber);
+        // }
         this.tasks.delete(fiber);
         return;
       }

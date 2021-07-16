@@ -10,8 +10,8 @@ export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
   let current = node.fiber;
   if (current) {
     // current is necessarily a rootfiber here
-    let root = parent.root!;
-    cancelFibers(current.children);
+    let root = parent.root;
+    cancelFibers(root, current.children);
     current.children = [];
     current.parent = parent;
     root.counter++;
@@ -29,8 +29,8 @@ export function makeRootFiber(node: OwlNode): Fiber {
   }
   let current = node.fiber;
   if (current) {
-    let root = current.root!;
-    root.counter -= cancelFibers(current.children);
+    let root = current.root;
+    root.counter -= cancelFibers(root, current.children);
     current.children = [];
     root.counter++;
     current.bdom = null;
@@ -51,15 +51,15 @@ export function makeMountFiber(node: OwlNode, target: HTMLElement): MountFiber {
 /**
  * @returns number of not-yet rendered fibers cancelled
  */
-function cancelFibers(fibers: Fiber[]): number {
+function cancelFibers(root: any, fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     fiber.node.fiber = null;
-    fiber.root = null;
+    fiber.root = root;
     if (!fiber.bdom) {
       result++;
     }
-    result += cancelFibers(fiber.children);
+    result += cancelFibers(root, fiber.children);
   }
   return result;
 }
@@ -67,7 +67,7 @@ function cancelFibers(fibers: Fiber[]): number {
 export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
-  root: RootFiber | null;
+  root: RootFiber;
   parent: Fiber | null;
   children: Fiber[] = [];
 
@@ -76,7 +76,7 @@ export class Fiber {
     node.fiber = this;
     this.parent = parent;
     if (parent) {
-      const root = parent.root!;
+      const root = parent.root;
       root.counter++;
       this.root = root;
       parent.children.push(this);

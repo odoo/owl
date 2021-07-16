@@ -1295,82 +1295,74 @@ test("concurrent renderings scenario 15", async () => {
   );
 });
 
-//   test.skip("concurrent renderings scenario 16", async () => {
-//     expect.assertions(4);
-//     let b: B | undefined = undefined;
-//     let c: C | undefined = undefined;
-//     class D extends Component {
-//       static template = xml`<ul>DDD</ul>`;
-//       async willStart() {
-//         await nextTick();
-//         await nextTick();
-//       }
-//     }
-//     class C extends Component {
-//       static template = xml`
-//        <p>
-//         <span t-esc="props.fromA"/>
-//         <span t-esc="props.fromB"/>
-//         <span t-esc="state.fromC"/>
-//         <D t-if="state.fromC === 13"/>
-//        </p>`;
-//       static components = { D };
-//       state = { fromC: 3 }; // not reactive
-//       constructor(parent, props) {
-//         super(parent, props);
-//         c = this;
-//       }
-//     }
-//     class B extends Component {
-//       static template = xml`<p><C fromB="state.fromB" fromA="props.fromA"/></p>`;
-//       static components = { C };
-//       constructor(parent, props) {
-//         super(parent, props);
-//         b = this;
-//       }
-//       state = useState({ fromB: 2 });
-//     }
-//     class A extends Component {
-//       static template = xml`<p><B fromA="state.fromA"/></p>`;
-//       static components = { B };
-//       state = useState({ fromA: 1 });
-//     }
-//     const a = new A();
-//     await a.mount(fixture);
-//     expect(fixture.innerHTML).toBe(
-//       "<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>"
-//     );
+test("concurrent renderings scenario 16", async () => {
+  let b: B | undefined = undefined;
+  let c: C | undefined = undefined;
+  class D extends Component {
+    static template = xml`<ul>DDD</ul>`;
 
-//     // trigger a re-rendering of the whole tree
-//     a.state.fromA += 10;
-//     // wait enough for the whole tree to be re-rendered, but not patched yet
-//     await nextMicroTick();
-//     await nextMicroTick();
-//     await nextMicroTick();
-//     await nextMicroTick();
-//     await nextMicroTick();
-//     expect(fixture.innerHTML).toBe(
-//       "<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>"
-//     );
+    setup() {
+      onWillStart(async () => {
+        await nextTick();
+        await nextTick();
+      });
+    }
+  }
+  class C extends Component {
+    static template = xml`
+       <p>
+        <span t-esc="props.fromA"/>
+        <span t-esc="props.fromB"/>
+        <span t-esc="state.fromC"/>
+        <D t-if="state.fromC === 13"/>
+       </p>`;
+    static components = { D };
+    state = { fromC: 3 }; // not reactive
+    setup() {
+      c = this;
+    }
+  }
+  class B extends Component {
+    static template = xml`<p><C fromB="state.fromB" fromA="props.fromA"/></p>`;
+    static components = { C };
+    setup() {
+      b = this;
+    }
+    state = useState({ fromB: 2 });
+  }
+  class A extends Component {
+    static template = xml`<p><B fromA="state.fromA"/></p>`;
+    static components = { B };
+    state = useState({ fromA: 1 });
+  }
+  const a = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
 
-//     // trigger a re-rendering from C, which will remap its new fiber
-//     c!.state.fromC += 10;
-//     const prom = c!.render().then(() => {
-//       expect(fixture.innerHTML).toBe(
-//         "<p><p><p><span>11</span><span>12</span><span>13</span><ul>DDD</ul></p></p></p>"
-//       );
-//     });
-//     // trigger a re-rendering from B, which will remap its new fiber as well
-//     b!.state.fromB += 10;
+  // trigger a re-rendering of the whole tree
+  a.state.fromA += 10;
+  // wait enough for the whole tree to be re-rendered, but not patched yet
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
 
-//     await nextTick();
-//     // at this point, C rendering is still pending, and nothing should have been
-//     // updated yet.
-//     expect(fixture.innerHTML).toBe(
-//       "<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>"
-//     );
-//     await prom;
-//   });
+  // trigger a re-rendering from C, which will remap its new fiber
+  c!.state.fromC += 10;
+  const prom = c!.render();
+  // trigger a re-rendering from B, which will remap its new fiber as well
+  b!.state.fromB += 10;
+
+  await nextTick();
+  // at this point, C rendering is still pending, and nothing should have been
+  // updated yet.
+  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  await prom;
+  expect(fixture.innerHTML).toBe(
+    "<p><p><p><span>11</span><span>12</span><span>13</span><ul>DDD</ul></p></p></p>"
+  );
+});
 
 //   test.skip("concurrent renderings scenario 17", async () => {
 //     class Parent extends Component {

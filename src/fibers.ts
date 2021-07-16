@@ -5,7 +5,6 @@ import { OwlNode } from "./owl_node";
 export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
-  isCompleted: boolean = false;
   isRendered: boolean = false;
   root: RootFiber;
   parent: Fiber | null;
@@ -14,9 +13,10 @@ export class Fiber {
   constructor(node: OwlNode, parent: Fiber | null) {
     // console.log(`new fiber ${this.constructor.name} for ${node.component.constructor.name}`)
     this.node = node;
-    if (node.fiber) {
+    const current = node.fiber;
+    if (current) {
       // pending rendering => should be cancelled
-      this.cancelRendering(node.fiber);
+      this.cancelFibers(current.root, current.children);
     }
     node.fiber = this;
     this.parent = parent;
@@ -30,21 +30,13 @@ export class Fiber {
     }
   }
 
-  cancelRendering(fiber: Fiber) {
-    // cancel old fibers
-    const fibers = [fiber.children];
-    const root = fiber.root;
-    let fiberGroup;
-    while ((fiberGroup = fibers.pop())) {
-      for (let fiber of fiberGroup) {
-        fiber.isCompleted = true;
-        if (fiber.isRendered) {
-          root.counter++;
-        }
-        if (fiber.children.length) {
-          fibers.push(fiber.children);
-        }
+  cancelFibers(root: RootFiber, fibers: Fiber[]) {
+    for (let fiber of fibers) {
+      fiber.node.fiber = null;
+      if (fiber.isRendered) {
+        root.counter++;
       }
+      this.cancelFibers(root, fiber.children);
     }
   }
 }
@@ -82,7 +74,6 @@ export class RootFiber extends Fiber {
       oldFiber.counter = 1;
     }
     oldFiber.isRendered = false;
-    oldFiber.isCompleted = false;
   }
 
   complete() {

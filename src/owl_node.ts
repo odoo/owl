@@ -64,7 +64,7 @@ export class OwlNode extends EventBus {
     const prom = Promise.all(this.willStart.map((f) => f.call(component)));
     this.status = STATUS.WILLSTARTED;
     await prom;
-    if (this.status === STATUS.WILLSTARTED && !fiber.isCompleted) {
+    if (this.status === STATUS.WILLSTARTED && this.fiber === fiber) {
       this._render(fiber);
     }
   }

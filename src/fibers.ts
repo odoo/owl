@@ -2,22 +2,75 @@ import type { Block } from "./bdom";
 import { STATUS } from "./status";
 import { OwlNode } from "./owl_node";
 
+export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
+  // todo: remove this
+  if ((window as any).debug) {
+    console.log("childfiber for " + node.component.constructor.name);
+  }
+  let current = node.fiber;
+  if (current) {
+    // current is necessarily a rootfiber here
+    let root = parent.root;
+    cancelFibers(current.children);
+    current.children = [];
+    current.parent = parent;
+    root.counter++;
+    return current;
+  }
+  let result = new Fiber(node, parent);
+  return result;
+}
+
+export function makeRootFiber(node: OwlNode): Fiber {
+  // todo: remove this
+  if ((window as any).debug) {
+    console.log("rootfiber for " + node.component.constructor.name);
+  }
+  let current = node.fiber;
+  if (current) {
+    let root = current.root;
+    root.counter -= cancelFibers(current.children);
+    current.children = [];
+    root.counter++;
+    current.bdom = null;
+    return current;
+  }
+  let result = new RootFiber(node);
+  return result;
+}
+
+export function makeMountFiber(node: OwlNode, target: HTMLElement): MountFiber {
+  if ((window as any).debug) {
+    console.log("mountfiber for " + node.component.constructor.name);
+  }
+  let result = new MountFiber(node, target);
+  return result;
+}
+
+/**
+ * @returns number of not-yet rendered fibers cancelled
+ */
+function cancelFibers(fibers: Fiber[]): number {
+  let result = 0;
+  for (let fiber of fibers) {
+    fiber.node.fiber = null;
+    if (!fiber.bdom) {
+      result++;
+    }
+    result += cancelFibers(fiber.children);
+  }
+  return result;
+}
+
 export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
-  isRendered: boolean = false;
   root: RootFiber;
   parent: Fiber | null;
   children: Fiber[] = [];
 
   constructor(node: OwlNode, parent: Fiber | null) {
-    // console.log(`${this.constructor.name} for ${node.component.constructor.name}`)
     this.node = node;
-    const current = node.fiber;
-    if (current) {
-      // pending rendering => should be cancelled
-      this.cancelFibers(current.root, current.children);
-    }
     node.fiber = this;
     this.parent = parent;
     if (parent) {
@@ -29,37 +82,21 @@ export class Fiber {
       this.root = this as any;
     }
   }
-
-  cancelFibers(root: RootFiber, fibers: Fiber[]) {
-    for (let fiber of fibers) {
-      fiber.node.fiber = null;
-      if (fiber.isRendered) {
-        root.counter++;
-      }
-      this.cancelFibers(root, fiber.children);
-    }
-  }
 }
 
 export class RootFiber extends Fiber {
-  counter: number;
-  error: Error | null;
+  counter: number = 1;
+  error: Error | null = null;
   resolve: any;
   promise: any;
   reject: any;
-  toPatch: OwlNode[];
+  toPatch: Fiber[];
 
   constructor(node: OwlNode) {
-    const oldFiber = node.fiber;
     super(node, null);
     this.counter = 1;
     this.error = null;
-    this.root = this;
-    this.toPatch = [node];
-    if (oldFiber) {
-      this._reuseFiber(oldFiber as any);
-      return oldFiber as any;
-    }
+    this.toPatch = [this];
 
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
@@ -67,22 +104,19 @@ export class RootFiber extends Fiber {
     });
   }
 
-  _reuseFiber(oldFiber: RootFiber) {
-    oldFiber.toPatch = [];
-    oldFiber.children = [];
-    if (oldFiber === oldFiber.root) {
-      oldFiber.counter = 1;
-    }
-    oldFiber.isRendered = false;
-  }
-
   complete() {
     const node = this.node;
     // if (node.fiber !== fiber) {
     //   return;
     // }
-    for (let node of this.toPatch) {
-      node.callBeforePatch();
+    for (let fiber of this.toPatch) {
+      let node = fiber.node;
+      // because of the asynchronous nature of the rendering, some parts of the
+      // UI may have been rendered, then deleted in a followup rendering, and we
+      // do not want to call onBeforePatch in that case.
+      if (node.fiber === fiber) {
+        node.callBeforePatch();
+      }
     }
     const mountedNodes: any[] = [];
     const patchedNodes: any[] = [node];

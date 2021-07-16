@@ -1,6 +1,6 @@
 import type { App } from "./app";
 import type { Block } from "./bdom";
-import { Fiber, MountFiber, RootFiber } from "./fibers";
+import { Fiber, makeMountFiber, makeRootFiber, MountFiber, RootFiber } from "./fibers";
 import type { Component } from "./component";
 import { STATUS } from "./status";
 import { EventBus } from "./event_bus";
@@ -42,7 +42,7 @@ export class OwlNode extends EventBus {
   }
 
   async mount(target: any) {
-    const fiber = new MountFiber(this, target);
+    const fiber = makeMountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
     await this.initiateRender(fiber);
     return fiber.promise.then(() => this.component);
@@ -52,11 +52,11 @@ export class OwlNode extends EventBus {
     if (this.fiber && !this.fiber.bdom) {
       return this.fiber.root.promise;
     }
-    const fiber = new RootFiber(this);
+    const fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
     this._render(fiber);
-    return fiber.promise;
+    return fiber.root.promise;
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
@@ -100,7 +100,6 @@ export class OwlNode extends EventBus {
   _render(fiber: Fiber | RootFiber) {
     this.fiber = fiber;
     fiber.bdom = this.renderFn();
-    fiber.isRendered = true;
     fiber.root.counter--;
   }
 

@@ -1,4 +1,4 @@
-import { RootFiber } from "./fibers";
+import { Fiber, RootFiber } from "./fibers";
 
 // -----------------------------------------------------------------------------
 //  Scheduler
@@ -22,7 +22,7 @@ export class Scheduler {
     this.isRunning = false;
   }
 
-  addFiber(fiber: RootFiber) {
+  addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root); // no check for unicity. need to be careful here
     if (!this.isRunning) {
       this.start();

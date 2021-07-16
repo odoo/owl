@@ -1158,7 +1158,7 @@ test("concurrent renderings scenario 13", async () => {
   expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
 });
 
-//   test("concurrent renderings scenario 14", async () => {
+//   test.skip("concurrent renderings scenario 14", async () => {
 //     let b: B | undefined = undefined;
 //     let c: C | undefined = undefined;
 //     class C extends Component {
@@ -1221,7 +1221,7 @@ test("concurrent renderings scenario 13", async () => {
 //     );
 //   });
 
-//   test("concurrent renderings scenario 15", async () => {
+//   test.skip("concurrent renderings scenario 15", async () => {
 //     let b: B | undefined = undefined;
 //     let c: C | undefined = undefined;
 //     class C extends Component {
@@ -1295,7 +1295,7 @@ test("concurrent renderings scenario 13", async () => {
 //     );
 //   });
 
-//   test("concurrent renderings scenario 16", async () => {
+//   test.skip("concurrent renderings scenario 16", async () => {
 //     expect.assertions(4);
 //     let b: B | undefined = undefined;
 //     let c: C | undefined = undefined;
@@ -1372,7 +1372,7 @@ test("concurrent renderings scenario 13", async () => {
 //     await prom;
 //   });
 
-//   test("concurrent renderings scenario 17", async () => {
+//   test.skip("concurrent renderings scenario 17", async () => {
 //     class Parent extends Component {
 //       static template = xml`<span><t t-esc="state.value"/></span>`;
 //       state = useState({ value: 1 });
@@ -1394,7 +1394,7 @@ test("concurrent renderings scenario 13", async () => {
 //     expect(fixture.innerHTML).toBe("<span>4</span>");
 //   });
 
-//   test("change state and call manually render: no unnecessary rendering", async () => {
+//   test.skip("change state and call manually render: no unnecessary rendering", async () => {
 //     class Widget extends Component {
 //       static template = xml`<div><t t-esc="state.val"/></div>`;
 //       state = useState({ val: 1 });
@@ -1412,7 +1412,7 @@ test("concurrent renderings scenario 13", async () => {
 //     expect(Widget.prototype.__render).toHaveBeenCalledTimes(2);
 //   });
 
-//   test("components with shouldUpdate=false", async () => {
+//   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 
 //     class ChildChild extends Component {
@@ -1489,7 +1489,7 @@ test("concurrent renderings scenario 13", async () => {
 //     );
 //   });
 
-//   test("components with shouldUpdate=false, part 2", async () => {
+//   test.skip("components with shouldUpdate=false, part 2", async () => {
 //     const state = { p: 1, cc: 10 };
 //     let shouldUpdate = true;
 

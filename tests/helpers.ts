@@ -104,7 +104,11 @@ export function snapshotEverything() {
     globalTemplates[name] = template;
   };
 
-  let globalSet = new Set(...Object.keys(globalTemplates));
+  let globalSet: any;
+
+  beforeAll(() => {
+    globalSet = new Set(Object.keys(globalTemplates));
+  });
   afterEach(() => {
     console.warn = () => {};
     for (let k in globalTemplates) {

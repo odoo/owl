@@ -78,7 +78,7 @@ describe("t-ref", () => {
 
     // false
     const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
-    expect(Object.keys(bdom.refs!)).toEqual([]);
+    expect(Object.keys((bdom as any).refs!)).toEqual([]);
     bdom.mount(document.createElement("div"), [], []);
     expect(Object.keys(refs)).toEqual(["p"]);
 

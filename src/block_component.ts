@@ -2,7 +2,6 @@ import { Block } from "./bdom";
 import { makeChildFiber } from "./fibers";
 import { OwlNode } from "./owl_node";
 import { STATUS } from "./status";
-// import type { Component } from "./component";
 
 // -----------------------------------------------------------------------------
 //  Component Block

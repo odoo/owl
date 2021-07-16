@@ -11,6 +11,7 @@ export class BNode extends Block {
   anchors?: ChildNode[] | null = null;
   data?: any[] | null = null;
   handlers?: any[] | null = null;
+  refs?: { [name: string]: HTMLElement };
 
   firstChildNode(): ChildNode | null {
     return this.el;

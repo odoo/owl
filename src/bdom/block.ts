@@ -4,7 +4,6 @@
 
 export abstract class Block {
   el: ChildNode | null | null = null;
-  refs?: { [name: string]: HTMLElement };
 
   mount(parent: HTMLElement, mountedNodes: any[], patchedNodes: any[]) {
     const anchor = document.createTextNode("");
@@ -32,15 +31,5 @@ export abstract class Block {
     this.remove();
   }
 
-  // move(parent: HTMLElement) {
-  //   const anchor = document.createTextNode("");
-  //   parent.appendChild(anchor);
-  //   this.moveBefore(anchor);
-  //   anchor.remove();
-  // }
-
   abstract moveBefore(anchor: ChildNode): void;
-  //  {
-  // this.mountBefore(anchor, []);
-  // }
 }

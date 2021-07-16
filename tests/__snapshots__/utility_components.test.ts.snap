@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NoUpdate prevent renderings from above  1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BText(ctx['props'].value);
+    return b1;
+  }
+}"
+`;
+
+exports[`NoUpdate prevent renderings from above  2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  const slot3 = ctx => parent => {
+    const b2 = new BComponent(\`Child\`, {value: ctx['state'].value}, \`__4\`, ctx, parent);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(2);
+    b1.children[0] = new BComponent(\`Child\`, {value: ctx['state'].value}, \`__1\`, ctx, parent);
+    const b3 = b1.children[1] = new BComponent(\`NoUpdate\`, {}, \`__2\`, ctx, parent);
+    b3.node.slots = {'default': slot3(ctx)};
+    return b1;
+  }
+}"
+`;

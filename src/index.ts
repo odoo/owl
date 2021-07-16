@@ -12,6 +12,7 @@ export async function mount<T extends typeof Component>(
 }
 
 export { status } from "./status";
+export { Portal, NoUpdate } from "./utility_components";
 export { xml } from "./tags";
 export { useState } from "./reactivity";
 export { useRef } from "./refs";

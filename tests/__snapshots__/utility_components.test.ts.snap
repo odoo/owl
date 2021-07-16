@@ -33,3 +33,671 @@ exports[`NoUpdate prevent renderings from above  2`] = `
   }
 }"
 `;
+
+exports[`Portal Portal composed with t-slot 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div>child2</div>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal Portal composed with t-slot 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  const slot2 = ctx => parent => {
+    const b1 = callSlot(ctx, 'default');
+    return b1;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b2 = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b2.node.slots = {'default': slot2(ctx)};
+    return b2;
+  }
+}"
+`;
+
+exports[`Portal Portal composed with t-slot 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BComponentH(1, \`Child2\`, {}, \`__3\`, ctx, parent);
+    b2.handlers[0] = [\`custom\`, (e) => ctx.__owl__.component['_handled'](e), ctx];
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal basic use of portal 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span>1</span><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new Block2();
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal (with sub Component) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal (with sub Component) 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>1</span>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b3 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__3\`, ctx, parent);
+    return b3;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    if (ctx['state'].hasPortal) {
+      const b4 = b1.children[1] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+      b4.node.slots = {'default': slot2(ctx)};
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>1</span>\`);
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b3 = new Block2();
+    return b3;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(2);
+    const b2 = b1.children[0] = new Block1();
+    if (ctx['state'].hasPortal) {
+      const b4 = b1.children[1] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+      b4.node.slots = {'default': slot2(ctx)};
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal lifecycle hooks of portal sub component are properly called 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal lifecycle hooks of portal sub component are properly called 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__3\`, ctx, parent);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    if (ctx['state'].hasChild) {
+      const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+      b3.node.slots = {'default': slot2(ctx)};
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal could have dynamically no content 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BMulti(1);
+    if (ctx['state'].val) {
+      const b3 = b2.children[0] = new Block2();
+      b3.data[0] = ctx['state'].val;
+    }
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b4 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b4.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with child and props 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with child and props 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__3\`, ctx, parent);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with dynamic body 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BMulti(2);
+    if (ctx['state'].val) {
+      const b3 = b2.children[0] = new Block2();
+      b3.data[0] = ctx['state'].val;
+    } else {
+      const b4 = b2.children[1] = new Block3();
+    }
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b5 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b5.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with many children 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<div>1</div>\`);
+  }
+  
+  class Block3 extends BStatic {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BMulti(2);
+    const b3 = b2.children[0] = new Block2();
+    const b4 = b2.children[1] = new Block3();
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b5 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b5.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with no content 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BMulti(1);
+    if (false) {
+      b2.children[0] = new BText('ABC');
+    }
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with only text as content 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BText('only text');
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal with target not in dom 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<div>2</div>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new Block2();
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#does-not-exist'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal's parent's env is not polluted 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<button>child</button>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal portal's parent's env is not polluted 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BComponent(\`Child\`, {}, \`__3\`, ctx, parent);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal with target in template (after portal) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><span>1</span><owl-anchor/><div id=\\"local-target\\"/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new Block2();
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#local-target'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal with target in template (before portal) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><div id=\\"local-target\\"/><span>1</span><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.nextSibling.nextSibling;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<p>2</p>\`);
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new Block2();
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#local-target'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<input id=\\"target-me\\"/>\`);
+    data = new Array(1);
+    update() {
+      this.updateAttr(this.el, \`placeholder\`, this.data[0]);
+    }
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  const slot2 = ctx => parent => {
+    const b2 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__3\`, ctx, parent);
+    return b2;
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
+    b3.node.slots = {'default': slot2(ctx)};
+    return b1;
+  }
+}"
+`;

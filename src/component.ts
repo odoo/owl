@@ -12,9 +12,9 @@ export class Component {
     this.env = env;
     this.__owl__ = node;
   }
-  get el() {
+  get el(): HTMLElement | null {
     const node = this.__owl__;
-    return node.bdom ? node.bdom.el : null;
+    return node.bdom ? (node.bdom.el as any) : null;
   }
 
   setup() {}

@@ -23,7 +23,7 @@ export class Scheduler {
   }
 
   addFiber(fiber: RootFiber) {
-    this.tasks.add(fiber); // no check for unicity. need to be careful here
+    this.tasks.add(fiber.root); // no check for unicity. need to be careful here
     if (!this.isRunning) {
       this.start();
     }

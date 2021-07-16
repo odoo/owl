@@ -55,6 +55,9 @@ export class OwlNode extends EventBus {
     const fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
+    if (this.fiber !== fiber) {
+      return;
+    }
     this._render(fiber);
     return fiber.root.promise;
   }

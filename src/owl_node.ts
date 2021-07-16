@@ -50,7 +50,7 @@ export class OwlNode extends EventBus {
 
   async render() {
     if (this.fiber && !this.fiber.bdom) {
-      return this.fiber.root.promise;
+      return this.fiber.root!.promise;
     }
     const fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
@@ -59,7 +59,7 @@ export class OwlNode extends EventBus {
       return;
     }
     this._render(fiber);
-    return fiber.root.promise;
+    return fiber.root!.promise;
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
@@ -103,7 +103,7 @@ export class OwlNode extends EventBus {
   _render(fiber: Fiber | RootFiber) {
     this.fiber = fiber;
     fiber.bdom = this.renderFn();
-    fiber.root.counter--;
+    fiber.root!.counter--;
   }
 
   destroy() {

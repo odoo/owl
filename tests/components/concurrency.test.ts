@@ -1,5 +1,7 @@
-import { App, mount, onWillStart, onWillUpdateProps, useState, Component } from "../../src";
+import { App, Component, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
+import { Fiber } from "../../src/fibers";
 import { onBeforePatch, onMounted, onPatched } from "../../src/lifecycle_hooks";
+import { Scheduler } from "../../src/scheduler";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
 import {
@@ -16,6 +18,20 @@ snapshotEverything();
 
 beforeEach(() => {
   fixture = makeTestFixture();
+});
+
+// following code is there to prevent memory leaks in the scheduled tasks
+let lastScheduler: Scheduler;
+const addFiber = Scheduler.prototype.addFiber;
+Scheduler.prototype.addFiber = function (fiber: Fiber) {
+  lastScheduler = this;
+  return addFiber.call(this, fiber);
+};
+
+afterEach(() => {
+  if (lastScheduler && lastScheduler.tasks.size > 0) {
+    throw new Error("we got a memory leak...");
+  }
 });
 
 describe("async rendering", () => {

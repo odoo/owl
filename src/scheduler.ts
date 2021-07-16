@@ -1,4 +1,5 @@
 import { Fiber, RootFiber } from "./fibers";
+import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
 //  Scheduler
@@ -23,7 +24,7 @@ export class Scheduler {
   }
 
   addFiber(fiber: Fiber) {
-    this.tasks.add(fiber.root); // no check for unicity. need to be careful here
+    this.tasks.add(fiber.root!); // no check for unicity. need to be careful here
     if (!this.isRunning) {
       this.start();
     }
@@ -35,11 +36,14 @@ export class Scheduler {
    */
   flush() {
     this.tasks.forEach((fiber) => {
-      // if (fiber.isCompleted) {
-      //   // leave the promise pending???
-      //   this.tasks.delete(fiber);
-      //   return;
-      // }
+      if (fiber.node.status === STATUS.DESTROYED) {
+        this.tasks.delete(fiber);
+        return;
+      }
+      if (fiber.root !== fiber) {
+        this.tasks.delete(fiber);
+        return;
+      }
       if (fiber.counter === 0) {
         if (!fiber.error) {
           fiber.complete();

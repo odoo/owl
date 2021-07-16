@@ -10,11 +10,12 @@ export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
   let current = node.fiber;
   if (current) {
     // current is necessarily a rootfiber here
-    let root = parent.root;
+    let root = parent.root!;
     cancelFibers(current.children);
     current.children = [];
     current.parent = parent;
     root.counter++;
+    current.root = root;
     return current;
   }
   let result = new Fiber(node, parent);
@@ -28,7 +29,7 @@ export function makeRootFiber(node: OwlNode): Fiber {
   }
   let current = node.fiber;
   if (current) {
-    let root = current.root;
+    let root = current.root!;
     root.counter -= cancelFibers(current.children);
     current.children = [];
     root.counter++;
@@ -54,6 +55,7 @@ function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     fiber.node.fiber = null;
+    fiber.root = null;
     if (!fiber.bdom) {
       result++;
     }
@@ -65,7 +67,7 @@ function cancelFibers(fibers: Fiber[]): number {
 export class Fiber {
   node: OwlNode;
   bdom: Block | null = null;
-  root: RootFiber;
+  root: RootFiber | null;
   parent: Fiber | null;
   children: Fiber[] = [];
 
@@ -74,7 +76,7 @@ export class Fiber {
     node.fiber = this;
     this.parent = parent;
     if (parent) {
-      const root = parent.root;
+      const root = parent.root!;
       root.counter++;
       this.root = root;
       parent.children.push(this);

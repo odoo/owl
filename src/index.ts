@@ -11,6 +11,7 @@ export async function mount<T extends typeof Component>(
   return app.mount(target);
 }
 
+export { status } from "./status";
 export { xml } from "./tags";
 export { useState } from "./reactivity";
 export { useRef } from "./refs";

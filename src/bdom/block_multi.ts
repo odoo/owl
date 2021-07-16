@@ -60,7 +60,7 @@ export class BMulti extends Block {
         if (newBlock) {
           block.patch(newBlock, mountedNodes, patchedNodes);
         } else {
-          children[0] = null;
+          children[i] = null;
           block.fullRemove();
         }
       } else if (newBlock) {

@@ -653,4 +653,62 @@ describe("lifecycle hooks", () => {
     app.destroy();
     expect(steps).toEqual(["Parent:beforeUnmount", "Parent:beforeDestroy"]);
   });
+
+
+  test("lifecycle semantics, part 4", async () => {
+    let def = makeDeferred();
+
+    let steps: string[] = [];
+
+    class GrandChild extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useLogLifecycle(steps);
+        onWillStart(() => def);
+      }
+    }
+    class Child extends Component {
+      static template = xml`<GrandChild/>`;
+      static components = { GrandChild };
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.hasChild"/>`;
+      static components = { Child };
+      state = useState({ hasChild: false });
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const app = new App(Parent);
+    const parent = await app.mount(fixture);
+
+    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
+
+    steps.splice(0);
+
+    parent.state.hasChild = true;
+
+    await nextTick();
+    expect(steps).toEqual([
+      "Child:setup",
+      "Child:willStart",
+      "GrandChild:setup",
+      "GrandChild:willStart"
+    ]);
+
+    steps.splice(0);
+
+    app.destroy();
+    expect(steps).toEqual([
+      "Parent:beforeUnmount",
+      "Parent:beforeDestroy",
+      "Child:beforeDestroy",
+      "GrandChild:beforeDestroy"
+    ]);
+  });
 });

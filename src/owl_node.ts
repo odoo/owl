@@ -78,7 +78,9 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
       cb.call(component);
     }
     for (let child of Object.values(this.children)) {
-      child.callBeforeUnmount();
+      if (child.status === STATUS.MOUNTED) {
+        child.callBeforeUnmount();
+      }
     }
   }
 

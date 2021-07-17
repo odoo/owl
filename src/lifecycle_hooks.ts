@@ -14,7 +14,7 @@ export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void) 
   node.willUpdateProps.push(fn);
 }
 
-export function onBeforeUnmount(fn: () => Promise<void> | void) {
+export function onBeforeUnmount(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
   node.beforeUnmount.push(fn);
 }
@@ -24,7 +24,7 @@ export function onMounted(fn: () => void) {
   node.mounted.push(fn);
 }
 
-export function onBeforePatch(fn: () => Promise<void> | void) {
+export function onBeforePatch(fn: () => Promise<void> | any | void) {
   const node = getCurrent()!;
   node.beforePatch.push(fn);
 }

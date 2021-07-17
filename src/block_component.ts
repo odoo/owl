@@ -139,13 +139,13 @@ export class BComponentH extends BComponent {
       const handler = this.handlers[i];
       const eventType = handler[0];
       const el = this.node.component.el!;
-      el.addEventListener(eventType, () => {
+      el.addEventListener(eventType, (ev: Event) => {
         const info = this.handlers![i];
         const [, callback] = info;
         // if (ctx.__owl__ && !ctx.__owl__.isMounted) {
         //   return;
         // }
-        callback();
+        callback(ev);
       });
     }
   }

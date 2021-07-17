@@ -551,4 +551,61 @@ describe("lifecycle hooks", () => {
       "Child:beforeDestroy",
     ]);
   });
+
+  test("lifecycle semantics, part 2", async () => {
+    let steps: string[] = [];
+
+    class GrandChild extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+    class Child extends Component {
+      static template = xml`<GrandChild/>`;
+      static components = { GrandChild };
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.hasChild"/>`;
+      static components = { Child };
+      state = useState({ hasChild: false });
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const app = new App(Parent);
+    const parent = await app.mount(fixture);
+
+    expect(steps).toEqual(["Parent:willStart", "Parent:mounted"]);
+
+    steps.splice(0);
+
+    parent.state.hasChild = true;
+    await nextTick();
+    expect(steps).toEqual([
+      "Child:willStart",
+      "GrandChild:willStart",
+      "Parent:beforePatch",
+      "GrandChild:mounted",
+      "Child:mounted",
+      "Parent:patched",
+    ]);
+
+    steps.splice(0);
+
+    app.destroy();
+    expect(steps).toEqual([
+      "Parent:beforeUnmount",
+      "Child:beforeUnmount",
+      "GrandChild:beforeUnmount",
+      "Parent:beforeDestroy",
+      "Child:beforeDestroy",
+      "GrandChild:beforeDestroy",
+    ]);
+  });
 });

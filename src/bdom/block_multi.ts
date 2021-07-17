@@ -79,8 +79,12 @@ export class BMulti extends Block {
   }
 
   remove() {
-    for (let i = 0; i < this.children.length; i++) {
-      this.children[i]!.remove();
+    const children = this.children;
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (child) {
+        child.remove();
+      }
       this.anchors![i].remove();
     }
   }

@@ -224,6 +224,52 @@ exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 }"
 `;
 
+exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks lifecycle semantics, part 3 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks lifecycle semantics, part 3 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return (ctx, parent = ctx) => {
+    const b1 = new BMulti(1);
+    if (ctx['state'].hasChild) {
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`lifecycle hooks mounted hook is called if mounted in DOM 1`] = `
 "function anonymous(Blocks, utils
 ) {

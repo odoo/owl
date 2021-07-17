@@ -20,6 +20,7 @@ beforeEach(() => {
 function useLogLifecycle(steps: string[]) {
   const component = useComponent();
   const name = component.constructor.name;
+  steps.push(`${name}:setup`);
   onWillStart(() => steps.push(`${name}:willStart`));
   onWillUpdateProps(() => steps.push(`${name}:willUpdateProps`));
   onMounted(() => steps.push(`${name}:mounted`));
@@ -536,7 +537,9 @@ describe("lifecycle hooks", () => {
     await app.mount(fixture);
 
     expect(steps).toEqual([
+      "Parent:setup",
       "Parent:willStart",
+      "Child:setup",
       "Child:willStart",
       "Child:mounted",
       "Parent:mounted",
@@ -581,14 +584,16 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:willStart", "Parent:mounted"]);
+    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
 
     steps.splice(0);
 
     parent.state.hasChild = true;
     await nextTick();
     expect(steps).toEqual([
+      "Child:setup",
       "Child:willStart",
+      "GrandChild:setup",
       "GrandChild:willStart",
       "Parent:beforePatch",
       "GrandChild:mounted",
@@ -607,5 +612,45 @@ describe("lifecycle hooks", () => {
       "Child:beforeDestroy",
       "GrandChild:beforeDestroy",
     ]);
+  });
+
+  test("lifecycle semantics, part 3", async () => {
+    let steps: string[] = [];
+
+    class GrandChild extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+    class Child extends Component {
+      static template = xml`<GrandChild/>`;
+      static components = { GrandChild };
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.hasChild"/>`;
+      static components = { Child };
+      state = useState({ hasChild: false });
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const app = new App(Parent);
+    const parent = await app.mount(fixture);
+
+    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
+
+    steps.splice(0);
+
+    parent.state.hasChild = true;
+
+    // immediately destroy everythin
+    app.destroy();
+    expect(steps).toEqual(["Parent:beforeUnmount", "Parent:beforeDestroy"]);
   });
 });

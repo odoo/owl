@@ -30,4 +30,20 @@ describe("BMulti", () => {
     bdom.patch(bdom4, [], []);
     expect(fixture.innerHTML).toBe("<p>1</p><p>2</p>");
   });
+
+  test("removing an BMulti with an empty slot", () => {
+    const template = `
+        <p>1</p>
+        <p t-if="flag">2</p>`;
+
+    snapshotTemplateCode(template);
+
+    const bdom = renderToBdom(template, { flag: false });
+    bdom.mount(fixture, [], []);
+    expect(fixture.innerHTML).toBe("<p>1</p>");
+
+    bdom.remove();
+    expect(fixture.innerHTML).toBe("");
+    expect(fixture.childNodes.length).toBe(0);
+  });
 });

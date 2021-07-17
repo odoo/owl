@@ -1,5 +1,6 @@
 import { App } from "./app";
 import { Component } from "./component";
+import { getCurrent } from "./owl_node";
 
 export { App, Component };
 
@@ -9,6 +10,11 @@ export async function mount<T extends typeof Component>(
 ): Promise<InstanceType<T>> {
   const app = new App(C);
   return app.mount(target);
+}
+
+export function useComponent(): Component {
+  const current = getCurrent();
+  return current!.component;
 }
 
 export { status } from "./status";
@@ -25,6 +31,7 @@ export {
   onWillUpdateProps,
   onBeforePatch,
   onPatched,
+  onBeforeDestroy,
 } from "./lifecycle_hooks";
 
 export const __info__ = {};

@@ -30,14 +30,15 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   mounted: LifecycleHook[] = [];
   beforePatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
+  beforeDestroy: LifecycleHook[] = [];
 
   constructor(app: App, C: T, props: any) {
     super();
     this.app = app;
     currentNode = this;
     const component: InstanceType<T> = new C(props, app.env, this) as any;
-    component.setup();
     this.component = component;
+    component.setup();
     this.renderFn = app.getTemplate(C.template).bind(null, component);
   }
 
@@ -81,6 +82,16 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     }
   }
 
+  callBeforeDestroy() {
+    const component = this.component;
+    for (let cb of this.beforeDestroy) {
+      cb.call(component);
+    }
+    for (let child of Object.values(this.children)) {
+      child.callBeforeDestroy();
+    }
+  }
+
   callBeforePatch() {
     const component = this.component;
     for (let cb of this.beforePatch) {
@@ -112,6 +123,8 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
         this.bdom!.remove();
         break;
     }
+
+    this.callBeforeDestroy();
     this.status = STATUS.DESTROYED;
   }
 }

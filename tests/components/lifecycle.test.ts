@@ -1,5 +1,6 @@
-import { App, mount, onMounted, onWillStart, useState, Component } from "../../src";
+import { App, mount, onMounted, onWillStart, useState, Component, useComponent } from "../../src";
 import {
+  onBeforeDestroy,
   onBeforePatch,
   onBeforeUnmount,
   onPatched,
@@ -15,6 +16,18 @@ snapshotEverything();
 beforeEach(() => {
   fixture = makeTestFixture();
 });
+
+function useLogLifecycle(steps: string[]) {
+  const component = useComponent();
+  const name = component.constructor.name;
+  onWillStart(() => steps.push(`${name}:willStart`));
+  onWillUpdateProps(() => steps.push(`${name}:willUpdateProps`));
+  onMounted(() => steps.push(`${name}:mounted`));
+  onBeforePatch(() => steps.push(`${name}:beforePatch`));
+  onPatched(() => steps.push(`${name}:patched`));
+  onBeforeUnmount(() => steps.push(`${name}:beforeUnmount`));
+  onBeforeDestroy(() => steps.push(`${name}:beforeDestroy`));
+}
 
 describe("lifecycle hooks", () => {
   test("basic checks for a component", async () => {
@@ -499,5 +512,43 @@ describe("lifecycle hooks", () => {
     widget.state.a = 2;
     await nextTick();
     expect(n).toBe(1);
+  });
+
+  test("lifecycle semantics", async () => {
+    let steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child a="state.a"/></div>`;
+      static components = { Child };
+      state = useState({ a: 1 });
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const app = new App(Parent);
+    await app.mount(fixture);
+
+    expect(steps).toEqual([
+      "Parent:willStart",
+      "Child:willStart",
+      "Child:mounted",
+      "Parent:mounted",
+    ]);
+
+    steps.splice(0);
+    app.destroy();
+    expect(steps).toEqual([
+      "Parent:beforeUnmount",
+      "Child:beforeUnmount",
+      "Parent:beforeDestroy",
+      "Child:beforeDestroy",
+    ]);
   });
 });

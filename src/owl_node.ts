@@ -30,7 +30,7 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   mounted: LifecycleHook[] = [];
   beforePatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
-  beforeDestroy: LifecycleHook[] = [];
+  destroyed: LifecycleHook[] = [];
 
   constructor(app: App, C: T, props: any) {
     super();
@@ -84,13 +84,13 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     }
   }
 
-  callBeforeDestroy() {
+  callDestroyed() {
     const component = this.component;
-    for (let cb of this.beforeDestroy) {
+    for (let cb of this.destroyed) {
       cb.call(component);
     }
     for (let child of Object.values(this.children)) {
-      child.callBeforeDestroy();
+      child.callDestroyed();
     }
   }
 
@@ -126,7 +126,7 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
         break;
     }
 
-    this.callBeforeDestroy();
+    this.callDestroyed();
     this.status = STATUS.DESTROYED;
   }
 }

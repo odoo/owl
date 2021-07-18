@@ -1,5 +1,5 @@
 import {
-  onBeforeDestroy,
+  onDestroyed,
   onBeforePatch,
   onBeforeUnmount,
   onMounted,
@@ -147,5 +147,5 @@ export function useLogLifecycle(steps: string[]) {
   onBeforePatch(() => steps.push(`${name}:beforePatch`));
   onPatched(() => steps.push(`${name}:patched`));
   onBeforeUnmount(() => steps.push(`${name}:beforeUnmount`));
-  onBeforeDestroy(() => steps.push(`${name}:beforeDestroy`));
+  onDestroyed(() => steps.push(`${name}:destroyed`));
 }

@@ -34,7 +34,7 @@ export function onBeforeUnmount(fn: () => Promise<void> | void | any) {
   node.beforeUnmount.push(fn);
 }
 
-export function onBeforeDestroy(fn: () => Promise<void> | void | any) {
+export function onDestroyed(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.beforeDestroy.push(fn);
+  node.destroyed.push(fn);
 }

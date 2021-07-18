@@ -57,7 +57,7 @@ describe("async rendering", () => {
     def.resolve();
     await nextTick();
     expect(status(w)).toBe("destroyed");
-    expect(steps).toEqual(["W:setup", "W:willStart", "W:beforeDestroy"]);
+    expect(steps).toEqual(["W:setup", "W:willStart", "W:destroyed"]);
   });
 });
 
@@ -106,7 +106,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
     "W:mounted",
     "Child:setup",
     "Child:willStart",
-    "Child:beforeDestroy",
+    "Child:destroyed",
     "Child:setup",
     "Child:willStart",
     "W:beforePatch",

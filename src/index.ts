@@ -31,7 +31,7 @@ export {
   onWillUpdateProps,
   onBeforePatch,
   onPatched,
-  onBeforeDestroy,
+  onDestroyed,
 } from "./lifecycle_hooks";
 
 export const __info__ = {};

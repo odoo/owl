@@ -1,4 +1,4 @@
-import { App, mount, onMounted, onWillStart, useState, Component, useComponent } from "../../src";
+import { App, Component, mount, onMounted, onWillStart, useState } from "../../src";
 import {
   onBeforePatch,
   onBeforeUnmount,
@@ -542,8 +542,8 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:beforeUnmount",
       "Child:beforeUnmount",
-      "Parent:beforeDestroy",
-      "Child:beforeDestroy",
+      "Parent:destroyed",
+      "Child:destroyed",
     ]);
   });
 
@@ -600,9 +600,9 @@ describe("lifecycle hooks", () => {
       "Parent:beforeUnmount",
       "Child:beforeUnmount",
       "GrandChild:beforeUnmount",
-      "Parent:beforeDestroy",
-      "Child:beforeDestroy",
-      "GrandChild:beforeDestroy",
+      "Parent:destroyed",
+      "Child:destroyed",
+      "GrandChild:destroyed",
     ]);
   });
 
@@ -643,7 +643,7 @@ describe("lifecycle hooks", () => {
 
     // immediately destroy everythin
     app.destroy();
-    expect(steps).toEqual(["Parent:beforeUnmount", "Parent:beforeDestroy"]);
+    expect(steps).toEqual(["Parent:beforeUnmount", "Parent:destroyed"]);
   });
 
   test("lifecycle semantics, part 4", async () => {
@@ -697,9 +697,9 @@ describe("lifecycle hooks", () => {
     app.destroy();
     expect(steps).toEqual([
       "Parent:beforeUnmount",
-      "Parent:beforeDestroy",
-      "Child:beforeDestroy",
-      "GrandChild:beforeDestroy",
+      "Parent:destroyed",
+      "Child:destroyed",
+      "GrandChild:destroyed",
     ]);
   });
 });

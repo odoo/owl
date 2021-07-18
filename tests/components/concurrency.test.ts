@@ -10,6 +10,7 @@ import {
   nextMicroTick,
   nextTick,
   snapshotEverything,
+  useLogLifecycle,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -36,11 +37,13 @@ afterEach(() => {
 
 describe("async rendering", () => {
   test("destroying a widget before start is over", async () => {
+    let steps: string[] = [];
     let def = makeDeferred();
     let w: any = null;
     class W extends Component {
       static template = xml`<div/>`;
       setup() {
+        useLogLifecycle(steps);
         expect(status(this)).toBe("new");
         w = this;
         onWillStart(() => def);
@@ -54,15 +57,18 @@ describe("async rendering", () => {
     def.resolve();
     await nextTick();
     expect(status(w)).toBe("destroyed");
+    expect(steps).toEqual(["W:setup", "W:willStart", "W:beforeDestroy"]);
   });
 });
 
 test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
+  let steps: string[] = [];
   let def = makeDeferred();
   let n = 0;
   class Child extends Component {
     static template = xml`<span>child:<t t-esc="props.val"/></span>`;
     setup() {
+      useLogLifecycle(steps);
       n++;
       onWillStart(() => def);
     }
@@ -75,6 +81,9 @@ test("destroying/recreating a subwidget with different props (if start is not ov
         </div>`;
     static components = { Child };
     state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle(steps);
+    }
   }
 
   const w = await mount(W, fixture);
@@ -91,6 +100,19 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
   expect(Object.values(w.__owl__.children).length).toBe(1);
+  expect(steps).toEqual([
+    "W:setup",
+    "W:willStart",
+    "W:mounted",
+    "Child:setup",
+    "Child:willStart",
+    "Child:beforeDestroy",
+    "Child:setup",
+    "Child:willStart",
+    "W:beforePatch",
+    "Child:mounted",
+    "W:patched",
+  ]);
 });
 
 test("creating two async components, scenario 1", async () => {

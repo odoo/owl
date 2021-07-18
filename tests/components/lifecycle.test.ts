@@ -1,6 +1,5 @@
 import { App, mount, onMounted, onWillStart, useState, Component, useComponent } from "../../src";
 import {
-  onBeforeDestroy,
   onBeforePatch,
   onBeforeUnmount,
   onPatched,
@@ -8,7 +7,13 @@ import {
 } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
-import { makeDeferred, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  makeDeferred,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  useLogLifecycle,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -16,19 +21,6 @@ snapshotEverything();
 beforeEach(() => {
   fixture = makeTestFixture();
 });
-
-function useLogLifecycle(steps: string[]) {
-  const component = useComponent();
-  const name = component.constructor.name;
-  steps.push(`${name}:setup`);
-  onWillStart(() => steps.push(`${name}:willStart`));
-  onWillUpdateProps(() => steps.push(`${name}:willUpdateProps`));
-  onMounted(() => steps.push(`${name}:mounted`));
-  onBeforePatch(() => steps.push(`${name}:beforePatch`));
-  onPatched(() => steps.push(`${name}:patched`));
-  onBeforeUnmount(() => steps.push(`${name}:beforeUnmount`));
-  onBeforeDestroy(() => steps.push(`${name}:beforeDestroy`));
-}
 
 describe("lifecycle hooks", () => {
   test("basic checks for a component", async () => {
@@ -654,7 +646,6 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual(["Parent:beforeUnmount", "Parent:beforeDestroy"]);
   });
 
-
   test("lifecycle semantics, part 4", async () => {
     let def = makeDeferred();
 
@@ -698,7 +689,7 @@ describe("lifecycle hooks", () => {
       "Child:setup",
       "Child:willStart",
       "GrandChild:setup",
-      "GrandChild:willStart"
+      "GrandChild:willStart",
     ]);
 
     steps.splice(0);
@@ -708,7 +699,7 @@ describe("lifecycle hooks", () => {
       "Parent:beforeUnmount",
       "Parent:beforeDestroy",
       "Child:beforeDestroy",
-      "GrandChild:beforeDestroy"
+      "GrandChild:beforeDestroy",
     ]);
   });
 });

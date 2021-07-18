@@ -1,3 +1,13 @@
+import {
+  onBeforeDestroy,
+  onBeforePatch,
+  onBeforeUnmount,
+  onMounted,
+  onPatched,
+  onWillStart,
+  onWillUpdateProps,
+  useComponent,
+} from "../src";
 import { TemplateSet } from "../src/app";
 import { Block, Blocks } from "../src/bdom";
 import { compileTemplate, Template } from "../src/compiler/index";
@@ -125,4 +135,17 @@ export function snapshotEverything() {
     }
     console.warn = consolewarn;
   });
+}
+
+export function useLogLifecycle(steps: string[]) {
+  const component = useComponent();
+  const name = component.constructor.name;
+  steps.push(`${name}:setup`);
+  onWillStart(() => steps.push(`${name}:willStart`));
+  onWillUpdateProps(() => steps.push(`${name}:willUpdateProps`));
+  onMounted(() => steps.push(`${name}:mounted`));
+  onBeforePatch(() => steps.push(`${name}:beforePatch`));
+  onPatched(() => steps.push(`${name}:patched`));
+  onBeforeUnmount(() => steps.push(`${name}:beforeUnmount`));
+  onBeforeDestroy(() => steps.push(`${name}:beforeDestroy`));
 }

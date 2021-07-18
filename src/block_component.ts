@@ -34,7 +34,7 @@ export class BComponent extends Block {
       const parentFiber = parentNode.fiber!;
       const fiber = makeChildFiber(node, parentFiber);
       if (node.beforePatch.length) {
-        parentFiber.root.toPatch.push(fiber);
+        parentFiber.root.beforePatch.add(fiber);
       }
       node.updateAndRender(props, fiber);
     } else {

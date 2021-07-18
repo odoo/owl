@@ -74,13 +74,19 @@ export class RootFiber extends Fiber {
   resolve: any;
   promise: Promise<any>;
   reject: any;
-  toPatch: Fiber[];
+
+  // only add stuff in this if they have registered some hooks
+  beforePatch: Set<Fiber> = new Set();
+  patched: Set<Fiber> = new Set();
+  mounted: Set<Fiber> = new Set();
 
   constructor(node: OwlNode) {
     super(node, null);
     this.counter = 1;
     this.error = null;
-    this.toPatch = [this];
+    if (node.beforePatch.length) {
+      this.beforePatch.add(this);
+    }
 
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
@@ -90,11 +96,11 @@ export class RootFiber extends Fiber {
 
   complete() {
     const node = this.node;
-    for (let fiber of this.toPatch) {
-      let node = fiber.node;
+    for (let fiber of this.beforePatch) {
       // because of the asynchronous nature of the rendering, some parts of the
       // UI may have been rendered, then deleted in a followup rendering, and we
       // do not want to call onBeforePatch in that case.
+      let node = fiber.node;
       if (node.fiber === fiber) {
         node.callBeforePatch();
       }
@@ -127,7 +133,7 @@ export class MountFiber extends RootFiber {
   constructor(node: OwlNode, target: HTMLElement) {
     super(node);
     this.target = target;
-    this.toPatch = [];
+    this.beforePatch.clear();
   }
   complete() {
     const node = this.node;

@@ -27,7 +27,7 @@ export { EventBus } from "./event_bus";
 export {
   onWillStart,
   onMounted,
-  onBeforeUnmount,
+  onWillUnmount,
   onWillUpdateProps,
   onWillPatch,
   onPatched,

@@ -1,7 +1,7 @@
 import { App, Component, mount, onMounted, onWillStart, useState } from "../../src";
 import {
   onWillPatch,
-  onBeforeUnmount,
+  onWillUnmount,
   onPatched,
   onWillUpdateProps,
 } from "../../src/lifecycle_hooks";
@@ -150,7 +150,7 @@ describe("lifecycle hooks", () => {
         onMounted(() => {
           steps.push("childchild:mounted");
         });
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           steps.push("childchild:willUnmount");
         });
       }
@@ -163,7 +163,7 @@ describe("lifecycle hooks", () => {
         onMounted(() => {
           steps.push("child:mounted");
         });
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           steps.push("child:willUnmount");
         });
       }
@@ -177,7 +177,7 @@ describe("lifecycle hooks", () => {
         onMounted(() => {
           steps.push("parent:mounted");
         });
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           steps.push("parent:willUnmount");
         });
       }
@@ -320,7 +320,7 @@ describe("lifecycle hooks", () => {
         onMounted(() => {
           steps.push("mounted");
         });
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           steps.push("willunmount");
         });
       }
@@ -344,7 +344,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="props.n"/></span>`;
       setup() {
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           childUnmounted = true;
         });
       }
@@ -391,7 +391,7 @@ describe("lifecycle hooks", () => {
         onMounted(() => {
           steps.push("c mounted");
         });
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           steps.push("c willunmount");
         });
       }
@@ -408,7 +408,7 @@ describe("lifecycle hooks", () => {
         onMounted(() => {
           steps.push("p mounted");
         });
-        onBeforeUnmount(() => {
+        onWillUnmount(() => {
           steps.push("p willunmount");
         });
       }
@@ -540,8 +540,8 @@ describe("lifecycle hooks", () => {
     steps.splice(0);
     app.destroy();
     expect(steps).toEqual([
-      "Parent:beforeUnmount",
-      "Child:beforeUnmount",
+      "Parent:willUnmount",
+      "Child:willUnmount",
       "Parent:destroyed",
       "Child:destroyed",
     ]);
@@ -597,9 +597,9 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps).toEqual([
-      "Parent:beforeUnmount",
-      "Child:beforeUnmount",
-      "GrandChild:beforeUnmount",
+      "Parent:willUnmount",
+      "Child:willUnmount",
+      "GrandChild:willUnmount",
       "Parent:destroyed",
       "Child:destroyed",
       "GrandChild:destroyed",
@@ -643,7 +643,7 @@ describe("lifecycle hooks", () => {
 
     // immediately destroy everythin
     app.destroy();
-    expect(steps).toEqual(["Parent:beforeUnmount", "Parent:destroyed"]);
+    expect(steps).toEqual(["Parent:willUnmount", "Parent:destroyed"]);
   });
 
   test("lifecycle semantics, part 4", async () => {
@@ -696,7 +696,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps).toEqual([
-      "Parent:beforeUnmount",
+      "Parent:willUnmount",
       "Parent:destroyed",
       "Child:destroyed",
       "GrandChild:destroyed",

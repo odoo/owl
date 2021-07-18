@@ -3,7 +3,7 @@ import {
   Component,
   mount,
   onWillPatch,
-  onBeforeUnmount,
+  onWillUnmount,
   onMounted,
   onPatched,
   useState,
@@ -337,7 +337,7 @@ describe("Portal", () => {
         onMounted(() => steps.push("child:mounted"));
         onWillPatch(() => steps.push("child:willPatch"));
         onPatched(() => steps.push("child:patched"));
-        onBeforeUnmount(() => steps.push("child:willUnmount"));
+        onWillUnmount(() => steps.push("child:willUnmount"));
       }
     }
 
@@ -354,7 +354,7 @@ describe("Portal", () => {
         onMounted(() => steps.push("parent:mounted"));
         onWillPatch(() => steps.push("parent:willPatch"));
         onPatched(() => steps.push("parent:patched"));
-        onBeforeUnmount(() => steps.push("parent:willUnmount"));
+        onWillUnmount(() => steps.push("parent:willUnmount"));
       }
     }
 

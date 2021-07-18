@@ -29,9 +29,9 @@ export function onPatched(fn: () => void | any) {
   node.patched.push(fn);
 }
 
-export function onBeforeUnmount(fn: () => Promise<void> | void | any) {
+export function onWillUnmount(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.beforeUnmount.push(fn);
+  node.willUnmount.push(fn);
 }
 
 export function onDestroyed(fn: () => Promise<void> | void | any) {

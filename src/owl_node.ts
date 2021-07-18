@@ -26,7 +26,7 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
 
   willStart: LifecycleHook[] = [];
   willUpdateProps: LifecycleHook[] = [];
-  beforeUnmount: LifecycleHook[] = [];
+  willUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
@@ -72,14 +72,14 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     }
   }
 
-  callBeforeUnmount() {
+  callWillUnmount() {
     const component = this.component;
-    for (let cb of this.beforeUnmount) {
+    for (let cb of this.willUnmount) {
       cb.call(component);
     }
     for (let child of Object.values(this.children)) {
       if (child.status === STATUS.MOUNTED) {
-        child.callBeforeUnmount();
+        child.callWillUnmount();
       }
     }
   }
@@ -121,7 +121,7 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   destroy() {
     switch (this.status) {
       case STATUS.MOUNTED:
-        this.callBeforeUnmount();
+        this.callWillUnmount();
         this.bdom!.remove();
         break;
     }

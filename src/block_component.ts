@@ -115,7 +115,7 @@ export class BComponent extends Block {
   }
 
   beforeRemove() {
-    this.node.callBeforeUnmount();
+    this.node.callWillUnmount();
   }
 
   remove() {

@@ -116,6 +116,8 @@ test("destroying/recreating a subwidget with different props (if start is not ov
 });
 
 test("creating two async components, scenario 1", async () => {
+  let steps: string[] = [];
+
   let defA = makeDeferred();
   let defB = makeDeferred();
   let nbRenderings: number = 0;
@@ -124,6 +126,7 @@ test("creating two async components, scenario 1", async () => {
     static template = xml`<span><t t-esc="getValue()"/></span>`;
 
     setup() {
+      useLogLifecycle(steps);
       onWillStart(() => defA);
     }
 
@@ -136,6 +139,7 @@ test("creating two async components, scenario 1", async () => {
   class ChildB extends Component {
     static template = xml`<span>b</span>`;
     setup() {
+      useLogLifecycle(steps);
       onWillStart(() => defB);
     }
   }
@@ -147,6 +151,9 @@ test("creating two async components, scenario 1", async () => {
 
     static components = { ChildA, ChildB };
     state = useState({ flagA: false, flagB: false });
+    setup() {
+      useLogLifecycle(steps);
+    }
   }
 
   const parent = await mount(Parent, fixture);
@@ -165,9 +172,26 @@ test("creating two async components, scenario 1", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");
   expect(nbRenderings).toBe(1);
+  expect(steps).toEqual([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:mounted",
+    "ChildA:setup",
+    "ChildA:willStart",
+    "ChildA:destroyed",
+    "ChildA:setup",
+    "ChildA:willStart",
+    "ChildB:setup",
+    "ChildB:willStart",
+    "Parent:beforePatch",
+    "ChildB:mounted",
+    "ChildA:mounted",
+    "Parent:patched",
+  ]);
 });
 
 test("creating two async components, scenario 2", async () => {
+  let steps: string[] = [];
   let defA = makeDeferred();
   let defB = makeDeferred();
 
@@ -175,6 +199,7 @@ test("creating two async components, scenario 2", async () => {
     static template = xml`<span>a<t t-esc="props.val"/></span>`;
 
     setup() {
+      useLogLifecycle(steps);
       onWillUpdateProps(() => defA);
     }
   }
@@ -182,6 +207,7 @@ test("creating two async components, scenario 2", async () => {
   class ChildB extends Component {
     static template = xml`<span>b<t t-esc="props.val"/></span>`;
     setup() {
+      useLogLifecycle(steps);
       onWillStart(() => defB);
     }
   }
@@ -194,6 +220,9 @@ test("creating two async components, scenario 2", async () => {
           </div>`;
     static components = { ChildA, ChildB };
     state = useState({ valA: 1, valB: 2, flagB: false });
+    setup() {
+      useLogLifecycle(steps);
+    }
   }
   const parent = await mount(Parent, fixture);
 
@@ -210,6 +239,24 @@ test("creating two async components, scenario 2", async () => {
   defA.resolve();
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
+
+  expect(steps).toEqual([
+    "Parent:setup",
+    "Parent:willStart",
+    "ChildA:setup",
+    "ChildA:willStart",
+    "ChildA:mounted",
+    "Parent:mounted",
+    "ChildA:willUpdateProps",
+    "ChildA:willUpdateProps",
+    "ChildB:setup",
+    "ChildB:willStart",
+    "Parent:beforePatch",
+    "ChildA:beforePatch",
+    "ChildB:mounted",
+    "ChildA:patched",
+    "Parent:patched",
+  ]);
 });
 
 test("creating two async components, scenario 3 (patching in the same frame)", async () => {

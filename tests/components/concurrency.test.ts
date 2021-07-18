@@ -1,6 +1,6 @@
 import { App, Component, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
 import { Fiber } from "../../src/fibers";
-import { onBeforePatch, onMounted, onPatched } from "../../src/lifecycle_hooks";
+import { onWillPatch, onMounted, onPatched } from "../../src/lifecycle_hooks";
 import { Scheduler } from "../../src/scheduler";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
@@ -109,7 +109,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
     "Child:destroyed",
     "Child:setup",
     "Child:willStart",
-    "W:beforePatch",
+    "W:willPatch",
     "Child:mounted",
     "W:patched",
   ]);
@@ -183,7 +183,7 @@ test("creating two async components, scenario 1", async () => {
     "ChildA:willStart",
     "ChildB:setup",
     "ChildB:willStart",
-    "Parent:beforePatch",
+    "Parent:willPatch",
     "ChildB:mounted",
     "ChildA:mounted",
     "Parent:patched",
@@ -251,8 +251,8 @@ test("creating two async components, scenario 2", async () => {
     "ChildA:willUpdateProps",
     "ChildB:setup",
     "ChildB:willStart",
-    "Parent:beforePatch",
-    "ChildA:beforePatch",
+    "Parent:willPatch",
+    "ChildA:willPatch",
     "ChildB:mounted",
     "ChildA:patched",
     "Parent:patched",
@@ -420,7 +420,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     static template = xml`<div/>`;
 
     setup() {
-      onBeforePatch(() => {
+      onWillPatch(() => {
         throw new Error("Should not happen!");
       });
       onPatched(() => {

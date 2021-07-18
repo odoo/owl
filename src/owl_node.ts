@@ -28,7 +28,7 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   willUpdateProps: LifecycleHook[] = [];
   beforeUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
-  beforePatch: LifecycleHook[] = [];
+  willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   destroyed: LifecycleHook[] = [];
 
@@ -94,9 +94,9 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     }
   }
 
-  callBeforePatch() {
+  callWillPatch() {
     const component = this.component;
-    for (let cb of this.beforePatch) {
+    for (let cb of this.willPatch) {
       cb.call(component);
     }
   }

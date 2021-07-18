@@ -1,6 +1,6 @@
 import { App, Component, mount, onMounted, onWillStart, useState } from "../../src";
 import {
-  onBeforePatch,
+  onWillPatch,
   onBeforeUnmount,
   onPatched,
   onWillUpdateProps,
@@ -208,7 +208,7 @@ describe("lifecycle hooks", () => {
       `;
 
       setup() {
-        onBeforePatch(() => {
+        onWillPatch(() => {
           steps.push("childchild:willPatch");
         });
         onPatched(() => {
@@ -224,7 +224,7 @@ describe("lifecycle hooks", () => {
       static components = { ChildChild };
 
       setup() {
-        onBeforePatch(() => {
+        onWillPatch(() => {
           steps.push("child:willPatch");
         });
         onPatched(() => {
@@ -242,7 +242,7 @@ describe("lifecycle hooks", () => {
       state = useState({ n: 1 });
 
       setup() {
-        onBeforePatch(() => {
+        onWillPatch(() => {
           steps.push("parent:willPatch");
         });
         onPatched(() => {
@@ -587,7 +587,7 @@ describe("lifecycle hooks", () => {
       "Child:willStart",
       "GrandChild:setup",
       "GrandChild:willStart",
-      "Parent:beforePatch",
+      "Parent:willPatch",
       "GrandChild:mounted",
       "Child:mounted",
       "Parent:patched",

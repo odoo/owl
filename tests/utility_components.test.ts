@@ -2,7 +2,7 @@ import {
   App,
   Component,
   mount,
-  onBeforePatch,
+  onWillPatch,
   onBeforeUnmount,
   onMounted,
   onPatched,
@@ -335,7 +335,7 @@ describe("Portal", () => {
       static template = xml`<span t-esc="props.val"/>`;
       setup() {
         onMounted(() => steps.push("child:mounted"));
-        onBeforePatch(() => steps.push("child:willPatch"));
+        onWillPatch(() => steps.push("child:willPatch"));
         onPatched(() => steps.push("child:patched"));
         onBeforeUnmount(() => steps.push("child:willUnmount"));
       }
@@ -352,7 +352,7 @@ describe("Portal", () => {
       state = useState({ hasChild: false, val: 1 });
       setup() {
         onMounted(() => steps.push("parent:mounted"));
-        onBeforePatch(() => steps.push("parent:willPatch"));
+        onWillPatch(() => steps.push("parent:willPatch"));
         onPatched(() => steps.push("parent:patched"));
         onBeforeUnmount(() => steps.push("parent:willUnmount"));
       }

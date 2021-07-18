@@ -29,7 +29,7 @@ export {
   onMounted,
   onBeforeUnmount,
   onWillUpdateProps,
-  onBeforePatch,
+  onWillPatch,
   onPatched,
   onDestroyed,
 } from "./lifecycle_hooks";

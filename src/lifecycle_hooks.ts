@@ -19,9 +19,9 @@ export function onMounted(fn: () => void | any) {
   node.mounted.push(fn);
 }
 
-export function onBeforePatch(fn: () => Promise<void> | any | void) {
+export function onWillPatch(fn: () => Promise<void> | any | void) {
   const node = getCurrent()!;
-  node.beforePatch.push(fn);
+  node.willPatch.push(fn);
 }
 
 export function onPatched(fn: () => void | any) {

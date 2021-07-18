@@ -1,6 +1,6 @@
 import {
   onDestroyed,
-  onBeforePatch,
+  onWillPatch,
   onBeforeUnmount,
   onMounted,
   onPatched,
@@ -144,7 +144,7 @@ export function useLogLifecycle(steps: string[]) {
   onWillStart(() => steps.push(`${name}:willStart`));
   onWillUpdateProps(() => steps.push(`${name}:willUpdateProps`));
   onMounted(() => steps.push(`${name}:mounted`));
-  onBeforePatch(() => steps.push(`${name}:beforePatch`));
+  onWillPatch(() => steps.push(`${name}:willPatch`));
   onPatched(() => steps.push(`${name}:patched`));
   onBeforeUnmount(() => steps.push(`${name}:beforeUnmount`));
   onDestroyed(() => steps.push(`${name}:destroyed`));

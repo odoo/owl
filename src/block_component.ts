@@ -29,12 +29,15 @@ export class BComponent extends Block {
       // delete parentNode.children[key];
       node = undefined;
     }
+    const parentFiber = parentNode.fiber!;
     if (node) {
       // update
-      const parentFiber = parentNode.fiber!;
       const fiber = makeChildFiber(node, parentFiber);
       if (node.willPatch.length) {
-        parentFiber.root.willPatch.add(fiber);
+        parentFiber.root.willPatch.push(fiber);
+      }
+      if (node.patched.length) {
+        parentFiber.root.patched.push(fiber);
       }
       node.updateAndRender(props, fiber);
     } else {
@@ -44,6 +47,9 @@ export class BComponent extends Block {
       node = new OwlNode(parentNode.app, C, props);
       parentNode.children[key] = node;
       const fiber = makeChildFiber(node, parentNode.fiber!);
+      if (node.mounted.length) {
+        parentFiber.root.mounted.push(fiber);
+      }
       node.initiateRender(fiber);
     }
     this.node = node;
@@ -54,14 +60,11 @@ export class BComponent extends Block {
     return bdom ? bdom.firstChildNode() : null;
   }
 
-  mountBefore(anchor: ChildNode, mounted: any[], patched: any[]) {
+  mountBefore(anchor: ChildNode) {
     const node = this.node;
-    if (node.mount.length) {
-      mounted.push(node);
-    }
     const bdom = node.fiber!.bdom!;
     node.bdom = bdom;
-    bdom.mountBefore(anchor, mounted, patched);
+    bdom.mountBefore(anchor);
     if (this.parentClass) {
       this.parentClass = this.parentClass.trim().split(/\s+/);
       const el = this.firstChildNode();
@@ -70,6 +73,7 @@ export class BComponent extends Block {
       }
     }
     node.status = STATUS.MOUNTED;
+    node.fiber!.appliedToDom = true;
     node.fiber = null;
   }
 
@@ -90,13 +94,10 @@ export class BComponent extends Block {
     }
   }
 
-  patch(other: BComponent, mountedNodes: any[], patchedNodes: any[]) {
+  patch() {
     const node = this.node;
-    if (node.patched.length) {
-      patchedNodes.push(node);
-    }
 
-    node.bdom!.patch(node!.fiber!.bdom!, mountedNodes, patchedNodes);
+    node.bdom!.patch(node!.fiber!.bdom!);
     if (this.parentClass) {
       const el = this.firstChildNode();
       if (el !== this.classTarget) {
@@ -111,16 +112,39 @@ export class BComponent extends Block {
         }
       }
     }
+    node.fiber!.appliedToDom = true;
     node.fiber = null;
   }
 
   beforeRemove() {
-    this.node.callWillUnmount();
+    prepareRemove(this.node);
   }
 
   remove() {
     const bdom = this.node.bdom!;
     bdom.remove();
+  }
+}
+
+export let destroyed: any[] = [];
+
+function prepareRemove(node: OwlNode) {
+  visitRemovedNodes(node);
+
+  function visitRemovedNodes(node: OwlNode) {
+    if (node.status === STATUS.MOUNTED) {
+      const component = node.component;
+      for (let cb of node.willUnmount) {
+        cb.call(component);
+      }
+    }
+    for (let child of Object.values(node.children)) {
+      visitRemovedNodes(child);
+    }
+    node.status = STATUS.DESTROYED;
+    if (node.destroyed.length) {
+      destroyed.push(node);
+    }
   }
 }
 
@@ -130,8 +154,8 @@ export class BComponentH extends BComponent {
     super(name, props, key, owner, parent);
     this.handlers = new Array(handlers);
   }
-  mountBefore(anchor: ChildNode, mounted: any[], patched: any[]) {
-    super.mountBefore(anchor, mounted, patched);
+  mountBefore(anchor: ChildNode) {
+    super.mountBefore(anchor);
     this.setupHandlers();
   }
   setupHandlers() {
@@ -142,9 +166,6 @@ export class BComponentH extends BComponent {
       el.addEventListener(eventType, (ev: Event) => {
         const info = this.handlers![i];
         const [, callback] = info;
-        // if (ctx.__owl__ && !ctx.__owl__.isMounted) {
-        //   return;
-        // }
         callback(ev);
       });
     }

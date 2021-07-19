@@ -15,19 +15,19 @@ describe("BMulti", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { flag: false });
-    bdom.mount(fixture, [], []);
+    bdom.mount(fixture);
     expect(fixture.innerHTML).toBe("<p>1</p>");
 
     const bdom2 = renderToBdom(template, { flag: true });
-    bdom.patch(bdom2, [], []);
+    bdom.patch(bdom2);
     expect(fixture.innerHTML).toBe("<p>1</p><p>2</p>");
 
     const bdom3 = renderToBdom(template, { flag: false });
-    bdom.patch(bdom3, [], []);
+    bdom.patch(bdom3);
     expect(fixture.innerHTML).toBe("<p>1</p>");
 
     const bdom4 = renderToBdom(template, { flag: true });
-    bdom.patch(bdom4, [], []);
+    bdom.patch(bdom4);
     expect(fixture.innerHTML).toBe("<p>1</p><p>2</p>");
   });
 
@@ -39,7 +39,7 @@ describe("BMulti", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { flag: false });
-    bdom.mount(fixture, [], []);
+    bdom.mount(fixture);
     expect(fixture.innerHTML).toBe("<p>1</p>");
 
     bdom.remove();

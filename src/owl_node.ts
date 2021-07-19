@@ -1,5 +1,6 @@
 import type { App } from "./app";
 import type { Block } from "./bdom";
+import { destroyed } from "./block_component";
 import type { Component } from "./component";
 import { EventBus } from "./event_bus";
 import { Fiber, makeRootFiber, MountFiber, RootFiber } from "./fibers";
@@ -20,7 +21,7 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   fiber: Fiber | null = null;
   status: STATUS = STATUS.NEW;
   renderFn: Function;
-  children: { [key: string]: OwlNode } = {};
+  children: { [key: string]: OwlNode } = Object.create(null);
   slots: any = {};
   refs: any = {};
 
@@ -128,5 +129,45 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
 
     this.callDestroyed();
     this.status = STATUS.DESTROYED;
+  }
+
+  patchDom(callback: Function, root: RootFiber) {
+    for (let fiber of root.willPatch) {
+      // because of the asynchronous nature of the rendering, some parts of the
+      // UI may have been rendered, then deleted in a followup rendering, and we
+      // do not want to call onWillPatch in that case.
+      let node = fiber.node;
+      if (node.fiber === fiber) {
+        node.callWillPatch();
+      }
+    }
+
+    callback();
+    root.appliedToDom = true;
+    let current;
+    let mountedFibers = root.mounted;
+    while ((current = mountedFibers.pop())) {
+      if (current.appliedToDom) {
+        for (let cb of current.node.mounted) {
+          cb();
+        }
+      }
+    }
+
+    let patchedFibers = root.patched;
+    while ((current = patchedFibers.pop())) {
+      if (current.appliedToDom) {
+        for (let cb of current.node.patched) {
+          cb();
+        }
+      }
+    }
+    for (let node of destroyed) {
+      for (let cb of node.destroyed) {
+        cb();
+      }
+    }
+    destroyed.length = 0;
+    this.fiber = null;
   }
 }

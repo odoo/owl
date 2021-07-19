@@ -19,11 +19,11 @@ export class BNode extends Block {
 
   toString(): string {
     const div = document.createElement("div");
-    this.mount(div, [], []);
+    this.mount(div);
     return div.innerHTML;
   }
 
-  mountBefore(anchor: ChildNode, mountedNodes: any[], patchedNodes: any[]) {
+  mountBefore(anchor: ChildNode) {
     this.el = (this.constructor as any).el.cloneNode(true);
     this.build();
     this.update();
@@ -32,7 +32,7 @@ export class BNode extends Block {
         const child = this.children[i];
         if (child) {
           const anchor = this.anchors![i];
-          child.mountBefore(anchor, mountedNodes, patchedNodes);
+          child.mountBefore(anchor);
         }
       }
     }
@@ -104,7 +104,7 @@ export class BNode extends Block {
 
   protected build() {}
 
-  patch(newTree: BNode, mountedNodes: any[], patchedNodes: any[]): void {
+  patch(newTree: BNode): void {
     this.data = newTree.data;
     this.refs = newTree.refs;
     this.update();
@@ -117,14 +117,14 @@ export class BNode extends Block {
         const child = children[i];
         if (child) {
           if (newChild) {
-            child.patch(newChild, mountedNodes, patchedNodes);
+            child.patch(newChild);
           } else {
             children[i] = null;
             child.fullRemove();
           }
         } else if (newChild) {
           children[i] = newChild;
-          newChild.mountBefore(anchors[i], mountedNodes, patchedNodes);
+          newChild.mountBefore(anchors[i]);
         }
       }
     }

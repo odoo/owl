@@ -561,6 +561,8 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     "Child:willUnmount",
     "SubChild:willUnmount",
     "Parent:patched",
+    "SubChild:destroyed",
+    "Child:destroyed",
   ]);
 });
 

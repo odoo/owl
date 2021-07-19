@@ -47,11 +47,11 @@ export class BCollection extends Block {
     return this.children.length ? this.children[0].firstChildNode() : null;
   }
 
-  mountBefore(anchor: ChildNode, mountedNodes: any[], patchedNodes: any[]) {
+  mountBefore(anchor: ChildNode) {
     const _anchor = this.anchor;
     anchor.before(_anchor);
     for (let child of this.children) {
-      child.mountBefore(_anchor, mountedNodes, patchedNodes);
+      child.mountBefore(_anchor);
     }
   }
 
@@ -63,7 +63,7 @@ export class BCollection extends Block {
     }
   }
 
-  patch(other: BCollection, mountedNodes: any[], patchedNodes: any[]) {
+  patch(other: BCollection) {
     const oldKeys = this.keys;
     const newKeys = other.keys;
     const oldCh = this.children;
@@ -81,19 +81,19 @@ export class BCollection extends Block {
       } else if (oldCh[oldEndIdx] === null) {
         oldEndIdx--;
       } else if (oldKeys[oldStartIdx] === newKeys[newStartIdx]) {
-        oldCh[oldStartIdx].patch(newCh[newStartIdx], mountedNodes, patchedNodes);
+        oldCh[oldStartIdx].patch(newCh[newStartIdx]);
         newCh[newStartIdx] = oldCh[oldStartIdx];
         oldStartIdx++;
         newStartIdx++;
       } else if (oldKeys[oldEndIdx] === newKeys[newEndIdx]) {
-        oldCh[oldEndIdx].patch(newCh[newEndIdx], mountedNodes, patchedNodes);
+        oldCh[oldEndIdx].patch(newCh[newEndIdx]);
         newCh[newEndIdx] = oldCh[oldEndIdx];
         oldEndIdx--;
         newEndIdx--;
       } else if (oldKeys[oldStartIdx] === newKeys[newEndIdx]) {
         // bnode moved right
         const elm = oldCh[oldStartIdx];
-        elm.patch(newCh[newEndIdx], mountedNodes, patchedNodes);
+        elm.patch(newCh[newEndIdx]);
         const nextChild = newCh[newEndIdx + 1];
         const anchor = nextChild ? nextChild.firstChildNode()! : _anchor;
         elm.moveBefore(anchor);
@@ -103,7 +103,7 @@ export class BCollection extends Block {
       } else if (oldKeys[oldEndIdx] === newKeys[newStartIdx]) {
         // bnode moved left
         const elm = oldCh[oldEndIdx];
-        elm.patch(newCh[newStartIdx], mountedNodes, patchedNodes);
+        elm.patch(newCh[newStartIdx]);
         const nextChild = oldCh[oldStartIdx];
         const anchor = nextChild ? nextChild.firstChildNode()! : _anchor;
         elm.moveBefore(anchor);
@@ -115,16 +115,12 @@ export class BCollection extends Block {
         let idxInOld = mapping[newKeys[newStartIdx]];
         if (idxInOld === undefined) {
           // new element
-          newCh[newStartIdx].mountBefore(
-            oldCh[oldStartIdx].firstChildNode()!,
-            mountedNodes,
-            patchedNodes
-          );
+          newCh[newStartIdx].mountBefore(oldCh[oldStartIdx].firstChildNode()!);
           newStartIdx++;
         } else {
           const elmToMove = oldCh[idxInOld];
           elmToMove.moveBefore(oldCh[oldStartIdx].firstChildNode()!);
-          elmToMove.patch(newCh[newStartIdx], mountedNodes, patchedNodes);
+          elmToMove.patch(newCh[newStartIdx]);
           newCh[newStartIdx] = elmToMove;
           oldCh[idxInOld] = null as any;
           newStartIdx++;
@@ -136,7 +132,7 @@ export class BCollection extends Block {
         const nextChild = newCh[newEndIdx + 1];
         const anchor = nextChild ? nextChild.firstChildNode()! : _anchor;
         for (let i = newStartIdx; i <= newEndIdx; i++) {
-          newCh[i].mountBefore(anchor, mountedNodes, patchedNodes);
+          newCh[i].mountBefore(anchor);
         }
       } else {
         for (let i = oldStartIdx; i <= oldEndIdx; i++) {

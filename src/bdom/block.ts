@@ -5,20 +5,20 @@
 export abstract class Block {
   el: ChildNode | null | null = null;
 
-  mount(parent: HTMLElement, mountedNodes: any[], patchedNodes: any[]) {
+  mount(parent: HTMLElement) {
     const anchor = document.createTextNode("");
     parent.appendChild(anchor);
-    this.mountBefore(anchor, mountedNodes, patchedNodes);
+    this.mountBefore(anchor);
     anchor.remove();
   }
 
-  abstract mountBefore(anchor: ChildNode, mountedNode: any[], patchedNode: any[]): void;
+  abstract mountBefore(anchor: ChildNode): void;
 
   /**
    * A key point is that a block of a given type is always patched with a block
    * of the same type
    */
-  abstract patch(other: Block, mountedNodes: any[], patchedNodes: any[]): void;
+  abstract patch(other: Block): void;
 
   abstract firstChildNode(): ChildNode | null;
 

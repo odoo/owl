@@ -30,7 +30,7 @@ class BPortal extends BText {
     this.selector = selector;
     this.realBDom = realBDom;
   }
-  mountBefore(anchor: ChildNode, mounted: any[], patched: any[]) {
+  mountBefore(anchor: ChildNode) {
     super.mountBefore(anchor);
     this.target = document.querySelector(this.selector) as any;
     if (!this.target) {
@@ -43,7 +43,7 @@ class BPortal extends BText {
         throw new Error("invalid portal target");
       }
     }
-    this.realBDom!.mount(this.target!, mounted, patched);
+    this.realBDom!.mount(this.target!);
   }
   remove() {
     super.remove();
@@ -51,13 +51,13 @@ class BPortal extends BText {
     this.realBDom = null;
   }
 
-  patch(other: BPortal, mountedNodes: any[], patchedNodes: any[]) {
+  patch(other: BPortal) {
     super.patch(other);
     if (this.realBDom) {
-      this.realBDom.patch(other.realBDom!, mountedNodes, patchedNodes);
+      this.realBDom.patch(other.realBDom!);
     } else {
       this.realBDom = other.realBDom;
-      this.realBDom!.mount(this.target!, mountedNodes, patchedNodes);
+      this.realBDom!.mount(this.target!);
     }
   }
 }

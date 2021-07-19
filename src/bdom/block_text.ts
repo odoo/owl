@@ -17,14 +17,14 @@ export class BText extends Block {
     return this.el;
   }
 
-  mountBefore(anchor: ChildNode, mounted?: any[], patched?: any[]) {
+  mountBefore(anchor: ChildNode) {
     anchor.before(this.el);
   }
 
   moveBefore(anchor: ChildNode) {
     anchor.before(this.el);
   }
-  patch(other: BText, mounted?: any[], patched?: any) {
+  patch(other: BText) {
     if (other.text !== this.text) {
       this.el.textContent = other.el.textContent;
       this.text = other.text;

@@ -52,6 +52,7 @@ export class Fiber {
   root: RootFiber;
   parent: Fiber | null;
   children: Fiber[] = [];
+  appliedToDom = false;
 
   constructor(node: OwlNode, parent: Fiber | null) {
     this.node = node;
@@ -76,16 +77,18 @@ export class RootFiber extends Fiber {
   reject: any;
 
   // only add stuff in this if they have registered some hooks
-  willPatch: Set<Fiber> = new Set();
-  patched: Set<Fiber> = new Set();
-  mounted: Set<Fiber> = new Set();
+  willPatch: Fiber[] = [];
+  patched: Fiber[] = [];
+  mounted: Fiber[] = [];
 
   constructor(node: OwlNode) {
     super(node, null);
     this.counter = 1;
-    this.error = null;
     if (node.willPatch.length) {
-      this.willPatch.add(this);
+      this.willPatch.push(this);
+    }
+    if (node.patched.length) {
+      this.patched.push(this);
     }
 
     this.promise = new Promise((resolve, reject) => {
@@ -96,34 +99,7 @@ export class RootFiber extends Fiber {
 
   complete() {
     const node = this.node;
-    for (let fiber of this.willPatch) {
-      // because of the asynchronous nature of the rendering, some parts of the
-      // UI may have been rendered, then deleted in a followup rendering, and we
-      // do not want to call onWillPatch in that case.
-      let node = fiber.node;
-      if (node.fiber === fiber) {
-        node.callWillPatch();
-      }
-    }
-    const mountedNodes: any[] = [];
-    const patchedNodes: any[] = [node];
-    node.bdom!.patch(this.bdom!, mountedNodes, patchedNodes);
-    this.finalize(mountedNodes, patchedNodes);
-    node.fiber = null;
-  }
-
-  finalize(mounted: OwlNode[], patched: OwlNode[]) {
-    let current;
-    while ((current = mounted.pop())) {
-      for (let cb of current.mounted) {
-        cb();
-      }
-    }
-    while ((current = patched.pop())) {
-      for (let cb of current.patched) {
-        cb();
-      }
-    }
+    node.patchDom(() => node.bdom!.patch(this.bdom!), this);
   }
 }
 
@@ -133,16 +109,16 @@ export class MountFiber extends RootFiber {
   constructor(node: OwlNode, target: HTMLElement) {
     super(node);
     this.target = target;
-    this.willPatch.clear();
+    this.willPatch.length = 0;
+    this.patched.length = 0;
+    if (node.mounted.length) {
+      this.mounted.push(this);
+    }
   }
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    const mountedNodes: any[] = [node];
-    const patchedNodes: any[] = [];
-    node.bdom!.mount(this.target, mountedNodes, patchedNodes);
-    this.finalize(mountedNodes, patchedNodes);
+    node.patchDom(() => node.bdom!.mount(this.target), this);
     node.status = STATUS.MOUNTED;
-    node.fiber = null;
   }
 }

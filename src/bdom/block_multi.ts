@@ -23,7 +23,7 @@ export class BMulti extends Block {
     return null;
   }
 
-  mountBefore(anchor: ChildNode, mountedNodes: any[], patchedNodes: any[]) {
+  mountBefore(anchor: ChildNode) {
     const children = this.children;
     const anchors = this.anchors;
     for (let i = 0, l = children.length; i < l; i++) {
@@ -32,7 +32,7 @@ export class BMulti extends Block {
       anchor.before(childAnchor);
       anchors![i] = childAnchor;
       if (child) {
-        child.mountBefore(childAnchor, mountedNodes, patchedNodes);
+        child.mountBefore(childAnchor);
       }
     }
   }
@@ -49,7 +49,7 @@ export class BMulti extends Block {
     }
   }
 
-  patch(newTree: BMulti, mountedNodes: any[], patchedNodes: any[]) {
+  patch(newTree: BMulti) {
     const children = this.children;
     const newChildren = newTree.children;
     const anchors = this.anchors!;
@@ -58,14 +58,14 @@ export class BMulti extends Block {
       const newBlock = newChildren[i];
       if (block) {
         if (newBlock) {
-          block.patch(newBlock, mountedNodes, patchedNodes);
+          block.patch(newBlock);
         } else {
           children[i] = null;
           block.fullRemove();
         }
       } else if (newBlock) {
         children[i] = newBlock;
-        newBlock.mountBefore(anchors[i], mountedNodes, patchedNodes);
+        newBlock.mountBefore(anchors[i]);
       }
     }
   }

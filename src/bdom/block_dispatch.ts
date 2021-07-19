@@ -30,10 +30,10 @@ export class BDispatch extends Block {
     return this.child.firstChildNode();
   }
 
-  mountBefore(anchor: ChildNode, mountedNodes: any[], patchedNodes: any[]) {
+  mountBefore(anchor: ChildNode) {
     const _anchor = this.anchor;
     anchor.before(_anchor);
-    this.child.mountBefore(_anchor, mountedNodes, patchedNodes);
+    this.child.mountBefore(_anchor);
   }
 
   moveBefore(anchor: ChildNode) {
@@ -42,14 +42,14 @@ export class BDispatch extends Block {
     this.child.moveBefore(_anchor);
   }
 
-  patch(newTree: BDispatch, mountedNodes: any[], patchedNodes: any[]) {
+  patch(newTree: BDispatch) {
     if (newTree.key === this.key) {
-      this.child.patch(newTree.child, mountedNodes, patchedNodes);
+      this.child.patch(newTree.child);
     } else {
       this.child.fullRemove();
       this.child = newTree.child;
       this.key = newTree.key;
-      this.child.mountBefore(this.anchor!, mountedNodes, patchedNodes);
+      this.child.mountBefore(this.anchor!);
     }
   }
 

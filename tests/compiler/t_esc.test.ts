@@ -75,7 +75,7 @@ describe("t-esc", () => {
     const template = `<div><t t-set="var"><p>escaped</p></t><t t-esc="var"/></div>`;
     const bdom = renderToBdom(template);
     const fixture = makeTestFixture();
-    bdom.mount(fixture, [], []);
+    bdom.mount(fixture);
 
     expect(fixture.textContent).toBe("<p>escaped</p>");
   });
@@ -89,7 +89,7 @@ describe("t-esc", () => {
 
     const bdom = context.getTemplate("main")({});
     const fixture = makeTestFixture();
-    bdom.mount(fixture, [], []);
+    bdom.mount(fixture);
     expect(fixture.querySelector("span")!.textContent).toBe("<p>escaped</p>");
   });
 });

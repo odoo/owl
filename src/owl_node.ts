@@ -67,9 +67,8 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   async initiateRender(fiber: Fiber | MountFiber) {
     const component = this.component;
     const prom = Promise.all(this.willStart.map((f) => f.call(component)));
-    this.status = STATUS.WILLSTARTED;
     await prom;
-    if (this.status === STATUS.WILLSTARTED && this.fiber === fiber) {
+    if (this.status === STATUS.NEW && this.fiber === fiber) {
       this._render(fiber);
     }
   }

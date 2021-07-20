@@ -51,7 +51,7 @@ describe("async rendering", () => {
     }
     const app = new App(W);
     app.mount(fixture);
-    expect(status(w)).toBe("willstarted");
+    expect(status(w)).toBe("new");
     app.destroy();
     expect(status(w)).toBe("destroyed");
     def.resolve();

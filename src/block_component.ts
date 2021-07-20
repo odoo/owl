@@ -1,5 +1,5 @@
 import { Block } from "./bdom";
-import { makeChildFiber, destroyed } from "./fibers";
+import { makeChildFiber, __internal__destroyed } from "./fibers";
 import { OwlNode } from "./owl_node";
 import { STATUS } from "./status";
 
@@ -138,7 +138,7 @@ function visitRemovedNodes(node: OwlNode) {
   }
   node.status = STATUS.DESTROYED;
   if (node.destroyed.length) {
-    destroyed.push(node);
+    __internal__destroyed.push(node);
   }
 }
 

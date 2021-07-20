@@ -135,17 +135,17 @@ export class RootFiber extends Fiber {
         }
       }
     }
-    for (let node of destroyed) {
+    for (let node of __internal__destroyed) {
       for (let cb of node.destroyed) {
         cb();
       }
     }
-    destroyed.length = 0;
+    __internal__destroyed.length = 0;
     this.node.fiber = null;
   }
 }
 
-export let destroyed: OwlNode[] = [];
+export let __internal__destroyed: OwlNode[] = [];
 
 export class MountFiber extends RootFiber {
   target: HTMLElement;

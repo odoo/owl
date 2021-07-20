@@ -27,7 +27,15 @@ export function makeRootFiber(node: OwlNode): Fiber {
     current.bdom = null;
     return current;
   }
-  return new RootFiber(node);
+  const fiber = new RootFiber(node);
+  if (node.willPatch.length) {
+    fiber.willPatch.push(fiber);
+  }
+  if (node.patched.length) {
+    fiber.patched.push(fiber);
+  }
+
+  return fiber;
 }
 
 /**
@@ -84,12 +92,6 @@ export class RootFiber extends Fiber {
   constructor(node: OwlNode) {
     super(node, null);
     this.counter = 1;
-    if (node.willPatch.length) {
-      this.willPatch.push(this);
-    }
-    if (node.patched.length) {
-      this.patched.push(this);
-    }
 
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
@@ -99,9 +101,51 @@ export class RootFiber extends Fiber {
 
   complete() {
     const node = this.node;
-    node.patchDom(() => node.bdom!.patch(this.bdom!), this);
+    this.patchDom(() => node.bdom!.patch(this.bdom!));
+  }
+
+  patchDom(callback: Function) {
+    for (let fiber of this.willPatch) {
+      // because of the asynchronous nature of the rendering, some parts of the
+      // UI may have been rendered, then deleted in a followup rendering, and we
+      // do not want to call onWillPatch in that case.
+      let node = fiber.node;
+      if (node.fiber === fiber) {
+        node.callWillPatch();
+      }
+    }
+
+    callback();
+    this.appliedToDom = true;
+    let current;
+    let mountedFibers = this.mounted;
+    while ((current = mountedFibers.pop())) {
+      if (current.appliedToDom) {
+        for (let cb of current.node.mounted) {
+          cb();
+        }
+      }
+    }
+
+    let patchedFibers = this.patched;
+    while ((current = patchedFibers.pop())) {
+      if (current.appliedToDom) {
+        for (let cb of current.node.patched) {
+          cb();
+        }
+      }
+    }
+    for (let node of destroyed) {
+      for (let cb of node.destroyed) {
+        cb();
+      }
+    }
+    destroyed.length = 0;
+    this.node.fiber = null;
   }
 }
+
+export let destroyed: OwlNode[] = [];
 
 export class MountFiber extends RootFiber {
   target: HTMLElement;
@@ -109,8 +153,6 @@ export class MountFiber extends RootFiber {
   constructor(node: OwlNode, target: HTMLElement) {
     super(node);
     this.target = target;
-    this.willPatch.length = 0;
-    this.patched.length = 0;
     if (node.mounted.length) {
       this.mounted.push(this);
     }
@@ -118,7 +160,7 @@ export class MountFiber extends RootFiber {
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    node.patchDom(() => node.bdom!.mount(this.target), this);
+    this.patchDom(() => node.bdom!.mount(this.target));
     node.status = STATUS.MOUNTED;
   }
 }

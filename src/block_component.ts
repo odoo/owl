@@ -1,6 +1,6 @@
 import { Block } from "./bdom";
-import { makeChildFiber } from "./fibers";
-import { destroyed, OwlNode } from "./owl_node";
+import { makeChildFiber, destroyed } from "./fibers";
+import { OwlNode } from "./owl_node";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------

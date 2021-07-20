@@ -101,22 +101,26 @@ export class RootFiber extends Fiber {
 
   complete() {
     const node = this.node;
-    this.patchDom(() => node.bdom!.patch(this.bdom!));
-  }
 
-  patchDom(callback: Function) {
+    // Step 1: calling all willPatch lifecycle hooks
     for (let fiber of this.willPatch) {
       // because of the asynchronous nature of the rendering, some parts of the
       // UI may have been rendered, then deleted in a followup rendering, and we
       // do not want to call onWillPatch in that case.
       let node = fiber.node;
       if (node.fiber === fiber) {
-        node.callWillPatch();
+        const component = node.component;
+        for (let cb of node.willPatch) {
+          cb.call(component);
+        }
       }
     }
 
-    callback();
+    // Step 2: patching the dom
+    node.bdom!.patch(this.bdom!);
     this.appliedToDom = true;
+
+    // Step 3: calling all mounted lifecycle hooks
     let current;
     let mountedFibers = this.mounted;
     while ((current = mountedFibers.pop())) {
@@ -127,6 +131,7 @@ export class RootFiber extends Fiber {
       }
     }
 
+    // Step 4: calling all patched hooks
     let patchedFibers = this.patched;
     while ((current = patchedFibers.pop())) {
       if (current.appliedToDom) {
@@ -135,13 +140,17 @@ export class RootFiber extends Fiber {
         }
       }
     }
+
+    // finally calling all destroyed hooks
     for (let node of __internal__destroyed) {
       for (let cb of node.destroyed) {
         cb();
       }
     }
     __internal__destroyed.length = 0;
-    this.node.fiber = null;
+
+    // unregistering the fiber
+    node.fiber = null;
   }
 }
 
@@ -160,7 +169,18 @@ export class MountFiber extends RootFiber {
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    this.patchDom(() => node.bdom!.mount(this.target));
+    node.bdom!.mount(this.target);
+    this.appliedToDom = true;
+    let current;
+    let mountedFibers = this.mounted;
+    while ((current = mountedFibers.pop())) {
+      if (current.appliedToDom) {
+        for (let cb of current.node.mounted) {
+          cb();
+        }
+      }
+    }
+    node.fiber = null;
     node.status = STATUS.MOUNTED;
   }
 }

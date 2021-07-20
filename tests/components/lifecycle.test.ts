@@ -542,8 +542,8 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:willUnmount",
       "Child:willUnmount",
-      "Parent:destroyed",
       "Child:destroyed",
+      "Parent:destroyed",
     ]);
   });
 
@@ -600,9 +600,9 @@ describe("lifecycle hooks", () => {
       "Parent:willUnmount",
       "Child:willUnmount",
       "GrandChild:willUnmount",
-      "Parent:destroyed",
-      "Child:destroyed",
       "GrandChild:destroyed",
+      "Child:destroyed",
+      "Parent:destroyed",
     ]);
   });
 
@@ -697,9 +697,9 @@ describe("lifecycle hooks", () => {
     app.destroy();
     expect(steps).toEqual([
       "Parent:willUnmount",
-      "Parent:destroyed",
-      "Child:destroyed",
       "GrandChild:destroyed",
+      "Child:destroyed",
+      "Parent:destroyed",
     ]);
   });
 

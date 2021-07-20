@@ -71,35 +71,6 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     }
   }
 
-  callWillUnmount() {
-    const component = this.component;
-    for (let cb of this.willUnmount) {
-      cb.call(component);
-    }
-    for (let child of Object.values(this.children)) {
-      if (child.status === STATUS.MOUNTED) {
-        child.callWillUnmount();
-      }
-    }
-  }
-
-  callDestroyed() {
-    const component = this.component;
-    for (let cb of this.destroyed) {
-      cb.call(component);
-    }
-    for (let child of Object.values(this.children)) {
-      child.callDestroyed();
-    }
-  }
-
-  callWillPatch() {
-    const component = this.component;
-    for (let cb of this.willPatch) {
-      cb.call(component);
-    }
-  }
-
   async updateAndRender(props: any, fiber: Fiber) {
     const component = this.component;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
@@ -112,20 +83,38 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   }
 
   _render(fiber: Fiber | RootFiber) {
-    // this.fiber = fiber;
     fiber.bdom = this.renderFn();
     fiber.root.counter--;
   }
 
   destroy() {
-    switch (this.status) {
-      case STATUS.MOUNTED:
-        this.callWillUnmount();
-        this.bdom!.remove();
-        break;
+    if (this.status === STATUS.MOUNTED) {
+      callWillUnmount(this);
+      this.bdom!.remove();
+    }
+    callDestroyed(this);
+
+    function callWillUnmount(node: OwlNode) {
+      const component = node.component;
+      for (let cb of node.willUnmount) {
+        cb.call(component);
+      }
+      for (let child of Object.values(node.children)) {
+        if (child.status === STATUS.MOUNTED) {
+          callWillUnmount(child);
+        }
+      }
     }
 
-    this.callDestroyed();
-    this.status = STATUS.DESTROYED;
+    function callDestroyed(node: OwlNode) {
+      const component = node.component;
+      node.status = STATUS.DESTROYED;
+      for (let child of Object.values(node.children)) {
+        callDestroyed(child);
+      }
+      for (let cb of node.destroyed) {
+        cb.call(component);
+      }
+    }
   }
 }

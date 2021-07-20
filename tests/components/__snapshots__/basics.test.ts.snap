@@ -551,6 +551,49 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
 }"
 `;
 
+exports[`basics three level of components with collapsing root nodes 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div>2</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics three level of components with collapsing root nodes 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics three level of components with collapsing root nodes 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`basics throws if mounting on target=null 1`] = `
 "function anonymous(Blocks, utils
 ) {

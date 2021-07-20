@@ -872,7 +872,14 @@ export class QWebCompiler {
       parts.push(`\${key${i + 1}}`);
     }
     const key = parts.join("__");
-    const blockArgs = `\`${ast.name}\`, ${propString}, \`${key}\`, ctx, parent`;
+    let expr: string;
+    if (ast.isDynamic) {
+      expr = this.generateId("Comp");
+      this.addLine(`let ${expr} = ${compileExpr(ast.name)};`);
+    } else {
+      expr = `\`${ast.name}\``;
+    }
+    const blockArgs = `${expr}, ${propString}, \`${key}\`, ctx, parent`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -921,17 +928,20 @@ export class QWebCompiler {
     const hasClass = "class" in ast.props;
     const shouldForce = hasSlot || hasClass;
 
+    const addDispatch = (block: string) =>
+      ast.isDynamic ? `new BDispatch(${expr}, ${block})` : block;
+
     if (Object.keys(ast.handlers).length) {
       // event handlers
       const n = Object.keys(ast.handlers).length;
-      id = this.insertBlock(`new BComponentH(${n}, ${blockArgs})`, {
+      id = this.insertBlock(addDispatch(`new BComponentH(${n}, ${blockArgs})`), {
         ...ctx,
         forceNewBlock: true,
       })!;
       const cblock = { varName: id, handlerNumber: 0 } as BlockDescription;
       this.generateHandlerCode(cblock, ast.handlers);
     } else {
-      id = this.insertBlock(`new BComponent(${blockArgs})`, {
+      id = this.insertBlock(addDispatch(`new BComponent(${blockArgs})`), {
         ...ctx,
         forceNewBlock: shouldForce,
       })!;

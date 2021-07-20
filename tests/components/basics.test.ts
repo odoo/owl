@@ -378,4 +378,22 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe(`<span>b</span>`);
   });
+
+  test("three level of components with collapsing root nodes", async () => {
+    class GrandChild extends Component {
+      static template = xml`<div>2</div>`;
+    }
+    class Child extends Component {
+      static components = { GrandChild };
+      static template = xml`<GrandChild/>`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child></Child>`;
+    }
+
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+  });
 });

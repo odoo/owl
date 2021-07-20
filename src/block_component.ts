@@ -1,4 +1,5 @@
 import { Block } from "./bdom";
+import { Component } from "./component";
 import { makeChildFiber, __internal__destroyed } from "./fibers";
 import { OwlNode } from "./owl_node";
 import { STATUS } from "./status";
@@ -20,15 +21,21 @@ export class BComponent extends Block {
    * @param owner the component in which the component was defined
    * @param parent the actual parent (may be different in case of slots)
    */
-  constructor(name: string, props: any, key: string, owner: any, parent: any) {
+  constructor(name: string | Component, props: any, key: string, owner: any, parent: any) {
     super();
     const parentNode: OwlNode = parent.__owl__;
     let node: OwlNode | undefined = parentNode.children[key];
+    let isDynamic = typeof name !== "string";
+
     if (node && node.status < STATUS.MOUNTED) {
       node.destroy();
       // delete parentNode.children[key];
       node = undefined;
     }
+    if (node && isDynamic && node.component.constructor !== name) {
+      node = undefined;
+    }
+
     const parentFiber = parentNode.fiber!;
     if (node) {
       // update
@@ -42,8 +49,7 @@ export class BComponent extends Block {
       node.updateAndRender(props, fiber);
     } else {
       // new component
-      const components = owner.constructor.components;
-      const C = components[name];
+      const C = isDynamic ? name : owner.constructor.components[name as any];
       node = new OwlNode(parentNode.app, C, props);
       parentNode.children[key] = node;
       const fiber = makeChildFiber(node, parentNode.fiber!);

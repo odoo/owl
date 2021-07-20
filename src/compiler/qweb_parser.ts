@@ -96,6 +96,7 @@ export interface ASTTCall {
 export interface ASTComponent {
   type: ASTType.TComponent;
   name: string;
+  isDynamic: boolean;
   props: { [name: string]: string };
   handlers: { [event: string]: string };
   slots: { [name: string]: AST };
@@ -540,10 +541,18 @@ function parseTSetNode(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 
 function parseComponent(node: Element, ctx: ParsingContext): AST | null {
-  const firstLetter = node.tagName[0];
-  if (firstLetter !== firstLetter.toUpperCase()) {
+  let name = node.tagName;
+  const firstLetter = name[0];
+  let isDynamic = node.hasAttribute("t-component");
+
+  if (!(firstLetter === firstLetter.toUpperCase() || isDynamic)) {
     return null;
   }
+  if (isDynamic) {
+    name = node.getAttribute("t-component")!;
+    node.removeAttribute("t-component");
+  }
+
   const props: ASTComponent["props"] = {};
   const handlers: ASTComponent["handlers"] = {};
   for (let name of node.getAttributeNames()) {
@@ -577,7 +586,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slots.default = defaultContent;
     }
   }
-  return { type: ASTType.TComponent, name: node.tagName, props, handlers, slots };
+  return { type: ASTType.TComponent, name, isDynamic, props, handlers, slots };
 }
 
 // -----------------------------------------------------------------------------

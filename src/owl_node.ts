@@ -1,6 +1,5 @@
 import type { App } from "./app";
 import type { Block } from "./bdom";
-import { destroyed } from "./block_component";
 import type { Component } from "./component";
 import { EventBus } from "./event_bus";
 import { Fiber, makeRootFiber, MountFiber, RootFiber } from "./fibers";
@@ -13,6 +12,8 @@ export function getCurrent(): OwlNode | null {
 }
 
 type LifecycleHook = Function;
+
+export let destroyed: OwlNode[] = [];
 
 export class OwlNode<T extends typeof Component = any> extends EventBus {
   app: App;

@@ -1,6 +1,6 @@
 import { Block } from "./bdom";
 import { makeChildFiber } from "./fibers";
-import { OwlNode } from "./owl_node";
+import { destroyed, OwlNode } from "./owl_node";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -125,8 +125,6 @@ export class BComponent extends Block {
     bdom.remove();
   }
 }
-
-export let destroyed: any[] = [];
 
 function prepareRemove(node: OwlNode) {
   visitRemovedNodes(node);

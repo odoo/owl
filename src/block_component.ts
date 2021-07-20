@@ -117,7 +117,7 @@ export class BComponent extends Block {
   }
 
   beforeRemove() {
-    prepareRemove(this.node);
+    visitRemovedNodes(this.node);
   }
 
   remove() {
@@ -126,23 +126,19 @@ export class BComponent extends Block {
   }
 }
 
-function prepareRemove(node: OwlNode) {
-  visitRemovedNodes(node);
-
-  function visitRemovedNodes(node: OwlNode) {
-    if (node.status === STATUS.MOUNTED) {
-      const component = node.component;
-      for (let cb of node.willUnmount) {
-        cb.call(component);
-      }
+function visitRemovedNodes(node: OwlNode) {
+  if (node.status === STATUS.MOUNTED) {
+    const component = node.component;
+    for (let cb of node.willUnmount) {
+      cb.call(component);
     }
-    for (let child of Object.values(node.children)) {
-      visitRemovedNodes(child);
-    }
-    node.status = STATUS.DESTROYED;
-    if (node.destroyed.length) {
-      destroyed.push(node);
-    }
+  }
+  for (let child of Object.values(node.children)) {
+    visitRemovedNodes(child);
+  }
+  node.status = STATUS.DESTROYED;
+  if (node.destroyed.length) {
+    destroyed.push(node);
   }
 }
 

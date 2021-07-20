@@ -14,7 +14,7 @@ exports[`list of components simple list 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -28,7 +28,7 @@ exports[`list of components simple list 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BCollection(ctx['state'].elems);
     b1.forEach(\`elem\`, ctx, (i1, ctx) => {
       let key1 = ctx['elem'].id;

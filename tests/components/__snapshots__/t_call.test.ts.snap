@@ -6,7 +6,7 @@ exports[`t-call dynamic t-call 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BText(\` owl \`);
     ctx[zero] = b1;
@@ -27,7 +27,7 @@ exports[`t-call dynamic t-call 2`] = `
     static el = elem(\`<div>foo</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -40,7 +40,7 @@ exports[`t-call dynamic t-call 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(\`bar\`);
     return b1;
   }
@@ -61,7 +61,7 @@ exports[`t-call sub components in two t-calls 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -84,7 +84,7 @@ exports[`t-call sub components in two t-calls 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     if (ctx['state'].val===1) {
       b1.children[0] = call(\`sub\`, ctx, parent);
@@ -103,7 +103,7 @@ exports[`t-call sub components in two t-calls 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__1\`, ctx, parent);
     return b1;
   }

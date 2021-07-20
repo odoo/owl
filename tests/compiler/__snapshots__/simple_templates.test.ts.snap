@@ -10,7 +10,7 @@ exports[`simple templates, mostly static can render a table row 1`] = `
     static el = elem(\`<tr><td>cell</td></tr>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -27,7 +27,7 @@ exports[`simple templates, mostly static div with a class attribute 1`] = `
     static el = elem(\`<div class=\\"abc\\">foo</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -44,7 +44,7 @@ exports[`simple templates, mostly static div with a class attribute with a quote
     static el = elem(\`<div class=\\"a'bc\\">word</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -61,7 +61,7 @@ exports[`simple templates, mostly static div with a span child node 1`] = `
     static el = elem(\`<div><span>word</span></div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -78,7 +78,7 @@ exports[`simple templates, mostly static div with an arbitrary attribute with a 
     static el = elem(\`<div abc=\\"a'bc\\">word</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -95,7 +95,7 @@ exports[`simple templates, mostly static div with an empty class attribute 1`] =
     static el = elem(\`<div>word</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -112,7 +112,7 @@ exports[`simple templates, mostly static div with content 1`] = `
     static el = elem(\`<div>foo</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -133,7 +133,7 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['text'];
     return b1;
@@ -155,7 +155,7 @@ exports[`simple templates, mostly static dom node with t-esc 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['text'];
     return b1;
@@ -169,7 +169,7 @@ exports[`simple templates, mostly static dynamic text value 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(ctx['text']);
     return b1;
   }
@@ -186,7 +186,7 @@ exports[`simple templates, mostly static empty div 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -199,7 +199,7 @@ exports[`simple templates, mostly static empty string 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(\`\`);
     return b1;
   }
@@ -212,7 +212,7 @@ exports[`simple templates, mostly static empty string in a template set 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(\`\`);
     return b1;
   }
@@ -233,7 +233,7 @@ exports[`simple templates, mostly static multiple root nodes 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     const b3 = b1.children[1] = new Block2();
@@ -248,7 +248,7 @@ exports[`simple templates, mostly static simple string 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(\`hello vdom\`);
     return b1;
   }
@@ -261,7 +261,7 @@ exports[`simple templates, mostly static simple string in t tag 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(\`hello vdom\`);
     return b1;
   }
@@ -274,7 +274,7 @@ exports[`simple templates, mostly static static text and dynamic text (no t tag)
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(\`hello \`);
     b1.children[1] = new BText(ctx['text']);
@@ -289,7 +289,7 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(\`hello \`);
     b1.children[1] = new BText(ctx['text']);
@@ -312,7 +312,7 @@ exports[`simple templates, mostly static t-esc in dom node 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['text'];
     return b1;
@@ -334,7 +334,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['text'];
     return b1;
@@ -356,7 +356,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['text'];
     return b1;
@@ -370,7 +370,7 @@ exports[`simple templates, mostly static two t-escs next to each other 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(ctx['text1']);
     b1.children[1] = new BText(ctx['text2']);
@@ -385,7 +385,7 @@ exports[`simple templates, mostly static two t-escs next to each other 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(ctx['text1']);
     b1.children[1] = new BText(ctx['text2']);
@@ -410,7 +410,7 @@ exports[`simple templates, mostly static two t-escs next to each other, in a div
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['text1'];
     b1.data[1] = ctx['text2'];

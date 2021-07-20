@@ -217,7 +217,7 @@ export class QWebCompiler {
     // generate main code
     this.target.indentLevel = 0;
     this.addLine(``);
-    this.addLine(`return (ctx, parent = ctx) => {`);
+    this.addLine(`return function template(ctx, parent = ctx) {`);
     if (this.hasRef) {
       this.addLine(`  const refs = ctx.__owl__.refs;`);
     }

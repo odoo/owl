@@ -15,7 +15,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([1]);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -51,7 +51,7 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([1,2]);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -80,7 +80,7 @@ exports[`t-foreach iterate on items 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([3,2,1]);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -115,7 +115,7 @@ exports[`t-foreach iterate, dict param 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['value']);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -150,7 +150,7 @@ exports[`t-foreach iterate, position 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(Array(5));
     b2.forEach(\`elem\`, ctx, (i1, ctx) => {
@@ -188,7 +188,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([3,2,1]);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -207,7 +207,7 @@ exports[`t-foreach simple iteration 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BCollection([3,2,1]);
     b1.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = ctx['item'];
@@ -241,7 +241,7 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BCollection([3,2,1]);
     b1.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = ctx['item'];
@@ -263,7 +263,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(7);
     b1.children[0] = new BText(\` [\`);
     b1.children[1] = new BText(ctx['a']);
@@ -308,7 +308,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers']);
@@ -342,7 +342,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BMulti(7);
     ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
@@ -389,7 +389,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers']);
     b2.forEach(\`a\`, ctx, (i1, ctx) => {
@@ -428,7 +428,7 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers']);
     b2.forEach(\`number\`, ctx, (i1, ctx) => {
@@ -464,7 +464,7 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BCollection(ctx['elems']);
     b1.forEach(\`elem\`, ctx, (i1, ctx) => {
       let key1 = ctx['elem'].id;
@@ -503,7 +503,7 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['elems']);
     b2.forEach(\`elem\`, ctx, (i1, ctx) => {
@@ -534,7 +534,7 @@ exports[`t-foreach t-key on an inside node 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BCollection([3,2,1]);
     b1.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = i1;
@@ -567,7 +567,7 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
     static el = elem(\`<span/>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['abc']);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
@@ -604,7 +604,7 @@ exports[`t-foreach warn if no key in some case 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([1,2]);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {

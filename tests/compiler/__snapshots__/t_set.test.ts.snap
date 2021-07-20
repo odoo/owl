@@ -14,7 +14,7 @@ exports[`t-set evaluate value expression 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`value\`] = 1+2;
@@ -38,7 +38,7 @@ exports[`t-set evaluate value expression, part 2 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`value\`] = ctx['somevariable']+2;
@@ -54,7 +54,7 @@ exports[`t-set set from attribute literal (no outside div) 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     ctx[\`value\`] = 'ok';
     const b1 = new BText(ctx['value']);
@@ -77,7 +77,7 @@ exports[`t-set set from attribute literal 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`value\`] = 'ok';
@@ -101,7 +101,7 @@ exports[`t-set set from attribute lookup 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`stuff\`] = ctx['value'];
@@ -117,7 +117,7 @@ exports[`t-set set from body literal 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     ctx[\`value\`] = \`ok\`;
     const b1 = new BText(ctx['value']);
@@ -140,7 +140,7 @@ exports[`t-set set from body lookup 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = new BText(ctx['value']);
@@ -165,7 +165,7 @@ exports[`t-set set from empty body 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`stuff\`] = null;
@@ -190,7 +190,7 @@ exports[`t-set t-set and t-if 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v\`] = ctx['value'];
@@ -225,7 +225,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v1\`] = 'before';
@@ -255,7 +255,7 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v\`] = ctx['value']+' artois';
@@ -289,7 +289,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v\`] = 1;
@@ -320,7 +320,7 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = new BMulti(2);
@@ -356,7 +356,7 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v3\`] = false;
@@ -395,7 +395,7 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v3\`] = 'Truthy';
@@ -431,7 +431,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     if (ctx['flag']) {
@@ -465,7 +465,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     if (ctx['flag']) {
@@ -485,7 +485,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
     if (ctx['flag']) {
@@ -517,7 +517,7 @@ exports[`t-set value priority (with non text body 1`] = `
     static el = elem(\`<span>2</span>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = new Block2();
@@ -542,7 +542,7 @@ exports[`t-set value priority 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`value\`] = withDefault(1, \`2\`);

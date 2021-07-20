@@ -6,7 +6,7 @@ exports[`NoUpdate prevent renderings from above  1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BText(ctx['props'].value);
     return b1;
   }
@@ -24,7 +24,7 @@ exports[`NoUpdate prevent renderings from above  2`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     b1.children[0] = new BComponent(\`Child\`, {value: ctx['state'].value}, \`__1\`, ctx, parent);
     const b3 = b1.children[1] = new BComponent(\`NoUpdate\`, {}, \`__2\`, ctx, parent);
@@ -44,7 +44,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
     static el = elem(\`<div>child2</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -62,7 +62,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
     return b1;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b2 = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
@@ -91,7 +91,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
@@ -125,7 +125,7 @@ exports[`Portal basic use of portal 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -148,7 +148,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -171,7 +171,7 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
     return b3;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['state'].hasPortal) {
@@ -202,7 +202,7 @@ exports[`Portal conditional use of Portal 1`] = `
     return b3;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['state'].hasPortal) {
@@ -228,7 +228,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -256,7 +256,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     if (ctx['state'].hasChild) {
       const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
@@ -299,7 +299,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b4 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b4.node.slots = {'default': slot2(ctx)};
@@ -322,7 +322,7 @@ exports[`Portal portal with child and props 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -350,7 +350,7 @@ exports[`Portal portal with child and props 2`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -397,7 +397,7 @@ exports[`Portal portal with dynamic body 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b5 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b5.node.slots = {'default': slot2(ctx)};
@@ -436,7 +436,7 @@ exports[`Portal portal with many children 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b5 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b5.node.slots = {'default': slot2(ctx)};
@@ -468,7 +468,7 @@ exports[`Portal portal with no content 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -497,7 +497,7 @@ exports[`Portal portal with only text as content 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -549,7 +549,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
     static el = elem(\`<button>child</button>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -576,7 +576,7 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -609,7 +609,7 @@ exports[`Portal with target in template (after portal) 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#local-target'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -642,7 +642,7 @@ exports[`Portal with target in template (before portal) 1`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#local-target'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};
@@ -665,7 +665,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -693,7 +693,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
     return b2;
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b3 = b1.children[0] = new BComponent(\`Portal\`, {target: '#outside'}, \`__1\`, ctx, parent);
     b3.node.slots = {'default': slot2(ctx)};

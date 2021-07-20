@@ -10,7 +10,7 @@ exports[`event handling can set handler on sub component 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -23,7 +23,7 @@ exports[`event handling can set handler on sub component 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, \`__1\`, ctx, parent);
@@ -44,7 +44,7 @@ exports[`event handling handler receive the event as argument 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     return b1;
   }
@@ -57,7 +57,7 @@ exports[`event handling handler receive the event as argument 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, \`__1\`, ctx, parent);

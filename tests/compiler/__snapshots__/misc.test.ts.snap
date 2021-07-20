@@ -82,7 +82,7 @@ exports[`misc complex template 1`] = `
     static el = elem(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
     b1.data[1] = \`card bg-\${ctx['klass']}-light\`;
@@ -155,7 +155,7 @@ exports[`misc global 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = 'agüero';
     b1.children[0] = new BHtml(ctx[zero]);
@@ -178,7 +178,7 @@ exports[`misc global 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
     return b1;
@@ -201,7 +201,7 @@ exports[`misc global 3`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = new BText(\`toto default\`);
     b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
@@ -234,7 +234,7 @@ exports[`misc global 4`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([4,5,6]);
@@ -460,7 +460,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     const b1 = new Block1();

@@ -14,7 +14,7 @@ exports[`BMulti removing an BMulti with an empty slot 1`] = `
     static el = elem(\`<p>2</p>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['flag']) {
@@ -39,7 +39,7 @@ exports[`BMulti removing/adding elements 1`] = `
     static el = elem(\`<p>2</p>\`);
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['flag']) {

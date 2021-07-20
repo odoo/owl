@@ -14,7 +14,7 @@ exports[`t-on can bind event handler 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['add'](e), ctx];
@@ -37,7 +37,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const arg1 = [5];
@@ -61,7 +61,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const arg1 = [{}];
@@ -85,7 +85,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const arg1 = [{}];
@@ -118,7 +118,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(['someval']);
@@ -148,7 +148,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const arg1 = [{val:5}];
@@ -174,7 +174,7 @@ exports[`t-on can bind two event handlers 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['handleClick'](e), ctx];
@@ -198,7 +198,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['add'](e), ctx];
@@ -221,7 +221,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BCollection([1]);
     b1.forEach(\`value\`, ctx, (i1, ctx) => {
@@ -250,7 +250,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['add'](e), ctx];
@@ -265,7 +265,7 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = call(\`sub\`, ctx, parent);
     return b1;
   }
@@ -286,7 +286,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['add'](e), ctx];
@@ -301,7 +301,7 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new BCollection([1]);
     b1.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = ctx['value'];
@@ -327,7 +327,7 @@ exports[`t-on receive event in first argument 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['add'](e), ctx];
@@ -350,7 +350,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
@@ -374,7 +374,7 @@ exports[`t-on t-on with inline statement 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
@@ -398,7 +398,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
@@ -422,7 +422,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
@@ -447,7 +447,7 @@ exports[`t-on t-on with t-call 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['update'](e), ctx];
@@ -471,7 +471,7 @@ exports[`t-on t-on with t-call 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;
@@ -493,7 +493,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const arg1 = [ctx['value']];
@@ -518,7 +518,7 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
     }
   }
   
-  return (ctx, parent = ctx) => {
+  return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.children[0] = call(\`sub\`, ctx, parent);
     return b1;

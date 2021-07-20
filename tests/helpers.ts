@@ -7,6 +7,7 @@ import {
   onWillStart,
   onWillUpdateProps,
   useComponent,
+  status,
 } from "../src";
 import { TemplateSet } from "../src/app";
 import { Block, Blocks } from "../src/bdom";
@@ -141,11 +142,40 @@ export function useLogLifecycle(steps: string[]) {
   const component = useComponent();
   const name = component.constructor.name;
   steps.push(`${name}:setup`);
-  onWillStart(() => steps.push(`${name}:willStart`));
-  onWillUpdateProps(() => steps.push(`${name}:willUpdateProps`));
-  onMounted(() => steps.push(`${name}:mounted`));
-  onWillPatch(() => steps.push(`${name}:willPatch`));
-  onPatched(() => steps.push(`${name}:patched`));
-  onWillUnmount(() => steps.push(`${name}:willUnmount`));
-  onDestroyed(() => steps.push(`${name}:destroyed`));
+  expect(name + ": " + status(component)).toBe(name + ": " + "new");
+
+  onWillStart(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "new");
+    steps.push(`${name}:willStart`);
+  });
+
+  onMounted(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:mounted`);
+  });
+
+  onWillUpdateProps(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:willUpdateProps`);
+  });
+
+  onWillPatch(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:willPatch`);
+  });
+
+  onPatched(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:patched`);
+  });
+
+  onWillUnmount(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:willUnmount`);
+  });
+
+  onDestroyed(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
+    steps.push(`${name}:destroyed`);
+  });
 }

@@ -170,6 +170,7 @@ export class MountFiber extends RootFiber {
     const node = this.node;
     node.bdom = this.bdom;
     node.bdom!.mount(this.target);
+    node.status = STATUS.MOUNTED;
     this.appliedToDom = true;
     let current;
     let mountedFibers = this.mounted;
@@ -181,6 +182,5 @@ export class MountFiber extends RootFiber {
       }
     }
     node.fiber = null;
-    node.status = STATUS.MOUNTED;
   }
 }

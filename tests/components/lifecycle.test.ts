@@ -745,4 +745,48 @@ describe("lifecycle hooks", () => {
       "Child:destroyed",
     ]);
   });
+
+  test("lifecycle semantics, part 6", async () => {
+    let steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child value="state.value" />`;
+      static components = { Child };
+      state = useState({ value: 1 });
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Child:mounted",
+      "Parent:mounted",
+    ]);
+
+    steps.splice(0);
+
+    parent.state.value = 2;
+
+    await nextTick();
+    expect(steps).toEqual([
+      "Child:willUpdateProps",
+      "Parent:willPatch",
+      "Child:willPatch",
+      "Child:patched",
+      "Parent:patched",
+    ]);
+  });
 });

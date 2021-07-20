@@ -26,11 +26,6 @@ import {
 export type Template = (context: any, refs?: any) => Block;
 export type TemplateFunction = (blocks: any, utils: any) => Template;
 
-// export function compile(template: string, utils: typeof UTILS = UTILS): RenderFunction {
-//   const templateFunction = compileTemplate(template);
-//   return templateFunction(Blocks, utils);
-// }
-
 // -----------------------------------------------------------------------------
 // BlockDescription
 // -----------------------------------------------------------------------------
@@ -323,7 +318,6 @@ export class QWebCompiler {
     // build tree of paths
     const tree: any = {};
     let i = 1;
-    // console.warn('lines before', lines)
     for (let line of lines) {
       let current: any = tree;
       let el: string = `this`;
@@ -335,20 +329,16 @@ export class QWebCompiler {
         if (current.firstChild && current.nextSibling && !current.name) {
           current.name = `el${i++}`;
           current.line.elemDefs.push(`const ${current.name} = ${el};`);
-          // this.addLine(`const ${current.name} = ${el};`);
         }
         el = `${current.name ? current.name : el}.${p}`;
         current = current[p];
         if (current.target && !current.name) {
           current.name = `el${i++}`;
           current.line.elemDefs.push(`const ${current.name} = ${el};`);
-          // this.addLine(`const ${current.name} = ${el};`);
         }
       }
       current.target = true;
     }
-    // console.warn('lines after', lines)
-    // console.warn(tree);
     for (let line of lines) {
       const { path, inserter, elemDefs } = line;
       for (let elem of elemDefs) {
@@ -739,7 +729,6 @@ export class QWebCompiler {
     const initialState = this.hasDefinedKey;
     this.hasDefinedKey = false;
     this.compileAST(ast.body, subCtx);
-    // const key = this.key || loopVar;
     if (!ast.key && !this.hasDefinedKey) {
       console.warn(
         `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
@@ -897,7 +886,6 @@ export class QWebCompiler {
         ctxStr = this.generateId("ctx");
         this.addLine(`const ${ctxStr} = capture(ctx);`);
       }
-      // slotDef = this.generateId("slots");
       let slotStr: string[] = [];
       const initialTarget = this.target;
       for (let slotName in ast.slots) {
@@ -912,16 +900,11 @@ export class QWebCompiler {
         this.functions.push(slot);
         this.target = slot;
         const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
-        // const nextId = this.getNextBlockId();
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
           slot.signature = "ctx => parent => {";
           slot.code.unshift(`  const refs = ctx.__owl__.refs`);
           slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
-          // const id = nextId();
-          // if (id) {
-          //   this.addLine(`${id}.refs = refs;`);
-          // }
         } else {
           slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
         }

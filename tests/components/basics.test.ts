@@ -23,6 +23,20 @@ describe("basics", () => {
     expect(component.el).toEqual(fixture.querySelector("span"));
   });
 
+  test("cannot mount on a documentFragment", async () => {
+    class SomeWidget extends Component {
+      static template = xml`<div>content</div>`;
+    }
+    let error;
+    try {
+      await mount(SomeWidget, document.createDocumentFragment() as any);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Cannot mount component: the target is not a valid DOM element");
+  });
+
   test("can mount a simple component with props", async () => {
     class Test extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
@@ -43,6 +57,17 @@ describe("basics", () => {
     const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("just text");
+    expect(component.el).toBeInstanceOf(Text);
+  });
+
+  test("can mount a component with no text", async () => {
+    class Test extends Component {
+      static template = xml`<t></t>`;
+    }
+
+    const component = await mount(Test, fixture);
+
+    expect(fixture.innerHTML).toBe("");
     expect(component.el).toBeInstanceOf(Text);
   });
 

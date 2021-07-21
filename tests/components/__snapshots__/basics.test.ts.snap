@@ -198,6 +198,19 @@ exports[`basics can mount a component with just some text 1`] = `
 }"
 `;
 
+exports[`basics can mount a component with no text 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BText(\`\`);
+    return b1;
+  }
+}"
+`;
+
 exports[`basics can mount a simple component 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -255,6 +268,23 @@ exports[`basics can mount a simple component with props 1`] = `
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
+    return b1;
+  }
+}"
+`;
+
+exports[`basics cannot mount on a documentFragment 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div>content</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
     return b1;
   }
 }"

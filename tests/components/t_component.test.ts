@@ -86,9 +86,9 @@ describe("t-component", () => {
       "ChildB:willStart",
       "Parent:willPatch",
       "ChildA:willUnmount",
+      "ChildA:destroyed",
       "ChildB:mounted",
       "Parent:patched",
-      "ChildA:destroyed",
     ]);
   });
 

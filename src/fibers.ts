@@ -120,7 +120,15 @@ export class RootFiber extends Fiber {
     node.bdom!.patch(this.bdom!);
     this.appliedToDom = true;
 
-    // Step 3: calling all mounted lifecycle hooks
+    // Step 3: calling all destroyed hooks
+    for (let node of __internal__destroyed) {
+      for (let cb of node.destroyed) {
+        cb();
+      }
+    }
+    __internal__destroyed.length = 0;
+
+    // Step 4: calling all mounted lifecycle hooks
     let current;
     let mountedFibers = this.mounted;
     while ((current = mountedFibers.pop())) {
@@ -131,7 +139,7 @@ export class RootFiber extends Fiber {
       }
     }
 
-    // Step 4: calling all patched hooks
+    // Step 5: calling all patched hooks
     let patchedFibers = this.patched;
     while ((current = patchedFibers.pop())) {
       if (current.appliedToDom) {
@@ -140,14 +148,6 @@ export class RootFiber extends Fiber {
         }
       }
     }
-
-    // finally calling all destroyed hooks
-    for (let node of __internal__destroyed) {
-      for (let cb of node.destroyed) {
-        cb();
-      }
-    }
-    __internal__destroyed.length = 0;
 
     // unregistering the fiber
     node.fiber = null;

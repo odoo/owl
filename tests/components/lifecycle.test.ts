@@ -339,14 +339,12 @@ describe("lifecycle hooks", () => {
   });
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
-    let childUnmounted = false;
+    let steps: string[] = [];
 
     class Child extends Component {
       static template = xml`<span><t t-esc="props.n"/></span>`;
       setup() {
-        onWillUnmount(() => {
-          childUnmounted = true;
-        });
+        useLogLifecycle(steps);
       }
     }
 
@@ -357,7 +355,9 @@ describe("lifecycle hooks", () => {
           </div>
       `;
       static components = { Child };
-
+      setup() {
+        useLogLifecycle(steps);
+      }
       state = useState({ n: 0, flag: true });
       increment() {
         this.state.n += 1;
@@ -375,7 +375,23 @@ describe("lifecycle hooks", () => {
     parent.toggleSubWidget();
     await nextTick();
     expect(fixture.innerHTML).toBe("");
-    expect(childUnmounted).toBe(true);
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Child:mounted",
+      "Parent:mounted",
+      "Child:willUpdateProps",
+      "Parent:willPatch",
+      "Child:willPatch",
+      "Child:patched",
+      "Parent:patched",
+      "Parent:willPatch",
+      "Child:willUnmount",
+      "Child:destroyed",
+      "Parent:patched",
+    ]);
   });
 
   test("hooks are called in proper order in widget creation/destruction", async () => {
@@ -741,8 +757,8 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:willPatch",
       "Child:willUnmount",
-      "Parent:patched",
       "Child:destroyed",
+      "Parent:patched",
     ]);
   });
 

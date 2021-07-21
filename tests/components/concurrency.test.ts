@@ -513,12 +513,11 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     "Parent:willPatch",
     "Child:willUnmount",
     "SubChild:willUnmount",
-    "Parent:patched",
     "SubChild:destroyed",
     "Child:destroyed",
+    "Parent:patched",
   ]);
 });
-
 
 test("rendering component again in next microtick", async () => {
   const steps: string[] = [];

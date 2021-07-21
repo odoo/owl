@@ -53,6 +53,10 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     if (this.fiber && !this.fiber.bdom) {
       return this.fiber.root.promise;
     }
+    if (!this.bdom && !this.fiber) {
+      // should find a way to return the future mounting promise
+      return;
+    }
     const fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();

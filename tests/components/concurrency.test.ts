@@ -1956,6 +1956,80 @@ test("change state and call manually render: no unnecessary rendering", async ()
   ]);
 });
 
+test("changing state before first render does not trigger a render", async () => {
+  const steps: string[] = [];
+  let renders = 0;
+
+  class TestW extends Component {
+    static template = xml`<div t-esc="value"/>`;
+    state = useState({ drinks: 1 });
+    setup() {
+      useLogLifecycle(steps);
+      this.state.drinks++;
+      onWillStart(() => {
+        this.state.drinks++;
+      });
+    }
+    get value() {
+      renders++;
+      return this.state.drinks;
+    }
+  }
+  await mount(TestW, fixture);
+
+  await nextTick();
+  expect(renders).toBe(1);
+  expect(fixture.innerHTML).toBe("<div>3</div>");
+  expect(steps).toEqual(["TestW:setup", "TestW:willStart", "TestW:mounted"]);
+});
+
+test("changing state before first render does not trigger a render (with parent)", async () => {
+  const steps: string[] = [];
+  let renders = 0;
+
+  class TestW extends Component {
+    static template = xml`<div t-esc="value"/>`;
+    state = useState({ drinks: 1 });
+    setup() {
+      useLogLifecycle(steps);
+      this.state.drinks++;
+      onWillStart(() => {
+        this.state.drinks++;
+      });
+    }
+    get value() {
+      renders++;
+      return this.state.drinks;
+    }
+  }
+
+  class Parent extends Component {
+    static components = { TestW };
+    static template = xml`<div><TestW t-if="state.flag"/></div>`;
+    setup() {
+      useLogLifecycle(steps);
+    }
+    state = useState({ flag: false });
+  }
+
+  const parent = await mount(Parent, fixture);
+
+  expect(fixture.innerHTML).toBe("<div></div>");
+  expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
+  steps.splice(0);
+  parent.state.flag = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><div>3</div></div>");
+  expect(renders).toBe(1);
+  expect(steps).toEqual([
+    "TestW:setup",
+    "TestW:willStart",
+    "Parent:willPatch",
+    "TestW:mounted",
+    "Parent:patched",
+  ]);
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

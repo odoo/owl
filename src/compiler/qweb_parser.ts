@@ -585,6 +585,22 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
     for (let slotNode of slotNodes) {
       const name = slotNode.getAttribute("t-set-slot")!;
+
+      // check if this is defined in a sub component (in which case it should
+      // be ignored)
+      let el = slotNode.parentElement!;
+      let isInSubComponent = false;
+      while (el !== clone) {
+        if (el!.hasAttribute("t-component") || el!.tagName[0] === el!.tagName[0].toUpperCase()) {
+          isInSubComponent = true;
+          break;
+        }
+        el = el.parentElement!;
+      }
+      if (isInSubComponent) {
+        continue;
+      }
+
       slotNode.removeAttribute("t-set-slot");
       slotNode.remove();
       const slotAst = parseNode(slotNode, ctx);

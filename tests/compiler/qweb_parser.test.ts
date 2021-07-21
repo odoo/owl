@@ -825,6 +825,60 @@ describe("qweb parser", () => {
     });
   });
 
+  test("component with t-set-slot inside component", async () => {
+    const template = `
+      <MyComponent>
+        <Child>
+          <t t-set-slot="brol">coucou</t>
+        </Child>
+      </MyComponent>
+    `;
+    expect(parse(template)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      props: {},
+      handlers: {},
+      isDynamic: false,
+      slots: {
+        default: {
+          type: ASTType.TComponent,
+          isDynamic: false,
+          handlers: {},
+          name: "Child",
+          props: {},
+          slots: { brol: { type: ASTType.Text, value: "coucou" } },
+        },
+      },
+    });
+  });
+
+  test("component with t-set-slot inside component, with an extra <t>", async () => {
+    const template = `
+      <MyComponent>
+        <Child>
+          <t><t t-set-slot="brol">coucou</t></t>
+        </Child>
+      </MyComponent>
+    `;
+    expect(parse(template)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      props: {},
+      handlers: {},
+      isDynamic: false,
+      slots: {
+        default: {
+          type: ASTType.TComponent,
+          isDynamic: false,
+          handlers: {},
+          name: "Child",
+          props: {},
+          slots: { brol: { type: ASTType.Text, value: "coucou" } },
+        },
+      },
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // t-slot
   // ---------------------------------------------------------------------------

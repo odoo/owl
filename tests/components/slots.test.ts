@@ -1207,4 +1207,134 @@ describe("slots", () => {
 
     expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
   });
+
+  test("nested slots: evaluation context and parented relationship", async () => {
+    let slot: any = null;
+    let grandChild: any = null;
+
+    class Slot extends Component {
+      static template = xml`<span t-esc="props.val"/>`;
+      setup() {
+        slot = this;
+      }
+    }
+    class GrandChild extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+      setup() {
+        grandChild = this;
+      }
+    }
+    class Child extends Component {
+      static components = { GrandChild };
+      static template = xml`
+          <GrandChild>
+            <t t-slot="default"/>
+          </GrandChild>`;
+    }
+    class Parent extends Component {
+      static components = { Child, Slot };
+      static template = xml`<Child><Slot val="state.val"/></Child>`;
+      state = useState({ val: 3 });
+    }
+
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+    expect(children(grandChild)).toEqual([slot]);
+  });
+
+  test("named slot inside slot", async () => {
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <t t-slot="brol"/>
+          <t t-slot="default"/>
+        </div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-set-slot="brol">
+              <p>A<t t-esc="value"/></p>
+            </t>
+            <Child>
+              <t t-set-slot="brol">
+                <p>B<t t-esc="value"/></p>
+              </t>
+            </Child>
+          </Child>
+        </div>`;
+      static components = { Child };
+      value = "blip";
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
+  });
+
+  test("named slots inside slot, again", async () => {
+    class Child extends Component {
+      static template = xml`
+        <child>
+          <t t-slot="brol1">default1</t>
+          <t t-slot="brol2">default2</t>
+          <t t-slot="default"/>
+        </child>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-set-slot="brol1">
+              <p>A<t t-esc="value"/></p>
+            </t>
+            <Child>
+              <t t-set-slot="brol2">
+                <p>B<t t-esc="value"/></p>
+              </t>
+            </Child>
+          </Child>
+        </div>`;
+      static components = { Child };
+      value = "blip";
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><child><p>Ablip</p>default2<child>default1<p>Bblip</p></child></child></div>"
+    );
+  });
+
+  test("named slot inside slot, part 3", async () => {
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <t t-slot="brol"/>
+          <t t-slot="default"/>
+        </div>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child>
+            <t t-set-slot="brol">
+              <p>A<t t-esc="value"/></p>
+            </t>
+            <Child>
+              <t>
+                <t t-set-slot="brol">
+                  <p>B<t t-esc="value"/></p>
+                </t>
+              </t>
+            </Child>
+          </Child>
+        </div>`;
+      static components = { Child };
+      value = "blip";
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
+  });
 });

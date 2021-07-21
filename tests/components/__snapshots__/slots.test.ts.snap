@@ -916,6 +916,176 @@ exports[`slots multiple slots containing components 3`] = `
 }"
 `;
 
+exports[`slots named slot inside slot 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, parent, 'brol');
+    b1.children[1] = callSlot(ctx, parent, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots named slot inside slot 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p>A<owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<p>B<owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  const slot3 = ctx => parent => {
+    const b2 = new Block2();
+    b2.data[0] = ctx['value'];
+    return b2;
+  }
+  
+  const slot4 = ctx => parent => {
+    const ctx6 = capture(ctx);
+    const b4 = new BComponent(\`Child\`, {}, \`__5\`, ctx, parent);
+    b4.node.slots = {'brol': slot7(ctx6)};
+    return b4;
+  }
+  
+  const slot7 = ctx => parent => {
+    const b3 = new Block3();
+    b3.data[0] = ctx['value'];
+    return b3;
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const ctx2 = capture(ctx);
+    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b5.node.slots = {'brol': slot3(ctx2), 'default': slot4(ctx2)};
+    return b1;
+  }
+}"
+`;
+
+exports[`slots named slot inside slot, part 3 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, parent, 'brol');
+    b1.children[1] = callSlot(ctx, parent, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots named slot inside slot, part 3 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p>A<owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<p>B<owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  const slot3 = ctx => parent => {
+    const b2 = new Block2();
+    b2.data[0] = ctx['value'];
+    return b2;
+  }
+  
+  const slot4 = ctx => parent => {
+    const ctx6 = capture(ctx);
+    const b4 = new BComponent(\`Child\`, {}, \`__5\`, ctx, parent);
+    b4.node.slots = {'brol': slot7(ctx6)};
+    return b4;
+  }
+  
+  const slot7 = ctx => parent => {
+    const b3 = new Block3();
+    b3.data[0] = ctx['value'];
+    return b3;
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const ctx2 = capture(ctx);
+    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b5.node.slots = {'brol': slot3(ctx2), 'default': slot4(ctx2)};
+    return b1;
+  }
+}"
+`;
+
 exports[`slots named slots can define a default content 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -962,6 +1132,103 @@ exports[`slots named slots can define a default content 2`] = `
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`slots named slots inside slot, again 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<child><owl-anchor/><owl-anchor/><owl-anchor/></child>\`);
+    children = new Array(3);
+    anchors = new Array(3);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+      this.anchors[2] = this.anchors[1].nextSibling;
+    }
+  }
+  
+  const defaultSlot1 = ctx => {
+    const b2 = new BText(\`default1\`);
+    return b2;
+  }
+  
+  const defaultSlot2 = ctx => {
+    const b3 = new BText(\`default2\`);
+    return b3;
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, parent, 'brol1', defaultSlot1, false);
+    b1.children[1] = callSlot(ctx, parent, 'brol2', defaultSlot2, false);
+    b1.children[2] = callSlot(ctx, parent, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots named slots inside slot, again 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p>A<owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<p>B<owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  const slot3 = ctx => parent => {
+    const b2 = new Block2();
+    b2.data[0] = ctx['value'];
+    return b2;
+  }
+  
+  const slot4 = ctx => parent => {
+    const ctx6 = capture(ctx);
+    const b4 = new BComponent(\`Child\`, {}, \`__5\`, ctx, parent);
+    b4.node.slots = {'brol2': slot7(ctx6)};
+    return b4;
+  }
+  
+  const slot7 = ctx => parent => {
+    const b3 = new Block3();
+    b3.data[0] = ctx['value'];
+    return b3;
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const ctx2 = capture(ctx);
+    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b5.node.slots = {'brol1': slot3(ctx2), 'default': slot4(ctx2)};
     return b1;
   }
 }"
@@ -1061,6 +1328,89 @@ exports[`slots nested slots in same template 4`] = `
     const b4 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
     b4.node.slots = {'default': slot2(ctx)};
     return b1;
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.children[0] = callSlot(ctx, parent, 'default');
+    return b1;
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  const slot2 = ctx => parent => {
+    const b1 = callSlot(ctx, parent, 'default');
+    return b1;
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b2 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, parent);
+    b2.node.slots = {'default': slot2(ctx)};
+    return b2;
+  }
+}"
+`;
+
+exports[`slots nested slots: evaluation context and parented relationship 4`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  const slot2 = ctx => parent => {
+    const b1 = new BComponent(\`Slot\`, {val: ctx['state'].val}, \`__3\`, ctx, parent);
+    return b1;
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b2.node.slots = {'default': slot2(ctx)};
+    return b2;
   }
 }"
 `;

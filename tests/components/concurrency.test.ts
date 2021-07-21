@@ -519,52 +519,6 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
   ]);
 });
 
-test.skip("reuse widget if possible, in some async situation", async () => {
-  // this optimization has been deactivated
-  // it is probably a bad idea
-
-  let def = makeDeferred();
-  let childCount = 0;
-  class ChildA extends Component {
-    static template = xml`<span>a<t t-esc="props.val"/></span>`;
-    setup() {
-      childCount++;
-    }
-  }
-  class ChildB extends Component {
-    static template = xml`<span>b<t t-esc="props.val"/></span>`;
-
-    setup() {
-      onWillStart(() => def);
-    }
-  }
-  class Parent extends Component {
-    static template = xml`
-            <span>
-                <t t-if="state.flag">
-                    <ChildA val="state.valA"/>
-                    <ChildB val="state.valB"/>
-                </t>
-            </span>`;
-    static components = { ChildA, ChildB };
-    state = useState({ valA: 1, valB: 2, flag: false });
-  }
-  const parent = await mount(Parent, fixture);
-
-  expect(childCount).toBe(0);
-
-  parent.state.flag = true;
-  await nextTick();
-  expect(childCount).toBe(1);
-
-  parent.state.valB = 3;
-  await nextTick();
-  expect(childCount).toBe(1);
-
-  def.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<span><span>a1</span><span>b3</span></span>");
-});
 
 test("rendering component again in next microtick", async () => {
   const steps: string[] = [];

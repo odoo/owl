@@ -1,5 +1,5 @@
 import { Component, mount, useState, xml } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
 snapshotEverything();
 
@@ -40,5 +40,54 @@ describe("list of components", () => {
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");
+  });
+
+  test("components in a node in a t-foreach ", async () => {
+    const steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div><t t-esc="props.item"/></div>`;
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+              <div>
+                  <ul>
+                      <t t-foreach="items" t-as="item">
+                          <li t-key="'li_'+item">
+                              <Child item="item"/>
+                          </li>
+                      </t>
+                  </ul>
+              </div>`;
+      static components = { Child };
+
+      setup() {
+        useLogLifecycle(steps);
+      }
+
+      get items() {
+        return [1, 2];
+      }
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
+    );
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Child:mounted",
+      "Child:mounted",
+      "Parent:mounted",
+    ]);
   });
 });

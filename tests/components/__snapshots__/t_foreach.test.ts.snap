@@ -1,5 +1,66 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`list of components components in a node in a t-foreach  1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].item;
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components components in a node in a t-foreach  2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><ul><owl-anchor/></ul></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<li><owl-anchor/></li>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(ctx['items']);
+    b2.forEach(\`item\`, ctx, (i1, ctx) => {
+      let key1 = i1;
+      key1 = 'li_'+ctx['item'];
+      const b3 = b2.children[i1] = new Block2();
+      b3.children[0] = new BComponent(\`Child\`, {item: ctx['item']}, \`__1__\${key1}\`, ctx, parent);
+      b2.keys[i1] = key1;
+    });
+    return b1;
+  }
+}"
+`;
+
 exports[`list of components simple list 1`] = `
 "function anonymous(Blocks, utils
 ) {

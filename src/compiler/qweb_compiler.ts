@@ -985,14 +985,14 @@ export class QWebCompiler {
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
-      blockString = `callSlot(ctx, ${slotName}, ${name}, ${dynamic})`;
+      blockString = `callSlot(ctx, parent, ${slotName}, ${name}, ${dynamic})`;
     } else {
       if (dynamic) {
         let name = this.generateId("slot");
         this.addLine(`const ${name} = ${slotName};`);
-        blockString = `new BDispatch(${name}, callSlot(ctx, ${name}))`;
+        blockString = `new BDispatch(${name}, callSlot(ctx, parent, ${name}))`;
       } else {
-        blockString = `callSlot(ctx, ${slotName})`;
+        blockString = `callSlot(ctx, parent, ${slotName})`;
       }
     }
 

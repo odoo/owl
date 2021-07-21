@@ -17,7 +17,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, 'footer');
+    b1.children[0] = callSlot(ctx, parent, 'footer');
     return b1;
   }
 }"

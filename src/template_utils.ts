@@ -64,19 +64,20 @@ function withDefault(value: any, defaultValue: any): any {
 
 function callSlot(
   ctx: any,
+  parent: any,
   name: string,
   defaultSlot?: (ctx: any) => Block,
   dynamic?: boolean
 ): Block | null {
   const slots = ctx.__owl__.slots;
   const slotFn = slots[name];
-  const slotBDom = slotFn ? slotFn(ctx) : null;
+  const slotBDom = slotFn ? slotFn(parent) : null;
   if (defaultSlot) {
     const result = new BMulti(2);
     if (slotBDom) {
       result.children[0] = dynamic ? new BDispatch(name, slotBDom) : slotBDom;
     } else {
-      result.children[1] = defaultSlot(ctx);
+      result.children[1] = defaultSlot(parent);
     }
     return result;
   }

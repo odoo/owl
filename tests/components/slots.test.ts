@@ -1,4 +1,4 @@
-import { App, Component, mount, useState, xml } from "../../src/index";
+import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
 import { addTemplate, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -872,5 +872,234 @@ describe("slots", () => {
     (<any>fixture.querySelector("button")).click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
+  });
+
+  test("slots and wrapper components", async () => {
+    class Link extends Component {
+      static template = xml`
+          <a href="abc">
+              <t t-slot="default"/>
+          </a>`;
+    }
+
+    class A extends Component {
+      static template = xml`<Link>hey</Link>`;
+      static components = { Link: Link };
+    }
+
+    await mount(A, fixture);
+
+    expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
+  });
+
+  test("template can just return a slot", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-esc="props.value"/></span>`;
+    }
+    class SlotComponent extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+          <div>
+              <SlotComponent><Child value="state.value"/></SlotComponent>
+          </div>`;
+      static components = { SlotComponent, Child };
+      state = useState({ value: 3 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+
+    parent.state.value = 5;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>5</span></div>");
+  });
+
+  test("multiple slots containing components", async () => {
+    class C extends Component {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class B extends Component {
+      static template = xml`<div><t t-slot="s1"/><t t-slot="s2"/></div>`;
+    }
+    class A extends Component {
+      static template = xml`
+          <B>
+            <t t-set-slot="s1"><C val="1"/></t>
+            <t t-set-slot="s2"><C val="2"/></t>
+          </B>`;
+      static components = { B, C };
+    }
+
+    await mount(A, fixture);
+
+    expect(fixture.innerHTML).toBe(`<div><span>1</span><span>2</span></div>`);
+  });
+
+  test("slots in t-foreach and re-rendering", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
+      state = useState({ val: "A" });
+      setup() {
+        onMounted(() => {
+          this.state.val = "B";
+        });
+      }
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+          <div>
+            <t t-foreach="Array(2)" t-as="n" t-key="n_index">
+              <Child><t t-esc="n_index"/></Child>
+            </t>
+          </div>`;
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for the changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
+  });
+
+  test("slots in t-foreach with t-set and re-rendering", async () => {
+    class Child extends Component {
+      static template = xml`
+          <span>
+            <t t-esc="state.val"/>
+            <t t-slot="default"/>
+          </span>`;
+      state = useState({ val: "A" });
+      setup() {
+        onMounted(() => {
+          this.state.val = "B";
+        });
+      }
+    }
+    class ParentWidget extends Component {
+      static components = { Child };
+      static template = xml`
+          <div>
+            <t t-foreach="Array(2)" t-as="n" t-key="n_index">
+              <t t-set="dummy" t-value="n_index"/>
+              <Child><t t-esc="dummy"/></Child>
+            </t>
+          </div>`;
+    }
+
+    await mount(ParentWidget, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
+  });
+
+  test("nested slots in same template", async () => {
+    let child: any = null;
+    let child2: any = null;
+    let child3: any = null;
+
+    class Child extends Component {
+      static template = xml`
+          <span id="c1">
+            <div>
+              <t t-slot="default"/>
+            </div>
+          </span>`;
+      setup() {
+        child = this;
+      }
+    }
+    class Child2 extends Component {
+      static template = xml`
+          <span id="c2">
+            <t t-slot="default"/>
+          </span>`;
+      setup() {
+        child2 = this;
+      }
+    }
+    class Child3 extends Component {
+      static template = xml`
+          <span>Child 3</span>`;
+      setup() {
+        child3 = this;
+      }
+    }
+    class Parent extends Component {
+      static components = { Child, Child2, Child3 };
+      static template = xml`
+          <span id="parent">
+            <Child>
+              <Child2>
+                <Child3/>
+              </Child2>
+            </Child>
+          </span>`;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<span id="parent"><span id="c1"><div><span id="c2"><span>Child 3</span></span></div></span></span>'
+    );
+
+    expect(children(child2)).toEqual([child3]);
+    expect(children(child)).toEqual([child2]);
+    expect(children(parent)).toEqual([child]);
+  });
+
+  test("t-slot nested within another slot", async () => {
+    let portal: any = null;
+    let modal: any = null;
+    let child3: any = null;
+
+    class Child3 extends Component {
+      static template = xml`<span>Child 3</span>`;
+      setup() {
+        child3 = this;
+      }
+    }
+    class Modal extends Component {
+      static template = xml`<span id="modal"><t t-slot="default"/></span>`;
+      setup() {
+        modal = this;
+      }
+    }
+    class Portal extends Component {
+      static template = xml`<span id="portal"><t t-slot="default"/></span>`;
+      setup() {
+        portal = this;
+      }
+    }
+    class Dialog extends Component {
+      static components = { Modal, Portal };
+      static template = xml`
+          <span id="c2">
+            <Modal>
+              <Portal>
+                <t t-slot="default"/>
+              </Portal>
+             </Modal>
+          </span>`;
+    }
+    class Parent extends Component {
+      static components = { Child3, Dialog };
+      static template = xml`
+          <span id="c1">
+            <Dialog>
+              <Child3/>
+            </Dialog>
+          </span>`;
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<span id="c1"><span id="c2"><span id="modal"><span id="portal"><span>Child 3</span></span></span></span></span>'
+    );
+
+    expect(children(portal)[0]).toBe(child3);
+    expect(children(modal)[0]).toBe(portal);
   });
 });

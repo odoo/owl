@@ -58,7 +58,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   const slot2 = ctx => parent => {
-    const b1 = callSlot(ctx, 'default');
+    const b1 = callSlot(ctx, parent, 'default');
     return b1;
   }
   

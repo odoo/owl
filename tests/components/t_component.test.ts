@@ -1,4 +1,4 @@
-import { Component, mount } from "../../src";
+import { Component, mount, useState } from "../../src";
 import { xml } from "../../src/tags";
 import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
@@ -90,5 +90,28 @@ describe("t-component", () => {
       "Parent:patched",
       "ChildA:destroyed",
     ]);
+  });
+
+  test("can switch between dynamic components without the need for a t-key", async () => {
+    class A extends Component {
+      static template = xml`<span>child a</span>`;
+    }
+    class B extends Component {
+      static template = xml`<span>child b</span>`;
+    }
+    class App extends Component {
+      static template = xml`
+        <div>
+            <t t-component="constructor.components[state.child]"/>
+        </div>`;
+      static components = { A, B };
+
+      state = useState({ child: "A" });
+    }
+    const app = await mount(App, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>child a</span></div>");
+    app.state.child = "B";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>child b</span></div>");
   });
 });

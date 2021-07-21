@@ -26,4 +26,26 @@ describe("env handling", () => {
     const component = await mount(Test, fixture);
     expect(component.env).toEqual({});
   });
+
+  test("parent env is propagated to child components", async () => {
+    const env = {};
+    let child: any = null;
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        child = this;
+      }
+    }
+
+    class Test extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    const app = new App(Test);
+    app.configure({ env });
+    await app.mount(fixture);
+    expect(child.env).toBe(env);
+  });
 });

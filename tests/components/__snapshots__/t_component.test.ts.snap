@@ -158,6 +158,59 @@ exports[`t-component can use dynamic components (the class) if given 3`] = `
 }"
 `;
 
+exports[`t-component modifying a sub widget 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/><button>Inc</button></div>\`);
+    data = new Array(1);
+    handlers = new Array(1);
+    build() {
+      this.setupHandler(this.el.firstChild.nextSibling, 0);
+    }
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].counter;
+    const v1 = ctx['state'];
+    b1.handlers[0] = [\`click\`, (e) => {const res = (() => { return v1.counter++ })(); if (typeof res === 'function') { res(e) }}, ctx];
+    return b1;
+  }
+}"
+`;
+
+exports[`t-component modifying a sub widget 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    let Comp2 = ctx['Counter'];
+    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    return b1;
+  }
+}"
+`;
+
 exports[`t-component switching dynamic component 1`] = `
 "function anonymous(Blocks, utils
 ) {

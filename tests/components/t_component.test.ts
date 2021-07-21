@@ -160,4 +160,28 @@ describe("t-component", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>child b</div>");
   });
+
+  test("modifying a sub widget", async () => {
+    class Counter extends Component {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0,
+      });
+    }
+
+    class ParentWidget extends Component {
+      static template = xml`<div><t t-component="Counter"/></div>`;
+
+      get Counter() {
+        return Counter;
+      }
+    }
+    await mount(ParentWidget, fixture);
+    expect(fixture.innerHTML).toBe("<div><div>0<button>Inc</button></div></div>");
+    const button = fixture.getElementsByTagName("button")[0];
+    await button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
+  });
 });

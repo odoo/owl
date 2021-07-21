@@ -61,6 +61,136 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 }"
 `;
 
+exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].blip;
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components reconciliation alg works for t-foreach in t-foreach 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(ctx['state'].s);
+    b2.forEach(\`section\`, ctx, (i1, ctx) => {
+      let key1 = ctx['section_index'];
+      const b3 = b2.children[i1] = new BCollection(ctx['section'].blips);
+      b3.forEach(\`blip\`, ctx, (i2, ctx) => {
+        let key2 = ctx['blip_index'];
+        b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, \`__1__\${key1}__\${key2}\`, ctx, parent);
+        b3.keys[i2] = key2;
+      });
+      b2.keys[i1] = key1;
+    });
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].row+'_'+ctx['props'].col;
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block2 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  class Block3 extends BNode {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(ctx['state'].rows);
+    b2.forEach(\`row\`, ctx, (i1, ctx) => {
+      let key1 = ctx['row'];
+      const b3 = b2.children[i1] = new Block2();
+      const b4 = b3.children[0] = new BCollection(ctx['state'].cols);
+      b4.forEach(\`col\`, ctx, (i2, ctx) => {
+        let key2 = ctx['col'];
+        const b5 = b4.children[i2] = new Block3();
+        b5.children[0] = new BComponent(\`Child\`, {row: ctx['row'],col: ctx['col']}, \`__1__\${key1}__\${key2}\`, ctx, parent);
+        b4.keys[i2] = key2;
+      });
+      b2.keys[i1] = key1;
+    });
+    return b1;
+  }
+}"
+`;
+
 exports[`list of components simple list 1`] = `
 "function anonymous(Blocks, utils
 ) {

@@ -90,4 +90,55 @@ describe("list of components", () => {
       "Parent:mounted",
     ]);
   });
+
+  test("reconciliation alg works for t-foreach in t-foreach", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-esc="props.blip"/></div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+            <t t-foreach="state.s" t-as="section" t-key="section_index">
+                <t t-foreach="section.blips" t-as="blip" t-key="blip_index">
+                  <Child blip="blip"/>
+                </t>
+            </t>
+        </div>`;
+      static components = { Child };
+      state = { s: [{ blips: ["a1", "a2"] }, { blips: ["b1"] }] };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><div>a1</div><div>a2</div><div>b1</div></div>");
+  });
+
+  test("reconciliation alg works for t-foreach in t-foreach, 2", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-esc="props.row + '_' + props.col"/></div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <p t-foreach="state.rows" t-as="row" t-key="row">
+            <p t-foreach="state.cols" t-as="col" t-key="col">
+                <Child row="row" col="col"/>
+              </p>
+            </p>
+        </div>`;
+      static components = { Child };
+      state = useState({ rows: [1, 2], cols: ["a", "b"] });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><p><p><div>1_a</div></p><p><div>1_b</div></p></p><p><p><div>2_a</div></p><p><div>2_b</div></p></p></div>"
+    );
+    parent.state.rows = [2, 1];
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><p><p><div>2_a</div></p><p><div>2_b</div></p></p><p><p><div>1_a</div></p><p><div>1_b</div></p></p></div>"
+    );
+  });
 });

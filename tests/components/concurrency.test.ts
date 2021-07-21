@@ -2030,6 +2030,22 @@ test("changing state before first render does not trigger a render (with parent)
   ]);
 });
 
+test("render method wait until rendering is done", async () => {
+  class TestW extends Component {
+    static template = xml`<div><t t-esc="state.drinks"/></div>`;
+    state = { drinks: 1 };
+  }
+  const widget = await mount(TestW, fixture);
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+
+  widget.state.drinks = 2;
+
+  const renderPromise = widget.render();
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+  await renderPromise;
+  expect(fixture.innerHTML).toBe("<div>2</div>");
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

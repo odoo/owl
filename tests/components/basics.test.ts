@@ -421,4 +421,88 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("<div>2</div>");
   });
+
+  test("do not remove previously rendered dom if not necessary", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div/>`;
+    }
+    const widget = await mount(SomeComponent, fixture);
+    expect(fixture.innerHTML).toBe(`<div></div>`);
+    widget.el!.appendChild(document.createElement("span"));
+    expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
+    await widget.render();
+    expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
+  });
+
+  test("do not remove previously rendered dom if not necessary, variation", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div><h1>h1</h1><span><t t-esc="state.value"/></span></div>`;
+      state = useState({ value: 1 });
+    }
+    const comp = await mount(SomeComponent, fixture);
+    expect(fixture.innerHTML).toBe(`<div><h1>h1</h1><span>1</span></div>`);
+    comp.el!.querySelector("h1")!.appendChild(document.createElement("p"));
+    expect(fixture.innerHTML).toBe("<div><h1>h1<p></p></h1><span>1</span></div>");
+
+    comp.state.value++;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><h1>h1<p></p></h1><span>2</span></div>");
+  });
+
+  test("reconciliation alg is not confused in some specific situation", async () => {
+    // in this test, we set t-key to 4 because it was in conflict with the
+    // template id corresponding to the first child.
+    class Child extends Component {
+      static template = xml`<span>child</span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+            <Child />
+            <Child t-key="4"/>
+        </div>
+      `;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>child</span><span>child</span></div>");
+  });
+
+  test("same t-keys in two different places", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-esc="props.blip"/></span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+            <div><Child t-key="1" blip="'1'"/></div>
+            <div><Child t-key="1" blip="'2'"/></div>
+        </div>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>1</span></div><div><span>2</span></div></div>");
+  });
+
+  test("t-key on a component with t-if, and a sibling component", async () => {
+    class Child extends Component {
+      static template = xml`<span>child</span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child t-if="false" t-key="'str'"/>
+          <Child/>
+        </div>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>child</span></div>");
+  });
 });

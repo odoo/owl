@@ -114,4 +114,50 @@ describe("t-component", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>child b</span></div>");
   });
+
+  test("can use dynamic components (the class) if given", async () => {
+    class A extends Component {
+      static template = xml`<span>child a</span>`;
+    }
+    class B extends Component {
+      static template = xml`<span>child b</span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+      state = useState({
+        child: "a",
+      });
+      get myComponent() {
+        return this.state.child === "a" ? A : B;
+      }
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>child a</span>");
+    parent.state.child = "b";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>child b</span>");
+  });
+
+  test("can use dynamic components (the class) if given (with different root tagname)", async () => {
+    class A extends Component {
+      static template = xml`<span>child a</span>`;
+    }
+    class B extends Component {
+      static template = xml`<div>child b</div>`;
+    }
+    class Parent extends Component {
+      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+      state = useState({
+        child: "a",
+      });
+      get myComponent() {
+        return this.state.child === "a" ? A : B;
+      }
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>child a</span>");
+    parent.state.child = "b";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>child b</div>");
+  });
 });

@@ -395,6 +395,45 @@ exports[`basics component with dynamic content can be updated 1`] = `
 }"
 `;
 
+exports[`basics do not remove previously rendered dom if not necessary 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics do not remove previously rendered dom if not necessary, variation 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><h1>h1</h1><span><owl-text/></span></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].value;
+    return b1;
+  }
+}"
+`;
+
 exports[`basics higher order components parent and child 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -520,6 +559,101 @@ exports[`basics props is set on root component 1`] = `
 }"
 `;
 
+exports[`basics reconciliation alg is not confused in some specific situation 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>child</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics reconciliation alg is not confused in some specific situation 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    let key0;
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    key0 = 4;
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics same t-keys in two different places 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].blip;
+    return b1;
+  }
+}"
+`;
+
+exports[`basics same t-keys in two different places 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><div><owl-anchor/></div><div><owl-anchor/></div></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      const el1 = this.el.firstChild;
+      this.anchors[0] = el1.firstChild;
+      this.anchors[1] = el1.nextSibling.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    let key0;
+    const b1 = new Block1();
+    key0 = 1;
+    b1.children[0] = new BComponent(\`Child\`, {blip: '1'}, \`__1\`, ctx, parent);
+    key0 = 1;
+    b1.children[1] = new BComponent(\`Child\`, {blip: '2'}, \`__2\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`basics simple component with a dynamic text 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -576,6 +710,52 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>child</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    let key0;
+    const b1 = new Block1();
+    if (false) {
+      key0 = 'str';
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, parent);
     return b1;
   }
 }"

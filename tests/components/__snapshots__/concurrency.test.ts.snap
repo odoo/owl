@@ -1571,6 +1571,28 @@ exports[`properly behave when destroyed/unmounted while rendering  3`] = `
 }"
 `;
 
+exports[`render method wait until rendering is done 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/></div>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].drinks;
+    return b1;
+  }
+}"
+`;
+
 exports[`rendering component again in next microtick 1`] = `
 "function anonymous(Blocks, utils
 ) {

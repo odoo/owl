@@ -54,4 +54,22 @@ describe("event handling", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>2");
   });
+
+  test("support for callable expression in event handler", async () => {
+    class Counter extends Component {
+      static template = xml`
+      <div><t t-esc="state.value"/><input type="text" t-on-input="obj.onInput"/></div>`;
+      state = useState({ value: "" });
+      obj = { onInput: (ev: any) => (this.state.value = ev.target.value) };
+    }
+
+    const counter = await mount(Counter, fixture);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<div><input type="text"></div>`);
+    const input = (<HTMLElement>counter.el).getElementsByTagName("input")[0];
+    input.value = "test";
+    input.dispatchEvent(new Event("input"));
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<div>test<input type="text"></div>`);
+  });
 });

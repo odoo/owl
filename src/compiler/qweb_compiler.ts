@@ -502,6 +502,7 @@ export class QWebCompiler {
         }
       } else {
         code = this.captureExpression(value);
+        code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
       }
       this.addLine(`${block.varName}.handlers[${index}] = [\`${event}\`, (e) => ${code}, ctx];`);
     }

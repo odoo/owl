@@ -67,3 +67,32 @@ exports[`event handling handler receive the event as argument 2`] = `
   }
 }"
 `;
+
+exports[`event handling support for callable expression in event handler 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-text/><input type=\\"text\\"/></div>\`);
+    data = new Array(1);
+    handlers = new Array(1);
+    build() {
+      this.setupHandler(this.el.firstChild.nextSibling, 0);
+    }
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].value;
+    const v1 = ctx['obj'];
+    b1.handlers[0] = [\`input\`, (e) => {const res = (() => { return v1.onInput })(); if (typeof res === 'function') { res(e) }}, ctx];
+    return b1;
+  }
+}"
+`;

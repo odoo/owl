@@ -354,7 +354,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v1.incrementCounter(2), ctx];
+    b1.handlers[0] = [\`click\`, (e) => {const res = (() => { return v1.incrementCounter(2) })(); if (typeof res === 'function') { res(e) }}, ctx];
     return b1;
   }
 }"
@@ -378,7 +378,7 @@ exports[`t-on t-on with inline statement 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v1.counter++, ctx];
+    b1.handlers[0] = [\`click\`, (e) => {const res = (() => { return v1.counter++ })(); if (typeof res === 'function') { res(e) }}, ctx];
     return b1;
   }
 }"
@@ -402,7 +402,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const v1 = ctx['state'];
-    b1.handlers[0] = [\`click\`, (e) => v1.flag=!v1.flag, ctx];
+    b1.handlers[0] = [\`click\`, (e) => {const res = (() => { return v1.flag=!v1.flag })(); if (typeof res === 'function') { res(e) }}, ctx];
     return b1;
   }
 }"
@@ -427,7 +427,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
     const b1 = new Block1();
     const v1 = ctx['state'];
     const v2 = ctx['someFunction'];
-    b1.handlers[0] = [\`click\`, (e) => v1.n=v2(3), ctx];
+    b1.handlers[0] = [\`click\`, (e) => {const res = (() => { return v1.n=v2(3) })(); if (typeof res === 'function') { res(e) }}, ctx];
     return b1;
   }
 }"

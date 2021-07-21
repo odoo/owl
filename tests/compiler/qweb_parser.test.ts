@@ -802,6 +802,29 @@ describe("qweb parser", () => {
       slots: {},
     });
   });
+
+  test("component with t-esc", async () => {
+    expect(parse(`<MyComponent t-esc="someValue"/>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      props: {},
+      handlers: {},
+      isDynamic: false,
+      slots: { default: { defaultValue: "", expr: "someValue", type: ASTType.TEsc } },
+    });
+  });
+
+  test("component with t-call", async () => {
+    expect(parse(`<MyComponent t-call="subTemplate"/>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      props: {},
+      handlers: {},
+      isDynamic: false,
+      slots: { default: { body: null, name: "subTemplate", type: ASTType.TCall } },
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // t-slot
   // ---------------------------------------------------------------------------

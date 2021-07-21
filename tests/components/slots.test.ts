@@ -1102,4 +1102,109 @@ describe("slots", () => {
     expect(children(portal)[0]).toBe(child3);
     expect(children(modal)[0]).toBe(portal);
   });
+
+  test("slots in slots, with vars", async () => {
+    class B extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class A extends Component {
+      static template = xml`
+          <div>
+            <B>
+              <t t-slot="default"/>
+            </B>
+          </div>`;
+      static components = { B };
+    }
+    class Parent extends Component {
+      static template = xml`
+          <div>
+            <t t-set="test" t-value="state.name"/>
+            <A>
+              <p>hey<t t-esc="test"/></p>
+            </A>
+          </div>`;
+      static components = { A };
+      state = { name: "aaron" };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span><p>heyaaron</p></span></div></div>");
+  });
+
+  test("t-set t-value in a slot", async () => {
+    class Dialog extends Component {
+      static template = xml`
+          <span>
+            <t t-slot="default"/>
+          </span>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Dialog>
+            <t t-set="rainbow" t-value="'dash'"/>
+            <t t-esc="rainbow"/>
+          </Dialog>
+        </div>`;
+      static components = { Dialog };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>dash</span></div>");
+  });
+
+  test("slot and t-esc", async () => {
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog><t t-esc="'toph'"/></Dialog></div>`;
+      static components = { Dialog };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
+  });
+
+  test("slot and (inline) t-esc", async () => {
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog t-esc="'toph'"/></div>`;
+      static components = { Dialog };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
+  });
+
+  test("slot and t-call", async () => {
+    let sokka = xml`<p>sokka</p>`;
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog><t t-call="${sokka}"/></Dialog></div>`;
+      static components = { Dialog };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
+  });
+
+  test("slot and (inline) t-call", async () => {
+    let sokka = xml`<p>sokka</p>`;
+    class Dialog extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Dialog t-call="${sokka}"/></div>`;
+      static components = { Dialog };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
+  });
 });

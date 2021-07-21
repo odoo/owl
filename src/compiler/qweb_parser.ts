@@ -340,6 +340,12 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
       content: [tesc],
     };
   }
+  if (ast && ast.type === ASTType.TComponent) {
+    return {
+      ...ast,
+      slots: { default: tesc },
+    };
+  }
   return tesc;
 }
 
@@ -430,9 +436,16 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-call");
   if (node.tagName !== "t") {
     const ast = parseNode(node, ctx);
+    const tcall: AST = { type: ASTType.TCall, name: subTemplate, body: null };
     if (ast && ast.type === ASTType.DomNode) {
-      ast.content = [{ type: ASTType.TCall, name: subTemplate, body: null }];
+      ast.content = [tcall];
       return ast;
+    }
+    if (ast && ast.type === ASTType.TComponent) {
+      return {
+        ...ast,
+        slots: { default: tcall },
+      };
     }
   }
   const body: AST[] = [];

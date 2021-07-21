@@ -839,4 +839,38 @@ describe("slots", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><button><h1>slot2</h1></button></div>");
   });
+
+  test("slot are properly rendered if inner props are changed", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          SC:<t t-esc="props.val"/>
+        </div>`;
+    }
+    class GenericComponent extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+
+    class App extends Component {
+      static template = xml`
+        <div>
+          <button t-on-click="inc">Inc[<t t-esc="state.val"/>]</button>
+          <GenericComponent>
+            <SomeComponent val="state.val"/>
+          </GenericComponent>
+        </div>`;
+      static components = { GenericComponent, SomeComponent };
+      state = useState({ val: 4 });
+
+      inc() {
+        this.state.val++;
+      }
+    }
+    await mount(App, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><button>Inc[4]</button><div><div> SC:4</div></div></div>");
+    (<any>fixture.querySelector("button")).click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
+  });
 });

@@ -13,11 +13,6 @@ beforeEach(() => {
 
 describe("basics", () => {
   test("no component catching error lead to full app destruction", async () => {
-    // expect.assertions(6);
-    // const handler = jest.fn();
-    // const consoleError = console.error;
-    // console.error = jest.fn();
-
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
@@ -40,10 +35,6 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("");
     expect(status(parent)).toBe("destroyed");
     expect(error).toBeDefined();
-    expect(error.message).toBe("cannot");
-
-    // expect(console.error).toBeCalledTimes(0);
-    // console.error = consoleError;
-    // expect(handler).toBeCalledTimes(1);
+    expect(error.message).toBe("Cannot read property 'this' of undefined");
   });
 });

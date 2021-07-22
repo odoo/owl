@@ -36,10 +36,6 @@ export class Scheduler {
    */
   flush() {
     this.tasks.forEach((fiber) => {
-      if (fiber.node.status === STATUS.DESTROYED) {
-        this.tasks.delete(fiber);
-        return;
-      }
       if (fiber.root !== fiber) {
         // this is wrong! should be something like
         // if (this.tasks.has(fiber.root)) {
@@ -47,6 +43,15 @@ export class Scheduler {
         //   fiber.resolve();
         //   this.tasks.delete(fiber);
         // }
+        this.tasks.delete(fiber);
+        return;
+      }
+      if (fiber.error) {
+        this.tasks.delete(fiber);
+        fiber.reject(fiber.error);
+        return;
+      }
+      if (fiber.node.status === STATUS.DESTROYED) {
         this.tasks.delete(fiber);
         return;
       }

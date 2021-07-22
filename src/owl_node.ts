@@ -87,8 +87,17 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   }
 
   _render(fiber: Fiber | RootFiber) {
-    fiber.bdom = this.renderFn();
+    try {
+      fiber.bdom = this.renderFn();
+    } catch (e) {
+      fiber.root.error = e;
+      this.handleError(fiber);
+    }
     fiber.root.counter--;
+  }
+
+  handleError(fiber: Fiber) {
+    fiber.node.app.destroy();
   }
 
   destroy() {

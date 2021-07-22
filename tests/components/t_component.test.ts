@@ -35,8 +35,10 @@ describe("t-component", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -78,12 +80,16 @@ describe("t-component", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "ChildA:setup",
       "ChildA:willStart",
+      "ChildA:render",
       "ChildA:mounted",
       "Parent:mounted",
+      "Parent:render",
       "ChildB:setup",
       "ChildB:willStart",
+      "ChildB:render",
       "Parent:willPatch",
       "ChildA:willUnmount",
       "ChildA:destroyed",

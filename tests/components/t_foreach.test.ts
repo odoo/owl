@@ -81,10 +81,13 @@ describe("list of components", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
+      "Child:render",
       "Child:mounted",
       "Child:mounted",
       "Parent:mounted",

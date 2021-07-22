@@ -38,8 +38,8 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
     currentNode = this;
     const component: InstanceType<T> = new C(props, app.env, this) as any;
     this.component = component;
-    component.setup();
     this.renderFn = app.getTemplate(C.template).bind(null, component);
+    component.setup();
   }
 
   async mount(target: any): Promise<InstanceType<T>> {

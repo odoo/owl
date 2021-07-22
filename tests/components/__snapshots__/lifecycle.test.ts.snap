@@ -501,6 +501,47 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 }"
 `;
 
+exports[`lifecycle hooks onRender 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<button><owl-text/></button>\`);
+    data = new Array(1);
+    handlers = new Array(1);
+    build() {
+      this.setupHandler(this.el, 0);
+    }
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['increment'](e), ctx];
+    b1.data[0] = ctx['state'].value;
+    return b1;
+  }
+}"
+`;
+
+exports[`lifecycle hooks onRender 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
 exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
 "function anonymous(Blocks, utils
 ) {

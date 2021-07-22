@@ -31,6 +31,7 @@ export {
   onWillUpdateProps,
   onWillPatch,
   onPatched,
+  onRender,
   onDestroyed,
 } from "./lifecycle_hooks";
 

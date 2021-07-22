@@ -8,6 +8,7 @@ import {
   onWillUpdateProps,
   useComponent,
   status,
+  onRender,
 } from "../src";
 import { TemplateSet } from "../src/app";
 import { Block, Blocks } from "../src/bdom";
@@ -157,6 +158,10 @@ export function useLogLifecycle(steps: string[]) {
   onWillUpdateProps(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     steps.push(`${name}:willUpdateProps`);
+  });
+
+  onRender(() => {
+    steps.push(`${name}:render`);
   });
 
   onWillPatch(() => {

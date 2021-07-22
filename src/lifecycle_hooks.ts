@@ -38,3 +38,12 @@ export function onDestroyed(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
   node.destroyed.push(fn);
 }
+
+export function onRender(fn: () => void | any) {
+  const node = getCurrent()!;
+  const renderFn = node.renderFn;
+  node.renderFn = () => {
+    fn();
+    return renderFn();
+  };
+}

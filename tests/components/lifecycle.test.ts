@@ -4,6 +4,7 @@ import {
   onWillUnmount,
   onPatched,
   onWillUpdateProps,
+  onRender,
 } from "../../src/lifecycle_hooks";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
@@ -378,15 +379,20 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "Child:mounted",
       "Parent:mounted",
+      "Parent:render",
       "Child:willUpdateProps",
+      "Child:render",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
       "Parent:patched",
+      "Parent:render",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
@@ -547,8 +553,10 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -592,17 +600,20 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
+    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:render", "Parent:mounted"]);
 
     steps.splice(0);
 
     parent.state.hasChild = true;
     await nextTick();
     expect(steps).toEqual([
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "GrandChild:setup",
       "GrandChild:willStart",
+      "GrandChild:render",
       "Parent:willPatch",
       "GrandChild:mounted",
       "Child:mounted",
@@ -651,7 +662,7 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
+    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:render", "Parent:mounted"]);
 
     steps.splice(0);
 
@@ -694,7 +705,7 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:mounted"]);
+    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:render", "Parent:mounted"]);
 
     steps.splice(0);
 
@@ -702,8 +713,10 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps).toEqual([
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "GrandChild:setup",
       "GrandChild:willStart",
     ]);
@@ -743,8 +756,10 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -755,6 +770,7 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps).toEqual([
+      "Parent:render",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
@@ -786,8 +802,10 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
+      "Parent:render",
       "Child:setup",
       "Child:willStart",
+      "Child:render",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -798,7 +816,77 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps).toEqual([
+      "Parent:render",
       "Child:willUpdateProps",
+      "Child:render",
+      "Parent:willPatch",
+      "Child:willPatch",
+      "Child:patched",
+      "Parent:patched",
+    ]);
+  });
+
+  test("onRender", async () => {
+    let steps: string[] = [];
+    const def = makeDeferred();
+
+    class Child extends Component {
+      static template = xml`<button t-on-click="increment"><t t-esc="state.value"/></button>`;
+      state = useState({ value: 1 });
+      visibleState = this.state.value;
+      setup() {
+        useLogLifecycle(steps);
+        onWillUpdateProps(() => def);
+        onRender(() => (this.visibleState = this.state.value));
+      }
+      increment() {
+        this.state.value++;
+        steps.push(`inc:${this.visibleState}`);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child />`;
+      static components = { Child };
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<button>1</button>");
+
+    parent.render(); // to block child render
+    await nextTick();
+
+    fixture.querySelector("button")!.click();
+
+    await nextTick();
+    fixture.querySelector("button")!.click();
+
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<button>1</button>");
+
+    def.resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>3</button>");
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:render",
+      "Child:setup",
+      "Child:willStart",
+      "Child:render",
+      "Child:mounted",
+      "Parent:mounted",
+      "Parent:render",
+      "Child:willUpdateProps",
+      "inc:1",
+      "inc:1",
+      "Child:render",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",

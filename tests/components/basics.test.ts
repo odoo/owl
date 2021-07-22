@@ -505,4 +505,113 @@ describe("basics", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>child</span></div>");
   });
+
+  test("widget after a t-foreach", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div/>`;
+    }
+
+    class Test extends Component {
+      static template = xml`<div><t t-foreach="Array(2)" t-as="elem" t-key="elem_index">txt</t><SomeComponent/></div>`;
+      static components = { SomeComponent };
+    }
+
+    await mount(Test, fixture);
+    expect(fixture.innerHTML).toBe("<div>txttxt<div></div></div>");
+  });
+
+  test("t-if works with t-component", async () => {
+    class Child extends Component {
+      static template = xml`<span>hey</span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    parent.state.flag = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("t-else works with t-component", async () => {
+    class Child extends Component {
+      static template = xml`<span>hey</span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <div t-if="state.flag">somediv</div>
+          <Child t-else=""/>
+        </div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div>somediv</div></div>");
+
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("t-elif works with t-component", async () => {
+    class Child extends Component {
+      static template = xml`<span>hey</span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <div t-if="state.flag">somediv</div>
+          <Child t-elif="!state.flag" />
+        </div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div>somediv</div></div>");
+
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("t-else with empty string works with t-component", async () => {
+    class Child extends Component {
+      static template = xml`<span>hey</span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <div t-if="state.flag">somediv</div>
+          <Child t-else="" />
+        </div>`;
+      static components = { Child };
+      state = useState({ flag: true });
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div>somediv</div></div>");
+
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
 });

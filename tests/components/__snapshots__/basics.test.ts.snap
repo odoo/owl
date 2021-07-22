@@ -715,6 +715,195 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
 }"
 `;
 
+exports[`basics t-elif works with t-component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-elif works with t-component 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<div>somediv</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    if (ctx['state'].flag) {
+      const b2 = b1.children[0] = new Block2();
+    } else if (!ctx['state'].flag) {
+      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-else with empty string works with t-component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-else with empty string works with t-component 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<div>somediv</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    if (ctx['state'].flag) {
+      const b2 = b1.children[0] = new Block2();
+    } else {
+      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-else works with t-component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-else works with t-component 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  class Block2 extends BStatic {
+    static el = elem(\`<div>somediv</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    if (ctx['state'].flag) {
+      const b2 = b1.children[0] = new Block2();
+    } else {
+      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-if works with t-component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>hey</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics t-if works with t-component 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    if (ctx['state'].flag) {
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -866,6 +1055,53 @@ exports[`basics updating a component with t-foreach as root 1`] = `
       b1.children[i1] = new BText(ctx['item']);
       b1.keys[i1] = key1;
     });
+    return b1;
+  }
+}"
+`;
+
+exports[`basics widget after a t-foreach 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics widget after a t-foreach 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
+    children = new Array(2);
+    anchors = new Array(2);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+      this.anchors[1] = this.anchors[0].nextSibling;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(Array(2));
+    b2.forEach(\`elem\`, ctx, (i1, ctx) => {
+      let key1 = ctx['elem_index'];
+      b2.children[i1] = new BText(\`txt\`);
+      b2.keys[i1] = key1;
+    });
+    b1.children[1] = new BComponent(\`SomeComponent\`, {}, \`__1\`, ctx, parent);
     return b1;
   }
 }"

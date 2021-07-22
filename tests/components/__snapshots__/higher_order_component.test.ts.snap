@@ -1,0 +1,236 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basics basic use 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span>child<owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].p;
+    return b1;
+  }
+}"
+`;
+
+exports[`basics basic use 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BComponent(\`Child\`, {p: 1}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can select a sub widget  1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>CHILD 1</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can select a sub widget  2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div>CHILD 2</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can select a sub widget  3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BMulti(2);
+    if (ctx['env'].flag) {
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    if (!ctx['env'].flag) {
+      b1.children[1] = new BComponent(\`OtherChild\`, {}, \`__2\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can select a sub widget, part 2 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>CHILD 1</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can select a sub widget, part 2 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div>CHILD 2</div>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics can select a sub widget, part 2 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BMulti(2);
+    if (ctx['state'].flag) {
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    }
+    if (!ctx['state'].flag) {
+      b1.children[1] = new BComponent(\`OtherChild\`, {}, \`__2\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`basics sub widget is interactive 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><button>click</button>child<owl-text/></span>\`);
+    data = new Array(1);
+    handlers = new Array(1);
+    build() {
+      this.setupHandler(this.el.firstChild, 0);
+    }
+    update() {
+      this.el.firstChild.nextSibling.nextSibling.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    ctx = Object.create(ctx);
+    const b1 = new Block1();
+    b1.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['inc'](e), ctx];
+    b1.data[0] = ctx['state'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`basics sub widget is interactive 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BComponent(\`Child\`, {p: 1}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics top level sub widget with a parent 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span>Hello</span>\`);
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics top level sub widget with a parent 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new BComponent(\`ComponentC\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;
+
+exports[`basics top level sub widget with a parent 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.children[0] = new BComponent(\`ComponentB\`, {}, \`__1\`, ctx, parent);
+    return b1;
+  }
+}"
+`;

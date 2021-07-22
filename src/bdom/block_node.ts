@@ -50,7 +50,10 @@ export class BNode extends Block {
       case "object":
         for (let k in _class) {
           if (_class[k]) {
-            elem.classList.add(k);
+            const classStr = k.trim().split(/\s+/);
+            for (let i = 0; i < classStr.length; i++) {
+              elem.classList.add(classStr[i]);
+            }
           }
         }
         break;

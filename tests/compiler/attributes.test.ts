@@ -224,6 +224,15 @@ describe("attributes", () => {
     const result = renderToString(template, { b: true, d: false, f: true });
     expect(result).toBe(`<div class="static a e"></div>`);
   });
+
+  test("t-att-class with multiple classes", () => {
+    expect(renderToString(`<div t-att-class="{'a b c': value}" />`, { value: true })).toBe(
+      '<div class="a b c"></div>'
+    );
+    expect(renderToString(`<div t-att-class="{['a b c']: value}" />`, { value: true })).toBe(
+      '<div class="a b c"></div>'
+    );
+  });
 });
 
 describe("special cases for some specific html attributes/properties", () => {

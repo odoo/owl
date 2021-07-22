@@ -1640,6 +1640,55 @@ exports[`rendering component again in next microtick 2`] = `
 }"
 `;
 
+exports[`two renderings initiated between willPatch and patched 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<abc><owl-text/></abc>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`two renderings initiated between willPatch and patched 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, parent = ctx) {
+    let key0;
+    const b1 = new Block1();
+    if (ctx['state'].flag) {
+      key0 = 'panel_'+ctx['state'].panel;
+      b1.children[0] = new BComponent(\`Panel\`, {val: ctx['state'].panel}, \`__1\`, ctx, parent);
+    }
+    return b1;
+  }
+}"
+`;
+
 exports[`update a sub-component twice in the same frame 1`] = `
 "function anonymous(Blocks, utils
 ) {

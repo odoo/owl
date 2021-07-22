@@ -1,6 +1,6 @@
 import { App, Component, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
 import { Fiber } from "../../src/fibers";
-import { onMounted, onPatched, onWillPatch } from "../../src/lifecycle_hooks";
+import { onMounted, onPatched, onWillPatch, onWillUnmount } from "../../src/lifecycle_hooks";
 import { Scheduler } from "../../src/scheduler";
 import { status } from "../../src/status";
 import { xml } from "../../src/tags";
@@ -2203,6 +2203,66 @@ test("render method wait until rendering is done", async () => {
   expect(fixture.innerHTML).toBe("<div>1</div>");
   await renderPromise;
   expect(fixture.innerHTML).toBe("<div>2</div>");
+});
+
+test("two renderings initiated between willPatch and patched", async () => {
+  let parent: any = null;
+  let steps: string[] = [];
+
+  class Panel extends Component {
+    static template = xml`<abc><t t-esc="props.val"/></abc>`;
+    setup() {
+      useLogLifecycle(steps);
+      onMounted(() => parent.render());
+      onWillUnmount(() => parent.render());
+    }
+  }
+
+  // Main root component
+  class Parent extends Component {
+    static template = xml`<div><Panel t-key="'panel_' + state.panel" val="state.panel" t-if="state.flag"/></div>`;
+    static components = { Panel };
+    state = useState({ panel: "Panel1", flag: true });
+    setup() {
+      useLogLifecycle(steps);
+      parent = this;
+    }
+  }
+
+  await mount(Parent, fixture);
+
+  expect(fixture.innerHTML).toBe("<div><abc>Panel1</abc></div>");
+
+  parent.state.panel = "Panel2";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
+
+  parent.state.flag = false;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(steps).toEqual([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:render",
+    "Panel:setup",
+    "Panel:willStart",
+    "Panel:render",
+    "Panel:mounted",
+    "Parent:mounted",
+    "Parent:render",
+    "Panel:willUpdateProps",
+    "Panel:render",
+    "Parent:willPatch",
+    "Panel:willPatch",
+    "Panel:patched",
+    "Parent:patched",
+    "Parent:render",
+    "Parent:willPatch",
+    "Panel:willUnmount",
+    "Panel:destroyed",
+    "Parent:patched",
+  ]);
 });
 
 //   test.skip("components with shouldUpdate=false", async () => {

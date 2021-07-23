@@ -2200,7 +2200,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['state'].users, true);
+    const b2 = b1.children[0] = new BCollection(ctx['state'].users, true, false);
     b2.forEach(\`user\`, ctx, (i1, ctx) => {
       let key1 = ctx['user'].id;
       const b3 = b2.children[i1] = new Block2();
@@ -2274,7 +2274,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['state'].users, true);
+    const b2 = b1.children[0] = new BCollection(ctx['state'].users, true, false);
     b2.forEach(\`user\`, ctx, (i1, ctx) => {
       let key1 = ctx['user'].id;
       const b3 = b2.children[i1] = new Block2();
@@ -2492,7 +2492,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(Array(2), true);
+    const b2 = b1.children[0] = new BCollection(Array(2), true, false);
     b2.forEach(\`n\`, ctx, (i1, ctx) => {
       let key1 = ctx['n_index'];
       const ctx2 = capture(ctx);
@@ -2576,14 +2576,14 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['tree'], true);
+    const b2 = b1.children[0] = new BCollection(ctx['tree'], true, false);
     b2.forEach(\`node1\`, ctx, (i1, ctx) => {
       let key1 = ctx['node1'].key;
       const b3 = b2.children[i1] = new BMulti(2);
       const b4 = b3.children[0] = new Block2();
       b4.data[0] = ctx['node1'].value;
       const b5 = b3.children[1] = new Block3();
-      const b6 = b5.children[0] = new BCollection(ctx['node1'].nodes, true);
+      const b6 = b5.children[0] = new BCollection(ctx['node1'].nodes, true, false);
       b6.forEach(\`node2\`, ctx, (i2, ctx) => {
         let key2 = ctx['node2'].key;
         const ctx2 = capture(ctx);
@@ -2649,7 +2649,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(Array(2), true);
+    const b2 = b1.children[0] = new BCollection(Array(2), true, false);
     b2.forEach(\`n\`, ctx, (i1, ctx) => {
       let key1 = ctx['n_index'];
       ctx[\`dummy\`] = ctx['n_index'];
@@ -2804,7 +2804,7 @@ exports[`slots t-slot in recursive templates 2`] = `
   const slot3 = ctx => parent => {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(ctx['name']);
-    const b2 = b1.children[1] = new BCollection(ctx['items'], false);
+    const b2 = b1.children[1] = new BCollection(ctx['items'], false, false);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = ctx['item'].name;
       const b3 = b2.children[i1] = new BMulti(2);

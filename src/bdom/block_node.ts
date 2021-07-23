@@ -110,6 +110,7 @@ export class BNode extends Block {
   patch(newTree: BNode): void {
     this.data = newTree.data;
     this.refs = newTree.refs;
+    this.handlers = newTree.handlers;
     this.update();
     if (this.children) {
       const anchors = this.anchors!;

@@ -708,7 +708,7 @@ export class QWebCompiler {
       this.insertAnchor(block);
     }
     const id = this.insertBlock(
-      `new BCollection(${compileExpr(ast.collection)}, ${ast.isOnlyChild})`,
+      `new BCollection(${compileExpr(ast.collection)}, ${ast.isOnlyChild}, ${ast.hasNoComponent})`,
       {
         ...ctx,
         forceNewBlock: true,

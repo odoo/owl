@@ -80,6 +80,7 @@ export interface ASTTForEach {
   key: string | null;
   body: AST;
   isOnlyChild: boolean;
+  hasNoComponent: boolean;
 }
 
 export interface ASTTKey {
@@ -405,6 +406,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   if (!body) {
     return null;
   }
+
   return {
     type: ASTType.TForEach,
     collection,
@@ -412,7 +414,59 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     body,
     key,
     isOnlyChild: false,
+    hasNoComponent: hasNoComponent(body),
   };
+}
+
+/**
+ * @returns true if we are sure the ast does not contain any component
+ */
+function hasNoComponent(ast: AST): boolean {
+  switch (ast.type) {
+    case ASTType.TComponent:
+    case ASTType.TRaw:
+    case ASTType.TCall:
+    case ASTType.TCallBlock:
+    case ASTType.TSlot:
+      return false;
+    case ASTType.TSet:
+    case ASTType.Text:
+    case ASTType.Comment:
+    case ASTType.TEsc:
+      return true;
+    case ASTType.TKey:
+      return hasNoComponent(ast.content);
+    case ASTType.TDebug:
+    case ASTType.TLog:
+      return ast.content ? hasNoComponent(ast.content) : true;
+    case ASTType.TForEach:
+      return ast.hasNoComponent;
+    case ASTType.Multi:
+    case ASTType.DomNode: {
+      for (let elem of ast.content) {
+        if (!hasNoComponent(elem)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    case ASTType.TIf: {
+      if (!hasNoComponent(ast.content)) {
+        return false;
+      }
+      if (ast.tElif) {
+        for (let elem of ast.tElif) {
+          if (!hasNoComponent(elem.content)) {
+            return false;
+          }
+        }
+      }
+      if (ast.tElse && !hasNoComponent(ast.tElse)) {
+        return false;
+      }
+      return true;
+    }
+  }
 }
 
 function parseTKey(node: Element, ctx: ParsingContext): AST | null {

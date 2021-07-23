@@ -470,6 +470,7 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: null,
+      hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
     });
@@ -481,6 +482,7 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: null,
+      hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
     });
@@ -491,6 +493,7 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
+      hasNoComponent: true,
       isOnlyChild: false,
       key: null,
       body: {
@@ -509,6 +512,7 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
+      hasNoComponent: true,
       isOnlyChild: false,
       key: "item.id",
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
@@ -521,6 +525,7 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: null,
+      hasNoComponent: true,
       isOnlyChild: false,
       body: {
         type: ASTType.DomNode,
@@ -541,6 +546,7 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: null,
+      hasNoComponent: true,
       isOnlyChild: false,
       body: {
         type: ASTType.TIf,
@@ -569,6 +575,7 @@ describe("qweb parser", () => {
       collection: "categories",
       elem: "category",
       key: null,
+      hasNoComponent: true,
       isOnlyChild: false,
       body: {
         type: ASTType.DomNode,
@@ -597,6 +604,7 @@ describe("qweb parser", () => {
           collection: "list",
           elem: "item",
           key: null,
+          hasNoComponent: true,
           isOnlyChild: true,
           body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
         },
@@ -620,6 +628,7 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
+      hasNoComponent: true,
       isOnlyChild: false,
       body: {
         type: ASTType.DomNode,
@@ -628,6 +637,25 @@ describe("qweb parser", () => {
         ref: null,
         attrs: {},
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
+      },
+    });
+  });
+
+  test("t-foreach expression with a component inside", async () => {
+    expect(parse(`<Comp t-foreach="list" t-as="item" />`)).toEqual({
+      type: ASTType.TForEach,
+      collection: "list",
+      elem: "item",
+      key: null,
+      hasNoComponent: false,
+      isOnlyChild: false,
+      body: {
+        type: ASTType.TComponent,
+        isDynamic: false,
+        name: "Comp",
+        handlers: {},
+        props: {},
+        slots: {},
       },
     });
   });

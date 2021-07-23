@@ -11,10 +11,12 @@ export class BCollection extends Block {
   collection: any[];
   values: any[];
   isOnlyChild: boolean;
+  hasNoComponent: boolean;
 
-  constructor(collection: any[], isOnlyChild: boolean) {
+  constructor(collection: any[], isOnlyChild: boolean, hasNoComponent: boolean) {
     super();
     this.isOnlyChild = isOnlyChild;
+    this.hasNoComponent = hasNoComponent;
     let n: number;
     if (Array.isArray(collection)) {
       this.collection = collection;
@@ -76,6 +78,23 @@ export class BCollection extends Block {
     let newEndIdx = newCh.length - 1;
     let mapping: any = undefined;
     const _anchor = this.anchor!;
+    let noFullRemove = this.hasNoComponent;
+    if (newCh.length === 0 && this.isOnlyChild) {
+      // fast path
+      if (!this.hasNoComponent) {
+        for (let i = 0; i < oldCh.length; i++) {
+          oldCh[i].beforeRemove();
+        }
+      }
+
+      const parent = this.anchor.parentElement!;
+      this.anchor.remove();
+      parent.textContent = "";
+      parent.appendChild(this.anchor);
+      this.children = newCh;
+      this.keys = newKeys;
+      return;
+    }
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (oldCh[oldStartIdx] === null) {
@@ -140,7 +159,11 @@ export class BCollection extends Block {
         for (let i = oldStartIdx; i <= oldEndIdx; i++) {
           let ch = oldCh[i];
           if (ch) {
-            ch.fullRemove();
+            if (noFullRemove) {
+              ch.remove();
+            } else {
+              ch.fullRemove();
+            }
           }
         }
       }
@@ -150,8 +173,10 @@ export class BCollection extends Block {
   }
 
   beforeRemove() {
-    for (let child of this.children) {
-      child.beforeRemove();
+    if (!this.hasNoComponent) {
+      for (let child of this.children) {
+        child.beforeRemove();
+      }
     }
   }
 

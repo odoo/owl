@@ -524,7 +524,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['node'].val;
-    const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false);
+    const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false, false);
     b2.forEach(\`subtree\`, ctx, (i1, ctx) => {
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
@@ -587,7 +587,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['node'].val;
-    const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false);
+    const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false, false);
     b2.forEach(\`subtree\`, ctx, (i1, ctx) => {
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
@@ -655,7 +655,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     ctx[\`recursive_idx\`] = ctx['recursive_idx']+1;
     b1.data[0] = ctx['node'].val;
     b1.data[1] = ctx['recursive_idx'];
-    const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false);
+    const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false, false);
     b2.forEach(\`subtree\`, ctx, (i1, ctx) => {
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
@@ -951,7 +951,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['list'], true);
+    const b2 = b1.children[0] = new BCollection(ctx['list'], true, false);
     b2.forEach(\`v\`, ctx, (i1, ctx) => {
       let key1 = ctx['v_index'];
       ctx[\`val\`] = ctx['v'].val;
@@ -1006,7 +1006,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['list'], true);
+    const b2 = b1.children[0] = new BCollection(ctx['list'], true, false);
     b2.forEach(\`v\`, ctx, (i1, ctx) => {
       let key1 = ctx['v_index'];
       ctx[\`val\`] = ctx['v'].val;

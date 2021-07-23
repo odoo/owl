@@ -112,7 +112,7 @@ describe("mount", () => {
       { id: 1, name: "sheep" },
       { id: 2, name: "cow" },
     ];
-    const tree = new BCollection(elems);
+    const tree = new BCollection(elems, false, true);
     tree.forEach("elem", {}, (i: any, ctx: any) => {
       tree.children[i] = new BText(ctx.elem.name);
       tree.keys[i] = ctx.elem.id;

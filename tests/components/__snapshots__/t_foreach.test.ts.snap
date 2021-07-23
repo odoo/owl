@@ -48,7 +48,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['items'], true);
+    const b2 = b1.children[0] = new BCollection(ctx['items'], true, false);
     b2.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = i1;
       key1 = 'li_'+ctx['item'];
@@ -100,10 +100,10 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['state'].s, true);
+    const b2 = b1.children[0] = new BCollection(ctx['state'].s, true, false);
     b2.forEach(\`section\`, ctx, (i1, ctx) => {
       let key1 = ctx['section_index'];
-      const b3 = b2.children[i1] = new BCollection(ctx['section'].blips, false);
+      const b3 = b2.children[i1] = new BCollection(ctx['section'].blips, false, false);
       b3.forEach(\`blip\`, ctx, (i2, ctx) => {
         let key2 = ctx['blip_index'];
         b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, \`__1__\${key1}__\${key2}\`, ctx, parent);
@@ -173,11 +173,11 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['state'].rows, true);
+    const b2 = b1.children[0] = new BCollection(ctx['state'].rows, true, false);
     b2.forEach(\`row\`, ctx, (i1, ctx) => {
       let key1 = ctx['row'];
       const b3 = b2.children[i1] = new Block2();
-      const b4 = b3.children[0] = new BCollection(ctx['state'].cols, true);
+      const b4 = b3.children[0] = new BCollection(ctx['state'].cols, true, false);
       b4.forEach(\`col\`, ctx, (i2, ctx) => {
         let key2 = ctx['col'];
         const b5 = b4.children[i2] = new Block3();
@@ -220,7 +220,7 @@ exports[`list of components simple list 2`] = `
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return function template(ctx, parent = ctx) {
-    const b1 = new BCollection(ctx['state'].elems, false);
+    const b1 = new BCollection(ctx['state'].elems, false, false);
     b1.forEach(\`elem\`, ctx, (i1, ctx) => {
       let key1 = ctx['elem'].id;
       b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, \`__1__\${key1}\`, ctx, parent);

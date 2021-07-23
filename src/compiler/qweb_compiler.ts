@@ -380,7 +380,7 @@ export class QWebCompiler {
       .join("");
   }
 
-  compileAST(ast: AST, ctx: Context, nextNode?: ASTDomNode) {
+  compileAST(ast: AST, ctx: Context) {
     switch (ast.type) {
       case ASTType.Comment:
         this.compileComment(ast, ctx);
@@ -398,7 +398,7 @@ export class QWebCompiler {
         this.compileTRaw(ast, ctx);
         break;
       case ASTType.TIf:
-        this.compileTIf(ast, ctx, nextNode);
+        this.compileTIf(ast, ctx);
         break;
       case ASTType.TForEach:
         this.compileTForeach(ast, ctx);
@@ -591,11 +591,7 @@ export class QWebCompiler {
           index: block.childNumber,
           forceNewBlock: false,
         };
-        const next =
-          children[i + 1] && children[i + 1].type === ASTType.DomNode
-            ? children[i + 1]
-            : (undefined as any);
-        this.compileAST(child, subCtx, next);
+        this.compileAST(child, subCtx);
         if (child.type !== ASTType.TSet) {
           block.currentPath.push("nextSibling");
         }

@@ -46,7 +46,7 @@ exports[`refs refs are properly bound in slots 2`] = `
     static el = elem(\`<button>do something</button>\`);
     handlers = new Array(1);
     build() {
-      this.setupHandler(this.el, 0);
+      this.setupHandler(this.el, \`click\`, 0);
     }
     update() {
       this.refs[\`myButton\`] = this.el;
@@ -60,7 +60,7 @@ exports[`refs refs are properly bound in slots 2`] = `
   const slot3 = ctx => parent => {
     const refs = ctx.__owl__.refs
     const b2 = new Block2();
-    b2.handlers[0] = [\`click\`, (e) => ctx.__owl__.component['doSomething'](e), ctx];
+    b2.handlers[0] = (e) => ctx.__owl__.component['doSomething'](e);
     b2.refs = refs;
     return b2;
   }

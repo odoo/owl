@@ -475,14 +475,14 @@ export class QWebCompiler {
   generateHandlerCode(
     block: BlockDescription,
     handlers: { [key: string]: string },
-    insert?: (index: number) => void
+    insert?: (type: string, index: number) => void
   ) {
     for (let event in handlers) {
       this.shouldDefineOwner = true;
       const index = block.handlerNumber;
       block.handlerNumber++;
       if (insert) {
-        insert(index);
+        insert(event, index);
       }
       const value = handlers[event];
       let args: string = "";
@@ -504,7 +504,9 @@ export class QWebCompiler {
         code = this.captureExpression(value);
         code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
       }
-      this.addLine(`${block.varName}.handlers[${index}] = [\`${event}\`, (e) => ${code}, ctx];`);
+      const handlerFn = `(e) => ${code}`;
+      const handler = insert ? handlerFn : `['${event}', ${handlerFn}]`;
+      this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
     }
   }
 
@@ -550,8 +552,8 @@ export class QWebCompiler {
     }
 
     // event handlers
-    const insert = (index: number) =>
-      block!.insertBuild((el) => `this.setupHandler(${el}, ${index});`);
+    const insert = (type: string, index: number) =>
+      block!.insertBuild((el) => `this.setupHandler(${el}, \`${type}\`, ${index});`);
     this.generateHandlerCode(block, ast.on, insert);
 
     // t-ref

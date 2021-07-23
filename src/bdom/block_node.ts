@@ -93,14 +93,9 @@ export class BNode extends Block {
     (elem as any)[prop] = value;
   }
 
-  setupHandler(el: HTMLElement, index: number) {
-    const eventType = this.handlers![index][0];
+  setupHandler(el: HTMLElement, eventType: string, index: number) {
     el.addEventListener(eventType, (ev) => {
-      const info = this.handlers![index];
-      const [, callback] = info;
-      // if (ctx.__owl__ && !ctx.__owl__.isMounted) {
-      //   return;
-      // }
+      const callback = this.handlers![index];
       callback(ev);
     });
   }

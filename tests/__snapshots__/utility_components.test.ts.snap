@@ -87,7 +87,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   
   const slot2 = ctx => parent => {
     const b2 = new BComponentH(1, \`Child2\`, {}, \`__3\`, ctx, parent);
-    b2.handlers[0] = [\`custom\`, (e) => ctx.__owl__.component['_handled'](e), ctx];
+    b2.handlers[0] = ['custom', (e) => ctx.__owl__.component['_handled'](e)];
     return b2;
   }
   

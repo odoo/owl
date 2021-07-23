@@ -1049,7 +1049,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return function template(ctx, parent = ctx) {
-    const b1 = new BCollection(ctx['items']);
+    const b1 = new BCollection(ctx['items'], false);
     b1.forEach(\`item\`, ctx, (i1, ctx) => {
       let key1 = ctx['item'];
       b1.children[i1] = new BText(ctx['item']);
@@ -1095,7 +1095,7 @@ exports[`basics widget after a t-foreach 2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(Array(2));
+    const b2 = b1.children[0] = new BCollection(Array(2), false);
     b2.forEach(\`elem\`, ctx, (i1, ctx) => {
       let key1 = ctx['elem_index'];
       b2.children[i1] = new BText(\`txt\`);

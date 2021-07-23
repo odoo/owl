@@ -293,7 +293,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`v\`] = 1;
-    const b2 = b1.children[0] = new BCollection(ctx['list']);
+    const b2 = b1.children[0] = new BCollection(ctx['list'], false);
     b2.forEach(\`elem\`, ctx, (i1, ctx) => {
       let key1 = ctx['elem_index'];
       const b3 = b2.children[i1] = new Block2();

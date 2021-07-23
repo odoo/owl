@@ -95,20 +95,20 @@ exports[`misc complex template 1`] = `
     if (ctx['batch'].state=='preparing') {
       const b3 = b1.children[1] = new Block3();
     }
-    const b4 = b1.children[2] = new BCollection(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])));
+    const b4 = b1.children[2] = new BCollection(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])), false);
     b4.forEach(\`slot\`, ctx, (i1, ctx) => {
       let key1 = ctx['slot'].id;
       const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__1__\${key1}\`, ctx, parent);
       b5.parentClass = \`slot_container\`;
       b4.keys[i1] = key1;
     });
-    const b6 = b1.children[3] = new BCollection([1,2,3,4]);
+    const b6 = b1.children[3] = new BCollection([1,2,3,4], false);
     b6.forEach(\`x\`, ctx, (i1, ctx) => {
       let key1 = ctx['x'];
       const b7 = b6.children[i1] = new Block4();
       b6.keys[i1] = key1;
     });
-    const b8 = b1.children[4] = new BCollection(ctx['commit_links']);
+    const b8 = b1.children[4] = new BCollection(ctx['commit_links'], true);
     b8.forEach(\`commit_link\`, ctx, (i1, ctx) => {
       let key1 = ctx['commit_link'].id;
       const b9 = b8.children[i1] = new Block5();
@@ -237,7 +237,7 @@ exports[`misc global 4`] = `
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection([4,5,6]);
+    const b2 = b1.children[0] = new BCollection([4,5,6], false);
     b2.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = ctx['value'];
       const b3 = b2.children[i1] = new BMulti(2);
@@ -466,7 +466,7 @@ exports[`misc other complex template 1`] = `
     const b1 = new Block1();
     b1.data[0] = \`/runbot/\${ctx['project'].slug}\`;
     b1.data[1] = ctx['project'].name;
-    const b2 = b1.children[0] = new BCollection(ctx['projects']);
+    const b2 = b1.children[0] = new BCollection(ctx['projects'], false);
     b2.forEach(\`project\`, ctx, (i1, ctx) => {
       let key1 = ctx['project'].id;
       const b3 = b2.children[i1] = new Block2();
@@ -503,7 +503,7 @@ exports[`misc other complex template 1`] = `
     b1.handlers[1] = [\`click\`, (e) => ctx.__owl__.component['toggleMore'](e), ctx];
     if (ctx['categories']&&ctx['categories'].length>1) {
       const b14 = b1.children[2] = new Block9();
-      const b15 = b14.children[0] = new BCollection(ctx['categories']);
+      const b15 = b14.children[0] = new BCollection(ctx['categories'], true);
       b15.forEach(\`category\`, ctx, (i1, ctx) => {
         let key1 = ctx['category'].id;
         const b16 = b15.children[i1] = new Block10();
@@ -521,7 +521,7 @@ exports[`misc other complex template 1`] = `
     b1.refs = refs;
     if (ctx['triggers']) {
       const b17 = b1.children[3] = new BMulti(2);
-      const b18 = b17.children[0] = new BCollection(ctx['triggers']);
+      const b18 = b17.children[0] = new BCollection(ctx['triggers'], false);
       b18.forEach(\`trigger\`, ctx, (i1, ctx) => {
         let key1 = ctx['trigger'].id;
         const b19 = b18.children[i1] = new BMulti(1);

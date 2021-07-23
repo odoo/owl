@@ -10,9 +10,11 @@ export class BCollection extends Block {
   keys: (string | number)[];
   collection: any[];
   values: any[];
+  isOnlyChild: boolean;
 
-  constructor(collection: any[]) {
+  constructor(collection: any[], isOnlyChild: boolean) {
     super();
+    this.isOnlyChild = isOnlyChild;
     let n: number;
     if (Array.isArray(collection)) {
       this.collection = collection;
@@ -154,10 +156,14 @@ export class BCollection extends Block {
   }
 
   remove() {
-    for (let child of this.children) {
-      child.remove();
+    if (this.isOnlyChild) {
+      this.anchor.parentElement!.textContent = "";
+    } else {
+      for (let child of this.children) {
+        child.remove();
+      }
+      this.anchor.remove();
     }
-    this.anchor.remove();
   }
 }
 

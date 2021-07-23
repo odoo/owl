@@ -79,6 +79,7 @@ export interface ASTTForEach {
   elem: string;
   key: string | null;
   body: AST;
+  isOnlyChild: boolean;
 }
 
 export interface ASTTKey {
@@ -299,6 +300,9 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       attrs[attr] = value;
     }
   }
+  if (children.length === 1 && children[0].type === ASTType.TForEach) {
+    children[0].isOnlyChild = true;
+  }
   return {
     type: ASTType.DomNode,
     tag: node.tagName,
@@ -407,6 +411,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     elem,
     body,
     key,
+    isOnlyChild: false,
   };
 }
 

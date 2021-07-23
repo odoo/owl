@@ -704,14 +704,16 @@ export class QWebCompiler {
 
   compileTForeach(ast: ASTTForEach, ctx: Context) {
     const { block } = ctx;
-
     if (block) {
       this.insertAnchor(block);
     }
-    const id = this.insertBlock(`new BCollection(${compileExpr(ast.collection)})`, {
-      ...ctx,
-      forceNewBlock: true,
-    })!;
+    const id = this.insertBlock(
+      `new BCollection(${compileExpr(ast.collection)}, ${ast.isOnlyChild})`,
+      {
+        ...ctx,
+        forceNewBlock: true,
+      }
+    )!;
     this.loopLevel++;
     const loopVar = `i${this.loopLevel}`;
     this.addLine(`${id}.forEach(\`${ast.elem}\`, ctx, (${loopVar}, ctx) => {`);

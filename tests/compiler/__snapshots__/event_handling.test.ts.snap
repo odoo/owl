@@ -121,7 +121,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(['someval']);
+    const b2 = b1.children[0] = new BCollection(['someval'], true);
     b2.forEach(\`action\`, ctx, (i1, ctx) => {
       let key1 = ctx['action_index'];
       const b3 = b2.children[i1] = new Block2();
@@ -223,7 +223,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
   
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
-    const b1 = new BCollection([1]);
+    const b1 = new BCollection([1], false);
     b1.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = i1;
       key1 = ctx['value'];
@@ -302,7 +302,7 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
   return function template(ctx, parent = ctx) {
-    const b1 = new BCollection([1]);
+    const b1 = new BCollection([1], false);
     b1.forEach(\`value\`, ctx, (i1, ctx) => {
       let key1 = ctx['value'];
       b1.children[i1] = call(\`sub\`, ctx, parent);

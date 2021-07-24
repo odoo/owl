@@ -52,7 +52,7 @@ export class BComponent extends Block {
       const C = isDynamic ? name : owner.constructor.components[name as any];
       node = new OwlNode(parentNode.app, C, props);
       parentNode.children[key] = node;
-      const fiber = makeChildFiber(node, parentNode.fiber!);
+      const fiber = makeChildFiber(node, parentFiber);
       if (node.mounted.length) {
         parentFiber.root.mounted.push(fiber);
       }

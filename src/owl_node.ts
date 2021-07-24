@@ -1,7 +1,6 @@
 import type { App } from "./app";
 import type { Block } from "./bdom";
 import type { Component } from "./component";
-import { EventBus } from "./event_bus";
 import { Fiber, makeRootFiber, MountFiber, RootFiber } from "./fibers";
 import { STATUS } from "./status";
 
@@ -13,7 +12,7 @@ export function getCurrent(): OwlNode | null {
 
 type LifecycleHook = Function;
 
-export class OwlNode<T extends typeof Component = any> extends EventBus {
+export class OwlNode<T extends typeof Component = any> {
   app: App;
   bdom: null | Block = null;
   component: InstanceType<T>;
@@ -33,7 +32,6 @@ export class OwlNode<T extends typeof Component = any> extends EventBus {
   destroyed: LifecycleHook[] = [];
 
   constructor(app: App, C: T, props: any) {
-    super();
     this.app = app;
     currentNode = this;
     const component: InstanceType<T> = new C(props, app.env, this) as any;

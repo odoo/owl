@@ -212,7 +212,7 @@ export class QWebCompiler {
     // generate main code
     this.target.indentLevel = 0;
     this.addLine(``);
-    this.addLine(`return function template(ctx, parent = ctx) {`);
+    this.addLine(`return function template(ctx, node = ctx.__owl__) {`);
     if (this.hasRef) {
       this.addLine(`  const refs = ctx.__owl__.refs;`);
     }
@@ -824,12 +824,12 @@ export class QWebCompiler {
     if (isDynamic) {
       const templateVar = this.generateId("template");
       this.addLine(`const ${templateVar} = ${subTemplate};`);
-      this.insertBlock(`new BDispatch(${templateVar}, call(${templateVar}, ctx, parent))`, {
+      this.insertBlock(`new BDispatch(${templateVar}, call(${templateVar}, ctx, node))`, {
         ...ctx,
         forceNewBlock: !block,
       });
     } else {
-      this.insertBlock(`call(${subTemplate}, ctx, parent)`, { ...ctx, forceNewBlock: !block });
+      this.insertBlock(`call(${subTemplate}, ctx, node)`, { ...ctx, forceNewBlock: !block });
     }
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
@@ -895,7 +895,7 @@ export class QWebCompiler {
     } else {
       expr = `\`${ast.name}\``;
     }
-    const blockArgs = `${expr}, ${propString}, \`${key}\`, ctx, parent`;
+    const blockArgs = `${expr}, ${propString}, \`${key}\`, ctx, node`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -915,7 +915,7 @@ export class QWebCompiler {
         let name = this.generateId("slot");
         const slot: CodeGroup = {
           name,
-          signature: "ctx => parent => {",
+          signature: "ctx => node => {",
           indentLevel: 0,
           code: [],
           rootBlock: null,
@@ -925,7 +925,7 @@ export class QWebCompiler {
         const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
-          slot.signature = "ctx => parent => {";
+          slot.signature = "ctx => node => {";
           slot.code.unshift(`  const refs = ctx.__owl__.refs`);
           slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
         } else {
@@ -1001,14 +1001,14 @@ export class QWebCompiler {
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
-      blockString = `callSlot(ctx, parent, ${slotName}, ${name}, ${dynamic})`;
+      blockString = `callSlot(ctx, node, ${slotName}, ${name}, ${dynamic})`;
     } else {
       if (dynamic) {
         let name = this.generateId("slot");
         this.addLine(`const ${name} = ${slotName};`);
-        blockString = `new BDispatch(${name}, callSlot(ctx, parent, ${name}))`;
+        blockString = `new BDispatch(${name}, callSlot(ctx, node, ${name}))`;
       } else {
-        blockString = `callSlot(ctx, parent, ${slotName})`;
+        blockString = `callSlot(ctx, node, ${slotName})`;
       }
     }
 

@@ -10,7 +10,7 @@ exports[`t-component can switch between dynamic components without the need for 
     static el = elem(\`<span>child a</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -27,7 +27,7 @@ exports[`t-component can switch between dynamic components without the need for 
     static el = elem(\`<span>child b</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -49,10 +49,10 @@ exports[`t-component can switch between dynamic components without the need for 
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     let Comp2 = ctx['constructor'].components[ctx['state'].child];
-    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -68,7 +68,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
     static el = elem(\`<span>child a</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -85,7 +85,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
     static el = elem(\`<div>child b</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -98,11 +98,11 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let key0;
     key0 = ctx['state'].child;
     let Comp2 = ctx['myComponent'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -118,7 +118,7 @@ exports[`t-component can use dynamic components (the class) if given 1`] = `
     static el = elem(\`<span>child a</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -135,7 +135,7 @@ exports[`t-component can use dynamic components (the class) if given 2`] = `
     static el = elem(\`<span>child b</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -148,11 +148,11 @@ exports[`t-component can use dynamic components (the class) if given 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let key0;
     key0 = ctx['state'].child;
     let Comp2 = ctx['myComponent'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -176,7 +176,7 @@ exports[`t-component modifying a sub widget 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['state'].counter;
@@ -202,10 +202,10 @@ exports[`t-component modifying a sub widget 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     let Comp2 = ctx['Counter'];
-    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -221,7 +221,7 @@ exports[`t-component switching dynamic component 1`] = `
     static el = elem(\`<div>child a</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -234,7 +234,7 @@ exports[`t-component switching dynamic component 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BText(\`child b\`);
     return b1;
   }
@@ -247,9 +247,9 @@ exports[`t-component switching dynamic component 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let Comp2 = ctx['Child'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -265,7 +265,7 @@ exports[`t-component t-component works in simple case 1`] = `
     static el = elem(\`<div>child</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -278,9 +278,9 @@ exports[`t-component t-component works in simple case 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let Comp2 = ctx['Child'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, parent));
+    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, \`__1\`, ctx, node));
     return b1;
   }
 }"

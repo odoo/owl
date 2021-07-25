@@ -82,7 +82,7 @@ exports[`misc complex template 1`] = `
     static el = elem(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
     b1.data[1] = \`card bg-\${ctx['klass']}-light\`;
@@ -105,7 +105,7 @@ exports[`misc complex template 1`] = `
       ctx[\`slot_index\`] = i1;
       ctx[\`slot_value\`] = k1[i1];
       let key1 = ctx['slot'].id;
-      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__2__\${key1}\`, ctx, parent);
+      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__2__\${key1}\`, ctx, node);
       b5.parentClass = \`slot_container\`;
       b4.keys[i1] = key1;
     }
@@ -178,7 +178,7 @@ exports[`misc global 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = 'agüero';
     b1.children[0] = new BHtml(ctx[zero]);
@@ -201,7 +201,7 @@ exports[`misc global 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
     return b1;
@@ -224,7 +224,7 @@ exports[`misc global 3`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     const b2 = new BText(\`toto default\`);
     b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
@@ -257,7 +257,7 @@ exports[`misc global 4`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([4,5,6], false, false);
@@ -277,18 +277,18 @@ exports[`misc global 4`] = `
       const b5 = new BMulti(3);
       ctx = Object.create(ctx);
       ctx[\`foo\`] = 'aaa';
-      b5.children[0] = call(\`_callee-uses-foo\`, ctx, parent);
+      b5.children[0] = call(\`_callee-uses-foo\`, ctx, node);
       ctx = ctx.__proto__;
-      b5.children[1] = call(\`_callee-uses-foo\`, ctx, parent);
+      b5.children[1] = call(\`_callee-uses-foo\`, ctx, node);
       ctx[\`foo\`] = 'bbb';
-      b5.children[2] = call(\`_callee-uses-foo\`, ctx, parent);
+      b5.children[2] = call(\`_callee-uses-foo\`, ctx, node);
       ctx[zero] = b5;
-      b3.children[1] = call(\`_callee-asc\`, ctx, parent);
+      b3.children[1] = call(\`_callee-asc\`, ctx, node);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
-    b1.children[1] = call(\`_callee-asc-toto\`, ctx, parent);
+    b1.children[1] = call(\`_callee-asc-toto\`, ctx, node);
     return b1;
   }
 }"
@@ -491,7 +491,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     const b1 = new Block1();
@@ -599,7 +599,7 @@ exports[`misc other complex template 1`] = `
       b21.handlers[3] = (e) => ctx.__owl__.component['toggleSettingsMenu'](e);
     }
     if (ctx['load_infos']) {
-      b1.children[4] = call(\`LOAD_INFOS_TEMPLATE\`, ctx, parent);
+      b1.children[4] = call(\`LOAD_INFOS_TEMPLATE\`, ctx, node);
     }
     if (ctx['message']) {
       const b22 = b1.children[5] = new Block13();
@@ -609,8 +609,8 @@ exports[`misc other complex template 1`] = `
       const b23 = b1.children[6] = new Block14();
     } else {
       const b24 = b1.children[7] = new Block15();
-      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__5\`, ctx, parent);
-      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__6\`, ctx, parent);
+      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__5\`, ctx, node);
+      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__6\`, ctx, node);
     }
     return b1;
   }

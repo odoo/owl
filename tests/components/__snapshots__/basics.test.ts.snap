@@ -14,7 +14,7 @@ exports[`basics Multi root component 1`] = `
     static el = elem(\`<span>2</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BMulti(3);
     const b2 = b1.children[0] = new Block1();
     b1.children[1] = new BText(\`text\`);
@@ -34,7 +34,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -47,8 +47,8 @@ exports[`basics a class component inside a class component, no external dom 2`] 
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -64,7 +64,7 @@ exports[`basics a component cannot be mounted in a detached node 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -81,7 +81,7 @@ exports[`basics a component inside a component 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -103,9 +103,9 @@ exports[`basics a component inside a component 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -129,7 +129,7 @@ exports[`basics can be clicked on and updated 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['state'].counter;
@@ -154,7 +154,7 @@ exports[`basics can handle empty props 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -177,9 +177,9 @@ exports[`basics can handle empty props 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx, parent);
+    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -191,7 +191,7 @@ exports[`basics can mount a component with just some text 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BText(\`just text\`);
     return b1;
   }
@@ -204,7 +204,7 @@ exports[`basics can mount a component with no text 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BText(\`\`);
     return b1;
   }
@@ -221,7 +221,7 @@ exports[`basics can mount a simple component 1`] = `
     static el = elem(\`<span>simple vnode</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -242,7 +242,7 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     const b3 = b1.children[1] = new Block2();
@@ -265,7 +265,7 @@ exports[`basics can mount a simple component with props 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -283,7 +283,7 @@ exports[`basics cannot mount on a documentFragment 1`] = `
     static el = elem(\`<div>content</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -296,7 +296,7 @@ exports[`basics child can be updated 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BText(ctx['props'].value);
     return b1;
   }
@@ -309,8 +309,8 @@ exports[`basics child can be updated 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -330,7 +330,7 @@ exports[`basics class component with dynamic text 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -352,7 +352,7 @@ exports[`basics class parent, class child component with props 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -366,8 +366,8 @@ exports[`basics class parent, class child component with props 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`Child\`, {value: 42}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -387,7 +387,7 @@ exports[`basics component with dynamic content can be updated 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -405,7 +405,7 @@ exports[`basics do not remove previously rendered dom if not necessary 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -426,7 +426,7 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['state'].value;
     return b1;
@@ -444,7 +444,7 @@ exports[`basics higher order components parent and child 1`] = `
     static el = elem(\`<div>a</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -461,7 +461,7 @@ exports[`basics higher order components parent and child 2`] = `
     static el = elem(\`<span>b</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -474,12 +474,12 @@ exports[`basics higher order components parent and child 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BMulti(2);
     if (ctx['props'].child==='a') {
-      b1.children[0] = new BComponent(\`ChildA\`, {}, \`__1\`, ctx, parent);
+      b1.children[0] = new BComponent(\`ChildA\`, {}, \`__1\`, ctx, node);
     } else {
-      b1.children[1] = new BComponent(\`ChildB\`, {}, \`__2\`, ctx, parent);
+      b1.children[1] = new BComponent(\`ChildB\`, {}, \`__2\`, ctx, node);
     }
     return b1;
   }
@@ -492,8 +492,8 @@ exports[`basics higher order components parent and child 4`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -509,7 +509,7 @@ exports[`basics parent, child and grandchild 1`] = `
     static el = elem(\`<div>hey</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -522,8 +522,8 @@ exports[`basics parent, child and grandchild 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -535,8 +535,8 @@ exports[`basics parent, child and grandchild 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -552,7 +552,7 @@ exports[`basics props is set on root component 1`] = `
     static el = elem(\`<span>simple vnode</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -569,7 +569,7 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
     static el = elem(\`<span>child</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -592,12 +592,12 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let key0;
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     key0 = 4;
-    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, parent);
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -617,7 +617,7 @@ exports[`basics same t-keys in two different places 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].blip;
     return b1;
@@ -642,13 +642,13 @@ exports[`basics same t-keys in two different places 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let key0;
     const b1 = new Block1();
     key0 = 1;
-    b1.children[0] = new BComponent(\`Child\`, {blip: '1'}, \`__1\`, ctx, parent);
+    b1.children[0] = new BComponent(\`Child\`, {blip: '1'}, \`__1\`, ctx, node);
     key0 = 1;
-    b1.children[1] = new BComponent(\`Child\`, {blip: '2'}, \`__2\`, ctx, parent);
+    b1.children[1] = new BComponent(\`Child\`, {blip: '2'}, \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -668,7 +668,7 @@ exports[`basics simple component with a dynamic text 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -690,7 +690,7 @@ exports[`basics simple component, useState 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['state'].value;
     return b1;
@@ -708,7 +708,7 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
     static el = elem(\`<span>simple vnode</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -725,7 +725,7 @@ exports[`basics t-elif works with t-component 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -752,12 +752,12 @@ exports[`basics t-elif works with t-component 2`] = `
     static el = elem(\`<div>somediv</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else if (!ctx['state'].flag) {
-      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -774,7 +774,7 @@ exports[`basics t-else with empty string works with t-component 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -801,12 +801,12 @@ exports[`basics t-else with empty string works with t-component 2`] = `
     static el = elem(\`<div>somediv</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else {
-      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -823,7 +823,7 @@ exports[`basics t-else works with t-component 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -850,12 +850,12 @@ exports[`basics t-else works with t-component 2`] = `
     static el = elem(\`<div>somediv</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else {
-      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+      b1.children[1] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -872,7 +872,7 @@ exports[`basics t-if works with t-component 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -894,10 +894,10 @@ exports[`basics t-if works with t-component 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     if (ctx['state'].flag) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -914,7 +914,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
     static el = elem(\`<span>child</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -937,14 +937,14 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     let key0;
     const b1 = new Block1();
     if (false) {
       key0 = 'str';
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     }
-    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, parent);
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -960,7 +960,7 @@ exports[`basics three level of components with collapsing root nodes 1`] = `
     static el = elem(\`<div>2</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -973,8 +973,8 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -986,8 +986,8 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+  return function template(ctx, node = ctx.__owl__) {
+    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -1003,7 +1003,7 @@ exports[`basics throws if mounting on target=null 1`] = `
     static el = elem(\`<span>simple vnode</span>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -1020,7 +1020,7 @@ exports[`basics two child components 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -1033,10 +1033,10 @@ exports[`basics two child components 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BMulti(2);
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
-    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, parent);
+    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    b1.children[1] = new BComponent(\`Child\`, {}, \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -1048,7 +1048,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BCollection(ctx['items'], false, true);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -1077,7 +1077,7 @@ exports[`basics widget after a t-foreach 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -1100,7 +1100,7 @@ exports[`basics widget after a t-foreach 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(Array(2), false, true);
     ctx = Object.create(ctx);
@@ -1116,7 +1116,7 @@ exports[`basics widget after a t-foreach 2`] = `
       b2.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
-    b1.children[1] = new BComponent(\`SomeComponent\`, {}, \`__2\`, ctx, parent);
+    b1.children[1] = new BComponent(\`SomeComponent\`, {}, \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -1132,7 +1132,7 @@ exports[`basics zero or one child components 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     return b1;
   }
@@ -1145,10 +1145,10 @@ exports[`basics zero or one child components 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, parent);
+      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
     }
     return b1;
   }

@@ -21,22 +21,21 @@ export class BComponent extends Block {
    * @param owner the component in which the component was defined
    * @param parent the actual parent (may be different in case of slots)
    */
-  constructor(name: string | Component, props: any, key: string, owner: any, parent: any) {
+  constructor(name: string | Component, props: any, key: string, owner: any, parent: OwlNode) {
     super();
-    const parentNode: OwlNode = parent.__owl__;
-    let node: OwlNode | undefined = parentNode.children[key];
+    let node: OwlNode | undefined = parent.children[key];
     let isDynamic = typeof name !== "string";
 
     if (node && node.status < STATUS.MOUNTED) {
       node.destroy();
-      // delete parentNode.children[key];
+      // delete parent.children[key];
       node = undefined;
     }
     if (node && isDynamic && node.component.constructor !== name) {
       node = undefined;
     }
 
-    const parentFiber = parentNode.fiber!;
+    const parentFiber = parent.fiber!;
     if (node) {
       // update
       const fiber = makeChildFiber(node, parentFiber);
@@ -50,8 +49,8 @@ export class BComponent extends Block {
     } else {
       // new component
       const C = isDynamic ? name : owner.constructor.components[name as any];
-      node = new OwlNode(parentNode.app, C, props);
-      parentNode.children[key] = node;
+      node = new OwlNode(parent.app, C, props);
+      parent.children[key] = node;
       const fiber = makeChildFiber(node, parentFiber);
       if (node.mounted.length) {
         parentFiber.root.mounted.push(fiber);

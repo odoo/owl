@@ -14,7 +14,7 @@ exports[`basics no component catching error lead to full app destruction 1`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].flag&&ctx['state'].this.will.crash;
     return b1;
@@ -37,9 +37,9 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
     }
   }
   
-  return function template(ctx, parent = ctx) {
+  return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`ErrorComponent\`, {flag: ctx['state'].flag}, \`__1\`, ctx, parent);
+    b1.children[0] = new BComponent(\`ErrorComponent\`, {flag: ctx['state'].flag}, \`__1\`, ctx, node);
     return b1;
   }
 }"

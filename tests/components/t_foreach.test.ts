@@ -144,4 +144,57 @@ describe("list of components", () => {
       "<div><p><p><div>2_a</div></p><p><div>2_b</div></p></p><p><p><div>1_a</div></p><p><div>1_b</div></p></p></div>"
     );
   });
+
+  test("sub components rendered in a loop", async () => {
+    class Child extends Component {
+      static template = xml`<p><t t-esc="props.n"/></p>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="state.numbers" t-as="number">
+            <Child t-key="number" n="number"/>
+          </t>
+        </div>`;
+      static components = { Child };
+
+      state = useState({ numbers: [1, 2, 3] });
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe(`<div><p>1</p><p>2</p><p>3</p></div>`);
+  });
+
+  test("sub components with some state rendered in a loop", async () => {
+    let n = 1;
+
+    class Child extends Component {
+      static template = xml`<p><t t-esc="state.n"/></p>`;
+      state: any;
+      setup() {
+        this.state = useState({ n });
+        n++;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="state.numbers" t-as="number">
+            <Child t-key="number"/>
+          </t>
+        </div>`;
+      static components = { Child };
+
+      state = useState({
+        numbers: [1, 2, 3],
+      });
+    }
+    const parent = await mount(Parent, fixture);
+
+    parent.state.numbers = [1, 3];
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<div><p>1</p><p>3</p></div>`);
+  });
 });

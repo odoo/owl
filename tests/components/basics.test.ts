@@ -23,6 +23,19 @@ describe("basics", () => {
     expect(component.el).toEqual(fixture.querySelector("span"));
   });
 
+  test("has no el after creation", async () => {
+    let el: any = null;
+    class Test extends Component {
+      static template = xml`<span>simple</span>`;
+      setup() {
+        el = this.el;
+      }
+    }
+
+    await mount(Test, fixture);
+    expect(el).toBeNull();
+  });
+
   test("cannot mount on a documentFragment", async () => {
     class SomeWidget extends Component {
       static template = xml`<div>content</div>`;

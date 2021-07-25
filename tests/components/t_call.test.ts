@@ -120,4 +120,46 @@ describe("t-call", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>a</span><span>b</span><span>c</span></div>");
   });
+
+  test("parent is set within t-call with no parentNode", async () => {
+    const sub = xml`<Child />`;
+
+    let child: any = null;
+
+    class Child extends Component {
+      setup() {
+        child = this;
+      }
+      static template = xml`<span>lucas</span>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<t t-call="${sub}"/>`;
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<span>lucas</span>");
+    expect(isDirectChildOf(child, parent)).toBe(true);
+  });
+
+  test("handlers with arguments are properly bound through a t-call", async () => {
+    const sub = xml`<p t-on-click="update(a)">lucas</p>`;
+
+    let value: any = null;
+
+    class Parent extends Component {
+      static template = xml`<div><t t-call="${sub}"/></div>`;
+      update(a: any) {
+        expect(this).toBe(parent);
+        value = a;
+      }
+      a = 3;
+    }
+    const parent = await mount(Parent, fixture);
+
+    fixture.querySelector("p")!.click();
+    expect(value).toBe(3);
+  });
 });

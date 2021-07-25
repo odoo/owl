@@ -274,3 +274,119 @@ exports[`list of components simple list 2`] = `
   }
 }"
 `;
+
+exports[`list of components sub components rendered in a loop 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].n;
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components sub components rendered in a loop 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(ctx['state'].numbers, true, false);
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`number\`] = v1[i1];
+      ctx[\`number_first\`] = i1 === 0;
+      ctx[\`number_last\`] = i1 === v1.length - 1;
+      ctx[\`number_index\`] = i1;
+      ctx[\`number_value\`] = k1[i1];
+      let key1 = i1;
+      key1 = ctx['number'];
+      b2.children[i1] = new BComponent(\`Child\`, {n: ctx['number']}, key + \`__2__\${key1}\`, ctx, node);
+      b2.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components sub components with some state rendered in a loop 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<p><owl-text/></p>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = ctx['state'].n;
+    return b1;
+  }
+}"
+`;
+
+exports[`list of components sub components with some state rendered in a loop 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(ctx['state'].numbers, true, false);
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`number\`] = v1[i1];
+      ctx[\`number_first\`] = i1 === 0;
+      ctx[\`number_last\`] = i1 === v1.length - 1;
+      ctx[\`number_index\`] = i1;
+      ctx[\`number_value\`] = k1[i1];
+      let key1 = i1;
+      key1 = ctx['number'];
+      b2.children[i1] = new BComponent(\`Child\`, {}, key + \`__2__\${key1}\`, ctx, node);
+      b2.keys[i1] = key1;
+    }
+    return b1;
+  }
+}"
+`;

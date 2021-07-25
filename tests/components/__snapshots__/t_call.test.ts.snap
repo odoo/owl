@@ -4,14 +4,14 @@ exports[`t-call dynamic t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__) {
     ctx = Object.create(ctx);
     const b1 = new BText(\` owl \`);
     ctx[zero] = b1;
     const template1 = (ctx['current'].template);
-    const b2 = new BDispatch(template1, call(template1, ctx, node));
+    const b2 = call(template1, ctx, node);
     return b2;
   }
 }"
@@ -21,7 +21,7 @@ exports[`t-call dynamic t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>foo</div>\`);
@@ -38,7 +38,7 @@ exports[`t-call dynamic t-call 3`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__) {
     const b1 = new BText(\`bar\`);
@@ -51,7 +51,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<p>lucas</p>\`);
@@ -74,7 +74,8 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  const callTemplate_1 = getTemplate(\`__template__6\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
@@ -91,7 +92,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
   
   return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
-    b1.children[0] = call(\`__template__6\`, ctx, node);
+    b1.children[0] = callTemplate_1(ctx, node);
     b1.data[0] = ctx['counter'];
     return b1;
   }
@@ -102,7 +103,7 @@ exports[`t-call parent is set within t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__) {
     const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
@@ -115,7 +116,7 @@ exports[`t-call parent is set within t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<span>lucas</span>\`);
@@ -132,7 +133,8 @@ exports[`t-call parent is set within t-call 3`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  const callTemplate_1 = getTemplate(\`__template__8\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -145,7 +147,7 @@ exports[`t-call parent is set within t-call 3`] = `
   
   return function template(ctx, node = ctx.__owl__) {
     const b1 = new Block1();
-    b1.children[0] = call(\`__template__8\`, ctx, node);
+    b1.children[0] = callTemplate_1(ctx, node);
     return b1;
   }
 }"
@@ -155,7 +157,7 @@ exports[`t-call sub components in two t-calls 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -177,7 +179,9 @@ exports[`t-call sub components in two t-calls 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  const callTemplate_1 = getTemplate(\`sub\`);
+  const callTemplate_2 = getTemplate(\`sub\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -191,10 +195,10 @@ exports[`t-call sub components in two t-calls 2`] = `
   return function template(ctx, node = ctx.__owl__) {
     const b1 = new BMulti(2);
     if (ctx['state'].val===1) {
-      b1.children[0] = call(\`sub\`, ctx, node);
+      b1.children[0] = callTemplate_1(ctx, node);
     } else {
       const b2 = b1.children[1] = new Block1();
-      b2.children[0] = call(\`sub\`, ctx, node);
+      b2.children[0] = callTemplate_2(ctx, node);
     }
     return b1;
   }
@@ -205,7 +209,7 @@ exports[`t-call sub components in two t-calls 3`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__) {
     const b1 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__1\`, ctx, node);

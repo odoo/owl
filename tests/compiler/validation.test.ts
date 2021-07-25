@@ -24,11 +24,6 @@ describe("basic validation", () => {
     expect(() => compile(template)).toThrow("Invalid XML in template");
   });
 
-  test("missing template", () => {
-    const template = `<t t-call="othertemplate" />`;
-    expect(() => renderToString(template)).toThrowError("Missing");
-  });
-
   test("missing template in template set", () => {
     const context = new TestContext();
     const template = `<t t-call="othertemplate" />`;

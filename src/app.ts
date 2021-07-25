@@ -6,6 +6,7 @@ import type { Component } from "./component";
 import { OwlNode } from "./owl_node";
 import { Scheduler } from "./scheduler";
 import { UTILS } from "./template_utils";
+import { BDispatch } from "./bdom/block_dispatch";
 
 const Blocks = {
   ...BaseBlocks,
@@ -25,10 +26,11 @@ export class TemplateSet {
   constructor() {
     const call = (subTemplate: string, ctx: any, parent: any) => {
       const template = this.getTemplate(subTemplate);
-      return template(ctx, parent);
+      return new BDispatch(subTemplate, template(ctx, parent));
     };
 
-    this.utils = Object.assign({}, UTILS, { call });
+    const getTemplate = (name: string) => this.getTemplate(name);
+    this.utils = Object.assign({}, UTILS, { call, getTemplate });
   }
 
   addTemplate(name: string, template: string, options: { allowDuplicate?: boolean } = {}) {
@@ -45,6 +47,10 @@ export class TemplateSet {
         throw new Error(`Missing template: "${name}"`);
       }
       const templateFn = compileTemplate(rawTemplate, name);
+
+      // first add a function to lazily get the template, in case there is a
+      // recursive call to the template name
+      this.templates[name] = (context, parent) => this.templates[name](context, parent);
       const template = templateFn(Blocks, this.utils);
       this.templates[name] = template;
     }

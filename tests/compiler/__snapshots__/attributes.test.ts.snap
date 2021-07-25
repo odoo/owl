@@ -4,7 +4,7 @@ exports[`attributes class and t-att-class should combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
@@ -26,7 +26,7 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
@@ -48,7 +48,7 @@ exports[`attributes dynamic attribute evaluating to 0 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -70,7 +70,7 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -92,7 +92,7 @@ exports[`attributes dynamic attribute with a dash 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -114,7 +114,7 @@ exports[`attributes dynamic attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -136,7 +136,7 @@ exports[`attributes dynamic class attribute 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -158,7 +158,7 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -180,7 +180,7 @@ exports[`attributes dynamic empty class attribute 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -202,7 +202,7 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -224,7 +224,7 @@ exports[`attributes fixed variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -246,7 +246,7 @@ exports[`attributes format expression 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -268,7 +268,7 @@ exports[`attributes format literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -290,7 +290,7 @@ exports[`attributes format multiple 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -312,7 +312,7 @@ exports[`attributes format value 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -334,7 +334,7 @@ exports[`attributes from object variables set previously 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span/></div>\`);
@@ -358,7 +358,7 @@ exports[`attributes from variables set previously (no external node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span/>\`);
@@ -382,7 +382,7 @@ exports[`attributes from variables set previously 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span/></div>\`);
@@ -406,7 +406,7 @@ exports[`attributes object 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -428,7 +428,7 @@ exports[`attributes static attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div foo=\\"a\\" bar=\\"b\\" baz=\\"c\\"/>\`);
@@ -445,7 +445,7 @@ exports[`attributes static attributes on void elements 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<img src=\\"/test.jpg\\" alt=\\"Test\\"/>\`);
@@ -462,7 +462,7 @@ exports[`attributes static attributes with dashes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div aria-label=\\"Close\\"/>\`);
@@ -479,7 +479,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
@@ -501,7 +501,7 @@ exports[`attributes t-att-class with multiple classes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -523,7 +523,7 @@ exports[`attributes t-att-class with multiple classes 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -545,7 +545,7 @@ exports[`attributes t-att-class with object 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"static\\"/>\`);
@@ -567,7 +567,7 @@ exports[`attributes t-attf-class 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -589,7 +589,7 @@ exports[`attributes t-attf-class should combine with class 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
@@ -611,7 +611,7 @@ exports[`attributes t-attf-class with multiple classes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -633,7 +633,7 @@ exports[`attributes t-attf-class with multiple classes separated by multiple spa
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -655,7 +655,7 @@ exports[`attributes tuple literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -677,7 +677,7 @@ exports[`attributes tuple variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -699,7 +699,7 @@ exports[`attributes two classes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div class=\\"a b\\"/>\`);
@@ -716,7 +716,7 @@ exports[`attributes two dynamic attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
@@ -741,7 +741,7 @@ exports[`attributes various escapes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div foo=\\"<foo\\"/>\`);
@@ -768,7 +768,7 @@ exports[`special cases for some specific html attributes/properties input of typ
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<input type=\\"checkbox\\"/>\`);
@@ -792,7 +792,7 @@ exports[`special cases for some specific html attributes/properties input type= 
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<input type=\\"checkbox\\"/>\`);
@@ -816,7 +816,7 @@ exports[`special cases for some specific html attributes/properties input with t
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<input/>\`);
@@ -840,7 +840,7 @@ exports[`special cases for some specific html attributes/properties various bool
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div><input type=\\"checkbox\\" checked=\\"checked\\"/><input checked=\\"checked\\"/><div checked=\\"checked\\"/><div selected=\\"selected\\"/><option selected=\\"selected\\" other=\\"1\\"/><input readonly=\\"readonly\\"/><button disabled=\\"disabled\\"/></div>\`);

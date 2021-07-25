@@ -97,9 +97,6 @@ export const UTILS = {
   elem,
   toString,
   withDefault,
-  call: (name: string) => {
-    throw new Error(`Missing template: ${name}`);
-  },
   zero: Symbol("zero"),
   callSlot,
   capture,

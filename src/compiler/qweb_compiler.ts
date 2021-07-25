@@ -110,6 +110,7 @@ export class QWebCompiler {
   templateName: string;
   template: string;
   ast: AST;
+  staticCalls: { id: string; template: string }[] = [];
 
   constructor(template: string, name?: string) {
     this.template = template;
@@ -192,7 +193,13 @@ export class QWebCompiler {
     this.addLine(
       `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;`
     );
-    this.addLine(`let {elem, toString, withDefault, call, zero, callSlot, capture} = utils;`);
+    this.addLine(
+      `let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;`
+    );
+
+    for (let { id, template } of this.staticCalls) {
+      this.addLine(`const ${id} = getTemplate(${template});`);
+    }
 
     // define all blocks
     for (let block of this.blocks) {
@@ -824,12 +831,14 @@ export class QWebCompiler {
     if (isDynamic) {
       const templateVar = this.generateId("template");
       this.addLine(`const ${templateVar} = ${subTemplate};`);
-      this.insertBlock(`new BDispatch(${templateVar}, call(${templateVar}, ctx, node))`, {
+      this.insertBlock(`call(${templateVar}, ctx, node)`, {
         ...ctx,
         forceNewBlock: !block,
       });
     } else {
-      this.insertBlock(`call(${subTemplate}, ctx, node)`, { ...ctx, forceNewBlock: !block });
+      const id = this.generateId(`callTemplate_`);
+      this.staticCalls.push({ id, template: subTemplate });
+      this.insertBlock(`${id}(ctx, node)`, { ...ctx, forceNewBlock: !block });
     }
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);

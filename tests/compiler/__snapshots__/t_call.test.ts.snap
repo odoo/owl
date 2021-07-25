@@ -525,14 +525,21 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
     const b1 = new Block1();
     b1.data[0] = ctx['node'].val;
     const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false, false);
-    b2.forEach(\`subtree\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`subtree\`] = v1[i1];
+      ctx[\`subtree_first\`] = i1 === 0;
+      ctx[\`subtree_last\`] = i1 === v1.length - 1;
+      ctx[\`subtree_index\`] = i1;
+      ctx[\`subtree_value\`] = k1[i1];
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
       b2.children[i1] = call(\`nodeTemplate\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -588,14 +595,21 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
     const b1 = new Block1();
     b1.data[0] = ctx['node'].val;
     const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false, false);
-    b2.forEach(\`subtree\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`subtree\`] = v1[i1];
+      ctx[\`subtree_first\`] = i1 === 0;
+      ctx[\`subtree_last\`] = i1 === v1.length - 1;
+      ctx[\`subtree_index\`] = i1;
+      ctx[\`subtree_value\`] = k1[i1];
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
       b2.children[i1] = call(\`nodeTemplate\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -656,14 +670,21 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     b1.data[0] = ctx['node'].val;
     b1.data[1] = ctx['recursive_idx'];
     const b2 = b1.children[0] = new BCollection(ctx['node'].children||[], false, false);
-    b2.forEach(\`subtree\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`subtree\`] = v1[i1];
+      ctx[\`subtree_first\`] = i1 === 0;
+      ctx[\`subtree_last\`] = i1 === v1.length - 1;
+      ctx[\`subtree_index\`] = i1;
+      ctx[\`subtree_value\`] = k1[i1];
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[\`node\`] = ctx['subtree'];
       b2.children[i1] = call(\`nodeTemplate\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -952,7 +973,14 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['list'], true, false);
-    b2.forEach(\`v\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`v\`] = v1[i1];
+      ctx[\`v_first\`] = i1 === 0;
+      ctx[\`v_last\`] = i1 === v1.length - 1;
+      ctx[\`v_index\`] = i1;
+      ctx[\`v_value\`] = k1[i1];
       let key1 = ctx['v_index'];
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
@@ -960,7 +988,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
       b2.children[i1] = call(\`sub\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -1007,7 +1035,14 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['list'], true, false);
-    b2.forEach(\`v\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`v\`] = v1[i1];
+      ctx[\`v_first\`] = i1 === 0;
+      ctx[\`v_last\`] = i1 === v1.length - 1;
+      ctx[\`v_index\`] = i1;
+      ctx[\`v_value\`] = k1[i1];
       let key1 = ctx['v_index'];
       ctx[\`val\`] = ctx['v'].val;
       ctx = Object.create(ctx);
@@ -1015,7 +1050,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
       b2.children[i1] = call(\`sub\`, ctx, parent);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"

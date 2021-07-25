@@ -49,13 +49,20 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['items'], true, false);
-    b2.forEach(\`item\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === v1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k1[i1];
       let key1 = i1;
       key1 = 'li_'+ctx['item'];
       const b3 = b2.children[i1] = new Block2();
-      b3.children[0] = new BComponent(\`Child\`, {item: ctx['item']}, \`__1__\${key1}\`, ctx, parent);
+      b3.children[0] = new BComponent(\`Child\`, {item: ctx['item']}, \`__2__\${key1}\`, ctx, parent);
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -101,16 +108,31 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].s, true, false);
-    b2.forEach(\`section\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`section\`] = v1[i1];
+      ctx[\`section_first\`] = i1 === 0;
+      ctx[\`section_last\`] = i1 === v1.length - 1;
+      ctx[\`section_index\`] = i1;
+      ctx[\`section_value\`] = k1[i1];
       let key1 = ctx['section_index'];
       const b3 = b2.children[i1] = new BCollection(ctx['section'].blips, false, false);
-      b3.forEach(\`blip\`, ctx, (i2, ctx) => {
+      ctx = Object.create(ctx);
+      const k2 = b3.values, v2 = b3.collection, l2 = k2.length;
+      for (let i2 = 0; i2 < l2; i2++) {
+        ctx[\`blip\`] = v2[i2];
+        ctx[\`blip_first\`] = i2 === 0;
+        ctx[\`blip_last\`] = i2 === v2.length - 1;
+        ctx[\`blip_index\`] = i2;
+        ctx[\`blip_value\`] = k2[i2];
         let key2 = ctx['blip_index'];
-        b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, \`__1__\${key1}__\${key2}\`, ctx, parent);
+        b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, \`__3__\${key1}__\${key2}\`, ctx, parent);
         b3.keys[i2] = key2;
-      });
+      }
+      ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -174,18 +196,33 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   return function template(ctx, parent = ctx) {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].rows, true, false);
-    b2.forEach(\`row\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`row\`] = v1[i1];
+      ctx[\`row_first\`] = i1 === 0;
+      ctx[\`row_last\`] = i1 === v1.length - 1;
+      ctx[\`row_index\`] = i1;
+      ctx[\`row_value\`] = k1[i1];
       let key1 = ctx['row'];
       const b3 = b2.children[i1] = new Block2();
       const b4 = b3.children[0] = new BCollection(ctx['state'].cols, true, false);
-      b4.forEach(\`col\`, ctx, (i2, ctx) => {
+      ctx = Object.create(ctx);
+      const k2 = b4.values, v2 = b4.collection, l2 = k2.length;
+      for (let i2 = 0; i2 < l2; i2++) {
+        ctx[\`col\`] = v2[i2];
+        ctx[\`col_first\`] = i2 === 0;
+        ctx[\`col_last\`] = i2 === v2.length - 1;
+        ctx[\`col_index\`] = i2;
+        ctx[\`col_value\`] = k2[i2];
         let key2 = ctx['col'];
         const b5 = b4.children[i2] = new Block3();
-        b5.children[0] = new BComponent(\`Child\`, {row: ctx['row'],col: ctx['col']}, \`__1__\${key1}__\${key2}\`, ctx, parent);
+        b5.children[0] = new BComponent(\`Child\`, {row: ctx['row'],col: ctx['col']}, \`__3__\${key1}__\${key2}\`, ctx, parent);
         b4.keys[i2] = key2;
-      });
+      }
+      ctx = ctx.__proto__;
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -221,11 +258,18 @@ exports[`list of components simple list 2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new BCollection(ctx['state'].elems, false, false);
-    b1.forEach(\`elem\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`elem\`] = v1[i1];
+      ctx[\`elem_first\`] = i1 === 0;
+      ctx[\`elem_last\`] = i1 === v1.length - 1;
+      ctx[\`elem_index\`] = i1;
+      ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'].id;
-      b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, \`__1__\${key1}\`, ctx, parent);
+      b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, \`__2__\${key1}\`, ctx, parent);
       b1.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"

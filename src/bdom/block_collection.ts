@@ -33,20 +33,6 @@ export class BCollection extends Block {
     this.children = new Array(n);
   }
 
-  forEach(item: string, ctx: any, cb: Function) {
-    const collection = this.collection;
-    const values = this.values;
-    ctx = Object.create(ctx);
-    for (let i = 0; i < collection.length; i++) {
-      ctx[item] = collection[i];
-      ctx[item + "_first"] = i === 0;
-      ctx[item + "_last"] = i === collection.length - 1;
-      ctx[item + "_index"] = i;
-      ctx[item + "_value"] = values[i];
-      cb(i, ctx);
-    }
-  }
-
   firstChildNode(): ChildNode | null {
     return this.children.length ? this.children[0].firstChildNode() : null;
   }

@@ -122,13 +122,20 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(['someval'], true, true);
-    b2.forEach(\`action\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`action\`] = v1[i1];
+      ctx[\`action_first\`] = i1 === 0;
+      ctx[\`action_last\`] = i1 === v1.length - 1;
+      ctx[\`action_index\`] = i1;
+      ctx[\`action_value\`] = k1[i1];
       let key1 = ctx['action_index'];
       const b3 = b2.children[i1] = new Block2();
-      const arg1 = [ctx['action']];
-      b3.handlers[0] = (e) => ctx.__owl__.component['activate'](...arg1, e);
+      const arg2 = [ctx['action']];
+      b3.handlers[0] = (e) => ctx.__owl__.component['activate'](...arg2, e);
       b2.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -224,13 +231,20 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
   return function template(ctx, parent = ctx) {
     ctx = Object.create(ctx);
     const b1 = new BCollection([1], false, true);
-    b1.forEach(\`value\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
+      ctx[\`value_first\`] = i1 === 0;
+      ctx[\`value_last\`] = i1 === v1.length - 1;
+      ctx[\`value_index\`] = i1;
+      ctx[\`value_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['value'];
       const b2 = b1.children[i1] = new Block1();
       b2.handlers[0] = (e) => ctx.__owl__.component['add'](e);
       b1.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"
@@ -303,11 +317,18 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
   
   return function template(ctx, parent = ctx) {
     const b1 = new BCollection([1], false, false);
-    b1.forEach(\`value\`, ctx, (i1, ctx) => {
+    ctx = Object.create(ctx);
+    const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
+      ctx[\`value_first\`] = i1 === 0;
+      ctx[\`value_last\`] = i1 === v1.length - 1;
+      ctx[\`value_index\`] = i1;
+      ctx[\`value_value\`] = k1[i1];
       let key1 = ctx['value'];
       b1.children[i1] = call(\`sub\`, ctx, parent);
       b1.keys[i1] = key1;
-    });
+    }
     return b1;
   }
 }"

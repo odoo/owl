@@ -718,8 +718,22 @@ export class QWebCompiler {
     )!;
     this.loopLevel++;
     const loopVar = `i${this.loopLevel}`;
-    this.addLine(`${id}.forEach(\`${ast.elem}\`, ctx, (${loopVar}, ctx) => {`);
+    this.addLine(`ctx = Object.create(ctx);`);
+
+    const cId = this.generateId();
+    const vals = `v${cId}`;
+    const keys = `k${cId}`;
+    const l = `l${cId}`;
+    this.addLine(
+      `const ${keys} = ${id}.values, ${vals} = ${id}.collection, ${l} = ${keys}.length;`
+    );
+    this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
+    this.addLine(`ctx[\`${ast.elem}\`] = ${vals}[${loopVar}];`);
+    this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
+    this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${vals}.length - 1;`);
+    this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
+    this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
     this.addLine(`let key${this.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
     const collectionBlock = new BlockDescription(id, "Collection");
     const subCtx: Context = {
@@ -740,7 +754,8 @@ export class QWebCompiler {
 
     this.target.indentLevel--;
     this.loopLevel--;
-    this.addLine(`});`);
+    this.addLine(`}`);
+    this.addLine(`ctx = ctx.__proto__;`);
   }
 
   compileTKey(ast: ASTTKey, ctx: Context) {

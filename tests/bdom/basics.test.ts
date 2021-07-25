@@ -1,8 +1,7 @@
 import { Blocks } from "../../src/bdom";
-import { makeTestFixture } from "../helpers";
-import { elem } from "../../src/template_utils";
-import { BCollection } from "../../src/bdom/block_collection";
 import { BText } from "../../src/bdom/block_text";
+import { elem } from "../../src/template_utils";
+import { makeTestFixture, renderToBdom } from "../helpers";
 
 const { BNode, BMulti } = Blocks;
 //------------------------------------------------------------------------------
@@ -108,15 +107,17 @@ describe("mount", () => {
   });
 
   test("a collection block can be removed and leaves nothing", async () => {
+    const template = `
+        <t t-foreach="elems" t-as="elem" t-key="elem.id">
+          <t t-esc="elem.name"/>
+        </t>`;
+
     const elems = [
       { id: 1, name: "sheep" },
       { id: 2, name: "cow" },
     ];
-    const tree = new BCollection(elems, false, true);
-    tree.forEach("elem", {}, (i: any, ctx: any) => {
-      tree.children[i] = new BText(ctx.elem.name);
-      tree.keys[i] = ctx.elem.id;
-    });
+
+    const tree = renderToBdom(template, { elems });
 
     expect(fixture.childNodes.length).toBe(0);
     tree.mount(fixture);

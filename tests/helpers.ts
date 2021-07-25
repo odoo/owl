@@ -9,6 +9,7 @@ import {
   useComponent,
   status,
   onRender,
+  Component,
 } from "../src";
 import { TemplateSet } from "../src/app";
 import { Block, Blocks } from "../src/bdom";
@@ -183,4 +184,13 @@ export function useLogLifecycle(steps: string[]) {
     expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
     steps.push(`${name}:destroyed`);
   });
+}
+
+export function children(w: Component): Component[] {
+  const childrenMap = w.__owl__.children;
+  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
+}
+
+export function isDirectChildOf(child: Component, parent: Component): boolean {
+  return children(parent).includes(child);
 }

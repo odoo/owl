@@ -1,13 +1,8 @@
 import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
-import { addTemplate, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { addTemplate, children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
-
-function children(w: Component): Component[] {
-  const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
-}
 
 beforeEach(() => {
   fixture = makeTestFixture();

@@ -10,7 +10,7 @@ exports[`app destroy remove the widget from the DOM 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }

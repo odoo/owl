@@ -100,4 +100,24 @@ describe("t-call", () => {
     expect(fixture.innerHTML).toBe("<div><span>lucas</span></div>");
     expect(isDirectChildOf(child, parent)).toBeTruthy();
   });
+
+  test("t-call in t-foreach and children component", async () => {
+    const sub = xml`<Child val="val"/>`;
+
+    class Child extends Component {
+      static template = xml`<span><t t-esc="props.val"/></span>`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <t t-foreach="['a', 'b', 'c']" t-as="val" t-key="val">
+            <t t-call="${sub}"/>
+          </t>
+        </div>`;
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>a</span><span>b</span><span>c</span></div>");
+  });
 });

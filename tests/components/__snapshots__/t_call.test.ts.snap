@@ -6,12 +6,12 @@ exports[`t-call dynamic t-call 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BText(\` owl \`);
     ctx[zero] = b1;
-    const template1 = (ctx['current'].template);
-    const b2 = call(template1, ctx, node);
+    const template2 = (ctx['current'].template);
+    const b2 = call(template2, ctx, node, key + \`__1\`);
     return b2;
   }
 }"
@@ -27,7 +27,7 @@ exports[`t-call dynamic t-call 2`] = `
     static el = elem(\`<div>foo</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -40,7 +40,7 @@ exports[`t-call dynamic t-call 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`bar\`);
     return b1;
   }
@@ -61,7 +61,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['update'](e);
@@ -75,7 +75,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_1 = getTemplate(\`__template__6\`);
+  const callTemplate_2 = getTemplate(\`__template__9\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
@@ -90,9 +90,9 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callTemplate_1(ctx, node);
+    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
     b1.data[0] = ctx['counter'];
     return b1;
   }
@@ -105,8 +105,8 @@ exports[`t-call parent is set within t-call 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -122,7 +122,7 @@ exports[`t-call parent is set within t-call 2`] = `
     static el = elem(\`<span>lucas</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -134,7 +134,7 @@ exports[`t-call parent is set within t-call 3`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_1 = getTemplate(\`__template__8\`);
+  const callTemplate_2 = getTemplate(\`__template__9\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -145,9 +145,9 @@ exports[`t-call parent is set within t-call 3`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callTemplate_1(ctx, node);
+    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
     return b1;
   }
 }"
@@ -167,7 +167,7 @@ exports[`t-call sub components in two t-calls 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -180,8 +180,8 @@ exports[`t-call sub components in two t-calls 2`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_1 = getTemplate(\`sub\`);
   const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_4 = getTemplate(\`sub\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -192,13 +192,13 @@ exports[`t-call sub components in two t-calls 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['state'].val===1) {
-      b1.children[0] = callTemplate_1(ctx, node);
+      b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
     } else {
       const b2 = b1.children[1] = new Block1();
-      b2.children[0] = callTemplate_2(ctx, node);
+      b2.children[0] = callTemplate_4(ctx, node, key + \`__3\`);
     }
     return b1;
   }
@@ -211,8 +211,79 @@ exports[`t-call sub components in two t-calls 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {val: ctx['state'].val}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, ctx, node);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call t-call in t-foreach and children component 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx, node);
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call t-call in t-foreach and children component 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<span><owl-text/></span>\`);
+    data = new Array(1);
+    update() {
+      this.el.firstChild.textContent = toString(this.data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = ctx['props'].val;
+    return b1;
+  }
+}"
+`;
+
+exports[`t-call t-call in t-foreach and children component 3`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  const callTemplate_3 = getTemplate(\`__template__9\`);
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BCollection(['a','b','c'], true, false);
+    ctx = Object.create(ctx);
+    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`val\`] = v1[i1];
+      ctx[\`val_first\`] = i1 === 0;
+      ctx[\`val_last\`] = i1 === v1.length - 1;
+      ctx[\`val_index\`] = i1;
+      ctx[\`val_value\`] = k1[i1];
+      let key1 = ctx['val'];
+      b2.children[i1] = callTemplate_3(ctx, node, key + \`__2__\${key1}\`);
+      b2.keys[i1] = key1;
+    }
     return b1;
   }
 }"

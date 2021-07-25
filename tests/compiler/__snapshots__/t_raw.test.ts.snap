@@ -15,7 +15,7 @@ exports[`t-raw literal 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BHtml('ok');
     return b1;
@@ -29,7 +29,7 @@ exports[`t-raw literal, no outside html element 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(1);
     b1.children[0] = new BHtml('ok');
     return b1;
@@ -53,7 +53,7 @@ exports[`t-raw multiple calls to t-raw 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx[zero]);
     b1.children[1] = new BHtml(ctx[zero]);
@@ -67,7 +67,7 @@ exports[`t-raw multiple calls to t-raw 2`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_1 = getTemplate(\`sub\`);
+  const callTemplate_2 = getTemplate(\`sub\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -82,12 +82,12 @@ exports[`t-raw multiple calls to t-raw 2`] = `
     static el = elem(\`<span>coucou</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     ctx = Object.create(ctx);
     const b2 = new Block2();
     ctx[zero] = b2;
-    b1.children[0] = callTemplate_1(ctx, node);
+    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
     return b1;
   }
 }"
@@ -108,7 +108,7 @@ exports[`t-raw not escaping 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx['var']);
     return b1;
@@ -131,7 +131,7 @@ exports[`t-raw t-raw and another sibling node 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx['var']);
     return b1;
@@ -154,7 +154,7 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = new BText(\`nope\`);
     b1.children[0] = new BHtml(withDefault(ctx['var'], b2));
@@ -182,7 +182,7 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
     static el = elem(\`<div>nope</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = new Block2();
     b1.children[0] = new BHtml(withDefault(ctx['var'], b2));
@@ -197,7 +197,7 @@ exports[`t-raw t-raw with a <t/> in body 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(1);
     b1.children[0] = new BHtml(ctx['var']);
     return b1;
@@ -220,7 +220,7 @@ exports[`t-raw t-raw with comment 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx['var']);
     return b1;
@@ -234,7 +234,7 @@ exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(1);
     b1.children[0] = new BHtml(ctx['var']);
     return b1;
@@ -257,7 +257,7 @@ exports[`t-raw variable 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BHtml(ctx['var']);
     return b1;

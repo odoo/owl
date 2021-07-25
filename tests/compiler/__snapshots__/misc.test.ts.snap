@@ -82,7 +82,7 @@ exports[`misc complex template 1`] = `
     static el = elem(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
     b1.data[1] = \`card bg-\${ctx['klass']}-light\`;
@@ -105,7 +105,7 @@ exports[`misc complex template 1`] = `
       ctx[\`slot_index\`] = i1;
       ctx[\`slot_value\`] = k1[i1];
       let key1 = ctx['slot'].id;
-      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, \`__2__\${key1}\`, ctx, node);
+      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, key + \`__2__\${key1}\`, ctx, node);
       b5.parentClass = \`slot_container\`;
       b4.keys[i1] = key1;
     }
@@ -178,7 +178,7 @@ exports[`misc global 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = 'agüero';
     b1.children[0] = new BHtml(ctx[zero]);
@@ -201,7 +201,7 @@ exports[`misc global 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
     return b1;
@@ -224,7 +224,7 @@ exports[`misc global 3`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = new BText(\`toto default\`);
     b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
@@ -238,11 +238,11 @@ exports[`misc global 4`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_3 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_5 = getTemplate(\`_callee-asc\`);
-  const callTemplate_6 = getTemplate(\`_callee-asc-toto\`);
+  const callTemplate_5 = getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_7 = getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_9 = getTemplate(\`_callee-asc\`);
+  const callTemplate_11 = getTemplate(\`_callee-asc-toto\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
@@ -262,7 +262,7 @@ exports[`misc global 4`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([4,5,6], false, false);
@@ -282,18 +282,18 @@ exports[`misc global 4`] = `
       const b5 = new BMulti(3);
       ctx = Object.create(ctx);
       ctx[\`foo\`] = 'aaa';
-      b5.children[0] = callTemplate_2(ctx, node);
+      b5.children[0] = callTemplate_3(ctx, node, key + \`__2__\${key1}\`);
       ctx = ctx.__proto__;
-      b5.children[1] = callTemplate_3(ctx, node);
+      b5.children[1] = callTemplate_5(ctx, node, key + \`__4__\${key1}\`);
       ctx[\`foo\`] = 'bbb';
-      b5.children[2] = callTemplate_4(ctx, node);
+      b5.children[2] = callTemplate_7(ctx, node, key + \`__6__\${key1}\`);
       ctx[zero] = b5;
-      b3.children[1] = callTemplate_5(ctx, node);
+      b3.children[1] = callTemplate_9(ctx, node, key + \`__8__\${key1}\`);
       ctx = ctx.__proto__;
       b2.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
-    b1.children[1] = callTemplate_6(ctx, node);
+    b1.children[1] = callTemplate_11(ctx, node, key + \`__10\`);
     return b1;
   }
 }"
@@ -304,7 +304,7 @@ exports[`misc other complex template 1`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_5 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
+  const callTemplate_6 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a><b style=\\"color:#777;\\"><owl-text/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-anchor/><li class=\\"nav-item divider\\"/><owl-anchor/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\"/><button class=\\"btn btn-default\\"> More </button><owl-anchor/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
@@ -497,7 +497,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     const b1 = new Block1();
@@ -605,7 +605,7 @@ exports[`misc other complex template 1`] = `
       b21.handlers[3] = (e) => ctx.__owl__.component['toggleSettingsMenu'](e);
     }
     if (ctx['load_infos']) {
-      b1.children[4] = callTemplate_5(ctx, node);
+      b1.children[4] = callTemplate_6(ctx, node, key + \`__5\`);
     }
     if (ctx['message']) {
       const b22 = b1.children[5] = new Block13();
@@ -615,8 +615,8 @@ exports[`misc other complex template 1`] = `
       const b23 = b1.children[6] = new Block14();
     } else {
       const b24 = b1.children[7] = new Block15();
-      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, \`__6\`, ctx, node);
-      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, \`__7\`, ctx, node);
+      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__7\`, ctx, node);
+      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__8\`, ctx, node);
     }
     return b1;
   }

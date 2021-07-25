@@ -17,10 +17,10 @@ exports[`slots can define and call slots 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'header');
-    b1.children[1] = callSlot(ctx, node, 'footer');
+    b1.children[0] = callSlot(ctx, node, key, 'header');
+    b1.children[1] = callSlot(ctx, node, key, 'footer');
     return b1;
   }
 }"
@@ -49,20 +49,20 @@ exports[`slots can define and call slots 2`] = `
     static el = elem(\`<span>footer</span>\`);
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new Block2();
     return b2;
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b3 = new Block3();
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b4 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b4 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b4.node.slots = {'header': slot3(ctx2), 'footer': slot4(ctx2)};
     return b1;
   }
@@ -75,8 +75,8 @@ exports[`slots content is the default slot (variation) 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -92,13 +92,13 @@ exports[`slots content is the default slot (variation) 2`] = `
     static el = elem(\`<span>sts rocks</span>\`);
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new Block1();
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -120,9 +120,9 @@ exports[`slots content is the default slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -147,14 +147,14 @@ exports[`slots content is the default slot 2`] = `
     static el = elem(\`<span>sts rocks</span>\`);
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b2 = new Block2();
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -181,9 +181,9 @@ exports[`slots dafault slots can define a default content 1`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default', defaultSlot1, false);
+    b1.children[0] = callSlot(ctx, node, key, 'default', defaultSlot1, false);
     return b1;
   }
 }"
@@ -204,9 +204,9 @@ exports[`slots dafault slots can define a default content 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -232,9 +232,9 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'header', defaultSlot1, false);
+    b1.children[0] = callSlot(ctx, node, key, 'header', defaultSlot1, false);
     return b1;
   }
 }"
@@ -255,15 +255,15 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new BText(\`hey\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'header': slot3(ctx2)};
     return b1;
   }
@@ -290,9 +290,9 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default', defaultSlot1, false);
+    b1.children[0] = callSlot(ctx, node, key, 'default', defaultSlot1, false);
     return b1;
   }
 }"
@@ -313,14 +313,14 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b2 = new BText(\`hey\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -354,10 +354,10 @@ exports[`slots default slot next to named slot, with default content 1`] = `
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default', defaultSlot1, false);
-    b1.children[1] = callSlot(ctx, node, 'footer', defaultSlot2, false);
+    b1.children[0] = callSlot(ctx, node, key, 'default', defaultSlot1, false);
+    b1.children[1] = callSlot(ctx, node, key, 'footer', defaultSlot2, false);
     return b1;
   }
 }"
@@ -378,15 +378,15 @@ exports[`slots default slot next to named slot, with default content 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new BText(\` Overridden footer \`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'footer': slot3(ctx2)};
     return b1;
   }
@@ -399,8 +399,8 @@ exports[`slots default slot work with text nodes (variation) 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -412,13 +412,13 @@ exports[`slots default slot work with text nodes (variation) 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new BText(\`sts rocks\`);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -440,9 +440,9 @@ exports[`slots default slot work with text nodes 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -463,14 +463,14 @@ exports[`slots default slot work with text nodes 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b2 = new BText(\`sts rocks\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -495,12 +495,12 @@ exports[`slots dynamic t-slot call 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['toggle'](e);
     const slot1 = (ctx['current'].slot);
-    b1.children[0] = new BDispatch(slot1, callSlot(ctx, node, slot1));
+    b1.children[0] = new BDispatch(slot1, callSlot(ctx, node, key, slot1));
     return b1;
   }
 }"
@@ -533,22 +533,22 @@ exports[`slots dynamic t-slot call 2`] = `
     static el = elem(\`<h1>slot2</h1>\`);
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new BMulti(2);
     const b3 = b2.children[0] = new Block2();
     const b4 = b2.children[1] = new Block3();
     return b2;
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b5 = new Block4();
     return b5;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b6 = b1.children[0] = new BComponent(\`Toggler\`, {}, \`__1\`, ctx, node);
+    const b6 = b1.children[0] = new BComponent(\`Toggler\`, {}, key + \`__1\`, ctx, node);
     b6.node.slots = {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)};
     return b1;
   }
@@ -578,11 +578,11 @@ exports[`slots dynamic t-slot call with default 1`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['toggle'](e);
-    b1.children[0] = callSlot(ctx, node, (ctx['current'].slot), defaultSlot1, true);
+    b1.children[0] = callSlot(ctx, node, key, (ctx['current'].slot), defaultSlot1, true);
     return b1;
   }
 }"
@@ -615,22 +615,22 @@ exports[`slots dynamic t-slot call with default 2`] = `
     static el = elem(\`<h1>slot2</h1>\`);
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new BMulti(2);
     const b3 = b2.children[0] = new Block2();
     const b4 = b2.children[1] = new Block3();
     return b2;
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b5 = new Block4();
     return b5;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b6 = b1.children[0] = new BComponent(\`Toggler\`, {}, \`__1\`, ctx, node);
+    const b6 = b1.children[0] = new BComponent(\`Toggler\`, {}, key + \`__1\`, ctx, node);
     b6.node.slots = {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)};
     return b1;
   }
@@ -643,10 +643,10 @@ exports[`slots fun: two calls to the same slot 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
-    b1.children[0] = callSlot(ctx, node, 'default');
-    b1.children[1] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
+    b1.children[1] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -658,13 +658,13 @@ exports[`slots fun: two calls to the same slot 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new BText(\`some text\`);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -687,10 +687,10 @@ exports[`slots missing slots are ignored 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
-    b1.children[1] = callSlot(ctx, node, 'footer');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
+    b1.children[1] = callSlot(ctx, node, key, 'footer');
     return b1;
   }
 }"
@@ -711,9 +711,9 @@ exports[`slots missing slots are ignored 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -734,9 +734,9 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -765,16 +765,16 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
     static el = elem(\`<span>rocks</span>\`);
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b2 = new BMulti(2);
     const b3 = b2.children[0] = new Block2();
     const b4 = b2.children[1] = new Block3();
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b5 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b5 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b5.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -796,9 +796,9 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'content');
+    b1.children[0] = callSlot(ctx, node, key, 'content');
     return b1;
   }
 }"
@@ -827,17 +827,17 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
     static el = elem(\`<span>rocks</span>\`);
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new BMulti(2);
     const b3 = b2.children[0] = new Block2();
     const b4 = b2.children[1] = new Block3();
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b5 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b5 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b5.node.slots = {'content': slot3(ctx2)};
     return b1;
   }
@@ -858,7 +858,7 @@ exports[`slots multiple slots containing components 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -882,10 +882,10 @@ exports[`slots multiple slots containing components 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 's1');
-    b1.children[1] = callSlot(ctx, node, 's2');
+    b1.children[0] = callSlot(ctx, node, key, 's1');
+    b1.children[1] = callSlot(ctx, node, key, 's2');
     return b1;
   }
 }"
@@ -897,19 +897,19 @@ exports[`slots multiple slots containing components 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot3 = ctx => node => {
-    const b1 = new BComponent(\`C\`, {val: 1}, \`__4\`, ctx, node);
+  const slot3 = ctx => (node, key) => {
+    const b1 = new BComponent(\`C\`, {val: 1}, key + \`__4\`, ctx, node);
     return b1;
   }
   
-  const slot5 = ctx => node => {
-    const b2 = new BComponent(\`C\`, {val: 2}, \`__6\`, ctx, node);
+  const slot5 = ctx => (node, key) => {
+    const b2 = new BComponent(\`C\`, {val: 2}, key + \`__6\`, ctx, node);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const ctx2 = capture(ctx);
-    const b3 = new BComponent(\`B\`, {}, \`__1\`, ctx, node);
+    const b3 = new BComponent(\`B\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'s1': slot3(ctx2), 's2': slot5(ctx2)};
     return b3;
   }
@@ -932,10 +932,10 @@ exports[`slots named slot inside slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'brol');
-    b1.children[1] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'brol');
+    b1.children[1] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -972,29 +972,29 @@ exports[`slots named slot inside slot 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new Block2();
     b2.data[0] = ctx['value'];
     return b2;
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const ctx6 = capture(ctx);
-    const b4 = new BComponent(\`Child\`, {}, \`__5\`, ctx, node);
+    const b4 = new BComponent(\`Child\`, {}, key + \`__5\`, ctx, node);
     b4.node.slots = {'brol': slot7(ctx6)};
     return b4;
   }
   
-  const slot7 = ctx => node => {
+  const slot7 = ctx => (node, key) => {
     const b3 = new Block3();
     b3.data[0] = ctx['value'];
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b5.node.slots = {'brol': slot3(ctx2), 'default': slot4(ctx2)};
     return b1;
   }
@@ -1017,10 +1017,10 @@ exports[`slots named slot inside slot, part 3 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'brol');
-    b1.children[1] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'brol');
+    b1.children[1] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1057,29 +1057,29 @@ exports[`slots named slot inside slot, part 3 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new Block2();
     b2.data[0] = ctx['value'];
     return b2;
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const ctx6 = capture(ctx);
-    const b4 = new BComponent(\`Child\`, {}, \`__5\`, ctx, node);
+    const b4 = new BComponent(\`Child\`, {}, key + \`__5\`, ctx, node);
     b4.node.slots = {'brol': slot7(ctx6)};
     return b4;
   }
   
-  const slot7 = ctx => node => {
+  const slot7 = ctx => (node, key) => {
     const b3 = new Block3();
     b3.data[0] = ctx['value'];
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b5.node.slots = {'brol': slot3(ctx2), 'default': slot4(ctx2)};
     return b1;
   }
@@ -1106,9 +1106,9 @@ exports[`slots named slots can define a default content 1`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'header', defaultSlot1, false);
+    b1.children[0] = callSlot(ctx, node, key, 'header', defaultSlot1, false);
     return b1;
   }
 }"
@@ -1129,9 +1129,9 @@ exports[`slots named slots can define a default content 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -1164,11 +1164,11 @@ exports[`slots named slots inside slot, again 1`] = `
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'brol1', defaultSlot1, false);
-    b1.children[1] = callSlot(ctx, node, 'brol2', defaultSlot2, false);
-    b1.children[2] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'brol1', defaultSlot1, false);
+    b1.children[1] = callSlot(ctx, node, key, 'brol2', defaultSlot2, false);
+    b1.children[2] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1205,29 +1205,29 @@ exports[`slots named slots inside slot, again 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new Block2();
     b2.data[0] = ctx['value'];
     return b2;
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const ctx6 = capture(ctx);
-    const b4 = new BComponent(\`Child\`, {}, \`__5\`, ctx, node);
+    const b4 = new BComponent(\`Child\`, {}, key + \`__5\`, ctx, node);
     b4.node.slots = {'brol2': slot7(ctx6)};
     return b4;
   }
   
-  const slot7 = ctx => node => {
+  const slot7 = ctx => (node, key) => {
     const b3 = new Block3();
     b3.data[0] = ctx['value'];
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b5 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b5.node.slots = {'brol1': slot3(ctx2), 'default': slot4(ctx2)};
     return b1;
   }
@@ -1249,9 +1249,9 @@ exports[`slots nested slots in same template 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1272,9 +1272,9 @@ exports[`slots nested slots in same template 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1290,7 +1290,7 @@ exports[`slots nested slots in same template 3`] = `
     static el = elem(\`<span>Child 3</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -1312,20 +1312,20 @@ exports[`slots nested slots in same template 4`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b3 = new BComponent(\`Child2\`, {}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b3 = new BComponent(\`Child2\`, {}, key + \`__3\`, ctx, node);
     b3.node.slots = {'default': slot4(ctx)};
     return b3;
   }
   
-  const slot4 = ctx => node => {
-    const b2 = new BComponent(\`Child3\`, {}, \`__5\`, ctx, node);
+  const slot4 = ctx => (node, key) => {
+    const b2 = new BComponent(\`Child3\`, {}, key + \`__5\`, ctx, node);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b4 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b4 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b4.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -1346,7 +1346,7 @@ exports[`slots nested slots: evaluation context and parented relationship 1`] = 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -1369,9 +1369,9 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1383,13 +1383,13 @@ exports[`slots nested slots: evaluation context and parented relationship 3`] = 
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
-    const b1 = callSlot(ctx, node, 'default');
+  const slot2 = ctx => (node, key) => {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -1402,13 +1402,13 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
-    const b1 = new BComponent(\`Slot\`, {val: ctx['state'].val}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b1 = new BComponent(\`Slot\`, {val: ctx['state'].val}, key + \`__3\`, ctx, node);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -1430,9 +1430,9 @@ exports[`slots no named slot content => just no children 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'header');
+    b1.children[0] = callSlot(ctx, node, key, 'header');
     return b1;
   }
 }"
@@ -1444,8 +1444,8 @@ exports[`slots no named slot content => just no children 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -1466,9 +1466,9 @@ exports[`slots simple default slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1480,13 +1480,13 @@ exports[`slots simple default slot 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new BText(\`some text\`);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -1499,8 +1499,8 @@ exports[`slots simple default slot, variation 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1512,13 +1512,13 @@ exports[`slots simple default slot, variation 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new BText(\`some text\`);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -1535,7 +1535,7 @@ exports[`slots slot and (inline) t-call 1`] = `
     static el = elem(\`<p>sokka</p>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -1557,9 +1557,9 @@ exports[`slots slot and (inline) t-call 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1570,7 +1570,7 @@ exports[`slots slot and (inline) t-call 3`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_4 = getTemplate(\`__template__104\`);
+  const callTemplate_5 = getTemplate(\`__template__9\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1581,15 +1581,15 @@ exports[`slots slot and (inline) t-call 3`] = `
     }
   }
   
-  const slot3 = ctx => node => {
-    const b2 = callTemplate_4(ctx, node);
+  const slot3 = ctx => (node, key) => {
+    const b2 = callTemplate_5(ctx, node, key + \`__4\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -1611,9 +1611,9 @@ exports[`slots slot and (inline) t-esc 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1634,14 +1634,14 @@ exports[`slots slot and (inline) t-esc 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b2 = new BText('toph');
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -1658,7 +1658,7 @@ exports[`slots slot and t-call 1`] = `
     static el = elem(\`<p>sokka</p>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -1680,9 +1680,9 @@ exports[`slots slot and t-call 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1693,7 +1693,7 @@ exports[`slots slot and t-call 3`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_4 = getTemplate(\`__template__101\`);
+  const callTemplate_5 = getTemplate(\`__template__9\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1704,15 +1704,15 @@ exports[`slots slot and t-call 3`] = `
     }
   }
   
-  const slot3 = ctx => node => {
-    const b2 = callTemplate_4(ctx, node);
+  const slot3 = ctx => (node, key) => {
+    const b2 = callTemplate_5(ctx, node, key + \`__4\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -1734,9 +1734,9 @@ exports[`slots slot and t-esc 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1757,14 +1757,14 @@ exports[`slots slot and t-esc 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b2 = new BText('toph');
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -1785,7 +1785,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -1808,9 +1808,9 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1838,17 +1838,17 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b2 = new BComponent(\`SomeComponent\`, {val: ctx['state'].val}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b2 = new BComponent(\`SomeComponent\`, {val: ctx['state'].val}, key + \`__3\`, ctx, node);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['inc'](e);
     b1.data[0] = ctx['state'].val;
-    const b3 = b1.children[0] = new BComponent(\`GenericComponent\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`GenericComponent\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -1870,9 +1870,9 @@ exports[`slots slot content is bound to caller 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1892,15 +1892,15 @@ exports[`slots slot content is bound to caller 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['inc'](e);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b2 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b2 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -1913,8 +1913,8 @@ exports[`slots slot preserves properly parented relationship 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1926,7 +1926,7 @@ exports[`slots slot preserves properly parented relationship 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`Grand Child\`);
     return b1;
   }
@@ -1948,14 +1948,14 @@ exports[`slots slot preserves properly parented relationship 3`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b2 = new BComponent(\`GrandChild\`, {}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b2 = new BComponent(\`GrandChild\`, {}, key + \`__3\`, ctx, node);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -1968,8 +1968,8 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -1981,7 +1981,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`Grand Child\`);
     return b1;
   }
@@ -1994,8 +1994,8 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`GrandChild\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -2006,7 +2006,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_4 = getTemplate(\`sub\`);
+  const callTemplate_5 = getTemplate(\`sub\`);
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -2017,15 +2017,15 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
     }
   }
   
-  const slot3 = ctx => node => {
-    const b2 = callTemplate_4(ctx, node);
+  const slot3 = ctx => (node, key) => {
+    const b2 = callTemplate_5(ctx, node, key + \`__4\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -2047,9 +2047,9 @@ exports[`slots slots and wrapper components 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2061,13 +2061,13 @@ exports[`slots slots and wrapper components 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new BText(\`hey\`);
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Link\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Link\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -2089,9 +2089,9 @@ exports[`slots slots are rendered with proper context 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'footer');
+    b1.children[0] = callSlot(ctx, node, key, 'footer');
     return b1;
   }
 }"
@@ -2124,18 +2124,18 @@ exports[`slots slots are rendered with proper context 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new Block2();
     b2.handlers[0] = (e) => ctx.__owl__.component['doSomething'](e);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'footer': slot3(ctx2)};
     return b1;
   }
@@ -2161,10 +2161,10 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].to;
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2194,14 +2194,14 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
     }
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b4 = new BMulti(2);
     b4.children[0] = new BText(\`User \`);
     b4.children[1] = new BText(ctx['user'].name);
     return b4;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].users, true, false);
     ctx = Object.create(ctx);
@@ -2215,7 +2215,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
       let key1 = ctx['user'].id;
       const b3 = b2.children[i1] = new Block2();
       const ctx3 = capture(ctx);
-      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, \`__2__\${key1}\`, ctx, node);
+      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__2__\${key1}\`, ctx, node);
       b5.node.slots = {'default': slot4(ctx3)};
       b2.keys[i1] = key1;
     }
@@ -2243,10 +2243,10 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].to;
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2276,12 +2276,12 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
     }
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b4 = new BText(ctx['userdescr']);
     return b4;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].users, true, false);
@@ -2297,7 +2297,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
       const b3 = b2.children[i1] = new Block2();
       ctx[\`userdescr\`] = 'User '+ctx['user'].name;
       const ctx3 = capture(ctx);
-      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, \`__2__\${key1}\`, ctx, node);
+      const b5 = b3.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__2__\${key1}\`, ctx, node);
       b5.node.slots = {'default': slot4(ctx3)};
       b2.keys[i1] = key1;
     }
@@ -2325,10 +2325,10 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].to;
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2349,17 +2349,17 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new BText(ctx['userdescr']);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`userdescr\`] = 'User '+ctx['state'].user.name;
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['state'].user.id}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Link\`, {to: '/user/'+ctx['state'].user.id}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -2381,9 +2381,9 @@ exports[`slots slots in slots, with vars 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2404,14 +2404,14 @@ exports[`slots slots in slots, with vars 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b2 = callSlot(ctx, node, 'default');
+  const slot2 = ctx => (node, key) => {
+    const b2 = callSlot(ctx, node, key, 'default');
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`B\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`B\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -2441,18 +2441,18 @@ exports[`slots slots in slots, with vars 3`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b2 = new Block2();
     b2.data[0] = ctx['test'];
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`test\`] = ctx['state'].name;
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`A\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`A\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -2478,10 +2478,10 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2502,12 +2502,12 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
     }
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b3 = new BText(ctx['n_index']);
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(Array(2), true, false);
     ctx = Object.create(ctx);
@@ -2520,7 +2520,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
       ctx[\`n_value\`] = k1[i1];
       let key1 = ctx['n_index'];
       const ctx3 = capture(ctx);
-      const b4 = b2.children[i1] = new BComponent(\`Child\`, {}, \`__2__\${key1}\`, ctx, node);
+      const b4 = b2.children[i1] = new BComponent(\`Child\`, {}, key + \`__2__\${key1}\`, ctx, node);
       b4.node.slots = {'default': slot4(ctx3)};
       b2.keys[i1] = key1;
     }
@@ -2544,9 +2544,9 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2592,13 +2592,13 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
     }
   }
   
-  const slot5 = ctx => node => {
+  const slot5 = ctx => (node, key) => {
     const b7 = new Block4();
     b7.data[0] = ctx['node1'].value;
     return b7;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['tree'], true, false);
     ctx = Object.create(ctx);
@@ -2625,7 +2625,7 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
         ctx[\`node2_value\`] = k2[i2];
         let key2 = ctx['node2'].key;
         const ctx4 = capture(ctx);
-        const b8 = b6.children[i2] = new BComponent(\`Child\`, {}, \`__3__\${key1}__\${key2}\`, ctx, node);
+        const b8 = b6.children[i2] = new BComponent(\`Child\`, {}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
         b8.node.slots = {'default': slot5(ctx4)};
         b6.keys[i2] = key2;
       }
@@ -2656,10 +2656,10 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2680,12 +2680,12 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
     }
   }
   
-  const slot4 = ctx => node => {
+  const slot4 = ctx => (node, key) => {
     const b3 = new BText(ctx['dummy']);
     return b3;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(Array(2), true, false);
@@ -2700,7 +2700,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
       let key1 = ctx['n_index'];
       ctx[\`dummy\`] = ctx['n_index'];
       const ctx3 = capture(ctx);
-      const b4 = b2.children[i1] = new BComponent(\`Child\`, {}, \`__2__\${key1}\`, ctx, node);
+      const b4 = b2.children[i1] = new BComponent(\`Child\`, {}, key + \`__2__\${key1}\`, ctx, node);
       b4.node.slots = {'default': slot4(ctx3)};
       b2.keys[i1] = key1;
     }
@@ -2724,9 +2724,9 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'content');
+    b1.children[0] = callSlot(ctx, node, key, 'content');
     return b1;
   }
 }"
@@ -2747,16 +2747,16 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     debugger;
     const b2 = new BText(\`abc\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'content': slot3(ctx2)};
     return b1;
   }
@@ -2778,9 +2778,9 @@ exports[`slots t-set t-value in a slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2801,17 +2801,17 @@ exports[`slots t-set t-value in a slot 2`] = `
     }
   }
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     ctx[\`rainbow\`] = 'dash';
     const b2 = new BText(ctx['rainbow']);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -2833,9 +2833,9 @@ exports[`slots t-slot in recursive templates 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2846,9 +2846,9 @@ exports[`slots t-slot in recursive templates 2`] = `
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
-  const callTemplate_5 = getTemplate(\`_test_recursive_template\`);
+  const callTemplate_6 = getTemplate(\`_test_recursive_template\`);
   
-  const slot3 = ctx => node => {
+  const slot3 = ctx => (node, key) => {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(ctx['name']);
     const b2 = b1.children[1] = new BCollection(ctx['items'], false, false);
@@ -2868,7 +2868,7 @@ exports[`slots t-slot in recursive templates 2`] = `
         ctx = Object.create(ctx);
         ctx[\`name\`] = ctx['item'].name;
         ctx[\`items\`] = ctx['item'].children;
-        b3.children[1] = callTemplate_5(ctx, node);
+        b3.children[1] = callTemplate_6(ctx, node, key + \`__5__\${key1}\`);
         ctx = ctx.__proto__;
       }
       b2.keys[i1] = key1;
@@ -2877,10 +2877,10 @@ exports[`slots t-slot in recursive templates 2`] = `
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const ctx2 = capture(ctx);
-    const b4 = new BComponent(\`Wrapper\`, {}, \`__1\`, ctx, node);
+    const b4 = new BComponent(\`Wrapper\`, {}, key + \`__1\`, ctx, node);
     b4.node.slots = {'default': slot3(ctx2)};
     return b4;
   }
@@ -2897,7 +2897,7 @@ exports[`slots t-slot nested within another slot 1`] = `
     static el = elem(\`<span>Child 3</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -2919,9 +2919,9 @@ exports[`slots t-slot nested within another slot 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2942,9 +2942,9 @@ exports[`slots t-slot nested within another slot 3`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -2965,20 +2965,20 @@ exports[`slots t-slot nested within another slot 4`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b3 = new BComponent(\`Portal\`, {}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b3 = new BComponent(\`Portal\`, {}, key + \`__3\`, ctx, node);
     b3.node.slots = {'default': slot4(ctx)};
     return b3;
   }
   
-  const slot4 = ctx => node => {
-    const b2 = callSlot(ctx, node, 'default');
+  const slot4 = ctx => (node, key) => {
+    const b2 = callSlot(ctx, node, key, 'default');
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b4 = b1.children[0] = new BComponent(\`Modal\`, {}, \`__1\`, ctx, node);
+    const b4 = b1.children[0] = new BComponent(\`Modal\`, {}, key + \`__1\`, ctx, node);
     b4.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -3000,14 +3000,14 @@ exports[`slots t-slot nested within another slot 5`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b2 = new BComponent(\`Child3\`, {}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b2 = new BComponent(\`Child3\`, {}, key + \`__3\`, ctx, node);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }
@@ -3020,8 +3020,8 @@ exports[`slots t-slot scope context 1`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -3045,16 +3045,16 @@ exports[`slots t-slot scope context 2`] = `
     }
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['onClick'](e);
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b2 = new BComponent(\`Wrapper\`, {}, \`__1\`, ctx, node);
+    const b2 = new BComponent(\`Wrapper\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -3071,13 +3071,13 @@ exports[`slots t-slot scope context 3`] = `
     static el = elem(\`<button>The Button</button>\`);
   }
   
-  const slot2 = ctx => node => {
+  const slot2 = ctx => (node, key) => {
     const b1 = new Block1();
     return b1;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b2 = new BComponent(\`Dialog\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b2 = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b2.node.slots = {'default': slot2(ctx)};
     return b2;
   }
@@ -3094,7 +3094,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
     static el = elem(\`<div class=\\"child\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -3116,9 +3116,9 @@ exports[`slots t-slot within dynamic t-call 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = callSlot(ctx, node, 'default');
+    b1.children[0] = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -3139,9 +3139,9 @@ exports[`slots t-slot within dynamic t-call 3`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+    b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -3162,16 +3162,16 @@ exports[`slots t-slot within dynamic t-call 4`] = `
     }
   }
   
-  const slot3 = ctx => node => {
-    const template4 = (ctx['tcallTemplate']);
-    const b2 = call(template4, ctx, node);
+  const slot3 = ctx => (node, key) => {
+    const template5 = (ctx['tcallTemplate']);
+    const b2 = call(template5, ctx, node, key + \`__4\`);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Slotted\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`Slotted\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot3(ctx2)};
     return b1;
   }
@@ -3192,7 +3192,7 @@ exports[`slots template can just return a slot 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -3206,8 +3206,8 @@ exports[`slots template can just return a slot 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = callSlot(ctx, node, 'default');
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = callSlot(ctx, node, key, 'default');
     return b1;
   }
 }"
@@ -3228,14 +3228,14 @@ exports[`slots template can just return a slot 3`] = `
     }
   }
   
-  const slot2 = ctx => node => {
-    const b2 = new BComponent(\`Child\`, {value: ctx['state'].value}, \`__3\`, ctx, node);
+  const slot2 = ctx => (node, key) => {
+    const b2 = new BComponent(\`Child\`, {value: ctx['state'].value}, key + \`__3\`, ctx, node);
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BComponent(\`SlotComponent\`, {}, \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BComponent(\`SlotComponent\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'default': slot2(ctx)};
     return b1;
   }

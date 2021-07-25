@@ -10,7 +10,7 @@ exports[`white space handling consecutives whitespaces are condensed into a sing
     static el = elem(\`<div> abc </div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -27,7 +27,7 @@ exports[`white space handling nothing is done in pre tags 1`] = `
     static el = elem(\`<pre>   </pre>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -46,7 +46,7 @@ exports[`white space handling nothing is done in pre tags 2`] = `
         </pre>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -65,7 +65,7 @@ exports[`white space handling nothing is done in pre tags 3`] = `
         </pre>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -82,7 +82,7 @@ exports[`white space handling white space only text nodes are condensed into a s
     static el = elem(\`<div> </div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -99,7 +99,7 @@ exports[`white space handling whitespace only text nodes with newlines are remov
     static el = elem(\`<div><span>abc</span></div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }

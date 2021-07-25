@@ -10,7 +10,7 @@ exports[`comments only a comment 1`] = `
     static el = elem(\`<!-- comment-->\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -27,7 +27,7 @@ exports[`comments properly handle comments 1`] = `
     static el = elem(\`<div>hello <!-- comment-->owl</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -58,7 +58,7 @@ exports[`comments properly handle comments between t-if/t-else 1`] = `
     static el = elem(\`<span>owl</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     if (true) {
       const b2 = b1.children[0] = new Block2();

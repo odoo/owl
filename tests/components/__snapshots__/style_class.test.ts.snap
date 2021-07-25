@@ -14,7 +14,7 @@ exports[`style and class handling can set class on multi root component 1`] = `
     static el = elem(\`<span>b</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     const b3 = b1.children[1] = new Block2();
@@ -29,8 +29,8 @@ exports[`style and class handling can set class on multi root component 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`fromparent\`;
     return b1;
   }
@@ -47,7 +47,7 @@ exports[`style and class handling can set class on sub component 1`] = `
     static el = elem(\`<div>child</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -60,8 +60,8 @@ exports[`style and class handling can set class on sub component 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`some-class\`;
     return b1;
   }
@@ -78,7 +78,7 @@ exports[`style and class handling can set class on sub sub component 1`] = `
     static el = elem(\`<div>childchild</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -91,8 +91,8 @@ exports[`style and class handling can set class on sub sub component 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`ChildChild\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`ChildChild\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`fromchild\`;
     return b1;
   }
@@ -105,8 +105,8 @@ exports[`style and class handling can set class on sub sub component 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`fromparent\`;
     return b1;
   }
@@ -123,7 +123,7 @@ exports[`style and class handling can set more than one class on sub component 1
     static el = elem(\`<div>child</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -136,8 +136,8 @@ exports[`style and class handling can set more than one class on sub component 2
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`a  b\`;
     return b1;
   }
@@ -154,7 +154,7 @@ exports[`style and class handling can set style and class on component 1`] = `
     static el = elem(\`<div style=\\"font-weight:bold;\\" class=\\"some-class\\">world</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -171,7 +171,7 @@ exports[`style and class handling class on sub component, which is switched to a
     static el = elem(\`<div>a</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -188,7 +188,7 @@ exports[`style and class handling class on sub component, which is switched to a
     static el = elem(\`<span>b</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -201,12 +201,12 @@ exports[`style and class handling class on sub component, which is switched to a
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['props'].child==='a') {
-      b1.children[0] = new BComponent(\`ChildA\`, {}, \`__1\`, ctx, node);
+      b1.children[0] = new BComponent(\`ChildA\`, {}, key + \`__1\`, ctx, node);
     } else {
-      b1.children[1] = new BComponent(\`ChildB\`, {}, \`__2\`, ctx, node);
+      b1.children[1] = new BComponent(\`ChildB\`, {}, key + \`__2\`, ctx, node);
     }
     return b1;
   }
@@ -219,8 +219,8 @@ exports[`style and class handling class on sub component, which is switched to a
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx, node);
     b1.parentClass = \`someclass\`;
     return b1;
   }
@@ -237,7 +237,7 @@ exports[`style and class handling component class and parent class combine toget
     static el = elem(\`<div class=\\"child\\">child</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -250,8 +250,8 @@ exports[`style and class handling component class and parent class combine toget
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`from parent\`;
     return b1;
   }
@@ -264,7 +264,7 @@ exports[`style and class handling setting a class on a child component with text
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`child\`);
     return b1;
   }
@@ -277,8 +277,8 @@ exports[`style and class handling setting a class on a child component with text
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`some-class\`;
     return b1;
   }

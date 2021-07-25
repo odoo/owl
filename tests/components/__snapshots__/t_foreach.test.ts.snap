@@ -14,7 +14,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].item;
     return b1;
@@ -46,7 +46,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['items'], true, false);
     ctx = Object.create(ctx);
@@ -60,7 +60,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
       let key1 = i1;
       key1 = 'li_'+ctx['item'];
       const b3 = b2.children[i1] = new Block2();
-      b3.children[0] = new BComponent(\`Child\`, {item: ctx['item']}, \`__2__\${key1}\`, ctx, node);
+      b3.children[0] = new BComponent(\`Child\`, {item: ctx['item']}, key + \`__2__\${key1}\`, ctx, node);
       b2.keys[i1] = key1;
     }
     return b1;
@@ -82,7 +82,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].blip;
     return b1;
@@ -105,7 +105,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].s, true, false);
     ctx = Object.create(ctx);
@@ -127,7 +127,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
         ctx[\`blip_index\`] = i2;
         ctx[\`blip_value\`] = k2[i2];
         let key2 = ctx['blip_index'];
-        b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, \`__3__\${key1}__\${key2}\`, ctx, node);
+        b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
         b3.keys[i2] = key2;
       }
       ctx = ctx.__proto__;
@@ -152,7 +152,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].row+'_'+ctx['props'].col;
     return b1;
@@ -193,7 +193,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].rows, true, false);
     ctx = Object.create(ctx);
@@ -217,7 +217,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
         ctx[\`col_value\`] = k2[i2];
         let key2 = ctx['col'];
         const b5 = b4.children[i2] = new Block3();
-        b5.children[0] = new BComponent(\`Child\`, {row: ctx['row'],col: ctx['col']}, \`__3__\${key1}__\${key2}\`, ctx, node);
+        b5.children[0] = new BComponent(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
         b4.keys[i2] = key2;
       }
       ctx = ctx.__proto__;
@@ -242,7 +242,7 @@ exports[`list of components simple list 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -256,7 +256,7 @@ exports[`list of components simple list 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BCollection(ctx['state'].elems, false, false);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -267,7 +267,7 @@ exports[`list of components simple list 2`] = `
       ctx[\`elem_index\`] = i1;
       ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'].id;
-      b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, \`__2__\${key1}\`, ctx, node);
+      b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, key + \`__2__\${key1}\`, ctx, node);
       b1.keys[i1] = key1;
     }
     return b1;

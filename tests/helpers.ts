@@ -14,7 +14,7 @@ import {
 import { TemplateSet } from "../src/app";
 import { Block, Blocks } from "../src/bdom";
 import { compileTemplate, Template } from "../src/compiler/index";
-import { globalTemplates } from "../src/tags";
+import { globalTemplates, xml } from "../src/tags";
 import { UTILS } from "../src/template_utils";
 
 export function nextMicroTick(): Promise<void> {
@@ -122,6 +122,11 @@ export function snapshotEverything() {
   beforeAll(() => {
     globalSet = new Set(Object.keys(globalTemplates));
   });
+
+  beforeEach(() => {
+    xml.nextId = 9;
+  });
+
   afterEach(() => {
     console.warn = () => {};
     for (let k in globalTemplates) {

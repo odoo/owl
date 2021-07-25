@@ -23,7 +23,7 @@ import {
   parse,
 } from "./qweb_parser";
 
-export type Template = (context: any, refs?: any) => Block;
+export type Template = (context: any, node?: Node, key?: string) => Block;
 export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 // -----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ export class QWebCompiler {
     // generate main code
     this.target.indentLevel = 0;
     this.addLine(``);
-    this.addLine(`return function template(ctx, node = ctx.__owl__) {`);
+    this.addLine(`return function template(ctx, node = ctx.__owl__, key = "") {`);
     if (this.hasRef) {
       this.addLine(`  const refs = ctx.__owl__.refs;`);
     }
@@ -828,17 +828,18 @@ export class QWebCompiler {
         this.insertAnchor(block);
       }
     }
+    const key = `key + \`${this.generateComponentKey()}\``;
     if (isDynamic) {
       const templateVar = this.generateId("template");
       this.addLine(`const ${templateVar} = ${subTemplate};`);
-      this.insertBlock(`call(${templateVar}, ctx, node)`, {
+      this.insertBlock(`call(${templateVar}, ctx, node, ${key})`, {
         ...ctx,
         forceNewBlock: !block,
       });
     } else {
       const id = this.generateId(`callTemplate_`);
       this.staticCalls.push({ id, template: subTemplate });
-      this.insertBlock(`${id}(ctx, node)`, { ...ctx, forceNewBlock: !block });
+      this.insertBlock(`${id}(ctx, node, ${key})`, { ...ctx, forceNewBlock: !block });
     }
     if (ast.body) {
       this.addLine(`ctx = ctx.__proto__;`);
@@ -880,6 +881,14 @@ export class QWebCompiler {
     }
   }
 
+  generateComponentKey() {
+    const parts = [this.generateId("__")];
+    for (let i = 0; i < this.loopLevel; i++) {
+      parts.push(`\${key${i + 1}}`);
+    }
+    return parts.join("__");
+  }
+
   compileComponent(ast: ASTComponent, ctx: Context) {
     const { block } = ctx;
     // props
@@ -892,11 +901,7 @@ export class QWebCompiler {
     const propString = `{${props.join(",")}}`;
 
     // cmap key
-    const parts = [this.generateId("__")];
-    for (let i = 0; i < this.loopLevel; i++) {
-      parts.push(`\${key${i + 1}}`);
-    }
-    const key = parts.join("__");
+    const key = this.generateComponentKey();
     let expr: string;
     if (ast.isDynamic) {
       expr = this.generateId("Comp");
@@ -904,7 +909,7 @@ export class QWebCompiler {
     } else {
       expr = `\`${ast.name}\``;
     }
-    const blockArgs = `${expr}, ${propString}, \`${key}\`, ctx, node`;
+    const blockArgs = `${expr}, ${propString}, key + \`${key}\`, ctx, node`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -924,7 +929,7 @@ export class QWebCompiler {
         let name = this.generateId("slot");
         const slot: CodeGroup = {
           name,
-          signature: "ctx => node => {",
+          signature: "ctx => (node, key) => {",
           indentLevel: 0,
           code: [],
           rootBlock: null,
@@ -1010,14 +1015,14 @@ export class QWebCompiler {
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
-      blockString = `callSlot(ctx, node, ${slotName}, ${name}, ${dynamic})`;
+      blockString = `callSlot(ctx, node, key, ${slotName}, ${name}, ${dynamic})`;
     } else {
       if (dynamic) {
         let name = this.generateId("slot");
         this.addLine(`const ${name} = ${slotName};`);
-        blockString = `new BDispatch(${name}, callSlot(ctx, node, ${name}))`;
+        blockString = `new BDispatch(${name}, callSlot(ctx, node, key, ${name}))`;
       } else {
-        blockString = `callSlot(ctx, node, ${slotName})`;
+        blockString = `callSlot(ctx, node, key, ${slotName})`;
       }
     }
 

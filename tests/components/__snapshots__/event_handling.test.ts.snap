@@ -10,7 +10,7 @@ exports[`event handling can set handler on sub component 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -23,10 +23,10 @@ exports[`event handling can set handler on sub component 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, \`__1\`, ctx, node);
+    const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, key + \`__1\`, ctx, node);
     b2.handlers[0] = ['click', (e) => ctx.__owl__.component['inc'](e)];
     b1.children[1] = new BText(ctx['state'].value);
     return b1;
@@ -44,7 +44,7 @@ exports[`event handling handler receive the event as argument 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -57,10 +57,10 @@ exports[`event handling handler receive the event as argument 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, \`__1\`, ctx, node);
+    const b2 = b1.children[0] = new BComponentH(1, \`Child\`, {}, key + \`__1\`, ctx, node);
     b2.handlers[0] = ['click', (e) => ctx.__owl__.component['inc'](e)];
     b1.children[1] = new BText(ctx['state'].value);
     return b1;
@@ -86,7 +86,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['state'].value;

@@ -14,7 +14,7 @@ exports[`basics basic use 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].p;
     return b1;
@@ -28,8 +28,8 @@ exports[`basics basic use 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {p: 1}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {p: 1}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -45,7 +45,7 @@ exports[`basics can select a sub widget  1`] = `
     static el = elem(\`<span>CHILD 1</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -62,7 +62,7 @@ exports[`basics can select a sub widget  2`] = `
     static el = elem(\`<div>CHILD 2</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -75,13 +75,13 @@ exports[`basics can select a sub widget  3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['env'].flag) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+      b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     if (!ctx['env'].flag) {
-      b1.children[1] = new BComponent(\`OtherChild\`, {}, \`__2\`, ctx, node);
+      b1.children[1] = new BComponent(\`OtherChild\`, {}, key + \`__2\`, ctx, node);
     }
     return b1;
   }
@@ -98,7 +98,7 @@ exports[`basics can select a sub widget, part 2 1`] = `
     static el = elem(\`<span>CHILD 1</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -115,7 +115,7 @@ exports[`basics can select a sub widget, part 2 2`] = `
     static el = elem(\`<div>CHILD 2</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -128,13 +128,13 @@ exports[`basics can select a sub widget, part 2 3`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['state'].flag) {
-      b1.children[0] = new BComponent(\`Child\`, {}, \`__1\`, ctx, node);
+      b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     if (!ctx['state'].flag) {
-      b1.children[1] = new BComponent(\`OtherChild\`, {}, \`__2\`, ctx, node);
+      b1.children[1] = new BComponent(\`OtherChild\`, {}, key + \`__2\`, ctx, node);
     }
     return b1;
   }
@@ -159,7 +159,7 @@ exports[`basics sub widget is interactive 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.handlers[0] = (e) => ctx.__owl__.component['inc'](e);
@@ -175,8 +175,8 @@ exports[`basics sub widget is interactive 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`Child\`, {p: 1}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {p: 1}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -192,7 +192,7 @@ exports[`basics top level sub widget with a parent 1`] = `
     static el = elem(\`<span>Hello</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -205,8 +205,8 @@ exports[`basics top level sub widget with a parent 2`] = `
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
   let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
-  return function template(ctx, node = ctx.__owl__) {
-    const b1 = new BComponent(\`ComponentC\`, {}, \`__1\`, ctx, node);
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`ComponentC\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -227,9 +227,9 @@ exports[`basics top level sub widget with a parent 3`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__) {
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`ComponentB\`, {}, \`__1\`, ctx, node);
+    b1.children[0] = new BComponent(\`ComponentB\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"

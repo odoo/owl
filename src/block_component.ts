@@ -10,7 +10,7 @@ import { STATUS } from "./status";
 
 export class BComponent extends Block {
   node: OwlNode;
-  parentClass?: any;
+  parentClass?: any = null;
   classTarget?: HTMLElement;
 
   /**

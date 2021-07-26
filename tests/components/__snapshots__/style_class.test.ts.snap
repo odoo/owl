@@ -161,6 +161,47 @@ exports[`style and class handling can set style and class on component 1`] = `
 }"
 `;
 
+exports[`style and class handling class is properly added on widget root el 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div class=\\"c\\"/>\`);
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling class is properly added on widget root el 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b2.parentClass = \`a b\`;
+    return b1;
+  }
+}"
+`;
+
 exports[`style and class handling class on sub component, which is switched to another 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -253,6 +294,73 @@ exports[`style and class handling component class and parent class combine toget
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
     b1.parentClass = \`from parent\`;
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling empty class attribute is not added on widget root el 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<span/>\`);
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling empty class attribute is not added on widget root el 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    anchors = new Array(1);
+    build() {
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling nothing happens if sub component is just some text 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BText(\`child\`);
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling nothing happens if sub component is just some text 2`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.parentClass = \`some-class\`;
     return b1;
   }
 }"

@@ -32,6 +32,31 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<div class="some-class">child</div>`);
   });
 
+  test("nothing happens if sub component is just some text", async () => {
+    class Child extends Component {
+      static template = xml`child`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child class="some-class" />`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`child`);
+  });
+
+  test("empty class attribute is not added on widget root el", async () => {
+    class Child extends Component {
+      static template = xml`<span/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child class=""/></div>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
+  });
+
   test("can set more than one class on sub component", async () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
@@ -56,6 +81,18 @@ describe("style and class handling", () => {
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="child from parent">child</div>`);
+  });
+
+  test("class is properly added on widget root el", async () => {
+    class Child extends Component {
+      static template = xml`<div class="c"/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child class="a b"/></div>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
   });
 
   test("setting a class on a child component with text node", async () => {

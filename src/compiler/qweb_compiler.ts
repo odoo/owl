@@ -978,7 +978,7 @@ export class QWebCompiler {
     }
 
     // class and style
-    if ("class" in ast.props) {
+    if (ast.props.class) {
       this.addLine(`${id!}.parentClass = \`${ast.props.class}\`;`);
     }
 

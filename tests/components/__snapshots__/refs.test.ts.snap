@@ -4,7 +4,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-anchor/></span>\`);
@@ -27,7 +27,7 @@ exports[`refs refs are properly bound in slots 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
@@ -37,8 +37,8 @@ exports[`refs refs are properly bound in slots 2`] = `
     build() {
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
-    update() {
-      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -48,7 +48,7 @@ exports[`refs refs are properly bound in slots 2`] = `
     build() {
       this.setupHandler(this.el, \`click\`, 0);
     }
-    update() {
+    update(prevData, data) {
       this.refs[\`myButton\`] = this.el;
     }
     remove() {

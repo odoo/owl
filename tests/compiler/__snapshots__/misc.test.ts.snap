@@ -4,7 +4,7 @@ exports[`misc complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
@@ -20,15 +20,15 @@ exports[`misc complex template 1`] = `
       this.anchors[3] = this.anchors[2].nextSibling;
       this.anchors[4] = el2.nextSibling.firstChild;
     }
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
-      this.updateClass(el1, this.data[0]);
+      this.updateClass(el1, data[0]);
       const el2 = el1.firstChild;
-      this.updateClass(el2, this.data[1]);
+      this.updateClass(el2, data[1]);
       const el3 = el2.firstChild.firstChild;
       this.updateAttr(el3, \`href\`, this.data[2]);
-      this.updateClass(el3, this.data[3]);
-      el3.firstChild.textContent = toString(this.data[4]);
+      this.updateClass(el3, data[3]);
+      setText(el3.firstChild, prevData[4], data[4]);
     }
   }
   
@@ -55,14 +55,14 @@ exports[`misc complex template 1`] = `
       this.anchors[2] = this.anchors[1].nextSibling;
       this.anchors[3] = this.anchors[2].nextSibling;
     }
-    update() {
+    update(prevData, data) {
       const el1 = this.el.firstChild;
       this.updateAttr(el1, \`href\`, this.data[0]);
-      this.updateClass(el1, this.data[1]);
-      this.anchors[3].nextSibling.textContent = toString(this.data[2]);
+      this.updateClass(el1, data[1]);
+      setText(this.anchors[3].nextSibling, prevData[2], data[2]);
       const el2 = el1.nextSibling;
       this.updateAttr(el2, \`href\`, this.data[3]);
-      el2.nextSibling.firstChild.textContent = toString(this.data[4]);
+      setText(el2.nextSibling.firstChild, prevData[4], data[4]);
     }
   }
   
@@ -163,7 +163,7 @@ exports[`misc global 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<año><owl-anchor/></año>\`);
@@ -173,7 +173,7 @@ exports[`misc global 1`] = `
     build() {
       this.anchors[0] = this.el.firstChild;
     }
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`falló\`, this.data[0]);
     }
   }
@@ -191,13 +191,13 @@ exports[`misc global 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -213,7 +213,7 @@ exports[`misc global 3`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -237,7 +237,7 @@ exports[`misc global 4`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   const callTemplate_3 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_5 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_7 = getTemplate(\`_callee-uses-foo\`);
@@ -257,8 +257,8 @@ exports[`misc global 4`] = `
   class Block2 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -303,7 +303,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   const callTemplate_6 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
   class Block1 extends BNode {
@@ -348,11 +348,11 @@ exports[`misc other complex template 1`] = `
       this.anchors[6] = this.anchors[5].nextSibling;
       this.anchors[7] = this.anchors[6].nextSibling;
     }
-    update() {
+    update(prevData, data) {
       const el1 = this.el.firstChild.firstChild.firstChild;
       const el3 = this.el.firstChild;
       this.updateAttr(el1, \`href\`, this.data[0]);
-      el1.firstChild.firstChild.textContent = toString(this.data[1]);
+      setText(el1.firstChild.firstChild, prevData[1], data[1]);
       const el2 = el1.nextSibling.nextSibling.firstChild.nextSibling.firstChild.firstChild.nextSibling;
       this.updateAttr(el2, \`value\`, this.data[2]);
       this.updateProp(el2, \`value\`, this.data[2]);
@@ -373,15 +373,15 @@ exports[`misc other complex template 1`] = `
     build() {
       this.setupHandler(this.el.firstChild, \`click\`, 0);
     }
-    update() {
-      this.el.firstChild.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild.firstChild, prevData[0], data[0]);
     }
   }
   
   class Block3 extends BNode {
     static el = elem(\`<li class=\\"nav-item dropdown\\"><b><a class=\\"nav-link\\">Login</a></b></li>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el.firstChild.firstChild, \`href\`, this.data[0]);
     }
   }
@@ -389,10 +389,10 @@ exports[`misc other complex template 1`] = `
   class Block4 extends BNode {
     static el = elem(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link text-danger\\"><i class=\\"fa fa-bug\\"/><owl-text/></a></li>\`);
     data = new Array(2);
-    update() {
+    update(prevData, data) {
       const el1 = this.el.firstChild;
       this.updateAttr(el1, \`title\`, this.data[0]);
-      el1.firstChild.nextSibling.textContent = toString(this.data[1]);
+      setText(el1.firstChild.nextSibling, prevData[1], data[1]);
     }
   }
   
@@ -411,9 +411,9 @@ exports[`misc other complex template 1`] = `
   class Block8 extends BNode {
     static el = elem(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><owl-text/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\">Web</a></div></li>\`);
     data = new Array(3);
-    update() {
+    update(prevData, data) {
       const el1 = this.el.firstChild;
-      el1.firstChild.firstChild.firstChild.textContent = toString(this.data[0]);
+      setText(el1.firstChild.firstChild.firstChild, prevData[0], data[0]);
       const el2 = el1.nextSibling.firstChild;
       this.updateAttr(el2, \`href\`, this.data[1]);
       this.updateAttr(el2.nextSibling, \`href\`, this.data[2]);
@@ -432,12 +432,12 @@ exports[`misc other complex template 1`] = `
   class Block10 extends BNode {
     static el = elem(\`<option><owl-text/></option>\`);
     data = new Array(3);
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
       this.updateAttr(el1, \`value\`, this.data[0]);
       this.updateAttr(el1, \`selected\`, this.data[1]);
       this.updateProp(el1, \`selected\`, this.data[1]);
-      el1.firstChild.textContent = toString(this.data[2]);
+      setText(el1.firstChild, prevData[2], data[2]);
     }
   }
   
@@ -448,7 +448,7 @@ exports[`misc other complex template 1`] = `
     build() {
       this.setupHandler(this.el.firstChild, \`change\`, 0);
     }
-    update() {
+    update(prevData, data) {
       const el1 = this.el.firstChild;
       this.updateAttr(el1, \`name\`, this.data[0]);
       this.updateAttr(el1, \`id\`, this.data[1]);
@@ -457,7 +457,7 @@ exports[`misc other complex template 1`] = `
       this.updateAttr(el1, \`data-trigger_id\`, this.data[3]);
       const el2 = el1.nextSibling;
       this.updateAttr(el2, \`for\`, this.data[4]);
-      el2.firstChild.textContent = toString(this.data[5]);
+      setText(el2.firstChild, prevData[5], data[5]);
     }
   }
   
@@ -478,8 +478,8 @@ exports[`misc other complex template 1`] = `
   class Block13 extends BNode {
     static el = elem(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><owl-text/> <!-- todo fixme--></div>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   

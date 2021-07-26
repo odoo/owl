@@ -4,7 +4,7 @@ exports[`BMulti removing an BMulti with an empty slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<p>1</p>\`);
@@ -29,7 +29,7 @@ exports[`BMulti removing/adding elements 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<p>1</p>\`);

@@ -4,7 +4,7 @@ exports[`event handling can set handler on sub component 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>simple vnode</div>\`);
@@ -21,7 +21,7 @@ exports[`event handling can set handler on sub component 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -38,7 +38,7 @@ exports[`event handling handler receive the event as argument 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>simple vnode</div>\`);
@@ -55,7 +55,7 @@ exports[`event handling handler receive the event as argument 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -72,7 +72,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-text/><input type=\\"text\\"/></div>\`);
@@ -81,8 +81,8 @@ exports[`event handling support for callable expression in event handler 1`] = `
     build() {
       this.setupHandler(this.el.firstChild.nextSibling, \`input\`, 0);
     }
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   

@@ -4,13 +4,13 @@ exports[`attributes class and t-att-class should combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -26,13 +26,13 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -48,12 +48,12 @@ exports[`attributes dynamic attribute evaluating to 0 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -70,12 +70,12 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -92,12 +92,12 @@ exports[`attributes dynamic attribute with a dash 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`data-action-id\`, this.data[0]);
     }
   }
@@ -114,12 +114,12 @@ exports[`attributes dynamic attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -136,13 +136,13 @@ exports[`attributes dynamic class attribute 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -158,13 +158,13 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -180,13 +180,13 @@ exports[`attributes dynamic empty class attribute 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -202,12 +202,12 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`aria-label\`, this.data[0]);
     }
   }
@@ -224,12 +224,12 @@ exports[`attributes fixed variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -246,12 +246,12 @@ exports[`attributes format expression 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -268,12 +268,12 @@ exports[`attributes format literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -290,12 +290,12 @@ exports[`attributes format multiple 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -312,12 +312,12 @@ exports[`attributes format value 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       this.updateAttr(this.el, \`foo\`, this.data[0]);
     }
   }
@@ -334,13 +334,13 @@ exports[`attributes from object variables set previously 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span/></div>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el.firstChild, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el.firstChild, data[0]);
     }
   }
   
@@ -358,13 +358,13 @@ exports[`attributes from variables set previously (no external node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -382,13 +382,13 @@ exports[`attributes from variables set previously 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><span/></div>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el.firstChild, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el.firstChild, data[0]);
     }
   }
   
@@ -406,13 +406,13 @@ exports[`attributes object 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateAttrs(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateAttrs(this.el, data[0]);
     }
   }
   
@@ -428,7 +428,7 @@ exports[`attributes static attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div foo=\\"a\\" bar=\\"b\\" baz=\\"c\\"/>\`);
@@ -445,7 +445,7 @@ exports[`attributes static attributes on void elements 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<img src=\\"/test.jpg\\" alt=\\"Test\\"/>\`);
@@ -462,7 +462,7 @@ exports[`attributes static attributes with dashes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div aria-label=\\"Close\\"/>\`);
@@ -479,13 +479,13 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -501,13 +501,13 @@ exports[`attributes t-att-class with multiple classes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -523,13 +523,13 @@ exports[`attributes t-att-class with multiple classes 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -545,13 +545,13 @@ exports[`attributes t-att-class with object 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"static\\"/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -567,13 +567,13 @@ exports[`attributes t-attf-class 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -589,13 +589,13 @@ exports[`attributes t-attf-class should combine with class 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div class=\\"hello\\"/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -611,13 +611,13 @@ exports[`attributes t-attf-class with multiple classes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -633,13 +633,13 @@ exports[`attributes t-attf-class with multiple classes separated by multiple spa
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateClass(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateClass(this.el, data[0]);
     }
   }
   
@@ -655,13 +655,13 @@ exports[`attributes tuple literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateAttrs(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateAttrs(this.el, data[0]);
     }
   }
   
@@ -677,13 +677,13 @@ exports[`attributes tuple variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(1);
-    update() {
-      this.updateAttrs(this.el, this.data[0]);
+    update(prevData, data) {
+      this.updateAttrs(this.el, data[0]);
     }
   }
   
@@ -699,7 +699,7 @@ exports[`attributes two classes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div class=\\"a b\\"/>\`);
@@ -716,12 +716,12 @@ exports[`attributes two dynamic attributes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div/>\`);
     data = new Array(2);
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
       this.updateAttr(el1, \`foo\`, this.data[0]);
       this.updateAttr(el1, \`bar\`, this.data[1]);
@@ -741,16 +741,16 @@ exports[`attributes various escapes 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div foo=\\"<foo\\"/>\`);
     data = new Array(3);
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
       this.updateAttr(el1, \`bar\`, this.data[0]);
       this.updateAttr(el1, \`baz\`, this.data[1]);
-      this.updateAttrs(el1, this.data[2]);
+      this.updateAttrs(el1, data[2]);
     }
   }
   
@@ -768,12 +768,12 @@ exports[`special cases for some specific html attributes/properties input of typ
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<input type=\\"checkbox\\"/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
       this.updateAttr(el1, \`indeterminate\`, this.data[0]);
       this.updateProp(el1, \`indeterminate\`, this.data[0]);
@@ -792,12 +792,12 @@ exports[`special cases for some specific html attributes/properties input type= 
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<input type=\\"checkbox\\"/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
       this.updateAttr(el1, \`checked\`, this.data[0]);
       this.updateProp(el1, \`checked\`, this.data[0]);
@@ -816,12 +816,12 @@ exports[`special cases for some specific html attributes/properties input with t
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<input/>\`);
     data = new Array(1);
-    update() {
+    update(prevData, data) {
       const el1 = this.el;
       this.updateAttr(el1, \`value\`, this.data[0]);
       this.updateProp(el1, \`value\`, this.data[0]);
@@ -840,7 +840,7 @@ exports[`special cases for some specific html attributes/properties various bool
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BStatic {
     static el = elem(\`<div><input type=\\"checkbox\\" checked=\\"checked\\"/><input checked=\\"checked\\"/><div checked=\\"checked\\"/><div selected=\\"selected\\"/><option selected=\\"selected\\" other=\\"1\\"/><input readonly=\\"readonly\\"/><button disabled=\\"disabled\\"/></div>\`);

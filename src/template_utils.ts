@@ -42,20 +42,30 @@ export function elem(html: string): HTMLElement | Text | Comment {
   return toDom(doc.firstChild!);
 }
 
-function toString(value: any): string {
+function setText(el: Text, prevValue: any, value: any) {
+  if (prevValue === value) { 
+    return;
+  }
+  let str: string;
   switch (typeof value) {
     case "string":
-      return value;
+      str = value;
+      break;
     case "number":
-      return String(value);
+      str = String(value);
+      break;
     case "boolean":
-      return value ? "true" : "false";
-    case "undefined":
-      return "";
+      str = value ? "true" : "false";
+      break;
     case "object":
-      return value ? value.toString() : "";
+        str = value ? value.toString() : "";
+        break;
+    default:
+      // most notably, undefined
+      str = "";
+      break;
   }
-  throw new Error("not yet working" + value);
+    el.textContent = str;
 }
 
 function withDefault(value: any, defaultValue: any): any {
@@ -96,7 +106,7 @@ function capture(ctx: any): any {
 
 export const UTILS = {
   elem,
-  toString,
+  setText,
   withDefault,
   zero: Symbol("zero"),
   callSlot,

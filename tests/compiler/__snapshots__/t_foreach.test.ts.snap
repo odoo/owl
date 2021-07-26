@@ -4,7 +4,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -39,7 +39,7 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -53,8 +53,8 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
   class Block2 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -83,7 +83,7 @@ exports[`t-foreach iterate on items 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -125,7 +125,7 @@ exports[`t-foreach iterate, dict param 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -167,7 +167,7 @@ exports[`t-foreach iterate, position 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -212,7 +212,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -247,7 +247,7 @@ exports[`t-foreach simple iteration 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BCollection([3,2,1], false, true);
@@ -272,21 +272,21 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span>a<owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild.nextSibling, prevData[0], data[0]);
     }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<span>b<owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.nextSibling.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild.nextSibling, prevData[0], data[0]);
     }
   }
   
@@ -317,7 +317,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(7);
@@ -337,7 +337,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   const callTemplate_4 = getTemplate(\`sub\`);
   
   class Block1 extends BNode {
@@ -348,20 +348,20 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
     build() {
       this.anchors[0] = this.el.firstChild;
     }
-    update() {
+    update(prevData, data) {
       const el1 = this.anchors[0].nextSibling.firstChild.nextSibling;
-      el1.textContent = toString(this.data[0]);
+      setText(el1, prevData[0], data[0]);
       const el2 = el1.nextSibling.nextSibling;
-      el2.textContent = toString(this.data[1]);
-      el2.nextSibling.nextSibling.textContent = toString(this.data[2]);
+      setText(el2, prevData[1], data[1]);
+      setText(el2.nextSibling.nextSibling, prevData[2], data[2]);
     }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -413,7 +413,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -435,7 +435,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   const callTemplate_4 = getTemplate(\`sub\`);
   
   class Block1 extends BNode {
@@ -446,20 +446,20 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
     build() {
       this.anchors[0] = this.el.firstChild;
     }
-    update() {
+    update(prevData, data) {
       const el1 = this.anchors[0].nextSibling.firstChild.nextSibling;
-      el1.textContent = toString(this.data[0]);
+      setText(el1, prevData[0], data[0]);
       const el2 = el1.nextSibling.nextSibling;
-      el2.textContent = toString(this.data[1]);
-      el2.nextSibling.nextSibling.textContent = toString(this.data[2]);
+      setText(el2, prevData[1], data[1]);
+      setText(el2.nextSibling.nextSibling, prevData[2], data[2]);
     }
   }
   
   class Block2 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -507,7 +507,7 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -559,13 +559,13 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -596,7 +596,7 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -610,8 +610,8 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
   class Block2 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -643,13 +643,13 @@ exports[`t-foreach t-key on an inside node 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<p><owl-text/></p>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   
@@ -678,7 +678,7 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -718,7 +718,7 @@ exports[`t-foreach warn if no key in some case 1`] = `
 "function anonymous(Blocks, utils
 ) {
   let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
-  let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
   
   class Block1 extends BNode {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -732,8 +732,8 @@ exports[`t-foreach warn if no key in some case 1`] = `
   class Block2 extends BNode {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
-    update() {
-      this.el.firstChild.textContent = toString(this.data[0]);
+    update(prevData, data) {
+      setText(this.el.firstChild, prevData[0], data[0]);
     }
   }
   

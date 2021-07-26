@@ -26,7 +26,7 @@ export class BNode extends Block {
   mountBefore(anchor: ChildNode) {
     this.el = (this.constructor as any).el.cloneNode(true);
     this.build();
-    this.update();
+    this.update([], this.data!);
     if (this.children) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
@@ -43,7 +43,7 @@ export class BNode extends Block {
     anchor.before(this.el!);
   }
 
-  update() {}
+  update(prevData: any[], newData: any[]) {}
 
   updateClass(elem: HTMLElement, _class: any) {
     switch (typeof _class) {
@@ -103,10 +103,11 @@ export class BNode extends Block {
   protected build() {}
 
   patch(newTree: BNode): void {
+    const prevData = this.data!;
     this.data = newTree.data;
     this.refs = newTree.refs;
     this.handlers = newTree.handlers;
-    this.update();
+    this.update(prevData, this.data!);
     if (this.children) {
       const anchors = this.anchors!;
       const children = this.children;

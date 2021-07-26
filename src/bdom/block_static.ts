@@ -26,8 +26,6 @@ export class BStatic extends Block {
     anchor.before(this.el!);
   }
 
-  update() {}
-
   patch() {}
 
   remove() {

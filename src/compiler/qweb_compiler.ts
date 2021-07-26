@@ -194,7 +194,7 @@ export class QWebCompiler {
       `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;`
     );
     this.addLine(
-      `let {elem, toString, withDefault, call, getTemplate, zero, callSlot, capture} = utils;`
+      `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;`
     );
 
     for (let { id, template } of this.staticCalls) {
@@ -284,7 +284,7 @@ export class QWebCompiler {
     }
     if (block.updateFn.length) {
       const updateInfo = block.updateFn;
-      this.addLine(`update() {`);
+      this.addLine(`update(prevData, data) {`);
       this.target.indentLevel++;
       if (updateInfo.length === 1) {
         const { path, inserter } = updateInfo[0];
@@ -544,7 +544,7 @@ export class QWebCompiler {
         block.dataNumber++;
         this.addLine(`${block.varName}.data[${idx}] = ${dynAttrs[key]};`);
         if (key === "class") {
-          block.insertUpdate((el) => `this.updateClass(${el}, this.data[${idx}]);`);
+          block.insertUpdate((el) => `this.updateClass(${el}, data[${idx}]);`);
         } else {
           if (key) {
             block.insertUpdate((el) => `this.updateAttr(${el}, \`${key}\`, this.data[${idx}]);`);
@@ -552,7 +552,7 @@ export class QWebCompiler {
               block.insertUpdate((el) => `this.updateProp(${el}, \`${key}\`, this.data[${idx}]);`);
             }
           } else {
-            block.insertUpdate((el) => `this.updateAttrs(${el}, this.data[${idx}]);`);
+            block.insertUpdate((el) => `this.updateAttrs(${el}, data[${idx}]);`);
           }
         }
       }
@@ -577,7 +577,7 @@ export class QWebCompiler {
         const index = block.dataNumber;
         block.dataNumber++;
         this.addLine(`${block.varName}.data[${index}] = \`${str}\`;`);
-        block.insertUpdate((el) => `this.refs[this.data[${index}]] = ${el};`);
+        block.insertUpdate((el) => `this.refs[data[${index}]] = ${el};`);
         block.removeFn.push(`delete this.refs[this.data[${index}]];`);
       } else {
         block.insertUpdate((el) => `this.refs[\`${ast.ref}\`] = ${el};`);
@@ -632,7 +632,7 @@ export class QWebCompiler {
       if (ast.expr === "0") {
         block.insertUpdate((el) => `${el}.textContent = this.data[${idx}];`);
       } else {
-        block.insertUpdate((el) => `${el}.textContent = toString(this.data[${idx}]);`);
+        block.insertUpdate((el) => `setText(${el}, prevData[${idx}], data[${idx}]);`);
       }
     }
   }

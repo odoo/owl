@@ -45,27 +45,22 @@ export class BNode extends Block {
 
   update(prevData: any[], newData: any[]) {}
 
-  updateClass(elem: HTMLElement, _class: any) {
-    switch (typeof _class) {
-      case "object":
-        for (let k in _class) {
-          if (_class[k]) {
-            const classStr = k.trim().split(/\s+/);
-            for (let i = 0; i < classStr.length; i++) {
-              elem.classList.add(classStr[i]);
-            }
-          }
-        }
-        break;
-      case "string":
-        if (_class) {
-          for (let cl of _class.trim().split(/\s+/)) {
-            elem.classList.add(cl);
-          }
-        }
-        break;
-      default:
-        elem.classList.add(_class);
+  updateClass(elem: HTMLElement, prevClass: any, _class: any) {
+    if (prevClass === _class) {
+      return;
+    }
+    prevClass = prevClass || {};
+    // remove classes
+    for (let c in prevClass) {
+      if (!(c in _class)) {
+        elem.classList.remove(c);
+      }
+    }
+    // add classes
+    for (let c in _class) {
+      if (!(c in prevClass)) {
+        elem.classList.add(c);
+      }
     }
   }
 

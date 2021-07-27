@@ -194,7 +194,7 @@ export class QWebCompiler {
       `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;`
     );
     this.addLine(
-      `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;`
+      `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;`
     );
 
     for (let { id, template } of this.staticCalls) {
@@ -542,9 +542,13 @@ export class QWebCompiler {
       for (let key in dynAttrs) {
         const idx = block.dataNumber;
         block.dataNumber++;
-        this.addLine(`${block.varName}.data[${idx}] = ${dynAttrs[key]};`);
+        let expr = dynAttrs[key];
         if (key === "class") {
-          block.insertUpdate((el) => `this.updateClass(${el}, data[${idx}]);`);
+          expr = `toClassObj(${expr})`;
+        }
+        this.addLine(`${block.varName}.data[${idx}] = ${expr};`);
+        if (key === "class") {
+          block.insertUpdate((el) => `this.updateClass(${el}, prevData[${idx}], data[${idx}]);`);
         } else {
           if (key) {
             block.insertUpdate((el) => `this.updateAttr(${el}, \`${key}\`, this.data[${idx}]);`);

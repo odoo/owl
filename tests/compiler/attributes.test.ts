@@ -233,6 +233,82 @@ describe("attributes", () => {
       '<div class="a b c"></div>'
     );
   });
+
+  test("changing an attribute with t-att-", () => {
+    // render input with initial value
+    const template = `<div t-att-value="v"/>`;
+    const bnode1 = renderToBdom(template, { v: "zucchini" });
+    const fixture = makeTestFixture();
+    bnode1.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div value="zucchini"></div>');
+
+    const bnode2 = renderToBdom(template, { v: "potato" });
+    bnode1.patch(bnode2);
+    expect(fixture.innerHTML).toBe('<div value="potato"></div>');
+
+    const bnode3 = renderToBdom(template, { v: "" });
+    bnode1.patch(bnode3);
+    // not sure about this. maybe we want to remove the attribute?
+    expect(fixture.innerHTML).toBe('<div value=""></div>');
+  });
+
+  test("changing a class with t-att-class", () => {
+    // render input with initial value
+    const template = `<div t-att-class="v"/>`;
+    const bnode1 = renderToBdom(template, { v: "zucchini" });
+    const fixture = makeTestFixture();
+    bnode1.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div class="zucchini"></div>');
+
+    const bnode2 = renderToBdom(template, { v: "potato" });
+    bnode1.patch(bnode2);
+    expect(fixture.innerHTML).toBe('<div class="potato"></div>');
+
+    const bnode3 = renderToBdom(template, { v: "" });
+    bnode1.patch(bnode3);
+    // not sure about this. maybe we want to remove the attribute?
+    expect(fixture.innerHTML).toBe('<div class=""></div>');
+  });
+
+  test.only("changing a class with t-att-class (preexisting class", () => {
+    // render input with initial value
+    const template = `<div class="hoy" t-att-class="v"/>`;
+    const bnode1 = renderToBdom(template, { v: "zucchini" });
+    const fixture = makeTestFixture();
+    bnode1.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div class="hoy zucchini"></div>');
+
+    const bnode2 = renderToBdom(template, { v: "potato" });
+    bnode1.patch(bnode2);
+    expect(fixture.innerHTML).toBe('<div class="hoy potato"></div>');
+
+    const bnode3 = renderToBdom(template, { v: "" });
+    bnode1.patch(bnode3);
+    // not sure about this. maybe we want to remove the attribute?
+    expect(fixture.innerHTML).toBe('<div class="hoy"></div>');
+  });
+
+  test("updating classes (with obj notation)", () => {
+    // render input with initial value
+    const template = `<div class="hoy" t-att-class="{'a b': condition}"/>`;
+    const bnode1 = renderToBdom(template, { condition: true });
+    const fixture = makeTestFixture();
+    bnode1.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
+
+    const bnode2 = renderToBdom(template, { condition: false });
+    bnode1.patch(bnode2);
+    expect(fixture.innerHTML).toBe('<div class="hoy"></div>');
+
+    const bnode3 = renderToBdom(template, { condition: true });
+    bnode1.patch(bnode3);
+    // not sure about this. maybe we want to remove the attribute?
+    expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
+  });
 });
 
 describe("special cases for some specific html attributes/properties", () => {

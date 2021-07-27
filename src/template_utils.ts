@@ -43,7 +43,7 @@ export function elem(html: string): HTMLElement | Text | Comment {
 }
 
 function setText(el: Text, prevValue: any, value: any) {
-  if (prevValue === value) { 
+  if (prevValue === value) {
     return;
   }
   let str: string;
@@ -58,14 +58,14 @@ function setText(el: Text, prevValue: any, value: any) {
       str = value ? "true" : "false";
       break;
     case "object":
-        str = value ? value.toString() : "";
-        break;
+      str = value ? value.toString() : "";
+      break;
     default:
       // most notably, undefined
       str = "";
       break;
   }
-    el.textContent = str;
+  el.textContent = str;
 }
 
 function withDefault(value: any, defaultValue: any): any {
@@ -104,6 +104,35 @@ function capture(ctx: any): any {
   return Object.create(result);
 }
 
+function toClassObj(expr: string | { [c: string]: any }) {
+  const result: { [c: string]: any } = {};
+  if (typeof expr === "string") {
+    // we transform here a list of classes into an object:
+    //  'hey you' becomes {hey: true, you: true}
+    const str = expr.trim();
+    if (!str) {
+      return {};
+    }
+    let words = str.split(/\s+/);
+    for (let i = 0; i < words.length; i++) {
+      result[words[i]] = true;
+    }
+    return result;
+  }
+  // this is already an object, but we may need to split keys:
+  // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
+  for (let key in expr) {
+    const value = expr[key];
+    if (value) {
+      const words = key.split(/\s+/);
+      for (let word of words) {
+        result[word] = value;
+      }
+    }
+  }
+  return result;
+}
+
 export const UTILS = {
   elem,
   setText,
@@ -111,4 +140,5 @@ export const UTILS = {
   zero: Symbol("zero"),
   callSlot,
   capture,
+  toClassObj,
 };

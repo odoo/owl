@@ -1,5 +1,71 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`attributes changing a class with t-att-class (preexisting class 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div class=\\"hoy\\"/>\`);
+    data = new Array(1);
+    update(prevData, data) {
+      this.updateClass(this.el, prevData[0], data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = toClassObj(ctx['v']);
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes changing a class with t-att-class 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update(prevData, data) {
+      this.updateClass(this.el, prevData[0], data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = toClassObj(ctx['v']);
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes changing an attribute with t-att- 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div/>\`);
+    data = new Array(1);
+    update(prevData, data) {
+      this.updateAttr(this.el, \`value\`, this.data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = ctx['v'];
+    return b1;
+  }
+}"
+`;
+
 exports[`attributes class and t-att-class should combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
@@ -732,6 +798,28 @@ exports[`attributes two dynamic attributes 1`] = `
     const b1 = new Block1();
     b1.data[0] = 'bar';
     b1.data[1] = 'foo';
+    return b1;
+  }
+}"
+`;
+
+exports[`attributes updating classes (with obj notation) 1`] = `
+"function anonymous(Blocks, utils
+) {
+  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  
+  class Block1 extends BNode {
+    static el = elem(\`<div class=\\"hoy\\"/>\`);
+    data = new Array(1);
+    update(prevData, data) {
+      this.updateClass(this.el, prevData[0], data[0]);
+    }
+  }
+  
+  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = toClassObj({'a b':ctx['condition']});
     return b1;
   }
 }"

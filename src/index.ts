@@ -18,7 +18,8 @@ export function useComponent(): Component {
 }
 
 export { status } from "./status";
-export { Portal, NoUpdate } from "./utility_components";
+export { Portal } from "./misc/portal";
+export { NoUpdate } from "./misc/no_update";
 export { xml } from "./tags";
 export { useState } from "./reactivity";
 export { useRef } from "./refs";

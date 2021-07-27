@@ -2,15 +2,15 @@ import {
   App,
   Component,
   mount,
-  onWillPatch,
-  onWillUnmount,
   onMounted,
   onPatched,
+  onWillPatch,
+  onWillUnmount,
   useState,
-} from "../src";
-import { xml } from "../src/tags";
-import { NoUpdate, Portal } from "../src/utility_components";
-import { makeTestFixture, nextTick, snapshotEverything } from "./helpers";
+} from "../../src";
+import { Portal } from "../../src/";
+import { xml } from "../../src/tags";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -27,43 +27,17 @@ beforeEach(() => {
   fixture = makeTestFixture();
 });
 
-describe("NoUpdate", () => {
-  test("prevent renderings from above ", async () => {
-    class Child extends Component {
-      static template = xml`<t t-esc="props.value"/>`;
-    }
-    class Test extends Component {
-      static template = xml`
-            <Child value="state.value"/>
-            <NoUpdate> 
-                <Child value="state.value"/>
-            </NoUpdate>`;
-
-      static components = { NoUpdate, Child };
-
-      state = useState({ value: 1 });
-    }
-
-    const component = await mount(Test, fixture);
-
-    expect(fixture.innerHTML).toBe("11");
-    component.state.value = 2;
-    await nextTick();
-    expect(fixture.innerHTML).toBe("21");
-  });
-});
-
 describe("Portal", () => {
   test("basic use of portal", async () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-        <div>
-          <span>1</span>
-          <Portal target="'#outside'">
-            <p>2</p>
-          </Portal>
-        </div>`;
+          <div>
+            <span>1</span>
+            <Portal target="'#outside'">
+              <p>2</p>
+            </Portal>
+          </div>`;
     }
 
     addOutsideDiv(fixture);
@@ -76,10 +50,10 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <span>1</span>
-          <Portal target="'#outside'" t-if="state.hasPortal">
-            <p>2</p>
-          </Portal>`;
+            <span>1</span>
+            <Portal target="'#outside'" t-if="state.hasPortal">
+              <p>2</p>
+            </Portal>`;
 
       state = useState({ hasPortal: false });
     }
@@ -108,10 +82,10 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
-            <span>1</span>
-            <Portal t-if="state.hasPortal" target="'#outside'">
-              <Child val="state.val"/>
-            </Portal>`;
+              <span>1</span>
+              <Portal t-if="state.hasPortal" target="'#outside'">
+                <Child val="state.val"/>
+              </Portal>`;
       state = useState({ hasPortal: false, val: 1 });
     }
 
@@ -141,13 +115,13 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <div id="local-target"></div>
-            <span>1</span>
-            <Portal target="'#local-target'">
-              <p>2</p>
-            </Portal>
-          </div>`;
+            <div>
+              <div id="local-target"></div>
+              <span>1</span>
+              <Portal target="'#local-target'">
+                <p>2</p>
+              </Portal>
+            </div>`;
     }
 
     const parent = await mount(Parent, fixture);
@@ -158,13 +132,13 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <span>1</span>
-            <Portal target="'#local-target'">
-              <p>2</p>
-            </Portal>
-            <div id="local-target"></div>
-          </div>`;
+            <div>
+              <span>1</span>
+              <Portal target="'#local-target'">
+                <p>2</p>
+              </Portal>
+              <div id="local-target"></div>
+            </div>`;
     }
 
     const parent = await mount(Parent, fixture);
@@ -177,11 +151,11 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <Portal target="'#does-not-exist'">
-              <div>2</div>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#does-not-exist'">
+                <div>2</div>
+              </Portal>
+            </div>`;
     }
 
     let error;
@@ -217,11 +191,11 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <Child val="state.val"/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <Child val="state.val"/>
+              </Portal>
+            </div>`;
       state = useState({ val: 1 });
     }
 
@@ -240,11 +214,11 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <t t-esc="'only text'"/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <t t-esc="'only text'"/>
+              </Portal>
+            </div>`;
     }
 
     addOutsideDiv(fixture);
@@ -256,11 +230,11 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <t t-if="false" t-esc="'ABC'"/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <t t-if="false" t-esc="'ABC'"/>
+              </Portal>
+            </div>`;
     }
 
     addOutsideDiv(fixture);
@@ -272,12 +246,12 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <div>1</div>
-              <p>2</p>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <div>1</div>
+                <p>2</p>
+              </Portal>
+            </div>`;
     }
     addOutsideDiv(fixture);
     await mount(Parent, fixture);
@@ -288,12 +262,12 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <span t-if="state.val" t-esc="state.val"/>
-              <div t-else=""/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <span t-if="state.val" t-esc="state.val"/>
+                <div t-else=""/>
+              </Portal>
+            </div>`;
       state = useState({ val: "ab" });
     }
 
@@ -311,11 +285,11 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <span t-if="state.val" t-esc="state.val"/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <span t-if="state.val" t-esc="state.val"/>
+              </Portal>
+            </div>`;
       state = useState({ val: "ab" });
     }
     const outside = addOutsideDiv(fixture);
@@ -344,11 +318,11 @@ describe("Portal", () => {
     class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
-          <div>
-            <Portal t-if="state.hasChild" target="'#outside'">
-              <Child val="state.val"/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal t-if="state.hasChild" target="'#outside'">
+                <Child val="state.val"/>
+              </Portal>
+            </div>`;
       state = useState({ hasChild: false, val: 1 });
       setup() {
         onMounted(() => steps.push("parent:mounted"));
@@ -681,16 +655,16 @@ describe("Portal", () => {
   test("portal's parent's env is not polluted", async () => {
     class Child extends Component {
       static template = xml`
-          <button>child</button>`;
+            <button>child</button>`;
     }
     class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <Child />
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <Child />
+              </Portal>
+            </div>`;
     }
     const env = {};
     const app = new App(Parent);
@@ -712,18 +686,18 @@ describe("Portal", () => {
     class Child extends Component {
       static components = { Portal, Child2 };
       static template = xml`
-          <Portal target="'#outside'">
-            <t t-slot="default"/>
-          </Portal>`;
+            <Portal target="'#outside'">
+              <t t-slot="default"/>
+            </Portal>`;
     }
     class Parent extends Component {
       static components = { Child, Child2 };
       static template = xml`
-          <div>
-            <Child>
-              <Child2 t-on-custom="_handled"/>
-            </Child>
-          </div>`;
+            <div>
+              <Child>
+                <Child2 t-on-custom="_handled"/>
+              </Child>
+            </div>`;
 
       _handled(ev: Event) {
         steps.push(ev.type as string);
@@ -742,16 +716,16 @@ describe("Portal: UI/UX", () => {
   test("focus is kept across re-renders", async () => {
     class Child extends Component {
       static template = xml`
-          <input id="target-me" t-att-placeholder="props.val"/>`;
+            <input id="target-me" t-att-placeholder="props.val"/>`;
     }
     class Parent extends Component {
       static components = { Portal, Child };
       static template = xml`
-          <div>
-            <Portal target="'#outside'">
-              <Child val="state.val"/>
-            </Portal>
-          </div>`;
+            <div>
+              <Portal target="'#outside'">
+                <Child val="state.val"/>
+              </Portal>
+            </div>`;
       state = useState({ val: "ab" });
     }
     addOutsideDiv(fixture);

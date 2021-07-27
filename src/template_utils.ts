@@ -104,31 +104,35 @@ function capture(ctx: any): any {
   return Object.create(result);
 }
 
-function toClassObj(expr: string | { [c: string]: any }) {
+function toClassObj(expr: string | number | { [c: string]: any }) {
   const result: { [c: string]: any } = {};
-  if (typeof expr === "string") {
-    // we transform here a list of classes into an object:
-    //  'hey you' becomes {hey: true, you: true}
-    const str = expr.trim();
-    if (!str) {
-      return {};
-    }
-    let words = str.split(/\s+/);
-    for (let i = 0; i < words.length; i++) {
-      result[words[i]] = true;
+
+  if (typeof expr === "object") {
+    // this is already an object but we may need to split keys:
+    // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
+    for (let key in expr) {
+      const value = expr[key];
+      if (value) {
+        const words = key.split(/\s+/);
+        for (let word of words) {
+          result[word] = value;
+        }
+      }
     }
     return result;
   }
-  // this is already an object, but we may need to split keys:
-  // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
-  for (let key in expr) {
-    const value = expr[key];
-    if (value) {
-      const words = key.split(/\s+/);
-      for (let word of words) {
-        result[word] = value;
-      }
-    }
+  if (typeof expr !== "string") {
+    expr = String(expr);
+  }
+  // we transform here a list of classes into an object:
+  //  'hey you' becomes {hey: true, you: true}
+  const str = expr.trim();
+  if (!str) {
+    return {};
+  }
+  let words = str.split(/\s+/);
+  for (let i = 0; i < words.length; i++) {
+    result[words[i]] = true;
   }
   return result;
 }

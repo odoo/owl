@@ -272,7 +272,7 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div class=""></div>');
   });
 
-  test.only("changing a class with t-att-class (preexisting class", () => {
+  test("changing a class with t-att-class (preexisting class", () => {
     // render input with initial value
     const template = `<div class="hoy" t-att-class="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });

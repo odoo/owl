@@ -71,8 +71,8 @@ exports[`refs refs are properly bound in slots 2`] = `
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BNode(\`Dialog\`, {}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'footer': slot3(ctx2)};
+    const b3 = b1.children[0] = node.getChild(\`Dialog\`, {}, key + \`__1\`, ctx);
+    b3.slots = {'footer': slot3(ctx2)};
     return b1;
   }
 }"

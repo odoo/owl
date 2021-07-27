@@ -29,8 +29,8 @@ exports[`Portal Portal composed with t-slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b2.node.slots = {'default': slot2(ctx)};
+    const b2 = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b2.slots = {'default': slot2(ctx)};
     return b2;
   }
 }"
@@ -52,7 +52,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   }
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BNode(\`Child2\`, {}, key + \`__3\`, ctx, node);
+    const b2 = node.getChild(\`Child2\`, {}, key + \`__3\`, ctx);
     b2.handlers = new Array(1);
     b2.handlers[0] = ['custom', (e) => ctx.__owl__.component['_handled'](e)];
     return b2;
@@ -61,8 +61,8 @@ exports[`Portal Portal composed with t-slot 3`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -94,8 +94,8 @@ exports[`Portal basic use of portal 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -134,7 +134,7 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
   }
   
   const slot2 = ctx => (node, key) => {
-    const b3 = new BNode(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx, node);
+    const b3 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
     return b3;
   }
   
@@ -142,8 +142,8 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['state'].hasPortal) {
-      const b4 = b1.children[1] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-      b4.node.slots = {'default': slot2(ctx)};
+      const b4 = b1.children[1] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+      b4.slots = {'default': slot2(ctx)};
     }
     return b1;
   }
@@ -173,8 +173,8 @@ exports[`Portal conditional use of Portal 1`] = `
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new Block1();
     if (ctx['state'].hasPortal) {
-      const b4 = b1.children[1] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-      b4.node.slots = {'default': slot2(ctx)};
+      const b4 = b1.children[1] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+      b4.slots = {'default': slot2(ctx)};
     }
     return b1;
   }
@@ -219,15 +219,15 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   }
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BNode(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx, node);
+    const b2 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
     return b2;
   }
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     if (ctx['state'].hasChild) {
-      const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-      b3.node.slots = {'default': slot2(ctx)};
+      const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+      b3.slots = {'default': slot2(ctx)};
     }
     return b1;
   }
@@ -268,8 +268,8 @@ exports[`Portal portal could have dynamically no content 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b4 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b4.node.slots = {'default': slot2(ctx)};
+    const b4 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b4.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -313,14 +313,14 @@ exports[`Portal portal with child and props 2`] = `
   }
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BNode(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx, node);
+    const b2 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
     return b2;
   }
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -366,8 +366,8 @@ exports[`Portal portal with dynamic body 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b5 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b5.node.slots = {'default': slot2(ctx)};
+    const b5 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b5.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -405,8 +405,8 @@ exports[`Portal portal with many children 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b5 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b5.node.slots = {'default': slot2(ctx)};
+    const b5 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b5.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -437,8 +437,8 @@ exports[`Portal portal with no content 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -466,8 +466,8 @@ exports[`Portal portal with only text as content 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -506,14 +506,14 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
   }
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BNode(\`Child\`, {}, key + \`__3\`, ctx, node);
+    const b2 = node.getChild(\`Child\`, {}, key + \`__3\`, ctx);
     return b2;
   }
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -545,8 +545,8 @@ exports[`Portal with target in template (after portal) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -578,8 +578,8 @@ exports[`Portal with target in template (before portal) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -623,14 +623,14 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   }
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BNode(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx, node);
+    const b2 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
     return b2;
   }
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b3 = b1.children[0] = new BNode(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"

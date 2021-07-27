@@ -29,7 +29,7 @@ exports[`basics basic use 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {p: 1}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -78,10 +78,10 @@ exports[`basics can select a sub widget  3`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['env'].flag) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     if (!ctx['env'].flag) {
-      b1.children[1] = new BNode(\`OtherChild\`, {}, key + \`__2\`, ctx, node);
+      b1.children[1] = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
     }
     return b1;
   }
@@ -131,10 +131,10 @@ exports[`basics can select a sub widget, part 2 3`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['state'].flag) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     if (!ctx['state'].flag) {
-      b1.children[1] = new BNode(\`OtherChild\`, {}, key + \`__2\`, ctx, node);
+      b1.children[1] = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
     }
     return b1;
   }
@@ -176,7 +176,7 @@ exports[`basics sub widget is interactive 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {p: 1}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -206,7 +206,7 @@ exports[`basics top level sub widget with a parent 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`ComponentC\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`ComponentC\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -229,7 +229,7 @@ exports[`basics top level sub widget with a parent 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`ComponentB\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`ComponentB\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"

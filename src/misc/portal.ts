@@ -1,7 +1,7 @@
 import { Block } from "../bdom";
 import { BText } from "../bdom/b_text";
 import { Component } from "../component";
-import type { OwlNode } from "../owl_node";
+import type { BNode } from "../b_node";
 import { xml } from "../tags";
 
 class BPortal extends BText {
@@ -48,7 +48,7 @@ class BPortal extends BText {
 export class Portal extends Component {
   static template = xml`<t t-slot="default"/>`;
 
-  constructor(props: any, env: any, node: OwlNode) {
+  constructor(props: any, env: any, node: BNode) {
     super(props, env, node);
     node._render = function (fiber: any) {
       // (this as any).realBdom = this.renderFn();

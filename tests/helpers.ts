@@ -87,7 +87,7 @@ export function compile(template: string): Template {
 }
 
 export function renderToBdom(template: string, context: any = {}): Block {
-  return compile(template)(context);
+  return compile(template)(context, {});
 }
 
 export function renderToString(template: string, context: any = {}): string {
@@ -100,7 +100,7 @@ export function renderToString(template: string, context: any = {}): string {
 export class TestContext extends TemplateSet {
   renderToString(name: string, context: any = {}): string {
     const renderFn = this.getTemplate(name);
-    const bdom = renderFn(context);
+    const bdom = renderFn(context, {});
     const fixture = makeTestFixture();
     bdom.mount(fixture);
     return fixture.innerHTML;

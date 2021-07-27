@@ -87,7 +87,7 @@ describe("t-esc", () => {
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    const bdom = context.getTemplate("main")({});
+    const bdom = context.getTemplate("main")({}, {});
     const fixture = makeTestFixture();
     bdom.mount(fixture);
     expect(fixture.querySelector("span")!.textContent).toBe("<p>escaped</p>");

@@ -105,8 +105,8 @@ exports[`misc complex template 1`] = `
       ctx[\`slot_index\`] = i1;
       ctx[\`slot_value\`] = k1[i1];
       let key1 = ctx['slot'].id;
-      const b5 = b4.children[i1] = new BNode(\`SlotButton\`, {slot: ctx['slot']}, key + \`__2__\${key1}\`, ctx, node);
-      b5.parentClass = \`slot_container\`;
+      const b5 = b4.children[i1] = node.getChild(\`SlotButton\`, {slot: ctx['slot']}, key + \`__2__\${key1}\`, ctx);
+      b5.parentClass = toClassObj(\`slot_container\`);
       b4.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
@@ -615,8 +615,8 @@ exports[`misc other complex template 1`] = `
       const b23 = b1.children[6] = new Block14();
     } else {
       const b24 = b1.children[7] = new Block15();
-      b24.children[0] = new BNode(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__7\`, ctx, node);
-      b24.children[1] = new BNode(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__8\`, ctx, node);
+      b24.children[0] = node.getChild(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__7\`, ctx);
+      b24.children[1] = node.getChild(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__8\`, ctx);
     }
     return b1;
   }

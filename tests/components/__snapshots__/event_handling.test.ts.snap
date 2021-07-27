@@ -26,7 +26,7 @@ exports[`event handling can set handler on sub component 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     b2.handlers = new Array(1);
     b2.handlers[0] = ['click', (e) => ctx.__owl__.component['inc'](e)];
     b1.children[1] = new BText(ctx['state'].value);
@@ -61,7 +61,7 @@ exports[`event handling handler receive the event as argument 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     b2.handlers = new Array(1);
     b2.handlers[0] = ['click', (e) => ctx.__owl__.component['inc'](e)];
     b1.children[1] = new BText(ctx['state'].value);

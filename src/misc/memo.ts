@@ -1,11 +1,11 @@
 import { Component } from "../component";
-import type { OwlNode } from "../owl_node";
+import type { BNode } from "../b_node";
 import { xml } from "../tags";
 
 export class Memo extends Component {
   static template = xml`<t t-slot="default"/>`;
 
-  constructor(props: any, env: any, node: OwlNode) {
+  constructor(props: any, env: any, node: BNode) {
     super(props, env, node);
     let bdom: any = null;
     let prevProps = props;

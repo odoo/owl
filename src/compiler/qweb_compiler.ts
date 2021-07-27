@@ -913,7 +913,7 @@ export class QWebCompiler {
     } else {
       expr = `\`${ast.name}\``;
     }
-    const blockArgs = `${expr}, ${propString}, key + \`${key}\`, ctx, node`;
+    const blockArgs = `${expr}, ${propString}, key + \`${key}\`, ctx`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -966,7 +966,7 @@ export class QWebCompiler {
     const addDispatch = (block: string) =>
       ast.isDynamic ? `new BDispatch(${expr}, ${block})` : block;
 
-    id = this.insertBlock(addDispatch(`new BNode(${blockArgs})`), {
+    id = this.insertBlock(addDispatch(`node.getChild(${blockArgs})`), {
       ...ctx,
       forceNewBlock: shouldForce,
     })!;
@@ -980,11 +980,11 @@ export class QWebCompiler {
 
     // class and style
     if (ast.props.class) {
-      this.addLine(`${id!}.parentClass = \`${ast.props.class}\`;`);
+      this.addLine(`${id!}.parentClass = toClassObj(\`${ast.props.class}\`);`);
     }
 
     if (hasSlot) {
-      this.addLine(`${id!}.node.slots = ${slotDef!};`);
+      this.addLine(`${id!}.slots = ${slotDef!};`);
     }
   }
 

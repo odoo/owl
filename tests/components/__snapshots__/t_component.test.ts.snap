@@ -52,7 +52,7 @@ exports[`t-component can switch between dynamic components without the need for 
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     let Comp2 = ctx['constructor'].components[ctx['state'].child];
-    b1.children[0] = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
+    b1.children[0] = new BDispatch(Comp2, node.getChild(Comp2, {}, key + \`__1\`, ctx));
     return b1;
   }
 }"
@@ -102,7 +102,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
     let key0;
     key0 = ctx['state'].child;
     let Comp2 = ctx['myComponent'];
-    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, node.getChild(Comp2, {}, key + \`__1\`, ctx));
     return b1;
   }
 }"
@@ -152,7 +152,7 @@ exports[`t-component can use dynamic components (the class) if given 3`] = `
     let key0;
     key0 = ctx['state'].child;
     let Comp2 = ctx['myComponent'];
-    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, node.getChild(Comp2, {}, key + \`__1\`, ctx));
     return b1;
   }
 }"
@@ -205,7 +205,7 @@ exports[`t-component modifying a sub widget 2`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     let Comp2 = ctx['Counter'];
-    b1.children[0] = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
+    b1.children[0] = new BDispatch(Comp2, node.getChild(Comp2, {}, key + \`__1\`, ctx));
     return b1;
   }
 }"
@@ -249,7 +249,7 @@ exports[`t-component switching dynamic component 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let Comp2 = ctx['Child'];
-    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, node.getChild(Comp2, {}, key + \`__1\`, ctx));
     return b1;
   }
 }"
@@ -280,7 +280,7 @@ exports[`t-component t-component works in simple case 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let Comp2 = ctx['Child'];
-    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, node.getChild(Comp2, {}, key + \`__1\`, ctx));
     return b1;
   }
 }"

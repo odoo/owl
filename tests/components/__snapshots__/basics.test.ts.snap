@@ -48,7 +48,7 @@ exports[`basics a class component inside a class component, no external dom 2`] 
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -105,7 +105,7 @@ exports[`basics a component inside a component 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -179,7 +179,7 @@ exports[`basics can handle empty props 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {val: undefined}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {val: undefined}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -310,7 +310,7 @@ exports[`basics child can be updated 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {value: ctx['state'].counter}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {value: ctx['state'].counter}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -367,7 +367,7 @@ exports[`basics class parent, class child component with props 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {value: 42}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {value: 42}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -494,9 +494,9 @@ exports[`basics higher order components parent and child 3`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['props'].child==='a') {
-      b1.children[0] = new BNode(\`ChildA\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`ChildA\`, {}, key + \`__1\`, ctx);
     } else {
-      b1.children[1] = new BNode(\`ChildB\`, {}, key + \`__2\`, ctx, node);
+      b1.children[1] = node.getChild(\`ChildB\`, {}, key + \`__2\`, ctx);
     }
     return b1;
   }
@@ -510,7 +510,7 @@ exports[`basics higher order components parent and child 4`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -540,7 +540,7 @@ exports[`basics parent, child and grandchild 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -553,7 +553,7 @@ exports[`basics parent, child and grandchild 3`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -612,9 +612,9 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
   return function template(ctx, node, key = \\"\\") {
     let key0;
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     key0 = 4;
-    b1.children[1] = new BNode(\`Child\`, {}, key + \`__2\`, ctx, node);
+    b1.children[1] = node.getChild(\`Child\`, {}, key + \`__2\`, ctx);
     return b1;
   }
 }"
@@ -663,9 +663,9 @@ exports[`basics same t-keys in two different places 2`] = `
     let key0;
     const b1 = new Block1();
     key0 = 1;
-    b1.children[0] = new BNode(\`Child\`, {blip: '1'}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {blip: '1'}, key + \`__1\`, ctx);
     key0 = 1;
-    b1.children[1] = new BNode(\`Child\`, {blip: '2'}, key + \`__2\`, ctx, node);
+    b1.children[1] = node.getChild(\`Child\`, {blip: '2'}, key + \`__2\`, ctx);
     return b1;
   }
 }"
@@ -774,7 +774,7 @@ exports[`basics t-elif works with t-component 2`] = `
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else if (!ctx['state'].flag) {
-      b1.children[1] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[1] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -823,7 +823,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else {
-      b1.children[1] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[1] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -872,7 +872,7 @@ exports[`basics t-else works with t-component 2`] = `
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else {
-      b1.children[1] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[1] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -914,7 +914,7 @@ exports[`basics t-if works with t-component 2`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     if (ctx['state'].flag) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -959,9 +959,9 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
     const b1 = new Block1();
     if (false) {
       key0 = 'str';
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
-    b1.children[1] = new BNode(\`Child\`, {}, key + \`__2\`, ctx, node);
+    b1.children[1] = node.getChild(\`Child\`, {}, key + \`__2\`, ctx);
     return b1;
   }
 }"
@@ -991,7 +991,7 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -1004,7 +1004,7 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -1052,8 +1052,8 @@ exports[`basics two child components 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
-    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.children[1] = new BNode(\`Child\`, {}, key + \`__2\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.children[1] = node.getChild(\`Child\`, {}, key + \`__2\`, ctx);
     return b1;
   }
 }"
@@ -1133,7 +1133,7 @@ exports[`basics widget after a t-foreach 2`] = `
       b2.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
-    b1.children[1] = new BNode(\`SomeComponent\`, {}, key + \`__2\`, ctx, node);
+    b1.children[1] = node.getChild(\`SomeComponent\`, {}, key + \`__2\`, ctx);
     return b1;
   }
 }"
@@ -1165,7 +1165,7 @@ exports[`basics zero or one child components 2`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }

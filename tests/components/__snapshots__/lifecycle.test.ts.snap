@@ -43,7 +43,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].ok) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -91,7 +91,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
     const b1 = new BMulti(1);
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block1();
-      b2.children[0] = new BNode(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, ctx, node);
+      b2.children[0] = node.getChild(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -132,7 +132,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -172,7 +172,7 @@ exports[`lifecycle hooks lifecycle semantics 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -202,7 +202,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -217,7 +217,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -248,7 +248,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -263,7 +263,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 3`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -294,7 +294,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -309,7 +309,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -342,7 +342,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -373,7 +373,7 @@ exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -430,7 +430,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -470,7 +470,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`ChildChild\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`ChildChild\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -494,7 +494,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     if (ctx['state'].flag) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     return b1;
   }
@@ -536,7 +536,7 @@ exports[`lifecycle hooks onRender 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -576,7 +576,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -638,7 +638,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`ChildChild\`, {n: ctx['props'].n}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`ChildChild\`, {n: ctx['props'].n}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -661,7 +661,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -691,7 +691,7 @@ exports[`lifecycle hooks willStart hook is called on sub component 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -771,7 +771,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     if (ctx['state'].ok) {
-      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     } else {
       const b2 = b1.children[1] = new Block2();
     }
@@ -809,7 +809,7 @@ exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, ctx, node);
+    const b1 = node.getChild(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, ctx);
     return b1;
   }
 }"

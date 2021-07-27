@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 
 import type { Component } from "./component";
-import { getCurrent } from "./owl_node";
+import { getCurrent } from "./b_node";
 
 /**
  * The purpose of this hook is to allow components to get a reference to a sub

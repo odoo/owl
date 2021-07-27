@@ -1,8 +1,8 @@
 import type { Block } from "./bdom";
 import { STATUS } from "./status";
-import { OwlNode } from "./owl_node";
+import { BNode } from "./b_node";
 
-export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
+export function makeChildFiber(node: BNode, parent: Fiber): Fiber {
   let current = node.fiber;
   if (current) {
     // current is necessarily a rootfiber here
@@ -17,7 +17,7 @@ export function makeChildFiber(node: OwlNode, parent: Fiber): Fiber {
   return new Fiber(node, parent);
 }
 
-export function makeRootFiber(node: OwlNode): Fiber {
+export function makeRootFiber(node: BNode): Fiber {
   let current = node.fiber;
   if (current) {
     let root = current.root;
@@ -55,14 +55,14 @@ function cancelFibers(root: any, fibers: Fiber[]): number {
 }
 
 export class Fiber {
-  node: OwlNode;
+  node: BNode;
   bdom: Block | null = null;
   root: RootFiber;
   parent: Fiber | null;
   children: Fiber[] = [];
   appliedToDom = false;
 
-  constructor(node: OwlNode, parent: Fiber | null) {
+  constructor(node: BNode, parent: Fiber | null) {
     this.node = node;
     node.fiber = this;
     this.parent = parent;
@@ -89,7 +89,7 @@ export class RootFiber extends Fiber {
   patched: Fiber[] = [];
   mounted: Fiber[] = [];
 
-  constructor(node: OwlNode) {
+  constructor(node: BNode) {
     super(node, null);
     this.counter = 1;
 
@@ -154,12 +154,12 @@ export class RootFiber extends Fiber {
   }
 }
 
-export let __internal__destroyed: OwlNode[] = [];
+export let __internal__destroyed: BNode[] = [];
 
 export class MountFiber extends RootFiber {
   target: HTMLElement;
 
-  constructor(node: OwlNode, target: HTMLElement) {
+  constructor(node: BNode, target: HTMLElement) {
     super(node);
     this.target = target;
     if (node.mounted.length) {

@@ -155,7 +155,7 @@ describe("t-on", () => {
     owner.__owl__ = { component: owner };
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
-    const bdom = render(owner);
+    const bdom = render(owner, {});
     bdom.mount(fixture);
     fixture.querySelector("button")!.click();
   });
@@ -179,7 +179,7 @@ describe("t-on", () => {
     owner.__owl__ = { component: owner };
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
-    const bdom = render(owner);
+    const bdom = render(owner, {});
     bdom.mount(fixture);
     fixture.querySelector("button")!.click();
   });
@@ -258,7 +258,7 @@ describe("t-on", () => {
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
-    const bdom = render(owner);
+    const bdom = render(owner, {});
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();
   });
@@ -282,7 +282,7 @@ describe("t-on", () => {
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
-    const bdom = render(owner);
+    const bdom = render(owner, {});
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();
   });

@@ -1,6 +1,6 @@
 import { App } from "./app";
 import { Component } from "./component";
-import { getCurrent } from "./owl_node";
+import { getCurrent } from "./b_node";
 
 export { App, Component };
 

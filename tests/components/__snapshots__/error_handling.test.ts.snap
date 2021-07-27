@@ -39,7 +39,7 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`ErrorComponent\`, {flag: ctx['state'].flag}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`ErrorComponent\`, {flag: ctx['state'].flag}, key + \`__1\`, ctx);
     return b1;
   }
 }"

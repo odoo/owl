@@ -1,13 +1,13 @@
-import type { OwlNode } from "./owl_node";
+import type { BNode } from "./b_node";
 
 export class Component {
   static template: string = "";
 
   props: any;
   env: any;
-  __owl__: OwlNode;
+  __owl__: BNode;
 
-  constructor(props: any, env: any, node: OwlNode) {
+  constructor(props: any, env: any, node: BNode) {
     this.props = props;
     this.env = env;
     this.__owl__ = node;

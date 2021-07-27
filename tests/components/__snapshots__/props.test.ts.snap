@@ -39,7 +39,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -84,7 +84,7 @@ exports[`basics explicit object prop 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BNode(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -142,7 +142,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
     const b1 = new Block1();
     const b2 = new Block2();
     ctx[\`abc\`] = b2;
-    b1.children[0] = new BNode(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -189,7 +189,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`abc\`] = \`42\`;
-    b1.children[0] = new BNode(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -236,7 +236,7 @@ exports[`basics t-set works  2`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`val\`] = 42;
-    b1.children[0] = new BNode(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx, node);
+    b1.children[0] = node.getChild(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx);
     return b1;
   }
 }"

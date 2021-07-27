@@ -30,8 +30,8 @@ exports[`style and class handling can set class on multi root component 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`fromparent\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`fromparent\`);
     return b1;
   }
 }"
@@ -61,8 +61,8 @@ exports[`style and class handling can set class on sub component 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`some-class\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`some-class\`);
     return b1;
   }
 }"
@@ -92,8 +92,8 @@ exports[`style and class handling can set class on sub sub component 2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`ChildChild\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`fromchild\`;
+    const b1 = node.getChild(\`ChildChild\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`fromchild\`);
     return b1;
   }
 }"
@@ -106,8 +106,8 @@ exports[`style and class handling can set class on sub sub component 3`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`fromparent\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`fromparent\`);
     return b1;
   }
 }"
@@ -137,8 +137,8 @@ exports[`style and class handling can set more than one class on sub component 2
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`a  b\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`a  b\`);
     return b1;
   }
 }"
@@ -195,8 +195,8 @@ exports[`style and class handling class is properly added on widget root el 2`] 
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b2.parentClass = \`a b\`;
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b2.parentClass = toClassObj(\`a b\`);
     return b1;
   }
 }"
@@ -245,9 +245,9 @@ exports[`style and class handling class on sub component, which is switched to a
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['props'].child==='a') {
-      b1.children[0] = new BNode(\`ChildA\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = node.getChild(\`ChildA\`, {}, key + \`__1\`, ctx);
     } else {
-      b1.children[1] = new BNode(\`ChildB\`, {}, key + \`__2\`, ctx, node);
+      b1.children[1] = node.getChild(\`ChildB\`, {}, key + \`__2\`, ctx);
     }
     return b1;
   }
@@ -261,8 +261,8 @@ exports[`style and class handling class on sub component, which is switched to a
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`someclass\`;
+    const b1 = node.getChild(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`someclass\`);
     return b1;
   }
 }"
@@ -292,8 +292,8 @@ exports[`style and class handling component class and parent class combine toget
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`from parent\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`from parent\`);
     return b1;
   }
 }"
@@ -333,7 +333,7 @@ exports[`style and class handling empty class attribute is not added on widget r
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b2 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -359,8 +359,8 @@ exports[`style and class handling nothing happens if sub component is just some 
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`some-class\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`some-class\`);
     return b1;
   }
 }"
@@ -386,8 +386,8 @@ exports[`style and class handling setting a class on a child component with text
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.parentClass = \`some-class\`;
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`some-class\`);
     return b1;
   }
 }"

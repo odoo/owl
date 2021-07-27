@@ -32,8 +32,8 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
     b1.children[0] = new BText(ctx['state'].a);
     b1.children[1] = new BText(ctx['state'].b);
     b1.children[2] = new BText(ctx['state'].c);
-    const b3 = b1.children[3] = new BNode(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[3] = node.getChild(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"
@@ -59,15 +59,15 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   const slot3 = ctx => (node, key) => {
-    const b2 = new BNode(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, ctx, node);
+    const b2 = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, ctx);
     return b2;
   }
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
-    b1.children[0] = new BNode(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx, node);
-    const b3 = b1.children[1] = new BNode(\`Memo\`, {}, key + \`__2\`, ctx, node);
-    b3.node.slots = {'default': slot3(ctx)};
+    b1.children[0] = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx);
+    const b3 = b1.children[1] = node.getChild(\`Memo\`, {}, key + \`__2\`, ctx);
+    b3.slots = {'default': slot3(ctx)};
     return b1;
   }
 }"
@@ -87,8 +87,8 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
   return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(ctx['state'].value);
-    const b3 = b1.children[1] = new BNode(\`Memo\`, {}, key + \`__1\`, ctx, node);
-    b3.node.slots = {'default': slot2(ctx)};
+    const b3 = b1.children[1] = node.getChild(\`Memo\`, {}, key + \`__1\`, ctx);
+    b3.slots = {'default': slot2(ctx)};
     return b1;
   }
 }"

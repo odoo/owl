@@ -3,7 +3,6 @@ import { compileTemplate, Template } from "./compiler/index";
 import { globalTemplates } from "./tags";
 import { BNode } from "./b_node";
 import type { Component } from "./component";
-import { OwlNode } from "./owl_node";
 import { Scheduler } from "./scheduler";
 import { UTILS } from "./template_utils";
 import { BDispatch } from "./bdom/b_dispatch";
@@ -62,7 +61,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   props: any;
   env: any = {};
   scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
-  root: OwlNode | null = null;
+  root: BNode | null = null;
   dev: boolean = true;
 
   constructor(Root: T, props?: any) {
@@ -89,9 +88,12 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     if (!document.body.contains(target)) {
       throw new Error("Cannot mount a component on a detached dom node");
     }
-    const node = new OwlNode(this, this.Root, this.props);
+    const node = new BNode(this.Root, this.props, this);
     this.root = node;
-    return node.mount(target);
+    return node.mountComponent(target);
+
+    // const node = new OwlNode(this, this.Root, this.props);
+    // return node.mount(target);
   }
 
   destroy() {

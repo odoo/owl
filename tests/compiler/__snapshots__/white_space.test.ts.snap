@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`white space handling consecutives whitespaces are condensed into a single space 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div> abc </div>\`);
@@ -18,10 +18,10 @@ exports[`white space handling consecutives whitespaces are condensed into a sing
 `;
 
 exports[`white space handling nothing is done in pre tags 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<pre>   </pre>\`);
@@ -35,10 +35,10 @@ exports[`white space handling nothing is done in pre tags 1`] = `
 `;
 
 exports[`white space handling nothing is done in pre tags 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<pre>
@@ -54,10 +54,10 @@ exports[`white space handling nothing is done in pre tags 2`] = `
 `;
 
 exports[`white space handling nothing is done in pre tags 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<pre>
@@ -73,10 +73,10 @@ exports[`white space handling nothing is done in pre tags 3`] = `
 `;
 
 exports[`white space handling white space only text nodes are condensed into a single space 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div> </div>\`);
@@ -90,10 +90,10 @@ exports[`white space handling white space only text nodes are condensed into a s
 `;
 
 exports[`white space handling whitespace only text nodes with newlines are removed 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div><span>abc</span></div>\`);

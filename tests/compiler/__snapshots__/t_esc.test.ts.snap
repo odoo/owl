@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-esc div with falsy values 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><p><owl-text/></p><p><owl-text/></p><p><owl-text/></p><p><owl-text/></p><p><owl-text/></p></div>\`);
@@ -35,10 +35,10 @@ exports[`t-esc div with falsy values 1`] = `
 `;
 
 exports[`t-esc escaping 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -57,10 +57,10 @@ exports[`t-esc escaping 1`] = `
 `;
 
 exports[`t-esc escaping on a node 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -79,10 +79,10 @@ exports[`t-esc escaping on a node 1`] = `
 `;
 
 exports[`t-esc escaping on a node with a body 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -101,10 +101,10 @@ exports[`t-esc escaping on a node with a body 1`] = `
 `;
 
 exports[`t-esc escaping on a node with a body, as a default 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -123,10 +123,10 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
 `;
 
 exports[`t-esc literal 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -145,10 +145,10 @@ exports[`t-esc literal 1`] = `
 `;
 
 exports[`t-esc t-esc is escaped 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -174,10 +174,10 @@ exports[`t-esc t-esc is escaped 1`] = `
 `;
 
 exports[`t-esc t-esc work with spread operator 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -196,10 +196,10 @@ exports[`t-esc t-esc work with spread operator 1`] = `
 `;
 
 exports[`t-esc t-esc=0 is escaped 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -218,10 +218,10 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
 `;
 
 exports[`t-esc t-esc=0 is escaped 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   class Block1 extends BElem {
@@ -249,10 +249,10 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
 `;
 
 exports[`t-esc variable 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);

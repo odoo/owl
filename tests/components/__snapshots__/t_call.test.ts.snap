@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-call dynamic t-call 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -18,10 +18,10 @@ exports[`t-call dynamic t-call 1`] = `
 `;
 
 exports[`t-call dynamic t-call 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>foo</div>\`);
@@ -35,10 +35,10 @@ exports[`t-call dynamic t-call 2`] = `
 `;
 
 exports[`t-call dynamic t-call 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`bar\`);
@@ -48,10 +48,10 @@ exports[`t-call dynamic t-call 3`] = `
 `;
 
 exports[`t-call handlers are properly bound through a t-call 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p>lucas</p>\`);
@@ -71,10 +71,10 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 `;
 
 exports[`t-call handlers are properly bound through a t-call 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
   class Block1 extends BElem {
@@ -100,10 +100,10 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
 `;
 
 exports[`t-call handlers with arguments are properly bound through a t-call 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p>lucas</p>\`);
@@ -124,10 +124,10 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
 `;
 
 exports[`t-call handlers with arguments are properly bound through a t-call 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
   class Block1 extends BElem {
@@ -148,10 +148,10 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
 `;
 
 exports[`t-call parent is set within t-call 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
@@ -161,10 +161,10 @@ exports[`t-call parent is set within t-call 1`] = `
 `;
 
 exports[`t-call parent is set within t-call 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<span>lucas</span>\`);
@@ -178,10 +178,10 @@ exports[`t-call parent is set within t-call 2`] = `
 `;
 
 exports[`t-call parent is set within t-call 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
   class Block1 extends BElem {
@@ -202,10 +202,10 @@ exports[`t-call parent is set within t-call 3`] = `
 `;
 
 exports[`t-call parent is set within t-call with no parentNode 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
@@ -215,10 +215,10 @@ exports[`t-call parent is set within t-call with no parentNode 1`] = `
 `;
 
 exports[`t-call parent is set within t-call with no parentNode 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<span>lucas</span>\`);
@@ -232,10 +232,10 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
 `;
 
 exports[`t-call parent is set within t-call with no parentNode 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -246,10 +246,10 @@ exports[`t-call parent is set within t-call with no parentNode 3`] = `
 `;
 
 exports[`t-call sub components in two t-calls 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -268,10 +268,10 @@ exports[`t-call sub components in two t-calls 1`] = `
 `;
 
 exports[`t-call sub components in two t-calls 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   const callTemplate_4 = getTemplate(\`sub\`);
   
@@ -298,10 +298,10 @@ exports[`t-call sub components in two t-calls 2`] = `
 `;
 
 exports[`t-call sub components in two t-calls 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BNode(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, ctx, node);
@@ -311,10 +311,10 @@ exports[`t-call sub components in two t-calls 3`] = `
 `;
 
 exports[`t-call t-call in t-foreach and children component 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BNode(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx, node);
@@ -324,10 +324,10 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
 `;
 
 exports[`t-call t-call in t-foreach and children component 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -346,10 +346,10 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
 `;
 
 exports[`t-call t-call in t-foreach and children component 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   const callTemplate_3 = getTemplate(\`__template__9\`);
   
   class Block1 extends BElem {

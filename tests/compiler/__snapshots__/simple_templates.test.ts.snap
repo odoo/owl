@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`simple templates, mostly static can render a table row 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<tr><td>cell</td></tr>\`);
@@ -18,10 +18,10 @@ exports[`simple templates, mostly static can render a table row 1`] = `
 `;
 
 exports[`simple templates, mostly static div with a class attribute 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div class=\\"abc\\">foo</div>\`);
@@ -35,10 +35,10 @@ exports[`simple templates, mostly static div with a class attribute 1`] = `
 `;
 
 exports[`simple templates, mostly static div with a class attribute with a quote 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div class=\\"a'bc\\">word</div>\`);
@@ -52,10 +52,10 @@ exports[`simple templates, mostly static div with a class attribute with a quote
 `;
 
 exports[`simple templates, mostly static div with a span child node 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div><span>word</span></div>\`);
@@ -69,10 +69,10 @@ exports[`simple templates, mostly static div with a span child node 1`] = `
 `;
 
 exports[`simple templates, mostly static div with an arbitrary attribute with a quote 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div abc=\\"a'bc\\">word</div>\`);
@@ -86,10 +86,10 @@ exports[`simple templates, mostly static div with an arbitrary attribute with a 
 `;
 
 exports[`simple templates, mostly static div with an empty class attribute 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>word</div>\`);
@@ -103,10 +103,10 @@ exports[`simple templates, mostly static div with an empty class attribute 1`] =
 `;
 
 exports[`simple templates, mostly static div with content 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>foo</div>\`);
@@ -120,10 +120,10 @@ exports[`simple templates, mostly static div with content 1`] = `
 `;
 
 exports[`simple templates, mostly static dom node with t-esc 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -142,10 +142,10 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
 `;
 
 exports[`simple templates, mostly static dom node with t-esc 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -164,10 +164,10 @@ exports[`simple templates, mostly static dom node with t-esc 2`] = `
 `;
 
 exports[`simple templates, mostly static dynamic text value 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(ctx['text']);
@@ -177,10 +177,10 @@ exports[`simple templates, mostly static dynamic text value 1`] = `
 `;
 
 exports[`simple templates, mostly static empty div 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div/>\`);
@@ -194,10 +194,10 @@ exports[`simple templates, mostly static empty div 1`] = `
 `;
 
 exports[`simple templates, mostly static empty string 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`\`);
@@ -207,10 +207,10 @@ exports[`simple templates, mostly static empty string 1`] = `
 `;
 
 exports[`simple templates, mostly static empty string in a template set 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`\`);
@@ -220,10 +220,10 @@ exports[`simple templates, mostly static empty string in a template set 1`] = `
 `;
 
 exports[`simple templates, mostly static multiple root nodes 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>foo</div>\`);
@@ -243,10 +243,10 @@ exports[`simple templates, mostly static multiple root nodes 1`] = `
 `;
 
 exports[`simple templates, mostly static simple string 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`hello vdom\`);
@@ -256,10 +256,10 @@ exports[`simple templates, mostly static simple string 1`] = `
 `;
 
 exports[`simple templates, mostly static simple string in t tag 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BText(\`hello vdom\`);
@@ -269,10 +269,10 @@ exports[`simple templates, mostly static simple string in t tag 1`] = `
 `;
 
 exports[`simple templates, mostly static static text and dynamic text (no t tag) 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
@@ -284,10 +284,10 @@ exports[`simple templates, mostly static static text and dynamic text (no t tag)
 `;
 
 exports[`simple templates, mostly static static text and dynamic text 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
@@ -299,10 +299,10 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
 `;
 
 exports[`simple templates, mostly static t-esc in dom node 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -321,10 +321,10 @@ exports[`simple templates, mostly static t-esc in dom node 1`] = `
 `;
 
 exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div>hello <owl-text/></div>\`);
@@ -343,10 +343,10 @@ exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
 `;
 
 exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div>hello <owl-text/> world</div>\`);
@@ -365,10 +365,10 @@ exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
 `;
 
 exports[`simple templates, mostly static two t-escs next to each other 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
@@ -380,10 +380,10 @@ exports[`simple templates, mostly static two t-escs next to each other 1`] = `
 `;
 
 exports[`simple templates, mostly static two t-escs next to each other 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
@@ -395,10 +395,10 @@ exports[`simple templates, mostly static two t-escs next to each other 2`] = `
 `;
 
 exports[`simple templates, mostly static two t-escs next to each other, in a div 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/><owl-text/></div>\`);

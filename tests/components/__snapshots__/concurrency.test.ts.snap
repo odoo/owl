@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`async rendering destroying a widget before start is over 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div/>\`);
@@ -18,10 +18,10 @@ exports[`async rendering destroying a widget before start is over 1`] = `
 `;
 
 exports[`change state and call manually render: no unnecessary rendering 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -40,10 +40,10 @@ exports[`change state and call manually render: no unnecessary rendering 1`] = `
 `;
 
 exports[`changing state before first render does not trigger a render (with parent) 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -62,10 +62,10 @@ exports[`changing state before first render does not trigger a render (with pare
 `;
 
 exports[`changing state before first render does not trigger a render (with parent) 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -87,10 +87,10 @@ exports[`changing state before first render does not trigger a render (with pare
 `;
 
 exports[`changing state before first render does not trigger a render 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -109,10 +109,10 @@ exports[`changing state before first render does not trigger a render 1`] = `
 `;
 
 exports[`concurrent renderings scenario 1 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-text/></span>\`);
@@ -134,10 +134,10 @@ exports[`concurrent renderings scenario 1 1`] = `
 `;
 
 exports[`concurrent renderings scenario 1 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -157,10 +157,10 @@ exports[`concurrent renderings scenario 1 2`] = `
 `;
 
 exports[`concurrent renderings scenario 1 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -180,10 +180,10 @@ exports[`concurrent renderings scenario 1 3`] = `
 `;
 
 exports[`concurrent renderings scenario 2 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-text/></span>\`);
@@ -205,10 +205,10 @@ exports[`concurrent renderings scenario 2 1`] = `
 `;
 
 exports[`concurrent renderings scenario 2 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -228,10 +228,10 @@ exports[`concurrent renderings scenario 2 2`] = `
 `;
 
 exports[`concurrent renderings scenario 2 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/><owl-anchor/></div>\`);
@@ -256,10 +256,10 @@ exports[`concurrent renderings scenario 2 3`] = `
 `;
 
 exports[`concurrent renderings scenario 2bis 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-text/></span>\`);
@@ -281,10 +281,10 @@ exports[`concurrent renderings scenario 2bis 1`] = `
 `;
 
 exports[`concurrent renderings scenario 2bis 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -304,10 +304,10 @@ exports[`concurrent renderings scenario 2bis 2`] = `
 `;
 
 exports[`concurrent renderings scenario 2bis 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -327,10 +327,10 @@ exports[`concurrent renderings scenario 2bis 3`] = `
 `;
 
 exports[`concurrent renderings scenario 3 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<i><owl-text/><owl-text/></i>\`);
@@ -352,10 +352,10 @@ exports[`concurrent renderings scenario 3 1`] = `
 `;
 
 exports[`concurrent renderings scenario 3 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
@@ -375,10 +375,10 @@ exports[`concurrent renderings scenario 3 2`] = `
 `;
 
 exports[`concurrent renderings scenario 3 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -398,10 +398,10 @@ exports[`concurrent renderings scenario 3 3`] = `
 `;
 
 exports[`concurrent renderings scenario 3 4`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -421,10 +421,10 @@ exports[`concurrent renderings scenario 3 4`] = `
 `;
 
 exports[`concurrent renderings scenario 4 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<i><owl-text/><owl-text/></i>\`);
@@ -446,10 +446,10 @@ exports[`concurrent renderings scenario 4 1`] = `
 `;
 
 exports[`concurrent renderings scenario 4 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
@@ -469,10 +469,10 @@ exports[`concurrent renderings scenario 4 2`] = `
 `;
 
 exports[`concurrent renderings scenario 4 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -492,10 +492,10 @@ exports[`concurrent renderings scenario 4 3`] = `
 `;
 
 exports[`concurrent renderings scenario 4 4`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -515,10 +515,10 @@ exports[`concurrent renderings scenario 4 4`] = `
 `;
 
 exports[`concurrent renderings scenario 5 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-text/></p>\`);
@@ -537,10 +537,10 @@ exports[`concurrent renderings scenario 5 1`] = `
 `;
 
 exports[`concurrent renderings scenario 5 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -560,10 +560,10 @@ exports[`concurrent renderings scenario 5 2`] = `
 `;
 
 exports[`concurrent renderings scenario 6 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-text/></p>\`);
@@ -582,10 +582,10 @@ exports[`concurrent renderings scenario 6 1`] = `
 `;
 
 exports[`concurrent renderings scenario 6 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -605,10 +605,10 @@ exports[`concurrent renderings scenario 6 2`] = `
 `;
 
 exports[`concurrent renderings scenario 7 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-text/><owl-text/></p>\`);
@@ -630,10 +630,10 @@ exports[`concurrent renderings scenario 7 1`] = `
 `;
 
 exports[`concurrent renderings scenario 7 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -653,10 +653,10 @@ exports[`concurrent renderings scenario 7 2`] = `
 `;
 
 exports[`concurrent renderings scenario 8 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-text/><owl-text/></p>\`);
@@ -678,10 +678,10 @@ exports[`concurrent renderings scenario 8 1`] = `
 `;
 
 exports[`concurrent renderings scenario 8 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -701,10 +701,10 @@ exports[`concurrent renderings scenario 8 2`] = `
 `;
 
 exports[`concurrent renderings scenario 9 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-text/></span>\`);
@@ -726,10 +726,10 @@ exports[`concurrent renderings scenario 9 1`] = `
 `;
 
 exports[`concurrent renderings scenario 9 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -749,10 +749,10 @@ exports[`concurrent renderings scenario 9 2`] = `
 `;
 
 exports[`concurrent renderings scenario 9 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<b><owl-text/></b>\`);
@@ -771,10 +771,10 @@ exports[`concurrent renderings scenario 9 3`] = `
 `;
 
 exports[`concurrent renderings scenario 9 4`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/><owl-anchor/><owl-anchor/></div>\`);
@@ -801,10 +801,10 @@ exports[`concurrent renderings scenario 9 4`] = `
 `;
 
 exports[`concurrent renderings scenario 10 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -823,10 +823,10 @@ exports[`concurrent renderings scenario 10 1`] = `
 `;
 
 exports[`concurrent renderings scenario 10 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -848,10 +848,10 @@ exports[`concurrent renderings scenario 10 2`] = `
 `;
 
 exports[`concurrent renderings scenario 10 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -871,10 +871,10 @@ exports[`concurrent renderings scenario 10 3`] = `
 `;
 
 exports[`concurrent renderings scenario 11 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/>|<owl-text/></span>\`);
@@ -896,10 +896,10 @@ exports[`concurrent renderings scenario 11 1`] = `
 `;
 
 exports[`concurrent renderings scenario 11 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -919,10 +919,10 @@ exports[`concurrent renderings scenario 11 2`] = `
 `;
 
 exports[`concurrent renderings scenario 12 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -941,10 +941,10 @@ exports[`concurrent renderings scenario 12 1`] = `
 `;
 
 exports[`concurrent renderings scenario 12 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -964,10 +964,10 @@ exports[`concurrent renderings scenario 12 2`] = `
 `;
 
 exports[`concurrent renderings scenario 13 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -986,10 +986,10 @@ exports[`concurrent renderings scenario 13 1`] = `
 `;
 
 exports[`concurrent renderings scenario 13 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
@@ -1013,10 +1013,10 @@ exports[`concurrent renderings scenario 13 2`] = `
 `;
 
 exports[`concurrent renderings scenario 14 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><span><owl-text/></span><span><owl-text/></span><span><owl-text/></span></p>\`);
@@ -1041,10 +1041,10 @@ exports[`concurrent renderings scenario 14 1`] = `
 `;
 
 exports[`concurrent renderings scenario 14 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -1064,10 +1064,10 @@ exports[`concurrent renderings scenario 14 2`] = `
 `;
 
 exports[`concurrent renderings scenario 14 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -1087,10 +1087,10 @@ exports[`concurrent renderings scenario 14 3`] = `
 `;
 
 exports[`concurrent renderings scenario 15 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><span><owl-text/></span><span><owl-text/></span><span><owl-text/></span></p>\`);
@@ -1115,10 +1115,10 @@ exports[`concurrent renderings scenario 15 1`] = `
 `;
 
 exports[`concurrent renderings scenario 15 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -1138,10 +1138,10 @@ exports[`concurrent renderings scenario 15 2`] = `
 `;
 
 exports[`concurrent renderings scenario 15 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -1161,10 +1161,10 @@ exports[`concurrent renderings scenario 15 3`] = `
 `;
 
 exports[`concurrent renderings scenario 16 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<ul>DDD</ul>\`);
@@ -1178,10 +1178,10 @@ exports[`concurrent renderings scenario 16 1`] = `
 `;
 
 exports[`concurrent renderings scenario 16 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><span><owl-text/></span><span><owl-text/></span><span><owl-text/></span><owl-anchor/></p>\`);
@@ -1214,10 +1214,10 @@ exports[`concurrent renderings scenario 16 2`] = `
 `;
 
 exports[`concurrent renderings scenario 16 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -1237,10 +1237,10 @@ exports[`concurrent renderings scenario 16 3`] = `
 `;
 
 exports[`concurrent renderings scenario 16 4`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
@@ -1260,10 +1260,10 @@ exports[`concurrent renderings scenario 16 4`] = `
 `;
 
 exports[`creating two async components, scenario 1 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -1282,10 +1282,10 @@ exports[`creating two async components, scenario 1 1`] = `
 `;
 
 exports[`creating two async components, scenario 1 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<span>b</span>\`);
@@ -1299,10 +1299,10 @@ exports[`creating two async components, scenario 1 2`] = `
 `;
 
 exports[`creating two async components, scenario 1 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
@@ -1318,10 +1318,10 @@ exports[`creating two async components, scenario 1 3`] = `
 `;
 
 exports[`creating two async components, scenario 2 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span>a<owl-text/></span>\`);
@@ -1340,10 +1340,10 @@ exports[`creating two async components, scenario 2 1`] = `
 `;
 
 exports[`creating two async components, scenario 2 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span>b<owl-text/></span>\`);
@@ -1362,10 +1362,10 @@ exports[`creating two async components, scenario 2 2`] = `
 `;
 
 exports[`creating two async components, scenario 2 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
@@ -1389,10 +1389,10 @@ exports[`creating two async components, scenario 2 3`] = `
 `;
 
 exports[`creating two async components, scenario 3 (patching in the same frame) 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span>a<owl-text/></span>\`);
@@ -1411,10 +1411,10 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 `;
 
 exports[`creating two async components, scenario 3 (patching in the same frame) 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span>b<owl-text/></span>\`);
@@ -1433,10 +1433,10 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 `;
 
 exports[`creating two async components, scenario 3 (patching in the same frame) 3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
@@ -1460,10 +1460,10 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 `;
 
 exports[`destroying/recreating a subwidget with different props (if start is not over) 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span>child:<owl-text/></span>\`);
@@ -1482,10 +1482,10 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 `;
 
 exports[`destroying/recreating a subwidget with different props (if start is not over) 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1507,10 +1507,10 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 `;
 
 exports[`properly behave when destroyed/unmounted while rendering  1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div/>\`);
@@ -1524,10 +1524,10 @@ exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 `;
 
 exports[`properly behave when destroyed/unmounted while rendering  2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1547,10 +1547,10 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
 `;
 
 exports[`properly behave when destroyed/unmounted while rendering  3`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1572,10 +1572,10 @@ exports[`properly behave when destroyed/unmounted while rendering  3`] = `
 `;
 
 exports[`render method wait until rendering is done 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
@@ -1594,10 +1594,10 @@ exports[`render method wait until rendering is done 1`] = `
 `;
 
 exports[`rendering component again in next microtick 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BStatic {
     static el = elem(\`<div>Child</div>\`);
@@ -1611,10 +1611,10 @@ exports[`rendering component again in next microtick 1`] = `
 `;
 
 exports[`rendering component again in next microtick 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><button>Click</button><owl-anchor/></div>\`);
@@ -1641,10 +1641,10 @@ exports[`rendering component again in next microtick 2`] = `
 `;
 
 exports[`two renderings initiated between willPatch and patched 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<abc><owl-text/></abc>\`);
@@ -1663,10 +1663,10 @@ exports[`two renderings initiated between willPatch and patched 1`] = `
 `;
 
 exports[`two renderings initiated between willPatch and patched 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1690,10 +1690,10 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
 `;
 
 exports[`update a sub-component twice in the same frame 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -1712,10 +1712,10 @@ exports[`update a sub-component twice in the same frame 1`] = `
 `;
 
 exports[`update a sub-component twice in the same frame 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
@@ -1735,10 +1735,10 @@ exports[`update a sub-component twice in the same frame 2`] = `
 `;
 
 exports[`update a sub-component twice in the same frame, 2 1`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
@@ -1757,10 +1757,10 @@ exports[`update a sub-component twice in the same frame, 2 1`] = `
 `;
 
 exports[`update a sub-component twice in the same frame, 2 2`] = `
-"function anonymous(Blocks, utils
+"function anonymous(Blocks, helpers
 ) {
-  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);

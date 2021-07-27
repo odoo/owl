@@ -133,7 +133,7 @@ export class QWebCompiler {
     this.compileAST(ast, { block: null, index: 0, forceNewBlock: false });
     const code = this.generateCode();
     // console.warn(code);
-    return new Function("Blocks, utils", code) as TemplateFunction;
+    return new Function("Blocks, helpers", code) as TemplateFunction;
   }
 
   addLine(line: string) {
@@ -191,10 +191,10 @@ export class QWebCompiler {
     this.target.indentLevel = 0;
     // define blocks and utility functions
     this.addLine(
-      `let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;`
+      `let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;`
     );
     this.addLine(
-      `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;`
+      `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;`
     );
 
     for (let { id, template } of this.staticCalls) {

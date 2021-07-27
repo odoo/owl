@@ -3,10 +3,10 @@
 exports[`t-ref can get a dynamic ref on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><span/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -32,10 +32,10 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><span/></div>\`);
     update(prevData, data) {
       this.refs[\`myspan\`] = this.el.firstChild;
@@ -58,11 +58,11 @@ exports[`t-ref can get a ref on a node 1`] = `
 exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -82,10 +82,10 @@ exports[`t-ref ref in a t-call 1`] = `
 exports[`t-ref ref in a t-call 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div>1<span/>2</div>\`);
     update(prevData, data) {
       this.refs[\`name\`] = this.el.firstChild.nextSibling;
@@ -108,10 +108,10 @@ exports[`t-ref ref in a t-call 2`] = `
 exports[`t-ref ref in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -120,7 +120,7 @@ exports[`t-ref ref in a t-if 1`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<span/>\`);
     update(prevData, data) {
       this.refs[\`name\`] = this.el;
@@ -146,10 +146,10 @@ exports[`t-ref ref in a t-if 1`] = `
 exports[`t-ref refs in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -158,7 +158,7 @@ exports[`t-ref refs in a loop 1`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(2);
     update(prevData, data) {
@@ -201,10 +201,10 @@ exports[`t-ref refs in a loop 1`] = `
 exports[`t-ref two refs, one in a t-if 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><p/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -220,7 +220,7 @@ exports[`t-ref two refs, one in a t-if 1`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<span/>\`);
     update(prevData, data) {
       this.refs[\`name\`] = this.el;

@@ -3,10 +3,10 @@
 exports[`t-raw literal 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -26,7 +26,7 @@ exports[`t-raw literal 1`] = `
 exports[`t-raw literal, no outside html element 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -40,10 +40,10 @@ exports[`t-raw literal, no outside html element 1`] = `
 exports[`t-raw multiple calls to t-raw 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><div>Greeter</div><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -65,11 +65,11 @@ exports[`t-raw multiple calls to t-raw 1`] = `
 exports[`t-raw multiple calls to t-raw 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -96,10 +96,10 @@ exports[`t-raw multiple calls to t-raw 2`] = `
 exports[`t-raw not escaping 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -119,10 +119,10 @@ exports[`t-raw not escaping 1`] = `
 exports[`t-raw t-raw and another sibling node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><span>hello</span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -142,10 +142,10 @@ exports[`t-raw t-raw and another sibling node 1`] = `
 exports[`t-raw t-raw on a node with a body, as a default 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -166,10 +166,10 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
 exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -194,7 +194,7 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
 exports[`t-raw t-raw with a <t/> in body 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -208,10 +208,10 @@ exports[`t-raw t-raw with a <t/> in body 1`] = `
 exports[`t-raw t-raw with comment 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -231,7 +231,7 @@ exports[`t-raw t-raw with comment 1`] = `
 exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -245,10 +245,10 @@ exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
 exports[`t-raw variable 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);

@@ -1,5 +1,5 @@
 import { Block } from "../bdom";
-import { BText } from "../bdom/block_text";
+import { BText } from "../bdom/b_text";
 import { Component } from "../component";
 import type { OwlNode } from "../owl_node";
 import { xml } from "../tags";

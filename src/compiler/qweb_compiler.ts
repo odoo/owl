@@ -48,7 +48,7 @@ class BlockDescription {
   dom?: Dom;
   currentDom?: DomNode;
   childNumber: number = 0;
-  baseClass: string = "BNode";
+  baseClass: string = "BElem";
 
   constructor(varName: string, blockName: string) {
     this.varName = varName;
@@ -191,7 +191,7 @@ export class QWebCompiler {
     this.target.indentLevel = 0;
     // define blocks and utility functions
     this.addLine(
-      `let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;`
+      `let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;`
     );
     this.addLine(
       `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;`
@@ -975,7 +975,7 @@ export class QWebCompiler {
       const cblock = { varName: id, handlerNumber: 0 } as BlockDescription;
       this.generateHandlerCode(cblock, ast.handlers);
     } else {
-      id = this.insertBlock(addDispatch(`new BComponent(${blockArgs})`), {
+      id = this.insertBlock(addDispatch(`new BNode(${blockArgs})`), {
         ...ctx,
         forceNewBlock: shouldForce,
       })!;

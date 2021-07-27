@@ -8,7 +8,7 @@ import { STATUS } from "./status";
 //  Component Block
 // -----------------------------------------------------------------------------
 
-export class BComponent extends Block {
+export class BNode extends Block {
   node: OwlNode;
   parentClass?: any = null;
   classTarget?: HTMLElement;
@@ -147,7 +147,7 @@ function visitRemovedNodes(node: OwlNode) {
   }
 }
 
-export class BComponentH extends BComponent {
+export class BComponentH extends BNode {
   handlers: any[];
   constructor(handlers: number, name: string, props: any, key: string, owner: any, parent: any) {
     super(name, props, key, owner, parent);

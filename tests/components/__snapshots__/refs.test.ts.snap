@@ -3,10 +3,10 @@
 exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -26,10 +26,10 @@ exports[`refs refs are properly bound in slots 1`] = `
 exports[`refs refs are properly bound in slots 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -42,7 +42,7 @@ exports[`refs refs are properly bound in slots 2`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<button>do something</button>\`);
     handlers = new Array(1);
     build() {
@@ -71,7 +71,7 @@ exports[`refs refs are properly bound in slots 2`] = `
     const b1 = new Block1();
     b1.data[0] = ctx['state'].val;
     const ctx2 = capture(ctx);
-    const b3 = b1.children[0] = new BComponent(\`Dialog\`, {}, key + \`__1\`, ctx, node);
+    const b3 = b1.children[0] = new BNode(\`Dialog\`, {}, key + \`__1\`, ctx, node);
     b3.node.slots = {'footer': slot3(ctx2)};
     return b1;
   }

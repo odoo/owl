@@ -4,10 +4,10 @@ import { Block } from "./block";
 //  Content Block
 // -----------------------------------------------------------------------------
 
-export class BNode extends Block {
+export class BElem extends Block {
   static el: ChildNode;
   // el?: HTMLElement | Text;
-  children: (BNode | null)[] | null = null;
+  children: (BElem | null)[] | null = null;
   anchors?: ChildNode[] | null = null;
   data?: any[] | null = null;
   handlers?: any[] | null = null;
@@ -97,7 +97,7 @@ export class BNode extends Block {
 
   protected build() {}
 
-  patch(newTree: BNode): void {
+  patch(newTree: BElem): void {
     const prevData = this.data!;
     this.data = newTree.data;
     this.refs = newTree.refs;

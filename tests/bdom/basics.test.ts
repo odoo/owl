@@ -1,9 +1,9 @@
 import { Blocks } from "../../src/bdom";
-import { BText } from "../../src/bdom/block_text";
+import { BText } from "../../src/bdom/b_text";
 import { elem } from "../../src/template_utils";
 import { makeTestFixture, renderToBdom } from "../helpers";
 
-const { BNode, BMulti } = Blocks;
+const { BElem, BMulti } = Blocks;
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ function el(html: string): HTMLElement {
 
 describe("mount", () => {
   test("simple block", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div>foo</div>");
     }
 
@@ -39,7 +39,7 @@ describe("mount", () => {
   });
 
   test("simple block with string", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("foo");
     }
 
@@ -60,10 +60,10 @@ describe("mount", () => {
   });
 
   test("simple block with multiple roots", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div>foo</div>");
     }
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<span>bar</span>");
     }
 
@@ -76,10 +76,10 @@ describe("mount", () => {
   });
 
   test("a multiblock can be removed and leaves no extra text nodes", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div>foo</div>");
     }
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<span>bar</span>");
     }
 
@@ -95,7 +95,7 @@ describe("mount", () => {
   });
 
   test("multiblock with an empty children", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div>foo</div>");
     }
 
@@ -129,7 +129,7 @@ describe("mount", () => {
   });
 
   test("block with dynamic content", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><p></p></div>");
       data = new Array(1);
       update() {
@@ -144,7 +144,7 @@ describe("mount", () => {
   });
 
   test("block with subblock", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><span></span><owl-anchor></owl-anchor></div>");
       children = new Array(1);
       anchors = new Array(1);
@@ -157,7 +157,7 @@ describe("mount", () => {
       }
     }
 
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<p>yip yip</p>");
     }
 
@@ -170,7 +170,7 @@ describe("mount", () => {
   });
 
   test("block with subblock with siblings", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><p>1</p><owl-anchor></owl-anchor><p>2</p></div>");
       children = new Array(1);
       anchors = new Array(1);
@@ -179,7 +179,7 @@ describe("mount", () => {
       }
     }
 
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<p>yip yip</p>");
     }
 
@@ -191,7 +191,7 @@ describe("mount", () => {
   });
 
   test("multi block in a regular block", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el(`<div><owl-anchor></owl-anchor></div>`);
       children = new Array(1);
       anchors = new Array(1);
@@ -200,7 +200,7 @@ describe("mount", () => {
       }
     }
 
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el(`<span>yip yip</span>`);
     }
 
@@ -215,7 +215,7 @@ describe("mount", () => {
 
 describe("update", () => {
   test("block with dynamic content", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><p></p></div>");
       data = new Array(1);
       update() {
@@ -235,7 +235,7 @@ describe("update", () => {
   });
 
   test("block with conditional child", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><p><owl-anchor></owl-anchor></p></div>");
       children = new Array(1);
       anchors = new Array(1);
@@ -243,7 +243,7 @@ describe("update", () => {
         this.anchors[0] = (this.el as any).firstChild!.firstChild!;
       }
     }
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<span>foo</span>");
     }
 
@@ -262,7 +262,7 @@ describe("update", () => {
   });
 
   test("block with subblock with dynamic content", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><owl-anchor></owl-anchor></div>");
       children = new Array(1);
       anchors = new Array(1);
@@ -271,7 +271,7 @@ describe("update", () => {
       }
     }
 
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<p></p>");
       data = new Array(1);
       update() {
@@ -295,7 +295,7 @@ describe("update", () => {
   });
 
   test("block with dynamic content and subblock", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el("<div><owl-anchor></owl-anchor><p></p></div>");
       children = new Array(1);
       data = new Array(1);
@@ -309,7 +309,7 @@ describe("update", () => {
       }
     }
 
-    class Block2 extends BNode {
+    class Block2 extends BElem {
       static el = el("<p>sub block</p>");
     }
 
@@ -329,7 +329,7 @@ describe("update", () => {
   });
 
   test("multi block", async () => {
-    class Block1 extends BNode {
+    class Block1 extends BElem {
       static el = el(`ok`);
     }
 

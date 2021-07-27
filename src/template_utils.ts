@@ -1,5 +1,5 @@
 import { Block, Blocks } from "./bdom";
-import { BDispatch } from "./bdom/block_dispatch";
+import { BDispatch } from "./bdom/b_dispatch";
 
 const { BMulti } = Blocks;
 

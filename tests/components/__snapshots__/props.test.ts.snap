@@ -3,10 +3,10 @@
 exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -25,10 +25,10 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -39,7 +39,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -48,10 +48,10 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 exports[`basics explicit object prop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -70,10 +70,10 @@ exports[`basics explicit object prop 1`] = `
 exports[`basics explicit object prop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -84,7 +84,7 @@ exports[`basics explicit object prop 2`] = `
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -93,10 +93,10 @@ exports[`basics explicit object prop 2`] = `
 exports[`basics t-set with a body expression can be passed in props, and then t-raw 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -121,10 +121,10 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 exports[`basics t-set with a body expression can be passed in props, and then t-raw 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -142,7 +142,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
     const b1 = new Block1();
     const b2 = new Block2();
     ctx[\`abc\`] = b2;
-    b1.children[0] = new BComponent(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -151,10 +151,10 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -173,10 +173,10 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -189,7 +189,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`abc\`] = \`42\`;
-    b1.children[0] = new BComponent(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -198,10 +198,10 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 exports[`basics t-set works  1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -220,10 +220,10 @@ exports[`basics t-set works  1`] = `
 exports[`basics t-set works  2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -236,7 +236,7 @@ exports[`basics t-set works  2`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`val\`] = 42;
-    b1.children[0] = new BComponent(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"

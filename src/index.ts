@@ -19,7 +19,6 @@ export function useComponent(): Component {
 
 export { status } from "./status";
 export { Portal } from "./misc/portal";
-export { NoUpdate } from "./misc/no_update";
 export { Memo } from "./misc/memo";
 export { xml } from "./tags";
 export { useState } from "./reactivity";

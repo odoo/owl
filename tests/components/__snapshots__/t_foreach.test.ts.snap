@@ -3,10 +3,10 @@
 exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -25,10 +25,10 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><ul><owl-anchor/></ul></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -37,7 +37,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<li><owl-anchor/></li>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -60,7 +60,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
       let key1 = i1;
       key1 = 'li_'+ctx['item'];
       const b3 = b2.children[i1] = new Block2();
-      b3.children[0] = new BComponent(\`Child\`, {item: ctx['item']}, key + \`__2__\${key1}\`, ctx, node);
+      b3.children[0] = new BNode(\`Child\`, {item: ctx['item']}, key + \`__2__\${key1}\`, ctx, node);
       b2.keys[i1] = key1;
     }
     return b1;
@@ -71,10 +71,10 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -93,10 +93,10 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -127,7 +127,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
         ctx[\`blip_index\`] = i2;
         ctx[\`blip_value\`] = k2[i2];
         let key2 = ctx['blip_index'];
-        b3.children[i2] = new BComponent(\`Child\`, {blip: ctx['blip']}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
+        b3.children[i2] = new BNode(\`Child\`, {blip: ctx['blip']}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
         b3.keys[i2] = key2;
       }
       ctx = ctx.__proto__;
@@ -141,10 +141,10 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -163,10 +163,10 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -175,7 +175,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -184,7 +184,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     }
   }
   
-  class Block3 extends BNode {
+  class Block3 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -217,7 +217,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
         ctx[\`col_value\`] = k2[i2];
         let key2 = ctx['col'];
         const b5 = b4.children[i2] = new Block3();
-        b5.children[0] = new BComponent(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
+        b5.children[0] = new BNode(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__3__\${key1}__\${key2}\`, ctx, node);
         b4.keys[i2] = key2;
       }
       ctx = ctx.__proto__;
@@ -231,10 +231,10 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components simple list 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -253,7 +253,7 @@ exports[`list of components simple list 1`] = `
 exports[`list of components simple list 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -267,7 +267,7 @@ exports[`list of components simple list 2`] = `
       ctx[\`elem_index\`] = i1;
       ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'].id;
-      b1.children[i1] = new BComponent(\`Child\`, {value: ctx['elem'].value}, key + \`__2__\${key1}\`, ctx, node);
+      b1.children[i1] = new BNode(\`Child\`, {value: ctx['elem'].value}, key + \`__2__\${key1}\`, ctx, node);
       b1.keys[i1] = key1;
     }
     return b1;
@@ -278,10 +278,10 @@ exports[`list of components simple list 2`] = `
 exports[`list of components sub components rendered in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<p><owl-text/></p>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -300,10 +300,10 @@ exports[`list of components sub components rendered in a loop 1`] = `
 exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -325,7 +325,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
       ctx[\`number_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['number'];
-      b2.children[i1] = new BComponent(\`Child\`, {n: ctx['number']}, key + \`__2__\${key1}\`, ctx, node);
+      b2.children[i1] = new BNode(\`Child\`, {n: ctx['number']}, key + \`__2__\${key1}\`, ctx, node);
       b2.keys[i1] = key1;
     }
     return b1;
@@ -336,10 +336,10 @@ exports[`list of components sub components rendered in a loop 2`] = `
 exports[`list of components sub components with some state rendered in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<p><owl-text/></p>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -358,10 +358,10 @@ exports[`list of components sub components with some state rendered in a loop 1`
 exports[`list of components sub components with some state rendered in a loop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -383,7 +383,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
       ctx[\`number_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['number'];
-      b2.children[i1] = new BComponent(\`Child\`, {}, key + \`__2__\${key1}\`, ctx, node);
+      b2.children[i1] = new BNode(\`Child\`, {}, key + \`__2__\${key1}\`, ctx, node);
       b2.keys[i1] = key1;
     }
     return b1;

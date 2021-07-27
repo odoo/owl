@@ -3,7 +3,7 @@
 exports[`t-component can switch between dynamic components without the need for a t-key 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -20,7 +20,7 @@ exports[`t-component can switch between dynamic components without the need for 
 exports[`t-component can switch between dynamic components without the need for a t-key 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -37,10 +37,10 @@ exports[`t-component can switch between dynamic components without the need for 
 exports[`t-component can switch between dynamic components without the need for a t-key 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -52,7 +52,7 @@ exports[`t-component can switch between dynamic components without the need for 
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     let Comp2 = ctx['constructor'].components[ctx['state'].child];
-    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, key + \`__1\`, ctx, node));
+    b1.children[0] = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -61,7 +61,7 @@ exports[`t-component can switch between dynamic components without the need for 
 exports[`t-component can use dynamic components (the class) if given (with different root tagname) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -78,7 +78,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
 exports[`t-component can use dynamic components (the class) if given (with different root tagname) 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -95,14 +95,14 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
 exports[`t-component can use dynamic components (the class) if given (with different root tagname) 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     let key0;
     key0 = ctx['state'].child;
     let Comp2 = ctx['myComponent'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -111,7 +111,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
 exports[`t-component can use dynamic components (the class) if given 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -128,7 +128,7 @@ exports[`t-component can use dynamic components (the class) if given 1`] = `
 exports[`t-component can use dynamic components (the class) if given 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -145,14 +145,14 @@ exports[`t-component can use dynamic components (the class) if given 2`] = `
 exports[`t-component can use dynamic components (the class) if given 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     let key0;
     key0 = ctx['state'].child;
     let Comp2 = ctx['myComponent'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -161,10 +161,10 @@ exports[`t-component can use dynamic components (the class) if given 3`] = `
 exports[`t-component modifying a sub widget 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/><button>Inc</button></div>\`);
     data = new Array(1);
     handlers = new Array(1);
@@ -190,10 +190,10 @@ exports[`t-component modifying a sub widget 1`] = `
 exports[`t-component modifying a sub widget 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -205,7 +205,7 @@ exports[`t-component modifying a sub widget 2`] = `
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     let Comp2 = ctx['Counter'];
-    b1.children[0] = new BDispatch(Comp2, new BComponent(Comp2, {}, key + \`__1\`, ctx, node));
+    b1.children[0] = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -214,7 +214,7 @@ exports[`t-component modifying a sub widget 2`] = `
 exports[`t-component switching dynamic component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -231,7 +231,7 @@ exports[`t-component switching dynamic component 1`] = `
 exports[`t-component switching dynamic component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -244,12 +244,12 @@ exports[`t-component switching dynamic component 2`] = `
 exports[`t-component switching dynamic component 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     let Comp2 = ctx['Child'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
     return b1;
   }
 }"
@@ -258,7 +258,7 @@ exports[`t-component switching dynamic component 3`] = `
 exports[`t-component t-component works in simple case 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -275,12 +275,12 @@ exports[`t-component t-component works in simple case 1`] = `
 exports[`t-component t-component works in simple case 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     let Comp2 = ctx['Child'];
-    const b1 = new BDispatch(Comp2, new BComponent(Comp2, {}, key + \`__1\`, ctx, node));
+    const b1 = new BDispatch(Comp2, new BNode(Comp2, {}, key + \`__1\`, ctx, node));
     return b1;
   }
 }"

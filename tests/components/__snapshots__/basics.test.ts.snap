@@ -3,7 +3,7 @@
 exports[`basics Multi root component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -27,7 +27,7 @@ exports[`basics Multi root component 1`] = `
 exports[`basics a class component inside a class component, no external dom 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -44,11 +44,11 @@ exports[`basics a class component inside a class component, no external dom 1`] 
 exports[`basics a class component inside a class component, no external dom 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -57,7 +57,7 @@ exports[`basics a class component inside a class component, no external dom 2`] 
 exports[`basics a component cannot be mounted in a detached node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -74,7 +74,7 @@ exports[`basics a component cannot be mounted in a detached node 1`] = `
 exports[`basics a component inside a component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -91,10 +91,10 @@ exports[`basics a component inside a component 1`] = `
 exports[`basics a component inside a component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -105,7 +105,7 @@ exports[`basics a component inside a component 2`] = `
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -114,10 +114,10 @@ exports[`basics a component inside a component 2`] = `
 exports[`basics can be clicked on and updated 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/><button>Inc</button></div>\`);
     data = new Array(1);
     handlers = new Array(1);
@@ -143,10 +143,10 @@ exports[`basics can be clicked on and updated 1`] = `
 exports[`basics can handle empty props 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -165,10 +165,10 @@ exports[`basics can handle empty props 1`] = `
 exports[`basics can handle empty props 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -179,7 +179,7 @@ exports[`basics can handle empty props 2`] = `
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {val: undefined}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {val: undefined}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -188,7 +188,7 @@ exports[`basics can handle empty props 2`] = `
 exports[`basics can mount a component with just some text 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -201,7 +201,7 @@ exports[`basics can mount a component with just some text 1`] = `
 exports[`basics can mount a component with no text 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -214,7 +214,7 @@ exports[`basics can mount a component with no text 1`] = `
 exports[`basics can mount a simple component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -231,7 +231,7 @@ exports[`basics can mount a simple component 1`] = `
 exports[`basics can mount a simple component with multiple roots 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -254,10 +254,10 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
 exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -276,7 +276,7 @@ exports[`basics can mount a simple component with props 1`] = `
 exports[`basics cannot mount on a documentFragment 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -293,7 +293,7 @@ exports[`basics cannot mount on a documentFragment 1`] = `
 exports[`basics child can be updated 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -306,11 +306,11 @@ exports[`basics child can be updated 1`] = `
 exports[`basics child can be updated 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`Child\`, {value: ctx['state'].counter}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`Child\`, {value: ctx['state'].counter}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -319,10 +319,10 @@ exports[`basics child can be updated 2`] = `
 exports[`basics class component with dynamic text 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span>My value: <owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -341,10 +341,10 @@ exports[`basics class component with dynamic text 1`] = `
 exports[`basics class parent, class child component with props 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -363,11 +363,11 @@ exports[`basics class parent, class child component with props 1`] = `
 exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`Child\`, {value: 42}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`Child\`, {value: 42}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -376,10 +376,10 @@ exports[`basics class parent, class child component with props 2`] = `
 exports[`basics component with dynamic content can be updated 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -398,7 +398,7 @@ exports[`basics component with dynamic content can be updated 1`] = `
 exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -415,10 +415,10 @@ exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 exports[`basics do not remove previously rendered dom if not necessary, variation 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><h1>h1</h1><span><owl-text/></span></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -437,7 +437,7 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
 exports[`basics has no el after creation 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -454,7 +454,7 @@ exports[`basics has no el after creation 1`] = `
 exports[`basics higher order components parent and child 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -471,7 +471,7 @@ exports[`basics higher order components parent and child 1`] = `
 exports[`basics higher order components parent and child 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -488,15 +488,15 @@ exports[`basics higher order components parent and child 2`] = `
 exports[`basics higher order components parent and child 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
     if (ctx['props'].child==='a') {
-      b1.children[0] = new BComponent(\`ChildA\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = new BNode(\`ChildA\`, {}, key + \`__1\`, ctx, node);
     } else {
-      b1.children[1] = new BComponent(\`ChildB\`, {}, key + \`__2\`, ctx, node);
+      b1.children[1] = new BNode(\`ChildB\`, {}, key + \`__2\`, ctx, node);
     }
     return b1;
   }
@@ -506,11 +506,11 @@ exports[`basics higher order components parent and child 3`] = `
 exports[`basics higher order components parent and child 4`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -519,7 +519,7 @@ exports[`basics higher order components parent and child 4`] = `
 exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -536,11 +536,11 @@ exports[`basics parent, child and grandchild 1`] = `
 exports[`basics parent, child and grandchild 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -549,11 +549,11 @@ exports[`basics parent, child and grandchild 2`] = `
 exports[`basics parent, child and grandchild 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -562,7 +562,7 @@ exports[`basics parent, child and grandchild 3`] = `
 exports[`basics props is set on root component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -579,7 +579,7 @@ exports[`basics props is set on root component 1`] = `
 exports[`basics reconciliation alg is not confused in some specific situation 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -596,10 +596,10 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
 exports[`basics reconciliation alg is not confused in some specific situation 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -612,9 +612,9 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     let key0;
     const b1 = new Block1();
-    b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     key0 = 4;
-    b1.children[1] = new BComponent(\`Child\`, {}, key + \`__2\`, ctx, node);
+    b1.children[1] = new BNode(\`Child\`, {}, key + \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -623,10 +623,10 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
 exports[`basics same t-keys in two different places 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -645,10 +645,10 @@ exports[`basics same t-keys in two different places 1`] = `
 exports[`basics same t-keys in two different places 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><div><owl-anchor/></div><div><owl-anchor/></div></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -663,9 +663,9 @@ exports[`basics same t-keys in two different places 2`] = `
     let key0;
     const b1 = new Block1();
     key0 = 1;
-    b1.children[0] = new BComponent(\`Child\`, {blip: '1'}, key + \`__1\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {blip: '1'}, key + \`__1\`, ctx, node);
     key0 = 1;
-    b1.children[1] = new BComponent(\`Child\`, {blip: '2'}, key + \`__2\`, ctx, node);
+    b1.children[1] = new BNode(\`Child\`, {blip: '2'}, key + \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -674,10 +674,10 @@ exports[`basics same t-keys in two different places 2`] = `
 exports[`basics simple component with a dynamic text 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -696,10 +696,10 @@ exports[`basics simple component with a dynamic text 1`] = `
 exports[`basics simple component, useState 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-text/></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -718,7 +718,7 @@ exports[`basics simple component, useState 1`] = `
 exports[`basics some simple sanity checks (el/status) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -735,7 +735,7 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
 exports[`basics t-elif works with t-component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -752,10 +752,10 @@ exports[`basics t-elif works with t-component 1`] = `
 exports[`basics t-elif works with t-component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -774,7 +774,7 @@ exports[`basics t-elif works with t-component 2`] = `
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else if (!ctx['state'].flag) {
-      b1.children[1] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[1] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -784,7 +784,7 @@ exports[`basics t-elif works with t-component 2`] = `
 exports[`basics t-else with empty string works with t-component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -801,10 +801,10 @@ exports[`basics t-else with empty string works with t-component 1`] = `
 exports[`basics t-else with empty string works with t-component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -823,7 +823,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else {
-      b1.children[1] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[1] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -833,7 +833,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
 exports[`basics t-else works with t-component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -850,10 +850,10 @@ exports[`basics t-else works with t-component 1`] = `
 exports[`basics t-else works with t-component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -872,7 +872,7 @@ exports[`basics t-else works with t-component 2`] = `
     if (ctx['state'].flag) {
       const b2 = b1.children[0] = new Block2();
     } else {
-      b1.children[1] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[1] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -882,7 +882,7 @@ exports[`basics t-else works with t-component 2`] = `
 exports[`basics t-if works with t-component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -899,10 +899,10 @@ exports[`basics t-if works with t-component 1`] = `
 exports[`basics t-if works with t-component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -914,7 +914,7 @@ exports[`basics t-if works with t-component 2`] = `
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new Block1();
     if (ctx['state'].flag) {
-      b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     return b1;
   }
@@ -924,7 +924,7 @@ exports[`basics t-if works with t-component 2`] = `
 exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -941,10 +941,10 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -959,9 +959,9 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
     const b1 = new Block1();
     if (false) {
       key0 = 'str';
-      b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
-    b1.children[1] = new BComponent(\`Child\`, {}, key + \`__2\`, ctx, node);
+    b1.children[1] = new BNode(\`Child\`, {}, key + \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -970,7 +970,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 exports[`basics three level of components with collapsing root nodes 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -987,11 +987,11 @@ exports[`basics three level of components with collapsing root nodes 1`] = `
 exports[`basics three level of components with collapsing root nodes 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`GrandChild\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -1000,11 +1000,11 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
 exports[`basics three level of components with collapsing root nodes 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
-    const b1 = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+    const b1 = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     return b1;
   }
 }"
@@ -1013,7 +1013,7 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
 exports[`basics throws if mounting on target=null 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -1030,7 +1030,7 @@ exports[`basics throws if mounting on target=null 1`] = `
 exports[`basics two child components 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -1047,13 +1047,13 @@ exports[`basics two child components 1`] = `
 exports[`basics two child components 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(2);
-    b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
-    b1.children[1] = new BComponent(\`Child\`, {}, key + \`__2\`, ctx, node);
+    b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
+    b1.children[1] = new BNode(\`Child\`, {}, key + \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -1062,7 +1062,7 @@ exports[`basics two child components 2`] = `
 exports[`basics updating a component with t-foreach as root 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -1087,7 +1087,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
 exports[`basics widget after a t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -1104,10 +1104,10 @@ exports[`basics widget after a t-foreach 1`] = `
 exports[`basics widget after a t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -1133,7 +1133,7 @@ exports[`basics widget after a t-foreach 2`] = `
       b2.keys[i1] = key1;
     }
     ctx = ctx.__proto__;
-    b1.children[1] = new BComponent(\`SomeComponent\`, {}, key + \`__2\`, ctx, node);
+    b1.children[1] = new BNode(\`SomeComponent\`, {}, key + \`__2\`, ctx, node);
     return b1;
   }
 }"
@@ -1142,7 +1142,7 @@ exports[`basics widget after a t-foreach 2`] = `
 exports[`basics zero or one child components 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -1159,13 +1159,13 @@ exports[`basics zero or one child components 1`] = `
 exports[`basics zero or one child components 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
     const b1 = new BMulti(1);
     if (ctx['state'].hasChild) {
-      b1.children[0] = new BComponent(\`Child\`, {}, key + \`__1\`, ctx, node);
+      b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
     }
     return b1;
   }

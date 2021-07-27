@@ -3,10 +3,10 @@
 exports[`misc complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
     children = new Array(5);
     anchors = new Array(5);
@@ -44,7 +44,7 @@ exports[`misc complex template 1`] = `
     static el = elem(\`<div class=\\"slot_filler\\"/>\`);
   }
   
-  class Block5 extends BNode {
+  class Block5 extends BElem {
     static el = elem(\`<div class=\\"one_line\\"><a><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-text/></a><a class=\\"badge badge-light\\" title=\\"View Commit on Github\\"><i class=\\"fa fa-github\\"/></a><span><owl-text/></span></div>\`);
     children = new Array(4);
     anchors = new Array(4);
@@ -105,7 +105,7 @@ exports[`misc complex template 1`] = `
       ctx[\`slot_index\`] = i1;
       ctx[\`slot_value\`] = k1[i1];
       let key1 = ctx['slot'].id;
-      const b5 = b4.children[i1] = new BComponent(\`SlotButton\`, {slot: ctx['slot']}, key + \`__2__\${key1}\`, ctx, node);
+      const b5 = b4.children[i1] = new BNode(\`SlotButton\`, {slot: ctx['slot']}, key + \`__2__\${key1}\`, ctx, node);
       b5.parentClass = \`slot_container\`;
       b4.keys[i1] = key1;
     }
@@ -162,10 +162,10 @@ exports[`misc complex template 1`] = `
 exports[`misc global 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<año><owl-anchor/></año>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -190,10 +190,10 @@ exports[`misc global 1`] = `
 exports[`misc global 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -212,10 +212,10 @@ exports[`misc global 2`] = `
 exports[`misc global 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -236,7 +236,7 @@ exports[`misc global 3`] = `
 exports[`misc global 4`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   const callTemplate_3 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_5 = getTemplate(\`_callee-uses-foo\`);
@@ -244,7 +244,7 @@ exports[`misc global 4`] = `
   const callTemplate_9 = getTemplate(\`_callee-asc\`);
   const callTemplate_11 = getTemplate(\`_callee-asc-toto\`);
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -254,7 +254,7 @@ exports[`misc global 4`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<span><owl-text/></span>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -302,11 +302,11 @@ exports[`misc global 4`] = `
 exports[`misc other complex template 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BComponent, BComponentH, BHtml, BMulti, BNode, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   const callTemplate_6 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
-  class Block1 extends BNode {
+  class Block1 extends BElem {
     static el = elem(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a><b style=\\"color:#777;\\"><owl-text/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-anchor/><li class=\\"nav-item divider\\"/><owl-anchor/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\"/><button class=\\"btn btn-default\\"> More </button><owl-anchor/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
                       <h5>Search options</h5>
                       <input class=\\"form-control\\" type=\\"text\\" name=\\"default_search\\" id=\\"default_search\\" t-att-checked=\\"default_search\\" placeholder=\\"Default search\\"/>
@@ -366,7 +366,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block2 extends BNode {
+  class Block2 extends BElem {
     static el = elem(\`<li class=\\"nav-item\\"><a class=\\"nav-link\\" href=\\"#\\"><owl-text/></a></li>\`);
     data = new Array(1);
     handlers = new Array(1);
@@ -378,7 +378,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block3 extends BNode {
+  class Block3 extends BElem {
     static el = elem(\`<li class=\\"nav-item dropdown\\"><b><a class=\\"nav-link\\">Login</a></b></li>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -386,7 +386,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block4 extends BNode {
+  class Block4 extends BElem {
     static el = elem(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link text-danger\\"><i class=\\"fa fa-bug\\"/><owl-text/></a></li>\`);
     data = new Array(2);
     update(prevData, data) {
@@ -408,7 +408,7 @@ exports[`misc other complex template 1`] = `
     static el = elem(\`<li class=\\"nav-item divider\\"/>\`);
   }
   
-  class Block8 extends BNode {
+  class Block8 extends BElem {
     static el = elem(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><owl-text/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\">Web</a></div></li>\`);
     data = new Array(3);
     update(prevData, data) {
@@ -420,7 +420,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block9 extends BNode {
+  class Block9 extends BElem {
     static el = elem(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><owl-anchor/></select>\`);
     children = new Array(1);
     anchors = new Array(1);
@@ -429,7 +429,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block10 extends BNode {
+  class Block10 extends BElem {
     static el = elem(\`<option><owl-text/></option>\`);
     data = new Array(3);
     update(prevData, data) {
@@ -441,7 +441,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block11 extends BNode {
+  class Block11 extends BElem {
     static el = elem(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\"/><label class=\\"form-check-label\\"><owl-text/></label></div>\`);
     data = new Array(6);
     handlers = new Array(1);
@@ -461,7 +461,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block12 extends BNode {
+  class Block12 extends BElem {
     static el = elem(\`<div><button class=\\"btn btn-sm btn-default\\">All</button><button class=\\"btn btn-sm btn-default\\">None</button><button class=\\"btn btn-sm btn-info\\">Default</button><button class=\\"btn btn-sm btn-default\\">Close</button></div>\`);
     handlers = new Array(4);
     build() {
@@ -475,7 +475,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  class Block13 extends BNode {
+  class Block13 extends BElem {
     static el = elem(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><owl-text/> <!-- todo fixme--></div>\`);
     data = new Array(1);
     update(prevData, data) {
@@ -487,7 +487,7 @@ exports[`misc other complex template 1`] = `
     static el = elem(\`<div class=\\"mb32\\"><h1>No project</h1></div>\`);
   }
   
-  class Block15 extends BNode {
+  class Block15 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
     anchors = new Array(2);
@@ -615,8 +615,8 @@ exports[`misc other complex template 1`] = `
       const b23 = b1.children[6] = new Block14();
     } else {
       const b24 = b1.children[7] = new Block15();
-      b24.children[0] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__7\`, ctx, node);
-      b24.children[1] = new BComponent(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__8\`, ctx, node);
+      b24.children[0] = new BNode(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__7\`, ctx, node);
+      b24.children[1] = new BNode(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__8\`, ctx, node);
     }
     return b1;
   }

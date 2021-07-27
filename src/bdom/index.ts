@@ -5,18 +5,18 @@
  * "block" instead of just a html (v)node.
  */
 
-import { BCollection } from "./block_collection";
-import { BHtml } from "./block_html";
-import { BMulti } from "./block_multi";
-import { BNode } from "./block_node";
-import { BStatic } from "./block_static";
-import { BText } from "./block_text";
-import { BDispatch } from "./block_dispatch";
+import { BCollection } from "./b_collection";
+import { BHtml } from "./b_html";
+import { BMulti } from "./b_multi";
+import { BElem } from "./b_elem";
+import { BStatic } from "./b_static";
+import { BText } from "./b_text";
+import { BDispatch } from "./b_dispatch";
 
 export { Block } from "./block";
 
 export const Blocks = {
-  BNode,
+  BElem,
   BStatic,
   BMulti,
   BHtml,

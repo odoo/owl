@@ -40,10 +40,10 @@ export class OwlNode<T extends typeof Component = any> {
     component.setup();
   }
 
-  async mount(target: any): Promise<InstanceType<T>> {
+  mount(target: any): Promise<InstanceType<T>> {
     const fiber = new MountFiber(this, target);
     this.app.scheduler.addFiber(fiber);
-    await this.initiateRender(fiber);
+    this.initiateRender(fiber);
     return fiber.promise.then(() => this.component);
   }
 

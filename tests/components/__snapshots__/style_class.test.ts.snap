@@ -3,7 +3,7 @@
 exports[`style and class handling can set class on multi root component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -26,7 +26,7 @@ exports[`style and class handling can set class on multi root component 1`] = `
 exports[`style and class handling can set class on multi root component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -40,7 +40,7 @@ exports[`style and class handling can set class on multi root component 2`] = `
 exports[`style and class handling can set class on sub component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -57,7 +57,7 @@ exports[`style and class handling can set class on sub component 1`] = `
 exports[`style and class handling can set class on sub component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -71,7 +71,7 @@ exports[`style and class handling can set class on sub component 2`] = `
 exports[`style and class handling can set class on sub sub component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -88,7 +88,7 @@ exports[`style and class handling can set class on sub sub component 1`] = `
 exports[`style and class handling can set class on sub sub component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -102,7 +102,7 @@ exports[`style and class handling can set class on sub sub component 2`] = `
 exports[`style and class handling can set class on sub sub component 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -116,7 +116,7 @@ exports[`style and class handling can set class on sub sub component 3`] = `
 exports[`style and class handling can set more than one class on sub component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -133,7 +133,7 @@ exports[`style and class handling can set more than one class on sub component 1
 exports[`style and class handling can set more than one class on sub component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -147,7 +147,7 @@ exports[`style and class handling can set more than one class on sub component 2
 exports[`style and class handling can set style and class on component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -164,7 +164,7 @@ exports[`style and class handling can set style and class on component 1`] = `
 exports[`style and class handling class is properly added on widget root el 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -181,7 +181,7 @@ exports[`style and class handling class is properly added on widget root el 1`] 
 exports[`style and class handling class is properly added on widget root el 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -205,7 +205,7 @@ exports[`style and class handling class is properly added on widget root el 2`] 
 exports[`style and class handling class on sub component, which is switched to another 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -222,7 +222,7 @@ exports[`style and class handling class on sub component, which is switched to a
 exports[`style and class handling class on sub component, which is switched to another 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -239,7 +239,7 @@ exports[`style and class handling class on sub component, which is switched to a
 exports[`style and class handling class on sub component, which is switched to another 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -257,7 +257,7 @@ exports[`style and class handling class on sub component, which is switched to a
 exports[`style and class handling class on sub component, which is switched to another 4`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -271,7 +271,7 @@ exports[`style and class handling class on sub component, which is switched to a
 exports[`style and class handling component class and parent class combine together 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -288,7 +288,7 @@ exports[`style and class handling component class and parent class combine toget
 exports[`style and class handling component class and parent class combine together 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -302,7 +302,7 @@ exports[`style and class handling component class and parent class combine toget
 exports[`style and class handling empty class attribute is not added on widget root el 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -319,7 +319,7 @@ exports[`style and class handling empty class attribute is not added on widget r
 exports[`style and class handling empty class attribute is not added on widget root el 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -342,7 +342,7 @@ exports[`style and class handling empty class attribute is not added on widget r
 exports[`style and class handling nothing happens if sub component is just some text 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -355,7 +355,7 @@ exports[`style and class handling nothing happens if sub component is just some 
 exports[`style and class handling nothing happens if sub component is just some text 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -369,7 +369,7 @@ exports[`style and class handling nothing happens if sub component is just some 
 exports[`style and class handling setting a class on a child component with text node 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -382,7 +382,7 @@ exports[`style and class handling setting a class on a child component with text
 exports[`style and class handling setting a class on a child component with text node 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {

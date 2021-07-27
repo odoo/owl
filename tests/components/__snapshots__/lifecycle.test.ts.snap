@@ -3,7 +3,7 @@
 exports[`lifecycle hooks basic checks for a component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -20,7 +20,7 @@ exports[`lifecycle hooks basic checks for a component 1`] = `
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -37,7 +37,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -53,7 +53,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -75,7 +75,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -101,7 +101,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -118,7 +118,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -141,7 +141,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 exports[`lifecycle hooks lifecycle semantics 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -158,7 +158,7 @@ exports[`lifecycle hooks lifecycle semantics 1`] = `
 exports[`lifecycle hooks lifecycle semantics 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -181,7 +181,7 @@ exports[`lifecycle hooks lifecycle semantics 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -198,7 +198,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -211,7 +211,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -227,7 +227,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -244,7 +244,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 3 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -257,7 +257,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 3 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -273,7 +273,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 3`] = `
 exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -290,7 +290,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -303,7 +303,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -319,7 +319,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -336,7 +336,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -352,7 +352,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -369,7 +369,7 @@ exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -382,7 +382,7 @@ exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
 exports[`lifecycle hooks mounted hook is called if mounted in DOM 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -399,7 +399,7 @@ exports[`lifecycle hooks mounted hook is called if mounted in DOM 1`] = `
 exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -416,7 +416,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -439,7 +439,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -456,7 +456,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -479,7 +479,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -504,7 +504,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 exports[`lifecycle hooks onRender 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -532,7 +532,7 @@ exports[`lifecycle hooks onRender 1`] = `
 exports[`lifecycle hooks onRender 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -545,7 +545,7 @@ exports[`lifecycle hooks onRender 2`] = `
 exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -562,7 +562,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
 exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -585,7 +585,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
 exports[`lifecycle hooks patched hook is called after updating State 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -602,7 +602,7 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -624,7 +624,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -647,7 +647,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -670,7 +670,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 exports[`lifecycle hooks willStart hook is called on sub component 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -687,7 +687,7 @@ exports[`lifecycle hooks willStart hook is called on sub component 1`] = `
 exports[`lifecycle hooks willStart hook is called on sub component 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -700,7 +700,7 @@ exports[`lifecycle hooks willStart hook is called on sub component 2`] = `
 exports[`lifecycle hooks willStart is called 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -717,7 +717,7 @@ exports[`lifecycle hooks willStart is called 1`] = `
 exports[`lifecycle hooks willStart is called with component as this 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -734,7 +734,7 @@ exports[`lifecycle hooks willStart is called with component as this 1`] = `
 exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is mounted in some other position 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -751,7 +751,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is mounted in some other position 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -783,7 +783,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -805,7 +805,7 @@ exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
 exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {

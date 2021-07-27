@@ -3,7 +3,7 @@
 exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -25,7 +25,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -48,7 +48,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 exports[`basics explicit object prop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -70,7 +70,7 @@ exports[`basics explicit object prop 1`] = `
 exports[`basics explicit object prop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -93,7 +93,7 @@ exports[`basics explicit object prop 2`] = `
 exports[`basics t-set with a body expression can be passed in props, and then t-raw 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -121,7 +121,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 exports[`basics t-set with a body expression can be passed in props, and then t-raw 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -151,7 +151,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -173,7 +173,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -198,7 +198,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 exports[`basics t-set works  1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -220,7 +220,7 @@ exports[`basics t-set works  1`] = `
 exports[`basics t-set works  2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {

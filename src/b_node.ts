@@ -12,6 +12,7 @@ export class BNode extends Block {
   node: OwlNode;
   parentClass?: any = null;
   classTarget?: HTMLElement;
+  handlers: any = null;
 
   /**
    *
@@ -80,6 +81,18 @@ export class BNode extends Block {
     node.status = STATUS.MOUNTED;
     node.fiber!.appliedToDom = true;
     node.fiber = null;
+    if (this.handlers) {
+      for (let i = 0; i < this.handlers.length; i++) {
+        const handler = this.handlers[i];
+        const eventType = handler[0];
+        const el = this.node.component.el!;
+        el.addEventListener(eventType, (ev: Event) => {
+          const info = this.handlers![i];
+          const [, callback] = info;
+          callback(ev);
+        });
+      }
+    }
   }
 
   moveBefore(anchor: ChildNode) {
@@ -144,29 +157,5 @@ function visitRemovedNodes(node: OwlNode) {
   node.status = STATUS.DESTROYED;
   if (node.destroyed.length) {
     __internal__destroyed.push(node);
-  }
-}
-
-export class BComponentH extends BNode {
-  handlers: any[];
-  constructor(handlers: number, name: string, props: any, key: string, owner: any, parent: any) {
-    super(name, props, key, owner, parent);
-    this.handlers = new Array(handlers);
-  }
-  mountBefore(anchor: ChildNode) {
-    super.mountBefore(anchor);
-    this.setupHandlers();
-  }
-  setupHandlers() {
-    for (let i = 0; i < this.handlers.length; i++) {
-      const handler = this.handlers[i];
-      const eventType = handler[0];
-      const el = this.node.component.el!;
-      el.addEventListener(eventType, (ev: Event) => {
-        const info = this.handlers![i];
-        const [, callback] = info;
-        callback(ev);
-      });
-    }
   }
 }

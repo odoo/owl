@@ -1,7 +1,7 @@
 import { Blocks as BaseBlocks } from "./bdom";
 import { compileTemplate, Template } from "./compiler/index";
 import { globalTemplates } from "./tags";
-import { BNode, BComponentH } from "./b_node";
+import { BNode } from "./b_node";
 import type { Component } from "./component";
 import { OwlNode } from "./owl_node";
 import { Scheduler } from "./scheduler";
@@ -11,7 +11,6 @@ import { BDispatch } from "./bdom/b_dispatch";
 const Blocks = {
   ...BaseBlocks,
   BNode,
-  BComponentH,
 };
 
 // -----------------------------------------------------------------------------

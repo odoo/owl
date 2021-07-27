@@ -191,7 +191,7 @@ export class QWebCompiler {
     this.target.indentLevel = 0;
     // define blocks and utility functions
     this.addLine(
-      `let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;`
+      `let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;`
     );
     this.addLine(
       `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;`
@@ -960,25 +960,22 @@ export class QWebCompiler {
 
     let id: string;
     const hasClass = "class" in ast.props;
-    const shouldForce = hasSlot || hasClass;
+    const hasHandlers = Object.keys(ast.handlers).length;
+    const shouldForce = hasSlot || hasClass || Boolean(hasHandlers);
 
     const addDispatch = (block: string) =>
       ast.isDynamic ? `new BDispatch(${expr}, ${block})` : block;
 
-    if (Object.keys(ast.handlers).length) {
+    id = this.insertBlock(addDispatch(`new BNode(${blockArgs})`), {
+      ...ctx,
+      forceNewBlock: shouldForce,
+    })!;
+    if (hasHandlers) {
       // event handlers
-      const n = Object.keys(ast.handlers).length;
-      id = this.insertBlock(addDispatch(`new BComponentH(${n}, ${blockArgs})`), {
-        ...ctx,
-        forceNewBlock: true,
-      })!;
+      const n = hasHandlers;
+      this.addLine(`${id}.handlers = new Array(${n});`);
       const cblock = { varName: id, handlerNumber: 0 } as BlockDescription;
       this.generateHandlerCode(cblock, ast.handlers);
-    } else {
-      id = this.insertBlock(addDispatch(`new BNode(${blockArgs})`), {
-        ...ctx,
-        forceNewBlock: shouldForce,
-      })!;
     }
 
     // class and style

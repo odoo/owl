@@ -3,7 +3,7 @@
 exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -25,7 +25,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -71,7 +71,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -93,7 +93,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -141,7 +141,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -163,7 +163,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -231,7 +231,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components simple list 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -253,7 +253,7 @@ exports[`list of components simple list 1`] = `
 exports[`list of components simple list 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   return function template(ctx, node = ctx.__owl__, key = \\"\\") {
@@ -278,7 +278,7 @@ exports[`list of components simple list 2`] = `
 exports[`list of components sub components rendered in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -300,7 +300,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
 exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -336,7 +336,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
 exports[`list of components sub components with some state rendered in a loop 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -358,7 +358,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
 exports[`list of components sub components with some state rendered in a loop 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {

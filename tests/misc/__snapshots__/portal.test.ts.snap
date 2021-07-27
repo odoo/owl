@@ -3,7 +3,7 @@
 exports[`Portal Portal composed with t-slot 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -20,7 +20,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
 exports[`Portal Portal composed with t-slot 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   const slot2 = ctx => (node, key) => {
@@ -39,7 +39,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
 exports[`Portal Portal composed with t-slot 3`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -52,7 +52,8 @@ exports[`Portal Portal composed with t-slot 3`] = `
   }
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BComponentH(1, \`Child2\`, {}, key + \`__3\`, ctx, node);
+    const b2 = new BNode(\`Child2\`, {}, key + \`__3\`, ctx, node);
+    b2.handlers = new Array(1);
     b2.handlers[0] = ['custom', (e) => ctx.__owl__.component['_handled'](e)];
     return b2;
   }
@@ -70,7 +71,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
 exports[`Portal basic use of portal 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -103,7 +104,7 @@ exports[`Portal basic use of portal 1`] = `
 exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -125,7 +126,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 exports[`Portal conditional use of Portal (with sub Component) 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -152,7 +153,7 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
 exports[`Portal conditional use of Portal 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -183,7 +184,7 @@ exports[`Portal conditional use of Portal 1`] = `
 exports[`Portal lifecycle hooks of portal sub component are properly called 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -205,7 +206,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
 exports[`Portal lifecycle hooks of portal sub component are properly called 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -236,7 +237,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
 exports[`Portal portal could have dynamically no content 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -277,7 +278,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
 exports[`Portal portal with child and props 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -299,7 +300,7 @@ exports[`Portal portal with child and props 1`] = `
 exports[`Portal portal with child and props 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -328,7 +329,7 @@ exports[`Portal portal with child and props 2`] = `
 exports[`Portal portal with dynamic body 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -375,7 +376,7 @@ exports[`Portal portal with dynamic body 1`] = `
 exports[`Portal portal with many children 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -414,7 +415,7 @@ exports[`Portal portal with many children 1`] = `
 exports[`Portal portal with no content 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -446,7 +447,7 @@ exports[`Portal portal with no content 1`] = `
 exports[`Portal portal with only text as content 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -475,7 +476,7 @@ exports[`Portal portal with only text as content 1`] = `
 exports[`Portal portal's parent's env is not polluted 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BStatic {
@@ -492,7 +493,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
 exports[`Portal portal's parent's env is not polluted 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -521,7 +522,7 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
 exports[`Portal with target in template (after portal) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -554,7 +555,7 @@ exports[`Portal with target in template (after portal) 1`] = `
 exports[`Portal with target in template (before portal) 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -587,7 +588,7 @@ exports[`Portal with target in template (before portal) 1`] = `
 exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {
@@ -609,7 +610,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
 "function anonymous(Blocks, utils
 ) {
-  let {BCollection, BNode, BComponentH, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
+  let {BCollection, BNode, BHtml, BMulti, BElem, BStatic, BText, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = utils;
   
   class Block1 extends BElem {

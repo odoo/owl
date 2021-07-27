@@ -10,7 +10,7 @@ exports[`event handling can set handler on sub component 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -23,7 +23,7 @@ exports[`event handling can set handler on sub component 2`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
@@ -45,7 +45,7 @@ exports[`event handling handler receive the event as argument 1`] = `
     static el = elem(\`<div>simple vnode</div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -58,7 +58,7 @@ exports[`event handling handler receive the event as argument 2`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = new BNode(\`Child\`, {}, key + \`__1\`, ctx, node);
@@ -88,7 +88,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     b1.data[0] = ctx['state'].value;

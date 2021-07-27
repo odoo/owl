@@ -14,7 +14,7 @@ exports[`attributes changing a class with t-att-class (preexisting class 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['v']);
     return b1;
@@ -36,7 +36,7 @@ exports[`attributes changing a class with t-att-class 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['v']);
     return b1;
@@ -58,7 +58,7 @@ exports[`attributes changing an attribute with t-att- 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['v'];
     return b1;
@@ -80,7 +80,7 @@ exports[`attributes class and t-att-class should combine together 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['value']);
     return b1;
@@ -102,7 +102,7 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj((ctx['value']?'world':''));
     return b1;
@@ -124,7 +124,7 @@ exports[`attributes dynamic attribute evaluating to 0 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -146,7 +146,7 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -168,7 +168,7 @@ exports[`attributes dynamic attribute with a dash 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['id'];
     return b1;
@@ -190,7 +190,7 @@ exports[`attributes dynamic attributes 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = 'bar';
     return b1;
@@ -212,7 +212,7 @@ exports[`attributes dynamic class attribute 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['c']);
     return b1;
@@ -234,7 +234,7 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['value']);
     return b1;
@@ -256,7 +256,7 @@ exports[`attributes dynamic empty class attribute 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['c']);
     return b1;
@@ -278,7 +278,7 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = \`Some text \${ctx['id']}\`;
     return b1;
@@ -300,7 +300,7 @@ exports[`attributes fixed variable 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -322,7 +322,7 @@ exports[`attributes format expression 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = (ctx['value']+37);
     return b1;
@@ -344,7 +344,7 @@ exports[`attributes format literal 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = \`bar\`;
     return b1;
@@ -366,7 +366,7 @@ exports[`attributes format multiple 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = \`a \${ctx['value1']} is \${ctx['value2']} of \${ctx['value3']} ]\`;
     return b1;
@@ -388,7 +388,7 @@ exports[`attributes format value 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = \`b\${ctx['value']}r\`;
     return b1;
@@ -410,7 +410,7 @@ exports[`attributes from object variables set previously 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`o\`] = {a:'b'};
@@ -434,7 +434,7 @@ exports[`attributes from variables set previously (no external node) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[\`abc\`] = 'def';
     const b1 = new Block1();
@@ -458,7 +458,7 @@ exports[`attributes from variables set previously 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`abc\`] = 'def';
@@ -482,7 +482,7 @@ exports[`attributes object 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -500,7 +500,7 @@ exports[`attributes static attributes 1`] = `
     static el = elem(\`<div foo=\\"a\\" bar=\\"b\\" baz=\\"c\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -517,7 +517,7 @@ exports[`attributes static attributes on void elements 1`] = `
     static el = elem(\`<img src=\\"/test.jpg\\" alt=\\"Test\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -534,7 +534,7 @@ exports[`attributes static attributes with dashes 1`] = `
     static el = elem(\`<div aria-label=\\"Close\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -555,7 +555,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(ctx['value']);
     return b1;
@@ -577,7 +577,7 @@ exports[`attributes t-att-class with multiple classes 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj({'a b c':ctx['value']});
     return b1;
@@ -599,7 +599,7 @@ exports[`attributes t-att-class with multiple classes 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj({['a b c']:ctx['value']});
     return b1;
@@ -621,7 +621,7 @@ exports[`attributes t-att-class with object 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj({a:ctx['b'],c:ctx['d'],e:ctx['f']});
     return b1;
@@ -643,7 +643,7 @@ exports[`attributes t-attf-class 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(\`hello\`);
     return b1;
@@ -665,7 +665,7 @@ exports[`attributes t-attf-class should combine with class 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(\`world\`);
     return b1;
@@ -687,7 +687,7 @@ exports[`attributes t-attf-class with multiple classes 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(\`hello \${ctx['word']}\`);
     return b1;
@@ -709,7 +709,7 @@ exports[`attributes t-attf-class with multiple classes separated by multiple spa
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(\`hello  \${ctx['word']}\`);
     return b1;
@@ -731,7 +731,7 @@ exports[`attributes tuple literal 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ['foo','bar'];
     return b1;
@@ -753,7 +753,7 @@ exports[`attributes tuple variable 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['value'];
     return b1;
@@ -771,7 +771,7 @@ exports[`attributes two classes 1`] = `
     static el = elem(\`<div class=\\"a b\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }
@@ -794,7 +794,7 @@ exports[`attributes two dynamic attributes 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = 'bar';
     b1.data[1] = 'foo';
@@ -817,7 +817,7 @@ exports[`attributes updating classes (with obj notation) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj({'a b':ctx['condition']});
     return b1;
@@ -842,7 +842,7 @@ exports[`attributes various escapes 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['bar'];
     b1.data[1] = \`<\${ctx['baz']}>\`;
@@ -868,7 +868,7 @@ exports[`special cases for some specific html attributes/properties input of typ
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['v'];
     return b1;
@@ -892,7 +892,7 @@ exports[`special cases for some specific html attributes/properties input type= 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['flag'];
     return b1;
@@ -916,7 +916,7 @@ exports[`special cases for some specific html attributes/properties input with t
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['v'];
     return b1;
@@ -934,7 +934,7 @@ exports[`special cases for some specific html attributes/properties various bool
     static el = elem(\`<div><input type=\\"checkbox\\" checked=\\"checked\\"/><input checked=\\"checked\\"/><div checked=\\"checked\\"/><div selected=\\"selected\\"/><option selected=\\"selected\\" other=\\"1\\"/><input readonly=\\"readonly\\"/><button disabled=\\"disabled\\"/></div>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     return b1;
   }

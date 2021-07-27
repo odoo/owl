@@ -6,7 +6,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BText(ctx['props'].value);
     return b1;
   }
@@ -27,7 +27,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(4);
     b1.children[0] = new BText(ctx['state'].a);
     b1.children[1] = new BText(ctx['state'].b);
@@ -45,7 +45,7 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BText(ctx['props'].value);
     return b1;
   }
@@ -63,7 +63,7 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     b1.children[0] = new BNode(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx, node);
     const b3 = b1.children[1] = new BNode(\`Memo\`, {}, key + \`__2\`, ctx, node);
@@ -84,7 +84,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
     return b2;
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(2);
     b1.children[0] = new BText(ctx['state'].value);
     const b3 = b1.children[1] = new BNode(\`Memo\`, {}, key + \`__1\`, ctx, node);

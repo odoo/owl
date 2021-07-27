@@ -15,7 +15,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([1], true, true);
     ctx = Object.create(ctx);
@@ -58,7 +58,7 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([1,2], true, true);
     ctx = Object.create(ctx);
@@ -94,7 +94,7 @@ exports[`t-foreach iterate on items 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([3,2,1], true, true);
     ctx = Object.create(ctx);
@@ -136,7 +136,7 @@ exports[`t-foreach iterate, dict param 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['value'], true, true);
     ctx = Object.create(ctx);
@@ -178,7 +178,7 @@ exports[`t-foreach iterate, position 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(Array(5), true, true);
     ctx = Object.create(ctx);
@@ -223,7 +223,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([3,2,1], true, true);
     ctx = Object.create(ctx);
@@ -249,7 +249,7 @@ exports[`t-foreach simple iteration 1`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BCollection([3,2,1], false, true);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -290,7 +290,7 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BCollection([3,2,1], false, true);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -319,7 +319,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BMulti(7);
     b1.children[0] = new BText(\` [\`);
     b1.children[1] = new BText(ctx['a']);
@@ -365,7 +365,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers'], false, false);
@@ -415,7 +415,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new BMulti(7);
     ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
@@ -463,7 +463,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers'], false, false);
     ctx = Object.create(ctx);
@@ -518,7 +518,7 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['numbers'], true, true);
     ctx = Object.create(ctx);
@@ -569,7 +569,7 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BCollection(ctx['elems'], false, true);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -615,7 +615,7 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['elems'], true, true);
     ctx = Object.create(ctx);
@@ -653,7 +653,7 @@ exports[`t-foreach t-key on an inside node 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BCollection([3,2,1], false, true);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -693,7 +693,7 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
     static el = elem(\`<span/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['abc'], true, true);
     ctx = Object.create(ctx);
@@ -737,7 +737,7 @@ exports[`t-foreach warn if no key in some case 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([1,2], true, true);
     ctx = Object.create(ctx);

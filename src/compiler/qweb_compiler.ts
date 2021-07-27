@@ -23,7 +23,7 @@ import {
   parse,
 } from "./qweb_parser";
 
-export type Template = (context: any, node?: Node, key?: string) => Block;
+export type Template = (context: any, node: any, key?: string) => Block;
 export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 // -----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ export class QWebCompiler {
     // generate main code
     this.target.indentLevel = 0;
     this.addLine(``);
-    this.addLine(`return function template(ctx, node = ctx.__owl__, key = "") {`);
+    this.addLine(`return function template(ctx, node, key = "") {`);
     if (this.hasRef) {
       this.addLine(`  const refs = ctx.__owl__.refs;`);
     }

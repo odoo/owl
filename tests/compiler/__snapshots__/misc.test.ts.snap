@@ -82,7 +82,7 @@ exports[`misc complex template 1`] = `
     static el = elem(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = toClassObj(\`batch_tile \${ctx['options'].more?'more':'nomore'}\`);
     b1.data[1] = toClassObj(\`card bg-\${ctx['klass']}-light\`);
@@ -178,7 +178,7 @@ exports[`misc global 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = 'agüero';
     b1.children[0] = new BHtml(ctx[zero]);
@@ -201,7 +201,7 @@ exports[`misc global 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
     return b1;
@@ -224,7 +224,7 @@ exports[`misc global 3`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = new BText(\`toto default\`);
     b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
@@ -262,7 +262,7 @@ exports[`misc global 4`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection([4,5,6], false, false);
@@ -497,7 +497,7 @@ exports[`misc other complex template 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     ctx = Object.create(ctx);
     const b1 = new Block1();

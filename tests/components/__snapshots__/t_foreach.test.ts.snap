@@ -14,7 +14,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].item;
     return b1;
@@ -46,7 +46,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['items'], true, false);
     ctx = Object.create(ctx);
@@ -82,7 +82,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].blip;
     return b1;
@@ -105,7 +105,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].s, true, false);
     ctx = Object.create(ctx);
@@ -152,7 +152,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].row+'_'+ctx['props'].col;
     return b1;
@@ -193,7 +193,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].rows, true, false);
     ctx = Object.create(ctx);
@@ -242,7 +242,7 @@ exports[`list of components simple list 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].value;
     return b1;
@@ -256,7 +256,7 @@ exports[`list of components simple list 2`] = `
   let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
   let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new BCollection(ctx['state'].elems, false, false);
     ctx = Object.create(ctx);
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
@@ -289,7 +289,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].n;
     return b1;
@@ -312,7 +312,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].numbers, true, false);
     ctx = Object.create(ctx);
@@ -347,7 +347,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['state'].n;
     return b1;
@@ -370,7 +370,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     const b2 = b1.children[0] = new BCollection(ctx['state'].numbers, true, false);
     ctx = Object.create(ctx);

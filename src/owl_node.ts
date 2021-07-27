@@ -36,7 +36,7 @@ export class OwlNode<T extends typeof Component = any> {
     currentNode = this;
     const component: InstanceType<T> = new C(props, app.env, this) as any;
     this.component = component;
-    this.renderFn = app.getTemplate(C.template).bind(null, component);
+    this.renderFn = app.getTemplate(C.template).bind(null, component, this);
     component.setup();
   }
 

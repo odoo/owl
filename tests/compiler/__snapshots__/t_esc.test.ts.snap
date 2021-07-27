@@ -22,7 +22,7 @@ exports[`t-esc div with falsy values 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['v1'];
     b1.data[1] = ctx['v2'];
@@ -48,7 +48,7 @@ exports[`t-esc escaping 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['var'];
     return b1;
@@ -70,7 +70,7 @@ exports[`t-esc escaping on a node 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = 'ok';
     return b1;
@@ -92,7 +92,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = withDefault('ok', \`nope\`);
     return b1;
@@ -114,7 +114,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = withDefault(ctx['var'], \`nope\`);
     return b1;
@@ -136,7 +136,7 @@ exports[`t-esc literal 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = 'ok';
     return b1;
@@ -162,7 +162,7 @@ exports[`t-esc t-esc is escaped 1`] = `
     static el = elem(\`<p>escaped</p>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = new Block2();
@@ -187,7 +187,7 @@ exports[`t-esc t-esc work with spread operator 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = [...ctx['state'].list];
     return b1;
@@ -209,7 +209,7 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx[zero];
     return b1;
@@ -237,7 +237,7 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
     static el = elem(\`<p>escaped</p>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     ctx = Object.create(ctx);
     const b2 = new Block2();
@@ -262,7 +262,7 @@ exports[`t-esc variable 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['var'];
     return b1;

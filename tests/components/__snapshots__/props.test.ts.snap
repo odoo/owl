@@ -14,7 +14,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].greetings;
     return b1;
@@ -37,7 +37,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BNode(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx, node);
     return b1;
@@ -59,7 +59,7 @@ exports[`basics explicit object prop 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['state'].someval;
     return b1;
@@ -82,7 +82,7 @@ exports[`basics explicit object prop 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.children[0] = new BNode(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx, node);
     return b1;
@@ -109,7 +109,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     b1.children[0] = new BHtml(ctx['props'].val);
@@ -137,7 +137,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
     static el = elem(\`<p>43</p>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const b2 = new Block2();
@@ -162,7 +162,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -185,7 +185,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`abc\`] = \`42\`;
@@ -209,7 +209,7 @@ exports[`basics t-set works  1`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
     b1.data[0] = ctx['props'].val;
     return b1;
@@ -232,7 +232,7 @@ exports[`basics t-set works  2`] = `
     }
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`val\`] = 42;

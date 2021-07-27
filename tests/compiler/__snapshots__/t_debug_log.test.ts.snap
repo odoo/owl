@@ -19,7 +19,7 @@ exports[`debugging t-debug 1`] = `
     static el = elem(\`<span>hey</span>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     debugger;
     const b1 = new Block1();
     if (true) {
@@ -41,7 +41,7 @@ exports[`debugging t-log 1`] = `
     static el = elem(\`<div/>\`);
   }
   
-  return function template(ctx, node = ctx.__owl__, key = \\"\\") {
+  return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`foo\`] = 42;

@@ -1,43 +1,37 @@
 import { Component } from "../component";
 import type { BNode } from "../b_node";
 import { xml } from "../tags";
+import { Fiber } from "../fibers";
 
 export class Memo extends Component {
   static template = xml`<t t-slot="default"/>`;
 
   constructor(props: any, env: any, node: BNode) {
     super(props, env, node);
-    let bdom: any = null;
-    let prevProps = props;
-    const component = this;
+
+    // prevent patching process conditionally
     let applyPatch = false;
-    // note: no error handling here. todo: check _render function and make
-    // sure it still works
-    node._render = function (fiber: any) {
-      if (!bdom) {
-        // initial render
-        bdom = this.renderFn();
-        const patchFn = bdom!.patch;
-        bdom!.patch = (other: any) => {
-          if (applyPatch) {
-            patchFn.call(bdom, other);
-            applyPatch = false;
-          }
-        };
-        fiber.bdom = bdom;
-        fiber.root.counter--;
+    const patchFn = node.patch;
+    node.patch = () => {
+      if (applyPatch) {
+        patchFn.call(node);
+        applyPatch = false;
+      }
+    };
+
+    // check props change, and render/apply patch if it changed
+    let prevProps = props;
+    const updateAndRender = node.updateAndRender;
+    node.updateAndRender = function (props: any, fiber: Fiber) {
+      const shouldUpdate = !shallowEqual(prevProps, props);
+      if (shouldUpdate) {
+        prevProps = props;
+        updateAndRender.call(node, props, fiber);
+        applyPatch = true;
       } else {
-        // other renders
-        const shouldUpdate = !shallowEqual(prevProps, component.props);
-        if (shouldUpdate) {
-          applyPatch = true;
-          prevProps = component.props;
-          fiber.bdom = this.renderFn();
-        } else {
-          fiber.bdom = bdom;
-        }
         fiber.root.counter--;
       }
+      return Promise.resolve();
     };
   }
 }

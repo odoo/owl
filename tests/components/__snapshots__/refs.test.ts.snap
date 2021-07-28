@@ -9,8 +9,8 @@ exports[`refs refs are properly bound in slots 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -32,9 +32,9 @@ exports[`refs refs are properly bound in slots 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
     update(prevData, data) {

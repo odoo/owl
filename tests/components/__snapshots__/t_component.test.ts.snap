@@ -43,8 +43,8 @@ exports[`t-component can switch between dynamic components without the need for 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -196,8 +196,8 @@ exports[`t-component modifying a sub widget 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

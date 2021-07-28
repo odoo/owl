@@ -9,8 +9,8 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -44,8 +44,8 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -88,8 +88,8 @@ exports[`t-foreach iterate on items 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -130,8 +130,8 @@ exports[`t-foreach iterate, dict param 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -172,8 +172,8 @@ exports[`t-foreach iterate, position 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -217,8 +217,8 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -343,9 +343,9 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><span>[<owl-text/>][<owl-text/>][<owl-text/>]</span></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(3);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -441,9 +441,9 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><span>[<owl-text/>][<owl-text/>][<owl-text/>]</span></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(3);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -512,8 +512,8 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -601,8 +601,8 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -683,8 +683,8 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -723,8 +723,8 @@ exports[`t-foreach warn if no key in some case 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

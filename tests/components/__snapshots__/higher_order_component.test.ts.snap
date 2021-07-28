@@ -221,8 +221,8 @@ exports[`basics top level sub widget with a parent 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

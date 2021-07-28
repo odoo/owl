@@ -9,8 +9,8 @@ exports[`t-call-block simple t-call-block with static text 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

@@ -45,8 +45,8 @@ exports[`Portal Portal composed with t-slot 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -77,8 +77,8 @@ exports[`Portal basic use of portal 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><span>1</span><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
   }
@@ -212,8 +212,8 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -243,8 +243,8 @@ exports[`Portal portal could have dynamically no content 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -306,8 +306,8 @@ exports[`Portal portal with child and props 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -335,8 +335,8 @@ exports[`Portal portal with dynamic body 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -382,8 +382,8 @@ exports[`Portal portal with many children 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -421,8 +421,8 @@ exports[`Portal portal with no content 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -453,8 +453,8 @@ exports[`Portal portal with only text as content 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -499,8 +499,8 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -528,8 +528,8 @@ exports[`Portal with target in template (after portal) 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><span>1</span><owl-anchor/><div id=\\"local-target\\"/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
   }
@@ -561,8 +561,8 @@ exports[`Portal with target in template (before portal) 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><div id=\\"local-target\\"/><span>1</span><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling.nextSibling;
     }
   }
@@ -616,8 +616,8 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

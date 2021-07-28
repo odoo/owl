@@ -80,9 +80,9 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -133,8 +133,8 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -187,8 +187,8 @@ exports[`t-call parent is set within t-call 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -278,8 +278,8 @@ exports[`t-call sub components in two t-calls 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -355,8 +355,8 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

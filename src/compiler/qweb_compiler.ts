@@ -260,7 +260,6 @@ export class QWebCompiler {
     }
     if (block.childNumber) {
       this.addLine(`children = new Array(${block.childNumber});`);
-      this.addLine(`anchors = new Array(${block.childNumber});`);
     }
     if (block.dataNumber) {
       this.addLine(`data = new Array(${block.dataNumber});`);
@@ -272,6 +271,10 @@ export class QWebCompiler {
       const updateInfo = block.buildFn;
       this.addLine(`build() {`);
       this.target.indentLevel++;
+      if (block.childNumber > 0) {
+        this.addLine(`this.anchors = new Array(${block.childNumber});`);
+      }
+
       if (updateInfo.length === 1) {
         const { path, inserter } = updateInfo[0];
         const target = `this.${path.join(".")}`;

@@ -9,9 +9,9 @@ exports[`misc complex template 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
     children = new Array(5);
-    anchors = new Array(5);
     data = new Array(5);
     build() {
+      this.anchors = new Array(5);
       const el1 = this.el.firstChild.firstChild;
       this.anchors[0] = el1.firstChild.firstChild.nextSibling;
       this.anchors[1] = el1.nextSibling;
@@ -47,9 +47,9 @@ exports[`misc complex template 1`] = `
   class Block5 extends BElem {
     static el = elem(\`<div class=\\"one_line\\"><a><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-text/></a><a class=\\"badge badge-light\\" title=\\"View Commit on Github\\"><i class=\\"fa fa-github\\"/></a><span><owl-text/></span></div>\`);
     children = new Array(4);
-    anchors = new Array(4);
     data = new Array(5);
     build() {
+      this.anchors = new Array(4);
       this.anchors[0] = this.el.firstChild.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
       this.anchors[2] = this.anchors[1].nextSibling;
@@ -168,9 +168,9 @@ exports[`misc global 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<año><owl-anchor/></año>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -218,8 +218,8 @@ exports[`misc global 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -247,8 +247,8 @@ exports[`misc global 4`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -322,10 +322,10 @@ exports[`misc other complex template 1`] = `
                       </div>
                   </div--><div class=\\"form-group col-md-6\\"><h5>Triggers</h5><owl-anchor/></div></div></div><div class=\\"container-fluid frontend\\"><div class=\\"row\\"><div class=\\"col-md-12\\"><owl-anchor/></div><div class=\\"col-md-12\\"><owl-anchor/><owl-anchor/><owl-anchor/></div></div></div></div>\`);
     children = new Array(8);
-    anchors = new Array(8);
     data = new Array(3);
     handlers = new Array(5);
     build() {
+      this.anchors = new Array(8);
       const el1 = this.el.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild;
       const el6 = this.el.firstChild;
       this.anchors[0] = el1.firstChild;
@@ -423,8 +423,8 @@ exports[`misc other complex template 1`] = `
   class Block9 extends BElem {
     static el = elem(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><owl-anchor/></select>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -490,8 +490,8 @@ exports[`misc other complex template 1`] = `
   class Block15 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }

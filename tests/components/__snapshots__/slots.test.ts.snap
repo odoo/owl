@@ -9,8 +9,8 @@ exports[`slots can define and call slots 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><div><owl-anchor/></div><div><owl-anchor/></div></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       const el1 = this.el.firstChild;
       this.anchors[0] = el1.firstChild;
       this.anchors[1] = el1.nextSibling.firstChild;
@@ -35,8 +35,8 @@ exports[`slots can define and call slots 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -114,8 +114,8 @@ exports[`slots content is the default slot 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -137,8 +137,8 @@ exports[`slots content is the default slot 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -170,8 +170,8 @@ exports[`slots dafault slots can define a default content 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -198,8 +198,8 @@ exports[`slots dafault slots can define a default content 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -221,8 +221,8 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -249,8 +249,8 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -279,8 +279,8 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -307,8 +307,8 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -336,8 +336,8 @@ exports[`slots default slot next to named slot, with default content 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div class=\\"Dialog\\"><div class=\\"content\\"><owl-anchor/></div><div class=\\"footer\\"><owl-anchor/></div></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       const el1 = this.el.firstChild;
       this.anchors[0] = el1.firstChild;
       this.anchors[1] = el1.nextSibling.firstChild;
@@ -372,8 +372,8 @@ exports[`slots default slot next to named slot, with default content 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -434,8 +434,8 @@ exports[`slots default slot work with text nodes 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -457,8 +457,8 @@ exports[`slots default slot work with text nodes 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -486,9 +486,9 @@ exports[`slots dynamic t-slot call 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<button><owl-anchor/></button>\`);
     children = new Array(1);
-    anchors = new Array(1);
     handlers = new Array(1);
     build() {
+      this.anchors = new Array(1);
       const el1 = this.el;
       this.setupHandler(el1, \`click\`, 0);
       this.anchors[0] = el1.firstChild;
@@ -515,8 +515,8 @@ exports[`slots dynamic t-slot call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -564,9 +564,9 @@ exports[`slots dynamic t-slot call with default 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<button><owl-anchor/></button>\`);
     children = new Array(1);
-    anchors = new Array(1);
     handlers = new Array(1);
     build() {
+      this.anchors = new Array(1);
       const el1 = this.el;
       this.setupHandler(el1, \`click\`, 0);
       this.anchors[0] = el1.firstChild;
@@ -597,8 +597,8 @@ exports[`slots dynamic t-slot call with default 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -680,8 +680,8 @@ exports[`slots missing slots are ignored 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/><span>some content</span><owl-anchor/></span>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling.nextSibling;
     }
@@ -705,8 +705,8 @@ exports[`slots missing slots are ignored 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -728,8 +728,8 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -751,8 +751,8 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -790,8 +790,8 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -813,8 +813,8 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -875,8 +875,8 @@ exports[`slots multiple slots containing components 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -925,8 +925,8 @@ exports[`slots named slot inside slot 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -950,8 +950,8 @@ exports[`slots named slot inside slot 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1010,8 +1010,8 @@ exports[`slots named slot inside slot, part 3 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -1035,8 +1035,8 @@ exports[`slots named slot inside slot, part 3 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1095,8 +1095,8 @@ exports[`slots named slots can define a default content 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1123,8 +1123,8 @@ exports[`slots named slots can define a default content 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1146,8 +1146,8 @@ exports[`slots named slots inside slot, again 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<child><owl-anchor/><owl-anchor/><owl-anchor/></child>\`);
     children = new Array(3);
-    anchors = new Array(3);
     build() {
+      this.anchors = new Array(3);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
       this.anchors[2] = this.anchors[1].nextSibling;
@@ -1183,8 +1183,8 @@ exports[`slots named slots inside slot, again 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1243,8 +1243,8 @@ exports[`slots nested slots in same template 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"c1\\"><div><owl-anchor/></div></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.firstChild;
     }
   }
@@ -1266,8 +1266,8 @@ exports[`slots nested slots in same template 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"c2\\"><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1306,8 +1306,8 @@ exports[`slots nested slots in same template 4`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"parent\\"><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1363,8 +1363,8 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1424,8 +1424,8 @@ exports[`slots no named slot content => just no children 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1460,8 +1460,8 @@ exports[`slots simple default slot 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1551,8 +1551,8 @@ exports[`slots slot and (inline) t-call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1575,8 +1575,8 @@ exports[`slots slot and (inline) t-call 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1605,8 +1605,8 @@ exports[`slots slot and (inline) t-esc 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1628,8 +1628,8 @@ exports[`slots slot and (inline) t-esc 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1674,8 +1674,8 @@ exports[`slots slot and t-call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1698,8 +1698,8 @@ exports[`slots slot and t-call 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1728,8 +1728,8 @@ exports[`slots slot and t-esc 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1751,8 +1751,8 @@ exports[`slots slot and t-esc 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1802,8 +1802,8 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1825,10 +1825,10 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><button>Inc[<owl-text/>]</button><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     handlers = new Array(1);
     build() {
+      this.anchors = new Array(1);
       const el1 = this.el.firstChild;
       this.setupHandler(el1, \`click\`, 0);
       this.anchors[0] = el1.nextSibling;
@@ -1864,8 +1864,8 @@ exports[`slots slot content is bound to caller 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -1942,8 +1942,8 @@ exports[`slots slot preserves properly parented relationship 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2011,8 +2011,8 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2041,8 +2041,8 @@ exports[`slots slots and wrapper components 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<a href=\\"abc\\"><owl-anchor/></a>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2083,8 +2083,8 @@ exports[`slots slots are rendered with proper context 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2106,9 +2106,9 @@ exports[`slots slots are rendered with proper context 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><span class=\\"counter\\"><owl-text/></span><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
     update(prevData, data) {
@@ -2151,9 +2151,9 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<a><owl-anchor/></a>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -2179,8 +2179,8 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><u><owl-anchor/></u></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.firstChild;
     }
   }
@@ -2188,8 +2188,8 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   class Block2 extends BElem {
     static el = elem(\`<li><owl-anchor/></li>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2233,9 +2233,9 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<a><owl-anchor/></a>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -2261,8 +2261,8 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><u><owl-anchor/></u></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.firstChild;
     }
   }
@@ -2270,8 +2270,8 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   class Block2 extends BElem {
     static el = elem(\`<li><owl-anchor/></li>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2315,9 +2315,9 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<a><owl-anchor/></a>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
     update(prevData, data) {
@@ -2343,8 +2343,8 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2375,8 +2375,8 @@ exports[`slots slots in slots, with vars 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2398,8 +2398,8 @@ exports[`slots slots in slots, with vars 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2427,8 +2427,8 @@ exports[`slots slots in slots, with vars 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2468,9 +2468,9 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
     update(prevData, data) {
@@ -2496,8 +2496,8 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2538,8 +2538,8 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2561,8 +2561,8 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2578,8 +2578,8 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
   class Block3 extends BElem {
     static el = elem(\`<ul><owl-anchor/></ul>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2646,9 +2646,9 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
     update(prevData, data) {
@@ -2674,8 +2674,8 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2718,8 +2718,8 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2741,8 +2741,8 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2772,8 +2772,8 @@ exports[`slots t-set t-value in a slot 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2795,8 +2795,8 @@ exports[`slots t-set t-value in a slot 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2827,8 +2827,8 @@ exports[`slots t-slot in recursive templates 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<wrapper><owl-anchor/></wrapper>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2913,8 +2913,8 @@ exports[`slots t-slot nested within another slot 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"modal\\"><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2936,8 +2936,8 @@ exports[`slots t-slot nested within another slot 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"portal\\"><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2959,8 +2959,8 @@ exports[`slots t-slot nested within another slot 4`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"c2\\"><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -2994,8 +2994,8 @@ exports[`slots t-slot nested within another slot 5`] = `
   class Block1 extends BElem {
     static el = elem(\`<span id=\\"c1\\"><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -3036,9 +3036,9 @@ exports[`slots t-slot scope context 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     handlers = new Array(1);
     build() {
+      this.anchors = new Array(1);
       const el1 = this.el;
       this.setupHandler(el1, \`click\`, 0);
       this.anchors[0] = el1.firstChild;
@@ -3110,8 +3110,8 @@ exports[`slots t-slot within dynamic t-call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div class=\\"slotted\\"><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -3133,8 +3133,8 @@ exports[`slots t-slot within dynamic t-call 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div class=\\"slot\\"><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -3156,8 +3156,8 @@ exports[`slots t-slot within dynamic t-call 4`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -3222,8 +3222,8 @@ exports[`slots template can just return a slot 3`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

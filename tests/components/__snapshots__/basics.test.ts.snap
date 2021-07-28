@@ -97,8 +97,8 @@ exports[`basics a component inside a component 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -171,8 +171,8 @@ exports[`basics can handle empty props 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -602,8 +602,8 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -651,8 +651,8 @@ exports[`basics same t-keys in two different places 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><div><owl-anchor/></div><div><owl-anchor/></div></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       const el1 = this.el.firstChild;
       this.anchors[0] = el1.firstChild;
       this.anchors[1] = el1.nextSibling.firstChild;
@@ -758,8 +758,8 @@ exports[`basics t-elif works with t-component 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -807,8 +807,8 @@ exports[`basics t-else with empty string works with t-component 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -856,8 +856,8 @@ exports[`basics t-else works with t-component 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -905,8 +905,8 @@ exports[`basics t-if works with t-component 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -947,8 +947,8 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }
@@ -1110,8 +1110,8 @@ exports[`basics widget after a t-foreach 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }

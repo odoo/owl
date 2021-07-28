@@ -81,8 +81,8 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -124,8 +124,8 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -164,8 +164,8 @@ exports[`lifecycle hooks lifecycle semantics 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -422,8 +422,8 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -462,8 +462,8 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -485,8 +485,8 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -568,8 +568,8 @@ exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -630,8 +630,8 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -653,8 +653,8 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -757,8 +757,8 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling;
     }

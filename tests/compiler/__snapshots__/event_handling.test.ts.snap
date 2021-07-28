@@ -104,8 +104,8 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   class Block1 extends BElem {
     static el = elem(\`<ul><owl-anchor/></ul>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -489,8 +489,8 @@ exports[`t-on t-on with t-call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -537,8 +537,8 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

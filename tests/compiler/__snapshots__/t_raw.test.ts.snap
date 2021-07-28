@@ -9,8 +9,8 @@ exports[`t-raw literal 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -46,8 +46,8 @@ exports[`t-raw multiple calls to t-raw 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/><div>Greeter</div><owl-anchor/></div>\`);
     children = new Array(2);
-    anchors = new Array(2);
     build() {
+      this.anchors = new Array(2);
       this.anchors[0] = this.el.firstChild;
       this.anchors[1] = this.anchors[0].nextSibling.nextSibling;
     }
@@ -72,8 +72,8 @@ exports[`t-raw multiple calls to t-raw 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -102,8 +102,8 @@ exports[`t-raw not escaping 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -125,8 +125,8 @@ exports[`t-raw t-raw and another sibling node 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><span>hello</span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
   }
@@ -148,8 +148,8 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -172,8 +172,8 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -214,8 +214,8 @@ exports[`t-raw t-raw with comment 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -251,8 +251,8 @@ exports[`t-raw variable 1`] = `
   class Block1 extends BElem {
     static el = elem(\`<span><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

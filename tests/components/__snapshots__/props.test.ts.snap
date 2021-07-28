@@ -31,8 +31,8 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -76,8 +76,8 @@ exports[`basics explicit object prop 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -99,9 +99,9 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   class Block1 extends BElem {
     static el = elem(\`<span><owl-text/><owl-anchor/></span>\`);
     children = new Array(1);
-    anchors = new Array(1);
     data = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.nextSibling;
     }
     update(prevData, data) {
@@ -127,8 +127,8 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -179,8 +179,8 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -226,8 +226,8 @@ exports[`basics t-set works  2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

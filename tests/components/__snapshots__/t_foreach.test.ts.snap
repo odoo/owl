@@ -31,8 +31,8 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><ul><owl-anchor/></ul></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild.firstChild;
     }
   }
@@ -40,8 +40,8 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   class Block2 extends BElem {
     static el = elem(\`<li><owl-anchor/></li>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -99,8 +99,8 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -169,8 +169,8 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -178,8 +178,8 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   class Block2 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -187,8 +187,8 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   class Block3 extends BElem {
     static el = elem(\`<p><owl-anchor/></p>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -306,8 +306,8 @@ exports[`list of components sub components rendered in a loop 2`] = `
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }
@@ -364,8 +364,8 @@ exports[`list of components sub components with some state rendered in a loop 2`
   class Block1 extends BElem {
     static el = elem(\`<div><owl-anchor/></div>\`);
     children = new Array(1);
-    anchors = new Array(1);
     build() {
+      this.anchors = new Array(1);
       this.anchors[0] = this.el.firstChild;
     }
   }

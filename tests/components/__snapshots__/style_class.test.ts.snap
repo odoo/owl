@@ -268,6 +268,78 @@ exports[`style and class handling class on sub component, which is switched to a
 }"
 `;
 
+exports[`style and class handling class with extra whitespaces (variation) 1`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling class with extra whitespaces (variation) 2`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BElem {
+    static el = elem(\`<p><owl-anchor/></p>\`);
+    children = new Array(1);
+    build() {
+      this.anchors = new Array(1);
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b2.parentClass = toClassObj(\`a  b c   d\`);
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling class with extra whitespaces 1`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div/>\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling class with extra whitespaces 2`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.parentClass = toClassObj(\`a  b c   d\`);
+    return b1;
+  }
+}"
+`;
+
 exports[`style and class handling component class and parent class combine together 1`] = `
 "function anonymous(Blocks, helpers
 ) {
@@ -333,7 +405,7 @@ exports[`style and class handling empty class attribute is not added on widget r
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     return b1;
   }
 }"
@@ -388,6 +460,93 @@ exports[`style and class handling setting a class on a child component with text
   return function template(ctx, node, key = \\"\\") {
     const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     b1.parentClass = toClassObj(\`some-class\`);
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling t-att-class is properly added/removed on widget root el (v2) 1`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BElem {
+    static el = elem(\`<span class=\\"c\\"/>\`);
+    data = new Array(1);
+    update(prevData, data) {
+      this.updateClass(this.el, prevData[0], data[0]);
+    }
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    b1.data[0] = toClassObj({d:ctx['state'].d});
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling t-att-class is properly added/removed on widget root el (v2) 2`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BElem {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    build() {
+      this.anchors = new Array(1);
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b2.parentClass = toClassObj({b:ctx['state'].b}, \`a\`);
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling t-att-class is properly added/removed on widget root el 1`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<div class=\\"c\\"/>\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`style and class handling t-att-class is properly added/removed on widget root el 2`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BElem {
+    static el = elem(\`<div><owl-anchor/></div>\`);
+    children = new Array(1);
+    build() {
+      this.anchors = new Array(1);
+      this.anchors[0] = this.el.firstChild;
+    }
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    b2.parentClass = toClassObj({a:ctx['state'].a,b:ctx['state'].b});
     return b1;
   }
 }"

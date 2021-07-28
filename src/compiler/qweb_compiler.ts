@@ -909,6 +909,25 @@ export class QWebCompiler {
 
   compileComponent(ast: ASTComponent, ctx: Context) {
     const { block } = ctx;
+
+    let hasClass = "class" in ast.props || "t-att-class" in ast.props;
+    let classExpr = "";
+    if (hasClass) {
+      if ("class" in ast.props) {
+        if (ast.props.class) {
+          classExpr = "`" + ast.props.class + "`";
+        } else {
+          hasClass = "t-att-class" in ast.props;
+        }
+        delete ast.props.class;
+      }
+      if ("t-att-class" in ast.props) {
+        const suffix = classExpr ? `, ${classExpr}` : "";
+        classExpr = compileExpr(ast.props["t-att-class"]) + suffix;
+        delete ast.props["t-att-class"];
+      }
+    }
+
     // props
     const props: string[] = [];
     for (let p in ast.props) {
@@ -973,7 +992,6 @@ export class QWebCompiler {
     }
 
     let id: string;
-    const hasClass = "class" in ast.props;
     const hasHandlers = Object.keys(ast.handlers).length;
     const shouldForce = hasSlot || hasClass || Boolean(hasHandlers);
 
@@ -993,8 +1011,8 @@ export class QWebCompiler {
     }
 
     // class and style
-    if (ast.props.class) {
-      this.addLine(`${id!}.parentClass = toClassObj(\`${ast.props.class}\`);`);
+    if (hasClass) {
+      this.addLine(`${id!}.parentClass = toClassObj(${classExpr});`);
     }
 
     if (hasSlot) {

@@ -25,6 +25,7 @@ type LifecycleHook = Function;
 
 export class BNode<T extends typeof Component = any> extends Block {
   parentClass?: any = null;
+  currentClass?: any = null;
   classTarget?: HTMLElement;
   handlers: any = null;
   app: App;
@@ -206,10 +207,10 @@ export class BNode<T extends typeof Component = any> extends Block {
     bdom.mountBefore(anchor);
     if (this.parentClass) {
       const el = this.firstChildNode();
-      // this.parentClass = this.parentClass.trim().split(/\s+/);
       if (el instanceof HTMLElement) {
         this.addClass(el);
       }
+      this.currentClass = this.parentClass;
     }
     this.status = STATUS.MOUNTED;
     this.fiber!.appliedToDom = true;
@@ -248,8 +249,23 @@ export class BNode<T extends typeof Component = any> extends Block {
   patch() {
     this.bdom!.patch(this!.fiber!.bdom!);
     if (this.parentClass) {
-      const el = this.firstChildNode();
-      if (el !== this.classTarget) {
+      const el = this.firstChildNode() as HTMLElement;
+      if (el === this.classTarget) {
+        const prev = this.currentClass;
+        const next = this.parentClass;
+        for (let c in prev) {
+          if (!(c in next)) {
+            el.classList.remove(c);
+          }
+        }
+        // add classes
+        for (let c in next) {
+          if (!(c in prev)) {
+            el.classList.add(c);
+          }
+        }
+        this.currentClass = next;
+      } else {
         if (el && this.classTarget) {
           this.removeClass(this.classTarget);
           this.addClass(el as any);

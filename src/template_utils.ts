@@ -104,8 +104,8 @@ function capture(ctx: any): any {
   return Object.create(result);
 }
 
-function toClassObj(expr: string | number | { [c: string]: any }) {
-  const result: { [c: string]: any } = {};
+export function toClassObj(expr: string | number | { [c: string]: any }, expr2?: any) {
+  const result: { [c: string]: any } = expr2 ? toClassObj(expr2) : {};
 
   if (typeof expr === "object") {
     // this is already an object but we may need to split keys:

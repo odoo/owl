@@ -164,4 +164,86 @@ describe("style and class handling", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe(`<span class="someclass">b</span>`);
   });
+
+  test("t-att-class is properly added/removed on widget root el", async () => {
+    class Child extends Component {
+      static template = xml`<div class="c"/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
+      static components = { Child };
+      state = useState({ a: true, b: false });
+    }
+    const widget = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
+
+    widget.state.a = false;
+    widget.state.b = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(`<div><div class="c b"></div></div>`);
+  });
+
+  test("class with extra whitespaces", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Child class="a  b c   d"/>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`<div class="a b c d"></div>`);
+  });
+
+  test("class with extra whitespaces (variation)", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<p><Child class="a  b c   d"/></p>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`<p><div class="a b c d"></div></p>`);
+  });
+
+  test("t-att-class is properly added/removed on widget root el (v2)", async () => {
+    let child: any = null;
+    class Child extends Component {
+      static template = xml`<span class="c" t-att-class="{ d: state.d }"/>`;
+      state = useState({ d: true });
+      setup() {
+        child = this;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child class="a" t-att-class="{ b: state.b }" />
+        </div>`;
+      static components = { Child };
+      state = useState({ b: true });
+    }
+    const widget = await mount(Parent, fixture);
+
+    const span = fixture.querySelector("span")!;
+    expect(span.className).toBe("c d a b");
+
+    widget.state.b = false;
+    await nextTick();
+    expect(span.className).toBe("c d a");
+
+    child.state.d = false;
+    await nextTick();
+    expect(span.className).toBe("c a");
+
+    widget.state.b = true;
+    await nextTick();
+    expect(span.className).toBe("c a b");
+
+    child.state.d = true;
+    await nextTick();
+    expect(span.className).toBe("c a b d");
+  });
 });

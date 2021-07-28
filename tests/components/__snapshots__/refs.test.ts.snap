@@ -60,7 +60,7 @@ exports[`refs refs are properly bound in slots 2`] = `
   const slot3 = ctx => node => {
     const refs = ctx.__owl__.refs
     const b2 = new Block2();
-    b2.handlers[0] = (e) => ctx.__owl__.component['doSomething'](e);
+    b2.handlers[0] = [ctx, 'doSomething'];
     b2.refs = refs;
     return b2;
   }

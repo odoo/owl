@@ -64,7 +64,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    b1.handlers[0] = (e) => ctx.__owl__.component['update'](e);
+    b1.handlers[0] = [ctx, 'update'];
     return b1;
   }
 }"
@@ -117,7 +117,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
     ctx = Object.create(ctx);
     const b1 = new Block1();
     const arg1 = [ctx['a']];
-    b1.handlers[0] = (e) => ctx.__owl__.component['update'](...arg1, e);
+    b1.handlers[0] = [ctx, 'update', arg1];
     return b1;
   }
 }"

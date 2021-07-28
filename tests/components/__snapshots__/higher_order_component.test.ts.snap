@@ -162,7 +162,7 @@ exports[`basics sub widget is interactive 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const b1 = new Block1();
-    b1.handlers[0] = (e) => ctx.__owl__.component['inc'](e);
+    b1.handlers[0] = [ctx, 'inc'];
     b1.data[0] = ctx['state'].val;
     return b1;
   }

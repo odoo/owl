@@ -28,7 +28,7 @@ exports[`event handling can set handler on sub component 2`] = `
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     b2.handlers = new Array(1);
-    b2.handlers[0] = ['click', (e) => ctx.__owl__.component['inc'](e)];
+    b2.handlers[0] = ['click', ctx, 'inc'];
     b1.children[1] = new BText(ctx['state'].value);
     return b1;
   }
@@ -63,7 +63,7 @@ exports[`event handling handler receive the event as argument 2`] = `
     const b1 = new BMulti(2);
     const b2 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     b2.handlers = new Array(1);
-    b2.handlers[0] = ['click', (e) => ctx.__owl__.component['inc'](e)];
+    b2.handlers[0] = ['click', ctx, 'inc'];
     b1.children[1] = new BText(ctx['state'].value);
     return b1;
   }

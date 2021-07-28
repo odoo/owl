@@ -86,8 +86,8 @@ export function compile(template: string): Template {
   return templateFunction(Blocks, UTILS);
 }
 
-export function renderToBdom(template: string, context: any = {}): Block {
-  return compile(template)(context, {});
+export function renderToBdom(template: string, context: any = {}, node: any = {}): Block {
+  return compile(template)(context, node);
 }
 
 export function renderToString(template: string, context: any = {}): string {

@@ -500,20 +500,23 @@ export class QWebCompiler {
       });
       const isMethodCall = name.match(FNAMEREGEXP);
       if (isMethodCall) {
+        let handlerFn;
         if (args) {
           const argId = this.generateId("arg");
           this.addLine(`const ${argId} = [${compileExpr(args)}];`);
-          code = `ctx.__owl__.component['${name}'](...${argId}, e)`;
+          handlerFn = `'${name}', ${argId}`;
         } else {
-          code = `ctx.__owl__.component['${name}'](e)`;
+          handlerFn = `'${name}'`;
         }
+        const handler = insert ? `[ctx, ${handlerFn}]` : `['${event}', ctx, ${handlerFn}]`;
+        this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
       } else {
         code = this.captureExpression(value);
         code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
+        const handlerFn = `(e) => ${code}`;
+        const handler = insert ? handlerFn : `['${event}', ${handlerFn}]`;
+        this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
       }
-      const handlerFn = `(e) => ${code}`;
-      const handler = insert ? handlerFn : `['${event}', ${handlerFn}]`;
-      this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
     }
   }
 

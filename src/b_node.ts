@@ -173,14 +173,14 @@ export class BNode<T extends typeof Component = any> extends Block {
   }
 
   async updateAndRender(props: any, parentFiber: Fiber) {
-      // update
-      const fiber = makeChildFiber(this, parentFiber);
-      if (this.willPatch.length) {
-        parentFiber.root.willPatch.push(fiber);
-      }
-      if (this.patched.length) {
-        parentFiber.root.patched.push(fiber);
-      }
+    // update
+    const fiber = makeChildFiber(this, parentFiber);
+    if (this.willPatch.length) {
+      parentFiber.root.willPatch.push(fiber);
+    }
+    if (this.patched.length) {
+      parentFiber.root.patched.push(fiber);
+    }
     const component = this.component;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;
@@ -221,8 +221,8 @@ export class BNode<T extends typeof Component = any> extends Block {
         const el = bdom.el!;
         el.addEventListener(eventType, (ev: Event) => {
           const info = this.handlers![i];
-          const [, callback] = info;
-          callback(ev);
+          const [, ctx, method] = info;
+          (ctx.__owl__.component as any)[method](ev);
         });
       }
     }

@@ -7,11 +7,12 @@ snapshotEverything();
 // -----------------------------------------------------------------------------
 
 describe("t-on", () => {
-  function mountToFixture(template: string, ctx: any = {}): HTMLDivElement {
-    if (!("__owl__" in ctx)) {
-      ctx.__owl__ = { component: ctx };
+  function mountToFixture(template: string, ctx: any = {}, node?: any): HTMLDivElement {
+    if (!node) {
+      node = { component: ctx };
+      ctx.__owl__ = node;
     }
-    const block = renderToBdom(template, ctx);
+    const block = renderToBdom(template, ctx, node);
     const fixture = makeTestFixture();
     block.mount(fixture);
     return fixture;
@@ -152,10 +153,11 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
-    owner.__owl__ = { component: owner };
+    const node = { component: owner };
+    owner.__owl__ = node;
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
-    const bdom = render(owner, {});
+    const bdom = render(owner, node);
     bdom.mount(fixture);
     fixture.querySelector("button")!.click();
   });
@@ -176,10 +178,11 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
-    owner.__owl__ = { component: owner };
+    const node = { component: owner };
+    owner.__owl__ = node;
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
-    const bdom = render(owner, {});
+    const bdom = render(owner, node);
     bdom.mount(fixture);
     fixture.querySelector("button")!.click();
   });
@@ -254,11 +257,12 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
-    owner.__owl__ = { component: owner };
+    const node = { component: owner };
+    owner.__owl__ = node;
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
-    const bdom = render(owner, {});
+    const bdom = render(owner, node);
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();
   });
@@ -278,11 +282,13 @@ describe("t-on", () => {
       },
       value: 444,
     };
-    owner.__owl__ = { component: owner };
+
+    const node = { component: owner };
+    owner.__owl__ = node;
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
-    const bdom = render(owner, {});
+    const bdom = render(owner, node);
     bdom.mount(fixture);
     fixture.querySelector("p")!.click();
   });

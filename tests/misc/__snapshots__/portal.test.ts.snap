@@ -54,7 +54,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   const slot2 = ctx => (node, key) => {
     const b2 = node.getChild(\`Child2\`, {}, key + \`__3\`, ctx);
     b2.handlers = new Array(1);
-    b2.handlers[0] = ['custom', (e) => ctx.__owl__.component['_handled'](e)];
+    b2.handlers[0] = ['custom', ctx, '_handled'];
     return b2;
   }
   

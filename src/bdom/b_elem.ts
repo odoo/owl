@@ -90,8 +90,15 @@ export class BElem extends Block {
 
   setupHandler(el: HTMLElement, eventType: string, index: number) {
     el.addEventListener(eventType, (ev) => {
-      const callback = this.handlers![index];
-      callback(ev);
+      const info = this.handlers![index];
+      if (typeof info === "function") {
+        info(ev);
+      } else {
+        const ctx = info[0];
+        const method = info[1];
+        const args = info[2] || [];
+        ctx.__owl__.component[method](...args, ev);
+      }
     });
   }
 

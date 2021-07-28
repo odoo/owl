@@ -473,6 +473,10 @@ describe("qweb parser", () => {
       hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -485,6 +489,10 @@ describe("qweb parser", () => {
       hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -504,6 +512,10 @@ describe("qweb parser", () => {
         ref: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -516,6 +528,10 @@ describe("qweb parser", () => {
       isOnlyChild: false,
       key: "item.id",
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -535,6 +551,10 @@ describe("qweb parser", () => {
         ref: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -562,6 +582,10 @@ describe("qweb parser", () => {
           content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
         },
       },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -588,6 +612,10 @@ describe("qweb parser", () => {
         ref: null,
         content: [{ type: ASTType.TEsc, expr: "category.name", defaultValue: "" }],
       },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -607,6 +635,10 @@ describe("qweb parser", () => {
           hasNoComponent: true,
           isOnlyChild: true,
           body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+          hasNoFirst: true,
+          hasNoIndex: true,
+          hasNoLast: true,
+          hasNoValue: true,
         },
       ],
     });
@@ -638,6 +670,10 @@ describe("qweb parser", () => {
         attrs: {},
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
+      hasNoFirst: true,
+      hasNoIndex: false,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
@@ -657,9 +693,32 @@ describe("qweb parser", () => {
         props: {},
         slots: {},
       },
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
     });
   });
 
+  test("t-foreach expression with a t-call inside", async () => {
+    expect(parse(`<t t-foreach="list" t-as="item"><t t-call="blap"/></t>`)).toEqual({
+      type: ASTType.TForEach,
+      collection: "list",
+      elem: "item",
+      key: null,
+      hasNoComponent: false,
+      isOnlyChild: false,
+      body: {
+        type: ASTType.TCall,
+        name: "blap",
+        body: null,
+      },
+      hasNoFirst: false,
+      hasNoIndex: false,
+      hasNoLast: false,
+      hasNoValue: false,
+    });
+  });
   // ---------------------------------------------------------------------------
   // t-call
   // ---------------------------------------------------------------------------

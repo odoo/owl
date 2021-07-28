@@ -747,10 +747,18 @@ export class QWebCompiler {
     this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
     this.addLine(`ctx[\`${ast.elem}\`] = ${vals}[${loopVar}];`);
-    this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
-    this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${vals}.length - 1;`);
-    this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
-    this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
+    if (!ast.hasNoFirst) {
+      this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
+    }
+    if (!ast.hasNoLast) {
+      this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${vals}.length - 1;`);
+    }
+    if (!ast.hasNoIndex) {
+      this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
+    }
+    if (!ast.hasNoValue) {
+      this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
+    }
     this.addLine(`let key${this.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
     const collectionBlock = new BlockDescription(id, "Collection");
     const subCtx: Context = {

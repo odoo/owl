@@ -2208,10 +2208,6 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`user\`] = v1[i1];
-      ctx[\`user_first\`] = i1 === 0;
-      ctx[\`user_last\`] = i1 === v1.length - 1;
-      ctx[\`user_index\`] = i1;
-      ctx[\`user_value\`] = k1[i1];
       let key1 = ctx['user'].id;
       const b3 = b2.children[i1] = new Block2();
       const ctx3 = capture(ctx);
@@ -2289,10 +2285,6 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`user\`] = v1[i1];
-      ctx[\`user_first\`] = i1 === 0;
-      ctx[\`user_last\`] = i1 === v1.length - 1;
-      ctx[\`user_index\`] = i1;
-      ctx[\`user_value\`] = k1[i1];
       let key1 = ctx['user'].id;
       const b3 = b2.children[i1] = new Block2();
       ctx[\`userdescr\`] = 'User '+ctx['user'].name;
@@ -2514,10 +2506,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`n\`] = v1[i1];
-      ctx[\`n_first\`] = i1 === 0;
-      ctx[\`n_last\`] = i1 === v1.length - 1;
       ctx[\`n_index\`] = i1;
-      ctx[\`n_value\`] = k1[i1];
       let key1 = ctx['n_index'];
       const ctx3 = capture(ctx);
       const b4 = b2.children[i1] = node.getChild(\`Child\`, {}, key + \`__2__\${key1}\`, ctx);
@@ -2605,10 +2594,6 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`node1\`] = v1[i1];
-      ctx[\`node1_first\`] = i1 === 0;
-      ctx[\`node1_last\`] = i1 === v1.length - 1;
-      ctx[\`node1_index\`] = i1;
-      ctx[\`node1_value\`] = k1[i1];
       let key1 = ctx['node1'].key;
       const b3 = b2.children[i1] = new BMulti(2);
       const b4 = b3.children[0] = new Block2();
@@ -2619,10 +2604,6 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
       const k2 = b6.values, v2 = b6.collection, l2 = k2.length;
       for (let i2 = 0; i2 < l2; i2++) {
         ctx[\`node2\`] = v2[i2];
-        ctx[\`node2_first\`] = i2 === 0;
-        ctx[\`node2_last\`] = i2 === v2.length - 1;
-        ctx[\`node2_index\`] = i2;
-        ctx[\`node2_value\`] = k2[i2];
         let key2 = ctx['node2'].key;
         const ctx4 = capture(ctx);
         const b8 = b6.children[i2] = node.getChild(\`Child\`, {}, key + \`__3__\${key1}__\${key2}\`, ctx);
@@ -2693,10 +2674,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`n\`] = v1[i1];
-      ctx[\`n_first\`] = i1 === 0;
-      ctx[\`n_last\`] = i1 === v1.length - 1;
       ctx[\`n_index\`] = i1;
-      ctx[\`n_value\`] = k1[i1];
       let key1 = ctx['n_index'];
       ctx[\`dummy\`] = ctx['n_index'];
       const ctx3 = capture(ctx);

@@ -53,10 +53,6 @@ exports[`list of components components in a node in a t-foreach  2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = i1;
       key1 = 'li_'+ctx['item'];
       const b3 = b2.children[i1] = new Block2();
@@ -112,20 +108,14 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`section\`] = v1[i1];
-      ctx[\`section_first\`] = i1 === 0;
-      ctx[\`section_last\`] = i1 === v1.length - 1;
       ctx[\`section_index\`] = i1;
-      ctx[\`section_value\`] = k1[i1];
       let key1 = ctx['section_index'];
       const b3 = b2.children[i1] = new BCollection(ctx['section'].blips, false, false);
       ctx = Object.create(ctx);
       const k2 = b3.values, v2 = b3.collection, l2 = k2.length;
       for (let i2 = 0; i2 < l2; i2++) {
         ctx[\`blip\`] = v2[i2];
-        ctx[\`blip_first\`] = i2 === 0;
-        ctx[\`blip_last\`] = i2 === v2.length - 1;
         ctx[\`blip_index\`] = i2;
-        ctx[\`blip_value\`] = k2[i2];
         let key2 = ctx['blip_index'];
         b3.children[i2] = node.getChild(\`Child\`, {blip: ctx['blip']}, key + \`__3__\${key1}__\${key2}\`, ctx);
         b3.keys[i2] = key2;
@@ -200,10 +190,6 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`row\`] = v1[i1];
-      ctx[\`row_first\`] = i1 === 0;
-      ctx[\`row_last\`] = i1 === v1.length - 1;
-      ctx[\`row_index\`] = i1;
-      ctx[\`row_value\`] = k1[i1];
       let key1 = ctx['row'];
       const b3 = b2.children[i1] = new Block2();
       const b4 = b3.children[0] = new BCollection(ctx['state'].cols, true, false);
@@ -211,10 +197,6 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
       const k2 = b4.values, v2 = b4.collection, l2 = k2.length;
       for (let i2 = 0; i2 < l2; i2++) {
         ctx[\`col\`] = v2[i2];
-        ctx[\`col_first\`] = i2 === 0;
-        ctx[\`col_last\`] = i2 === v2.length - 1;
-        ctx[\`col_index\`] = i2;
-        ctx[\`col_value\`] = k2[i2];
         let key2 = ctx['col'];
         const b5 = b4.children[i2] = new Block3();
         b5.children[0] = node.getChild(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__3__\${key1}__\${key2}\`, ctx);
@@ -262,10 +244,6 @@ exports[`list of components simple list 2`] = `
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`elem\`] = v1[i1];
-      ctx[\`elem_first\`] = i1 === 0;
-      ctx[\`elem_last\`] = i1 === v1.length - 1;
-      ctx[\`elem_index\`] = i1;
-      ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'].id;
       b1.children[i1] = node.getChild(\`Child\`, {value: ctx['elem'].value}, key + \`__2__\${key1}\`, ctx);
       b1.keys[i1] = key1;
@@ -319,10 +297,6 @@ exports[`list of components sub components rendered in a loop 2`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`number\`] = v1[i1];
-      ctx[\`number_first\`] = i1 === 0;
-      ctx[\`number_last\`] = i1 === v1.length - 1;
-      ctx[\`number_index\`] = i1;
-      ctx[\`number_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['number'];
       b2.children[i1] = node.getChild(\`Child\`, {n: ctx['number']}, key + \`__2__\${key1}\`, ctx);
@@ -377,10 +351,6 @@ exports[`list of components sub components with some state rendered in a loop 2`
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`number\`] = v1[i1];
-      ctx[\`number_first\`] = i1 === 0;
-      ctx[\`number_last\`] = i1 === v1.length - 1;
-      ctx[\`number_index\`] = i1;
-      ctx[\`number_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['number'];
       b2.children[i1] = node.getChild(\`Child\`, {}, key + \`__2__\${key1}\`, ctx);

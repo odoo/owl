@@ -126,10 +126,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`action\`] = v1[i1];
-      ctx[\`action_first\`] = i1 === 0;
-      ctx[\`action_last\`] = i1 === v1.length - 1;
       ctx[\`action_index\`] = i1;
-      ctx[\`action_value\`] = k1[i1];
       let key1 = ctx['action_index'];
       const b3 = b2.children[i1] = new Block2();
       const arg2 = [ctx['action']];
@@ -235,10 +232,6 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`value\`] = v1[i1];
-      ctx[\`value_first\`] = i1 === 0;
-      ctx[\`value_last\`] = i1 === v1.length - 1;
-      ctx[\`value_index\`] = i1;
-      ctx[\`value_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['value'];
       const b2 = b1.children[i1] = new Block1();

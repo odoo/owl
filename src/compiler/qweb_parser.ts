@@ -81,6 +81,10 @@ export interface ASTTForEach {
   body: AST;
   isOnlyChild: boolean;
   hasNoComponent: boolean;
+  hasNoFirst: boolean;
+  hasNoLast: boolean;
+  hasNoIndex: boolean;
+  hasNoValue: boolean;
 }
 
 export interface ASTTKey {
@@ -395,6 +399,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-foreach")) {
     return null;
   }
+  const html = node.outerHTML;
   const collection = node.getAttribute("t-foreach")!;
   node.removeAttribute("t-foreach");
   const elem = node.getAttribute("t-as") || "";
@@ -407,6 +412,12 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     return null;
   }
 
+  const hasNoTCall = !html.includes("t-call");
+  const hasNoFirst = hasNoTCall && !html.includes(`${elem}_first`);
+  const hasNoLast = hasNoTCall && !html.includes(`${elem}_last`);
+  const hasNoIndex = hasNoTCall && !html.includes(`${elem}_index`);
+  const hasNoValue = hasNoTCall && !html.includes(`${elem}_value`);
+
   return {
     type: ASTType.TForEach,
     collection,
@@ -415,6 +426,10 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     key,
     isOnlyChild: false,
     hasNoComponent: hasNoComponent(body),
+    hasNoFirst,
+    hasNoLast,
+    hasNoIndex,
+    hasNoValue,
   };
 }
 

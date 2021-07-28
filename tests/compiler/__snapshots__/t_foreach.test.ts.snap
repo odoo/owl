@@ -22,10 +22,6 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
       b2.children[i1] = new BText(ctx['item']);
       b2.keys[i1] = key1;
@@ -65,10 +61,6 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
       const b3 = b2.children[i1] = new Block2();
       b3.data[0] = ctx['item'];
@@ -101,8 +93,6 @@ exports[`t-foreach iterate on items 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
@@ -143,8 +133,6 @@ exports[`t-foreach iterate, dict param 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item_index'];
@@ -188,7 +176,6 @@ exports[`t-foreach iterate, position 1`] = `
       ctx[\`elem_first\`] = i1 === 0;
       ctx[\`elem_last\`] = i1 === v1.length - 1;
       ctx[\`elem_index\`] = i1;
-      ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'];
       const b3 = b2.children[i1] = new BMulti(6);
       b3.children[0] = new BText(\` -\`);
@@ -230,10 +217,6 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
       b2.children[i1] = new BText(ctx['item']);
       b2.keys[i1] = key1;
@@ -255,10 +238,6 @@ exports[`t-foreach simple iteration 1`] = `
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
       b1.children[i1] = new BText(ctx['item']);
       b1.keys[i1] = key1;
@@ -296,10 +275,6 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
       const b2 = b1.children[i1] = new BMulti(2);
       const b3 = b2.children[0] = new Block1();
@@ -525,20 +500,12 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`number\`] = v1[i1];
-      ctx[\`number_first\`] = i1 === 0;
-      ctx[\`number_last\`] = i1 === v1.length - 1;
-      ctx[\`number_index\`] = i1;
-      ctx[\`number_value\`] = k1[i1];
       let key1 = ctx['number'];
       const b3 = b2.children[i1] = new BCollection(ctx['letters'], false, true);
       ctx = Object.create(ctx);
       const k2 = b3.values, v2 = b3.collection, l2 = k2.length;
       for (let i2 = 0; i2 < l2; i2++) {
         ctx[\`letter\`] = v2[i2];
-        ctx[\`letter_first\`] = i2 === 0;
-        ctx[\`letter_last\`] = i2 === v2.length - 1;
-        ctx[\`letter_index\`] = i2;
-        ctx[\`letter_value\`] = k2[i2];
         let key2 = ctx['letter'];
         const b4 = b3.children[i2] = new BMulti(4);
         b4.children[0] = new BText(\` [\`);
@@ -575,10 +542,6 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`elem\`] = v1[i1];
-      ctx[\`elem_first\`] = i1 === 0;
-      ctx[\`elem_last\`] = i1 === v1.length - 1;
-      ctx[\`elem_index\`] = i1;
-      ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'].id;
       const b2 = b1.children[i1] = new BMulti(1);
       if (ctx['elem'].id<3) {
@@ -622,10 +585,6 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`elem\`] = v1[i1];
-      ctx[\`elem_first\`] = i1 === 0;
-      ctx[\`elem_last\`] = i1 === v1.length - 1;
-      ctx[\`elem_index\`] = i1;
-      ctx[\`elem_value\`] = k1[i1];
       let key1 = ctx['elem'].id;
       const b3 = b2.children[i1] = new BMulti(1);
       if (ctx['elem'].id<3) {
@@ -659,10 +618,6 @@ exports[`t-foreach t-key on an inside node 1`] = `
     const k1 = b1.values, v1 = b1.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = i1;
       key1 = ctx['item'];
       const b2 = b1.children[i1] = new Block1();
@@ -700,10 +655,7 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = ctx['item'];
       key1 = ctx['item_index'];
       const b3 = b2.children[i1] = new Block2();
@@ -744,10 +696,6 @@ exports[`t-foreach warn if no key in some case 1`] = `
     const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`item\`] = v1[i1];
-      ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v1.length - 1;
-      ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k1[i1];
       let key1 = i1;
       const b3 = b2.children[i1] = new Block2();
       b3.data[0] = ctx['item'];

@@ -22,14 +22,12 @@ export class Memo extends Component {
     // check props change, and render/apply patch if it changed
     let prevProps = props;
     const updateAndRender = node.updateAndRender;
-    node.updateAndRender = function (props: any, fiber: Fiber) {
+    node.updateAndRender = function (props: any, parentFiber: Fiber) {
       const shouldUpdate = !shallowEqual(prevProps, props);
       if (shouldUpdate) {
         prevProps = props;
-        updateAndRender.call(node, props, fiber);
+        updateAndRender.call(node, props, parentFiber);
         applyPatch = true;
-      } else {
-        fiber.root.counter--;
       }
       return Promise.resolve();
     };

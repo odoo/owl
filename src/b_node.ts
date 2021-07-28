@@ -63,6 +63,9 @@ export class BNode<T extends typeof Component = any> extends Block {
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
+    if (this.mounted.length) {
+      fiber.root.mounted.push(fiber);
+    }
     const component = this.component;
     const prom = Promise.all(this.willStart.map((f) => f.call(component)));
     await prom;
@@ -156,15 +159,7 @@ export class BNode<T extends typeof Component = any> extends Block {
 
     const parentFiber = this.fiber!;
     if (node) {
-      // update
-      const fiber = makeChildFiber(node, parentFiber);
-      if (node.willPatch.length) {
-        parentFiber.root.willPatch.push(fiber);
-      }
-      if (node.patched.length) {
-        parentFiber.root.patched.push(fiber);
-      }
-      node.updateAndRender(props, fiber);
+      node.updateAndRender(props, parentFiber);
     } else {
       // new component
       const C = isDynamic ? name : owner.constructor.components[name as any];
@@ -172,15 +167,20 @@ export class BNode<T extends typeof Component = any> extends Block {
       this.children[key] = node;
 
       const fiber = makeChildFiber(node, parentFiber);
-      if (node.mounted.length) {
-        parentFiber.root.mounted.push(fiber);
-      }
       node.initiateRender(fiber);
     }
     return node;
   }
 
-  async updateAndRender(props: any, fiber: Fiber) {
+  async updateAndRender(props: any, parentFiber: Fiber) {
+      // update
+      const fiber = makeChildFiber(this, parentFiber);
+      if (this.willPatch.length) {
+        parentFiber.root.willPatch.push(fiber);
+      }
+      if (this.patched.length) {
+        parentFiber.root.patched.push(fiber);
+      }
     const component = this.component;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;
@@ -190,6 +190,10 @@ export class BNode<T extends typeof Component = any> extends Block {
     this.component.props = props;
     this._render(fiber);
   }
+
+  // ---------------------------------------------------------------------------
+  // Block DOM methods
+  // ---------------------------------------------------------------------------
 
   firstChildNode(): ChildNode | null {
     const bdom = this.bdom;

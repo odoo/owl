@@ -162,9 +162,6 @@ export class MountFiber extends RootFiber {
   constructor(node: BNode, target: HTMLElement) {
     super(node);
     this.target = target;
-    if (node.mounted.length) {
-      this.mounted.push(this);
-    }
   }
   complete() {
     const node = this.node;

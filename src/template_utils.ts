@@ -101,7 +101,7 @@ function capture(ctx: any): any {
   for (let k in ctx) {
     result[k] = ctx[k];
   }
-  return Object.create(result);
+  return result;
 }
 
 export function toClassObj(expr: string | number | { [c: string]: any }, expr2?: any) {

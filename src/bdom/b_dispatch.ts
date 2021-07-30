@@ -19,7 +19,7 @@ export class BDispatch implements Block<BDispatch> {
   el: ChildNode | null = null;
   child: Block;
   key: string;
-  anchor: ChildNode = document.createTextNode("");
+  anchor: ChildNode | null = null;
 
   constructor(key: string, child: Block) {
     this.key = key;
@@ -31,13 +31,14 @@ export class BDispatch implements Block<BDispatch> {
   }
 
   mountBefore(anchor: ChildNode) {
-    const _anchor = this.anchor;
+    const _anchor = document.createTextNode("");
     anchor.before(_anchor);
     this.child.mountBefore(_anchor);
+    this.anchor = _anchor;
   }
 
   moveBefore(anchor: ChildNode) {
-    const _anchor = this.anchor;
+    const _anchor = this.anchor!;
     anchor.before(_anchor);
     this.child.moveBefore(_anchor);
   }

@@ -7,7 +7,7 @@ import { Block, removeBlock } from "./block";
 export class BCollection implements Block<BCollection> {
   el: ChildNode | null;
   children: Block[];
-  anchor: ChildNode = document.createTextNode("");
+  anchor: ChildNode | null;
   keys: (string | number)[];
   collection: any[];
   values: any[];
@@ -16,6 +16,7 @@ export class BCollection implements Block<BCollection> {
 
   constructor(collection: any[], isOnlyChild: boolean, hasNoComponent: boolean) {
     this.el = null;
+    this.anchor = null;
     this.isOnlyChild = isOnlyChild;
     this.hasNoComponent = hasNoComponent;
     let n: number;
@@ -39,7 +40,8 @@ export class BCollection implements Block<BCollection> {
   }
 
   mountBefore(anchor: ChildNode) {
-    const _anchor = this.anchor;
+    const _anchor = document.createTextNode("");
+    this.anchor = _anchor;
     anchor.before(_anchor);
     for (let child of this.children) {
       child.mountBefore(_anchor);
@@ -47,7 +49,7 @@ export class BCollection implements Block<BCollection> {
   }
 
   moveBefore(anchor: ChildNode) {
-    const _anchor = this.anchor;
+    const _anchor = this.anchor!;
     anchor.before(_anchor);
     for (let child of this.children) {
       child.moveBefore(_anchor);
@@ -74,10 +76,10 @@ export class BCollection implements Block<BCollection> {
         }
       }
 
-      const parent = this.anchor.parentElement!;
-      this.anchor.remove();
+      const parent = _anchor.parentElement!;
+      _anchor.remove();
       parent.textContent = "";
-      parent.appendChild(this.anchor);
+      parent.appendChild(_anchor);
       this.children = newCh;
       this.keys = newKeys;
       return;
@@ -169,12 +171,12 @@ export class BCollection implements Block<BCollection> {
 
   remove() {
     if (this.isOnlyChild) {
-      this.anchor.parentElement!.textContent = "";
+      this.anchor!.parentElement!.textContent = "";
     } else {
       for (let child of this.children) {
         child.remove();
       }
-      this.anchor.remove();
+      this.anchor!.remove();
     }
   }
 }

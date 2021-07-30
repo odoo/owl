@@ -8,10 +8,9 @@ export class BHtml implements Block<BHtml> {
   el: ChildNode | null = null;
   html: string;
   content: ChildNode[] = [];
-  anchor: ChildNode;
+  anchor: ChildNode | null = null;
   constructor(html: any) {
     this.html = String(html);
-    this.anchor = document.createTextNode("");
   }
 
   firstChildNode(): ChildNode | null {
@@ -19,17 +18,19 @@ export class BHtml implements Block<BHtml> {
   }
 
   mountBefore(anchor: ChildNode) {
+    const _anchor = document.createTextNode("");
     this.build();
-    anchor.before(this.anchor);
+    anchor.before(_anchor);
     for (let elem of this.content) {
-      this.anchor.before(elem);
+      _anchor.before(elem);
     }
+    this.anchor = _anchor;
   }
 
   moveBefore(anchor: ChildNode): void {
-    anchor.before(this.anchor);
+    anchor.before(this.anchor!);
     for (let elem of this.content) {
-      this.anchor.before(elem);
+      this.anchor!.before(elem);
     }
   }
 
@@ -45,7 +46,7 @@ export class BHtml implements Block<BHtml> {
     for (let elem of this.content) {
       elem.remove();
     }
-    this.anchor.remove();
+    this.anchor!.remove();
   }
 
   patch(other: BHtml) {
@@ -55,7 +56,7 @@ export class BHtml implements Block<BHtml> {
     this.html = other.html;
     this.build();
     for (let elem of this.content) {
-      this.anchor.before(elem);
+      this.anchor!.before(elem);
     }
   }
 

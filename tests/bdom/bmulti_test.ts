@@ -1,3 +1,4 @@
+import { mountBlock } from "../../src/bdom/block";
 import { makeTestFixture, renderToBdom, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;
@@ -15,7 +16,7 @@ describe("BMulti", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { flag: false });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>1</p>");
 
     const bdom2 = renderToBdom(template, { flag: true });
@@ -39,7 +40,7 @@ describe("BMulti", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { flag: false });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>1</p>");
 
     bdom.remove();

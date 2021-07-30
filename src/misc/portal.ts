@@ -3,6 +3,7 @@ import { BText } from "../bdom/b_text";
 import { Component } from "../component";
 import type { BNode } from "../b_node";
 import { xml } from "../tags";
+import { mountBlock } from "../bdom/block";
 
 class BPortal extends BText {
   selector: string;
@@ -27,7 +28,7 @@ class BPortal extends BText {
         throw new Error("invalid portal target");
       }
     }
-    this.realBDom!.mount(this.target!);
+    mountBlock(this.realBDom!, this.target);
   }
   remove() {
     super.remove();
@@ -41,7 +42,7 @@ class BPortal extends BText {
       this.realBDom.patch(other.realBDom!);
     } else {
       this.realBDom = other.realBDom;
-      this.realBDom!.mount(this.target!);
+      mountBlock(this.realBDom!, this.target!);
     }
   }
 }

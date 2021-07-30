@@ -1,3 +1,4 @@
+import { mountBlock } from "../../src/bdom/block";
 import { makeTestFixture, renderToBdom, snapshotTemplateCode } from "../helpers";
 
 let fixture: HTMLElement;
@@ -15,7 +16,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: ["a"] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>a</span>");
     const bdom2 = renderToBdom(template, { items: [] });
     bdom.patch(bdom2);
@@ -31,7 +32,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: ["a"] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>a</span><span>a</span>");
     const bdom2 = renderToBdom(template, { items: [] });
     bdom.patch(bdom2);
@@ -46,7 +47,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: ["a"] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>a</span>");
     const bdom2 = renderToBdom(template, { items: ["a", "b"] });
     bdom.patch(bdom2);
@@ -62,7 +63,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: ["a"] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>a</span><span>a</span>");
     const bdom2 = renderToBdom(template, { items: ["a", "b"] });
     bdom.patch(bdom2);
@@ -77,7 +78,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span>");
     const span1 = fixture.firstChild;
     expect((span1 as any).outerHTML).toBe("<span>1</span>");
@@ -97,7 +98,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>1</span>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3] });
     bdom.patch(bdom2);
@@ -114,7 +115,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>4</span><span>5</span>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
     bdom.patch(bdom2);
@@ -132,7 +133,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>4</p><p>4</p><p>5</p><p>5</p>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
     bdom.patch(bdom2);
@@ -149,7 +150,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span><span>4</span><span>5</span>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
     bdom.patch(bdom2);
@@ -167,7 +168,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<p>1</p><p>1</p><p>2</p><p>2</p><p>4</p><p>4</p><p>5</p><p>5</p>"
     );
@@ -186,7 +187,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [2, 3, 4] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>2</span><span>3</span><span>4</span>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
     bdom.patch(bdom2);
@@ -204,7 +205,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [2, 3, 4] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>2</p><p>2</p><p>3</p><p>3</p><p>4</p><p>4</p>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
     bdom.patch(bdom2);
@@ -221,7 +222,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3] });
     bdom.patch(bdom2);
@@ -237,7 +238,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3] });
     bdom.patch(bdom2);
@@ -254,7 +255,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3] });
     bdom.patch(bdom2);
@@ -272,7 +273,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
     const bdom2 = renderToBdom(template, { items: [1, 2, 3] });
     bdom.patch(bdom2);
@@ -287,7 +288,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span><span>3</span>");
     const bdom2 = renderToBdom(template, { items: [] });
     bdom.patch(bdom2);
@@ -303,7 +304,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>1</p><p>1</p><p>2</p><p>2</p><p>3</p><p>3</p>");
     const bdom2 = renderToBdom(template, { items: [] });
     bdom.patch(bdom2);
@@ -320,7 +321,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p><span>1</span><span>2</span><span>3</span></p>");
     const bdom2 = renderToBdom(template, { items: [] });
     bdom.patch(bdom2);
@@ -335,7 +336,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>"
     );
@@ -353,7 +354,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<p>1</p><p>1</p><p>2</p><p>2</p><p>3</p><p>3</p><p>4</p><p>4</p><p>5</p><p>5</p>"
     );
@@ -370,7 +371,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>"
     );
@@ -387,7 +388,7 @@ describe("adding/removing elements", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>"
     );
@@ -406,7 +407,7 @@ describe("element reordering", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span><span>3</span><span>4</span>");
     const bdom2 = renderToBdom(template, { items: [2, 3, 1, 4] });
     bdom.patch(bdom2);
@@ -422,7 +423,7 @@ describe("element reordering", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<p>1</p><p>1</p><p>2</p><p>2</p><p>3</p><p>3</p><p>4</p><p>4</p>"
     );
@@ -441,7 +442,7 @@ describe("element reordering", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span><span>3</span>");
     const bdom2 = renderToBdom(template, { items: [2, 3, 1] });
     bdom.patch(bdom2);
@@ -457,7 +458,7 @@ describe("element reordering", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>1</p><p>1</p><p>2</p><p>2</p><p>3</p><p>3</p>");
     const bdom2 = renderToBdom(template, { items: [2, 3, 1] });
     bdom.patch(bdom2);
@@ -472,7 +473,7 @@ describe("element reordering", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span><span>3</span><span>4</span>");
     const bdom2 = renderToBdom(template, { items: [1, 4, 2, 3] });
     bdom.patch(bdom2);
@@ -487,7 +488,7 @@ describe("element reordering", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span><span>3</span><span>4</span>");
     const bdom2 = renderToBdom(template, { items: [4, 3, 2, 1] });
     bdom.patch(bdom2);
@@ -504,7 +505,7 @@ describe("miscellaneous operations", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>"
     );
@@ -524,7 +525,7 @@ describe("miscellaneous operations", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<p>1</p><p>1</p><p>2</p><p>2</p><p>3</p><p>3</p><p>4</p><p>4</p><p>5</p><p>5</p>"
     );
@@ -543,7 +544,7 @@ describe("miscellaneous operations", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [1, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>4</span><span>5</span>");
     const bdom2 = renderToBdom(template, { items: [4, 6] });
     bdom.patch(bdom2);
@@ -558,7 +559,7 @@ describe("miscellaneous operations", () => {
     snapshotTemplateCode(template);
 
     const bdom = renderToBdom(template, { items: [2, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<span>2</span><span>4</span><span>5</span>");
     const bdom2 = renderToBdom(template, { items: [4, 5, 3] });
     bdom.patch(bdom2);
@@ -572,7 +573,7 @@ describe("miscellaneous operations", () => {
         </t>`;
 
     const bdom = renderToBdom(template, { items: [1, 2, 3, 4, 5, 6, 7, 8] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe(
       "<p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p>"
     );
@@ -590,7 +591,7 @@ describe("miscellaneous operations", () => {
         </t>`;
 
     const bdom = renderToBdom(template, { items: [0, 1, 2, 3, 4, 5] });
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     expect(fixture.innerHTML).toBe("<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p>");
     const bdom2 = renderToBdom(template, { items: [4, 3, 2, 1, 5, 0] });
     bdom.patch(bdom2);

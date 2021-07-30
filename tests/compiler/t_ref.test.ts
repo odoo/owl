@@ -1,4 +1,5 @@
 import { TemplateSet } from "../../src/app";
+import { mountBlock } from "../../src/bdom/block";
 import { renderToBdom, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -13,7 +14,7 @@ describe("t-ref", () => {
     const refs: any = {};
     const bdom = renderToBdom(template, { __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    mountBlock(bdom, document.createElement("div"));
     expect(refs.myspan.tagName).toBe("SPAN");
   });
 
@@ -22,7 +23,7 @@ describe("t-ref", () => {
     const refs: any = {};
     const bdom = renderToBdom(template, { id: 3, __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    mountBlock(bdom, document.createElement("div"));
     expect(refs.myspan3.tagName).toBe("SPAN");
   });
 
@@ -35,7 +36,7 @@ describe("t-ref", () => {
     const refs: any = {};
     const bdom = renderToBdom(template, { items: [1, 2, 3], __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    mountBlock(bdom, document.createElement("div"));
     expect(Object.keys(refs)).toEqual(["1", "2", "3"]);
   });
 
@@ -51,7 +52,7 @@ describe("t-ref", () => {
     // false
     const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
     expect(refs).toEqual({});
-    bdom.mount(document.createElement("div"));
+    mountBlock(bdom, document.createElement("div"));
     expect(refs).toEqual({});
 
     // true now
@@ -79,7 +80,7 @@ describe("t-ref", () => {
     // false
     const bdom = renderToBdom(template, { condition: false, __owl__: { refs } });
     expect(Object.keys((bdom as any).refs!)).toEqual([]);
-    bdom.mount(document.createElement("div"));
+    mountBlock(bdom, document.createElement("div"));
     expect(Object.keys(refs)).toEqual(["p"]);
 
     // true now
@@ -104,7 +105,7 @@ describe("t-ref", () => {
     app.addTemplate("sub", sub);
 
     const bdom = app.getTemplate("main")({ __owl__: { refs } }, {});
-    bdom.mount(document.createElement("div"));
+    mountBlock(bdom, document.createElement("div"));
 
     expect(refs.name.tagName).toBe("SPAN");
   });

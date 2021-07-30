@@ -13,6 +13,7 @@ import {
 } from "../src";
 import { TemplateSet } from "../src/app";
 import { Block, Blocks } from "../src/bdom";
+import { mountBlock } from "../src/bdom/block";
 import { compileTemplate, Template } from "../src/compiler/index";
 import { globalTemplates, xml } from "../src/tags";
 import { UTILS } from "../src/template_utils";
@@ -93,7 +94,7 @@ export function renderToBdom(template: string, context: any = {}, node: any = {}
 export function renderToString(template: string, context: any = {}): string {
   const fixture = makeTestFixture();
   const bdom = renderToBdom(template, context);
-  bdom.mount(fixture);
+  mountBlock(bdom, fixture);
   return fixture.innerHTML;
 }
 
@@ -102,7 +103,7 @@ export class TestContext extends TemplateSet {
     const renderFn = this.getTemplate(name);
     const bdom = renderFn(context, {});
     const fixture = makeTestFixture();
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     return fixture.innerHTML;
   }
 }

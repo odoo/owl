@@ -7,15 +7,6 @@ export abstract class Block {
 
   abstract firstChildNode(): ChildNode | null;
 
-  // mount operations
-  // ----------------------------
-  mount(parent: HTMLElement) {
-    const anchor = document.createTextNode("");
-    parent.appendChild(anchor);
-    this.mountBefore(anchor);
-    anchor.remove();
-  }
-
   abstract mountBefore(anchor: ChildNode): void;
 
   // update operations
@@ -39,4 +30,11 @@ export abstract class Block {
     this.beforeRemove();
     this.remove();
   }
+}
+
+export function mountBlock(block: Block, target: HTMLElement) {
+  const anchor = document.createTextNode("");
+  target.appendChild(anchor);
+  block.mountBefore(anchor);
+  anchor.remove();
 }

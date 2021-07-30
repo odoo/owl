@@ -1,4 +1,5 @@
 import { TemplateSet } from "../../src/app";
+import { mountBlock } from "../../src/bdom/block";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -14,7 +15,8 @@ describe("t-on", () => {
     }
     const block = renderToBdom(template, ctx, node);
     const fixture = makeTestFixture();
-    block.mount(fixture);
+
+    mountBlock(block, fixture);
     return fixture;
   }
 
@@ -158,7 +160,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner, node);
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     fixture.querySelector("button")!.click();
   });
 
@@ -183,7 +185,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner, node);
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     fixture.querySelector("button")!.click();
   });
 
@@ -263,7 +265,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
     const bdom = render(owner, node);
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     fixture.querySelector("p")!.click();
   });
 
@@ -289,7 +291,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
     const bdom = render(owner, node);
-    bdom.mount(fixture);
+    mountBlock(bdom, fixture);
     fixture.querySelector("p")!.click();
   });
 

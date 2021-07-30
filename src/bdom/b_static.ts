@@ -12,9 +12,7 @@ export class BStatic extends Block {
   }
 
   toString(): string {
-    const div = document.createElement("div");
-    this.mount(div);
-    return div.innerHTML;
+    return (this.constructor as any).el!.cloneNode(true).outerHTML;
   }
 
   mountBefore(anchor: ChildNode) {

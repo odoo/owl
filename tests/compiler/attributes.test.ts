@@ -1,4 +1,5 @@
 import { xml } from "../../src";
+import { mountBlock } from "../../src/bdom/block";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -239,7 +240,7 @@ describe("attributes", () => {
     const template = `<div t-att-value="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    bnode1.mount(fixture);
+    mountBlock(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div value="zucchini"></div>');
 
@@ -258,7 +259,7 @@ describe("attributes", () => {
     const template = `<div t-att-class="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    bnode1.mount(fixture);
+    mountBlock(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div class="zucchini"></div>');
 
@@ -277,7 +278,7 @@ describe("attributes", () => {
     const template = `<div class="hoy" t-att-class="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    bnode1.mount(fixture);
+    mountBlock(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div class="hoy zucchini"></div>');
 
@@ -296,7 +297,7 @@ describe("attributes", () => {
     const template = `<div class="hoy" t-att-class="{'a b': condition}"/>`;
     const bnode1 = renderToBdom(template, { condition: true });
     const fixture = makeTestFixture();
-    bnode1.mount(fixture);
+    mountBlock(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
 
@@ -339,7 +340,7 @@ describe("special cases for some specific html attributes/properties", () => {
     const template = `<input  t-att-value="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    bnode1.mount(fixture);
+    mountBlock(bnode1, fixture);
     const input = fixture.querySelector("input")!;
     expect(input.value).toBe("zucchini");
 
@@ -358,7 +359,7 @@ describe("special cases for some specific html attributes/properties", () => {
     const template = `<input type="checkbox" t-att-indeterminate="v"/>`;
     const bnode1 = renderToBdom(template, { v: true });
     const fixture = makeTestFixture();
-    bnode1.mount(fixture);
+    mountBlock(bnode1, fixture);
     const input = fixture.querySelector("input")!;
     expect(input.indeterminate).toBe(true);
   });

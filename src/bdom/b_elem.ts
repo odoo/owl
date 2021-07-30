@@ -1,4 +1,4 @@
-import { Block } from "./block";
+import { Block, mountBlock } from "./block";
 
 // -----------------------------------------------------------------------------
 //  Content Block
@@ -19,7 +19,7 @@ export class BElem extends Block {
 
   toString(): string {
     const div = document.createElement("div");
-    this.mount(div);
+    mountBlock(this, div);
     return div.innerHTML;
   }
 

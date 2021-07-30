@@ -4,12 +4,12 @@ import { Block } from "./block";
 //  Html Block
 // -----------------------------------------------------------------------------
 
-export class BHtml extends Block {
+export class BHtml implements Block<BHtml> {
+  el: ChildNode | null = null;
   html: string;
   content: ChildNode[] = [];
   anchor: ChildNode;
   constructor(html: any) {
-    super();
     this.html = String(html);
     this.anchor = document.createTextNode("");
   }
@@ -40,6 +40,7 @@ export class BHtml extends Block {
     this.el = this.content[0];
   }
 
+  beforeRemove() {}
   remove() {
     for (let elem of this.content) {
       elem.remove();

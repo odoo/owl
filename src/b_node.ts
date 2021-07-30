@@ -23,7 +23,8 @@ export function getCurrent(): BNode | null {
 
 type LifecycleHook = Function;
 
-export class BNode<T extends typeof Component = any> extends Block {
+export class BNode<T extends typeof Component = any> implements Block<BNode> {
+  el: ChildNode | null = null;
   parentClass?: any = null;
   currentClass?: any = null;
   classTarget?: HTMLElement;
@@ -48,7 +49,6 @@ export class BNode<T extends typeof Component = any> extends Block {
   destroyed: LifecycleHook[] = [];
 
   constructor(C: T, props: any, app: App) {
-    super();
     currentNode = this;
     this.app = app;
     this.component = new C(props, app.env, this) as any;

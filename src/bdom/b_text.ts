@@ -4,11 +4,11 @@ import { Block } from "./block";
 //  Text Block
 // -----------------------------------------------------------------------------
 
-export class BText extends Block {
+export class BText implements Block<BText> {
   el: Text;
   text: string;
+
   constructor(text: string) {
-    super();
     this.el = document.createTextNode(text);
     this.text = text;
   }
@@ -24,6 +24,7 @@ export class BText extends Block {
   moveBefore(anchor: ChildNode) {
     anchor.before(this.el);
   }
+
   patch(other: BText) {
     if (other.text !== this.text) {
       this.el.textContent = other.el.textContent;
@@ -32,9 +33,10 @@ export class BText extends Block {
   }
 
   toString() {
-    return this.el.textContent;
+    return this.el.textContent!;
   }
 
+  beforeRemove() {}
   remove() {
     this.el.remove();
   }

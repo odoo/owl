@@ -1,35 +1,16 @@
-// -----------------------------------------------------------------------------
-//  Block
-// -----------------------------------------------------------------------------
+export interface Block<T = any> {
+  el: ChildNode | null;
 
-export abstract class Block {
-  el: ChildNode | null | null = null;
+  firstChildNode(): ChildNode | null;
 
-  abstract firstChildNode(): ChildNode | null;
+  mountBefore(anchor: ChildNode): void;
 
-  abstract mountBefore(anchor: ChildNode): void;
+  patch(other: T): void;
 
-  // update operations
-  // ----------------------------
+  beforeRemove(): void;
+  moveBefore(anchor: ChildNode): void;
 
-  /**
-   * A key point is that a block of a given type is always patched with a block
-   * of the same type
-   */
-  abstract patch(other: Block): void;
-
-  abstract moveBefore(anchor: ChildNode): void;
-
-  // remove operations
-  // ----------------------------
-  beforeRemove() {}
-
-  abstract remove(): void;
-
-  fullRemove() {
-    this.beforeRemove();
-    this.remove();
-  }
+  remove(): void;
 }
 
 export function mountBlock(block: Block, target: HTMLElement) {
@@ -37,4 +18,9 @@ export function mountBlock(block: Block, target: HTMLElement) {
   target.appendChild(anchor);
   block.mountBefore(anchor);
   anchor.remove();
+}
+
+export function removeBlock(block: Block) {
+  block.beforeRemove();
+  block.remove();
 }

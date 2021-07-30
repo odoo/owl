@@ -4,8 +4,9 @@ import { Block } from "./block";
 //  Static Block
 // -----------------------------------------------------------------------------
 
-export class BStatic extends Block {
+export class BStatic implements Block<BStatic> {
   static el: ChildNode;
+  el: ChildNode | null = null;
 
   firstChildNode(): ChildNode | null {
     return this.el;
@@ -25,6 +26,8 @@ export class BStatic extends Block {
   }
 
   patch() {}
+
+  beforeRemove() {}
 
   remove() {
     this.el!.remove();

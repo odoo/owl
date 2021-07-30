@@ -1,4 +1,4 @@
-import { Block } from "./block";
+import { Block, removeBlock } from "./block";
 
 /**
  * Block Dispatch
@@ -15,13 +15,13 @@ import { Block } from "./block";
  * block to make the transition.
  */
 
-export class BDispatch extends Block {
+export class BDispatch implements Block<BDispatch> {
+  el: ChildNode | null = null;
   child: Block;
   key: string;
   anchor: ChildNode = document.createTextNode("");
 
   constructor(key: string, child: Block) {
-    super();
     this.key = key;
     this.child = child;
   }
@@ -46,7 +46,7 @@ export class BDispatch extends Block {
     if (newTree.key === this.key) {
       this.child.patch(newTree.child);
     } else {
-      this.child.fullRemove();
+      removeBlock(this.child);
       this.child = newTree.child;
       this.key = newTree.key;
       this.child.mountBefore(this.anchor!);

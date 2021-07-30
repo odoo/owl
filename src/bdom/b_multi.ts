@@ -1,15 +1,15 @@
-import { Block } from "./block";
+import { Block, removeBlock } from "./block";
 
 // -----------------------------------------------------------------------------
 //  Multi Block
 // -----------------------------------------------------------------------------
 
-export class BMulti extends Block {
+export class BMulti implements Block<BMulti> {
   children: (Block | undefined | null)[];
   anchors?: ChildNode[];
+  el: ChildNode | null = null;
 
   constructor(n: number) {
-    super();
     this.children = new Array(n);
     this.anchors = new Array(n);
   }
@@ -61,7 +61,7 @@ export class BMulti extends Block {
           block.patch(newBlock);
         } else {
           children[i] = null;
-          block.fullRemove();
+          removeBlock(block);
         }
       } else if (newBlock) {
         children[i] = newBlock;

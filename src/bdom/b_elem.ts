@@ -1,12 +1,12 @@
-import { Block, mountBlock } from "./block";
+import { Block, mountBlock, removeBlock } from "./block";
 
 // -----------------------------------------------------------------------------
 //  Content Block
 // -----------------------------------------------------------------------------
 
-export class BElem extends Block {
+export class BElem implements Block<BElem> {
   static el: ChildNode;
-  // el?: HTMLElement | Text;
+  el: ChildNode | null = null;
   children: (BElem | null)[] | null = null;
   anchors?: ChildNode[] | null = null;
   data?: any[] | null = null;
@@ -122,7 +122,7 @@ export class BElem extends Block {
             child.patch(newChild);
           } else {
             children[i] = null;
-            child.fullRemove();
+            removeBlock(child);
           }
         } else if (newChild) {
           children[i] = newChild;

@@ -1,10 +1,11 @@
-import { Block } from "./block";
+import { Block, removeBlock } from "./block";
 
 // -----------------------------------------------------------------------------
 //  Collection Block
 // -----------------------------------------------------------------------------
 
-export class BCollection extends Block {
+export class BCollection implements Block<BCollection> {
+  el: ChildNode | null;
   children: Block[];
   anchor: ChildNode = document.createTextNode("");
   keys: (string | number)[];
@@ -14,7 +15,7 @@ export class BCollection extends Block {
   hasNoComponent: boolean;
 
   constructor(collection: any[], isOnlyChild: boolean, hasNoComponent: boolean) {
-    super();
+    this.el = null;
     this.isOnlyChild = isOnlyChild;
     this.hasNoComponent = hasNoComponent;
     let n: number;
@@ -148,7 +149,7 @@ export class BCollection extends Block {
             if (noFullRemove) {
               ch.remove();
             } else {
-              ch.fullRemove();
+              removeBlock(ch);
             }
           }
         }

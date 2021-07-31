@@ -13,7 +13,7 @@ import { BStatic } from "./b_static";
 import { BText } from "./b_text";
 import { BDispatch } from "./b_dispatch";
 
-export { Block } from "./block";
+export type { Block } from "./block";
 
 export const Blocks = {
   BElem,

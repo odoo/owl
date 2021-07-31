@@ -10,6 +10,7 @@ import {
   __internal__destroyed,
 } from "./fibers";
 import { STATUS } from "./status";
+import { toClassObj } from "./template_utils";
 
 // -----------------------------------------------------------------------------
 //  Component Block
@@ -32,7 +33,7 @@ export class BNode<T extends typeof Component = any> implements Block<BNode> {
   app: App;
   fiber: Fiber | null = null;
   component: InstanceType<T>;
-  bdom: any;
+  bdom: any = null;
   status: STATUS = STATUS.NEW;
 
   renderFn: Function;
@@ -235,13 +236,13 @@ export class BNode<T extends typeof Component = any> implements Block<BNode> {
 
   addClass(el: HTMLElement) {
     this.classTarget = el;
-    for (let cl in this.parentClass) {
+    for (let cl in toClassObj(this.parentClass)) {
       el.classList.add(cl);
     }
   }
 
   removeClass(el: HTMLElement) {
-    for (let cl in this.parentClass) {
+    for (let cl in toClassObj(this.parentClass)) {
       el.classList.remove(cl);
     }
   }
@@ -251,8 +252,8 @@ export class BNode<T extends typeof Component = any> implements Block<BNode> {
     if (this.parentClass) {
       const el = this.firstChildNode() as HTMLElement;
       if (el === this.classTarget) {
-        const prev = this.currentClass;
-        const next = this.parentClass;
+        const prev = toClassObj(this.currentClass);
+        const next = toClassObj(this.parentClass);
         for (let c in prev) {
           if (!(c in next)) {
             el.classList.remove(c);

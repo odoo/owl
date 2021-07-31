@@ -481,7 +481,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj({d:ctx['state'].d});
+    b1.data[0] = {d:ctx['state'].d};
     return b1;
   }
 }"

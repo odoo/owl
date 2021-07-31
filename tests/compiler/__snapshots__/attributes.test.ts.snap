@@ -16,7 +16,7 @@ exports[`attributes changing a class with t-att-class (preexisting class 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['v']);
+    b1.data[0] = ctx['v'];
     return b1;
   }
 }"
@@ -38,7 +38,7 @@ exports[`attributes changing a class with t-att-class 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['v']);
+    b1.data[0] = ctx['v'];
     return b1;
   }
 }"
@@ -82,7 +82,7 @@ exports[`attributes class and t-att-class should combine together 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['value']);
+    b1.data[0] = ctx['value'];
     return b1;
   }
 }"
@@ -104,7 +104,7 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj((ctx['value']?'world':''));
+    b1.data[0] = (ctx['value']?'world':'');
     return b1;
   }
 }"
@@ -214,7 +214,7 @@ exports[`attributes dynamic class attribute 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['c']);
+    b1.data[0] = ctx['c'];
     return b1;
   }
 }"
@@ -236,7 +236,7 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['value']);
+    b1.data[0] = ctx['value'];
     return b1;
   }
 }"
@@ -258,7 +258,7 @@ exports[`attributes dynamic empty class attribute 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['c']);
+    b1.data[0] = ctx['c'];
     return b1;
   }
 }"
@@ -414,7 +414,7 @@ exports[`attributes from object variables set previously 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`o\`] = {a:'b'};
-    b1.data[0] = toClassObj(ctx['o'].a);
+    b1.data[0] = ctx['o'].a;
     return b1;
   }
 }"
@@ -438,7 +438,7 @@ exports[`attributes from variables set previously (no external node) 1`] = `
     ctx = Object.create(ctx);
     ctx[\`abc\`] = 'def';
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['abc']);
+    b1.data[0] = ctx['abc'];
     return b1;
   }
 }"
@@ -462,7 +462,7 @@ exports[`attributes from variables set previously 1`] = `
     ctx = Object.create(ctx);
     const b1 = new Block1();
     ctx[\`abc\`] = 'def';
-    b1.data[0] = toClassObj(ctx['abc']);
+    b1.data[0] = ctx['abc'];
     return b1;
   }
 }"
@@ -557,7 +557,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(ctx['value']);
+    b1.data[0] = ctx['value'];
     return b1;
   }
 }"
@@ -579,7 +579,7 @@ exports[`attributes t-att-class with multiple classes 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj({'a b c':ctx['value']});
+    b1.data[0] = {'a b c':ctx['value']};
     return b1;
   }
 }"
@@ -601,7 +601,7 @@ exports[`attributes t-att-class with multiple classes 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj({['a b c']:ctx['value']});
+    b1.data[0] = {['a b c']:ctx['value']};
     return b1;
   }
 }"
@@ -623,7 +623,7 @@ exports[`attributes t-att-class with object 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj({a:ctx['b'],c:ctx['d'],e:ctx['f']});
+    b1.data[0] = {a:ctx['b'],c:ctx['d'],e:ctx['f']};
     return b1;
   }
 }"
@@ -645,7 +645,7 @@ exports[`attributes t-attf-class 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(\`hello\`);
+    b1.data[0] = \`hello\`;
     return b1;
   }
 }"
@@ -667,7 +667,7 @@ exports[`attributes t-attf-class should combine with class 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(\`world\`);
+    b1.data[0] = \`world\`;
     return b1;
   }
 }"
@@ -689,7 +689,7 @@ exports[`attributes t-attf-class with multiple classes 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(\`hello \${ctx['word']}\`);
+    b1.data[0] = \`hello \${ctx['word']}\`;
     return b1;
   }
 }"
@@ -711,7 +711,7 @@ exports[`attributes t-attf-class with multiple classes separated by multiple spa
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(\`hello  \${ctx['word']}\`);
+    b1.data[0] = \`hello  \${ctx['word']}\`;
     return b1;
   }
 }"
@@ -819,7 +819,7 @@ exports[`attributes updating classes (with obj notation) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj({'a b':ctx['condition']});
+    b1.data[0] = {'a b':ctx['condition']};
     return b1;
   }
 }"

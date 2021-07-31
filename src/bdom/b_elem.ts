@@ -1,3 +1,4 @@
+import { toClassObj } from "../template_utils";
 import { Block, mountBlock, removeBlock } from "./block";
 
 // -----------------------------------------------------------------------------
@@ -49,7 +50,8 @@ export class BElem implements Block<BElem> {
     if (prevClass === _class) {
       return;
     }
-    prevClass = prevClass || {};
+    prevClass = prevClass === undefined ? {} : toClassObj(prevClass);
+    _class = _class === undefined ? {} : toClassObj(_class);
     // remove classes
     for (let c in prevClass) {
       if (!(c in _class)) {

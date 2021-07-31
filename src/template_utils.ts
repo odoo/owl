@@ -1,7 +1,7 @@
-import { Block, Blocks } from "./bdom";
+import type { Block } from "./bdom";
 import { BDispatch } from "./bdom/b_dispatch";
+import { BMulti } from "./bdom/b_multi";
 
-const { BMulti } = Blocks;
 
 // -----------------------------------------------------------------------------
 // Helpers

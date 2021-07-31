@@ -84,10 +84,10 @@ exports[`misc complex template 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b1 = new Block1();
-    b1.data[0] = toClassObj(\`batch_tile \${ctx['options'].more?'more':'nomore'}\`);
-    b1.data[1] = toClassObj(\`card bg-\${ctx['klass']}-light\`);
+    b1.data[0] = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
+    b1.data[1] = \`card bg-\${ctx['klass']}-light\`;
     b1.data[2] = \`/runbot/batch/\${ctx['batch'].id}\`;
-    b1.data[3] = toClassObj(\`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`);
+    b1.data[3] = \`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`;
     b1.data[4] = ctx['batch'].formated_age;
     if (ctx['batch'].has_warning) {
       const b2 = b1.children[0] = new Block2();
@@ -124,7 +124,7 @@ exports[`misc complex template 1`] = `
       let key1 = ctx['commit_link'].id;
       const b9 = b8.children[i1] = new Block5();
       b9.data[0] = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
-      b9.data[1] = toClassObj(\`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`);
+      b9.data[1] = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
       if (ctx['commit_link'].match_type=='new') {
         const b10 = b9.children[0] = new Block6();
       }

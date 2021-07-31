@@ -549,9 +549,9 @@ export class QWebCompiler {
         const idx = block.dataNumber;
         block.dataNumber++;
         let expr = dynAttrs[key];
-        if (key === "class") {
-          expr = `toClassObj(${expr})`;
-        }
+        // if (key === "class") {
+        //   expr = `toClassObj(${expr})`;
+        // }
         this.addLine(`${block.varName}.data[${idx}] = ${expr};`);
         if (key === "class") {
           block.insertUpdate((el) => `this.updateClass(${el}, prevData[${idx}], data[${idx}]);`);

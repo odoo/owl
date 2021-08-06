@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simple event handling  1`] = `
+"class Builder {
+    constructor(data) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el;
+      this.refs = [ref0];
+      this.data = [];
+      const handler = this.handleEvent;
+      ref0.addEventListener(\\"click\\", handler.bind(this, 0));
+      this.update(data);
+    }
+    update(data) {
+      const currentData = this.data;
+      const nextData = data.data;
+      this.data = nextData;
+    }
+    handleEvent(n) {
+      const [owner, method] = this.data[n];
+      owner[method]();
+    }
+  }"
+`;

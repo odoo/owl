@@ -1,0 +1,280 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`text and elem blocks block with 2 dynamic text nodes 1`] = `
+"class Builder {
+    constructor(data) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild.firstChild;
+      let ref1 = this.el.firstChild.nextSibling.firstChild;
+      this.refs = [ref0, ref1];
+      this.data = [];
+      this.update(data);
+    }
+    update(data) {
+      const refs = this.refs;
+      const currentData = this.data;
+      const nextData = data.data;
+      if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
+      if (nextData[1] !== currentData[1]) { refs[1].textContent = nextData[1]}
+      this.data = nextData;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with 2 subblocks 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      let ref1 = this.el.firstChild.nextSibling;
+      this.refs = [ref0, ref1];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      let currentChild1 = currentChildren[1], child1 = children[1];
+      if (currentChild1) { if (child1) { patch(currentChild1, child1); } else { remove(currentChild1); } }
+      else if (child1) { mountBefore(child1, refs[1]) }
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with 2 subblocks 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with conditional child 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with conditional child 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with dynamic content 1`] = `
+"class Builder {
+    constructor(data) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild.firstChild;
+      this.refs = [ref0];
+      this.data = [];
+      this.update(data);
+    }
+    update(data) {
+      const refs = this.refs;
+      const currentData = this.data;
+      const nextData = data.data;
+      if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
+      this.data = nextData;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with dynamic content and subblock 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      let ref1 = this.el.firstChild.nextSibling.firstChild;
+      this.refs = [ref0, ref1];
+      this.data = [];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentData = this.data;
+      const nextData = data.data;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      if (nextData[0] !== currentData[0]) { refs[1].textContent = nextData[0]}
+      this.data = nextData;
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with dynamic content and subblock 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with subblock 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with subblock 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with subblock with dynamic content 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with subblock with dynamic content 2`] = `
+"class Builder {
+    constructor(data) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.data = [];
+      this.update(data);
+    }
+    update(data) {
+      const refs = this.refs;
+      const currentData = this.data;
+      const nextData = data.data;
+      if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
+      this.data = nextData;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with subblock with siblings 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild.nextSibling;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`text and elem blocks block with subblock with siblings 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks elem block can be removed 1`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks simple block with multiple roots 1`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks simple block with multiple roots 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`text and elem blocks simple elem block 1`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;

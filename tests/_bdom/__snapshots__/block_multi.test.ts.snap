@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`multi blocks a multiblock can be removed and leaves no extra text nodes 1`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`multi blocks a multiblock can be removed and leaves no extra text nodes 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`multi blocks multi block in a regular block 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
+      else if (child0) { mountBefore(child0, refs[0]) }
+      this.children = children;
+    }
+  }"
+`;
+
+exports[`multi blocks multi block in a regular block 2`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;
+
+exports[`multi blocks multiblock with an empty children 1`] = `
+"class Builder {
+    constructor() {
+      this.el = template.cloneNode(true);
+    }
+    update() {
+    }
+  }"
+`;

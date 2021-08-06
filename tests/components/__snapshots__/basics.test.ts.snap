@@ -967,6 +967,53 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 }"
 `;
 
+exports[`basics text after a conditional component 1`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BStatic {
+    static el = elem(\`<p>simple vnode</p>\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    return b1;
+  }
+}"
+`;
+
+exports[`basics text after a conditional component 2`] = `
+"function anonymous(Blocks, helpers
+) {
+  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
+  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  
+  class Block1 extends BElem {
+    static el = elem(\`<div><owl-anchor/><span><owl-text/></span></div>\`);
+    children = new Array(1);
+    data = new Array(1);
+    build() {
+      this.anchors = new Array(1);
+      this.anchors[0] = this.el.firstChild;
+    }
+    update(prevData, data) {
+      setText(this.anchors[0].nextSibling.firstChild, prevData[0], data[0]);
+    }
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b1 = new Block1();
+    if (ctx['state'].hasChild) {
+      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    }
+    b1.data[0] = ctx['state'].text;
+    return b1;
+  }
+}"
+`;
+
 exports[`basics three level of components with collapsing root nodes 1`] = `
 "function anonymous(Blocks, helpers
 ) {

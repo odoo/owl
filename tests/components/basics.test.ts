@@ -340,6 +340,34 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
   });
 
+  test("text after a conditional component", async () => {
+    class Child extends Component {
+      static template = xml`<p>simple vnode</p>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child t-if="state.hasChild"/>
+          <span t-esc="state.text"/>
+        </div>`;
+      static components = { Child };
+      state = useState({ hasChild: false, text: "1" });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+    parent.state.hasChild = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><p>simple vnode</p><span>1</span></div>");
+
+    parent.state.hasChild = false;
+    parent.state.text = "2";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
+  });
+
   test("can be clicked on and updated", async () => {
     class Counter extends Component {
       static template = xml`

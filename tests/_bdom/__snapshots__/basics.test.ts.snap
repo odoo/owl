@@ -35,12 +35,11 @@ exports[`text and elem blocks block with 2 subblocks 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
       let currentChild1 = currentChildren[1], child1 = children[1];
-      if (currentChild1) { if (child1) { patch(currentChild1, child1); } else { remove(currentChild1); } }
-      else if (child1) { mountBefore(child1, refs[1]) }
-      this.children = children;
+      if (currentChild1) { if (child1) { patch(currentChild1, child1); } else { remove(currentChild1); currentChildren[1] = null; } }
+      else if (child1) { mountBefore(child1, refs[1]); currentChildren[1] = child1 }
     }
   }"
 `;
@@ -68,9 +67,8 @@ exports[`text and elem blocks block with conditional child 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
-      this.children = children;
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }"
 `;
@@ -121,11 +119,10 @@ exports[`text and elem blocks block with dynamic content and subblock 1`] = `
       const nextData = data.data;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
       if (nextData[0] !== currentData[0]) { refs[1].textContent = nextData[0]}
       this.data = nextData;
-      this.children = children;
     }
   }"
 `;
@@ -153,9 +150,8 @@ exports[`text and elem blocks block with subblock 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
-      this.children = children;
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }"
 `;
@@ -183,9 +179,8 @@ exports[`text and elem blocks block with subblock with dynamic content 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
-      this.children = children;
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }"
 `;
@@ -222,9 +217,8 @@ exports[`text and elem blocks block with subblock with siblings 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
-      this.children = children;
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }"
 `;

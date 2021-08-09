@@ -152,7 +152,9 @@ export function removeBlock(block: Block) {
   switch (block.type) {
     case BLOCK_TYPE.Text:
     case BLOCK_TYPE.Element:
-      block.el!.remove();
+      const el = block.el!;
+      el.parentElement!.removeChild(el);
+      // block.el!.remove();
       break;
     case BLOCK_TYPE.Multi:
       {
@@ -268,12 +270,9 @@ export function patch(block1: Block, block2: Block) {
         let mapping: any = undefined;
         let noFullRemove = data.hasNoComponent;
 
-        // console.warn('oldch', oldCh[0].content)
         while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-          // console.warn('iteration', oldStartIdx, oldEndIdx, newStartIdx, newEndIdx);
           // -------------------------------------------------------------------
           if (oldStartBlock === null) {
-            // todo: comment this and check it is useful
             oldStartBlock = oldCh[++oldStartIdx];
           }
           // -------------------------------------------------------------------
@@ -281,17 +280,7 @@ export function patch(block1: Block, block2: Block) {
             oldEndBlock = oldCh[--oldEndIdx];
           }
           // -------------------------------------------------------------------
-          else if (newStartBlock === null) {
-            // todo: understand why these 2 next elseifs are useful
-            newStartBlock = newCh[++newStartIdx];
-          }
-          // -------------------------------------------------------------------
-          else if (newEndBlock === null) {
-            newEndBlock = newCh[--newEndIdx];
-          }
-          // -------------------------------------------------------------------
           else if (oldStartBlock.key === newStartBlock.key) {
-            // console.warn('same start', oldStartBlock, newStartBlock);
             patch(oldStartBlock, newStartBlock);
             newCh[newStartIdx] = oldStartBlock;
             oldStartBlock = oldCh[++oldStartIdx];
@@ -299,11 +288,8 @@ export function patch(block1: Block, block2: Block) {
           }
           // -------------------------------------------------------------------
           else if (oldEndBlock.key === newEndBlock.key) {
-            // console.warn('same end');
             patch(oldEndBlock, newEndBlock);
-            // console.warn('oeb', oldEndBlock)
             newCh[newEndIdx] = oldEndBlock;
-            // console.warn(newCh[newEndIdx])
             oldEndBlock = oldCh[--oldEndIdx];
             newEndBlock = newCh[--newEndIdx];
           }
@@ -331,17 +317,13 @@ export function patch(block1: Block, block2: Block) {
           }
           // -------------------------------------------------------------------
           else {
-            // console.warn('in else')
             mapping = mapping || createMapping(oldCh, oldStartIdx, oldEndIdx);
-            // console.warn('mapping', mapping)
             let idxInOld = mapping[newStartBlock.key];
             if (idxInOld === undefined) {
-              // new element
               mountBefore(
                 newStartBlock,
                 oldStartBlock.el || (firstChildNode(oldStartBlock)! as any)
               );
-              // console.log(document.body.innerHTML)
             } else {
               const elmToMove = oldCh[idxInOld];
               moveBefore(elmToMove, oldStartBlock.el || (firstChildNode(oldStartBlock) as any));
@@ -353,11 +335,9 @@ export function patch(block1: Block, block2: Block) {
           }
         }
         // ---------------------------------------------------------------------
-        // console.warn('after')
         if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
           if (oldStartIdx > oldEndIdx) {
             const nextChild = newCh[newEndIdx + 1];
-            // console.warn('next', nextChild)
             const anchor = nextChild ? nextChild.el || firstChildNode(nextChild)! : _anchor;
             for (let i = newStartIdx; i <= newEndIdx; i++) {
               mountBefore(newCh[i], anchor as any);

@@ -33,9 +33,8 @@ exports[`multi blocks multi block in a regular block 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); } }
-      else if (child0) { mountBefore(child0, refs[0]) }
-      this.children = children;
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }"
 `;

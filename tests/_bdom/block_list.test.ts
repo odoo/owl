@@ -1,14 +1,13 @@
 import { elem, list, mount, multi, patch, remove, text } from "../../src/_bdom/blockdom";
-import { makeBuilder } from "../../src/_bdom/builder";
 import { Block } from "../../src/_bdom/types";
-// import { makeBuilder as origMakeBuilder } from "../../src/_bdom/builder";
+import { makeBuilder as origMakeBuilder } from "../../src/_bdom/builder";
 import { makeTestFixture } from "../helpers";
 
-// function makeBuilder(str: string) {
-//   const B = origMakeBuilder(str);
-//   expect(B.toString()).toMatchSnapshot();
-//   return B;
-// }
+function makeBuilder(str: string) {
+  const B = origMakeBuilder(str);
+  expect(B.toString()).toMatchSnapshot();
+  return B;
+}
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -74,6 +73,22 @@ describe("list block: misc", () => {
     remove(bdom);
     expect(fixture.innerHTML).toBe("");
     expect(fixture.childNodes.length).toBe(0);
+  });
+
+  test("patching a list block inside an elem block", async () => {
+    const builder = makeBuilder("<div><owl-child-0/></div>");
+    const tree = elem(builder);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    patch(tree, elem(builder, [], [list([1, 2, 3].map(n))]));
+    expect(fixture.innerHTML).toBe("<div>123</div>");
+
+    patch(tree, elem(builder, [], [list([])]));
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    patch(tree, elem(builder, [], [list([1, 2, 3].map(n))]));
+    expect(fixture.innerHTML).toBe("<div>123</div>");
   });
 });
 

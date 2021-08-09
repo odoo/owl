@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` 1`] = `
+"class Builder {
+    constructor(data) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.data = [];
+      this.update(data);
+    }
+    update(data) {
+      const refs = this.refs;
+      const currentData = this.data;
+      const nextData = data.data;
+      if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
+      this.data = nextData;
+    }
+  }"
+`;
+
+exports[` 2`] = `
+"class Builder {
+    constructor(data) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.data = [];
+      this.update(data);
+    }
+    update(data) {
+      const refs = this.refs;
+      const currentData = this.data;
+      const nextData = data.data;
+      if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
+      this.data = nextData;
+    }
+  }"
+`;
+
+exports[`adding/removing elements adds children: [] => [1,2,3] (inside elem) 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+    }
+  }"
+`;
+
+exports[`adding/removing elements adds children: [] => [1,2,3] (inside elem, multi) 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+    }
+  }"
+`;
+
+exports[`adding/removing elements remove children: [1,2,3] => [] (inside elem) 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+    }
+  }"
+`;
+
+exports[`list block: misc patching a list block inside an elem block 1`] = `
+"class Builder {
+    constructor(data, children) {
+      this.el = template.cloneNode(true);
+      let ref0 = this.el.firstChild;
+      this.refs = [ref0];
+      this.children = [];
+      this.update(data, children);
+    }
+    update(data, children) {
+      const refs = this.refs;
+      const currentChildren = this.children;
+      let currentChild0 = currentChildren[0], child0 = children[0];
+      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+    }
+  }"
+`;

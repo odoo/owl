@@ -36,3 +36,17 @@ test("simple event handling ", async () => {
   (fixture.firstChild as HTMLDivElement).click();
   expect(n).toBe(1);
 });
+
+test("simple event handling, with function", async () => {
+  const builder = makeBuilder('<div owl-handler-0="click"></div>');
+  let n = 0;
+  const tree = elem(builder, [() => n++]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(fixture.firstChild).toBeInstanceOf(HTMLDivElement);
+  expect(n).toBe(0);
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(n).toBe(1);
+});

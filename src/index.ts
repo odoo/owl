@@ -1,15 +1,14 @@
-import { elem, list, mount, multi, patch, remove, text } from "./_bdom/blockdom";
-import { makeBuilder } from "./_bdom/builder";
+import { list, mount, multi, patch, remove, text } from "./_bdom/blockdom";
+import { makeBlock } from "./_bdom/builder";
 
 export const blockDom = {
-  elem,
   list,
   mount,
   multi,
   patch,
   remove,
   text,
-  makeBuilder,
+  makeBlock,
 };
 
 // import { App } from "./app";

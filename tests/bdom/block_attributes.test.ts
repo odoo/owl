@@ -1,12 +1,5 @@
-import { mount, patch } from "../../src/_bdom";
-import { makeBlock as origMakeBlock, _compileBlock } from "../../src/_bdom/element";
+import { mount, patch, createBlock } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-
-function makeBlock(str: string) {
-  const { fn } = _compileBlock(str);
-  expect(fn.toString()).toMatchSnapshot();
-  return origMakeBlock(str);
-}
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -23,7 +16,7 @@ afterEach(() => {
 });
 
 test("simple attribute", async () => {
-  const block = makeBlock('<div owl-attribute-0="hello"></div>');
+  const block = createBlock('<div owl-attribute-0="hello"></div>');
   const tree = block(["world"]);
 
   mount(tree, fixture);
@@ -34,7 +27,7 @@ test("simple attribute", async () => {
 });
 
 test("class attribute", async () => {
-  const block = makeBlock('<div owl-attribute-0="class"></div>');
+  const block = createBlock('<div owl-attribute-0="class"></div>');
   const tree = block(["fire"]);
 
   mount(tree, fixture);

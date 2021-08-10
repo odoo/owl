@@ -1,21 +1,5 @@
-import {
-  list,
-  mount,
-  multi,
-  patch,
-  remove,
-  text,
-  makeBlock as origMakeBlock,
-} from "../../src/_bdom";
-import { _compileBlock } from "../../src/_bdom/element";
-import { Block } from "../../src/_bdom/types";
+import { list, mount, multi, patch, text, createBlock, BNode } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-
-function makeBlock(str: string) {
-  const { fn } = _compileBlock(str);
-  expect(fn.toString()).toMatchSnapshot();
-  return origMakeBlock(str);
-}
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -31,7 +15,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-function kText(str: string, key: any): Block {
+function kText(str: string, key: any): BNode {
   const block = text(str);
   block.key = key;
   return block;
@@ -41,50 +25,50 @@ function n(n: number) {
   return kText(String(n), n);
 }
 
-const span = makeBlock("<span><owl-text-0/></span>");
-const p = makeBlock("<p><owl-text-0/></p>");
+const span = createBlock("<span><owl-text-0/></span>");
+const p = createBlock("<p><owl-text-0/></p>");
 
-function kSpan(str: string, key: any): Block {
+function kSpan(str: string, key: any): BNode {
   const block = span([str]);
   block.key = key;
   return block;
 }
 
-function kPair(n: number): Block {
-  const blocks = [p([String(n)]), p([String(n)])];
-  const block = multi(blocks);
+function kPair(n: number): BNode {
+  const bnodes = [p([String(n)]), p([String(n)])];
+  const block = multi(bnodes);
   block.key = n;
   return block;
 }
 
-describe("list block: misc", () => {
-  test("list block", async () => {
-    const blocks = [1, 2, 3].map((key) => kText(`text${key}`, key));
+describe("list node: misc", () => {
+  test("list node", async () => {
+    const bnodes = [1, 2, 3].map((key) => kText(`text${key}`, key));
 
-    const tree = list(blocks);
+    const tree = list(bnodes);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("text1text2text3");
   });
 
   test("a list block can be removed and leaves nothing", async () => {
-    const blocks = [
+    const bnodes = [
       { id: 1, name: "sheep" },
       { id: 2, name: "cow" },
     ].map((elem) => kText(elem.name, elem.id));
 
-    const tree = list(blocks);
+    const tree = list(bnodes);
     expect(fixture.childNodes.length).toBe(0);
     mount(tree, fixture);
     expect(fixture.childNodes.length).toBe(3);
     expect(fixture.innerHTML).toBe("sheepcow");
 
-    remove(tree);
+    tree.remove();
     expect(fixture.innerHTML).toBe("");
     expect(fixture.childNodes.length).toBe(0);
   });
 
   test("patching a list block inside an elem block", async () => {
-    const block = makeBlock("<div><owl-child-0/></div>");
+    const block = createBlock("<div><owl-child-0/></div>");
     const tree = block();
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -241,7 +225,7 @@ describe("adding/removing elements", () => {
   });
 
   test("adds children: [] => [1,2,3] (inside elem)", () => {
-    const block = makeBlock("<p><owl-child-0/></p>");
+    const block = createBlock("<p><owl-child-0/></p>");
     const tree = block([], []);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
@@ -251,7 +235,7 @@ describe("adding/removing elements", () => {
   });
 
   test("adds children: [] => [1,2,3] (inside elem, multi)", () => {
-    const block = makeBlock("<p><owl-child-0/></p>");
+    const block = createBlock("<p><owl-child-0/></p>");
     const tree = block([], []);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
@@ -279,7 +263,7 @@ describe("adding/removing elements", () => {
   });
 
   test("remove children: [1,2,3] => [] (inside elem)", () => {
-    const block = makeBlock("<p><owl-child-0/></p>");
+    const block = createBlock("<p><owl-child-0/></p>");
     const tree = block([], [list([1, 2, 3].map(n))]);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p>123</p>");

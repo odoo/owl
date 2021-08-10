@@ -1,8 +1,6 @@
-import { Blocks } from "../../src/bdom";
-import { mountBlock } from "../../src/bdom/block";
+import { html, mount, patch } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
 
-const { BHtml } = Blocks;
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
@@ -21,14 +19,13 @@ afterEach(() => {
 // Tests
 //------------------------------------------------------------------------------
 
-describe("BHtml", () => {
+describe("html block", () => {
   test("can be mounted and patched", async () => {
-    const tree = new BHtml("<span>1</span><span>2</span>");
-    mountBlock(tree, fixture);
+    const tree = html("<span>1</span><span>2</span>");
+    mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<span>1</span><span>2</span>");
 
-    const tree2 = new BHtml("<div>coucou</div>");
-    tree.patch(tree2);
+    patch(tree, html("<div>coucou</div>"));
     expect(fixture.innerHTML).toBe("<div>coucou</div>");
   });
 });

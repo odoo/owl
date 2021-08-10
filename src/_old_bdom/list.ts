@@ -1,4 +1,11 @@
-import { Anchor, Block, BlockList, Operations } from "./types";
+import { Anchor, Block } from "./types";
+
+export interface BlockList extends Block<BlockList> {
+  blocks: Block[];
+  isOnlyChild: boolean;
+  hasNoComponent: boolean;
+  anchor: any;
+}
 
 // -----------------------------------------------------------------------------
 //  List blocks
@@ -9,45 +16,50 @@ export function list(
   isOnlyChild: boolean = false,
   hasNoComponent: boolean = false
 ): BlockList {
-  return {
-    ops: LIST_OPS,
-    el: undefined,
-    data: { anchor: undefined, isOnlyChild, hasNoComponent },
-    content: blocks,
-  };
+  return new BList(blocks, isOnlyChild, hasNoComponent);
 }
 
-const LIST_OPS: Operations = {
-  mountBefore(block: any, anchor: Anchor) {
-    const children = block.content;
+export class BList implements Block<BlockList> {
+  blocks: Block[];
+  isOnlyChild: boolean;
+  hasNoComponent: boolean;
+  anchor: any;
+
+  constructor(blocks: Block[], isOnlyChild: boolean, hasNoComponent: boolean) {
+    this.blocks = blocks;
+    this.isOnlyChild = isOnlyChild;
+    this.hasNoComponent = hasNoComponent;
+    this.anchor = undefined;
+  }
+
+  mountBefore(anchor: Anchor) {
+    const children = this.blocks;
     const _anchor = document.createTextNode("");
-    block.data.anchor = _anchor;
+    this.anchor = _anchor;
     anchor.before(_anchor);
     const l = children.length;
     if (l) {
-      const mountBefore = children[0].ops.mountBefore;
       for (let i = 0; i < l; i++) {
-        mountBefore(children[i], _anchor);
+        children[i].mountBefore(_anchor);
       }
     }
-  },
-  patch(block1: any, block2: any) {
-    if (block1 === block2) {
+  }
+
+  patch(block: BList) {
+    if (this === block) {
       return;
     }
-    const oldCh = block1.content;
-    const newCh: Block[] = (block2 as any).content;
+    const oldCh = this.blocks;
+    const newCh: Block[] = block.blocks;
     if (newCh.length === 0 && oldCh.length === 0) {
       return;
     }
-    const ops: Operations = oldCh[0] ? oldCh[0].ops : newCh[0].ops;
-    const { firstChildNode, moveBefore, mountBefore, patch, remove: removeBlock } = ops;
 
-    const data = block1.data;
-    const _anchor = data.anchor!;
+    const _anchor = this.anchor!;
+    const isOnlyChild = this.isOnlyChild;
 
     // fast path: no new child => only remove
-    if (newCh.length === 0 && data.isOnlyChild) {
+    if (newCh.length === 0 && isOnlyChild) {
       // if (!data.hasNoComponent) {
       //   for (let i = 0; i < oldCh.length; i++) {
       //     beforeRemove(oldCh[i]);
@@ -55,26 +67,25 @@ const LIST_OPS: Operations = {
       // }
 
       const parent = _anchor.parentElement!;
-      _anchor.remove();
       parent.textContent = "";
       parent.appendChild(_anchor);
-      block1.content = newCh;
+      this.blocks = newCh;
       return;
     }
 
     // fast path: only new child and isonlychild => can use fragment
-    if (oldCh.length === 0 && data.isOnlyChild) {
-        const frag = document.createDocumentFragment();
-        const parent = _anchor.parentElement!;
-        frag.appendChild(_anchor);
-        for (let i = 0, l = newCh.length; i < l; i++) {
-            mountBefore(newCh[i], _anchor);
-        }
-        parent.appendChild(frag);
-        parent.appendChild(_anchor);
-        block1.content = newCh;
-        return;
-    }
+    // if (oldCh.length === 0 && isOnlyChild) {
+    //   const frag = document.createDocumentFragment();
+    //   const parent = _anchor.parentElement!;
+    //   frag.appendChild(_anchor);
+    //   for (let i = 0, l = newCh.length; i < l; i++) {
+    //     newCh[i].mountBefore(_anchor);
+    //   }
+    //   parent.appendChild(frag);
+    //   parent.appendChild(_anchor);
+    //   this.blocks = newCh;
+    //   return;
+    // }
 
     let oldStartIdx = 0;
     let newStartIdx = 0;
@@ -87,7 +98,7 @@ const LIST_OPS: Operations = {
     let newEndBlock = newCh[newEndIdx];
 
     let mapping: any = undefined;
-    let noFullRemove = data.hasNoComponent;
+    let noFullRemove = this.hasNoComponent;
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       // -------------------------------------------------------------------
@@ -100,14 +111,14 @@ const LIST_OPS: Operations = {
       }
       // -------------------------------------------------------------------
       else if (oldStartBlock.key === newStartBlock.key) {
-        patch(oldStartBlock, newStartBlock);
+        oldStartBlock.patch(newStartBlock);
         newCh[newStartIdx] = oldStartBlock;
         oldStartBlock = oldCh[++oldStartIdx];
         newStartBlock = newCh[++newStartIdx];
       }
       // -------------------------------------------------------------------
       else if (oldEndBlock.key === newEndBlock.key) {
-        patch(oldEndBlock, newEndBlock);
+        oldEndBlock.patch(newEndBlock);
         newCh[newEndIdx] = oldEndBlock;
         oldEndBlock = oldCh[--oldEndIdx];
         newEndBlock = newCh[--newEndIdx];
@@ -115,10 +126,10 @@ const LIST_OPS: Operations = {
       // -------------------------------------------------------------------
       else if (oldStartBlock.key === newEndBlock.key) {
         // bnode moved right
-        patch(oldStartBlock, newEndBlock);
+        oldStartBlock.patch(newEndBlock);
         const nextChild = newCh[newEndIdx + 1];
-        const anchor = nextChild ? nextChild.el || firstChildNode(nextChild)! : _anchor;
-        moveBefore(oldStartBlock, anchor);
+        const anchor = nextChild ? nextChild.el || nextChild.firstChildNode()! : _anchor;
+        oldStartBlock.moveBefore(anchor);
         newCh[newEndIdx] = oldStartBlock;
         oldStartBlock = oldCh[++oldStartIdx];
         newEndBlock = newCh[--newEndIdx];
@@ -126,10 +137,10 @@ const LIST_OPS: Operations = {
       // -------------------------------------------------------------------
       else if (oldEndBlock.key === newStartBlock.key) {
         // bnode moved left
-        patch(oldEndBlock, newStartBlock);
+        oldEndBlock.patch(newStartBlock);
         const nextChild = oldCh[oldStartIdx];
-        const anchor = nextChild ? nextChild.el || firstChildNode(nextChild)! : _anchor;
-        moveBefore(oldEndBlock, anchor);
+        const anchor = nextChild ? nextChild.el || nextChild.firstChildNode()! : _anchor;
+        oldEndBlock.moveBefore(anchor);
         newCh[newStartIdx] = oldEndBlock;
         oldEndBlock = oldCh[--oldEndIdx];
         newStartBlock = newCh[++newStartIdx];
@@ -139,11 +150,11 @@ const LIST_OPS: Operations = {
         mapping = mapping || createMapping(oldCh, oldStartIdx, oldEndIdx);
         let idxInOld = mapping[newStartBlock.key];
         if (idxInOld === undefined) {
-          mountBefore(newStartBlock, oldStartBlock.el || (firstChildNode(oldStartBlock)! as any));
+          newStartBlock.mountBefore(oldStartBlock.el || (oldStartBlock.firstChildNode()! as any));
         } else {
           const elmToMove = oldCh[idxInOld];
-          moveBefore(elmToMove, oldStartBlock.el || (firstChildNode(oldStartBlock) as any));
-          patch(elmToMove, newStartBlock);
+          elmToMove.moveBefore(oldStartBlock.el || (oldStartBlock.firstChildNode() as any));
+          elmToMove.patch(newStartBlock);
           newCh[newStartIdx] = elmToMove;
           oldCh[idxInOld] = null as any;
         }
@@ -154,9 +165,9 @@ const LIST_OPS: Operations = {
     if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
       if (oldStartIdx > oldEndIdx) {
         const nextChild = newCh[newEndIdx + 1];
-        const anchor = nextChild ? nextChild.el || firstChildNode(nextChild)! : _anchor;
+        const anchor = nextChild ? nextChild.el || nextChild.firstChildNode()! : _anchor;
         for (let i = newStartIdx; i <= newEndIdx; i++) {
-          mountBefore(newCh[i], anchor as any);
+          newCh[i].mountBefore(anchor as any);
         }
       } else {
         for (let i = oldStartIdx; i <= oldEndIdx; i++) {
@@ -164,40 +175,39 @@ const LIST_OPS: Operations = {
           if (ch) {
             if (noFullRemove) {
               // remove(ch);
-              removeBlock(ch);
+              ch.remove();
             } else {
-              removeBlock(ch);
+              ch.remove();
             }
           }
         }
       }
     }
-    block1.content = newCh;
-  },
-  moveBefore(block: any, anchor: any) {
+    this.blocks = newCh;
+  }
+  moveBefore(anchor: any) {
     // todo
-  },
-  remove(block: any) {
-    const { isOnlyChild, anchor } = block.data;
+  }
+  remove() {
+    const { isOnlyChild, anchor } = this;
     if (isOnlyChild) {
       anchor!.parentElement!.textContent = "";
     } else {
-      const children = block.content;
+      const children = this.blocks;
       const l = children.length;
       if (l) {
-        const removeBlock = children[0].ops.remove;
         for (let i = 0; i < l; i++) {
-          removeBlock(children[i]);
+          children[i].remove();
         }
       }
       anchor!.remove();
     }
-  },
-  firstChildNode(block: any): ChildNode | null {
-    const first = block.content[0];
-    return first ? first.el || first.ops.firstChildNode(first) : null;
-  },
-};
+  }
+  firstChildNode(): ChildNode | null {
+    const first = this.blocks[0];
+    return first ? first.el || first.firstChildNode() : null;
+  }
+}
 
 function createMapping(
   oldCh: any[],

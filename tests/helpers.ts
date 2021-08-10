@@ -1,22 +1,22 @@
-import {
-  onDestroyed,
-  onWillPatch,
-  onWillUnmount,
-  onMounted,
-  onPatched,
-  onWillStart,
-  onWillUpdateProps,
-  useComponent,
-  status,
-  onRender,
-  Component,
-} from "../src";
-import { TemplateSet } from "../src/app";
-import { Block, Blocks } from "../src/bdom";
-import { mountBlock } from "../src/bdom/block";
-import { compileTemplate, Template } from "../src/compiler/index";
-import { globalTemplates, xml } from "../src/tags";
-import { UTILS } from "../src/template_utils";
+// import {
+//   onDestroyed,
+//   onWillPatch,
+//   onWillUnmount,
+//   onMounted,
+//   onPatched,
+//   onWillStart,
+//   onWillUpdateProps,
+//   useComponent,
+//   status,
+//   onRender,
+//   Component,
+// } from "../src";
+// import { TemplateSet } from "../src/app";
+// import { Block, Blocks } from "../src/bdom";
+// import { mountBlock } from "../src/bdom/block";
+// import { compileTemplate } from "../src/compiler/index";
+// import { globalTemplates, xml } from "../src/tags";
+// import { UTILS } from "../src/template_utils";
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
@@ -34,9 +34,9 @@ export function makeTestFixture() {
   return fixture;
 }
 
-export function snapshotTemplateCode(template: string) {
-  expect(compileTemplate(template).toString()).toMatchSnapshot();
-}
+// export function snapshotTemplateCode(template: string) {
+//   expect(compileTemplate(template).toString()).toMatchSnapshot();
+// }
 
 export async function nextTick(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve));
@@ -62,141 +62,141 @@ export function makeDeferred(): Deferred {
 /**
  * Return the global template xml string corresponding to the given name
  */
-export function fromName(name: string): string {
-  return globalTemplates[name];
-}
+// export function fromName(name: string): string {
+//   return globalTemplates[name];
+// }
 
-export function trim(str: string): string {
-  return str.replace(/\s/g, "");
-}
+// export function trim(str: string): string {
+//   return str.replace(/\s/g, "");
+// }
 
-export function addTemplate(name: string, template: string): string {
-  globalTemplates[name] = template;
-  return name;
-}
+// export function addTemplate(name: string, template: string): string {
+//   globalTemplates[name] = template;
+//   return name;
+// }
 
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
 
-export function compile(template: string): Template {
-  // register here the template globally so snapshotEverything
-  // can get it
-  globalTemplates[template] = template;
-  const templateFunction = compileTemplate(template);
-  return templateFunction(Blocks, UTILS);
-}
+// export function compile(template: string): Template {
+//   // register here the template globally so snapshotEverything
+//   // can get it
+//   globalTemplates[template] = template;
+//   const templateFunction = compileTemplate(template);
+//   return templateFunction(Blocks, UTILS);
+// }
 
-export function renderToBdom(template: string, context: any = {}, node: any = {}): Block {
-  return compile(template)(context, node);
-}
+// export function renderToBdom(template: string, context: any = {}, node: any = {}): Block {
+//   return compile(template)(context, node);
+// }
 
-export function renderToString(template: string, context: any = {}): string {
-  const fixture = makeTestFixture();
-  const bdom = renderToBdom(template, context);
-  mountBlock(bdom, fixture);
-  return fixture.innerHTML;
-}
+// export function renderToString(template: string, context: any = {}): string {
+//   const fixture = makeTestFixture();
+//   const bdom = renderToBdom(template, context);
+//   mountBlock(bdom, fixture);
+//   return fixture.innerHTML;
+// }
 
-export class TestContext extends TemplateSet {
-  renderToString(name: string, context: any = {}): string {
-    const renderFn = this.getTemplate(name);
-    const bdom = renderFn(context, {});
-    const fixture = makeTestFixture();
-    mountBlock(bdom, fixture);
-    return fixture.innerHTML;
-  }
-}
+// export class TestContext extends TemplateSet {
+//   renderToString(name: string, context: any = {}): string {
+//     const renderFn = this.getTemplate(name);
+//     const bdom = renderFn(context, {});
+//     const fixture = makeTestFixture();
+//     mountBlock(bdom, fixture);
+//     return fixture.innerHTML;
+//   }
+// }
 
-export function snapshotEverything() {
-  const consolewarn = console.warn;
+// export function snapshotEverything() {
+//   const consolewarn = console.warn;
 
-  const originalAddTemplate = TemplateSet.prototype.addTemplate;
-  TemplateSet.prototype.addTemplate = function (name: string, template: string, options) {
-    originalAddTemplate.call(this, name, template, options);
-    // register it so snapshotEverything can get it
-    globalTemplates[name] = template;
-  };
+//   const originalAddTemplate = TemplateSet.prototype.addTemplate;
+//   TemplateSet.prototype.addTemplate = function (name: string, template: string, options) {
+//     originalAddTemplate.call(this, name, template, options);
+//     // register it so snapshotEverything can get it
+//     globalTemplates[name] = template;
+//   };
 
-  let globalSet: any;
+//   let globalSet: any;
 
-  beforeAll(() => {
-    globalSet = new Set(Object.keys(globalTemplates));
-  });
+//   beforeAll(() => {
+//     globalSet = new Set(Object.keys(globalTemplates));
+//   });
 
-  beforeEach(() => {
-    xml.nextId = 9;
-  });
+//   beforeEach(() => {
+//     xml.nextId = 9;
+//   });
 
-  afterEach(() => {
-    console.warn = () => {};
-    for (let k in globalTemplates) {
-      if (globalSet.has(k)) {
-        // ignore generic templates
-        continue;
-      }
-      try {
-        snapshotTemplateCode(globalTemplates[k]);
-      } catch (e) {
-        // ignore error
-      }
-      delete globalTemplates[k];
-    }
-    console.warn = consolewarn;
-  });
-}
+//   afterEach(() => {
+//     console.warn = () => {};
+//     for (let k in globalTemplates) {
+//       if (globalSet.has(k)) {
+//         // ignore generic templates
+//         continue;
+//       }
+//       try {
+//         snapshotTemplateCode(globalTemplates[k]);
+//       } catch (e) {
+//         // ignore error
+//       }
+//       delete globalTemplates[k];
+//     }
+//     console.warn = consolewarn;
+//   });
+// }
 
-export function useLogLifecycle(steps: string[]) {
-  const component = useComponent();
-  const name = component.constructor.name;
-  steps.push(`${name}:setup`);
-  expect(name + ": " + status(component)).toBe(name + ": " + "new");
+// export function useLogLifecycle(steps: string[]) {
+//   const component = useComponent();
+//   const name = component.constructor.name;
+//   steps.push(`${name}:setup`);
+//   expect(name + ": " + status(component)).toBe(name + ": " + "new");
 
-  onWillStart(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "new");
-    steps.push(`${name}:willStart`);
-  });
+//   onWillStart(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "new");
+//     steps.push(`${name}:willStart`);
+//   });
 
-  onMounted(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:mounted`);
-  });
+//   onMounted(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+//     steps.push(`${name}:mounted`);
+//   });
 
-  onWillUpdateProps(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:willUpdateProps`);
-  });
+//   onWillUpdateProps(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+//     steps.push(`${name}:willUpdateProps`);
+//   });
 
-  onRender(() => {
-    steps.push(`${name}:render`);
-  });
+//   onRender(() => {
+//     steps.push(`${name}:render`);
+//   });
 
-  onWillPatch(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:willPatch`);
-  });
+//   onWillPatch(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+//     steps.push(`${name}:willPatch`);
+//   });
 
-  onPatched(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:patched`);
-  });
+//   onPatched(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+//     steps.push(`${name}:patched`);
+//   });
 
-  onWillUnmount(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:willUnmount`);
-  });
+//   onWillUnmount(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+//     steps.push(`${name}:willUnmount`);
+//   });
 
-  onDestroyed(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
-    steps.push(`${name}:destroyed`);
-  });
-}
+//   onDestroyed(() => {
+//     expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
+//     steps.push(`${name}:destroyed`);
+//   });
+// }
 
-export function children(w: Component): Component[] {
-  const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
-}
+// export function children(w: Component): Component[] {
+//   const childrenMap = w.__owl__.children;
+//   return Object.keys(childrenMap).map((id) => childrenMap[id].component);
+// }
 
-export function isDirectChildOf(child: Component, parent: Component): boolean {
-  return children(parent).includes(child);
-}
+// export function isDirectChildOf(child: Component, parent: Component): boolean {
+//   return children(parent).includes(child);
+// }

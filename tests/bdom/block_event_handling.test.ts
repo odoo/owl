@@ -1,12 +1,5 @@
-import { mount, makeBlock as origMakeBlock } from "../../src/_bdom";
-import { _compileBlock } from "../../src/_bdom/element";
+import { mount, createBlock } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
-
-function makeBlock(str: string) {
-  const { fn } = _compileBlock(str);
-  expect(fn.toString()).toMatchSnapshot();
-  return origMakeBlock(str);
-}
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -23,7 +16,7 @@ afterEach(() => {
 });
 
 test("simple event handling ", async () => {
-  const block = makeBlock('<div owl-handler-0="click"></div>');
+  const block = createBlock('<div owl-handler-0="click"></div>');
   let n = 0;
   const obj = { f: () => n++ };
   const tree = block([[obj, "f"]]);
@@ -38,7 +31,7 @@ test("simple event handling ", async () => {
 });
 
 test("simple event handling, with function", async () => {
-  const block = makeBlock('<div owl-handler-0="click"></div>');
+  const block = createBlock('<div owl-handler-0="click"></div>');
   let n = 0;
   const tree = block([() => n++]);
 

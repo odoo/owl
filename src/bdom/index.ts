@@ -1,26 +1,30 @@
-/**
- * Block DOM
- *
- * A virtual-dom inspired implementation, but where the basic primitive is a
- * "block" instead of just a html (v)node.
- */
+export { createBlock } from "./block";
+export { list } from "./list";
+export { multi } from "./multi";
+export { text } from "./text";
+export { html } from "./html";
 
-import { BCollection } from "./b_collection";
-import { BHtml } from "./b_html";
-import { BMulti } from "./b_multi";
-import { BElem } from "./b_elem";
-import { BStatic } from "./b_static";
-import { BText } from "./b_text";
-import { BDispatch } from "./b_dispatch";
+export interface VNode<T = any> {
+  mount(parent: HTMLElement, afterNode: Node | null): void;
+  moveBefore(other: T | null, afterNode: Node | null): void;
+  patch(other: T): void;
+  remove(): void;
+  firstNode(): Node | undefined;
 
-export type { Block } from "./block";
+  el?: undefined | HTMLElement | Text;
+  parentEl?: undefined | HTMLElement;
+  singleNode?: boolean | undefined;
+  key?: any;
+}
 
-export const Blocks = {
-  BElem,
-  BStatic,
-  BMulti,
-  BHtml,
-  BCollection,
-  BText,
-  BDispatch,
-};
+export function mount(vnode: VNode, fixture: HTMLElement) {
+  vnode.mount(fixture, null);
+}
+
+export function patch(vnode1: VNode, vnode2: VNode) {
+  vnode1.patch(vnode2);
+}
+
+export function remove(vnode: VNode) {
+  vnode.remove();
+}

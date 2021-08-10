@@ -1,10 +1,6 @@
-import { Blocks } from "../../src/bdom";
-import { mountBlock } from "../../src/bdom/block";
-import { BText } from "../../src/bdom/b_text";
-import { elem } from "../../src/template_utils";
-import { makeTestFixture, renderToBdom } from "../helpers";
+import { mount, text, patch, createBlock, multi, remove } from "../../src/bdom";
+import { makeTestFixture } from "../helpers";
 
-const { BElem, BMulti } = Blocks;
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
@@ -19,334 +15,228 @@ afterEach(() => {
   fixture.remove();
 });
 
-function el(html: string): HTMLElement {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return elem(div.outerHTML).firstChild as HTMLElement;
-}
-//------------------------------------------------------------------------------
-// Tests
-//------------------------------------------------------------------------------
-
-describe("mount", () => {
-  test("simple block", async () => {
-    class Block1 extends BElem {
-      static el = el("<div>foo</div>");
-    }
-
-    const tree = new Block1();
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("<div>foo</div>");
-  });
-
-  test("simple block with string", async () => {
-    class Block1 extends BElem {
-      static el = el("foo");
-    }
-
-    const tree = new Block1();
-    mountBlock(tree, fixture);
+describe("adding/patching text and blocks", () => {
+  test("simple text node", async () => {
+    const tree = text("foo");
+    expect(tree.el).toBe(undefined);
+    mount(tree, fixture);
     expect(fixture.innerHTML).toBe("foo");
+    expect(tree.el).not.toBe(undefined);
   });
 
-  test("a text block can be removed", async () => {
-    const tree = new BText("cat");
-    expect(fixture.childNodes.length).toBe(0);
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("cat");
-    expect(fixture.childNodes.length).toBe(1);
-    tree.remove();
-    expect(fixture.innerHTML).toBe("");
-    expect(fixture.childNodes.length).toBe(0);
+  test("patching a simple text node", async () => {
+    const tree = text("foo");
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("foo");
+
+    patch(tree, text("bar"));
+    expect(fixture.innerHTML).toBe("bar");
   });
 
-  test("simple block with multiple roots", async () => {
-    class Block1 extends BElem {
-      static el = el("<div>foo</div>");
-    }
-    class Block2 extends BElem {
-      static el = el("<span>bar</span>");
-    }
+  test("simple block", async () => {
+    const block = createBlock("<div>foo</div>");
+    const tree = block();
+    expect(tree.el).toBe(undefined);
 
-    const tree = new BMulti(2);
-    tree.children[0] = new Block1();
-    tree.children[1] = new Block2();
-
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("<div>foo</div><span>bar</span>");
-  });
-
-  test("a multiblock can be removed and leaves no extra text nodes", async () => {
-    class Block1 extends BElem {
-      static el = el("<div>foo</div>");
-    }
-    class Block2 extends BElem {
-      static el = el("<span>bar</span>");
-    }
-
-    const tree = new BMulti(2);
-    tree.children[0] = new Block1();
-    tree.children[1] = new Block2();
-
-    expect(fixture.childNodes.length).toBe(0);
-    mountBlock(tree, fixture);
-    expect(fixture.childNodes.length).toBe(4);
-    tree.remove();
-    expect(fixture.childNodes.length).toBe(0);
-  });
-
-  test("multiblock with an empty children", async () => {
-    class Block1 extends BElem {
-      static el = el("<div>foo</div>");
-    }
-
-    const tree = new BMulti(2);
-    tree.children[0] = new Block1();
-
-    mountBlock(tree, fixture);
+    mount(tree, fixture);
+    expect(tree.el).not.toBe(undefined);
     expect(fixture.innerHTML).toBe("<div>foo</div>");
-  });
-
-  test("a collection block can be removed and leaves nothing", async () => {
-    const template = `
-        <t t-foreach="elems" t-as="elem" t-key="elem.id">
-          <t t-esc="elem.name"/>
-        </t>`;
-
-    const elems = [
-      { id: 1, name: "sheep" },
-      { id: 2, name: "cow" },
-    ];
-
-    const tree = renderToBdom(template, { elems });
-
-    expect(fixture.childNodes.length).toBe(0);
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("sheepcow");
-    expect(fixture.childNodes.length).toBe(3);
-    tree.remove();
-    expect(fixture.innerHTML).toBe("");
-    expect(fixture.childNodes.length).toBe(0);
   });
 
   test("block with dynamic content", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><p></p></div>");
-      data = new Array(1);
-      update() {
-        this.el!.firstChild!.textContent = this.data[0];
-      }
-    }
+    const block = createBlock("<div><p><owl-text-0/></p></div>");
+    const tree = block(["foo"]);
 
-    const tree = new Block1();
-    tree.data[0] = "foo";
-    mountBlock(tree, fixture);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
+    patch(tree, block(["bar"]));
+    expect(fixture.innerHTML).toBe("<div><p>bar</p></div>");
+
+    patch(tree, block(["foo"]));
     expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
   });
 
-  test("block with subblock", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><span></span><owl-anchor></owl-anchor></div>");
-      children = new Array(1);
-      anchors = new Array(1);
-      data = new Array(1);
-      build() {
-        this.anchors[0] = (this.el as any).firstChild!.nextSibling;
-      }
-      update() {
-        this.el!.firstChild!.textContent = this.data[0];
-      }
-    }
+  test("block with 2 dynamic text nodes", async () => {
+    const block = createBlock("<div><p><owl-text-0/></p><span><owl-text-1/></span></div>");
+    const tree = block(["foo", "bar"]);
 
-    class Block2 extends BElem {
-      static el = el("<p>yip yip</p>");
-    }
-
-    const tree = new Block1();
-    tree.data[0] = "foo";
-    tree.children[0] = new Block2();
-
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>foo</span><p>yip yip</p></div>");
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div><p>foo</p><span>bar</span></div>");
+    patch(tree, block(["appa", "yip yip"]));
+    expect(fixture.innerHTML).toBe("<div><p>appa</p><span>yip yip</span></div>");
   });
 
-  test("block with subblock with siblings", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><p>1</p><owl-anchor></owl-anchor><p>2</p></div>");
-      children = new Array(1);
-      anchors = new Array(1);
-      build() {
-        this.anchors[0] = (this.el as any).firstChild!.nextSibling;
-      }
-    }
+  test("block with multiple references", async () => {
+    const block1 = createBlock(
+      "<div><owl-text-0/><p><owl-text-1/><owl-text-2/></p><owl-text-3/></div>"
+    );
+    const tree = block1(["1", "2", "3", "4"]);
 
-    class Block2 extends BElem {
-      static el = el("<p>yip yip</p>");
-    }
-
-    const tree = new Block1();
-    tree.children[0] = new Block2();
-
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("<div><p>1</p><p>yip yip</p><p>2</p></div>");
-  });
-
-  test("multi block in a regular block", async () => {
-    class Block1 extends BElem {
-      static el = el(`<div><owl-anchor></owl-anchor></div>`);
-      children = new Array(1);
-      anchors = new Array(1);
-      build() {
-        this.anchors[0] = (this.el as any).firstChild!;
-      }
-    }
-
-    class Block2 extends BElem {
-      static el = el(`<span>yip yip</span>`);
-    }
-
-    const b1 = new Block1();
-    const b2 = (b1.children[0] = new BMulti(1));
-    b2.children[0] = new Block2();
-
-    mountBlock(b1, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>yip yip</span></div>");
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div>1<p>23</p>4</div>");
   });
 });
 
-describe("update", () => {
-  test("block with dynamic content", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><p></p></div>");
-      data = new Array(1);
-      update() {
-        this.el!.firstChild!.textContent = this.data[0];
-      }
-    }
+describe("sub blocks", () => {
+  test("block with subblock (only child)", async () => {
+    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block2 = createBlock("<p>yip yip</p>");
+    const tree = block1([], [block2()]);
 
-    const tree1 = new Block1();
-    tree1.data[0] = "foo";
-    mountBlock(tree1, fixture);
-    expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
+    mount(tree, fixture);
 
-    const tree2 = new Block1();
-    tree2.data[0] = "bar";
-    tree1.patch(tree2);
-    expect(fixture.innerHTML).toBe("<div><p>bar</p></div>");
+    expect(fixture.innerHTML).toBe("<div><p>yip yip</p></div>");
+  });
+
+  test("block with subblock (first child with sibling)", async () => {
+    const block1 = createBlock("<div><owl-child-0/><span>something</span></div>");
+    const block2 = createBlock("<p>yip yip</p>");
+    const tree = block1([], [block2()]);
+
+    mount(tree, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>yip yip</p><span>something</span></div>");
+  });
+
+  test("block with subblock (last child with sibling)", async () => {
+    const block1 = createBlock("<div><span>something</span><owl-child-0/></div>");
+    const block2 = createBlock("<p>yip yip</p>");
+    const tree = block1([], [block2()]);
+
+    mount(tree, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><span>something</span><p>yip yip</p></div>");
+  });
+
+  test("block with 2 subblocks", async () => {
+    const block1 = createBlock("<div><owl-child-0/><owl-child-1/></div>");
+    const block2 = createBlock("<p>yip yip</p>");
+    const tree = block1([], [block2(), text("appa")]);
+
+    mount(tree, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>yip yip</p>appa</div>");
+  });
+
+  test("block with subblock with siblings", async () => {
+    const block1 = createBlock("<div><p>1</p><owl-child-0/><p>2</p></div>");
+    const block2 = createBlock("<p>yip yip</p>");
+
+    const tree = block1([], [block2()]);
+
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div><p>1</p><p>yip yip</p><p>2</p></div>");
   });
 
   test("block with conditional child", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><p><owl-anchor></owl-anchor></p></div>");
-      children = new Array(1);
-      anchors = new Array(1);
-      build() {
-        this.anchors[0] = (this.el as any).firstChild!.firstChild!;
-      }
-    }
-    class Block2 extends BElem {
-      static el = el("<span>foo</span>");
-    }
+    const block1 = createBlock("<div><p><owl-child-0/></p></div>");
+    const block2 = createBlock("<span>foo</span>");
 
-    const tree = new Block1();
-    mountBlock(tree, fixture);
+    const tree = block1();
+    mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div><p></p></div>");
 
-    const tree2 = new Block1();
-    tree2.children[0] = new Block2();
-    tree.patch(tree2);
+    patch(tree, block1([], [block2()]));
     expect(fixture.innerHTML).toBe("<div><p><span>foo</span></p></div>");
 
-    const tree3 = new Block1();
-    tree.patch(tree3);
+    patch(tree, block1());
     expect(fixture.innerHTML).toBe("<div><p></p></div>");
   });
 
   test("block with subblock with dynamic content", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><owl-anchor></owl-anchor></div>");
-      children = new Array(1);
-      anchors = new Array(1);
-      build() {
-        this.anchors[0] = (this.el as any).firstChild!;
-      }
-    }
+    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block2 = createBlock("<p><owl-text-0/></p>");
+    const tree = block1([], [block2(["yip yip"])]);
 
-    class Block2 extends BElem {
-      static el = el("<p></p>");
-      data = new Array(1);
-      update() {
-        this.el!.textContent = this.data[0];
-      }
-    }
-
-    const tree = new Block1();
-    tree.children[0] = new Block2();
-    tree.children[0].data[0] = "yip yip";
-
-    mountBlock(tree, fixture);
+    mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div><p>yip yip</p></div>");
 
-    const tree2 = new Block1();
-    tree2.children[0] = new Block2();
-    tree2.children[0].data[0] = "foo";
-
-    tree.patch(tree2);
+    patch(tree, block1([], [block2(["foo"])]));
     expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
   });
 
   test("block with dynamic content and subblock", async () => {
-    class Block1 extends BElem {
-      static el = el("<div><owl-anchor></owl-anchor><p></p></div>");
-      children = new Array(1);
-      data = new Array(1);
-      anchors = new Array(1);
-      build() {
-        this.anchors[0] = (this.el as any).firstChild!;
-      }
+    const block1 = createBlock("<div><owl-child-0/><p><owl-text-0/></p></div>");
+    const block2 = createBlock("<p>sub block</p>");
+    const tree = block1(["yip yip"], [block2()]);
 
-      update() {
-        this.anchors![0].nextSibling!.textContent = this.data[0];
-      }
-    }
-
-    class Block2 extends BElem {
-      static el = el("<p>sub block</p>");
-    }
-
-    const tree = new Block1();
-    tree.data[0] = "yip yip";
-    tree.children[0] = new Block2();
-
-    mountBlock(tree, fixture);
+    mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div><p>sub block</p><p>yip yip</p></div>");
 
-    const tree2 = new Block1();
-    tree2.data[0] = "foo";
-    tree2.children[0] = new Block2();
-
-    tree.patch(tree2);
+    patch(tree, block1(["foo"], [block2()]));
     expect(fixture.innerHTML).toBe("<div><p>sub block</p><p>foo</p></div>");
   });
+});
 
-  test("multi block", async () => {
-    class Block1 extends BElem {
-      static el = el(`ok`);
-    }
-
-    const tree = new BMulti(1);
-    tree.children[0] = new Block1();
-
-    mountBlock(tree, fixture);
-    expect(fixture.innerHTML).toBe("ok");
-
-    const tree2 = new BMulti(1);
-    tree.patch(tree2);
+describe("remove text and elem blocks", () => {
+  test("a text block can be removed", async () => {
+    const tree = text("cat");
+    expect(fixture.childNodes.length).toBe(0);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("cat");
+    expect(fixture.childNodes.length).toBe(1);
+    remove(tree);
     expect(fixture.innerHTML).toBe("");
+    expect(fixture.childNodes.length).toBe(0);
+  });
 
-    const tree3 = new BMulti(1);
-    tree3.children[0] = new Block1();
-    tree.patch(tree3);
-    expect(fixture.innerHTML).toBe("ok");
+  test("elem block can be removed", async () => {
+    const block = createBlock("<div>foo</div>");
+    const tree = block();
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div>foo</div>");
+    remove(tree);
+    expect(fixture.innerHTML).toBe("");
+    expect(fixture.childNodes.length).toBe(0);
   });
 });
+
+describe("multi blocks", () => {
+  test("simple multi with multiple roots", async () => {
+    const block1 = createBlock("<div>foo</div>");
+    const block2 = createBlock("<span>bar</span>");
+
+    const tree = multi([block1(), block2()]);
+
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div>foo</div><span>bar</span>");
+  });
+});
+
+//   describe("misc", () => {
+//     test("reusing a block skips patching process", async () => {
+//       const block = createBlock('<div><owl-text-0/></div>');
+//       const foo = block(["foo"]);
+//       const bar = block(["bar"]);
+//       let fooCounter = 0;
+//       let barCounter = 0;
+//       let fooValue = "foo";
+//       let barValue = "bar";
+//       Object.defineProperty(foo.data, 0, {
+//         get() {
+//           fooCounter++;
+//           return fooValue;
+//         },
+//       });
+//       Object.defineProperty(bar.data, 0, {
+//         get() {
+//           barCounter++;
+//           return barValue;
+//         },
+//         set(val) {
+//           barValue = val;
+//         },
+//       });
+
+//       const bdom = multi([foo, bar]);
+//       mount(bdom, fixture);
+//       expect(fooCounter).toBe(1);
+//       expect(barCounter).toBe(1);
+//       expect(fixture.innerHTML).toBe("<div>foo</div><div>bar</div>");
+
+//       patch(bdom, multi([foo, block(["otherbar"])]));
+//       expect(fixture.innerHTML).toBe("foootherbar");
+//       expect(fooCounter).toBe(1);
+//       expect(barCounter).toBe(2);
+//     });
+// });

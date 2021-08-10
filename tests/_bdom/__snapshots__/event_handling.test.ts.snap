@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`simple event handling  1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data) {
       this.el = template.cloneNode(true);
       let ref0 = this.el;
@@ -25,11 +27,14 @@ exports[`simple event handling  1`] = `
         owner[method]();
       }
     }
-  }"
+  }
+}"
 `;
 
 exports[`simple event handling, with function 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data) {
       this.el = template.cloneNode(true);
       let ref0 = this.el;
@@ -53,5 +58,6 @@ exports[`simple event handling, with function 1`] = `
         owner[method]();
       }
     }
-  }"
+  }
+}"
 `;

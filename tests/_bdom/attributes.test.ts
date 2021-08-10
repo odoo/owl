@@ -1,11 +1,11 @@
-import { elem, mount, patch } from "../../src/_bdom/blockdom";
-import { makeBuilder as origMakeBuilder } from "../../src/_bdom/builder";
+import { mount, patch } from "../../src/_bdom/blockdom";
+import { makeBlock as origMakeBlock, _compileBlock } from "../../src/_bdom/builder";
 import { makeTestFixture } from "../helpers";
 
-function makeBuilder(str: string) {
-  const B = origMakeBuilder(str);
-  expect(B.toString()).toMatchSnapshot();
-  return B;
+function makeBlock(str: string) {
+  const { fn } = _compileBlock(str);
+  expect(fn.toString()).toMatchSnapshot();
+  return origMakeBlock(str);
 }
 
 //------------------------------------------------------------------------------
@@ -23,26 +23,26 @@ afterEach(() => {
 });
 
 test("simple attribute", async () => {
-  const builder = makeBuilder('<div owl-attribute-0="hello"></div>');
-  const tree = elem(builder, ["world"]);
+  const block = makeBlock('<div owl-attribute-0="hello"></div>');
+  const tree = block(["world"]);
 
   mount(tree, fixture);
   expect(fixture.innerHTML).toBe(`<div hello="world"></div>`);
 
-  patch(tree, elem(builder, ["owl"]));
+  patch(tree, block(["owl"]));
   expect(fixture.innerHTML).toBe(`<div hello="owl"></div>`);
 });
 
 test("class attribute", async () => {
-  const builder = makeBuilder('<div owl-attribute-0="class"></div>');
-  const tree = elem(builder, ["fire"]);
+  const block = makeBlock('<div owl-attribute-0="class"></div>');
+  const tree = block(["fire"]);
 
   mount(tree, fixture);
   expect(fixture.innerHTML).toBe(`<div class="fire"></div>`);
 
-  patch(tree, elem(builder, ["water"]));
+  patch(tree, block(["water"]));
   expect(fixture.innerHTML).toBe(`<div class="water"></div>`);
 
-  patch(tree, elem(builder, [""]));
+  patch(tree, block([""]));
   expect(fixture.innerHTML).toBe(`<div class=""></div>`);
 });

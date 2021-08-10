@@ -1,4 +1,4 @@
-import { mountBefore, patch, remove } from "./blockdom";
+import { elem, mountBefore, patch, remove } from "./blockdom";
 import { Builder } from "./types";
 
 // -----------------------------------------------------------------------------
@@ -75,7 +75,11 @@ function toDom(node: ChildNode, ctx: BuilderContext): HTMLElement | Text | Comme
   throw new Error("boom");
 }
 
-export function makeBuilder(str: string): Builder {
+interface CompiledOutput {
+  template: HTMLElement;
+  fn: Function;
+}
+export function _compileBlock(str: string): CompiledOutput {
   const info: BuilderContext["info"] = [];
   const ctx: BuilderContext = {
     path: ["el"],
@@ -203,7 +207,13 @@ export function makeBuilder(str: string): Builder {
     "template, mountBefore, patch, remove, updateClass",
     code.join("\n")
   );
-  return wrapper(template, mountBefore, patch, remove, updateClass);
+  return { template, fn: wrapper };
+}
+
+export function makeBlock(str: string): Builder {
+  const { template, fn } = _compileBlock(str);
+  const block = fn(template, mountBefore, patch, remove, updateClass);
+  return elem.bind(null, block);
 }
 
 // -----------------------------------------------------------------------------

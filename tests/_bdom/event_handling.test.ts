@@ -1,11 +1,11 @@
-import { elem, mount } from "../../src/_bdom/blockdom";
-import { makeBuilder as origMakeBuilder } from "../../src/_bdom/builder";
+import { mount } from "../../src/_bdom/blockdom";
+import { makeBlock as origMakeBlock, _compileBlock } from "../../src/_bdom/builder";
 import { makeTestFixture } from "../helpers";
 
-function makeBuilder(str: string) {
-  const B = origMakeBuilder(str);
-  expect(B.toString()).toMatchSnapshot();
-  return B;
+function makeBlock(str: string) {
+  const { fn } = _compileBlock(str);
+  expect(fn.toString()).toMatchSnapshot();
+  return origMakeBlock(str);
 }
 
 //------------------------------------------------------------------------------
@@ -23,10 +23,10 @@ afterEach(() => {
 });
 
 test("simple event handling ", async () => {
-  const builder = makeBuilder('<div owl-handler-0="click"></div>');
+  const block = makeBlock('<div owl-handler-0="click"></div>');
   let n = 0;
   const obj = { f: () => n++ };
-  const tree = elem(builder, [[obj, "f"]]);
+  const tree = block([[obj, "f"]]);
 
   mount(tree, fixture);
   expect(fixture.innerHTML).toBe("<div></div>");
@@ -38,9 +38,9 @@ test("simple event handling ", async () => {
 });
 
 test("simple event handling, with function", async () => {
-  const builder = makeBuilder('<div owl-handler-0="click"></div>');
+  const block = makeBlock('<div owl-handler-0="click"></div>');
   let n = 0;
-  const tree = elem(builder, [() => n++]);
+  const tree = block([() => n++]);
 
   mount(tree, fixture);
   expect(fixture.innerHTML).toBe("<div></div>");

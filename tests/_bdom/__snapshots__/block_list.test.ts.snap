@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[` 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data) {
       this.el = template.cloneNode(true);
       let ref0 = this.el.firstChild;
@@ -16,11 +18,14 @@ exports[` 1`] = `
       if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
       this.data = nextData;
     }
-  }"
+  }
+}"
 `;
 
 exports[` 2`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data) {
       this.el = template.cloneNode(true);
       let ref0 = this.el.firstChild;
@@ -35,11 +40,14 @@ exports[` 2`] = `
       if (nextData[0] !== currentData[0]) { refs[0].textContent = nextData[0]}
       this.data = nextData;
     }
-  }"
+  }
+}"
 `;
 
 exports[`adding/removing elements adds children: [] => [1,2,3] (inside elem) 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data, children) {
       this.el = template.cloneNode(true);
       let ref0 = this.el.firstChild;
@@ -54,11 +62,14 @@ exports[`adding/removing elements adds children: [] => [1,2,3] (inside elem) 1`]
       if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
       else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
-  }"
+  }
+}"
 `;
 
 exports[`adding/removing elements adds children: [] => [1,2,3] (inside elem, multi) 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data, children) {
       this.el = template.cloneNode(true);
       let ref0 = this.el.firstChild;
@@ -73,11 +84,14 @@ exports[`adding/removing elements adds children: [] => [1,2,3] (inside elem, mul
       if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
       else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
-  }"
+  }
+}"
 `;
 
 exports[`adding/removing elements remove children: [1,2,3] => [] (inside elem) 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data, children) {
       this.el = template.cloneNode(true);
       let ref0 = this.el.firstChild;
@@ -92,11 +106,14 @@ exports[`adding/removing elements remove children: [1,2,3] => [] (inside elem) 1
       if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
       else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
-  }"
+  }
+}"
 `;
 
 exports[`list block: misc patching a list block inside an elem block 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data, children) {
       this.el = template.cloneNode(true);
       let ref0 = this.el.firstChild;
@@ -111,5 +128,6 @@ exports[`list block: misc patching a list block inside an elem block 1`] = `
       if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
       else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
-  }"
+  }
+}"
 `;

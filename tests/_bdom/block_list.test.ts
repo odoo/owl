@@ -1,12 +1,12 @@
-import { elem, list, mount, multi, patch, remove, text } from "../../src/_bdom/blockdom";
+import { list, mount, multi, patch, remove, text } from "../../src/_bdom/blockdom";
+import { makeBlock as origMakeBlock, _compileBlock } from "../../src/_bdom/builder";
 import { Block } from "../../src/_bdom/types";
-import { makeBuilder as origMakeBuilder } from "../../src/_bdom/builder";
 import { makeTestFixture } from "../helpers";
 
-function makeBuilder(str: string) {
-  const B = origMakeBuilder(str);
-  expect(B.toString()).toMatchSnapshot();
-  return B;
+function makeBlock(str: string) {
+  const { fn } = _compileBlock(str);
+  expect(fn.toString()).toMatchSnapshot();
+  return origMakeBlock(str);
 }
 
 //------------------------------------------------------------------------------
@@ -33,17 +33,17 @@ function n(n: number) {
   return kText(String(n), n);
 }
 
-const span = makeBuilder("<span><owl-text-0/></span>");
-const p = makeBuilder("<p><owl-text-0/></p>");
+const span = makeBlock("<span><owl-text-0/></span>");
+const p = makeBlock("<p><owl-text-0/></p>");
 
 function kSpan(str: string, key: any): Block {
-  const block = elem(span, [str]);
+  const block = span([str]);
   block.key = key;
   return block;
 }
 
 function kPair(n: number): Block {
-  const blocks = [elem(p, [String(n)]), elem(p, [String(n)])];
+  const blocks = [p([String(n)]), p([String(n)])];
   const block = multi(blocks);
   block.key = n;
   return block;
@@ -53,8 +53,8 @@ describe("list block: misc", () => {
   test("list block", async () => {
     const blocks = [1, 2, 3].map((key) => kText(`text${key}`, key));
 
-    const bdom = list(blocks);
-    mount(bdom, fixture);
+    const tree = list(blocks);
+    mount(tree, fixture);
     expect(fixture.innerHTML).toBe("text1text2text3");
   });
 
@@ -64,30 +64,30 @@ describe("list block: misc", () => {
       { id: 2, name: "cow" },
     ].map((elem) => kText(elem.name, elem.id));
 
-    const bdom = list(blocks);
+    const tree = list(blocks);
     expect(fixture.childNodes.length).toBe(0);
-    mount(bdom, fixture);
+    mount(tree, fixture);
     expect(fixture.childNodes.length).toBe(3);
     expect(fixture.innerHTML).toBe("sheepcow");
 
-    remove(bdom);
+    remove(tree);
     expect(fixture.innerHTML).toBe("");
     expect(fixture.childNodes.length).toBe(0);
   });
 
   test("patching a list block inside an elem block", async () => {
-    const builder = makeBuilder("<div><owl-child-0/></div>");
-    const tree = elem(builder);
+    const block = makeBlock("<div><owl-child-0/></div>");
+    const tree = block();
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
 
-    patch(tree, elem(builder, [], [list([1, 2, 3].map(n))]));
+    patch(tree, block([], [list([1, 2, 3].map(n))]));
     expect(fixture.innerHTML).toBe("<div>123</div>");
 
-    patch(tree, elem(builder, [], [list([])]));
+    patch(tree, block([], [list([])]));
     expect(fixture.innerHTML).toBe("<div></div>");
 
-    patch(tree, elem(builder, [], [list([1, 2, 3].map(n))]));
+    patch(tree, block([], [list([1, 2, 3].map(n))]));
     expect(fixture.innerHTML).toBe("<div>123</div>");
   });
 });
@@ -122,7 +122,7 @@ describe("adding/removing elements", () => {
 
   test("removing elements, variation", () => {
     const f = (i: number) => {
-      const b = multi([elem(span, [`a${i}`]), elem(span, [`b${i}`])]);
+      const b = multi([span([`a${i}`]), span([`b${i}`])]);
       b.key = i;
       return b;
     };
@@ -233,22 +233,22 @@ describe("adding/removing elements", () => {
   });
 
   test("adds children: [] => [1,2,3] (inside elem)", () => {
-    const builder = makeBuilder("<p><owl-child-0/></p>");
-    const tree = elem(builder, [], []);
+    const block = makeBlock("<p><owl-child-0/></p>");
+    const tree = block([], []);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
 
-    patch(tree, elem(builder, [], [list([1, 2, 3].map(n))]));
+    patch(tree, block([], [list([1, 2, 3].map(n))]));
     expect(fixture.innerHTML).toBe("<p>123</p>");
   });
 
   test("adds children: [] => [1,2,3] (inside elem, multi)", () => {
-    const builder = makeBuilder("<p><owl-child-0/></p>");
-    const tree = elem(builder, [], []);
+    const block = makeBlock("<p><owl-child-0/></p>");
+    const tree = block([], []);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
 
-    patch(tree, elem(builder, [], [list([1, 2, 3].map(kPair))]));
+    patch(tree, block([], [list([1, 2, 3].map(kPair))]));
     expect(fixture.innerHTML).toBe("<p><p>1</p><p>1</p><p>2</p><p>2</p><p>3</p><p>3</p></p>");
   });
 
@@ -271,12 +271,12 @@ describe("adding/removing elements", () => {
   });
 
   test("remove children: [1,2,3] => [] (inside elem)", () => {
-    const builder = makeBuilder("<p><owl-child-0/></p>");
-    const tree = elem(builder, [], [list([1, 2, 3].map(n))]);
+    const block = makeBlock("<p><owl-child-0/></p>");
+    const tree = block([], [list([1, 2, 3].map(n))]);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p>123</p>");
 
-    patch(tree, elem(builder, [], [list([])]));
+    patch(tree, block([], [list([])]));
     expect(fixture.innerHTML).toBe("<p></p>");
   });
 

@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`class attribute 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data) {
       this.el = template.cloneNode(true);
       let ref0 = this.el;
@@ -16,11 +18,14 @@ exports[`class attribute 1`] = `
       if (nextData[0] !== currentData[0]) { updateClass(refs[0], currentData[0], nextData[0]); }
       this.data = nextData;
     }
-  }"
+  }
+}"
 `;
 
 exports[`simple attribute 1`] = `
-"class Builder {
+"function anonymous(template, mountBefore, patch, remove, updateClass
+) {
+  return class Builder {
     constructor(data) {
       this.el = template.cloneNode(true);
       let ref0 = this.el;
@@ -35,5 +40,6 @@ exports[`simple attribute 1`] = `
       if (nextData[0] !== currentData[0]) { let value = nextData[0]; refs[0].setAttribute(\\"hello\\", value === true ? \\"\\" : value);}
       this.data = nextData;
     }
-  }"
+  }
+}"
 `;

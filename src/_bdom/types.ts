@@ -41,7 +41,7 @@ export interface Operations {
 export interface BlockText {
   ops: Operations;
   el: Text | undefined;
-  key: any | undefined;
+  key?: any | undefined;
   data: string;
   content: undefined;
 }
@@ -60,7 +60,7 @@ export interface ElemData {
 export interface BlockElement {
   ops: Operations;
   el: HTMLElement | undefined;
-  key: any | undefined;
+  key?: any | undefined;
   data: ElemData;
   content: undefined | Block[];
 }
@@ -69,7 +69,7 @@ export interface BlockElement {
 export interface BlockMulti {
   ops: Operations;
   el: undefined;
-  key: any | undefined;
+  key?: any | undefined;
   data: Anchor[] | undefined;
   content: (Block | undefined)[];
 }
@@ -78,7 +78,7 @@ export interface BlockMulti {
 export interface BlockList {
   ops: Operations;
   el: undefined;
-  key: any | undefined;
+  key?: any | undefined;
   data: { anchor: Anchor | undefined; isOnlyChild: boolean; hasNoComponent: boolean };
   content: Block[];
 }

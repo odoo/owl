@@ -8,7 +8,6 @@ export function text(text: string): BlockText {
   return {
     ops: TEXT_OPS,
     el: undefined,
-    key: undefined,
     data: text,
     content: undefined,
   };

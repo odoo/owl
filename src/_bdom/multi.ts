@@ -8,7 +8,6 @@ export function multi(blocks: (Block | undefined)[]): BlockMulti {
   return {
     ops: MULTI_BLOCK_OPS,
     el: undefined,
-    key: undefined,
     data: undefined,
     content: blocks,
   };

@@ -12,7 +12,6 @@ export function list(
   return {
     ops: LIST_OPS,
     el: undefined,
-    key: undefined,
     data: { anchor: undefined, isOnlyChild, hasNoComponent },
     content: blocks,
   };

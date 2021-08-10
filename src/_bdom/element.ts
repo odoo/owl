@@ -8,7 +8,6 @@ export function elem(builder: Builder, data: any[] = [], children: Block[] = [])
   return {
     ops: ELEMENT_OPS,
     el: undefined,
-    key: undefined,
     data: { builder, data },
     content: children,
   };

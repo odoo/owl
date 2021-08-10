@@ -206,7 +206,6 @@ export function makeBuilder(str: string): Builder {
   return wrapper(template, mountBefore, patch, remove, updateClass);
 }
 
-
 // -----------------------------------------------------------------------------
 // helpers
 // -----------------------------------------------------------------------------

@@ -173,3 +173,40 @@ describe("text and elem blocks", () => {
     expect(fixture.innerHTML).toBe("<div><p>sub block</p><p>foo</p></div>");
   });
 });
+
+describe("misc", () => {
+  test("reusing a block skips patching process", async () => {
+    const foo = text("foo");
+    const bar = text("bar");
+    let fooCounter = 0;
+    let barCounter = 0;
+    let fooValue = "foo";
+    let barValue = "bar";
+    Object.defineProperty(foo, "data", {
+      get() {
+        fooCounter++;
+        return fooValue;
+      },
+    });
+    Object.defineProperty(bar, "data", {
+      get() {
+        barCounter++;
+        return barValue;
+      },
+      set(val) {
+        barValue = val;
+      },
+    });
+
+    const bdom = multi([foo, bar]);
+    mount(bdom, fixture);
+    expect(fooCounter).toBe(1);
+    expect(barCounter).toBe(1);
+    expect(fixture.innerHTML).toBe("foobar");
+
+    patch(bdom, multi([foo, text("otherbar")]));
+    expect(fixture.innerHTML).toBe("foootherbar");
+    expect(fooCounter).toBe(1);
+    expect(barCounter).toBe(2);
+  });
+});

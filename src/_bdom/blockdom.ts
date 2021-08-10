@@ -198,6 +198,9 @@ export function mount(block: Block, target: HTMLElement) {
 }
 
 export function patch(block1: Block, block2: Block) {
+  if (block1 === block2) {
+    return;
+  }
   switch (block1.type) {
     case BLOCK_TYPE.Text:
       {

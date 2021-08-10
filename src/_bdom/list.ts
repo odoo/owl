@@ -46,7 +46,7 @@ const LIST_OPS: Operations = {
     const data = block1.data;
     const _anchor = data.anchor!;
 
-    // fast path
+    // fast path: no new child => only remove
     if (newCh.length === 0 && data.isOnlyChild) {
       // if (!data.hasNoComponent) {
       //   for (let i = 0; i < oldCh.length; i++) {
@@ -60,6 +60,20 @@ const LIST_OPS: Operations = {
       parent.appendChild(_anchor);
       block1.content = newCh;
       return;
+    }
+
+    // fast path: only new child and isonlychild => can use fragment
+    if (oldCh.length === 0 && data.isOnlyChild) {
+        const frag = document.createDocumentFragment();
+        const parent = _anchor.parentElement!;
+        frag.appendChild(_anchor);
+        for (let i = 0, l = newCh.length; i < l; i++) {
+            mountBefore(newCh[i], _anchor);
+        }
+        parent.appendChild(frag);
+        parent.appendChild(_anchor);
+        block1.content = newCh;
+        return;
     }
 
     let oldStartIdx = 0;

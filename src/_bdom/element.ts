@@ -1,17 +1,9 @@
-import { Anchor, Block, BlockElement, Builder, Operations } from "./types";
+import { Anchor, Block, Builder, Operations } from "./types";
 
 // -----------------------------------------------------------------------------
 //  Element blocks
 // -----------------------------------------------------------------------------
 
-export function elem(builder: Builder, data: any[] = [], children: Block[] = []): BlockElement {
-  return {
-    ops: ELEMENT_OPS,
-    el: undefined,
-    data: { builder, data },
-    content: children,
-  };
-}
 
 const ELEMENT_OPS: Operations = {
   mountBefore(block: any, anchor: Anchor) {
@@ -117,6 +109,7 @@ function toDom(node: ChildNode, ctx: BuilderContext): HTMLElement | Text | Comme
 interface CompiledOutput {
   template: HTMLElement;
   fn: Function;
+  hasChild: boolean;
 }
 export function _compileBlock(str: string): CompiledOutput {
   const info: BuilderContext["info"] = [];
@@ -243,14 +236,29 @@ export function _compileBlock(str: string): CompiledOutput {
 
   //   console.warn(code.join("\n"));
   const wrapper = new Function("template, updateClass", code.join("\n"));
-  return { template, fn: wrapper };
+  return { template, fn: wrapper, hasChild };
 }
 
 export function makeBlock(str: string): Builder {
-  const { template, fn } = _compileBlock(str);
+  const { template, fn, hasChild } = _compileBlock(str);
   const block = fn(template, updateClass);
-  return elem.bind(null, block);
+  if (hasChild) {
+    return (data: any[] = [], children: Block[] = []) => ({
+      ops: ELEMENT_OPS,
+      el: undefined,
+      data: { builder: block, data},
+      content: children
+    })
+  } else {
+    return (data: any[] = []) => ({
+      ops: ELEMENT_OPS,
+      el: undefined,
+      data: { builder: block, data},
+      content: []
+    });
+  }
 }
+
 
 // -----------------------------------------------------------------------------
 // helpers

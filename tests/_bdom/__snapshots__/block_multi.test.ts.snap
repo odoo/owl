@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`multi blocks a multiblock can be removed and leaves no extra text nodes 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -14,7 +14,7 @@ exports[`multi blocks a multiblock can be removed and leaves no extra text nodes
 `;
 
 exports[`multi blocks a multiblock can be removed and leaves no extra text nodes 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -27,7 +27,7 @@ exports[`multi blocks a multiblock can be removed and leaves no extra text nodes
 `;
 
 exports[`multi blocks multi block in a regular block 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -41,15 +41,15 @@ exports[`multi blocks multi block in a regular block 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }
 }"
 `;
 
 exports[`multi blocks multi block in a regular block 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -62,7 +62,7 @@ exports[`multi blocks multi block in a regular block 2`] = `
 `;
 
 exports[`multi blocks multiblock with an empty children 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {

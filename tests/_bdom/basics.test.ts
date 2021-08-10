@@ -27,8 +27,8 @@ describe("text and elem blocks", () => {
     const tree = text("foo");
     expect(tree.el).toBe(undefined);
     mount(tree, fixture);
-    expect(tree.el).not.toBe(undefined);
     expect(fixture.innerHTML).toBe("foo");
+    expect(tree.el).not.toBe(undefined);
   });
 
   test("patching a simple text block", async () => {

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`text and elem blocks block with 2 dynamic text nodes 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data) {
@@ -25,7 +25,7 @@ exports[`text and elem blocks block with 2 dynamic text nodes 1`] = `
 `;
 
 exports[`text and elem blocks block with 2 subblocks 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -40,18 +40,18 @@ exports[`text and elem blocks block with 2 subblocks 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
       let currentChild1 = currentChildren[1], child1 = children[1];
-      if (currentChild1) { if (child1) { patch(currentChild1, child1); } else { remove(currentChild1); currentChildren[1] = null; } }
-      else if (child1) { mountBefore(child1, refs[1]); currentChildren[1] = child1 }
+      if (currentChild1) { if (child1) { currentChild1.ops.patch(currentChild1, child1); } else { currentChild1.ops.remove(currentChild1); currentChildren[1] = null; } }
+      else if (child1) { child1.ops.mountBefore(child1, refs[1]); currentChildren[1] = child1 }
     }
   }
 }"
 `;
 
 exports[`text and elem blocks block with 2 subblocks 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -64,7 +64,7 @@ exports[`text and elem blocks block with 2 subblocks 2`] = `
 `;
 
 exports[`text and elem blocks block with conditional child 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -78,15 +78,15 @@ exports[`text and elem blocks block with conditional child 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }
 }"
 `;
 
 exports[`text and elem blocks block with conditional child 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -99,7 +99,7 @@ exports[`text and elem blocks block with conditional child 2`] = `
 `;
 
 exports[`text and elem blocks block with dynamic content 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data) {
@@ -121,7 +121,7 @@ exports[`text and elem blocks block with dynamic content 1`] = `
 `;
 
 exports[`text and elem blocks block with dynamic content and subblock 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -139,8 +139,8 @@ exports[`text and elem blocks block with dynamic content and subblock 1`] = `
       const nextData = data.data;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
       if (nextData[0] !== currentData[0]) { refs[1].textContent = nextData[0]}
       this.data = nextData;
     }
@@ -149,7 +149,7 @@ exports[`text and elem blocks block with dynamic content and subblock 1`] = `
 `;
 
 exports[`text and elem blocks block with dynamic content and subblock 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -162,7 +162,7 @@ exports[`text and elem blocks block with dynamic content and subblock 2`] = `
 `;
 
 exports[`text and elem blocks block with subblock 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -176,15 +176,15 @@ exports[`text and elem blocks block with subblock 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }
 }"
 `;
 
 exports[`text and elem blocks block with subblock 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -197,7 +197,7 @@ exports[`text and elem blocks block with subblock 2`] = `
 `;
 
 exports[`text and elem blocks block with subblock with dynamic content 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -211,15 +211,15 @@ exports[`text and elem blocks block with subblock with dynamic content 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }
 }"
 `;
 
 exports[`text and elem blocks block with subblock with dynamic content 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data) {
@@ -241,7 +241,7 @@ exports[`text and elem blocks block with subblock with dynamic content 2`] = `
 `;
 
 exports[`text and elem blocks block with subblock with siblings 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data, children) {
@@ -255,15 +255,15 @@ exports[`text and elem blocks block with subblock with siblings 1`] = `
       const refs = this.refs;
       const currentChildren = this.children;
       let currentChild0 = currentChildren[0], child0 = children[0];
-      if (currentChild0) { if (child0) { patch(currentChild0, child0); } else { remove(currentChild0); currentChildren[0] = null; } }
-      else if (child0) { mountBefore(child0, refs[0]); currentChildren[0] = child0 }
+      if (currentChild0) { if (child0) { currentChild0.ops.patch(currentChild0, child0); } else { currentChild0.ops.remove(currentChild0); currentChildren[0] = null; } }
+      else if (child0) { child0.ops.mountBefore(child0, refs[0]); currentChildren[0] = child0 }
     }
   }
 }"
 `;
 
 exports[`text and elem blocks block with subblock with siblings 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -276,7 +276,7 @@ exports[`text and elem blocks block with subblock with siblings 2`] = `
 `;
 
 exports[`text and elem blocks elem block can be removed 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -289,7 +289,7 @@ exports[`text and elem blocks elem block can be removed 1`] = `
 `;
 
 exports[`text and elem blocks simple block with multiple roots 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -302,7 +302,7 @@ exports[`text and elem blocks simple block with multiple roots 1`] = `
 `;
 
 exports[`text and elem blocks simple block with multiple roots 2`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {
@@ -315,7 +315,7 @@ exports[`text and elem blocks simple block with multiple roots 2`] = `
 `;
 
 exports[`text and elem blocks simple elem block 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor() {

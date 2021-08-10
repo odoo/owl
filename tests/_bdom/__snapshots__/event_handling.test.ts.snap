@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`simple event handling  1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data) {
@@ -32,7 +32,7 @@ exports[`simple event handling  1`] = `
 `;
 
 exports[`simple event handling, with function 1`] = `
-"function anonymous(template, mountBefore, patch, remove, updateClass
+"function anonymous(template, updateClass
 ) {
   return class Builder {
     constructor(data) {

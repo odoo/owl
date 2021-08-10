@@ -1,13 +1,14 @@
-export const enum BLOCK_TYPE {
-  Text,
-  Element,
-  Multi,
-  List,
+export interface Operations {
+  mountBefore(block: any, anchor: any): void;
+  patch(block1: any, block2: any): void;
+  moveBefore(block: any, anchor: any): void;
+  remove(block: any): void;
+  firstChildNode(block: any): ChildNode | null;
 }
 
 // Text
 export interface BlockText {
-  type: BLOCK_TYPE.Text;
+  ops: Operations;
   el: Text | undefined;
   key: any | undefined;
   data: string;
@@ -26,7 +27,7 @@ export interface ElemData {
 }
 
 export interface BlockElement {
-  type: BLOCK_TYPE.Element;
+  ops: Operations;
   el: HTMLElement | undefined;
   key: any | undefined;
   data: ElemData;
@@ -35,7 +36,7 @@ export interface BlockElement {
 
 // Multi
 export interface BlockMulti {
-  type: BLOCK_TYPE.Multi;
+  ops: Operations;
   el: undefined;
   key: any | undefined;
   data: Anchor[] | undefined;
@@ -44,7 +45,7 @@ export interface BlockMulti {
 
 // List
 export interface BlockList {
-  type: BLOCK_TYPE.List;
+  ops: Operations;
   el: undefined;
   key: any | undefined;
   data: { anchor: Anchor | undefined; isOnlyChild: boolean; hasNoComponent: boolean };

@@ -1,4 +1,4 @@
-import { elem, mountBefore, patch, remove } from "./blockdom";
+import { elem } from "./blockdom";
 import { Builder } from "./types";
 
 // -----------------------------------------------------------------------------
@@ -176,10 +176,10 @@ export function _compileBlock(str: string): CompiledOutput {
             `      let currentChild${index} = currentChildren[${index}], child${index} = children[${index}];`
           );
           code.push(
-            `      if (currentChild${index}) { if (child${index}) { patch(currentChild${index}, child${index}); } else { remove(currentChild${index}); currentChildren[${index}] = null; } }`
+            `      if (currentChild${index}) { if (child${index}) { currentChild${index}.ops.patch(currentChild${index}, child${index}); } else { currentChild${index}.ops.remove(currentChild${index}); currentChildren[${index}] = null; } }`
           );
           code.push(
-            `      else if (child${index}) { mountBefore(child${index}, refs[${i}]); currentChildren[${index}] = child${index} }`
+            `      else if (child${index}) { child${index}.ops.mountBefore(child${index}, refs[${i}]); currentChildren[${index}] = child${index} }`
           );
       }
     }
@@ -203,16 +203,13 @@ export function _compileBlock(str: string): CompiledOutput {
   code.push(`  }`);
 
   //   console.warn(code.join("\n"));
-  const wrapper = new Function(
-    "template, mountBefore, patch, remove, updateClass",
-    code.join("\n")
-  );
+  const wrapper = new Function("template, updateClass", code.join("\n"));
   return { template, fn: wrapper };
 }
 
 export function makeBlock(str: string): Builder {
   const { template, fn } = _compileBlock(str);
-  const block = fn(template, mountBefore, patch, remove, updateClass);
+  const block = fn(template, updateClass);
   return elem.bind(null, block);
 }
 

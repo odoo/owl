@@ -1,183 +1,4 @@
-import {
-  Block,
-  Builder,
-  Anchor,
-  BlockElement,
-  BlockMulti,
-  BlockList,
-  BlockText,
-  Operations,
-} from "./types";
-
-// -----------------------------------------------------------------------------
-//  Text blocks
-// -----------------------------------------------------------------------------
-
-export function text(text: string): BlockText {
-  return {
-    ops: TEXT_OPS,
-    el: undefined,
-    key: undefined,
-    data: text,
-    content: undefined,
-  };
-}
-
-const TEXT_OPS: Operations = {
-  mountBefore(block: any, anchor: Anchor) {
-    let el = document.createTextNode(block.data);
-    block.el = el;
-    anchor.before(el);
-  },
-  patch(block1: any, block2: any) {
-    if (block1 === block2) {
-      return;
-    }
-    let text = block2.data as any;
-    if (block1.data !== text) {
-      block1.data = text;
-      block1.el!.textContent = text;
-    }
-  },
-  moveBefore(block: any, anchor: any) {
-    anchor.before(block.el);
-  },
-  remove(block: any) {
-    const el = block.el!;
-    el.parentElement!.removeChild(el);
-  },
-  firstChildNode(block: any): ChildNode | null {
-    return block.el;
-  },
-};
-
-// -----------------------------------------------------------------------------
-//  Multi blocks
-// -----------------------------------------------------------------------------
-
-export function multi(blocks: (Block | undefined)[]): BlockMulti {
-  return {
-    ops: MULTI_BLOCK_OPS,
-    el: undefined,
-    key: undefined,
-    data: undefined,
-    content: blocks,
-  };
-}
-
-const MULTI_BLOCK_OPS: Operations = {
-  mountBefore(block: any, anchor: Anchor) {
-    const children = block.content;
-    const anchors = new Array(children.length);
-    for (let i = 0, l = children.length; i < l; i++) {
-      let child = children[i];
-      const childAnchor = document.createTextNode("");
-      anchor.before(childAnchor);
-      anchors![i] = childAnchor;
-      if (child) {
-        child.ops.mountBefore(child, childAnchor);
-      }
-    }
-    block.data = anchors;
-  },
-  patch(block1: any, block2: any) {
-    if (block1 === block2) {
-      return;
-    }
-    const children = block1.content;
-    const newChildren = block2.content!;
-    const anchors = block1.data!;
-    for (let i = 0, l = children.length; i < l; i++) {
-      const block = children[i];
-      const newBlock = newChildren[i];
-      if (block) {
-        if (newBlock) {
-          patch(block, newBlock);
-        } else {
-          children[i] = undefined;
-          remove(block);
-        }
-      } else if (newBlock) {
-        children[i] = newBlock;
-        newBlock.ops.mountBefore(newBlock, anchors[i]);
-      }
-    }
-  },
-  moveBefore(block: any, anchor: any) {
-    const children = block.content;
-    const anchors = block.data!;
-    for (let i = 0, l = children.length; i < l; i++) {
-      let child = children[i];
-      let _anchor = anchors[i];
-      anchor.before(_anchor);
-      if (child) {
-        child.ops.moveBefore(child, _anchor);
-      }
-    }
-  },
-  remove(block: any) {
-    const children = block.content;
-    const anchors = block.data;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (child) {
-        remove(child);
-      }
-      anchors![i].remove();
-    }
-  },
-  firstChildNode(block: any): ChildNode | null {
-    const children = block.content;
-    for (let i = 0, l = children.length; i < l; i++) {
-      const child = children[i];
-      if (child) {
-        return child.el || child.ops.firstChildNode(child);
-      }
-    }
-    return null;
-  },
-};
-
-// -----------------------------------------------------------------------------
-//  Element blocks
-// -----------------------------------------------------------------------------
-
-export function elem(builder: Builder, data: any[] = [], children: Block[] = []): BlockElement {
-  return {
-    ops: ELEMENT_OPS,
-    el: undefined,
-    key: undefined,
-    data: { builder, data },
-    content: children,
-  };
-}
-
-const ELEMENT_OPS: Operations = {
-  mountBefore(block: any, anchor: Anchor) {
-    const data = block.data;
-    const builder = new data.builder(data, block.content);
-    data.builder = builder;
-    const el = builder.el;
-    anchor.before(el);
-    block.el = el;
-  },
-  patch(block1: any, block2: any) {
-    if (block1 === block2) {
-      return;
-    }
-    (block1 as any).data.builder.update((block2 as any).data, block2.content);
-  },
-  moveBefore(block: any, anchor: any) {
-    anchor.before(block.el!);
-  },
-  remove(block: any) {
-    const el = block.el!;
-    el.parentElement!.removeChild(el);
-  },
-  firstChildNode(block: any): ChildNode | null {
-    return block.el;
-  },
-};
+import { Anchor, Block, BlockList, Operations } from "./types";
 
 // -----------------------------------------------------------------------------
 //  List blocks
@@ -221,18 +42,18 @@ const LIST_OPS: Operations = {
       return;
     }
     const ops: Operations = oldCh[0] ? oldCh[0].ops : newCh[0].ops;
-    const { firstChildNode, moveBefore, mountBefore, remove: removeBlock } = ops;
+    const { firstChildNode, moveBefore, mountBefore, patch, remove: removeBlock } = ops;
 
     const data = block1.data;
     const _anchor = data.anchor!;
 
     // fast path
     if (newCh.length === 0 && data.isOnlyChild) {
-      if (!data.hasNoComponent) {
-        for (let i = 0; i < oldCh.length; i++) {
-          beforeRemove(oldCh[i]);
-        }
-      }
+      // if (!data.hasNoComponent) {
+      //   for (let i = 0; i < oldCh.length; i++) {
+      //     beforeRemove(oldCh[i]);
+      //   }
+      // }
 
       const parent = _anchor.parentElement!;
       _anchor.remove();
@@ -329,7 +150,8 @@ const LIST_OPS: Operations = {
           let ch = oldCh[i];
           if (ch) {
             if (noFullRemove) {
-              remove(ch);
+              // remove(ch);
+              removeBlock(ch);
             } else {
               removeBlock(ch);
             }
@@ -363,28 +185,6 @@ const LIST_OPS: Operations = {
     return first ? first.el || first.ops.firstChildNode(first) : null;
   },
 };
-
-export function beforeRemove(block: Block) {}
-
-// -----------------------------------------------------------------------------
-//  BDom main entry points
-// -----------------------------------------------------------------------------
-
-export function mount(block: Block, target: HTMLElement) {
-  const anchor = document.createTextNode("");
-  target.appendChild(anchor);
-  block.ops.mountBefore(block, anchor);
-  anchor.remove();
-}
-
-export function patch(block1: Block, block2: Block) {
-  block1.ops.patch(block1, block2);
-}
-
-export function remove(block: Block) {
-  beforeRemove(block);
-  block.ops.remove(block);
-}
 
 function createMapping(
   oldCh: any[],

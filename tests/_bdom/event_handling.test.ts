@@ -1,5 +1,5 @@
-import { mount } from "../../src/_bdom/blockdom";
-import { makeBlock as origMakeBlock, _compileBlock } from "../../src/_bdom/builder";
+import { mount, makeBlock as origMakeBlock } from "../../src/_bdom";
+import { _compileBlock } from "../../src/_bdom/element";
 import { makeTestFixture } from "../helpers";
 
 function makeBlock(str: string) {

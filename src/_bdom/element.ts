@@ -1,5 +1,45 @@
-import { elem } from "./blockdom";
-import { Builder } from "./types";
+import { Anchor, Block, BlockElement, Builder, Operations } from "./types";
+
+// -----------------------------------------------------------------------------
+//  Element blocks
+// -----------------------------------------------------------------------------
+
+export function elem(builder: Builder, data: any[] = [], children: Block[] = []): BlockElement {
+  return {
+    ops: ELEMENT_OPS,
+    el: undefined,
+    key: undefined,
+    data: { builder, data },
+    content: children,
+  };
+}
+
+const ELEMENT_OPS: Operations = {
+  mountBefore(block: any, anchor: Anchor) {
+    const data = block.data;
+    const builder = new data.builder(data, block.content);
+    data.builder = builder;
+    const el = builder.el;
+    anchor.before(el);
+    block.el = el;
+  },
+  patch(block1: any, block2: any) {
+    if (block1 === block2) {
+      return;
+    }
+    (block1 as any).data.builder.update((block2 as any).data, block2.content);
+  },
+  moveBefore(block: any, anchor: any) {
+    anchor.before(block.el!);
+  },
+  remove(block: any) {
+    const el = block.el!;
+    el.parentElement!.removeChild(el);
+  },
+  firstChildNode(block: any): ChildNode | null {
+    return block.el;
+  },
+};
 
 // -----------------------------------------------------------------------------
 //  makeBuilder

@@ -1,5 +1,13 @@
-import { list, mount, multi, patch, remove, text } from "../../src/_bdom/blockdom";
-import { makeBlock as origMakeBlock, _compileBlock } from "../../src/_bdom/builder";
+import {
+  list,
+  mount,
+  multi,
+  patch,
+  remove,
+  text,
+  makeBlock as origMakeBlock,
+} from "../../src/_bdom";
+import { _compileBlock } from "../../src/_bdom/element";
 import { Block } from "../../src/_bdom/types";
 import { makeTestFixture } from "../helpers";
 

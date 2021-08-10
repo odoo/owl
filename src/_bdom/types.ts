@@ -6,6 +6,37 @@ export interface Operations {
   firstChildNode(block: any): ChildNode | null;
 }
 
+// interface Shape1 {
+//     ops: Operations;
+//     value: any;
+//     data: string;
+// }
+
+// text => shape1
+// text.ops = ...;
+// text.value = Text | undefined;
+// text.data = string
+
+// key => shape1
+// ops ?
+// value = bdom
+// data = key value
+
+// elem => shape2
+// ops: ...
+// value: el
+// data: data, children, ...
+
+// multi => shape2
+// ops: ...
+// value: children[]
+// data: anchor[]
+
+// list =>
+// ops: ...
+// value: children[]
+// data: {anchor, isonlychild, hasnocomponent}
+
 // Text
 export interface BlockText {
   ops: Operations;

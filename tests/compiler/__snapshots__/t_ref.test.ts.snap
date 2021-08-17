@@ -1,241 +1,137 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-ref can get a dynamic ref on a node 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><span/></div>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      this.refs[data[0]] = this.el.firstChild;
-    }
-    remove() {
-      delete this.refs[this.data[0]];
-      super.remove();
-    }
-  }
+  let block1 = createBlock(\`<div><span owl-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    const b1 = new Block1();
-    b1.refs = refs;
     const v1 = ctx['id'];
-    b1.data[0] = \`myspan\${v1}\`;
-    return b1;
+    let d1 = (el) => refs[\`myspan\${v1}\`] = el;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-ref can get a ref on a node 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><span/></div>\`);
-    update(prevData, data) {
-      this.refs[\`myspan\`] = this.el.firstChild;
-    }
-    remove() {
-      delete this.refs[\`myspan\`];
-      super.remove();
-    }
-  }
+  let block1 = createBlock(\`<div><span owl-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    const b1 = new Block1();
-    b1.refs = refs;
-    return b1;
+    let d1 = (el) => refs[\`myspan\`] = el;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-ref ref in a t-call 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
-    return b1;
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-ref ref in a t-call 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div>1<span/>2</div>\`);
-    update(prevData, data) {
-      this.refs[\`name\`] = this.el.firstChild.nextSibling;
-    }
-    remove() {
-      delete this.refs[\`name\`];
-      super.remove();
-    }
-  }
+  let block1 = createBlock(\`<div>1<span owl-ref=\\"0\\"/>2</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    const b1 = new Block1();
-    b1.refs = refs;
-    return b1;
+    let d1 = (el) => refs[\`name\`] = el;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-ref ref in a t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span/>\`);
-    update(prevData, data) {
-      this.refs[\`name\`] = this.el;
-    }
-    remove() {
-      delete this.refs[\`name\`];
-      super.remove();
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<span owl-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    const b1 = new Block1();
+    let b2;
     if (ctx['condition']) {
-      const b2 = b1.children[0] = new Block2();
-      b2.refs = refs;
+      let d1 = (el) => refs[\`name\`] = el;
+      b2 = block2([d1]);
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-ref refs in a loop 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<div><owl-text/></div>\`);
-    data = new Array(2);
-    update(prevData, data) {
-      const el1 = this.el;
-      this.refs[data[0]] = el1;
-      setText(el1.firstChild, prevData[1], data[1]);
-    }
-    remove() {
-      delete this.refs[this.data[0]];
-      super.remove();
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<div owl-ref=\\"0\\"><owl-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(ctx['items'], true, true);
     ctx = Object.create(ctx);
-    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`item\`] = v1[i1];
-      let key1 = i1;
-      key1 = ctx['item'];
-      const b3 = b2.children[i1] = new Block2();
-      b3.refs = refs;
-      const v2 = ctx['item'];
-      b3.data[0] = \`\${v2}\`;
-      b3.data[1] = ctx['item'];
-      b2.keys[i1] = key1;
+    const [k2, v2, l2, c2] = prepareList(ctx['items']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      let key1 = ctx['item'];
+      const v1 = ctx['item'];
+      let d1 = (el) => refs[\`\${v1}\`] = el;
+      let d2 = ctx['item'];
+      c2[i1] = withKey(block3([d1, d2]), key1);
     }
-    return b1;
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-ref two refs, one in a t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><p/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-    update(prevData, data) {
-      this.refs[\`p\`] = this.anchors[0].nextSibling;
-    }
-    remove() {
-      delete this.refs[\`p\`];
-      super.remove();
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span/>\`);
-    update(prevData, data) {
-      this.refs[\`name\`] = this.el;
-    }
-    remove() {
-      delete this.refs[\`name\`];
-      super.remove();
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><p owl-ref=\\"0\\"/></div>\`);
+  let block2 = createBlock(\`<span owl-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    const b1 = new Block1();
+    let b2;
     if (ctx['condition']) {
-      const b2 = b1.children[0] = new Block2();
-      b2.refs = refs;
+      let d1 = (el) => refs[\`name\`] = el;
+      b2 = block2([d1]);
     }
-    b1.refs = refs;
-    return b1;
+    let d2 = (el) => refs[\`p\`] = el;
+    return block1([d2], [b2]);
   }
 }"
 `;

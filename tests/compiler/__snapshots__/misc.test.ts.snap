@@ -1,301 +1,187 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`misc complex template 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><div><div class=\\"batch_header\\"><a title=\\"View Batch\\"><owl-text/><owl-anchor/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-anchor/><div class=\\"batch_slots\\"><owl-anchor/><owl-anchor/></div><div class=\\"batch_commits\\"><owl-anchor/></div></div></div>\`);
-    children = new Array(5);
-    data = new Array(5);
-    build() {
-      this.anchors = new Array(5);
-      const el1 = this.el.firstChild.firstChild;
-      this.anchors[0] = el1.firstChild.firstChild.nextSibling;
-      this.anchors[1] = el1.nextSibling;
-      const el2 = this.anchors[1].nextSibling;
-      this.anchors[2] = el2.firstChild;
-      this.anchors[3] = this.anchors[2].nextSibling;
-      this.anchors[4] = el2.nextSibling.firstChild;
-    }
-    update(prevData, data) {
-      const el1 = this.el;
-      this.updateClass(el1, prevData[0], data[0]);
-      const el2 = el1.firstChild;
-      this.updateClass(el2, prevData[1], data[1]);
-      const el3 = el2.firstChild.firstChild;
-      this.updateAttr(el3, \`href\`, this.data[2]);
-      this.updateClass(el3, prevData[3], data[3]);
-      setText(el3.firstChild, prevData[4], data[4]);
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<i class=\\"fa fa-exclamation-triangle\\"/>\`);
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<span><i class=\\"fa fa-cog fa-spin fa-fw\\"/> preparing</span>\`);
-  }
-  
-  class Block4 extends BStatic {
-    static el = elem(\`<div class=\\"slot_filler\\"/>\`);
-  }
-  
-  class Block5 extends BElem {
-    static el = elem(\`<div class=\\"one_line\\"><a><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-text/></a><a class=\\"badge badge-light\\" title=\\"View Commit on Github\\"><i class=\\"fa fa-github\\"/></a><span><owl-text/></span></div>\`);
-    children = new Array(4);
-    data = new Array(5);
-    build() {
-      this.anchors = new Array(4);
-      this.anchors[0] = this.el.firstChild.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-      this.anchors[2] = this.anchors[1].nextSibling;
-      this.anchors[3] = this.anchors[2].nextSibling;
-    }
-    update(prevData, data) {
-      const el1 = this.el.firstChild;
-      this.updateAttr(el1, \`href\`, this.data[0]);
-      this.updateClass(el1, prevData[1], data[1]);
-      setText(this.anchors[3].nextSibling, prevData[2], data[2]);
-      const el2 = el1.nextSibling;
-      this.updateAttr(el2, \`href\`, this.data[3]);
-      setText(el2.nextSibling.firstChild, prevData[4], data[4]);
-    }
-  }
-  
-  class Block6 extends BStatic {
-    static el = elem(\`<i class=\\"fa fa-fw fa-hashtag\\" title=\\"This commit is a new head\\"/>\`);
-  }
-  
-  class Block7 extends BStatic {
-    static el = elem(\`<i class=\\"fa fa-fw fa-link\\" title=\\"This commit is an existing head from bundle branches\\"/>\`);
-  }
-  
-  class Block8 extends BStatic {
-    static el = elem(\`<i class=\\"fa fa-fw fa-code-fork\\" title=\\"This commit is matched from a base batch with matching merge_base\\"/>\`);
-  }
-  
-  class Block9 extends BStatic {
-    static el = elem(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
-  }
+  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"><div owl-attribute-1=\\"class\\"><div class=\\"batch_header\\"><a owl-attribute-2=\\"href\\" owl-attribute-3=\\"class\\" title=\\"View Batch\\"><owl-text-4/><owl-child-0/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-child-1/><div class=\\"batch_slots\\"><owl-child-2/><owl-child-3/></div><div class=\\"batch_commits\\"><owl-child-4/></div></div></div>\`);
+  let block2 = createBlock(\`<i class=\\"fa fa-exclamation-triangle\\"/>\`);
+  let block3 = createBlock(\`<span><i class=\\"fa fa-cog fa-spin fa-fw\\"/> preparing</span>\`);
+  let block6 = createBlock(\`<div class=\\"slot_filler\\"/>\`);
+  let block8 = createBlock(\`<div class=\\"one_line\\"><a owl-attribute-0=\\"href\\" owl-attribute-1=\\"class\\"><owl-child-0/><owl-child-1/><owl-child-2/><owl-child-3/><owl-text-2/></a><a owl-attribute-3=\\"href\\" class=\\"badge badge-light\\" title=\\"View Commit on Github\\"><i class=\\"fa fa-github\\"/></a><span><owl-text-4/></span></div>\`);
+  let block9 = createBlock(\`<i class=\\"fa fa-fw fa-hashtag\\" title=\\"This commit is a new head\\"/>\`);
+  let block10 = createBlock(\`<i class=\\"fa fa-fw fa-link\\" title=\\"This commit is an existing head from bundle branches\\"/>\`);
+  let block11 = createBlock(\`<i class=\\"fa fa-fw fa-code-fork\\" title=\\"This commit is matched from a base batch with matching merge_base\\"/>\`);
+  let block12 = createBlock(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
-    b1.data[1] = \`card bg-\${ctx['klass']}-light\`;
-    b1.data[2] = \`/runbot/batch/\${ctx['batch'].id}\`;
-    b1.data[3] = \`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`;
-    b1.data[4] = ctx['batch'].formated_age;
+    let b2,b3,b4,b5,b7;
+    let d1 = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
+    let d2 = \`card bg-\${ctx['klass']}-light\`;
+    let d3 = \`/runbot/batch/\${ctx['batch'].id}\`;
+    let d4 = \`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`;
+    let d5 = ctx['batch'].formated_age;
     if (ctx['batch'].has_warning) {
-      const b2 = b1.children[0] = new Block2();
+      b2 = block2();
     }
     if (ctx['batch'].state=='preparing') {
-      const b3 = b1.children[1] = new Block3();
+      b3 = block3();
     }
-    const b4 = b1.children[2] = new BCollection(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])), false, false);
     ctx = Object.create(ctx);
-    const k1 = b4.values, v1 = b4.collection, l1 = k1.length;
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`slot\`] = v1[i1];
-      let key1 = ctx['slot'].id;
-      const b5 = b4.children[i1] = node.getChild(\`SlotButton\`, {slot: ctx['slot']}, key + \`__2__\${key1}\`, ctx);
-      b5.parentClass = toClassObj(\`slot_container\`);
-      b4.keys[i1] = key1;
-    }
-    ctx = ctx.__proto__;
-    const b6 = b1.children[3] = new BCollection([1,2,3,4], false, true);
-    ctx = Object.create(ctx);
-    const k3 = b6.values, v3 = b6.collection, l3 = k3.length;
-    for (let i1 = 0; i1 < l3; i1++) {
-      ctx[\`x\`] = v3[i1];
-      let key1 = ctx['x'];
-      const b7 = b6.children[i1] = new Block4();
-      b6.keys[i1] = key1;
-    }
-    ctx = ctx.__proto__;
-    const b8 = b1.children[4] = new BCollection(ctx['commit_links'], true, true);
-    ctx = Object.create(ctx);
-    const k4 = b8.values, v4 = b8.collection, l4 = k4.length;
+    const [k4, v4, l4, c4] = prepareList(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])));
     for (let i1 = 0; i1 < l4; i1++) {
-      ctx[\`commit_link\`] = v4[i1];
+      ctx[\`slot\`] = v4[i1];
+      let key1 = ctx['slot'].id;
+    }
+    ctx = ctx.__proto__;
+    b4 = list(c4);
+    ctx = Object.create(ctx);
+    const [k5, v5, l5, c5] = prepareList([1,2,3,4]);
+    for (let i1 = 0; i1 < l5; i1++) {
+      ctx[\`x\`] = v5[i1];
+      let key1 = ctx['x'];
+      c5[i1] = withKey(block6(), key1);
+    }
+    ctx = ctx.__proto__;
+    b5 = list(c5);
+    ctx = Object.create(ctx);
+    const [k7, v7, l7, c7] = prepareList(ctx['commit_links']);
+    for (let i1 = 0; i1 < l7; i1++) {
+      ctx[\`commit_link\`] = v7[i1];
       let key1 = ctx['commit_link'].id;
-      const b9 = b8.children[i1] = new Block5();
-      b9.data[0] = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
-      b9.data[1] = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
+      let b9,b10,b11,b12;
+      let d6 = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
+      let d7 = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
       if (ctx['commit_link'].match_type=='new') {
-        const b10 = b9.children[0] = new Block6();
+        b9 = block9();
       }
       if (ctx['commit_link'].match_type=='head') {
-        const b11 = b9.children[1] = new Block7();
+        b10 = block10();
       }
       if (ctx['commit_link'].match_type=='base_match') {
-        const b12 = b9.children[2] = new Block8();
+        b11 = block11();
       }
       if (ctx['commit_link'].match_type=='base_head') {
-        const b13 = b9.children[3] = new Block9();
+        b12 = block12();
       }
-      b9.data[2] = ctx['commit_link'].commit_dname;
-      b9.data[3] = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
-      b9.data[4] = ctx['commit_link'].commit_subject;
-      b8.keys[i1] = key1;
+      let d8 = ctx['commit_link'].commit_dname;
+      let d9 = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
+      let d10 = ctx['commit_link'].commit_subject;
+      c7[i1] = withKey(block8([d6, d7, d8, d9, d10], [b9, b10, b11, b12]), key1);
     }
-    return b1;
+    ctx = ctx.__proto__;
+    b7 = list(c7);
+    return block1([d1, d2, d3, d4, d5], [b2, b3, b4, b5, b7]);
   }
 }"
 `;
 
 exports[`misc global 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<año><owl-anchor/></año>\`);
-    children = new Array(1);
-    data = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-    update(prevData, data) {
-      this.updateAttr(this.el, \`falló\`, this.data[0]);
-    }
-  }
+  let block1 = createBlock(\`<año owl-attribute-0=\\"falló\\"><owl-child-0/></año>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = 'agüero';
-    b1.children[0] = new BHtml(ctx[zero]);
-    return b1;
+    let d1 = 'agüero';
+    let b2 = html(ctx[zero]);
+    return block1([d1], [b2]);
   }
 }"
 `;
 
 exports[`misc global 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = withDefault(ctx['foo'], \`foo default\`);
-    return b1;
+    let d1 = withDefault(ctx['foo'], \`foo default\`);
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`misc global 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b2 = new BText(\`toto default\`);
-    b1.children[0] = new BHtml(withDefault(ctx['toto'], b2));
-    return b1;
+    let b3 = text(\`toto default\`);
+    let b2 = html(withDefault(ctx['toto'], b3));
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`misc global 4`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
-  const callTemplate_3 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_5 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_7 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_9 = getTemplate(\`_callee-asc\`);
-  const callTemplate_11 = getTemplate(\`_callee-asc-toto\`);
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
+  const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_6 = getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_8 = getTemplate(\`_callee-asc\`);
+  const callTemplate_10 = getTemplate(\`_callee-asc-toto\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block4 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection([4,5,6], false, false);
     ctx = Object.create(ctx);
-    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`value\`] = v1[i1];
+    const [k2, v2, l2, c2] = prepareList([4,5,6]);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`value\`] = v2[i1];
       ctx[\`value_first\`] = i1 === 0;
-      ctx[\`value_last\`] = i1 === v1.length - 1;
+      ctx[\`value_last\`] = i1 === v2.length - 1;
       ctx[\`value_index\`] = i1;
-      ctx[\`value_value\`] = k1[i1];
+      ctx[\`value_value\`] = k2[i1];
       let key1 = ctx['value'];
-      const b3 = b2.children[i1] = new BMulti(2);
-      const b4 = b3.children[0] = new Block2();
-      b4.data[0] = ctx['value'];
+      let d1 = ctx['value'];
+      let b4 = block4([d1]);
       ctx = Object.create(ctx);
-      const b5 = new BMulti(3);
       ctx = Object.create(ctx);
       ctx[\`foo\`] = 'aaa';
-      b5.children[0] = callTemplate_3(ctx, node, key + \`__2__\${key1}\`);
+      let b6 = callTemplate_2(ctx, node, key + \`__1__\${key1}\`);
       ctx = ctx.__proto__;
-      b5.children[1] = callTemplate_5(ctx, node, key + \`__4__\${key1}\`);
+      let b7 = callTemplate_4(ctx, node, key + \`__3__\${key1}\`);
       ctx[\`foo\`] = 'bbb';
-      b5.children[2] = callTemplate_7(ctx, node, key + \`__6__\${key1}\`);
+      let b8 = callTemplate_6(ctx, node, key + \`__5__\${key1}\`);
+      let b5 = multi([b6, b7, b8]);
       ctx[zero] = b5;
-      b3.children[1] = callTemplate_9(ctx, node, key + \`__8__\${key1}\`);
+      let b9 = callTemplate_8(ctx, node, key + \`__7__\${key1}\`);
       ctx = ctx.__proto__;
-      b2.keys[i1] = key1;
+      c2[i1] = withKey(multi([b4, b9]), key1);
     }
     ctx = ctx.__proto__;
-    b1.children[1] = callTemplate_11(ctx, node, key + \`__10\`);
-    return b1;
+    let b2 = list(c2);
+    let b10 = callTemplate_10(ctx, node, key + \`__9\`);
+    return block1([], [b2, b10]);
   }
 }"
 `;
 
 exports[`misc other complex template 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
-  const callTemplate_6 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
+  const callTemplate_3 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a><b style=\\"color:#777;\\"><owl-text/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-anchor/><li class=\\"nav-item divider\\"/><owl-anchor/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\"/><button class=\\"btn btn-default\\"> More </button><owl-anchor/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
+  let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a owl-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><owl-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-child-0/><li class=\\"nav-item divider\\"/><owl-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" owl-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" owl-handler-3=\\"click\\"> More </button><owl-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" owl-attribute-4=\\"value\\" owl-handler-5=\\"keyup\\" owl-handler-6=\\"change\\" owl-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" owl-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" owl-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
                       <h5>Search options</h5>
                       <input class=\\"form-control\\" type=\\"text\\" name=\\"default_search\\" id=\\"default_search\\" t-att-checked=\\"default_search\\" placeholder=\\"Default search\\"/>
       
@@ -308,293 +194,129 @@ exports[`misc other complex template 1`] = `
                           <input class=\\"form-check-input\\" type=\\"checkbox\\" name=\\"display_dev\\"/>
                           <label class=\\"form-check-label\\" for=\\"display_dev\\">Display dev</label>
                       </div>
-                  </div--><div class=\\"form-group col-md-6\\"><h5>Triggers</h5><owl-anchor/></div></div></div><div class=\\"container-fluid frontend\\"><div class=\\"row\\"><div class=\\"col-md-12\\"><owl-anchor/></div><div class=\\"col-md-12\\"><owl-anchor/><owl-anchor/><owl-anchor/></div></div></div></div>\`);
-    children = new Array(8);
-    data = new Array(3);
-    handlers = new Array(5);
-    build() {
-      this.anchors = new Array(8);
-      const el1 = this.el.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild;
-      const el6 = this.el.firstChild;
-      this.anchors[0] = el1.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling.nextSibling;
-      const el2 = el1.nextSibling.firstChild.firstChild.firstChild;
-      const el4 = el1.nextSibling.firstChild.firstChild;
-      this.setupHandler(el2, \`click\`, 0);
-      const el3 = el2.nextSibling;
-      this.setupHandler(el3, \`click\`, 1);
-      this.anchors[2] = el3.nextSibling;
-      const el5 = el4.nextSibling;
-      this.setupHandler(el5, \`keyup\`, 2);
-      this.setupHandler(el5, \`change\`, 3);
-      this.setupHandler(el5.nextSibling.firstChild, \`click\`, 4);
-      const el7 = el6.nextSibling;
-      this.anchors[3] = el7.firstChild.firstChild.nextSibling.firstChild.nextSibling;
-      const el8 = el7.nextSibling.firstChild.firstChild;
-      this.anchors[4] = el8.firstChild;
-      this.anchors[5] = el8.nextSibling.firstChild;
-      this.anchors[6] = this.anchors[5].nextSibling;
-      this.anchors[7] = this.anchors[6].nextSibling;
-    }
-    update(prevData, data) {
-      const el1 = this.el.firstChild.firstChild.firstChild;
-      const el3 = this.el.firstChild;
-      this.updateAttr(el1, \`href\`, this.data[0]);
-      setText(el1.firstChild.firstChild, prevData[1], data[1]);
-      const el2 = el1.nextSibling.nextSibling.firstChild.nextSibling.firstChild.firstChild.nextSibling;
-      this.updateAttr(el2, \`value\`, this.data[2]);
-      this.updateProp(el2, \`value\`, this.data[2]);
-      this.refs[\`search_input\`] = el2;
-      this.refs[\`settings_menu\`] = el3.nextSibling;
-    }
-    remove() {
-      delete this.refs[\`search_input\`];
-      delete this.refs[\`settings_menu\`];
-      super.remove();
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<li class=\\"nav-item\\"><a class=\\"nav-link\\" href=\\"#\\"><owl-text/></a></li>\`);
-    data = new Array(1);
-    handlers = new Array(1);
-    build() {
-      this.setupHandler(this.el.firstChild, \`click\`, 0);
-    }
-    update(prevData, data) {
-      setText(this.el.firstChild.firstChild, prevData[0], data[0]);
-    }
-  }
-  
-  class Block3 extends BElem {
-    static el = elem(\`<li class=\\"nav-item dropdown\\"><b><a class=\\"nav-link\\">Login</a></b></li>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      this.updateAttr(this.el.firstChild.firstChild, \`href\`, this.data[0]);
-    }
-  }
-  
-  class Block4 extends BElem {
-    static el = elem(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link text-danger\\"><i class=\\"fa fa-bug\\"/><owl-text/></a></li>\`);
-    data = new Array(2);
-    update(prevData, data) {
-      const el1 = this.el.firstChild;
-      this.updateAttr(el1, \`title\`, this.data[0]);
-      setText(el1.firstChild.nextSibling, prevData[1], data[1]);
-    }
-  }
-  
-  class Block5 extends BStatic {
-    static el = elem(\`<li class=\\"nav-item divider\\"/>\`);
-  }
-  
-  class Block6 extends BStatic {
-    static el = elem(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link\\" title=\\"Random Bugs\\"><i class=\\"fa fa-bug\\"/></a></li>\`);
-  }
-  
-  class Block7 extends BStatic {
-    static el = elem(\`<li class=\\"nav-item divider\\"/>\`);
-  }
-  
-  class Block8 extends BElem {
-    static el = elem(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><owl-text/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\">Web</a></div></li>\`);
-    data = new Array(3);
-    update(prevData, data) {
-      const el1 = this.el.firstChild;
-      setText(el1.firstChild.firstChild.firstChild, prevData[0], data[0]);
-      const el2 = el1.nextSibling.firstChild;
-      this.updateAttr(el2, \`href\`, this.data[1]);
-      this.updateAttr(el2.nextSibling, \`href\`, this.data[2]);
-    }
-  }
-  
-  class Block9 extends BElem {
-    static el = elem(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><owl-anchor/></select>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block10 extends BElem {
-    static el = elem(\`<option><owl-text/></option>\`);
-    data = new Array(3);
-    update(prevData, data) {
-      const el1 = this.el;
-      this.updateAttr(el1, \`value\`, this.data[0]);
-      this.updateAttr(el1, \`selected\`, this.data[1]);
-      this.updateProp(el1, \`selected\`, this.data[1]);
-      setText(el1.firstChild, prevData[2], data[2]);
-    }
-  }
-  
-  class Block11 extends BElem {
-    static el = elem(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\"/><label class=\\"form-check-label\\"><owl-text/></label></div>\`);
-    data = new Array(6);
-    handlers = new Array(1);
-    build() {
-      this.setupHandler(this.el.firstChild, \`change\`, 0);
-    }
-    update(prevData, data) {
-      const el1 = this.el.firstChild;
-      this.updateAttr(el1, \`name\`, this.data[0]);
-      this.updateAttr(el1, \`id\`, this.data[1]);
-      this.updateAttr(el1, \`checked\`, this.data[2]);
-      this.updateProp(el1, \`checked\`, this.data[2]);
-      this.updateAttr(el1, \`data-trigger_id\`, this.data[3]);
-      const el2 = el1.nextSibling;
-      this.updateAttr(el2, \`for\`, this.data[4]);
-      setText(el2.firstChild, prevData[5], data[5]);
-    }
-  }
-  
-  class Block12 extends BElem {
-    static el = elem(\`<div><button class=\\"btn btn-sm btn-default\\">All</button><button class=\\"btn btn-sm btn-default\\">None</button><button class=\\"btn btn-sm btn-info\\">Default</button><button class=\\"btn btn-sm btn-default\\">Close</button></div>\`);
-    handlers = new Array(4);
-    build() {
-      const el1 = this.el.firstChild;
-      this.setupHandler(el1, \`click\`, 0);
-      const el2 = el1.nextSibling;
-      this.setupHandler(el2, \`click\`, 1);
-      const el3 = el2.nextSibling;
-      this.setupHandler(el3, \`click\`, 2);
-      this.setupHandler(el3.nextSibling, \`click\`, 3);
-    }
-  }
-  
-  class Block13 extends BElem {
-    static el = elem(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><owl-text/> <!-- todo fixme--></div>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
-  
-  class Block14 extends BStatic {
-    static el = elem(\`<div class=\\"mb32\\"><h1>No project</h1></div>\`);
-  }
-  
-  class Block15 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
+                  </div--><div class=\\"form-group col-md-6\\"><h5>Triggers</h5><owl-child-3/></div></div></div><div class=\\"container-fluid frontend\\"><div class=\\"row\\"><div class=\\"col-md-12\\"><owl-child-4/></div><div class=\\"col-md-12\\"><owl-child-5/><owl-child-6/><owl-child-7/></div></div></div></div>\`);
+  let block3 = createBlock(\`<li class=\\"nav-item\\"><a class=\\"nav-link\\" href=\\"#\\" owl-handler-0=\\"click\\"><owl-text-1/></a></li>\`);
+  let block5 = createBlock(\`<li class=\\"nav-item dropdown\\"><b><a class=\\"nav-link\\" owl-attribute-0=\\"href\\">Login</a></b></li>\`);
+  let block8 = createBlock(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link text-danger\\" owl-attribute-0=\\"title\\"><i class=\\"fa fa-bug\\"/><owl-text-1/></a></li>\`);
+  let block9 = createBlock(\`<li class=\\"nav-item divider\\"/>\`);
+  let block11 = createBlock(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link\\" title=\\"Random Bugs\\"><i class=\\"fa fa-bug\\"/></a></li>\`);
+  let block12 = createBlock(\`<li class=\\"nav-item divider\\"/>\`);
+  let block13 = createBlock(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><owl-text-0/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\" owl-attribute-1=\\"href\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\" owl-attribute-2=\\"href\\">Web</a></div></li>\`);
+  let block14 = createBlock(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><owl-child-0/></select>\`);
+  let block16 = createBlock(\`<option owl-attribute-0=\\"value\\" owl-attribute-1=\\"selected\\"><owl-text-2/></option>\`);
+  let block20 = createBlock(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\" owl-attribute-0=\\"name\\" owl-attribute-1=\\"id\\" owl-attribute-2=\\"checked\\" owl-attribute-3=\\"data-trigger_id\\" owl-handler-4=\\"change\\"/><label class=\\"form-check-label\\" owl-attribute-5=\\"for\\"><owl-text-6/></label></div>\`);
+  let block21 = createBlock(\`<div><button class=\\"btn btn-sm btn-default\\" owl-handler-0=\\"click\\">All</button><button class=\\"btn btn-sm btn-default\\" owl-handler-1=\\"click\\">None</button><button class=\\"btn btn-sm btn-info\\" owl-handler-2=\\"click\\">Default</button><button class=\\"btn btn-sm btn-default\\" owl-handler-3=\\"click\\">Close</button></div>\`);
+  let block23 = createBlock(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><owl-text-0/> <!-- todo fixme--></div>\`);
+  let block24 = createBlock(\`<div class=\\"mb32\\"><h1>No project</h1></div>\`);
+  let block25 = createBlock(\`<div/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
+    let b2,b4,b14,b17,b22,b23,b24,b25;
+    let d1 = \`/runbot/\${ctx['project'].slug}\`;
+    let d2 = ctx['project'].name;
     ctx = Object.create(ctx);
-    const b1 = new Block1();
-    b1.data[0] = \`/runbot/\${ctx['project'].slug}\`;
-    b1.data[1] = ctx['project'].name;
-    const b2 = b1.children[0] = new BCollection(ctx['projects'], false, true);
-    ctx = Object.create(ctx);
-    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`project\`] = v1[i1];
+    const [k2, v2, l2, c2] = prepareList(ctx['projects']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`project\`] = v2[i1];
       let key1 = ctx['project'].id;
-      const b3 = b2.children[i1] = new Block2();
-      const arg2 = [ctx['project']];
-      b3.handlers[0] = [ctx, 'selectProject', arg2];
-      b3.data[0] = ctx['project'].name;
-      b2.keys[i1] = key1;
+      const arg1 = [ctx['project']];
+      let d3 = [ctx, 'selectProject', arg1];
+      let d4 = ctx['project'].name;
+      c2[i1] = withKey(block3([d3, d4]), key1);
     }
     ctx = ctx.__proto__;
+    b2 = list(c2);
     if (ctx['user']) {
-      const b4 = b1.children[1] = new BMulti(2);
+      let b5,b6;
       if (ctx['user'].public) {
-        const b5 = b4.children[0] = new Block3();
-        b5.data[0] = \`/web/login?redirect=/\`;
+        let d5 = \`/web/login?redirect=/\`;
+        b5 = block5([d5]);
       } else {
-        const b6 = b4.children[1] = new BMulti(2);
+        let b7,b10,b13;
         if (ctx['nb_assigned_errors']&&ctx['nb_assigned_errors']>0) {
-          const b7 = b6.children[0] = new BMulti(2);
-          const b8 = b7.children[0] = new Block4();
-          b8.data[0] = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
-          b8.data[1] = ctx['nb_assigned_errors'];
-          const b9 = b7.children[1] = new Block5();
+          let d6 = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
+          let d7 = ctx['nb_assigned_errors'];
+          let b8 = block8([d6, d7]);
+          let b9 = block9();
+          b7 = multi([b8, b9]);
         } else if (ctx['nb_build_errors']&&ctx['nb_build_errors']>0) {
-          const b10 = b6.children[1] = new BMulti(2);
-          const b11 = b10.children[0] = new Block6();
-          const b12 = b10.children[1] = new Block7();
+          let b11 = block11();
+          let b12 = block12();
+          b10 = multi([b11, b12]);
         }
-        const b13 = b6.children[1] = new Block8();
-        b13.data[0] = ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name;
-        b13.data[1] = \`/web/session/logout?redirect=/\`;
-        b13.data[2] = \`/web\`;
+        let d8 = ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name;
+        let d9 = \`/web/session/logout?redirect=/\`;
+        let d10 = \`/web\`;
+        b13 = block13([d8, d9, d10]);
+        b6 = multi([b7, b10, b13]);
       }
+      b4 = multi([b5, b6]);
     }
-    b1.handlers[0] = [ctx, 'toggleSettingsMenu'];
-    b1.handlers[1] = [ctx, 'toggleMore'];
+    let d11 = [ctx, 'toggleSettingsMenu'];
+    let d12 = [ctx, 'toggleMore'];
     if (ctx['categories']&&ctx['categories'].length>1) {
-      const b14 = b1.children[2] = new Block9();
-      const b15 = b14.children[0] = new BCollection(ctx['categories'], true, true);
       ctx = Object.create(ctx);
-      const k3 = b15.values, v3 = b15.collection, l3 = k3.length;
-      for (let i1 = 0; i1 < l3; i1++) {
-        ctx[\`category\`] = v3[i1];
+      const [k15, v15, l15, c15] = prepareList(ctx['categories']);
+      for (let i1 = 0; i1 < l15; i1++) {
+        ctx[\`category\`] = v15[i1];
         let key1 = ctx['category'].id;
-        const b16 = b15.children[i1] = new Block10();
-        b16.data[0] = ctx['category'].id;
-        b16.data[1] = ctx['category'].id==ctx['options'].active_category_id;
-        b16.data[2] = ctx['category'].name;
-        b15.keys[i1] = key1;
+        let d13 = ctx['category'].id;
+        let d14 = ctx['category'].id==ctx['options'].active_category_id;
+        let d15 = ctx['category'].name;
+        c15[i1] = withKey(block16([d13, d14, d15]), key1);
       }
       ctx = ctx.__proto__;
+      let b15 = list(c15);
+      b14 = block14([], [b15]);
     }
-    b1.data[2] = ctx['search'].value;
-    b1.handlers[2] = [ctx, 'updateFilter'];
-    b1.handlers[3] = [ctx, 'updateFilter'];
-    b1.refs = refs;
-    b1.handlers[4] = [ctx, 'clearSearch'];
-    b1.refs = refs;
+    let d16 = ctx['search'].value;
+    let d17 = [ctx, 'updateFilter'];
+    let d18 = [ctx, 'updateFilter'];
+    let d19 = (el) => refs[\`search_input\`] = el;
+    let d20 = [ctx, 'clearSearch'];
+    let d21 = (el) => refs[\`settings_menu\`] = el;
     if (ctx['triggers']) {
-      const b17 = b1.children[3] = new BMulti(2);
-      const b18 = b17.children[0] = new BCollection(ctx['triggers'], false, true);
       ctx = Object.create(ctx);
-      const k4 = b18.values, v4 = b18.collection, l4 = k4.length;
-      for (let i1 = 0; i1 < l4; i1++) {
-        ctx[\`trigger\`] = v4[i1];
+      const [k18, v18, l18, c18] = prepareList(ctx['triggers']);
+      for (let i1 = 0; i1 < l18; i1++) {
+        ctx[\`trigger\`] = v18[i1];
         let key1 = ctx['trigger'].id;
-        const b19 = b18.children[i1] = new BMulti(1);
+        let b20;
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
-          const b20 = b19.children[0] = new Block11();
-          b20.data[0] = \`trigger_\${ctx['trigger'].id}\`;
-          b20.data[1] = \`trigger_\${ctx['trigger'].id}\`;
-          b20.data[2] = ctx['options'].trigger_display[ctx['trigger'].id];
-          b20.data[3] = ctx['trigger'].id;
-          b20.handlers[0] = [ctx, 'updateTriggerDisplay'];
-          b20.data[4] = \`trigger_\${ctx['trigger'].id}\`;
-          b20.data[5] = ctx['trigger'].name;
+          let d22 = \`trigger_\${ctx['trigger'].id}\`;
+          let d23 = \`trigger_\${ctx['trigger'].id}\`;
+          let d24 = ctx['options'].trigger_display[ctx['trigger'].id];
+          let d25 = ctx['trigger'].id;
+          let d26 = [ctx, 'updateTriggerDisplay'];
+          let d27 = \`trigger_\${ctx['trigger'].id}\`;
+          let d28 = ctx['trigger'].name;
+          b20 = block20([d22, d23, d24, d25, d26, d27, d28]);
         }
-        b18.keys[i1] = key1;
+        c18[i1] = withKey(multi([b20]), key1);
       }
       ctx = ctx.__proto__;
-      const b21 = b17.children[1] = new Block12();
-      b21.handlers[0] = [ctx, 'triggerAll'];
-      b21.handlers[1] = [ctx, 'triggerNone'];
-      b21.handlers[2] = [ctx, 'triggerDefault'];
-      b21.handlers[3] = [ctx, 'toggleSettingsMenu'];
+      let b18 = list(c18);
+      let d29 = [ctx, 'triggerAll'];
+      let d30 = [ctx, 'triggerNone'];
+      let d31 = [ctx, 'triggerDefault'];
+      let d32 = [ctx, 'toggleSettingsMenu'];
+      let b21 = block21([d29, d30, d31, d32]);
+      b17 = multi([b18, b21]);
     }
     if (ctx['load_infos']) {
-      b1.children[4] = callTemplate_6(ctx, node, key + \`__5\`);
+      b22 = callTemplate_3(ctx, node, key + \`__2\`);
     }
     if (ctx['message']) {
-      const b22 = b1.children[5] = new Block13();
-      b22.data[0] = ctx['message'];
+      let d33 = ctx['message'];
+      b23 = block23([d33]);
     }
     if (!ctx['project']) {
-      const b23 = b1.children[6] = new Block14();
+      b24 = block24();
     } else {
-      const b24 = b1.children[7] = new Block15();
-      b24.children[0] = node.getChild(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__7\`, ctx);
-      b24.children[1] = node.getChild(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__8\`, ctx);
+      b25 = block25();
     }
-    return b1;
+    return block1([d1, d2, d11, d12, d16, d17, d18, d19, d20, d21], [b2, b4, b14, b17, b22, b23, b24, b25]);
   }
 }"
 `;

@@ -1,5 +1,5 @@
 import type { App } from "./app";
-import { Block } from "./bdom";
+// import { VNode } from "./bdom";
 import type { Component } from "./component";
 import {
   Fiber,
@@ -24,7 +24,8 @@ export function getCurrent(): BNode | null {
 
 type LifecycleHook = Function;
 
-export class BNode<T extends typeof Component = any> implements Block<BNode> {
+export class BNode<T extends typeof Component = any> {
+  //implements VNode<BNode> {
   el: ChildNode | null = null;
   parentClass?: any = null;
   currentClass?: any = null;
@@ -205,7 +206,7 @@ export class BNode<T extends typeof Component = any> implements Block<BNode> {
   mountBefore(anchor: ChildNode) {
     const bdom = this.fiber!.bdom!;
     this.bdom = bdom;
-    bdom.mountBefore(anchor);
+    // bdom.m(anchor);
     if (this.parentClass) {
       const el = this.firstChildNode();
       if (el instanceof HTMLElement) {

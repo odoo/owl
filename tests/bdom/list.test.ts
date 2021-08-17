@@ -1,4 +1,4 @@
-import { list, mount, multi, patch, text, createBlock, BNode } from "../../src/bdom";
+import { list, mount, multi, patch, text, createBlock, VNode } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-function kText(str: string, key: any): BNode {
+function kText(str: string, key: any): VNode {
   const block = text(str);
   block.key = key;
   return block;
@@ -28,13 +28,13 @@ function n(n: number) {
 const span = createBlock("<span><owl-text-0/></span>");
 const p = createBlock("<p><owl-text-0/></p>");
 
-function kSpan(str: string, key: any): BNode {
+function kSpan(str: string, key: any): VNode {
   const block = span([str]);
   block.key = key;
   return block;
 }
 
-function kPair(n: number): BNode {
+function kPair(n: number): VNode {
   const bnodes = [p([String(n)]), p([String(n)])];
   const block = multi(bnodes);
   block.key = n;
@@ -48,6 +48,11 @@ describe("list node: misc", () => {
     const tree = list(bnodes);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("text1text2text3");
+  });
+
+  test("list vnode can be used as text", () => {
+    mount(text(list([text("a"), text("b")]) as any), fixture);
+    expect(fixture.innerHTML).toBe("ab");
   });
 
   test("a list block can be removed and leaves nothing", async () => {

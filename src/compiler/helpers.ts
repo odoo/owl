@@ -1,3 +1,5 @@
+import { setupMainHandler, setupNormalize } from "../bdom/block";
+
 export const enum DomType {
   Text,
   Comment,
@@ -65,4 +67,19 @@ export function isProp(tag: string, key: string): boolean {
       return key === "disabled";
   }
   return false;
+}
+
+export function setupBlockDom() {
+  setupMainHandler((data, ev) => {
+    if (typeof data === "function") {
+      data(ev);
+    } else {
+      const ctx = data[0];
+      const method = data[1];
+      const args = data[2] || [];
+      ctx.__owl__.component[method](...args, ev);
+    }
+  });
+
+  setupNormalize(false); // compiler does the job
 }

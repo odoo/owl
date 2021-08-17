@@ -61,4 +61,19 @@ describe("multi blocks", () => {
     patch(tree, multi([text("blip"), text("bar")]));
     expect(fixture.innerHTML).toBe("blipbar");
   });
+
+  test("simple multi with multiple roots", async () => {
+    const block1 = createBlock("<div>foo</div>");
+    const block2 = createBlock("<span>bar</span>");
+
+    const tree = multi([block1(), block2()]);
+
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div>foo</div><span>bar</span>");
+  });
+
+  test("multi vnode can be used as text", () => {
+    mount(text(multi([text("a"), text("b")]) as any), fixture);
+    expect(fixture.innerHTML).toBe("ab");
+  });
 });

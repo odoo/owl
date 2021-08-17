@@ -1,4 +1,4 @@
-import { list, mount, multi, patch, text, createBlock } from "./bdom";
+import { list, mount, multi, patch, text, createBlock, html } from "./bdom";
 // import { BList } from "./_old_bdom/list";
 // import { BMulti } from "./_bdom/multi";
 // import { BText } from "./_bdom/text";
@@ -11,6 +11,7 @@ export const blockDom = {
   patch,
   text,
   createBlock,
+  html,
 };
 
 // import { App } from "./app";
@@ -35,7 +36,7 @@ export const blockDom = {
 // export { status } from "./status";
 // export { Portal } from "./misc/portal";
 // export { Memo } from "./misc/memo";
-// export { xml } from "./tags";
+export { xml } from "./tags";
 // export { useState } from "./reactivity";
 // export { useRef } from "./refs";
 // export { EventBus } from "./event_bus";

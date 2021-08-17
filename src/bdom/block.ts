@@ -1,16 +1,35 @@
 import type { VNode } from "./index";
+import { toText } from "./text";
 
 const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!;
 const nodeProto = Node.prototype;
 const elementProto = Element.prototype;
 const characterDataProto = CharacterData.prototype;
+const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 
 const nodeCloneNode = nodeProto.cloneNode;
 const nodeInsertBefore = nodeProto.insertBefore;
-const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 const elementRemove = elementProto.remove;
 const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
 const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
+
+export let defaultHandler = function (data: any, ev: Event) {
+  data(ev);
+};
+
+let mainHandler: typeof defaultHandler = defaultHandler;
+
+export function setupMainHandler(handler: typeof defaultHandler) {
+  mainHandler = handler;
+}
+
+let shouldNormalize = true;
+
+export function setupNormalize(value: boolean) {
+  shouldNormalize = value;
+}
+
+const NO_OP = () => {};
 
 // -----------------------------------------------------------------------------
 // Block
@@ -27,7 +46,9 @@ export function createBlock(str: string): BlockType {
 
   const doc = new DOMParser().parseFromString(str, "text/xml");
   const node = doc.firstChild!;
-  normalizeNode(node as any);
+  if (shouldNormalize) {
+    normalizeNode(node as any);
+  }
   const template = processDescription(node, ctx) as any;
 
   return compileBlock(info, template);
@@ -39,7 +60,7 @@ function normalizeNode(node: HTMLElement | Text) {
       (node as Text).remove();
       return;
     }
-    node.textContent = node.textContent!.trim();
+    // node.textContent = node.textContent!.trim();
   }
   if (node.nodeType === Node.ELEMENT_NODE) {
     if ((node as HTMLElement).tagName === "pre") {
@@ -58,10 +79,11 @@ function normalizeNode(node: HTMLElement | Text) {
 interface BlockInfo {
   index: number;
   refIndex?: number;
-  type: "text" | "child" | "handler" | "attribute";
+  type: "text" | "child" | "handler" | "attribute" | "attributes" | "ref";
   path: string[];
   event?: string;
   name?: string;
+  tag?: string;
   isOnlyChild?: boolean;
   parentPath?: string[];
 }
@@ -106,6 +128,19 @@ function processDescription(node: ChildNode, ctx: BuilderContext, parentPath: st
             path: ctx.path.slice(),
             type: "attribute",
             name: attrValue,
+            tag: tagName,
+          });
+        } else if (attrName === "owl-attributes") {
+          ctx.info.push({
+            index: parseInt(attrValue, 10),
+            path: ctx.path.slice(),
+            type: "attributes",
+          });
+        } else if (attrName === "owl-ref") {
+          ctx.info.push({
+            index: parseInt(attrValue, 10),
+            path: ctx.path.slice(),
+            type: "ref",
           });
         } else {
           result.setAttribute(attrs[i].name, attrValue);
@@ -166,28 +201,161 @@ interface ChildInsertionPoint {
 }
 
 function createAttrUpdater(attr: string) {
-  return function (this: HTMLElement, a: any, b: any) {
-    this.setAttribute(attr, a);
+  return function (this: HTMLElement, value: any) {
+    if (value !== false) {
+      if (value === true) {
+        this.setAttribute(attr, "");
+      } else {
+        this.setAttribute(attr, value);
+      }
+    }
+  };
+}
+
+function attrsSetter(this: HTMLElement, attrs: any) {
+  if (Array.isArray(attrs)) {
+    this.setAttribute(attrs[0], attrs[1]);
+  } else {
+    for (let k in attrs) {
+      this.setAttribute(k, attrs[k]);
+    }
+  }
+}
+
+function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
+  if (Array.isArray(attrs)) {
+    if (attrs[0] === oldAttrs[0]) {
+      if (attrs[1] === oldAttrs[1]) {
+        return;
+      }
+      this.setAttribute(attrs[0], attrs[1]);
+    } else {
+      this.removeAttribute(oldAttrs[0]);
+      this.setAttribute(attrs[0], attrs[1]);
+    }
+  } else {
+    for (let k in oldAttrs) {
+      if (!(k in attrs)) {
+        this.removeAttribute(k);
+      }
+    }
+    for (let k in attrs) {
+      if (attrs[k] !== oldAttrs[k]) {
+        this.setAttribute(k, attrs[k]);
+      }
+    }
+  }
+}
+
+function isProp(tag: string, key: string): boolean {
+  switch (tag) {
+    case "input":
+      return (
+        key === "checked" ||
+        key === "indeterminate" ||
+        key === "value" ||
+        key === "readonly" ||
+        key === "disabled"
+      );
+    case "option":
+      return key === "selected" || key === "disabled";
+    case "textarea":
+      return key === "readonly" || key === "disabled";
+      break;
+    case "button":
+    case "select":
+    case "optgroup":
+      return key === "disabled";
+  }
+  return false;
+}
+
+function toClassObj(expr: string | number | { [c: string]: any }, expr2?: any) {
+  const result: { [c: string]: any } = expr2 ? toClassObj(expr2) : {};
+
+  if (typeof expr === "object") {
+    // this is already an object but we may need to split keys:
+    // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
+    for (let key in expr) {
+      const value = expr[key];
+      if (value) {
+        const words = key.split(/\s+/);
+        for (let word of words) {
+          result[word] = value;
+        }
+      }
+    }
+    return result;
+  }
+  if (typeof expr !== "string") {
+    expr = String(expr);
+  }
+  // we transform here a list of classes into an object:
+  //  'hey you' becomes {hey: true, you: true}
+  const str = expr.trim();
+  if (!str) {
+    return {};
+  }
+  let words = str.split(/\s+/);
+  for (let i = 0; i < words.length; i++) {
+    result[words[i]] = true;
+  }
+  return result;
+}
+
+function setClass(this: HTMLElement, val: any) {
+  val = val === undefined ? {} : toClassObj(val);
+  // add classes
+  for (let c in val) {
+    this.classList.add(c);
+  }
+}
+
+function updateClass(this: HTMLElement, val: any, oldVal: any) {
+  oldVal = oldVal === undefined ? {} : toClassObj(oldVal);
+  val = val === undefined ? {} : toClassObj(val);
+  // remove classes
+  for (let c in oldVal) {
+    if (!(c in val)) {
+      this.classList.remove(c);
+    }
+  }
+  // add classes
+  for (let c in val) {
+    if (!(c in oldVal)) {
+      this.classList.add(c);
+    }
+  }
+}
+
+function makePropSetter(name: string) {
+  return function setProp(this: HTMLElement, value: any) {
+    (this as any)[name] = value;
   };
 }
 
 function createEventHandler(event: string) {
-  return function handler(this: HTMLElement, data: any) {
-    (this as any).__eventdata = data;
-    this.addEventListener(event, () => {
-      const handler = (this as any).__eventdata;
-      if (typeof handler === "function") {
-        handler();
-      } else {
-        const [owner, method] = handler;
-        owner[method]();
+  let wm = new WeakMap();
+  return {
+    setup(this: HTMLElement, data: any) {
+      let handlers = wm.get(this);
+      if (!handlers) {
+        handlers = {};
+        wm.set(this, handlers);
       }
-    });
+      handlers[event] = data;
+      this.addEventListener(event, (ev) => {
+        mainHandler(handlers[event], ev);
+      });
+    },
+    update(this: HTMLElement, data: any) {
+      wm.get(this)[event] = data;
+    },
   };
 }
 
-function updateEventData(this: HTMLElement, data: any) {
-  (this as any).__eventdata = data;
+function setText(this: Text, value: any) {
+  characterDataSetData.call(this, toText(value));
 }
 
 function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
@@ -195,6 +363,7 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
   let locations: Location[] = [];
   let children: ChildInsertionPoint[] = [];
   let isDynamic = Boolean(info.length);
+  let refs: number[] = [];
 
   if (info.length) {
     let current = 0;
@@ -238,30 +407,52 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
           locations.push({
             idx: line.index,
             refIdx,
-            setData: characterDataSetData,
-            updateData: characterDataSetData,
+            setData: setText,
+            updateData: setText,
           });
           break;
         }
         case "attribute": {
           const refIdx = line.refIndex!;
-          const updater = createAttrUpdater(line.name!);
+          let updater: any;
+          let setter: any;
+          if (isProp(line.tag!, line.name!)) {
+            const setProp = makePropSetter(line.name!);
+            setter = setProp;
+            updater = setProp;
+          } else if (line.name === "class") {
+            setter = setClass;
+            updater = updateClass;
+          } else {
+            setter = createAttrUpdater(line.name!);
+            updater = setter;
+          }
           locations.push({
             idx: line.index,
             refIdx,
-            setData: updater,
+            setData: setter,
             updateData: updater,
+          });
+          break;
+        }
+        case "attributes": {
+          const refIdx = line.refIndex!;
+          locations.push({
+            idx: line.index,
+            refIdx,
+            setData: attrsSetter,
+            updateData: attrsUpdater,
           });
           break;
         }
         case "handler": {
           const refIdx = line.refIndex!;
-          const createHandler = createEventHandler(line.event!);
+          const { setup, update } = createEventHandler(line.event!);
           locations.push({
             idx: line.index,
             refIdx,
-            setData: createHandler,
-            updateData: updateEventData,
+            setData: setup,
+            updateData: update,
           });
           break;
         }
@@ -278,13 +469,38 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
               afterRefIdx: line.refIndex!, // current ref is textnode anchor
             });
           }
+          break;
+        case "ref": {
+          const refIdx = line.refIndex!;
+          refs.push(line.index);
+          locations.push({
+            idx: line.index,
+            refIdx,
+            setData: setRef,
+            updateData: NO_OP,
+          });
+        }
       }
     }
   }
 
-  const B = createBlockClass(template, collectors, locations, children, isDynamic);
-
+  let B = createBlockClass(template, collectors, locations, children, isDynamic);
+  if (refs.length) {
+    B = class extends B {
+      remove() {
+        super.remove();
+        for (let ref of refs) {
+          let fn = (this as any).data[ref];
+          fn(null);
+        }
+      }
+    };
+  }
   return (data?: any[], children?: (VNode | undefined)[]) => new B(data, children);
+}
+
+function setRef(this: HTMLElement, fn: any) {
+  fn(this);
 }
 
 // -----------------------------------------------------------------------------
@@ -390,7 +606,7 @@ function createBlockClass(
           const idx = loc.idx;
           const val2 = data2[idx];
           if (data1[idx] !== val2) {
-            loc.updateData.call(refs[loc.refIdx], val2);
+            loc.updateData.call(refs[loc.refIdx], val2, data1[idx]);
           }
         }
         this.data = other.data;
@@ -422,6 +638,11 @@ function createBlockClass(
           }
         }
       }
+    }
+    toString() {
+      const div = document.createElement("div");
+      this.mount(div, null);
+      return div.innerHTML;
     }
   };
 }

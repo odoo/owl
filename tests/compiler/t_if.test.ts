@@ -1,4 +1,5 @@
-import { mountBlock } from "../../src/bdom/block";
+// import { mountBlock } from "../../src/bdom/block";
+import { mount } from "../../src/bdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -200,7 +201,7 @@ describe("t-if", () => {
     // need to do it with bdom to go through the update path
     const bdom = renderToBdom(template, { condition: true, text: "owl" });
     const fixture = makeTestFixture();
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     expect(fixture.innerHTML).toBe("<div><p>1</p><p>2</p>owl</div>");
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
     bdom.patch(bdom2);
@@ -213,7 +214,7 @@ describe("t-if", () => {
     // need to do it with bdom to go through the update path
     const bdom = renderToBdom(template, { condition: true, text: "owl" });
     const fixture = makeTestFixture();
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     expect(fixture.innerHTML).toBe("<div><span>owl</span><p>1</p><p>2</p></div>");
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
     bdom.patch(bdom2);

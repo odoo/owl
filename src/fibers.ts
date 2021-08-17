@@ -1,7 +1,8 @@
-import type { Block } from "./bdom";
+import type { BDom } from "./bdom";
+import { mount } from "./bdom";
 import { STATUS } from "./status";
 import { BNode } from "./b_node";
-import { mountBlock } from "./bdom/block";
+// import { mountBlock } from "./bdom/block";
 
 export function makeChildFiber(node: BNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -57,7 +58,7 @@ function cancelFibers(root: any, fibers: Fiber[]): number {
 
 export class Fiber {
   node: BNode;
-  bdom: Block | null = null;
+  bdom: BDom | null = null;
   root: RootFiber;
   parent: Fiber | null;
   children: Fiber[] = [];
@@ -167,7 +168,7 @@ export class MountFiber extends RootFiber {
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    mountBlock(node.bdom!, this.target);
+    mount(node.bdom!, this.target);
     node.status = STATUS.MOUNTED;
     this.appliedToDom = true;
     let current;

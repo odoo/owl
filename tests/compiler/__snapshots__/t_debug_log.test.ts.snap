@@ -1,52 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`debugging t-debug 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<span>hey</span>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<span>hey</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     debugger;
-    const b1 = new Block1();
+    let b2;
     if (true) {
       debugger;
-      const b2 = b1.children[0] = new Block2();
+      b2 = block2();
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`debugging t-log 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<div/>\`);
-  }
+  let block1 = createBlock(\`<div/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
     ctx[\`foo\`] = 42;
     console.log(ctx['foo']+3);
-    return b1;
+    return block1();
   }
 }"
 `;

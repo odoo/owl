@@ -1,4 +1,4 @@
-import { html, mount, patch } from "../../src/bdom";
+import { html, mount, patch, text } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -27,5 +27,10 @@ describe("html block", () => {
 
     patch(tree, html("<div>coucou</div>"));
     expect(fixture.innerHTML).toBe("<div>coucou</div>");
+  });
+
+  test("html vnode can be used as text", () => {
+    mount(text(html("<p>a</p>") as any), fixture);
+    expect(fixture.textContent).toBe("<p>a</p>");
   });
 });

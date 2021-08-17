@@ -190,6 +190,10 @@ class VList {
     const child = this.children[0];
     return child ? child.firstNode() : undefined;
   }
+
+  toString(): string {
+    return this.children.map((c) => c!.toString()).join("");
+  }
 }
 
 export function list(children: VNode[]): VNode<VList> {

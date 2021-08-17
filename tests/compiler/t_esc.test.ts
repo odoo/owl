@@ -1,4 +1,4 @@
-import { mountBlock } from "../../src/bdom/block";
+import { mount } from "../../src/bdom";
 import {
   makeTestFixture,
   renderToBdom,
@@ -67,6 +67,19 @@ describe("t-esc", () => {
     );
   });
 
+  test("falsy values in text nodes", () => {
+    const template = `
+        <t t-esc="v1"/>:<t t-esc="v2"/>:<t t-esc="v3"/>:<t t-esc="v4"/>:<t t-esc="v5"/>`;
+    const vals = {
+      v1: false,
+      v2: undefined,
+      v3: null,
+      v4: 0,
+      v5: "",
+    };
+    expect(renderToString(template, vals)).toBe("false:::0:");
+  });
+
   test("t-esc work with spread operator", () => {
     const template = `<span><t t-esc="[...state.list]"/></span>`;
     expect(renderToString(template, { state: { list: [1, 2] } })).toBe("<span>1,2</span>");
@@ -76,7 +89,7 @@ describe("t-esc", () => {
     const template = `<div><t t-set="var"><p>escaped</p></t><t t-esc="var"/></div>`;
     const bdom = renderToBdom(template);
     const fixture = makeTestFixture();
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
 
     expect(fixture.textContent).toBe("<p>escaped</p>");
   });
@@ -90,7 +103,7 @@ describe("t-esc", () => {
 
     const bdom = context.getTemplate("main")({}, {});
     const fixture = makeTestFixture();
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     expect(fixture.querySelector("span")!.textContent).toBe("<p>escaped</p>");
   });
 });

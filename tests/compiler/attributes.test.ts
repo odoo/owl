@@ -1,5 +1,5 @@
 import { xml } from "../../src";
-import { mountBlock } from "../../src/bdom/block";
+import { mount } from "../../src/bdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -24,8 +24,8 @@ describe("attributes", () => {
   });
 
   test("static attributes on void elements", () => {
-    const template = `<img src="/test.jpg" alt="Test"/>`;
-    expect(renderToString(template)).toBe(`<img src="/test.jpg" alt="Test">`);
+    const template = `<img src="/test.skip.jpg" alt="Test"/>`;
+    expect(renderToString(template)).toBe(`<img src="/test.skip.jpg" alt="Test">`);
   });
 
   test("dynamic attributes", () => {
@@ -240,7 +240,7 @@ describe("attributes", () => {
     const template = `<div t-att-value="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    mountBlock(bnode1, fixture);
+    mount(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div value="zucchini"></div>');
 
@@ -259,7 +259,7 @@ describe("attributes", () => {
     const template = `<div t-att-class="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    mountBlock(bnode1, fixture);
+    mount(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div class="zucchini"></div>');
 
@@ -278,7 +278,7 @@ describe("attributes", () => {
     const template = `<div class="hoy" t-att-class="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    mountBlock(bnode1, fixture);
+    mount(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div class="hoy zucchini"></div>');
 
@@ -297,7 +297,7 @@ describe("attributes", () => {
     const template = `<div class="hoy" t-att-class="{'a b': condition}"/>`;
     const bnode1 = renderToBdom(template, { condition: true });
     const fixture = makeTestFixture();
-    mountBlock(bnode1, fixture);
+    mount(bnode1, fixture);
 
     expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
 
@@ -316,7 +316,7 @@ describe("special cases for some specific html attributes/properties", () => {
   test("input type= checkbox, with t-att-checked", () => {
     const template = `<input type="checkbox" t-att-checked="flag"/>`;
     const result = renderToString(template, { flag: true });
-    expect(result).toBe(`<input type="checkbox" checked="">`);
+    expect(result).toBe(`<input type="checkbox">`);
   });
 
   test("various boolean html attributes", () => {
@@ -340,7 +340,7 @@ describe("special cases for some specific html attributes/properties", () => {
     const template = `<input  t-att-value="v"/>`;
     const bnode1 = renderToBdom(template, { v: "zucchini" });
     const fixture = makeTestFixture();
-    mountBlock(bnode1, fixture);
+    mount(bnode1, fixture);
     const input = fixture.querySelector("input")!;
     expect(input.value).toBe("zucchini");
 
@@ -359,7 +359,7 @@ describe("special cases for some specific html attributes/properties", () => {
     const template = `<input type="checkbox" t-att-indeterminate="v"/>`;
     const bnode1 = renderToBdom(template, { v: true });
     const fixture = makeTestFixture();
-    mountBlock(bnode1, fixture);
+    mount(bnode1, fixture);
     const input = fixture.querySelector("input")!;
     expect(input.indeterminate).toBe(true);
   });

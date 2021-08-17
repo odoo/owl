@@ -19,7 +19,7 @@ class VText {
 
   mount(parent: HTMLElement, afterNode: Node | null) {
     this.parentEl = parent;
-    const node = document.createTextNode(this.text);
+    const node = document.createTextNode(toText(this.text));
     nodeInsertBefore.call(parent, node, afterNode);
     this.el = node;
   }
@@ -32,7 +32,8 @@ class VText {
   patch(other: VText) {
     const text2 = other.text;
     if (this.text !== text2) {
-      characterDataSetData.call(this.el, text2);
+      characterDataSetData.call(this.el!, toText(text2));
+      this.text = text2;
     }
   }
 
@@ -43,8 +44,28 @@ class VText {
   firstNode(): Node {
     return this.el!;
   }
+
+  toString() {
+    return this.text;
+  }
 }
 
 export function text(str: string): VNode<VText> {
   return new VText(str);
+}
+
+export function toText(value: any): string {
+  switch (typeof value) {
+    case "string":
+      return value;
+    case "number":
+      return String(value);
+    case "boolean":
+      return value ? "true" : "false";
+    case "object":
+      return value ? value.toString() : "";
+    default:
+      // most notably, undefined
+      return "";
+  }
 }

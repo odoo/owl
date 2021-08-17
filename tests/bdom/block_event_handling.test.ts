@@ -1,4 +1,5 @@
-import { mount, createBlock } from "../../src/bdom";
+import { mount, createBlock, multi } from "../../src/bdom";
+import { defaultHandler, setupMainHandler } from "../../src/bdom/block";
 import { makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -6,9 +7,11 @@ import { makeTestFixture } from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
+let initialHandler = defaultHandler;
 
 beforeEach(() => {
   fixture = makeTestFixture();
+  setupMainHandler(initialHandler);
 });
 
 afterEach(() => {
@@ -16,6 +19,15 @@ afterEach(() => {
 });
 
 test("simple event handling ", async () => {
+  setupMainHandler((data, ev) => {
+    if (typeof data === "function") {
+      data();
+    } else {
+      const [owner, method] = data;
+      owner[method]();
+    }
+  });
+
   const block = createBlock('<div owl-handler-0="click"></div>');
   let n = 0;
   const obj = { f: () => n++ };
@@ -42,4 +54,34 @@ test("simple event handling, with function", async () => {
   expect(n).toBe(0);
   (fixture.firstChild as HTMLDivElement).click();
   expect(n).toBe(1);
+});
+
+test("can bind two handlers on same node", async () => {
+  const block = createBlock('<div owl-handler-0="click" owl-handler-1="dblclick"></div>');
+  let steps: string[] = [];
+  let handleClick = () => steps.push("click");
+  let handleDblClick = () => steps.push("dblclick");
+  const tree = block([handleClick, handleDblClick]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  (fixture.firstChild as HTMLDivElement).click();
+  (fixture.firstChild as HTMLDivElement).dispatchEvent(new Event("dblclick"));
+  expect(steps).toEqual(["click", "dblclick"]);
+});
+
+test("two same block nodes with different handlers", async () => {
+  const block = createBlock('<div owl-handler-0="click"></div>');
+  let steps: string[] = [];
+  let handler1 = () => steps.push("1");
+  let handler2 = () => steps.push("2");
+  const tree = multi([block([handler1]), block([handler2])]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div><div></div>");
+
+  (fixture.firstChild as HTMLDivElement).click();
+  (fixture.firstChild!.nextSibling as HTMLDivElement).click();
+  expect(steps).toEqual(["1", "2"]);
 });

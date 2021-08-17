@@ -1,3 +1,4 @@
+export { toggler } from "./toggler";
 export { createBlock } from "./block";
 export { list } from "./list";
 export { multi } from "./multi";
@@ -16,6 +17,8 @@ export interface VNode<T = any> {
   singleNode?: boolean | undefined;
   key?: any;
 }
+
+export type BDom = VNode<any>;
 
 export function mount(vnode: VNode, fixture: HTMLElement) {
   vnode.mount(fixture, null);

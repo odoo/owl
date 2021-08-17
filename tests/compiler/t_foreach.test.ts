@@ -12,11 +12,6 @@ describe("t-foreach", () => {
     expect(renderToString(template)).toBe("321");
   });
 
-  test("t-key on an inside node", () => {
-    const template = `<t t-foreach="[3, 2, 1]" t-as="item"><p t-key="item"><t t-esc="item"/></p></t>`;
-    expect(renderToString(template)).toBe("<p>3</p><p>2</p><p>1</p>");
-  });
-
   test("simple iteration with two nodes inside", () => {
     const template = `
       <t t-foreach="[3, 2, 1]" t-as="item" t-key="item">

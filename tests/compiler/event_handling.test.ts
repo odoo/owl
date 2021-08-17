@@ -1,5 +1,5 @@
 import { TemplateSet } from "../../src/app";
-import { mountBlock } from "../../src/bdom/block";
+import { mount } from "../../src/bdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -16,7 +16,7 @@ describe("t-on", () => {
     const block = renderToBdom(template, ctx, node);
     const fixture = makeTestFixture();
 
-    mountBlock(block, fixture);
+    mount(block, fixture);
     return fixture;
   }
 
@@ -130,8 +130,8 @@ describe("t-on", () => {
   test("handler is bound to proper owner, part 2", () => {
     expect.assertions(2);
     const template = `
-        <t t-foreach="[1]" t-as="value">
-          <button t-key="value" t-on-click="add">Click</button>
+        <t t-foreach="[1]" t-as="value" t-key="value">
+          <button t-on-click="add">Click</button>
         </t>`;
     let owner = {
       add() {
@@ -160,7 +160,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner, node);
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     fixture.querySelector("button")!.click();
   });
 
@@ -185,7 +185,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
     const bdom = render(owner, node);
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     fixture.querySelector("button")!.click();
   });
 
@@ -265,7 +265,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
     const bdom = render(owner, node);
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     fixture.querySelector("p")!.click();
   });
 
@@ -291,7 +291,7 @@ describe("t-on", () => {
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
     const bdom = render(owner, node);
-    mountBlock(bdom, fixture);
+    mount(bdom, fixture);
     fixture.querySelector("p")!.click();
   });
 

@@ -1,4 +1,4 @@
-import { mount, text, patch, createBlock, multi, remove } from "../../src/bdom";
+import { createBlock, mount, patch, remove, text } from "../../src/bdom";
 import { makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -15,24 +15,7 @@ afterEach(() => {
   fixture.remove();
 });
 
-describe("adding/patching text and blocks", () => {
-  test("simple text node", async () => {
-    const tree = text("foo");
-    expect(tree.el).toBe(undefined);
-    mount(tree, fixture);
-    expect(fixture.innerHTML).toBe("foo");
-    expect(tree.el).not.toBe(undefined);
-  });
-
-  test("patching a simple text node", async () => {
-    const tree = text("foo");
-    mount(tree, fixture);
-    expect(fixture.innerHTML).toBe("foo");
-
-    patch(tree, text("bar"));
-    expect(fixture.innerHTML).toBe("bar");
-  });
-
+describe("adding/patching blocks", () => {
   test("simple block", async () => {
     const block = createBlock("<div>foo</div>");
     const tree = block();
@@ -74,6 +57,23 @@ describe("adding/patching text and blocks", () => {
 
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div>1<p>23</p>4</div>");
+  });
+
+  test("falsy values in block nodes", () => {
+    const cases = [
+      [false, "false"],
+      [undefined, ""],
+      [null, ""],
+      [0, "0"],
+      ["", ""],
+    ];
+    const block = createBlock("<p><owl-text-0/></p>");
+
+    for (let [value, result] of cases) {
+      const fixture = makeTestFixture();
+      mount(block([value as any]), fixture);
+      expect(fixture.innerHTML).toBe(`<p>${result}</p>`);
+    }
   });
 });
 
@@ -168,18 +168,7 @@ describe("sub blocks", () => {
   });
 });
 
-describe("remove text and elem blocks", () => {
-  test("a text block can be removed", async () => {
-    const tree = text("cat");
-    expect(fixture.childNodes.length).toBe(0);
-    mount(tree, fixture);
-    expect(fixture.innerHTML).toBe("cat");
-    expect(fixture.childNodes.length).toBe(1);
-    remove(tree);
-    expect(fixture.innerHTML).toBe("");
-    expect(fixture.childNodes.length).toBe(0);
-  });
-
+describe("remove elem blocks", () => {
   test("elem block can be removed", async () => {
     const block = createBlock("<div>foo</div>");
     const tree = block();
@@ -191,52 +180,46 @@ describe("remove text and elem blocks", () => {
   });
 });
 
-describe("multi blocks", () => {
-  test("simple multi with multiple roots", async () => {
-    const block1 = createBlock("<div>foo</div>");
-    const block2 = createBlock("<span>bar</span>");
-
-    const tree = multi([block1(), block2()]);
-
-    mount(tree, fixture);
-    expect(fixture.innerHTML).toBe("<div>foo</div><span>bar</span>");
+describe("misc", () => {
+  test("block vnode can be used as text", () => {
+    const block = createBlock("<p>a</p>");
+    mount(text(block() as any), fixture);
+    expect(fixture.textContent).toBe("<p>a</p>");
   });
+
+  //     test("reusing a block skips patching process", async () => {
+  //       const block = createBlock('<div><owl-text-0/></div>');
+  //       const foo = block(["foo"]);
+  //       const bar = block(["bar"]);
+  //       let fooCounter = 0;
+  //       let barCounter = 0;
+  //       let fooValue = "foo";
+  //       let barValue = "bar";
+  //       Object.defineProperty(foo.data, 0, {
+  //         get() {
+  //           fooCounter++;
+  //           return fooValue;
+  //         },
+  //       });
+  //       Object.defineProperty(bar.data, 0, {
+  //         get() {
+  //           barCounter++;
+  //           return barValue;
+  //         },
+  //         set(val) {
+  //           barValue = val;
+  //         },
+  //       });
+
+  //       const bdom = multi([foo, bar]);
+  //       mount(bdom, fixture);
+  //       expect(fooCounter).toBe(1);
+  //       expect(barCounter).toBe(1);
+  //       expect(fixture.innerHTML).toBe("<div>foo</div><div>bar</div>");
+
+  //       patch(bdom, multi([foo, block(["otherbar"])]));
+  //       expect(fixture.innerHTML).toBe("foootherbar");
+  //       expect(fooCounter).toBe(1);
+  //       expect(barCounter).toBe(2);
+  //     });
 });
-
-//   describe("misc", () => {
-//     test("reusing a block skips patching process", async () => {
-//       const block = createBlock('<div><owl-text-0/></div>');
-//       const foo = block(["foo"]);
-//       const bar = block(["bar"]);
-//       let fooCounter = 0;
-//       let barCounter = 0;
-//       let fooValue = "foo";
-//       let barValue = "bar";
-//       Object.defineProperty(foo.data, 0, {
-//         get() {
-//           fooCounter++;
-//           return fooValue;
-//         },
-//       });
-//       Object.defineProperty(bar.data, 0, {
-//         get() {
-//           barCounter++;
-//           return barValue;
-//         },
-//         set(val) {
-//           barValue = val;
-//         },
-//       });
-
-//       const bdom = multi([foo, bar]);
-//       mount(bdom, fixture);
-//       expect(fooCounter).toBe(1);
-//       expect(barCounter).toBe(1);
-//       expect(fixture.innerHTML).toBe("<div>foo</div><div>bar</div>");
-
-//       patch(bdom, multi([foo, block(["otherbar"])]));
-//       expect(fixture.innerHTML).toBe("foootherbar");
-//       expect(fooCounter).toBe(1);
-//       expect(barCounter).toBe(2);
-//     });
-// });

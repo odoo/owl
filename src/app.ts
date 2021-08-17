@@ -1,16 +1,18 @@
-import { Blocks as BaseBlocks } from "./bdom";
+// import { Blocks as BaseBlocks } from "./bdom";
 import { compileTemplate, Template } from "./compiler/index";
 import { globalTemplates } from "./tags";
 import { BNode } from "./b_node";
 import type { Component } from "./component";
 import { Scheduler } from "./scheduler";
 import { UTILS } from "./template_utils";
-import { BDispatch } from "./bdom/b_dispatch";
+import { blockDom } from ".";
+import { toggler } from "./bdom";
+// import { BDispatch } from "./bdom/b_dispatch";
 
-const Blocks = {
-  ...BaseBlocks,
-  BNode,
-};
+// const Blocks = {
+//   ...BaseBlocks,
+//   BNode,
+// };
 
 // -----------------------------------------------------------------------------
 //  TemplateSet
@@ -24,11 +26,11 @@ export class TemplateSet {
   constructor() {
     const call = (subTemplate: string, ctx: any, parent: any) => {
       const template = this.getTemplate(subTemplate);
-      return new BDispatch(subTemplate, template(ctx, parent));
+      return toggler(subTemplate, template(ctx, parent));
     };
 
     const getTemplate = (name: string) => this.getTemplate(name);
-    this.utils = Object.assign({}, UTILS, { call, getTemplate });
+    this.utils = Object.assign({}, UTILS, { getTemplate, call });
   }
 
   addTemplate(name: string, template: string, options: { allowDuplicate?: boolean } = {}) {
@@ -49,7 +51,7 @@ export class TemplateSet {
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       this.templates[name] = (context, parent) => this.templates[name](context, parent);
-      const template = templateFn(Blocks, this.utils);
+      const template = templateFn(blockDom, this.utils);
       this.templates[name] = template;
     }
     return this.templates[name];

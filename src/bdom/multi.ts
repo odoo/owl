@@ -114,6 +114,10 @@ class VMulti {
     const child = this.children[0];
     return child ? child.firstNode() : this.anchors![0];
   }
+
+  toString(): string {
+    return this.children.map((c) => c!.toString()).join("");
+  }
 }
 
 export function multi(children: (VNode | undefined)[]): VNode<VMulti> {

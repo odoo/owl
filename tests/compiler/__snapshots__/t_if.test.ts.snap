@@ -1,707 +1,521 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-if a t-if next to a div 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<div>foo</div>\`);
-  }
+  let block2 = createBlock(\`<div>foo</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new Block1();
+    let b2,b3;
+    b2 = block2();
     if (ctx['cond']) {
-      b1.children[1] = new BText(\`1\`);
+      b3 = text(\`1\`);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`t-if a t-if with two inner nodes 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>yip</span>\`);
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<div>yip</div>\`);
-  }
+  let block3 = createBlock(\`<span>yip</span>\`);
+  let block4 = createBlock(\`<div>yip</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(1);
+    let b2;
     if (ctx['condition']) {
-      const b2 = b1.children[0] = new BMulti(2);
-      const b3 = b2.children[0] = new Block1();
-      const b4 = b2.children[1] = new Block2();
+      let b3 = block3();
+      let b4 = block4();
+      b2 = multi([b3, b4]);
     }
-    return b1;
+    return multi([b2]);
   }
 }"
 `;
 
 exports[`t-if boolean value condition elif (no outside node) 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(4);
+    let b2,b3,b4,b5;
     if (ctx['color']=='black') {
-      b1.children[0] = new BText(\`black pearl\`);
+      b2 = text(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
-      b1.children[1] = new BText(\`yellow submarine\`);
+      b3 = text(\`yellow submarine\`);
     } else if (ctx['color']=='red') {
-      b1.children[2] = new BText(\`red is dead\`);
+      b4 = text(\`red is dead\`);
     } else {
-      b1.children[3] = new BText(\`beer\`);
+      b5 = text(\`beer\`);
     }
-    return b1;
+    return multi([b2, b3, b4, b5]);
   }
 }"
 `;
 
 exports[`t-if boolean value condition elif 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(4);
-    build() {
-      this.anchors = new Array(4);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-      this.anchors[2] = this.anchors[1].nextSibling;
-      this.anchors[3] = this.anchors[2].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/><owl-child-2/><owl-child-3/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3,b4,b5;
     if (ctx['color']=='black') {
-      b1.children[0] = new BText(\`black pearl\`);
+      b2 = text(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
-      b1.children[1] = new BText(\`yellow submarine\`);
+      b3 = text(\`yellow submarine\`);
     } else if (ctx['color']=='red') {
-      b1.children[2] = new BText(\`red is dead\`);
+      b4 = text(\`red is dead\`);
     } else {
-      b1.children[3] = new BText(\`beer\`);
+      b5 = text(\`beer\`);
     }
-    return b1;
+    return block1([], [b2, b3, b4, b5]);
   }
 }"
 `;
 
 exports[`t-if boolean value condition else 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><span>begin</span><owl-anchor/><owl-anchor/><span>end</span></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild.nextSibling;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><span>begin</span><owl-child-0/><owl-child-1/><span>end</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`ok\`);
+      b2 = text(\`ok\`);
     } else {
-      b1.children[1] = new BText(\`ok-else\`);
+      b3 = text(\`ok-else\`);
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;
 
 exports[`t-if boolean value condition false else 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><span>begin</span><owl-anchor/><owl-anchor/><span>end</span></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild.nextSibling;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><span>begin</span><owl-child-0/><owl-child-1/><span>end</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`fail\`);
+      b2 = text(\`fail\`);
     } else {
-      b1.children[1] = new BText(\`fail-else\`);
+      b3 = text(\`fail-else\`);
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;
 
 exports[`t-if can use some boolean operators in expressions 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(8);
-    build() {
-      this.anchors = new Array(8);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-      this.anchors[2] = this.anchors[1].nextSibling;
-      this.anchors[3] = this.anchors[2].nextSibling;
-      this.anchors[4] = this.anchors[3].nextSibling;
-      this.anchors[5] = this.anchors[4].nextSibling;
-      this.anchors[6] = this.anchors[5].nextSibling;
-      this.anchors[7] = this.anchors[6].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/><owl-child-2/><owl-child-3/><owl-child-4/><owl-child-5/><owl-child-6/><owl-child-7/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3,b4,b5,b6,b7,b8,b9;
     if (ctx['cond1']&&ctx['cond2']) {
-      b1.children[0] = new BText(\`and\`);
+      b2 = text(\`and\`);
     }
     if (ctx['cond1']&&ctx['cond3']) {
-      b1.children[1] = new BText(\`nope\`);
+      b3 = text(\`nope\`);
     }
     if (ctx['cond1']||ctx['cond3']) {
-      b1.children[2] = new BText(\`or\`);
+      b4 = text(\`or\`);
     }
     if (ctx['cond3']||ctx['cond4']) {
-      b1.children[3] = new BText(\`nope\`);
+      b5 = text(\`nope\`);
     }
     if (ctx['m']>3) {
-      b1.children[4] = new BText(\`mgt\`);
+      b6 = text(\`mgt\`);
     }
     if (ctx['n']>3) {
-      b1.children[5] = new BText(\`ngt\`);
+      b7 = text(\`ngt\`);
     }
     if (ctx['m']<3) {
-      b1.children[6] = new BText(\`mlt\`);
+      b8 = text(\`mlt\`);
     }
     if (ctx['n']<3) {
-      b1.children[7] = new BText(\`nlt\`);
+      b9 = text(\`nlt\`);
     }
-    return b1;
+    return block1([], [b2, b3, b4, b5, b6, b7, b8, b9]);
   }
 }"
 `;
 
 exports[`t-if div containing a t-if with two inner nodes 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<span>yip</span>\`);
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<div>yip</div>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<span>yip</span>\`);
+  let block4 = createBlock(\`<div>yip</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2;
     if (ctx['condition']) {
-      const b2 = b1.children[0] = new BMulti(2);
-      const b3 = b2.children[0] = new Block2();
-      const b4 = b2.children[1] = new Block3();
+      let b3 = block3();
+      let b4 = block4();
+      b2 = multi([b3, b4]);
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-if dynamic content after t-if with two children nodes 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
-    children = new Array(1);
-    data = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-    update(prevData, data) {
-      setText(this.anchors[0].nextSibling, prevData[0], data[0]);
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<p>1</p>\`);
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-text-0/></div>\`);
+  let block3 = createBlock(\`<p>1</p>\`);
+  let block4 = createBlock(\`<p>2</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2;
     if (ctx['condition']) {
-      const b2 = b1.children[0] = new BMulti(2);
-      const b3 = b2.children[0] = new Block2();
-      const b4 = b2.children[1] = new Block3();
+      let b3 = block3();
+      let b4 = block4();
+      b2 = multi([b3, b4]);
     }
-    b1.data[0] = ctx['text'];
-    return b1;
+    let d1 = ctx['text'];
+    return block1([d1], [b2]);
   }
 }"
 `;
 
 exports[`t-if just a t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(1);
+    let b2;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`ok\`);
+      b2 = text(\`ok\`);
     }
-    return b1;
+    return multi([b2]);
   }
 }"
 `;
 
 exports[`t-if simple t-if/t-else 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`1\`);
+      b2 = text(\`1\`);
     } else {
-      b1.children[1] = new BText(\`2\`);
+      b3 = text(\`2\`);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`t-if simple t-if/t-else in a div 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`1\`);
+      b2 = text(\`1\`);
     } else {
-      b1.children[1] = new BText(\`2\`);
+      b3 = text(\`2\`);
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;
 
 exports[`t-if t-esc with t-elif 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3;
     if (false) {
-      b1.children[0] = new BText(\`abc\`);
+      b2 = text(\`abc\`);
     } else {
-      b1.children[1] = new BText('x');
+      b3 = text('x');
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;
 
 exports[`t-if t-esc with t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2;
     if (true) {
-      b1.children[0] = new BText('x');
+      b2 = text('x');
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-if t-if and t-else with two nodes 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>a</span>\`);
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<span>b</span>\`);
-  }
+  let block4 = createBlock(\`<span>a</span>\`);
+  let block5 = createBlock(\`<span>b</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`1\`);
+      b2 = text(\`1\`);
     } else {
-      const b2 = b1.children[1] = new BMulti(2);
-      const b3 = b2.children[0] = new Block1();
-      const b4 = b2.children[1] = new Block2();
+      let b4 = block4();
+      let b5 = block5();
+      b3 = multi([b4, b5]);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`t-if t-if in a div 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2;
     if (ctx['condition']) {
-      b1.children[0] = new BText(\`ok\`);
+      b2 = text(\`ok\`);
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-if t-if in a t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span>1<owl-anchor/></span>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild.nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<span>1<owl-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2;
     if (ctx['cond1']) {
-      const b2 = b1.children[0] = new Block2();
+      let b3;
       if (ctx['cond2']) {
-        b2.children[0] = new BText(\`2\`);
+        b3 = text(\`2\`);
       }
+      b2 = block2([], [b3]);
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-if t-if/t-else with more content 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['condition']) {
       if (ctx['condition']) {
-        b1.children[0] = new BText(\`asf\`);
+        b2 = text(\`asf\`);
       }
     } else {
-      b1.children[1] = new BText(\`coucou\`);
+      b3 = text(\`coucou\`);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`t-if t-set, then t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
+    let b2;
     ctx[\`title\`] = 'test';
     if (ctx['title']) {
-      b1.children[0] = new BText(ctx['title']);
+      b2 = text(ctx['title']);
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-if t-set, then t-if, part 2 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<span>COUCOU</span>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<span>COUCOU</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
+    let b2;
     ctx[\`y\`] = true;
     ctx[\`x\`] = ctx['y'];
     if (ctx['x']) {
-      const b2 = b1.children[0] = new Block2();
+      b2 = block2();
     }
-    return b1;
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-if t-set, then t-if, part 3 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<span>AAA</span>\`);
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<span>BBB</span>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block2 = createBlock(\`<span>AAA</span>\`);
+  let block3 = createBlock(\`<span>BBB</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
+    let b2,b3;
     ctx[\`y\`] = false;
     ctx[\`x\`] = ctx['y'];
     if (ctx['x']) {
-      const b2 = b1.children[0] = new Block2();
+      b2 = block2();
     } else if (!ctx['x']) {
-      const b3 = b1.children[1] = new Block3();
+      b3 = block3();
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;
 
 exports[`t-if two consecutive t-if 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['cond1']) {
-      b1.children[0] = new BText(\`1\`);
+      b2 = text(\`1\`);
     }
     if (ctx['cond2']) {
-      b1.children[1] = new BText(\`2\`);
+      b3 = text(\`2\`);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`t-if two consecutive t-if in a div 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3;
     if (ctx['cond1']) {
-      b1.children[0] = new BText(\`1\`);
+      b2 = text(\`1\`);
     }
     if (ctx['cond2']) {
-      b1.children[1] = new BText(\`2\`);
+      b3 = text(\`2\`);
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;
 
 exports[`t-if two t-ifs next to each other 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-anchor/></div>\`);
-    children = new Array(2);
-    build() {
-      this.anchors = new Array(2);
-      this.anchors[0] = this.el.firstChild;
-      this.anchors[1] = this.anchors[0].nextSibling;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<p>1</p>\`);
-  }
-  
-  class Block4 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block2 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block4 = createBlock(\`<p>1</p>\`);
+  let block5 = createBlock(\`<p>2</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b2,b3;
     if (ctx['condition']) {
-      const b2 = b1.children[0] = new Block2();
-      b2.data[0] = ctx['text'];
+      let d1 = ctx['text'];
+      b2 = block2([d1]);
     }
     if (ctx['condition']) {
-      const b3 = b1.children[1] = new BMulti(2);
-      const b4 = b3.children[0] = new Block3();
-      const b5 = b3.children[1] = new Block4();
+      let b4 = block4();
+      let b5 = block5();
+      b3 = multi([b4, b5]);
     }
-    return b1;
+    return block1([], [b2, b3]);
   }
 }"
 `;

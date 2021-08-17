@@ -71,6 +71,10 @@ class VHtml {
   firstNode(): Node {
     return this.content[0]!;
   }
+
+  toString() {
+    return this.html;
+  }
 }
 
 export function html(str: string): VNode<VHtml> {

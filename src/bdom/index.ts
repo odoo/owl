@@ -1,5 +1,5 @@
 export { toggler } from "./toggler";
-export { createBlock } from "./block";
+export { createBlock, config } from "./block";
 export { list } from "./list";
 export { multi } from "./multi";
 export { text } from "./text";
@@ -9,6 +9,7 @@ export interface VNode<T = any> {
   mount(parent: HTMLElement, afterNode: Node | null): void;
   moveBefore(other: T | null, afterNode: Node | null): void;
   patch(other: T): void;
+  beforeRemove(): void;
   remove(): void;
   firstNode(): Node | undefined;
 
@@ -29,5 +30,6 @@ export function patch(vnode1: VNode, vnode2: VNode) {
 }
 
 export function remove(vnode: VNode) {
+  vnode.beforeRemove();
   vnode.remove();
 }

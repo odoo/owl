@@ -1,23 +1,22 @@
-// import {
-//   onDestroyed,
-//   onWillPatch,
-//   onWillUnmount,
-//   onMounted,
-//   onPatched,
-//   onWillStart,
-//   onWillUpdateProps,
-//   useComponent,
-//   status,
-//   onRender,
-//   Component,
-// } from "../src";
-import { TemplateSet } from "../src/app";
+import {
+  onDestroyed,
+  onWillPatch,
+  onWillUnmount,
+  onMounted,
+  onPatched,
+  onWillStart,
+  onWillUpdateProps,
+  useComponent,
+  status,
+  onRender,
+  Component,
+} from "../src";
+import { TemplateSet, globalTemplates, UTILS } from "../src/qweb/template_helpers";
 import { blockDom } from "../src";
 import { BDom } from "../src/bdom";
 // import { mountBlock } from "../src/bdom/block";
-import { compileTemplate, Template } from "../src/compiler/index";
-import { globalTemplates, xml } from "../src/tags";
-import { UTILS } from "../src/template_utils";
+import { compileTemplate, Template } from "../src/qweb/compiler";
+import { xml } from "../src/tags";
 // import { UTILS } from "../src/template_utils";
 
 const mount = blockDom.mount;
@@ -74,10 +73,10 @@ export function trim(str: string): string {
   return str.replace(/\s/g, "");
 }
 
-// export function addTemplate(name: string, template: string): string {
-//   globalTemplates[name] = template;
-//   return name;
-// }
+export function addTemplate(name: string, template: string): string {
+  globalTemplates[name] = template;
+  return name;
+}
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -150,57 +149,57 @@ export function snapshotEverything() {
   });
 }
 
-// export function useLogLifecycle(steps: string[]) {
-//   const component = useComponent();
-//   const name = component.constructor.name;
-//   steps.push(`${name}:setup`);
-//   expect(name + ": " + status(component)).toBe(name + ": " + "new");
+export function useLogLifecycle(steps: string[]) {
+  const component = useComponent();
+  const name = component.constructor.name;
+  steps.push(`${name}:setup`);
+  expect(name + ": " + status(component)).toBe(name + ": " + "new");
 
-//   onWillStart(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "new");
-//     steps.push(`${name}:willStart`);
-//   });
+  onWillStart(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "new");
+    steps.push(`${name}:willStart`);
+  });
 
-//   onMounted(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-//     steps.push(`${name}:mounted`);
-//   });
+  onMounted(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:mounted`);
+  });
 
-//   onWillUpdateProps(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-//     steps.push(`${name}:willUpdateProps`);
-//   });
+  onWillUpdateProps(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:willUpdateProps`);
+  });
 
-//   onRender(() => {
-//     steps.push(`${name}:render`);
-//   });
+  onRender(() => {
+    steps.push(`${name}:render`);
+  });
 
-//   onWillPatch(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-//     steps.push(`${name}:willPatch`);
-//   });
+  onWillPatch(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:willPatch`);
+  });
 
-//   onPatched(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-//     steps.push(`${name}:patched`);
-//   });
+  onPatched(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:patched`);
+  });
 
-//   onWillUnmount(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-//     steps.push(`${name}:willUnmount`);
-//   });
+  onWillUnmount(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    steps.push(`${name}:willUnmount`);
+  });
 
-//   onDestroyed(() => {
-//     expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
-//     steps.push(`${name}:destroyed`);
-//   });
-// }
+  onDestroyed(() => {
+    expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
+    steps.push(`${name}:destroyed`);
+  });
+}
 
-// export function children(w: Component): Component[] {
-//   const childrenMap = w.__owl__.children;
-//   return Object.keys(childrenMap).map((id) => childrenMap[id].component);
-// }
+export function children(w: Component): Component[] {
+  const childrenMap = w.__owl__.children;
+  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
+}
 
-// export function isDirectChildOf(child: Component, parent: Component): boolean {
-//   return children(parent).includes(child);
-// }
+export function isDirectChildOf(child: Component, parent: Component): boolean {
+  return children(parent).includes(child);
+}

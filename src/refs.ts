@@ -2,8 +2,8 @@
 // useRef
 // -----------------------------------------------------------------------------
 
-import type { Component } from "./component";
-import { getCurrent } from "./b_node";
+import type { Component } from "./component/component";
+import { getCurrent } from "./component/component_node";
 
 /**
  * The purpose of this hook is to allow components to get a reference to a sub

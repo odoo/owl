@@ -1,637 +1,466 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Portal Portal composed with t-slot 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<div>child2</div>\`);
-  }
+  let block1 = createBlock(\`<div>child2</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`Portal Portal composed with t-slot 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
-    const b1 = callSlot(ctx, node, key, 'default');
-    return b1;
+    return callSlot(ctx, node, key, 'default');
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b2.slots = {'default': slot2(ctx)};
-    return b2;
+    return assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
 
 exports[`Portal Portal composed with t-slot 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = node.getChild(\`Child2\`, {}, key + \`__3\`, ctx);
-    b2.handlers = new Array(1);
-    b2.handlers[0] = ['custom', ctx, '_handled'];
-    return b2;
+    let h4 = [\`custom\`, ctx, '_handled'];
+    return assign(node.getChild(\`Child2\`, {}, key + \`__3\`, ctx), {handlers: [h4]});
   }
   
   return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Child\`, {}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal basic use of portal 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><span>1</span><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild.nextSibling;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block1 = createBlock(\`<div><span>1</span><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new Block2();
-    return b2;
+    return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal conditional use of Portal (with sub Component) 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<p><owl-text/></p>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<p><owl-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`Portal conditional use of Portal (with sub Component) 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>1</span>\`);
-  }
+  let block2 = createBlock(\`<span>1</span>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b3 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
-    return b3;
+    return node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new Block1();
+    let b2,b4;
+    b2 = block2();
     if (ctx['state'].hasPortal) {
-      const b4 = b1.children[1] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-      b4.slots = {'default': slot2(ctx)};
+      b4 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
     }
-    return b1;
+    return multi([b2, b4]);
   }
 }"
 `;
 
 exports[`Portal conditional use of Portal 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>1</span>\`);
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block2 = createBlock(\`<span>1</span>\`);
+  let block3 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b3 = new Block2();
-    return b3;
+    return block3();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
-    const b2 = b1.children[0] = new Block1();
+    let b2,b4;
+    b2 = block2();
     if (ctx['state'].hasPortal) {
-      const b4 = b1.children[1] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-      b4.slots = {'default': slot2(ctx)};
+      b4 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
     }
-    return b1;
+    return multi([b2, b4]);
   }
 }"
 `;
 
 exports[`Portal lifecycle hooks of portal sub component are properly called 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`Portal lifecycle hooks of portal sub component are properly called 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
-    return b2;
+    return node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
+    let b3;
     if (ctx['state'].hasChild) {
-      const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-      b3.slots = {'default': slot2(ctx)};
+      b3 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
     }
-    return b1;
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal portal could have dynamically no content 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BMulti(1);
+    let b3;
     if (ctx['state'].val) {
-      const b3 = b2.children[0] = new Block2();
-      b3.data[0] = ctx['state'].val;
+      let d1 = ctx['state'].val;
+      b3 = block3([d1]);
     }
-    return b2;
+    return multi([b3]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b4 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b4.slots = {'default': slot2(ctx)};
-    return b1;
+    let b4 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b4]);
   }
 }"
 `;
 
 exports[`Portal portal with child and props 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`Portal portal with child and props 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
-    return b2;
+    return node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal portal with dynamic body 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<div/>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block4 = createBlock(\`<div/>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BMulti(2);
+    let b3,b4;
     if (ctx['state'].val) {
-      const b3 = b2.children[0] = new Block2();
-      b3.data[0] = ctx['state'].val;
+      let d1 = ctx['state'].val;
+      b3 = block3([d1]);
     } else {
-      const b4 = b2.children[1] = new Block3();
+      b4 = block4();
     }
-    return b2;
+    return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b5 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b5.slots = {'default': slot2(ctx)};
-    return b1;
+    let b5 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b5]);
   }
 }"
 `;
 
 exports[`Portal portal with many children 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<div>1</div>\`);
-  }
-  
-  class Block3 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<div>1</div>\`);
+  let block4 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BMulti(2);
-    const b3 = b2.children[0] = new Block2();
-    const b4 = b2.children[1] = new Block3();
-    return b2;
+    let b3 = block3();
+    let b4 = block4();
+    return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b5 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b5.slots = {'default': slot2(ctx)};
-    return b1;
+    let b5 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b5]);
   }
 }"
 `;
 
 exports[`Portal portal with no content 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BMulti(1);
+    let b3;
     if (false) {
-      b2.children[0] = new BText('ABC');
+      b3 = text('ABC');
     }
-    return b2;
+    return multi([b3]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b4 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b4]);
   }
 }"
 `;
 
 exports[`Portal portal with only text as content 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BText('only text');
-    return b2;
+    return text('only text');
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal portal with target not in dom 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<div>2</div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return block2();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#does-not-exist'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal portal's parent's env is not polluted 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<button>child</button>\`);
-  }
+  let block1 = createBlock(\`<button>child</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`Portal portal's parent's env is not polluted 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = node.getChild(\`Child\`, {}, key + \`__3\`, ctx);
-    return b2;
+    return node.getChild(\`Child\`, {}, key + \`__3\`, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal with target in template (after portal) 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><span>1</span><owl-anchor/><div id=\\"local-target\\"/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild.nextSibling;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block1 = createBlock(\`<div><span>1</span><owl-child-0/><div id=\\"local-target\\"/></div>\`);
+  let block2 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new Block2();
-    return b2;
+    return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal with target in template (before portal) 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><div id=\\"local-target\\"/><span>1</span><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild.nextSibling.nextSibling;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<p>2</p>\`);
-  }
+  let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new Block2();
-    return b2;
+    return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#local-target'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<input id=\\"target-me\\"/>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      this.updateAttr(this.el, \`placeholder\`, this.data[0]);
-    }
-  }
+  let block1 = createBlock(\`<input id=\\"target-me\\" owl-attribute-0=\\"placeholder\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    const b2 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
-    return b2;
+    return node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b3 = b1.children[0] = node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b3 = assign(node.getChild(\`Portal\`, {target: '#outside'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
   }
 }"
 `;

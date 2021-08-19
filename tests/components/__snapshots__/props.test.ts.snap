@@ -1,243 +1,160 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].greetings;
-    return b1;
+    let d1 = ctx['props'].greetings;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = node.getChild(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx);
-    return b1;
+    let b2 = node.getChild(\`Child\`, {greetings: ctx['greetings']}, key + \`__1\`, ctx);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`basics explicit object prop 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['state'].someval;
-    return b1;
+    let d1 = ctx['state'].someval;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`basics explicit object prop 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = node.getChild(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx);
-    return b1;
+    let b2 = node.getChild(\`Child\`, {value: ctx['state'].val}, key + \`__1\`, ctx);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`basics t-set with a body expression can be passed in props, and then t-raw 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/><owl-anchor/></span>\`);
-    children = new Array(1);
-    data = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild.nextSibling;
-    }
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/><owl-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    b1.children[0] = new BHtml(ctx['props'].val);
-    return b1;
+    let d1 = ctx['props'].val;
+    let b2 = html(ctx['props'].val);
+    return block1([d1], [b2]);
   }
 }"
 `;
 
 exports[`basics t-set with a body expression can be passed in props, and then t-raw 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
-  
-  class Block2 extends BStatic {
-    static el = elem(\`<p>43</p>\`);
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<p>43</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
-    const b2 = new Block2();
+    let b2 = block2();
     ctx[\`abc\`] = b2;
-    b1.children[0] = node.getChild(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx);
-    return b1;
+    let b3 = node.getChild(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx);
+    return block1([], [b3]);
   }
 }"
 `;
 
 exports[`basics t-set with a body expression can be used as textual prop 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`basics t-set with a body expression can be used as textual prop 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
     ctx[\`abc\`] = \`42\`;
-    b1.children[0] = node.getChild(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx);
-    return b1;
+    let b2 = node.getChild(\`Child\`, {val: ctx['abc']}, key + \`__1\`, ctx);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`basics t-set works  1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`basics t-set works  2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new Block1();
     ctx[\`val\`] = 42;
-    b1.children[0] = node.getChild(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx);
-    return b1;
+    let b2 = node.getChild(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx);
+    return block1([], [b2]);
   }
 }"
 `;

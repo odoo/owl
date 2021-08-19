@@ -1,5 +1,4 @@
-import { mount, useState, Component, App } from "../../src";
-import { status } from "../../src/status";
+import { App, Component, mount, status, useState } from "../../src";
 import { xml } from "../../src/tags";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
@@ -33,7 +32,7 @@ describe("basics", () => {
     }
 
     await mount(Test, fixture);
-    expect(el).toBeNull();
+    expect(el).toBeUndefined();
   });
 
   test("cannot mount on a documentFragment", async () => {
@@ -92,7 +91,7 @@ describe("basics", () => {
     const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("<span></span><div></div>");
-    expect(component.el).toEqual(null);
+    expect((component.el as any).tagName).toBe("SPAN");
   });
 
   test("component with dynamic content can be updated", async () => {
@@ -146,7 +145,7 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
       setup() {
-        expect(this.el).toBe(null);
+        expect(this.el).toBe(undefined);
         expect(status(this)).toBe("new");
       }
     }
@@ -482,7 +481,7 @@ describe("basics", () => {
     }
     const comp = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe(`<div><h1>h1</h1><span>1</span></div>`);
-    comp.el!.querySelector("h1")!.appendChild(document.createElement("p"));
+    (comp.el! as any).querySelector("h1")!.appendChild(document.createElement("p"));
     expect(fixture.innerHTML).toBe("<div><h1>h1<p></p></h1><span>1</span></div>");
 
     comp.state.value++;

@@ -1,5 +1,5 @@
 import { Component, mount } from "../../src";
-import { status } from "../../src/status";
+import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 

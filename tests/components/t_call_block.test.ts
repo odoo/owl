@@ -1,4 +1,4 @@
-import { BText } from "../../src/bdom/b_text";
+import { text } from "../../src/bdom";
 import { Component, mount, xml } from "../../src/index";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
@@ -15,7 +15,7 @@ describe("t-call-block", () => {
     class Test extends Component {
       static template = xml`<div><t t-call-block="myBlock()"/></div>`;
       myBlock() {
-        return new BText("hello");
+        return text("hello");
       }
     }
 

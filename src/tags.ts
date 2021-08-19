@@ -1,8 +1,8 @@
+import { globalTemplates } from "./qweb/template_helpers";
+
 // -----------------------------------------------------------------------------
 //  Global templates
 // -----------------------------------------------------------------------------
-
-export const globalTemplates: { [key: string]: string } = {};
 
 export function xml(strings: TemplateStringsArray, ...args: any[]) {
   const name = `__template__${xml.nextId++}`;

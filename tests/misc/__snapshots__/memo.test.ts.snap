@@ -1,95 +1,87 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Memo if no prop change, prevent renderings from above  1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BText(ctx['props'].value);
-    return b1;
+    return text(ctx['props'].value);
   }
 }"
 `;
 
 exports[`Memo if no prop change, prevent renderings from above  2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BMulti(3);
-    b2.children[0] = new BText(ctx['state'].a);
-    b2.children[1] = new BText(ctx['state'].b);
-    b2.children[2] = new BText(ctx['state'].c);
-    return b2;
+    let b6 = text(ctx['state'].a);
+    let b7 = text(ctx['state'].b);
+    let b8 = text(ctx['state'].c);
+    return multi([b6, b7, b8]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(4);
-    b1.children[0] = new BText(ctx['state'].a);
-    b1.children[1] = new BText(ctx['state'].b);
-    b1.children[2] = new BText(ctx['state'].c);
-    const b3 = b1.children[3] = node.getChild(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b2 = text(ctx['state'].a);
+    let b3 = text(ctx['state'].b);
+    let b4 = text(ctx['state'].c);
+    let b9 = assign(node.getChild(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return multi([b2, b3, b4, b9]);
   }
 }"
 `;
 
 exports[`Memo if no props, prevent renderings from above  1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BText(ctx['props'].value);
-    return b1;
+    return text(ctx['props'].value);
   }
 }"
 `;
 
 exports[`Memo if no props, prevent renderings from above  2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
   const slot3 = ctx => (node, key) => {
-    const b2 = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, ctx);
-    return b2;
+    return node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
-    b1.children[0] = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx);
-    const b3 = b1.children[1] = node.getChild(\`Memo\`, {}, key + \`__2\`, ctx);
-    b3.slots = {'default': slot3(ctx)};
-    return b1;
+    let b2 = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx);
+    let b4 = assign(node.getChild(\`Memo\`, {}, key + \`__2\`, ctx), {slots: {'default': slot3(ctx)}});
+    return multi([b2, b4]);
   }
 }"
 `;
 
 exports[`Memo if no props, prevent renderings from above (work with simple html)  1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
-    const b2 = new BText(ctx['state'].value);
-    return b2;
+    return text(ctx['state'].value);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
-    b1.children[0] = new BText(ctx['state'].value);
-    const b3 = b1.children[1] = node.getChild(\`Memo\`, {}, key + \`__1\`, ctx);
-    b3.slots = {'default': slot2(ctx)};
-    return b1;
+    let b2 = text(ctx['state'].value);
+    let b4 = assign(node.getChild(\`Memo\`, {}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    return multi([b2, b4]);
   }
 }"
 `;

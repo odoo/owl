@@ -33,10 +33,14 @@ class VToggler {
       this.child.patch(other.child);
     } else {
       other.child.mount(this.parentEl!, this.child.firstNode()!);
+      this.child.beforeRemove();
       this.child.remove();
       this.child = other.child;
+      this.key = other.key;
     }
   }
+
+  beforeRemove() {}
 
   remove() {
     this.child.remove();

@@ -13,23 +13,12 @@ const elementRemove = elementProto.remove;
 const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
 const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
 
-export let defaultHandler = function (data: any, ev: Event) {
-  data(ev);
-};
-
-let mainHandler: typeof defaultHandler = defaultHandler;
-
-export function setupMainHandler(handler: typeof defaultHandler) {
-  mainHandler = handler;
-}
-
-let shouldNormalize = true;
-
-export function setupNormalize(value: boolean) {
-  shouldNormalize = value;
-}
-
 const NO_OP = () => {};
+
+export const config = {
+  shouldNormalizeDom: true,
+  mainEventHandler: (data: any, ev: Event) => data(ev),
+};
 
 // -----------------------------------------------------------------------------
 // Block
@@ -37,7 +26,12 @@ const NO_OP = () => {};
 
 type BlockType = (data?: any[], children?: VNode[]) => VNode;
 
+const cache: { [key: string]: BlockType } = {};
+
 export function createBlock(str: string): BlockType {
+  if (str in cache) {
+    return cache[str];
+  }
   const info: BuilderContext["info"] = [];
   const ctx: BuilderContext = {
     path: ["el"],
@@ -46,12 +40,14 @@ export function createBlock(str: string): BlockType {
 
   const doc = new DOMParser().parseFromString(str, "text/xml");
   const node = doc.firstChild!;
-  if (shouldNormalize) {
+  if (config.shouldNormalizeDom) {
     normalizeNode(node as any);
   }
   const template = processDescription(node, ctx) as any;
 
-  return compileBlock(info, template);
+  const result = compileBlock(info, template);
+  cache[str] = result;
+  return result;
 }
 
 function normalizeNode(node: HTMLElement | Text) {
@@ -345,7 +341,7 @@ function createEventHandler(event: string) {
       }
       handlers[event] = data;
       this.addEventListener(event, (ev) => {
-        mainHandler(handlers[event], ev);
+        config.mainEventHandler(handlers[event], ev);
       });
     },
     update(this: HTMLElement, data: any) {
@@ -496,6 +492,20 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
       }
     };
   }
+  if (children.length) {
+    B = class extends B {
+      beforeRemove() {
+        // todo: share that code with multi?
+        const children = (this as any).children!!;
+        for (let i = 0, l = children.length; i < l; i++) {
+          const child = children[i];
+          if (child) {
+            child.beforeRemove();
+          }
+        }
+      }
+    };
+  }
   return (data?: any[], children?: (VNode | undefined)[]) => new B(data, children);
 }
 
@@ -534,6 +544,7 @@ function createBlockClass(
       this.children = children;
     }
 
+    beforeRemove() {}
     remove() {
       elementRemove.call(this.el);
     }
@@ -627,6 +638,7 @@ function createBlockClass(
             if (child2) {
               child1.patch(child2);
             } else {
+              child1.beforeRemove();
               child1.remove();
               children1[i] = undefined;
             }

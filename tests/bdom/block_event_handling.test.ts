@@ -1,5 +1,5 @@
-import { mount, createBlock, multi } from "../../src/bdom";
-import { defaultHandler, setupMainHandler } from "../../src/bdom/block";
+import { mount, createBlock, multi, config } from "../../src/bdom";
+// import { defaultHandler, setupMainHandler } from "../../src/bdom/block";
 import { makeTestFixture } from "../helpers";
 
 //------------------------------------------------------------------------------
@@ -7,11 +7,11 @@ import { makeTestFixture } from "../helpers";
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-let initialHandler = defaultHandler;
+let initialHandler = config.mainEventHandler;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  setupMainHandler(initialHandler);
+  config.mainEventHandler = initialHandler;
 });
 
 afterEach(() => {
@@ -19,14 +19,14 @@ afterEach(() => {
 });
 
 test("simple event handling ", async () => {
-  setupMainHandler((data, ev) => {
+  config.mainEventHandler = (data, ev) => {
     if (typeof data === "function") {
       data();
     } else {
       const [owner, method] = data;
       owner[method]();
     }
-  });
+  };
 
   const block = createBlock('<div owl-handler-0="click"></div>');
   let n = 0;

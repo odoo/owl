@@ -1,8 +1,8 @@
 import { App, Component, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
-import { Fiber } from "../../src/fibers";
+import { Fiber } from "../../src/component/fibers";
 import { onMounted, onPatched, onWillPatch, onWillUnmount } from "../../src/lifecycle_hooks";
-import { Scheduler } from "../../src/scheduler";
-import { status } from "../../src/status";
+import { Scheduler } from "../../src/component/scheduler";
+import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
 import {
   makeDeferred,
@@ -2056,7 +2056,7 @@ test("concurrent renderings scenario 16", async () => {
   ]);
 });
 
-// test("concurrent renderings scenario 17", async () => {
+// test.skip("concurrent renderings scenario 17", async () => {
 //   class Parent extends Component {
 //     static template = xml`<span><t t-esc="state.value"/></span>`;
 //     state = useState({ value: 1 });

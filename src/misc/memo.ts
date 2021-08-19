@@ -1,12 +1,12 @@
-import { Component } from "../component";
-import type { BNode } from "../b_node";
+import { Component } from "../component/component";
+import type { ComponentNode } from "../component/component_node";
 import { xml } from "../tags";
-import { Fiber } from "../fibers";
+import { Fiber } from "../component/fibers";
 
 export class Memo extends Component {
   static template = xml`<t t-slot="default"/>`;
 
-  constructor(props: any, env: any, node: BNode) {
+  constructor(props: any, env: any, node: ComponentNode) {
     super(props, env, node);
 
     // prevent patching process conditionally

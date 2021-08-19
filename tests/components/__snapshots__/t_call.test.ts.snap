@@ -1,382 +1,293 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-call dynamic t-call 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const b1 = new BText(\` owl \`);
+    let b1 = text(\` owl \`);
     ctx[zero] = b1;
     const template2 = (ctx['current'].template);
-    const b2 = call(template2, ctx, node, key + \`__1\`);
-    return b2;
+    return call(template2, ctx, node, key + \`__1\`);
   }
 }"
 `;
 
 exports[`t-call dynamic t-call 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<div>foo</div>\`);
-  }
+  let block1 = createBlock(\`<div>foo</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`t-call dynamic t-call 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BText(\`bar\`);
-    return b1;
+    return text(\`bar\`);
   }
 }"
 `;
 
 exports[`t-call handlers are properly bound through a t-call 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<p>lucas</p>\`);
-    handlers = new Array(1);
-    build() {
-      this.setupHandler(this.el, \`click\`, 0);
-    }
-  }
+  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const b1 = new Block1();
-    b1.handlers[0] = [ctx, 'update'];
-    return b1;
+    let d1 = [ctx, 'update'];
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-call handlers are properly bound through a t-call 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/><owl-text/></div>\`);
-    children = new Array(1);
-    data = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-    update(prevData, data) {
-      setText(this.anchors[0].nextSibling, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/><owl-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
-    b1.data[0] = ctx['counter'];
-    return b1;
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    let d1 = ctx['counter'];
+    return block1([d1], [b2]);
   }
 }"
 `;
 
 exports[`t-call handlers with arguments are properly bound through a t-call 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<p>lucas</p>\`);
-    handlers = new Array(1);
-    build() {
-      this.setupHandler(this.el, \`click\`, 0);
-    }
-  }
+  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const b1 = new Block1();
     const arg1 = [ctx['a']];
-    b1.handlers[0] = [ctx, 'update', arg1];
-    return b1;
+    let d1 = [ctx, 'update', arg1];
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-call handlers with arguments are properly bound through a t-call 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
-    return b1;
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-call parent is set within t-call 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`t-call parent is set within t-call 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>lucas</span>\`);
-  }
+  let block1 = createBlock(\`<span>lucas</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`t-call parent is set within t-call 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
-    return b1;
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
 
 exports[`t-call parent is set within t-call with no parentNode 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`t-call parent is set within t-call with no parentNode 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>lucas</span>\`);
-  }
+  let block1 = createBlock(\`<span>lucas</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`t-call parent is set within t-call with no parentNode 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = callTemplate_2(ctx, node, key + \`__1\`);
-    return b1;
+    return callTemplate_2(ctx, node, key + \`__1\`);
   }
 }"
 `;
 
 exports[`t-call sub components in two t-calls 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-call sub components in two t-calls 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   const callTemplate_4 = getTemplate(\`sub\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block3 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['state'].val===1) {
-      b1.children[0] = callTemplate_2(ctx, node, key + \`__1\`);
+      b2 = callTemplate_2(ctx, node, key + \`__1\`);
     } else {
-      const b2 = b1.children[1] = new Block1();
-      b2.children[0] = callTemplate_4(ctx, node, key + \`__3\`);
+      let b4 = callTemplate_4(ctx, node, key + \`__3\`);
+      b3 = block3([], [b4]);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`t-call sub components in two t-calls 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`t-call t-call in t-foreach and children component 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`Child\`, {val: ctx['val']}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`t-call t-call in t-foreach and children component 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].val;
-    return b1;
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`t-call t-call in t-foreach and children component 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
-  const callTemplate_3 = getTemplate(\`__template__9\`);
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    const b2 = b1.children[0] = new BCollection(['a','b','c'], true, false);
     ctx = Object.create(ctx);
-    const k1 = b2.values, v1 = b2.collection, l1 = k1.length;
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`val\`] = v1[i1];
+    const [k2, v2, l2, c2] = prepareList(['a','b','c']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`val\`] = v2[i1];
       ctx[\`val_first\`] = i1 === 0;
-      ctx[\`val_last\`] = i1 === v1.length - 1;
+      ctx[\`val_last\`] = i1 === v2.length - 1;
       ctx[\`val_index\`] = i1;
-      ctx[\`val_value\`] = k1[i1];
+      ctx[\`val_value\`] = k2[i1];
       let key1 = ctx['val'];
-      b2.children[i1] = callTemplate_3(ctx, node, key + \`__2__\${key1}\`);
-      b2.keys[i1] = key1;
+      c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
     }
-    return b1;
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
   }
 }"
 `;

@@ -37,6 +37,8 @@ class VText {
     }
   }
 
+  beforeRemove() {}
+
   remove() {
     nodeRemoveChild.call(this.parentEl, this.el!);
   }

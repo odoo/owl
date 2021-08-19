@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 describe("style and class handling", () => {
-  test("can set style and class on component", async () => {
+  test("can set style and class inside component", async () => {
     class Test extends Component {
       static template = xml`
           <div style="font-weight:bold;" class="some-class">world</div>
@@ -19,35 +19,48 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<div style="font-weight:bold;" class="some-class">world</div>`);
   });
 
-  test("can set class on sub component", async () => {
+  test("can set class on sub component, as prop", async () => {
     class Child extends Component {
-      static template = xml`<div>child</div>`;
+      static template = xml`<div t-att-class="props.class">child</div>`;
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="some-class" />`;
+      static template = xml`<Child class="'some-class'" />`;
       static components = { Child };
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="some-class">child</div>`);
   });
 
-  test("nothing happens if sub component is just some text", async () => {
+  test("no class is set is parent does not give it as prop", async () => {
     class Child extends Component {
-      static template = xml`child`;
+      static template = xml`<div t-att-class="props.class">child</div>`;
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="some-class" />`;
+      static template = xml`<Child />`;
       static components = { Child };
     }
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe(`child`);
+    expect(fixture.innerHTML).toBe(`<div>child</div>`);
+  });
+
+  test("no class is set is child ignores it", async () => {
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child class="'hey'"/>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(`<div>child</div>`);
   });
 
   test("empty class attribute is not added on widget root el", async () => {
     class Child extends Component {
-      static template = xml`<span/>`;
+      static template = xml`<span t-att-class="props.class"/>`;
     }
     class Parent extends Component {
       static template = xml`<div><Child class=""/></div>`;
@@ -59,11 +72,11 @@ describe("style and class handling", () => {
 
   test("can set more than one class on sub component", async () => {
     class Child extends Component {
-      static template = xml`<div>child</div>`;
+      static template = xml`<div t-att-class="props.class">child</div>`;
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="a  b" />`;
+      static template = xml`<Child class="'a  b'" />`;
       static components = { Child };
     }
     await mount(Parent, fixture);
@@ -72,87 +85,62 @@ describe("style and class handling", () => {
 
   test("component class and parent class combine together", async () => {
     class Child extends Component {
-      static template = xml`<div class="child">child</div>`;
+      static template = xml`<div class="child" t-att-class="props.class">child</div>`;
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="from parent" />`;
+      static template = xml`<Child class="'from parent'" />`;
       static components = { Child };
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(`<div class="child from parent">child</div>`);
   });
 
-  test("class is properly added on widget root el", async () => {
-    class Child extends Component {
-      static template = xml`<div class="c"/>`;
-    }
-    class Parent extends Component {
-      static template = xml`<div><Child class="a b"/></div>`;
-      static components = { Child };
-    }
-    await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe(`<div><div class="c a b"></div></div>`);
-  });
-
-  test("setting a class on a child component with text node", async () => {
-    class Child extends Component {
-      static template = xml`child`;
-    }
-
-    class Parent extends Component {
-      static template = xml`<Child class="some-class" />`;
-      static components = { Child };
-    }
-    await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe(`child`);
-  });
-
   test("can set class on sub sub component", async () => {
     class ChildChild extends Component {
-      static template = xml`<div>childchild</div>`;
+      static template = xml`<div t-att-class="props.class">childchild</div>`;
     }
 
     class Child extends Component {
-      static template = xml`<ChildChild class="fromchild" />`;
+      static template = xml`<ChildChild class="(props.class || '') + ' fromchild'" />`;
       static components = { ChildChild };
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="fromparent" />`;
+      static template = xml`<Child class="'fromparent'" />`;
       static components = { Child };
     }
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe(`<div class="fromchild fromparent">childchild</div>`);
+    expect(fixture.innerHTML).toBe(`<div class="fromparent fromchild">childchild</div>`);
   });
 
   test("can set class on multi root component", async () => {
     class Child extends Component {
-      static template = xml`<div>a</div><span>b</span>`;
+      static template = xml`<div>a</div><span t-att-class="props.class">b</span>`;
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="fromparent" />`;
+      static template = xml`<Child class="'fromparent'" />`;
       static components = { Child };
     }
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe(`<div class="fromparent">a</div><span>b</span>`);
+    expect(fixture.innerHTML).toBe(`<div>a</div><span class="fromparent">b</span>`);
   });
 
   test("class on sub component, which is switched to another", async () => {
     class ChildA extends Component {
-      static template = xml`<div>a</div>`;
+      static template = xml`<div t-att-class="props.class">a</div>`;
     }
     class ChildB extends Component {
-      static template = xml`<span>b</span>`;
+      static template = xml`<span t-att-class="props.class">b</span>`;
     }
     class Child extends Component {
-      static template = xml`<ChildA t-if="props.child==='a'"/><ChildB t-else=""/>`;
+      static template = xml`<ChildA class="props.class" t-if="props.child==='a'"/><ChildB class="props.class" t-else=""/>`;
       static components = { ChildA, ChildB };
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="someclass" child="state.child" />`;
+      static template = xml`<Child class="'someclass'" child="state.child" />`;
       static components = { Child };
 
       state = useState({ child: "a" });
@@ -165,30 +153,30 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<span class="someclass">b</span>`);
   });
 
-  test("t-att-class is properly added/removed on widget root el", async () => {
-    class Child extends Component {
-      static template = xml`<div class="c"/>`;
-    }
-    class Parent extends Component {
-      static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
-      static components = { Child };
-      state = useState({ a: true, b: false });
-    }
-    const widget = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
+  // test("t-att-class is properly added/removed on widget root el", async () => {
+  //   class Child extends Component {
+  //     static template = xml`<div class="c"/>`;
+  //   }
+  //   class Parent extends Component {
+  //     static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
+  //     static components = { Child };
+  //     state = useState({ a: true, b: false });
+  //   }
+  //   const widget = await mount(Parent, fixture);
+  //   expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
 
-    widget.state.a = false;
-    widget.state.b = true;
-    await nextTick();
-    expect(fixture.innerHTML).toBe(`<div><div class="c b"></div></div>`);
-  });
+  //   widget.state.a = false;
+  //   widget.state.b = true;
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe(`<div><div class="c b"></div></div>`);
+  // });
 
   test("class with extra whitespaces", async () => {
     class Child extends Component {
-      static template = xml`<div/>`;
+      static template = xml`<div t-att-class="props.class"/>`;
     }
     class Parent extends Component {
-      static template = xml`<Child class="a  b c   d"/>`;
+      static template = xml`<Child class="'a  b c   d'"/>`;
       static components = { Child };
     }
     await mount(Parent, fixture);
@@ -197,10 +185,10 @@ describe("style and class handling", () => {
 
   test("class with extra whitespaces (variation)", async () => {
     class Child extends Component {
-      static template = xml`<div/>`;
+      static template = xml`<div t-att-class="props.class"/>`;
     }
     class Parent extends Component {
-      static template = xml`<p><Child class="a  b c   d"/></p>`;
+      static template = xml`<p><Child class="'a  b c   d'"/></p>`;
       static components = { Child };
     }
     await mount(Parent, fixture);
@@ -210,7 +198,7 @@ describe("style and class handling", () => {
   test("t-att-class is properly added/removed on widget root el (v2)", async () => {
     let child: any = null;
     class Child extends Component {
-      static template = xml`<span class="c" t-att-class="{ d: state.d }"/>`;
+      static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
       state = useState({ d: true });
       setup() {
         child = this;
@@ -220,7 +208,7 @@ describe("style and class handling", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child class="a" t-att-class="{ b: state.b }" />
+          <Child class="{ b: state.b }" />
         </div>`;
       static components = { Child };
       state = useState({ b: true });
@@ -228,22 +216,22 @@ describe("style and class handling", () => {
     const widget = await mount(Parent, fixture);
 
     const span = fixture.querySelector("span")!;
-    expect(span.className).toBe("c d a b");
+    expect(span.className).toBe("c d b");
 
     widget.state.b = false;
     await nextTick();
-    expect(span.className).toBe("c d a");
+    expect(span.className).toBe("c d");
 
     child.state.d = false;
     await nextTick();
-    expect(span.className).toBe("c a");
+    expect(span.className).toBe("c");
 
     widget.state.b = true;
     await nextTick();
-    expect(span.className).toBe("c a b");
+    expect(span.className).toBe("c b");
 
     child.state.d = true;
     await nextTick();
-    expect(span.className).toBe("c a b d");
+    expect(span.className).toBe("c b d");
   });
 });

@@ -1,0 +1,370 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-on can bind event handler 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'add'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with arguments 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const arg1 = [5];
+    let d1 = [ctx, 'add', arg1];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with empty  object 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const arg1 = [{}];
+    let d1 = [ctx, 'doSomething', arg1];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with empty object (with non empty inner string) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const arg1 = [{}];
+    let d1 = [ctx, 'doSomething', arg1];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with empty object (with non empty inner string) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<ul><owl-child-0/></ul>\`);
+  let block3 = createBlock(\`<li><a owl-handler-0=\\"click\\">link</a></li>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(['someval']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`action\`] = v2[i1];
+      ctx[\`action_index\`] = i1;
+      let key1 = ctx['action_index'];
+      const arg1 = [ctx['action']];
+      let d1 = [ctx, 'activate', arg1];
+      c2[i1] = withKey(block3([d1]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-on can bind handlers with object arguments 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const arg1 = [{val:5}];
+    let d1 = [ctx, 'add', arg1];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on can bind two event handlers 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\" owl-handler-1=\\"dblclick\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'handleClick'];
+    let d2 = [ctx, 'handleDblClick'];
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'add'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block2 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k1, v1, l1, c1] = prepareList([1]);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
+      let key1 = ctx['value'];
+      let d1 = [ctx, 'add'];
+      c1[i1] = withKey(block2([d1]), key1);
+    }
+    return list(c1);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 3 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'add'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 3 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callTemplate_2(ctx, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 4 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'add'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 4 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k1, v1, l1, c1] = prepareList([1]);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`value\`] = v1[i1];
+      ctx[\`value_first\`] = i1 === 0;
+      ctx[\`value_last\`] = i1 === v1.length - 1;
+      ctx[\`value_index\`] = i1;
+      ctx[\`value_value\`] = k1[i1];
+      let key1 = ctx['value'];
+      c1[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
+    }
+    return list(c1);
+  }
+}"
+`;
+
+exports[`t-on receive event in first argument 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'add'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement (function call) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const v1 = ctx['state'];
+    let d1 = (e) => {const res = (() => { return v1.incrementCounter(2) })(); if (typeof res === 'function') { res(e) }};
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const v1 = ctx['state'];
+    let d1 = (e) => {const res = (() => { return v1.counter++ })(); if (typeof res === 'function') { res(e) }};
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement, part 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Toggle</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const v1 = ctx['state'];
+    let d1 = (e) => {const res = (() => { return v1.flag=!v1.flag })(); if (typeof res === 'function') { res(e) }};
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on with inline statement, part 3 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Toggle</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const v1 = ctx['state'];
+    const v2 = ctx['someFunction'];
+    let d1 = (e) => {const res = (() => { return v1.n=v2(3) })(); if (typeof res === 'function') { res(e) }};
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on with t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'update'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on with t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on, with arguments and t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const arg1 = [ctx['value']];
+    let d1 = [ctx, 'update', arg1];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on, with arguments and t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    return block1([], [b2]);
+  }
+}"
+`;

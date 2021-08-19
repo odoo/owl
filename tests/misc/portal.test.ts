@@ -125,7 +125,9 @@ describe("Portal", () => {
     }
 
     const parent = await mount(Parent, fixture);
-    expect(parent.el!.innerHTML).toBe('<div id="local-target"><p>2</p></div><span>1</span>');
+    expect((parent.el as any)!.innerHTML).toBe(
+      '<div id="local-target"><p>2</p></div><span>1</span>'
+    );
   });
 
   test("with target in template (after portal)", async () => {
@@ -142,7 +144,9 @@ describe("Portal", () => {
     }
 
     const parent = await mount(Parent, fixture);
-    expect(parent.el!.innerHTML).toBe('<span>1</span><div id="local-target"><p>2</p></div>');
+    expect((parent.el as any)!.innerHTML).toBe(
+      '<span>1</span><div id="local-target"><p>2</p></div>'
+    );
   });
 
   test.skip("portal with target not in dom", async () => {
@@ -201,12 +205,12 @@ describe("Portal", () => {
 
     const parent = await mount(Parent, fixture);
     expect(outside.innerHTML).toBe("<span>1</span>");
-    expect(parent.el!.innerHTML).toBe("");
+    expect((parent.el as any).innerHTML).toBe("");
 
     parent.state.val = 2;
     await nextTick();
     expect(outside.innerHTML).toBe("<span>2</span>");
-    expect(parent.el!.innerHTML).toBe("");
+    expect((parent.el as any).innerHTML).toBe("");
     expect(steps).toEqual(["mounted", "patched"]);
   });
 
@@ -375,7 +379,7 @@ describe("Portal", () => {
     ]);
   });
 
-  //   test("portal destroys on crash", async () => {
+  //   test.skip("portal destroys on crash", async () => {
   //     class Child extends Component {
   //       static template = xml`<span t-esc="props.error and this.will.crash" />`;
   //       state = {};
@@ -405,7 +409,7 @@ describe("Portal", () => {
   //     expect(error.message).toBe("Cannot read property 'crash' of undefined");
   //   });
 
-  //   test("portal manual unmount", async () => {
+  //   test.skip("portal manual unmount", async () => {
   //     class Parent extends Component {
   //       static components = { Portal };
   //       static template = xml`
@@ -431,7 +435,7 @@ describe("Portal", () => {
   //     expect(parent.el!.innerHTML).toBe("<portal></portal>");
   //   });
 
-  //   test("portal manual unmount with subcomponent", async () => {
+  //   test.skip("portal manual unmount with subcomponent", async () => {
   //     expect.assertions(9);
   //     class Child extends Component {
   //       static template = xml`<span>gloria</span>`;
@@ -469,7 +473,7 @@ describe("Portal", () => {
   // });
 
   // describe("Portal: Events handling", () => {
-  //   test("events triggered on movable pure node are handled", async () => {
+  //   test.skip("events triggered on movable pure node are handled", async () => {
   //     class Parent extends Component {
   //       static components = { Portal };
   //       static template = xml`
@@ -493,7 +497,7 @@ describe("Portal", () => {
   //     expect(outside.innerHTML).toBe(`<span id="trigger-me">triggered</span>`);
   //   });
 
-  //   test("events triggered on movable owl components are redirected", async () => {
+  //   test.skip("events triggered on movable owl components are redirected", async () => {
   //     let childInst: Component | null = null;
   //     class Child extends Component {
   //       static template = xml`
@@ -531,7 +535,7 @@ describe("Portal", () => {
   //     expect(outside.innerHTML).toBe(`<span>triggered</span>`);
   //   });
 
-  //   test("events triggered on contained movable owl components are redirected", async () => {
+  //   test.skip("events triggered on contained movable owl components are redirected", async () => {
   //     const steps: string[] = [];
   //     let childInst: Component | null = null;
   //     class Child extends Component {
@@ -572,7 +576,7 @@ describe("Portal", () => {
   //     expect(steps).toMatchObject(["custom-portal", "custom"]);
   //   });
 
-  //   test("Dom events are not mapped", async () => {
+  //   test.skip("Dom events are not mapped", async () => {
   //     let childInst: Component | null = null;
   //     const steps: string[] = [];
   //     class Child extends Component {
@@ -610,7 +614,7 @@ describe("Portal", () => {
   //     document.body.removeEventListener("click", bodyListener);
   //   });
 
-  //   test("Nested portals event propagation", async () => {
+  //   test.skip("Nested portals event propagation", async () => {
   //     const outside2 = document.createElement("div");
   //     outside2.setAttribute("id", "outside2");
   //     fixture.appendChild(outside2);

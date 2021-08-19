@@ -1,4 +1,4 @@
-import { getCurrent } from "./b_node";
+import { getCurrent } from "./component/component_node";
 
 export function useState<T>(state: T): T {
   const node = getCurrent()!;

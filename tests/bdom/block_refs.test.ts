@@ -43,3 +43,15 @@ test("simple callback ref", async () => {
   expect(arg).toBeNull();
   expect(n).toBe(2);
 });
+
+test("is in dom when callback is called", async () => {
+  expect.assertions(1);
+  const block = createBlock('<div><span owl-ref="0">hey</span></div>');
+  const refFn = (span: any) => {
+    expect(document.body.contains(span)).toBeTruthy();
+  };
+
+  const tree = block([refFn]);
+
+  mount(tree, fixture);
+});

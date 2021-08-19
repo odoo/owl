@@ -6,7 +6,7 @@ import {
   onWillUpdateProps,
   onRender,
 } from "../../src/lifecycle_hooks";
-import { status } from "../../src/status";
+import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
 import {
   makeDeferred,
@@ -123,7 +123,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<div/>`;
       setup() {
         onMounted(() => {
-          expect(document.body.contains(this.el)).toBe(true);
+          expect(document.body.contains(this.el!)).toBe(true);
           steps.push("child:mounted");
         });
       }

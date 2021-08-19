@@ -56,8 +56,8 @@ describe("list of components", () => {
       static template = xml`
               <div>
                   <ul>
-                      <t t-foreach="items" t-as="item">
-                          <li t-key="'li_'+item">
+                      <t t-foreach="items" t-as="item" t-key="'li_'+item">
+                          <li>
                               <Child item="item"/>
                           </li>
                       </t>
@@ -153,8 +153,8 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="state.numbers" t-as="number">
-            <Child t-key="number" n="number"/>
+          <t t-foreach="state.numbers" t-as="number" t-key="number" >
+            <Child n="number"/>
           </t>
         </div>`;
       static components = { Child };
@@ -181,8 +181,8 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="state.numbers" t-as="number">
-            <Child t-key="number"/>
+          <t t-foreach="state.numbers" t-as="number" t-key="number">
+            <Child/>
           </t>
         </div>`;
       static components = { Child };

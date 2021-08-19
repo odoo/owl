@@ -1,5 +1,5 @@
 import { App, Component } from "../../src";
-import { status } from "../../src/status";
+import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
@@ -19,7 +19,7 @@ describe("app", () => {
 
     const app = new App(SomeComponent);
     const comp = await app.mount(fixture);
-    const el = comp.el;
+    const el = comp.el!;
     expect(document.contains(el)).toBe(true);
     app.destroy();
     expect(document.contains(el)).toBe(false);

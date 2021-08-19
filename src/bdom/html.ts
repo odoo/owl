@@ -61,6 +61,8 @@ class VHtml {
     }
   }
 
+  beforeRemove() {}
+
   remove() {
     const parent = this.parentEl;
     for (let elem of this.content) {

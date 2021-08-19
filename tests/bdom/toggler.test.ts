@@ -36,6 +36,12 @@ describe("togglers", () => {
     patch(tree, toggler("key2", text("bar")));
     expect(fixture.innerHTML).toBe("bar");
     expect(fixture.firstChild).not.toBe(textnode);
+
+    // we check here that the key was properly reset
+    const other = fixture.firstChild;
+    patch(tree, toggler("key1", text("foo")));
+    expect(fixture.innerHTML).toBe("foo");
+    expect(fixture.firstChild).not.toBe(other);
   });
 
   test("can toggle between text node and block", async () => {

@@ -80,6 +80,7 @@ class VMulti {
           const anchor = document.createTextNode("");
           anchors[i] = anchor;
           nodeInsertBefore.call(parentEl, anchor, afterNode);
+          vn1.beforeRemove();
           vn1.remove();
           children1[i] = undefined;
         }
@@ -92,9 +93,21 @@ class VMulti {
     }
   }
 
+  beforeRemove() {
+    const children = this.children;
+    for (let i = 0, l = children.length; i < l; i++) {
+      const child = children[i];
+      if (child) {
+        child.beforeRemove();
+      }
+    }
+  }
+
   remove() {
     const parentEl = this.parentEl;
     if (this.singleNode) {
+      // todo: check if this should not be fixed. it looks like we still need
+      // to call the beforeRemove hook
       nodeSetTextContent.call(parentEl, "");
     } else {
       const children = this.children;

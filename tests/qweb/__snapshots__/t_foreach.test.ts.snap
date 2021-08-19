@@ -1,0 +1,496 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-foreach does not pollute the rendering context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList([1]);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      let key1 = ctx['item'];
+      c2[i1] = withKey(text(ctx['item']), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach iterate on items (on a element node) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList([1,2]);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      let key1 = ctx['item'];
+      let d1 = ctx['item'];
+      c2[i1] = withKey(block3([d1]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach iterate on items 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList([3,2,1]);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      let key1 = ctx['item'];
+      let b4 = text(\` [\`);
+      let b5 = text(ctx['item_index']);
+      let b6 = text(\`: \`);
+      let b7 = text(ctx['item']);
+      let b8 = text(\` \`);
+      let b9 = text(ctx['item_value']);
+      let b10 = text(\`] \`);
+      c2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9, b10]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach iterate, dict param 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['value']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k2[i1];
+      let key1 = ctx['item_index'];
+      let b4 = text(\` [\`);
+      let b5 = text(ctx['item_index']);
+      let b6 = text(\`: \`);
+      let b7 = text(ctx['item']);
+      let b8 = text(\` \`);
+      let b9 = text(ctx['item_value']);
+      let b10 = text(\`] \`);
+      c2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9, b10]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach iterate, position 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(Array(5));
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`elem\`] = v2[i1];
+      ctx[\`elem_first\`] = i1 === 0;
+      ctx[\`elem_last\`] = i1 === v2.length - 1;
+      ctx[\`elem_index\`] = i1;
+      let key1 = ctx['elem'];
+      let b4,b5,b6,b7,b8,b9;
+      b4 = text(\` -\`);
+      if (ctx['elem_first']) {
+        b5 = text(\` first\`);
+      }
+      if (ctx['elem_last']) {
+        b6 = text(\` last\`);
+      }
+      b7 = text(\` (\`);
+      b8 = text(ctx['elem_index']);
+      b9 = text(\`) \`);
+      c2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach simple iteration (in a node) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList([3,2,1]);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      let key1 = ctx['item'];
+      c2[i1] = withKey(text(ctx['item']), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach simple iteration 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k1, v1, l1, c1] = prepareList([3,2,1]);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      let key1 = ctx['item'];
+      c1[i1] = withKey(text(ctx['item']), key1);
+    }
+    return list(c1);
+  }
+}"
+`;
+
+exports[`t-foreach simple iteration with two nodes inside 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block3 = createBlock(\`<span>a<owl-text-0/></span>\`);
+  let block4 = createBlock(\`<span>b<owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k1, v1, l1, c1] = prepareList([3,2,1]);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`item\`] = v1[i1];
+      let key1 = ctx['item'];
+      let d1 = ctx['item'];
+      let b3 = block3([d1]);
+      let d2 = ctx['item'];
+      let b4 = block4([d2]);
+      c1[i1] = withKey(multi([b3, b4]), key1);
+    }
+    return list(c1);
+  }
+}"
+`;
+
+exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(\` [\`);
+    let b3 = text(ctx['a']);
+    let b4 = text(\`] [\`);
+    let b5 = text(ctx['b']);
+    let b6 = text(\`] [\`);
+    let b7 = text(ctx['c']);
+    let b8 = text(\`] \`);
+    return multi([b2, b3, b4, b5, b6, b7, b8]);
+  }
+}"
+`;
+
+exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><owl-child-0/><span>[<owl-text-0/>][<owl-text-1/>][<owl-text-2/>]</span></div>\`);
+  let block6 = createBlock(\`<span><owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['numbers']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`a\`] = v2[i1];
+      ctx[\`a_first\`] = i1 === 0;
+      ctx[\`a_last\`] = i1 === v2.length - 1;
+      ctx[\`a_index\`] = i1;
+      ctx[\`a_value\`] = k2[i1];
+      let key1 = ctx['a'];
+      ctx = Object.create(ctx);
+      const [k4, v4, l4, c4] = prepareList(ctx['letters']);
+      for (let i2 = 0; i2 < l4; i2++) {
+        ctx[\`b\`] = v4[i2];
+        ctx[\`b_first\`] = i2 === 0;
+        ctx[\`b_last\`] = i2 === v4.length - 1;
+        ctx[\`b_index\`] = i2;
+        ctx[\`b_value\`] = k4[i2];
+        let key2 = ctx['b'];
+        ctx = Object.create(ctx);
+        ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
+        c4[i2] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
+        ctx = ctx.__proto__;
+      }
+      ctx = ctx.__proto__;
+      let b4 = list(c4);
+      let d1 = ctx['c'];
+      let b6 = block6([d1]);
+      c2[i1] = withKey(multi([b4, b6]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    let d2 = ctx['a'];
+    let d3 = ctx['b'];
+    let d4 = ctx['c'];
+    return block1([d2, d3, d4], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[\`c\`] = 'x'+'_'+ctx['a']+'_'+ctx['b'];
+    let b2 = text(\` [\`);
+    let b3 = text(ctx['a']);
+    let b4 = text(\`] [\`);
+    let b5 = text(ctx['b']);
+    let b6 = text(\`] [\`);
+    let b7 = text(ctx['c']);
+    let b8 = text(\`] \`);
+    return multi([b2, b3, b4, b5, b6, b7, b8]);
+  }
+}"
+`;
+
+exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><owl-child-0/><span>[<owl-text-0/>][<owl-text-1/>][<owl-text-2/>]</span></div>\`);
+  let block6 = createBlock(\`<span><owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['numbers']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`a\`] = v2[i1];
+      ctx[\`a_first\`] = i1 === 0;
+      ctx[\`a_last\`] = i1 === v2.length - 1;
+      ctx[\`a_index\`] = i1;
+      ctx[\`a_value\`] = k2[i1];
+      let key1 = ctx['a'];
+      ctx = Object.create(ctx);
+      const [k4, v4, l4, c4] = prepareList(ctx['letters']);
+      for (let i2 = 0; i2 < l4; i2++) {
+        ctx[\`b\`] = v4[i2];
+        ctx[\`b_first\`] = i2 === 0;
+        ctx[\`b_last\`] = i2 === v4.length - 1;
+        ctx[\`b_index\`] = i2;
+        ctx[\`b_value\`] = k4[i2];
+        let key2 = ctx['b'];
+        c4[i2] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
+      }
+      ctx = ctx.__proto__;
+      let b4 = list(c4);
+      let d1 = ctx['c'];
+      let b6 = block6([d1]);
+      c2[i1] = withKey(multi([b4, b6]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    let d2 = ctx['a'];
+    let d3 = ctx['b'];
+    let d4 = ctx['c'];
+    return block1([d2, d3, d4], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach t-foreach in t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['numbers']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`number\`] = v2[i1];
+      let key1 = ctx['number'];
+      ctx = Object.create(ctx);
+      const [k3, v3, l3, c3] = prepareList(ctx['letters']);
+      for (let i2 = 0; i2 < l3; i2++) {
+        ctx[\`letter\`] = v3[i2];
+        let key2 = ctx['letter'];
+        let b5 = text(\` [\`);
+        let b6 = text(ctx['number']);
+        let b7 = text(ctx['letter']);
+        let b8 = text(\`] \`);
+        c3[i2] = withKey(multi([b5, b6, b7, b8]), key2);
+      }
+      ctx = ctx.__proto__;
+      c2[i1] = withKey(list(c3), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k1, v1, l1, c1] = prepareList(ctx['elems']);
+    for (let i1 = 0; i1 < l1; i1++) {
+      ctx[\`elem\`] = v1[i1];
+      let key1 = ctx['elem'].id;
+      let b3;
+      if (ctx['elem'].id<3) {
+        let d1 = ctx['elem'].text;
+        b3 = block3([d1]);
+      }
+      c1[i1] = withKey(multi([b3]), key1);
+    }
+    return list(c1);
+  }
+}"
+`;
+
+exports[`t-foreach t-foreach with t-if inside 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block4 = createBlock(\`<span><owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['elems']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`elem\`] = v2[i1];
+      let key1 = ctx['elem'].id;
+      let b4;
+      if (ctx['elem'].id<3) {
+        let d1 = ctx['elem'].text;
+        b4 = block4([d1]);
+      }
+      c2[i1] = withKey(multi([b4]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach throws error if invalid loop expression 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<span/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['abc']);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      ctx[\`item_index\`] = i1;
+      let key1 = ctx['item'];
+      c2[i1] = withKey(block3(), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach warn if no key in some case 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList([1,2]);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`item\`] = v2[i1];
+      let key1 = i1;
+      let d1 = ctx['item'];
+      c2[i1] = withKey(block3([d1]), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;

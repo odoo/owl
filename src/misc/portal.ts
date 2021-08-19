@@ -1,22 +1,22 @@
-import { Block } from "../bdom";
-import { BText } from "../bdom/b_text";
-import { Component } from "../component";
-import type { BNode } from "../b_node";
+import type { ComponentNode } from "../component/component_node";
+import { Component } from "../component/component";
 import { xml } from "../tags";
-import { mountBlock } from "../bdom/block";
+import { BDom, text, VNode } from "../bdom";
 
-class BPortal extends BText {
-  selector: string;
-  realBDom: Block | null;
+const VText: any = text("").constructor;
+
+class VPortal extends VText implements Partial<VNode<VPortal>> {
+  //   selector: string;
+  realBDom: BDom | null;
   target: HTMLElement | null = null;
 
-  constructor(selector: string, realBDom: Block) {
+  constructor(selector: string, realBDom: BDom) {
     super("");
     this.selector = selector;
     this.realBDom = realBDom;
   }
-  mountBefore(anchor: ChildNode) {
-    super.mountBefore(anchor);
+  mount(parent: HTMLElement, anchor: ChildNode) {
+    super.mount(parent, anchor);
     this.target = document.querySelector(this.selector) as any;
     if (!this.target) {
       let el: any = this.el;
@@ -28,7 +28,11 @@ class BPortal extends BText {
         throw new Error("invalid portal target");
       }
     }
-    mountBlock(this.realBDom!, this.target);
+    this.realBDom!.mount(this.target!, null);
+  }
+
+  beforeRemove() {
+    this.realBDom!.beforeRemove();
   }
   remove() {
     super.remove();
@@ -36,24 +40,24 @@ class BPortal extends BText {
     this.realBDom = null;
   }
 
-  patch(other: BPortal) {
+  patch(other: VPortal) {
     super.patch(other);
     if (this.realBDom) {
       this.realBDom.patch(other.realBDom!);
     } else {
       this.realBDom = other.realBDom;
-      mountBlock(this.realBDom!, this.target!);
+      this.realBDom!.mount(this.target!, null);
     }
   }
 }
+
 export class Portal extends Component {
   static template = xml`<t t-slot="default"/>`;
 
-  constructor(props: any, env: any, node: BNode) {
+  constructor(props: any, env: any, node: ComponentNode) {
     super(props, env, node);
     node._render = function (fiber: any) {
-      // (this as any).realBdom = this.renderFn();
-      const bdom = new BPortal(props.target, this.renderFn());
+      const bdom = new VPortal(props.target, this.renderFn());
       fiber.bdom = bdom;
       fiber.root.counter--;
     };

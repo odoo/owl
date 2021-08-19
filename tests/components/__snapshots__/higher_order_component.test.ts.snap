@@ -1,236 +1,191 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`basics basic use 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span>child<owl-text/></span>\`);
-    data = new Array(1);
-    update(prevData, data) {
-      setText(this.el.firstChild.nextSibling, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span>child<owl-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.data[0] = ctx['props'].p;
-    return b1;
+    let d1 = ctx['props'].p;
+    return block1([d1]);
   }
 }"
 `;
 
 exports[`basics basic use 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`basics can select a sub widget  1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>CHILD 1</span>\`);
-  }
+  let block1 = createBlock(\`<span>CHILD 1</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`basics can select a sub widget  2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<div>CHILD 2</div>\`);
-  }
+  let block1 = createBlock(\`<div>CHILD 2</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`basics can select a sub widget  3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['env'].flag) {
-      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     if (!ctx['env'].flag) {
-      b1.children[1] = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
+      b3 = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`basics can select a sub widget, part 2 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>CHILD 1</span>\`);
-  }
+  let block1 = createBlock(\`<span>CHILD 1</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`basics can select a sub widget, part 2 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<div>CHILD 2</div>\`);
-  }
+  let block1 = createBlock(\`<div>CHILD 2</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`basics can select a sub widget, part 2 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new BMulti(2);
+    let b2,b3;
     if (ctx['state'].flag) {
-      b1.children[0] = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
     }
     if (!ctx['state'].flag) {
-      b1.children[1] = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
+      b3 = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
     }
-    return b1;
+    return multi([b2, b3]);
   }
 }"
 `;
 
 exports[`basics sub widget is interactive 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<span><button>click</button>child<owl-text/></span>\`);
-    data = new Array(1);
-    handlers = new Array(1);
-    build() {
-      this.setupHandler(this.el.firstChild, \`click\`, 0);
-    }
-    update(prevData, data) {
-      setText(this.el.firstChild.nextSibling.nextSibling, prevData[0], data[0]);
-    }
-  }
+  let block1 = createBlock(\`<span><button owl-handler-0=\\"click\\">click</button>child<owl-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const b1 = new Block1();
-    b1.handlers[0] = [ctx, 'inc'];
-    b1.data[0] = ctx['state'].val;
-    return b1;
+    let d1 = [ctx, 'inc'];
+    let d2 = ctx['state'].val;
+    return block1([d1, d2]);
   }
 }"
 `;
 
 exports[`basics sub widget is interactive 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`basics top level sub widget with a parent 1`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BStatic {
-    static el = elem(\`<span>Hello</span>\`);
-  }
+  let block1 = createBlock(\`<span>Hello</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    return b1;
+    return block1();
   }
 }"
 `;
 
 exports[`basics top level sub widget with a parent 2`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = node.getChild(\`ComponentC\`, {}, key + \`__1\`, ctx);
-    return b1;
+    return node.getChild(\`ComponentC\`, {}, key + \`__1\`, ctx);
   }
 }"
 `;
 
 exports[`basics top level sub widget with a parent 3`] = `
-"function anonymous(Blocks, helpers
+"function anonymous(bdom, helpers
 ) {
-  let {BElem, BText, BNode, BCollection, BHtml, BMulti, BStatic, BDispatch} = Blocks;
-  let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
-  class Block1 extends BElem {
-    static el = elem(\`<div><owl-anchor/></div>\`);
-    children = new Array(1);
-    build() {
-      this.anchors = new Array(1);
-      this.anchors[0] = this.el.firstChild;
-    }
-  }
+  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b1 = new Block1();
-    b1.children[0] = node.getChild(\`ComponentB\`, {}, key + \`__1\`, ctx);
-    return b1;
+    let b2 = node.getChild(\`ComponentB\`, {}, key + \`__1\`, ctx);
+    return block1([], [b2]);
   }
 }"
 `;

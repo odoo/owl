@@ -473,6 +473,7 @@ describe("qweb parser", () => {
       hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -489,6 +490,7 @@ describe("qweb parser", () => {
       hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -512,6 +514,7 @@ describe("qweb parser", () => {
         ref: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -528,6 +531,7 @@ describe("qweb parser", () => {
       isOnlyChild: false,
       key: "item.id",
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -551,6 +555,7 @@ describe("qweb parser", () => {
         ref: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -582,6 +587,7 @@ describe("qweb parser", () => {
           content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
         },
       },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -612,6 +618,7 @@ describe("qweb parser", () => {
         ref: null,
         content: [{ type: ASTType.TEsc, expr: "category.name", defaultValue: "" }],
       },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -635,6 +642,7 @@ describe("qweb parser", () => {
           hasNoComponent: true,
           isOnlyChild: true,
           body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+          memo: "",
           hasNoFirst: true,
           hasNoIndex: true,
           hasNoLast: true,
@@ -670,6 +678,7 @@ describe("qweb parser", () => {
         attrs: {},
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -693,6 +702,7 @@ describe("qweb parser", () => {
         props: {},
         slots: {},
       },
+      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -713,12 +723,33 @@ describe("qweb parser", () => {
         name: "blap",
         body: null,
       },
+      memo: "",
       hasNoFirst: false,
       hasNoIndex: false,
       hasNoLast: false,
       hasNoValue: false,
     });
   });
+
+  test("t-foreach expression with t-memo", async () => {
+    expect(parse(`<t t-foreach="list" t-as="item" t-memo="[row.x]"><t t-esc="item"/></t>`)).toEqual(
+      {
+        type: ASTType.TForEach,
+        collection: "list",
+        elem: "item",
+        key: null,
+        hasNoComponent: true,
+        isOnlyChild: false,
+        body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+        memo: "[row.x]",
+        hasNoFirst: true,
+        hasNoIndex: true,
+        hasNoLast: true,
+        hasNoValue: true,
+      }
+    );
+  });
+
   // ---------------------------------------------------------------------------
   // t-call
   // ---------------------------------------------------------------------------

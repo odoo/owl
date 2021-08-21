@@ -4,7 +4,7 @@ exports[`style and class handling can set class on multi root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block2 = createBlock(\`<div>a</div>\`);
   let block3 = createBlock(\`<span owl-attribute-0=\\"class\\">b</span>\`);
@@ -22,7 +22,7 @@ exports[`style and class handling can set class on multi root component 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'fromparent'}, key + \`__1\`, node, ctx);
@@ -34,7 +34,7 @@ exports[`style and class handling can set class on sub component, as prop 1`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">child</div>\`);
   
@@ -49,7 +49,7 @@ exports[`style and class handling can set class on sub component, as prop 2`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'some-class'}, key + \`__1\`, node, ctx);
@@ -61,7 +61,7 @@ exports[`style and class handling can set class on sub sub component 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">childchild</div>\`);
   
@@ -76,7 +76,7 @@ exports[`style and class handling can set class on sub sub component 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`ChildChild\`, {class: (ctx['props'].class||'')+' fromchild'}, key + \`__1\`, node, ctx);
@@ -88,7 +88,7 @@ exports[`style and class handling can set class on sub sub component 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'fromparent'}, key + \`__1\`, node, ctx);
@@ -100,7 +100,7 @@ exports[`style and class handling can set more than one class on sub component 1
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">child</div>\`);
   
@@ -115,7 +115,7 @@ exports[`style and class handling can set more than one class on sub component 2
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'a  b'}, key + \`__1\`, node, ctx);
@@ -127,7 +127,7 @@ exports[`style and class handling can set style and class inside component 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div style=\\"font-weight:bold;\\" class=\\"some-class\\">world</div>\`);
   
@@ -141,7 +141,7 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">a</div>\`);
   
@@ -156,7 +156,7 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<span owl-attribute-0=\\"class\\">b</span>\`);
   
@@ -171,7 +171,7 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -189,7 +189,7 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'someclass',child: ctx['state'].child}, key + \`__1\`, node, ctx);
@@ -201,7 +201,7 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -216,7 +216,7 @@ exports[`style and class handling class with extra whitespaces (variation) 2`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<p><owl-child-0/></p>\`);
   
@@ -231,7 +231,7 @@ exports[`style and class handling class with extra whitespaces 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -246,7 +246,7 @@ exports[`style and class handling class with extra whitespaces 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
@@ -258,7 +258,7 @@ exports[`style and class handling component class and parent class combine toget
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"child\\" owl-attribute-0=\\"class\\">child</div>\`);
   
@@ -273,7 +273,7 @@ exports[`style and class handling component class and parent class combine toget
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'from parent'}, key + \`__1\`, node, ctx);
@@ -285,7 +285,7 @@ exports[`style and class handling empty class attribute is not added on widget r
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<span owl-attribute-0=\\"class\\"/>\`);
   
@@ -300,7 +300,7 @@ exports[`style and class handling empty class attribute is not added on widget r
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
@@ -315,7 +315,7 @@ exports[`style and class handling no class is set is child ignores it 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div>child</div>\`);
   
@@ -329,7 +329,7 @@ exports[`style and class handling no class is set is child ignores it 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'hey'}, key + \`__1\`, node, ctx);
@@ -341,7 +341,7 @@ exports[`style and class handling no class is set is parent does not give it as 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">child</div>\`);
   
@@ -356,7 +356,7 @@ exports[`style and class handling no class is set is parent does not give it as 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -368,7 +368,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<span class=\\"c\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -383,7 +383,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   

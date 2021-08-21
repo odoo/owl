@@ -4,7 +4,7 @@ exports[`attributes changing a class with t-att-class (preexisting class 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hoy\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -19,7 +19,7 @@ exports[`attributes changing a class with t-att-class 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -34,7 +34,7 @@ exports[`attributes changing an attribute with t-att- 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"value\\"/>\`);
   
@@ -49,7 +49,7 @@ exports[`attributes class and t-att-class should combine together 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\" class=\\"hello\\"/>\`);
   
@@ -64,7 +64,7 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hello\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -79,7 +79,7 @@ exports[`attributes dynamic attribute evaluating to 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -94,7 +94,7 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -109,7 +109,7 @@ exports[`attributes dynamic attribute with a dash 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"data-action-id\\"/>\`);
   
@@ -124,7 +124,7 @@ exports[`attributes dynamic attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -139,7 +139,7 @@ exports[`attributes dynamic class attribute 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -154,7 +154,7 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -169,7 +169,7 @@ exports[`attributes dynamic empty class attribute 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -184,7 +184,7 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"aria-label\\"/>\`);
   
@@ -199,7 +199,7 @@ exports[`attributes fixed variable 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -214,7 +214,7 @@ exports[`attributes format expression 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -229,7 +229,7 @@ exports[`attributes format literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -244,7 +244,7 @@ exports[`attributes format multiple 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -259,7 +259,7 @@ exports[`attributes format value 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\"/>\`);
   
@@ -274,7 +274,7 @@ exports[`attributes from object variables set previously 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><span owl-attribute-0=\\"class\\"/></div>\`);
   
@@ -291,7 +291,7 @@ exports[`attributes from variables set previously (no external node) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<span owl-attribute-0=\\"class\\"/>\`);
   
@@ -308,7 +308,7 @@ exports[`attributes from variables set previously 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><span owl-attribute-0=\\"class\\"/></div>\`);
   
@@ -325,7 +325,7 @@ exports[`attributes object 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attributes=\\"0\\"/>\`);
   
@@ -340,7 +340,7 @@ exports[`attributes static attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div foo=\\"a\\" bar=\\"b\\" baz=\\"c\\"/>\`);
   
@@ -354,7 +354,7 @@ exports[`attributes static attributes on void elements 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<img src=\\"/test.skip.jpg\\" alt=\\"Test\\"/>\`);
   
@@ -368,7 +368,7 @@ exports[`attributes static attributes with dashes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div aria-label=\\"Close\\"/>\`);
   
@@ -382,7 +382,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hello\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -397,7 +397,7 @@ exports[`attributes t-att-class with multiple classes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -412,7 +412,7 @@ exports[`attributes t-att-class with multiple classes 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -427,7 +427,7 @@ exports[`attributes t-att-class with object 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"static\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -442,7 +442,7 @@ exports[`attributes t-attf-class 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -457,7 +457,7 @@ exports[`attributes t-attf-class should combine with class 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hello\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -472,7 +472,7 @@ exports[`attributes t-attf-class with multiple classes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -487,7 +487,7 @@ exports[`attributes t-attf-class with multiple classes separated by multiple spa
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
   
@@ -502,7 +502,7 @@ exports[`attributes tuple literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attributes=\\"0\\"/>\`);
   
@@ -517,7 +517,7 @@ exports[`attributes tuple variable 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attributes=\\"0\\"/>\`);
   
@@ -532,7 +532,7 @@ exports[`attributes two classes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"a b\\"/>\`);
   
@@ -546,7 +546,7 @@ exports[`attributes two dynamic attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"foo\\" owl-attribute-1=\\"bar\\"/>\`);
   
@@ -562,7 +562,7 @@ exports[`attributes updating classes (with obj notation) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hoy\\" owl-attribute-0=\\"class\\"/>\`);
   
@@ -577,7 +577,7 @@ exports[`attributes various escapes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div foo=\\"<foo\\" owl-attribute-0=\\"bar\\" owl-attribute-1=\\"baz\\" owl-attributes=\\"2\\"/>\`);
   
@@ -594,7 +594,7 @@ exports[`special cases for some specific html attributes/properties input of typ
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<input type=\\"checkbox\\" owl-attribute-0=\\"indeterminate\\"/>\`);
   
@@ -609,7 +609,7 @@ exports[`special cases for some specific html attributes/properties input type= 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<input type=\\"checkbox\\" owl-attribute-0=\\"checked\\"/>\`);
   
@@ -624,7 +624,7 @@ exports[`special cases for some specific html attributes/properties input with t
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<input owl-attribute-0=\\"value\\"/>\`);
   
@@ -639,7 +639,7 @@ exports[`special cases for some specific html attributes/properties various bool
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><input type=\\"checkbox\\" checked=\\"checked\\"/><input checked=\\"checked\\"/><div checked=\\"checked\\"/><div selected=\\"selected\\"/><option selected=\\"selected\\" other=\\"1\\"/><input readonly=\\"readonly\\"/><button disabled=\\"disabled\\"/></div>\`);
   

@@ -79,6 +79,7 @@ export interface ASTTForEach {
   elem: string;
   key: string | null;
   body: AST;
+  memo: string;
   isOnlyChild: boolean;
   hasNoComponent: boolean;
   hasNoFirst: boolean;
@@ -406,6 +407,8 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-as");
   const key = node.getAttribute("t-key");
   node.removeAttribute("t-key");
+  const memo = node.getAttribute("t-memo") || "";
+  node.removeAttribute("t-memo");
   const body = parseNode(node, ctx);
 
   if (!body) {
@@ -423,6 +426,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     collection,
     elem,
     body,
+    memo,
     key,
     isOnlyChild: false,
     hasNoComponent: hasNoComponent(body),

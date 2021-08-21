@@ -4,7 +4,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
   
@@ -19,7 +19,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><ul><owl-child-0/></ul></div>\`);
   let block3 = createBlock(\`<li><owl-child-0/></li>\`);
@@ -43,7 +43,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
   
@@ -58,7 +58,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
@@ -90,7 +90,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
   
@@ -105,7 +105,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   let block3 = createBlock(\`<p><owl-child-0/></p>\`);
@@ -139,7 +139,7 @@ exports[`list of components simple list 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
@@ -154,7 +154,7 @@ exports[`list of components simple list 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -173,7 +173,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<p><owl-text-0/></p>\`);
   
@@ -188,7 +188,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
@@ -210,7 +210,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<p><owl-text-0/></p>\`);
   
@@ -225,7 +225,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   

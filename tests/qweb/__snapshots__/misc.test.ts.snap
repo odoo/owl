@@ -4,7 +4,7 @@ exports[`misc complex template 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"><div owl-attribute-1=\\"class\\"><div class=\\"batch_header\\"><a owl-attribute-2=\\"href\\" owl-attribute-3=\\"class\\" title=\\"View Batch\\"><owl-text-4/><owl-child-0/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-child-1/><div class=\\"batch_slots\\"><owl-child-2/><owl-child-3/></div><div class=\\"batch_commits\\"><owl-child-4/></div></div></div>\`);
   let block2 = createBlock(\`<i class=\\"fa fa-exclamation-triangle\\"/>\`);
@@ -82,7 +82,7 @@ exports[`misc global 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<año owl-attribute-0=\\"falló\\"><owl-child-0/></año>\`);
   
@@ -98,7 +98,7 @@ exports[`misc global 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
   
@@ -113,7 +113,7 @@ exports[`misc global 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
@@ -129,7 +129,7 @@ exports[`misc global 4`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_6 = getTemplate(\`_callee-uses-foo\`);
@@ -178,7 +178,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_3 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
   let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a owl-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><owl-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><owl-child-0/><li class=\\"nav-item divider\\"/><owl-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" owl-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" owl-handler-3=\\"click\\"> More </button><owl-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" owl-attribute-4=\\"value\\" owl-handler-5=\\"keyup\\" owl-handler-6=\\"change\\" owl-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" owl-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" owl-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">

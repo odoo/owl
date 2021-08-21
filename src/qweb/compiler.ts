@@ -112,6 +112,7 @@ class CodeTarget {
   loopLevel = 0;
   code: string[] = [];
   hasRoot = false;
+  hasCache = false;
 
   constructor(name: string) {
     this.name = name;
@@ -231,7 +232,7 @@ export class QWebCompiler {
     // define blocks and utility functions
     this.addLine(`let { text, createBlock, list, multi, html, toggler, component } = bdom;`);
     this.addLine(
-      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;`
+      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;`
     );
     if (this.shouldDefineAssign) {
       this.addLine(`let assign = Object.assign;`);
@@ -266,6 +267,10 @@ export class QWebCompiler {
     if (this.shouldProtectScope) {
       this.addLine(`  ctx = Object.create(ctx);`);
     }
+    if (this.target.hasCache) {
+      this.addLine(`  let cache = ctx.cache || {};`);
+      this.addLine(`  let nextCache = ctx.cache = {};`);
+    }
     // if (this.shouldDefineKey0) {
     //   this.addLine(`  let key0;`);
     // }
@@ -289,6 +294,10 @@ export class QWebCompiler {
   generateFunctions(fn: CodeTarget) {
     this.addLine("");
     this.addLine(`const ${fn.name} = ${fn.signature}`);
+    if (fn.hasCache) {
+      this.addLine(`let cache = ctx.cache || {};`);
+      this.addLine(`let nextCache = ctx.cache = {};`);
+    }
     for (let line of fn.code) {
       this.addLine(line);
     }
@@ -664,6 +673,26 @@ export class QWebCompiler {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
     }
     this.addLine(`let key${this.target.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
+    let id: string;
+    if (ast.memo) {
+      this.target.hasCache = true;
+      this.shouldDefineAssign = true;
+      id = this.generateId();
+      this.addLine(`let memo${id} = ${compileExpr(ast.memo)}`);
+      this.addLine(`let vnode${id} = cache[key${this.target.loopLevel}];`);
+      this.addLine(`if (vnode${id}) {`);
+      this.target.indentLevel++;
+      this.addLine(`if (shallowEqual(vnode${id}.memo, memo${id})) {`);
+      this.target.indentLevel++;
+      this.addLine(`${c}[${loopVar}] = vnode${id};`);
+      this.addLine(`nextCache[key${this.target.loopLevel}] = vnode${id};`);
+      this.addLine(`continue;`);
+      this.target.indentLevel--;
+      this.addLine("}");
+      this.target.indentLevel--;
+      this.addLine("}");
+    }
+
     const subCtx: Context = {
       block: block, //collectionBlock,
       index: loopVar,
@@ -673,6 +702,11 @@ export class QWebCompiler {
     if (!ast.key) {
       console.warn(
         `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
+      );
+    }
+    if (ast.memo) {
+      this.addLine(
+        `nextCache[key${this.target.loopLevel}] = assign(${c}[${loopVar}], {memo: memo${id!}});`
       );
     }
     this.target.indentLevel--;

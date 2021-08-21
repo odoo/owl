@@ -76,6 +76,7 @@ export const UTILS = {
   // toClassObj,
   withKey,
   prepareList,
+  shallowEqual,
 };
 
 export class TemplateSet {
@@ -116,4 +117,13 @@ export class TemplateSet {
     }
     return this.templates[name];
   }
+}
+
+function shallowEqual(l1: any[], l2: any[]): boolean {
+  for (let i = 0, l = l1.length; i < l; i++) {
+    if (l1[i] !== l2[i]) {
+      return false;
+    }
+  }
+  return true;
 }

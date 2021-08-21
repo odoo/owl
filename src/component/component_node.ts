@@ -24,12 +24,8 @@ export function getCurrent(): ComponentNode | null {
 
 type LifecycleHook = Function;
 
-export class ComponentNode<T extends typeof Component = any> implements VNode<any> {
-  //implements VNode<BNode> {
+export class ComponentNode<T extends typeof Component = any> implements VNode<ComponentNode> {
   el?: HTMLElement | Text | undefined;
-  // parentClass?: any = null;
-  // currentClass?: any = null;
-  // classTarget?: HTMLElement;
   handlers: any = null;
   app: App;
   fiber: Fiber | null = null;
@@ -110,7 +106,6 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<an
   }
 
   destroy() {
-    // console.warn(this.bdom)
     if (this.status === STATUS.MOUNTED) {
       callWillUnmount(this);
       this.bdom!.remove();
@@ -208,13 +203,6 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<an
     const bdom = this.fiber!.bdom!;
     this.bdom = bdom;
     bdom.mount(parent, anchor);
-    // if (this.parentClass) {
-    //   const el = this.firstNode();
-    //   if (el instanceof HTMLElement) {
-    //     this.addClass(el);
-    //   }
-    //   this.currentClass = this.parentClass;
-    // }
     this.status = STATUS.MOUNTED;
     this.fiber!.appliedToDom = true;
     this.fiber = null;
@@ -236,51 +224,8 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<an
     this.bdom!.moveBefore(other ? other.bdom : null, afterNode);
   }
 
-  // addClass(el: HTMLElement) {
-  //   this.classTarget = el;
-  //   for (let cl in toClassObj(this.parentClass)) {
-  //     console.warn(el, this.firstNode(), this.bdom)
-  //     el.classList.add(cl);
-  //   }
-  // }
-
-  // removeClass(el: HTMLElement) {
-  //   for (let cl in toClassObj(this.parentClass)) {
-  //     el.classList.remove(cl);
-  //   }
-  // }
-
   patch() {
     this.bdom!.patch(this!.fiber!.bdom!);
-    // if (this.parentClass) {
-    //   const el = this.firstNode() as HTMLElement;
-    //   if (el === this.classTarget) {
-    //     const prev = toClassObj(this.currentClass);
-    //     const next = toClassObj(this.parentClass);
-    //     for (let c in prev) {
-    //       if (!(c in next)) {
-    //         el.classList.remove(c);
-    //       }
-    //     }
-    //     // add classes
-    //     for (let c in next) {
-    //       if (!(c in prev)) {
-    //         el.classList.add(c);
-    //       }
-    //     }
-    //     this.currentClass = next;
-    //   } else {
-    //     if (el && this.classTarget) {
-    //       this.removeClass(this.classTarget);
-    //       this.addClass(el as any);
-    //     } else if (el) {
-    //       this.addClass(el as any);
-    //     } else {
-    //       this.removeClass(this.classTarget!);
-    //       this.classTarget = undefined;
-    //     }
-    //   }
-    // }
     this.fiber!.appliedToDom = true;
     this.fiber = null;
   }
@@ -290,9 +235,6 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<an
   }
 
   remove() {
-    // if (this.status !== STATUS.DESTROYED) {
-    //   visitRemovedNodes(this);
-    // }
     this.bdom!.remove();
   }
 }
